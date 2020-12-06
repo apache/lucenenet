@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -33,6 +34,7 @@ namespace Lucene.Net.Util.Packed
     /// <seealso cref="BlockPackedWriter"/>
     public sealed class BlockPackedReaderIterator
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static long ZigZagDecode(long n)
         {
             return (((long)((ulong)n >> 1)) ^ -(n & 1));
@@ -42,6 +44,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// NOTE: This was readVLong() in Lucene.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static long ReadVInt64(DataInput @in)
         {
             byte b = @in.ReadByte();
@@ -186,6 +189,7 @@ namespace Lucene.Net.Util.Packed
             off += (int)count;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SkipBytes(long count)
         {
             if (@in is IndexInput input)

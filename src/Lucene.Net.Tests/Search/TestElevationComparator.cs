@@ -201,8 +201,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     idIndex.LookupOrd(ord, tempBR);
-                    int? prio;
-                    if (outerInstance.priority.TryGetValue(tempBR, out prio))
+                    if (outerInstance.priority.TryGetValue(tempBR, out int? prio))
                     {
                         return (int)prio;
                     }

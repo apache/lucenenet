@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
         internal sealed class OneComparerFieldValueHitQueue<T> : FieldValueHitQueue<T>
             where T : FieldValueHitQueue.Entry
         {
-            private int oneReverseMul;
+            private readonly int oneReverseMul; // LUCENENET: marked readonly
 
             public OneComparerFieldValueHitQueue(SortField[] fields, int size)
                 : base(fields, size)

@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -32,11 +33,13 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     public sealed class MonotonicAppendingInt64Buffer : AbstractAppendingInt64Buffer
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static long ZigZagDecode(long n)
         {
             return (((long)((ulong)n >> 1)) ^ -(n & 1));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static long ZigZagEncode(long n)
         {
             return (n >> 63) ^ (n << 1);
@@ -128,6 +131,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal override void Grow(int newBlockCount)
         {
             base.Grow(newBlockCount);
@@ -175,11 +179,13 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal override long BaseRamBytesUsed()
         {
             return base.BaseRamBytesUsed() + 2 * RamUsageEstimator.NUM_BYTES_OBJECT_REF; // 2 additional arrays
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long RamBytesUsed()
         {
             return base.RamBytesUsed() + RamUsageEstimator.SizeOf(averages) + RamUsageEstimator.SizeOf(minValues);

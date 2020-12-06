@@ -53,9 +53,9 @@ namespace Lucene.Net.Analysis.Phonetic
         {
             inject = GetBoolean(args, INJECT, true);
             maxCodeLength = GetInt32(args, MAX_CODE_LENGTH, DEFAULT_MAX_CODE_LENGTH);
-            if (!(args.Count == 0))
+            if (args.Count > 0)
             {
-                throw new ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
             }
         }
 

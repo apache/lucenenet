@@ -417,8 +417,8 @@ namespace Lucene.Net.Tests.Queries
             AtomicReader wrapper = SlowCompositeReaderWrapper.Wrap(reader);
             string field = @"body";
             Terms terms = wrapper.GetTerms(field);
-            var lowFreqQueue = new AnonymousPriorityQueue(this, 5);
-            Util.PriorityQueue<TermAndFreq> highFreqQueue = new AnonymousPriorityQueue1(this, 5);
+            var lowFreqQueue = new AnonymousPriorityQueue(5);
+            Util.PriorityQueue<TermAndFreq> highFreqQueue = new AnonymousPriorityQueue1(5);
             try
             {
                 TermsEnum iterator = terms.GetEnumerator();
@@ -502,13 +502,11 @@ namespace Lucene.Net.Tests.Queries
 
         private sealed class AnonymousPriorityQueue : Util.PriorityQueue<TermAndFreq>
         {
-            public AnonymousPriorityQueue(CommonTermsQueryTest parent, int maxSize)
+            public AnonymousPriorityQueue(int maxSize)
                 : base(maxSize)
             {
-                this.parent = parent;
             }
 
-            private readonly CommonTermsQueryTest parent;
             protected internal override bool LessThan(TermAndFreq a, TermAndFreq b)
             {
                 return a.freq > b.freq;
@@ -517,13 +515,11 @@ namespace Lucene.Net.Tests.Queries
 
         private sealed class AnonymousPriorityQueue1 : Util.PriorityQueue<TermAndFreq>
         {
-            public AnonymousPriorityQueue1(CommonTermsQueryTest parent, int maxSize)
+            public AnonymousPriorityQueue1(int maxSize)
                 : base(maxSize)
             {
-                this.parent = parent;
             }
 
-            private readonly CommonTermsQueryTest parent;
             protected internal override bool LessThan(TermAndFreq a, TermAndFreq b)
             {
                 return a.freq < b.freq;

@@ -2,8 +2,7 @@ using Lucene.Net.Codecs.Lucene40;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
-using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Compressing
 {
@@ -51,13 +50,15 @@ namespace Lucene.Net.Codecs.Compressing
     public sealed class CompressingStoredFieldsReader : StoredFieldsReader
     {
         // Do not reuse the decompression buffer when there is more than 32kb to decompress
-        private static readonly int BUFFER_REUSE_THRESHOLD = 1 << 15;
+        private const int BUFFER_REUSE_THRESHOLD = 1 << 15;
 
         private readonly int version;
         private readonly FieldInfos fieldInfos;
         private readonly CompressingStoredFieldsIndexReader indexReader;
         private readonly long maxPointer;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexInput fieldsStream;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly int chunkSize;
         private readonly int packedIntsVersion;
         private readonly CompressionMode compressionMode;
@@ -166,6 +167,7 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         /// <exception cref="ObjectDisposedException"> If this FieldsReader is disposed. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureOpen()
         {
             if (closed)
@@ -177,6 +179,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// <summary>
         /// Dispose the underlying <see cref="IndexInput"/>s.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (!closed)
@@ -340,7 +343,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
 
                 decompressor.Decompress(fieldsStream, chunkSize, offset, Math.Min(length, chunkSize - offset), bytes);
-                documentInput = new DataInputAnonymousInnerClassHelper(this, offset, length);
+                documentInput = new DataInputAnonymousInnerClassHelper(this, length);
             }
             else
             {
@@ -357,7 +360,7 @@ namespace Lucene.Net.Codecs.Compressing
                 FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
 
                 int bits = (int)(infoAndBits & CompressingStoredFieldsWriter.TYPE_MASK);
-                if (Debugging.AssertsEnabled) Debugging.Assert(bits <= CompressingStoredFieldsWriter.NUMERIC_DOUBLE, () => "bits=" + bits.ToString("x"));
+                if (Debugging.AssertsEnabled) Debugging.Assert(bits <= CompressingStoredFieldsWriter.NUMERIC_DOUBLE,"bits={0:x}", bits);
 
                 switch (visitor.NeedsField(fieldInfo))
                 {
@@ -379,13 +382,11 @@ namespace Lucene.Net.Codecs.Compressing
         {
             private readonly CompressingStoredFieldsReader outerInstance;
 
-            private int offset;
-            private int length;
+            private readonly int length;
 
-            public DataInputAnonymousInnerClassHelper(CompressingStoredFieldsReader outerInstance, int offset, int length)
+            public DataInputAnonymousInnerClassHelper(CompressingStoredFieldsReader outerInstance, int length)
             {
                 this.outerInstance = outerInstance;
-                this.offset = offset;
                 this.length = length;
                 decompressed = outerInstance.bytes.Length;
             }
@@ -492,14 +493,14 @@ namespace Lucene.Net.Codecs.Compressing
             /// </summary>
             internal void Next(int doc)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(doc >= this.docBase + this.chunkDocs, () => doc + " " + this.docBase + " " + this.chunkDocs);
+                if (Debugging.AssertsEnabled) Debugging.Assert(doc >= this.docBase + this.chunkDocs, "{0} {1} {2}", doc, this.docBase, this.chunkDocs);
                 fieldsStream.Seek(outerInstance.indexReader.GetStartPointer(doc));
 
                 int docBase = fieldsStream.ReadVInt32();
                 int chunkDocs = fieldsStream.ReadVInt32();
                 if (docBase < this.docBase + this.chunkDocs || docBase + chunkDocs > outerInstance.numDocs)
                 {
-                    throw new CorruptIndexException("Corrupted: current docBase=" + this.docBase + ", current numDocs=" + this.chunkDocs + ", new docBase=" + docBase + ", new numDocs=" + chunkDocs + " (resource=" + fieldsStream + ")");
+                    throw new CorruptIndexException($"Corrupted: current docBase={this.docBase}, current numDocs={this.chunkDocs}, new docBase={docBase}, new numDocs={chunkDocs} (resource={fieldsStream})");
                 }
                 this.docBase = docBase;
                 this.chunkDocs = chunkDocs;
@@ -543,7 +544,7 @@ namespace Lucene.Net.Codecs.Compressing
                     }
                     else if (bitsPerLength > 31)
                     {
-                        throw new CorruptIndexException("bitsPerLength=" + bitsPerLength);
+                        throw new CorruptIndexException($"bitsPerLength={bitsPerLength}");
                     }
                     else
                     {

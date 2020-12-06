@@ -75,8 +75,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public virtual void SetChild(IQueryNode child)
         {
-            List<IQueryNode> list = new List<IQueryNode>();
-            list.Add(child);
+            List<IQueryNode> list = new List<IQueryNode>
+            {
+                child
+            };
             this.Set(list);
         }
     }

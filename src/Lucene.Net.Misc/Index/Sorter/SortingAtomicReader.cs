@@ -143,12 +143,10 @@ namespace Lucene.Net.Index.Sorter
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
                 DocsEnum inReuse;
-                SortingDocsEnum wrapReuse;
-                if (reuse != null && reuse is SortingDocsEnum)
+                if (reuse != null && reuse is SortingDocsEnum wrapReuse)
                 {
                     // if we're asked to reuse the given DocsEnum and it is Sorting, return
                     // the wrapped one, since some Codecs expect it.
-                    wrapReuse = (SortingDocsEnum)reuse;
                     inReuse = wrapReuse.Wrapped;
                 }
                 else
@@ -158,19 +156,18 @@ namespace Lucene.Net.Index.Sorter
                 }
 
                 DocsEnum inDocs = m_input.Docs(NewToOld(liveDocs), inReuse, flags);
-                bool withFreqs = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0 && (flags & DocsFlags.FREQS) != 0;
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                bool withFreqs = IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS) >= 0 && (flags & DocsFlags.FREQS) != 0;
                 return new SortingDocsEnum(docMap.Count, wrapReuse, inDocs, withFreqs, docMap);
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
                 DocsAndPositionsEnum inReuse;
-                SortingDocsAndPositionsEnum wrapReuse;
-                if (reuse != null && reuse is SortingDocsAndPositionsEnum)
+                if (reuse != null && reuse is SortingDocsAndPositionsEnum wrapReuse)
                 {
                     // if we're asked to reuse the given DocsEnum and it is Sorting, return
                     // the wrapped one, since some Codecs expect it.
-                    wrapReuse = (SortingDocsAndPositionsEnum)reuse;
                     inReuse = wrapReuse.Wrapped;
                 }
                 else
@@ -189,7 +186,8 @@ namespace Lucene.Net.Index.Sorter
                 // since this code is expected to be used during addIndexes which will
                 // ask for everything. if that assumption changes in the future, we can
                 // factor in whether 'flags' says offsets are not required.
-                bool storeOffsets = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                bool storeOffsets = IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 return new SortingDocsAndPositionsEnum(docMap.Count, wrapReuse, inDocsAndPositions, docMap, storeOffsets);
             }
         }
@@ -394,8 +392,8 @@ namespace Lucene.Net.Index.Sorter
 
             private readonly int maxDoc;
             private readonly DocFreqSorter sorter;
-            private int[] docs;
-            private int[] freqs;
+            private readonly int[] docs; // LUCENENET: marked readonly
+            private readonly int[] freqs; // LUCENENET: marked readonly
             private int docIt = -1;
             private readonly int upto;
             private readonly bool withFreqs;
@@ -567,8 +565,8 @@ namespace Lucene.Net.Index.Sorter
 
             private readonly int maxDoc;
             private readonly DocOffsetSorter sorter;
-            private int[] docs;
-            private long[] offsets;
+            private readonly int[] docs; // LUCENENET: marked readonly
+            private readonly long[] offsets; // LUCENENET: marked readonly
             private readonly int upto;
 
             private readonly IndexInput postingInput;

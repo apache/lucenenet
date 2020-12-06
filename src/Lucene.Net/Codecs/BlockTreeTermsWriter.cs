@@ -4,8 +4,8 @@ using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Codecs
@@ -233,8 +233,10 @@ namespace Lucene.Net.Codecs
 
         internal const string TERMS_INDEX_CODEC_NAME = "BLOCK_TREE_TERMS_INDEX";
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexOutput @out;
         private readonly IndexOutput indexOut;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         internal readonly int minItemsInBlock;
         internal readonly int maxItemsInBlock;
 
@@ -261,7 +263,7 @@ namespace Lucene.Net.Codecs
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(numTerms > 0);
                 this.FieldInfo = fieldInfo;
-                if (Debugging.AssertsEnabled) Debugging.Assert(rootCode != null, () => "field=" + fieldInfo.Name + " numTerms=" + numTerms);
+                if (Debugging.AssertsEnabled) Debugging.Assert(rootCode != null, "field={0} numTerms={1}", fieldInfo.Name, numTerms);
                 this.RootCode = rootCode;
                 this.IndexStartFP = indexStartFP;
                 this.NumTerms = numTerms;
@@ -338,6 +340,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Writes the terms file header. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual void WriteHeader(IndexOutput @out)
         {
             CodecUtil.WriteHeader(@out, TERMS_CODEC_NAME, VERSION_CURRENT);
@@ -345,6 +348,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Writes the index file header. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual void WriteIndexHeader(IndexOutput @out)
         {
             CodecUtil.WriteHeader(@out, TERMS_INDEX_CODEC_NAME, VERSION_CURRENT);
@@ -352,6 +356,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Writes the terms file trailer. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual void WriteTrailer(IndexOutput @out, long dirStart)
         {
             @out.WriteInt64(dirStart);
@@ -359,6 +364,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Writes the index file trailer. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual void WriteIndexTrailer(IndexOutput indexOut, long dirStart)
         {
             indexOut.WriteInt64(dirStart);
@@ -373,6 +379,7 @@ namespace Lucene.Net.Codecs
             return new TermsWriter(this, field);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static long EncodeOutput(long fp, bool hasTerms, bool isFloor)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(fp < (1L << 62));
@@ -437,19 +444,29 @@ namespace Lucene.Net.Codecs
             }
 
             // LUCENENET specific - to keep the Debug.Assert statement from throwing exceptions
-            // because of invalid UTF8 code in Prefix, we have a wrapper method that falls back
-            // to using PendingBlock.Prefix.ToString() if PendingBlock.ToString()
-            private string ToString(IList<PendingBlock> blocks) // For assert
+            // because of invalid UTF8 code in Prefix, we have a wrapper class that falls back
+            // to using PendingBlock.Prefix.ToString() if PendingBlock.ToString() errors.
+            // This struct defers formatting the string until it is actually used as a parameter
+            // in string.Format().
+            private struct PendingBlocksFormatter // For assert
             {
-                if (blocks == null)
-                    return "null";
-
-
-                if (blocks.Count == 0)
-                    return "[]";
-
-                using (var it = blocks.GetEnumerator())
+#pragma warning disable IDE0044 // Add readonly modifier
+                private IList<PendingBlock> blocks;
+#pragma warning restore IDE0044 // Add readonly modifier
+                public PendingBlocksFormatter(IList<PendingBlock> blocks)
                 {
+                    this.blocks = blocks; // May be null
+                }
+
+                public override string ToString() // For assert
+                {
+                    if (blocks == null)
+                        return "null";
+
+                    if (blocks.Count == 0)
+                        return "[]";
+
+                    using var it = blocks.GetEnumerator();
                     StringBuilder sb = new StringBuilder();
                     sb.Append('[');
                     it.MoveNext();
@@ -478,13 +495,14 @@ namespace Lucene.Net.Codecs
 
             public void CompileIndex(IList<PendingBlock> floorBlocks, RAMOutputStream scratchBytes)
             {
-                // LUCENENET specific - we use a custom wrapper function to display floorBlocks, since
-                // it might contain garbage that cannot be converted into text.
-                if (Debugging.AssertsEnabled) Debugging.Assert(
-                    (IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null),
-                    () => "isFloor=" + IsFloor + " floorBlocks=" + ToString(floorBlocks));
+                if (Debugging.AssertsEnabled)
+                {
+                    // LUCENENET specific - we use a custom wrapper struct to display floorBlocks, since
+                    // it might contain garbage that cannot be converted into text.
+                    Debugging.Assert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null), "isFloor={0} floorBlocks={1}", IsFloor, new PendingBlocksFormatter(floorBlocks));
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(scratchBytes.GetFilePointer() == 0);
+                    Debugging.Assert(scratchBytes.GetFilePointer() == 0);
+                }
 
                 // TODO: try writing the leading vLong in MSB order
                 // (opposite of what Lucene does today), for better
@@ -567,7 +585,9 @@ namespace Lucene.Net.Codecs
             }
         }
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         internal readonly RAMOutputStream scratchBytes = new RAMOutputStream();
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         internal class TermsWriter : TermsConsumer
         {
@@ -675,7 +695,7 @@ namespace Lucene.Net.Codecs
                     // and we found 30 terms/sub-blocks starting w/ that
                     // prefix, and minItemsInBlock <= 30 <=
                     // maxItemsInBlock.
-                    PendingBlock nonFloorBlock = WriteBlock(prevTerm, prefixLength, prefixLength, count, count, 0, false, -1, true);
+                    PendingBlock nonFloorBlock = WriteBlock(prevTerm, prefixLength, prefixLength, count, count, /*0, LUCENENET: Never read */ false, -1, true);
                     nonFloorBlock.CompileIndex(null, outerInstance.scratchBytes);
                     pending.Add(nonFloorBlock);
                 }
@@ -851,7 +871,7 @@ namespace Lucene.Net.Codecs
                                 prevTerm.Int32s[prevTerm.Offset + prefixLength] = startLabel;
                             }
                             //System.out.println("  " + subCount + " subs");
-                            PendingBlock floorBlock = WriteBlock(prevTerm, prefixLength, curPrefixLength, curStart, pendingCount, subTermCountSums[1 + sub], true, startLabel, curStart == pendingCount);
+                            PendingBlock floorBlock = WriteBlock(prevTerm, prefixLength, curPrefixLength, curStart, pendingCount, /*subTermCountSums[1 + sub], LUCENENET: Never read */ true, startLabel, curStart == pendingCount);
                             if (firstBlock == null)
                             {
                                 firstBlock = floorBlock;
@@ -864,7 +884,7 @@ namespace Lucene.Net.Codecs
                             //System.out.println("    = " + pendingCount);
                             pendingCount = 0;
 
-                            if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.minItemsInBlock == 1 || subCount > 1, () => "minItemsInBlock=" + outerInstance.minItemsInBlock + " subCount=" + subCount + " sub=" + sub + " of " + numSubs + " subTermCount=" + subTermCountSums[sub] + " subSubCount=" + subSubCounts[sub] + " depth=" + prefixLength);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.minItemsInBlock == 1 || subCount > 1, "minItemsInBlock={0} subCount={1} sub={2} of {3} subTermCount={4} subSubCount={5} depth={6}", outerInstance.minItemsInBlock, subCount, sub, numSubs, subTermCountSums[sub], subSubCounts[sub], prefixLength);
                             subCount = 0;
                             startLabel = subBytes[sub + 1];
 
@@ -895,7 +915,7 @@ namespace Lucene.Net.Codecs
                                   System.out.println("      **");
                                 }
                                 */
-                                floorBlocks.Add(WriteBlock(prevTerm, prefixLength, prefixLength + 1, curStart, curStart, 0, true, startLabel, true));
+                                floorBlocks.Add(WriteBlock(prevTerm, prefixLength, prefixLength + 1, curStart,curStart, /* 0, LUCENENET: Never read */ true, startLabel, true));
                                 break;
                             }
                         }
@@ -913,7 +933,9 @@ namespace Lucene.Net.Codecs
             }
 
             // for debugging
+#pragma warning disable IDE0051 // Remove unused private members
             private string ToString(BytesRef b)
+#pragma warning restore IDE0051 // Remove unused private members
             {
                 try
                 {
@@ -930,13 +952,15 @@ namespace Lucene.Net.Codecs
 
             // Writes all entries in the pending slice as a single
             // block:
-            private PendingBlock WriteBlock(Int32sRef prevTerm, int prefixLength, int indexPrefixLength, int startBackwards, int length, int futureTermCount, bool isFloor, int floorLeadByte, bool isLastInFloor)
+            private PendingBlock WriteBlock(Int32sRef prevTerm, int prefixLength, int indexPrefixLength,
+                int startBackwards, int length, /*int futureTermCount, // LUCENENET: Not used*/
+                bool isFloor, int floorLeadByte, bool isLastInFloor)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(length > 0);
 
                 int start = pending.Count - startBackwards;
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(start >= 0, () => "pending.Count=" + pending.Count + " startBackwards=" + startBackwards + " length=" + length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(start >= 0, "pending.Count={0} startBackwards={1} length={2}", pending.Count, startBackwards, length);
 
                 IList<PendingEntry> slice = pending.SubList(start, start + length);
 
@@ -1013,7 +1037,7 @@ namespace Lucene.Net.Codecs
                         statsWriter.WriteVInt32(state.DocFreq);
                         if (fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                         {
-                            if (Debugging.AssertsEnabled) Debugging.Assert(state.TotalTermFreq >= state.DocFreq, () => state.TotalTermFreq + " vs " + state.DocFreq);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(state.TotalTermFreq >= state.DocFreq, "{0} vs {1}", state.TotalTermFreq, state.DocFreq);
                             statsWriter.WriteVInt64(state.TotalTermFreq - state.DocFreq);
                         }
 
@@ -1167,6 +1191,7 @@ namespace Lucene.Net.Codecs
 
             public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override PostingsConsumer StartTerm(BytesRef text)
             {
                 //if (DEBUG) System.out.println("\nBTTW.startTerm term=" + fieldInfo.name + ":" + toString(text) + " seg=" + segment);
@@ -1207,7 +1232,7 @@ namespace Lucene.Net.Codecs
                     blockBuilder.Finish();
 
                     // We better have one final "root" block:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(pending.Count == 1 && !pending[0].IsTerm, () => "pending.size()=" + pending.Count + " pending=" + pending);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(pending.Count == 1 && !pending[0].IsTerm, "pending.Count={0} pending={1}", pending.Count, pending);
                     PendingBlock root = (PendingBlock)pending[0];
                     if (Debugging.AssertsEnabled)
                     {
@@ -1293,7 +1318,7 @@ namespace Lucene.Net.Codecs
                 }
                 finally
                 {
-                    IOUtils.DisposeWhileHandlingException(ioe, @out, indexOut, postingsWriter);
+                    IOUtils.DisposeWhileHandlingException(ioe, @out, indexOut, postingsWriter, scratchBytes); // LUCENENET: Added scratchBytes
                 }
             }
         }

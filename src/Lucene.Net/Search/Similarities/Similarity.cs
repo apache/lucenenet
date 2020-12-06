@@ -102,7 +102,7 @@ namespace Lucene.Net.Search.Similarities
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        public Similarity()
+        protected Similarity() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
         }
 
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search.Similarities
             /// Sole constructor. (For invocation by subclass
             /// constructors, typically implicit.)
             /// </summary>
-            public SimScorer()
+            protected SimScorer() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
             }
 
@@ -228,7 +228,7 @@ namespace Lucene.Net.Search.Similarities
             /// Sole constructor. (For invocation by subclass
             /// constructors, typically implicit.)
             /// </summary>
-            public SimWeight()
+            protected SimWeight() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
             }
 

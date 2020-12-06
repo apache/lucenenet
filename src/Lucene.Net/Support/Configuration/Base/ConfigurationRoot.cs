@@ -20,7 +20,7 @@ namespace Lucene.Net.Configuration
         , IConfigurationRoot
 #endif
     {
-        private IList<IConfigurationProvider> _providers;
+        private readonly IList<IConfigurationProvider> _providers;
         private ConfigurationReloadToken _changeToken = new ConfigurationReloadToken();
 
         /// <summary>

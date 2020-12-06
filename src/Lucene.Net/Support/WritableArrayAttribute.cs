@@ -35,7 +35,7 @@ namespace Lucene.Net.Support
     /// </code>
     /// </summary>
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false)]
-    internal class WritableArrayAttribute : Attribute 
+    internal sealed class WritableArrayAttribute : Attribute 
     {
     }
 }

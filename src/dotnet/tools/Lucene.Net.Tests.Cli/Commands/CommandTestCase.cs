@@ -2,6 +2,7 @@
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -149,7 +150,7 @@ namespace Lucene.Net.Cli.Commands
         public virtual MockConsoleApp RunCommand(string command)
         {
             var output = new MockConsoleApp();
-            var cmd = CreateConfiguration(output).Execute(command.ToArgs());
+            CreateConfiguration(output).Execute(command.ToArgs());
             return output;
         }
 
@@ -161,6 +162,7 @@ namespace Lucene.Net.Cli.Commands
                 this.CallCount++;
             }
 
+            [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Used for testing arguments")]
             public string[] Args { get; private set; }
             public int CallCount { get; private set; }
         }
@@ -174,6 +176,8 @@ namespace Lucene.Net.Cli.Commands
             }
 
             public string InputPattern { get; private set; }
+
+            [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Used for testing output")]
             public string[] Output { get; private set; }
         }
     }

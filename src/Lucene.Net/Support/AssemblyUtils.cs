@@ -147,7 +147,7 @@ namespace Lucene.Net.Support
 
                 var publicKey = assembly.GetPublicKeyToken();
 
-                if (publicKey == default(byte[]))
+                if (publicKey == default)
                 {
                     return false;
                 }

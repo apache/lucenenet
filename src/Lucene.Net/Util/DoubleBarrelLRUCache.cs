@@ -75,8 +75,7 @@ namespace Lucene.Net.Util
             }
 
             // Try primary first
-            TValue result;
-            if (!primary.TryGetValue(key, out result))
+            if (!primary.TryGetValue(key, out TValue result))
             {
                 // Not found -- try secondary
                 if (secondary.TryGetValue(key, out result))

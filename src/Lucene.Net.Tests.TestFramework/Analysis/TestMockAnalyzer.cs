@@ -293,15 +293,13 @@ namespace Lucene.Net.Analysis
                 StringReader reader = new StringReader(s);
                 MockCharFilter charfilter = new MockCharFilter(reader, 2);
                 MockAnalyzer analyzer = new MockAnalyzer(Random);
-                using (TokenStream ts = analyzer.GetTokenStream("bogus", charfilter))
+                using TokenStream ts = analyzer.GetTokenStream("bogus", charfilter);
+                ts.Reset();
+                while (ts.IncrementToken())
                 {
-                    ts.Reset();
-                    while (ts.IncrementToken())
-                    {
-                        ;
-                    }
-                    ts.End();
+                    ;
                 }
+                ts.End();
             }
         }
 

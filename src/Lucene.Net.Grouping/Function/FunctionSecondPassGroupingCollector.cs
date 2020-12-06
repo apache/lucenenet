@@ -63,8 +63,7 @@ namespace Lucene.Net.Search.Grouping.Function
         protected override AbstractSecondPassGroupingCollector.SearchGroupDocs<MutableValue> RetrieveGroup(int doc)
         {
             filler.FillValue(doc);
-            AbstractSecondPassGroupingCollector.SearchGroupDocs<MutableValue> result;
-            m_groupMap.TryGetValue(mval, out result);
+            m_groupMap.TryGetValue(mval, out var result);
             return result;
         }
 

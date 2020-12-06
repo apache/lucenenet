@@ -26,14 +26,8 @@ namespace Lucene.Net.Analysis.Util
     /// 
     /// @lucene.internal
     /// </summary>
-    public class StemmerUtil
+    public static class StemmerUtil // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        /// <summary>
-        /// no instance </summary>
-        private StemmerUtil()
-        {
-        }
-
         /// <summary>
         /// Returns true if the character array starts with the prefix.
         /// </summary>

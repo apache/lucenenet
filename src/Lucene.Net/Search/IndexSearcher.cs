@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="IndexReader.Context"/>
         public IndexSearcher(IndexReaderContext context, TaskScheduler executor)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(context.IsTopLevel, () => "IndexSearcher's ReaderContext must be topLevel for reader" + context.Reader);
+            if (Debugging.AssertsEnabled) Debugging.Assert(context.IsTopLevel,"IndexSearcher's ReaderContext must be topLevel for reader {0}", context.Reader);
             reader = context.Reader;
             this.executor = executor;
             this.m_readerContext = context;
@@ -900,11 +900,7 @@ namespace Lucene.Net.Search
                 return false;
             }
 
-            // LUCENENET NOTE: Not supported in .NET anyway
-            //public override void Remove()
-            //{
-            //  throw new NotSupportedException();
-            //}
+            // LUCENENET NOTE: Remove() excluded because it is not applicable in .NET
 
             public IEnumerator<T> GetEnumerator()
             {

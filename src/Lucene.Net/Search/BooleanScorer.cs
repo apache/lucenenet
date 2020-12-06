@@ -62,8 +62,8 @@ namespace Lucene.Net.Search
     {
         private sealed class BooleanScorerCollector : ICollector
         {
-            private BucketTable bucketTable;
-            private int mask;
+            private readonly BucketTable bucketTable; // LUCENENET: marked readonly
+            private readonly int mask; // LUCENENET: marked readonly
             private Scorer scorer;
 
             public BooleanScorerCollector(int mask, BucketTable bucketTable)
@@ -133,8 +133,8 @@ namespace Lucene.Net.Search
         /// A simple hash table of document scores within a range. </summary>
         internal sealed class BucketTable
         {
-            public static readonly int SIZE = 1 << 11;
-            public static readonly int MASK = SIZE - 1;
+            public const int SIZE = 1 << 11;
+            public const int MASK = SIZE - 1;
 
             internal readonly Bucket[] buckets = new Bucket[SIZE];
             internal Bucket first = null; // head of valid list
@@ -154,7 +154,7 @@ namespace Lucene.Net.Search
                 return new BooleanScorerCollector(mask, this);
             }
 
-            public int Count => SIZE; // LUCENENET NOTE: This was size() in Lucene.
+            public static int Count => SIZE; // LUCENENET NOTE: This was size() in Lucene. // LUCENENET: CA1822: Mark members as static
         }
 
         internal sealed class SubScorer
@@ -185,8 +185,8 @@ namespace Lucene.Net.Search
             }
         }
 
-        private SubScorer scorers = null;
-        private BucketTable bucketTable = new BucketTable();
+        private readonly SubScorer scorers = null; // LUCENENET: marked readonly
+        private readonly BucketTable bucketTable = new BucketTable(); // LUCENENET: marked readonly
         private readonly float[] coordFactors;
 
         // TODO: re-enable this if BQ ever sends us required clauses
@@ -199,12 +199,12 @@ namespace Lucene.Net.Search
         // Any time a prohibited clause matches we set bit 0:
         private const int PROHIBITED_MASK = 1;
 
-        private readonly Weight weight;
+        //private readonly Weight weight; // LUCENENET: Never read
 
         internal BooleanScorer(BooleanWeight weight, bool disableCoord, int minNrShouldMatch, IList<BulkScorer> optionalScorers, IList<BulkScorer> prohibitedScorers, int maxCoord)
         {
             this.minNrShouldMatch = minNrShouldMatch;
-            this.weight = weight;
+            //this.weight = weight; // LUCENENET: Never read
 
             foreach (BulkScorer scorer in optionalScorers)
             {

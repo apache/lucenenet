@@ -179,9 +179,9 @@ namespace Lucene.Net.Index.Memory
         //  private final IntBlockPool.SliceReader postingsReader;
         private readonly Int32BlockPool.SliceWriter postingsWriter;
 
-        private Dictionary<string, FieldInfo> fieldInfos = new Dictionary<string, FieldInfo>();
+        private readonly Dictionary<string, FieldInfo> fieldInfos = new Dictionary<string, FieldInfo>(); // LUCENENET: marked readonly
 
-        private Counter bytesUsed;
+        private readonly Counter bytesUsed; // LUCENENET: marked readonly
 
         /// <summary>
         /// Constructs an empty instance.
@@ -277,19 +277,13 @@ namespace Lucene.Net.Index.Memory
                 throw new ArgumentException("keywords must not be null");
             }
 
-            return new TokenStreamAnonymousInnerClassHelper<T>(this, keywords);
+            return new TokenStreamAnonymousInnerClassHelper<T>(keywords);
         }
 
         private sealed class TokenStreamAnonymousInnerClassHelper<T> : TokenStream
         {
-            private readonly MemoryIndex outerInstance;
-
-            private ICollection<T> keywords;
-
-            public TokenStreamAnonymousInnerClassHelper(MemoryIndex outerInstance, ICollection<T> keywords)
+            public TokenStreamAnonymousInnerClassHelper(ICollection<T> keywords)
             {
-                this.outerInstance = outerInstance;
-                this.keywords = keywords;
                 iter = keywords.GetEnumerator();
                 start = 0;
                 termAtt = AddAttribute<ICharTermAttribute>();
@@ -320,6 +314,30 @@ namespace Lucene.Net.Index.Memory
                 offsetAtt.SetOffset(start, start + termAtt.Length);
                 start += term.Length + 1; // separate words by 1 (blank) character
                 return true;
+            }
+
+            /// <summary>
+            /// Releases resources used by the <see cref="TokenStreamAnonymousInnerClassHelper{T}"/> and
+            /// if overridden in a derived class, optionally releases unmanaged resources.
+            /// </summary>
+            /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+            /// <c>false</c> to release only unmanaged resources.</param>
+
+            // LUCENENET specific
+            protected override void Dispose(bool disposing)
+            {
+                try
+                {
+                    if (disposing)
+                    {
+                        iter?.Dispose(); // LUCENENET specific - dispose iter and set to null
+                        iter = null;
+                    }
+                }
+                finally
+                {
+                    base.Dispose(disposing);
+                }
             }
         }
 
@@ -404,10 +422,9 @@ namespace Lucene.Net.Index.Memory
                 int pos = -1;
                 BytesRefHash terms;
                 SliceByteStartArray sliceArray;
-                Info info = null;
                 long sumTotalTermFreq = 0;
                 int offset = 0;
-                if (fields.TryGetValue(fieldName, out info))
+                if (fields.TryGetValue(fieldName, out Info info))
                 {
                     numTokens = info.numTokens;
                     numOverlapTokens = info.numOverlapTokens;
@@ -540,7 +557,7 @@ namespace Lucene.Net.Index.Memory
             try
             {
                 float[] scores = new float[1]; // inits to 0.0f (no match)
-                searcher.Search(query, new CollectorAnonymousInnerClassHelper(this, scores));
+                searcher.Search(query, new CollectorAnonymousInnerClassHelper(scores));
                 float score = scores[0];
                 return score;
             } // can never happen (RAMDirectory)
@@ -569,13 +586,10 @@ namespace Lucene.Net.Index.Memory
 
         private class CollectorAnonymousInnerClassHelper : ICollector
         {
-            private readonly MemoryIndex outerInstance;
+            private readonly float[] scores;
 
-            private float[] scores;
-
-            public CollectorAnonymousInnerClassHelper(MemoryIndex outerInstance, float[] scores)
+            public CollectorAnonymousInnerClassHelper(float[] scores)
             {
-                this.outerInstance = outerInstance;
                 this.scores = scores;
             }
 

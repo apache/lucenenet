@@ -281,68 +281,64 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestWickedLongTerm()
         {
-            using (RAMDirectory dir = new RAMDirectory())
+            using RAMDirectory dir = new RAMDirectory();
+            char[] chars = new char[IndexWriter.MAX_TERM_LENGTH];
+            Arrays.Fill(chars, 'x');
+
+            string bigTerm = new string(chars);
+            Document doc = new Document();
+
+            using (IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new ClassicAnalyzer(TEST_VERSION_CURRENT))))
+            {
+                // This produces a too-long term:
+                string contents = "abc xyz x" + bigTerm + " another term";
+                doc.Add(new TextField("content", contents, Field.Store.NO));
+                writer.AddDocument(doc);
+
+                // Make sure we can add another normal document
+                doc = new Document();
+                doc.Add(new TextField("content", "abc bbb ccc", Field.Store.NO));
+                writer.AddDocument(doc);
+            }
+#pragma warning disable 612, 618
+            using (IndexReader reader = IndexReader.Open(dir))
+#pragma warning restore 612, 618
             {
 
-                char[] chars = new char[IndexWriter.MAX_TERM_LENGTH];
-                Arrays.Fill(chars, 'x');
+                // Make sure all terms < max size were indexed
+                assertEquals(2, reader.DocFreq(new Term("content", "abc")));
+                assertEquals(1, reader.DocFreq(new Term("content", "bbb")));
+                assertEquals(1, reader.DocFreq(new Term("content", "term")));
+                assertEquals(1, reader.DocFreq(new Term("content", "another")));
 
-                string bigTerm = new string(chars);
-                Document doc = new Document();
+                // Make sure position is still incremented when
+                // massive term is skipped:
+                DocsAndPositionsEnum tps = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), "content", new BytesRef("another"));
+                assertTrue(tps.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+                assertEquals(1, tps.Freq);
+                assertEquals(3, tps.NextPosition());
 
-                using (IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new ClassicAnalyzer(TEST_VERSION_CURRENT))))
-                {
-                    // This produces a too-long term:
-                    string contents = "abc xyz x" + bigTerm + " another term";
-                    doc.Add(new TextField("content", contents, Field.Store.NO));
-                    writer.AddDocument(doc);
+                // Make sure the doc that has the massive term is in
+                // the index:
+                assertEquals("document with wicked long term should is not in the index!", 2, reader.NumDocs);
 
-                    // Make sure we can add another normal document
-                    doc = new Document();
-                    doc.Add(new TextField("content", "abc bbb ccc", Field.Store.NO));
-                    writer.AddDocument(doc);
-                }
+            }
+
+            // Make sure we can add a document with exactly the
+            // maximum length term, and search on that term:
+            doc = new Document();
+            doc.Add(new TextField("content", bigTerm, Field.Store.NO));
+            ClassicAnalyzer sa = new ClassicAnalyzer(TEST_VERSION_CURRENT);
+            sa.MaxTokenLength = 100000;
+            using (var writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, sa)))
+            {
+                writer.AddDocument(doc);
+            }
 #pragma warning disable 612, 618
-                using (IndexReader reader = IndexReader.Open(dir))
+            using (var reader = IndexReader.Open(dir))
 #pragma warning restore 612, 618
-                {
-
-                    // Make sure all terms < max size were indexed
-                    assertEquals(2, reader.DocFreq(new Term("content", "abc")));
-                    assertEquals(1, reader.DocFreq(new Term("content", "bbb")));
-                    assertEquals(1, reader.DocFreq(new Term("content", "term")));
-                    assertEquals(1, reader.DocFreq(new Term("content", "another")));
-
-                    // Make sure position is still incremented when
-                    // massive term is skipped:
-                    DocsAndPositionsEnum tps = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), "content", new BytesRef("another"));
-                    assertTrue(tps.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-                    assertEquals(1, tps.Freq);
-                    assertEquals(3, tps.NextPosition());
-
-                    // Make sure the doc that has the massive term is in
-                    // the index:
-                    assertEquals("document with wicked long term should is not in the index!", 2, reader.NumDocs);
-
-                }
-
-                // Make sure we can add a document with exactly the
-                // maximum length term, and search on that term:
-                doc = new Document();
-                doc.Add(new TextField("content", bigTerm, Field.Store.NO));
-                ClassicAnalyzer sa = new ClassicAnalyzer(TEST_VERSION_CURRENT);
-                sa.MaxTokenLength = 100000;
-                using (var writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, sa)))
-                {
-                    writer.AddDocument(doc);
-                }
-#pragma warning disable 612, 618
-                using (var reader = IndexReader.Open(dir))
-#pragma warning restore 612, 618
-                {
-                    assertEquals(1, reader.DocFreq(new Term("content", bigTerm)));
-                }
-
+            {
+                assertEquals(1, reader.DocFreq(new Term("content", bigTerm)));
             }
         }
 

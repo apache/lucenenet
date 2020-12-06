@@ -2,6 +2,7 @@ using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -105,6 +106,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Expert. </summary>
         [WritableArray]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long[] GetBits()
         {
             return bits;
@@ -115,6 +117,7 @@ namespace Lucene.Net.Util
         /// long in the backing bits array, and the result is not
         /// internally cached!
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long Cardinality()
         {
             return BitUtil.Pop_Array(bits, 0, bits.Length);
@@ -122,7 +125,7 @@ namespace Lucene.Net.Util
 
         public bool Get(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, () => "index=" + index);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, "index={0}", index);
             int i = (int)(index >> 6); // div 64
             // signed shift will keep a negative index and force an
             // array-index-out-of-bounds-exception, removing the need for an explicit check.
@@ -133,7 +136,7 @@ namespace Lucene.Net.Util
 
         public void Set(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, () => "index=" + index + " numBits=" + numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, "index={0} numBits={1}", index, numBits);
             int wordNum = (int)(index >> 6); // div 64
             int bit = (int)(index & 0x3f); // mod 64
             long bitmask = 1L << bit;
@@ -205,7 +208,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public long PrevSetBit(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, () => "index=" + index + " numBits=" + numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, "index={0} numBits={1}", index, numBits);
             int i = (int)(index >> 6);
             int subIndex = (int)(index & 0x3f); // index within the word
             long word = (bits[i] << (63 - subIndex)); // skip all the bits to the left of index
@@ -231,7 +234,7 @@ namespace Lucene.Net.Util
         /// this = this OR other </summary>
         public void Or(Int64BitSet other)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(other.numWords <= numWords, () => "numWords=" + numWords + ", other.numWords=" + other.numWords);
+            if (Debugging.AssertsEnabled) Debugging.Assert(other.numWords <= numWords, "numWords={0}, other.numWords={1}", numWords, other.numWords);
             int pos = Math.Min(numWords, other.numWords);
             while (--pos >= 0)
             {
@@ -243,7 +246,7 @@ namespace Lucene.Net.Util
         /// this = this XOR other </summary>
         public void Xor(Int64BitSet other)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(other.numWords <= numWords, () => "numWords=" + numWords + ", other.numWords=" + other.numWords);
+            if (Debugging.AssertsEnabled) Debugging.Assert(other.numWords <= numWords, "numWords={0}, other.numWords={1}", numWords, other.numWords);
             int pos = Math.Min(numWords, other.numWords);
             while (--pos >= 0)
             {
@@ -419,6 +422,7 @@ namespace Lucene.Net.Util
             bits[endWord] &= endmask;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Int64BitSet Clone()
         {
             long[] bits = new long[this.bits.Length];

@@ -1215,42 +1215,36 @@ namespace Lucene.Net.Index
             {
                 IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
                 conf.SetCodec(new UnRegisteredCodec());
-                using (var w = new IndexWriter(toAdd, conf))
-                {
-                    Document doc = new Document();
-                    FieldType customType = new FieldType();
-                    customType.IsIndexed = true;
-                    doc.Add(NewField("foo", "bar", customType));
-                    w.AddDocument(doc);
-                }
+                using var w = new IndexWriter(toAdd, conf);
+                Document doc = new Document();
+                FieldType customType = new FieldType();
+                customType.IsIndexed = true;
+                doc.Add(NewField("foo", "bar", customType));
+                w.AddDocument(doc);
             }
 
             {
-                using (Directory dir = NewDirectory())
+                using Directory dir = NewDirectory();
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+                conf.SetCodec(TestUtil.AlwaysPostingsFormat(new Pulsing41PostingsFormat(1 + Random.Next(20))));
+                IndexWriter w = new IndexWriter(dir, conf);
+                try
                 {
-                    IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-                    conf.SetCodec(TestUtil.AlwaysPostingsFormat(new Pulsing41PostingsFormat(1 + Random.Next(20))));
-                    IndexWriter w = new IndexWriter(dir, conf);
-                    try
-                    {
-                        w.AddIndexes(toAdd);
-                        Assert.Fail("no such codec");
-                    }
-#pragma warning disable 168
-                    catch (ArgumentException ex)
-#pragma warning restore 168
-                    {
-                        // expected
-                    }
-                    finally
-                    {
-                        w.Dispose();
-                    }
-                    using (IndexReader open = DirectoryReader.Open(dir))
-                    {
-                        Assert.AreEqual(0, open.NumDocs);
-                    }
+                    w.AddIndexes(toAdd);
+                    Assert.Fail("no such codec");
                 }
+#pragma warning disable 168
+                catch (ArgumentException ex)
+#pragma warning restore 168
+                {
+                    // expected
+                }
+                finally
+                {
+                    w.Dispose();
+                }
+                using IndexReader open = DirectoryReader.Open(dir);
+                Assert.AreEqual(0, open.NumDocs);
             }
 
             try

@@ -37,8 +37,8 @@ namespace Lucene.Net.Analysis.Ja
     /// </remarks>
     public sealed class JapaneseKatakanaStemFilter : TokenFilter
     {
-        public readonly static int DEFAULT_MINIMUM_LENGTH = 4;
-        private readonly static char HIRAGANA_KATAKANA_PROLONGED_SOUND_MARK = '\u30fc';
+        public const int DEFAULT_MINIMUM_LENGTH = 4;
+        private const char HIRAGANA_KATAKANA_PROLONGED_SOUND_MARK = '\u30fc';
 
         private readonly ICharTermAttribute termAttr;
         private readonly IKeywordAttribute keywordAttr;
@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Ja
             return length;
         }
 
-        private bool IsKatakana(char[] term, int length)
+        private static bool IsKatakana(char[] term, int length) // LUCENENET: CA1822: Mark members as static
         {
             for (int i = 0; i < length; i++)
             {

@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs
 {
@@ -49,6 +50,7 @@ namespace Lucene.Net.Codecs
         {
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal MappingMultiDocsAndPositionsEnum Reset(MultiDocsAndPositionsEnum postingsEnum)
         {
             this.numSubs = postingsEnum.NumSubs;
@@ -126,6 +128,7 @@ namespace Lucene.Net.Codecs
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int NextPosition()
         {
             return current.NextPosition();
@@ -135,11 +138,13 @@ namespace Lucene.Net.Codecs
 
         public override int EndOffset => current.EndOffset;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override BytesRef GetPayload()
         {
             return current.GetPayload();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long GetCost()
         {
             long cost = 0;

@@ -60,17 +60,15 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
         private CharacterDefinition()
         {
-            using (Stream @is = BinaryDictionary.GetTypeResource(GetType(), FILENAME_SUFFIX))
+            using Stream @is = BinaryDictionary.GetTypeResource(GetType(), FILENAME_SUFFIX);
+            DataInput @in = new InputStreamDataInput(@is);
+            CodecUtil.CheckHeader(@in, HEADER, VERSION, VERSION);
+            @in.ReadBytes(characterCategoryMap, 0, characterCategoryMap.Length);
+            for (int i = 0; i < CLASS_COUNT; i++)
             {
-                DataInput @in = new InputStreamDataInput(@is);
-                CodecUtil.CheckHeader(@in, HEADER, VERSION, VERSION);
-                @in.ReadBytes(characterCategoryMap, 0, characterCategoryMap.Length);
-                for (int i = 0; i < CLASS_COUNT; i++)
-                {
-                    byte b = @in.ReadByte();
-                    invokeMap[i] = (b & 0x01) != 0;
-                    groupMap[i] = (b & 0x02) != 0;
-                }
+                byte b = @in.ReadByte();
+                invokeMap[i] = (b & 0x01) != 0;
+                groupMap[i] = (b & 0x02) != 0;
             }
         }
 

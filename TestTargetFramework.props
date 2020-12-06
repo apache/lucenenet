@@ -28,14 +28,36 @@
     this setting only affects the test projects. -->
     <!--<TargetFramework>net48</TargetFramework>-->
     <!--<TargetFramework>netcoreapp2.1</TargetFramework>-->
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <!--<TargetFramework>netcoreapp3.1</TargetFramework>-->
+    <TargetFramework>net5.0</TargetFramework>
 
     <!-- Allow the build script to pass in the test frameworks to build for.
       This overrides the above TargetFramework setting. 
       LUCENENET TODO: Due to a parsing bug, we cannot pass a string with a ; to dotnet msbuild, so passing true as a workaround -->
-    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">netcoreapp3.1;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">net5.0;netcoreapp3.1;netcoreapp2.1</TargetFrameworks>
     <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' AND $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net48</TargetFrameworks>
     <TargetFramework Condition=" '$(TargetFrameworks)' != '' "></TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Warnings to be Disabled in Test Projects">
+    <NoWarn Label="Nested types should not be visible">$(NoWarn);CA1034</NoWarn>
+    <NoWarn Label="Use Literals Where Appropriate">$(NoWarn);CA1802</NoWarn>
+    <NoWarn Label="Add readonly modifier">$(NoWarn);CA1822</NoWarn>
+    <NoWarn Label="Avoid zero-length array allocations">$(NoWarn);CA1825</NoWarn>
+    <NoWarn Label="Do not raise exceptions in exception clauses">$(NoWarn);CA2219</NoWarn>
+
+    <NoWarn Label="Use object initializers">$(NoWarn);IDE0017</NoWarn>
+    <NoWarn Label="Use pattern matching">$(NoWarn);IDE0019;IDE0020;IDE0038</NoWarn>
+    <NoWarn Label="Use collection initializers">$(NoWarn);IDE0028</NoWarn>
+    <NoWarn Label="Use null propagation">$(NoWarn);IDE0031</NoWarn>
+    <NoWarn Label="Add accessibility modifiers">$(NoWarn);IDE0040</NoWarn>
+    <NoWarn Label="Add readonly modifier">$(NoWarn);IDE0044</NoWarn>
+    <NoWarn Label="Use language keywords">$(NoWarn);IDE0049</NoWarn>
+    <NoWarn Label="Remove unused private member">$(NoWarn);IDE0051</NoWarn>
+    <NoWarn Label="Remove unread private member">$(NoWarn);IDE0052</NoWarn>
+    <NoWarn Label="Remove unnecessary value assignment">$(NoWarn);IDE0059</NoWarn>
+    <NoWarn Label="Remove unused parameter">$(NoWarn);IDE0060</NoWarn>
+    <NoWarn Label="Naming rule violation">$(NoWarn);IDE1006</NoWarn>
   </PropertyGroup>
   
 </Project>

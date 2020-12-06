@@ -190,10 +190,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 #endif
                 };
 
-            using (var reader = XmlReader.Create(new StreamReader(source, encoding), xmlReaderSettings))
-            {
-                LoadPatterns(reader);
-            }
+            using var reader = XmlReader.Create(new StreamReader(source, encoding), xmlReaderSettings);
+            LoadPatterns(reader);
         }
 
         /// <summary>

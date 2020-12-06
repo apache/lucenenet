@@ -6,9 +6,9 @@
 # The ASF licenses this file to You under the Apache License, Version 2.0
 # (the ""License""); you may not use this file except in compliance with
 # the License.  You may obtain a copy of the License at
-# 
+#
 # http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an ""AS IS"" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,8 +29,21 @@ param (
     [Parameter(Mandatory = $false)]
     [string] $LogLevel = 'Warning',
     [Parameter(Mandatory = $false)]
-    [string] $BaseUrl = 'http://localhost:8080'
+    [string] $BaseUrl = 'https://lucenenet.apache.org/docs/',
+    [Parameter(Mandatory = $false)]
+    [int] $StagingPort = 8080
 )
+
+# if the base URL is the lucene live site default value we also need to include the version
+if ($BaseUrl -eq 'https://lucenenet.apache.org/docs/') {
+    $BaseUrl += $LuceneNetVersion
+}
+$BaseUrl = $BaseUrl.TrimEnd('/') # Remove any trailing slash
+Write-Host "Base URL for xref map set to $BaseUrl"
+
+# HACK: Our plugin only recognizes the version number through an environment variable,
+# so we set it here.
+$env:LuceneNetVersion = $LuceneNetVersion
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
@@ -53,9 +66,9 @@ New-Item "$ToolsFolder\docfx" -type directory -force
 $DocFxExe = "$ToolsFolder\docfx\docfx.exe"
 if (-not (test-path $DocFxExe)) {
     Write-Host "Retrieving docfx..."
-    $DocFxZip = "$ToolsFolder\tmp\docfx.zip"	
-    Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.56/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60 
-	
+    $DocFxZip = "$ToolsFolder\tmp\docfx.zip"
+    Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.56.2/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60
+
     #unzip
     Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
 }
@@ -77,7 +90,7 @@ if (-not (test-path $vswhere)) {
     &$nuget install vswhere -OutputDirectory $path
     $dir = Get-ChildItem "$path\vswhere.*" | Sort-Object -property Name -descending | Select-Object -first 1
     $file = Get-ChildItem -path "$dir" -name vswhere.exe -recurse
-    Move-Item "$dir\$file" $vswhere   
+    Move-Item "$dir\$file" $vswhere
 }
 
 Remove-Item  -Recurse -Force "$ToolsFolder\tmp"
@@ -98,11 +111,11 @@ if ($DisablePlugins -eq $false) {
     if (-not (test-path $MSBuild)) {
         throw "MSBuild not found!"
     }
-    
+
     # Build the plugin solution
     $pluginSln = (Join-Path -Path $RepoRoot "src\docs\DocumentationTools.sln")
     & $nuget restore $pluginSln
-    
+
     $PluginsFolder = (Join-Path -Path $ApiDocsFolder "Templates\LuceneTemplate\plugins")
     New-Item $PluginsFolder -type directory -force
     & $msbuild $pluginSln /target:LuceneDocsPlugins "/p:OutDir=$PluginsFolder"
@@ -111,7 +124,7 @@ if ($DisablePlugins -eq $false) {
 # update the docjx.global.json file based
 $DocFxGlobalJson = Join-Path -Path $ApiDocsFolder "docfx.global.json"
 $DocFxJsonContent = Get-Content $DocFxGlobalJson | ConvertFrom-Json
-$DocFxJsonContent._appFooter = "Copyright © $((Get-Date).Year) Licensed to the Apache Software Foundation (ASF)"
+$DocFxJsonContent._appFooter = "Copyright © $((Get-Date).Year) The Apache Software Foundation, Licensed under the <a href='http://www.apache.org/licenses/LICENSE-2.0' target='_blank'>Apache License, Version 2.0</a><br/> <small>Apache Lucene.Net, Lucene.Net, Apache, the Apache feather logo, and the Apache Lucene.Net project logo are trademarks of The Apache Software Foundation. <br/>All other marks mentioned may be trademarks or registered trademarks of their respective owners.</small>"
 $DocFxJsonContent._appTitle = "Apache Lucene.NET $LuceneNetVersion Documentation"
 $DocFxJsonContent._gitContribute.branch = "docs/$LuceneNetVersion"
 $DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxGlobalJson
@@ -128,7 +141,7 @@ $DocFxJsonMeta = @(
     "docfx.analysis-smartcn.json",
     "docfx.analysis-stempel.json",
     "docfx.benchmark.json",
-    "docfx.classification.json",    
+    "docfx.classification.json",
     "docfx.expressions.json",
     "docfx.facet.json",
     "docfx.grouping.json",
@@ -151,13 +164,13 @@ $DocFxJsonSite = Join-Path -Path $ApiDocsFolder "docfx.site.json"
 # set env vars that will be replaced in Markdown
 $env:LuceneNetVersion = $LuceneNetVersion
 
-if ($? -and $DisableMetaData -eq $false) { 
+if ($? -and $DisableMetaData -eq $false) {
     foreach ($proj in $DocFxJsonMeta) {
         $projFile = Join-Path -Path $ApiDocsFolder $proj
 
         $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\${proj}.meta.log"
 
-        # build the output		
+        # build the output
         Write-Host "Building api metadata for $projFile..."
 
         if ($Clean) {
@@ -169,13 +182,13 @@ if ($? -and $DisableMetaData -eq $false) {
     }
 }
 
-if ($? -and $DisableBuild -eq $false) { 
+if ($? -and $DisableBuild -eq $false) {
     foreach ($proj in $DocFxJsonMeta) {
         $projFile = Join-Path -Path $ApiDocsFolder $proj
 
         $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\${proj}.build.log"
 
-        # build the output		
+        # build the output
         Write-Host "Building site output for $projFile..."
 
         # Before we build the site we have to clear the frickin docfx cache!
@@ -212,7 +225,7 @@ if ($?) {
 
     if ($ServeDocs -eq $false) {
 
-        # build the output		
+        # build the output
         Write-Host "Building docs..."
 
         if ($Clean) {
@@ -225,7 +238,7 @@ if ($?) {
     else {
         # build + serve (for testing)
         Write-Host "starting website..."
-        & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel --serve --debug
+        & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel --serve --port $StagingPort --debug
     }
 }
 

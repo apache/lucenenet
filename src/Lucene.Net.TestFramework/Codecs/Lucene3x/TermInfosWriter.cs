@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private FieldInfos fieldInfos;
         private IndexOutput output;
-        private TermInfo lastTi = new TermInfo();
+        private readonly TermInfo lastTi = new TermInfo(); // LUCENENET: marked readonly
         private long size;
 
         // TODO: the default values for these two parameters should be settable from
@@ -107,9 +107,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         directory.DeleteFile(IndexFileNames.SegmentFileName(segment, "", (isIndex ? Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION : Lucene3xPostingsFormat.TERMS_EXTENSION)));
                     }
-#pragma warning disable 168
+#pragma warning disable 168, IDE0059
                     catch (IOException ignored)
-#pragma warning restore 168
+#pragma warning restore 168, IDE0059
                     {
                     }
                 }
@@ -148,9 +148,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         directory.DeleteFile(IndexFileNames.SegmentFileName(segment, "", (isIndex ? Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION : Lucene3xPostingsFormat.TERMS_EXTENSION)));
                     }
-#pragma warning disable 168
+#pragma warning disable 168, IDE0059
                     catch (IOException ignored)
-#pragma warning restore 168
+#pragma warning restore 168, IDE0059
                     {
                     }
                 }
@@ -243,10 +243,17 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// </summary>
         public void Add(int fieldNumber, BytesRef term, TermInfo ti)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(CompareToLastTerm(fieldNumber, term) < 0 || (isIndex && term.Length == 0 && lastTerm.Length == 0), () => "Terms are out of order: field=" + FieldName(fieldInfos, fieldNumber) + " (number " + fieldNumber + ")" + " lastField=" + FieldName(fieldInfos, lastFieldNumber) + " (number " + lastFieldNumber + ")" + " text=" + term.Utf8ToString() + " lastText=" + lastTerm.Utf8ToString());
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(CompareToLastTerm(fieldNumber, term) < 0 || (isIndex && term.Length == 0 && lastTerm.Length == 0),
+                    "Terms are out of order: field={0} (number {1}) lastField={2} (number {3}) text={4} lastText={5}",
+                    FieldName(fieldInfos, fieldNumber), fieldNumber, FieldName(fieldInfos, lastFieldNumber), lastFieldNumber,
+                    // LUCENENET specific - use wrapper BytesRefFormatter struct to defer building the string unless string.Format() is called
+                    new BytesRefFormatter(term, BytesRefFormat.UTF8), new BytesRefFormatter(lastTerm, BytesRefFormat.UTF8));
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(ti.FreqPointer >= lastTi.FreqPointer, () => "freqPointer out of order (" + ti.FreqPointer + " < " + lastTi.FreqPointer + ")");
-            if (Debugging.AssertsEnabled) Debugging.Assert(ti.ProxPointer >= lastTi.ProxPointer, () => "proxPointer out of order (" + ti.ProxPointer + " < " + lastTi.ProxPointer + ")");
+                Debugging.Assert(ti.FreqPointer >= lastTi.FreqPointer, "freqPointer out of order ({0} < {1})", ti.FreqPointer, lastTi.FreqPointer);
+                Debugging.Assert(ti.ProxPointer >= lastTi.ProxPointer, "proxPointer out of order ({0} < {1})", ti.ProxPointer, lastTi.ProxPointer);
+            }
 
             if (!isIndex && size % indexInterval == 0)
             {

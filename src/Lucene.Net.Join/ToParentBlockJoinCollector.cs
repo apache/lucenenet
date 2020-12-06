@@ -92,7 +92,7 @@ namespace Lucene.Net.Join
         private readonly bool trackScores;
 
         private int docBase;
-        private ToParentBlockJoinQuery.BlockJoinScorer[] joinScorers = new ToParentBlockJoinQuery.BlockJoinScorer[0];
+        private ToParentBlockJoinQuery.BlockJoinScorer[] joinScorers = Arrays.Empty<ToParentBlockJoinQuery.BlockJoinScorer>();
         private AtomicReaderContext currentReaderContext;
         private Scorer scorer;
         private bool queueFull;
@@ -284,7 +284,7 @@ namespace Lucene.Net.Join
                     og.counts[scorerIDX] = joinScorer.ChildCount;
                     //System.out.println("    count=" + og.counts[scorerIDX]);
                     og.docs[scorerIDX] = joinScorer.SwapChildDocs(og.docs[scorerIDX]);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(og.docs[scorerIDX].Length >= og.counts[scorerIDX], () => "length=" + og.docs[scorerIDX].Length + " vs count=" + og.counts[scorerIDX]);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(og.docs[scorerIDX].Length >= og.counts[scorerIDX], "length={0} vs count={1}", og.docs[scorerIDX].Length, og.counts[scorerIDX]);
                     //System.out.println("    len=" + og.docs[scorerIDX].length);
                     /*
                       for(int idx=0;idx<og.counts[scorerIDX];idx++) {
@@ -295,7 +295,7 @@ namespace Lucene.Net.Join
                     {
                         //System.out.println("    copy scores");
                         og.scores[scorerIDX] = joinScorer.SwapChildScores(og.scores[scorerIDX]);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(og.scores[scorerIDX].Length >= og.counts[scorerIDX], () => "length=" + og.scores[scorerIDX].Length + " vs count=" + og.counts[scorerIDX]);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(og.scores[scorerIDX].Length >= og.counts[scorerIDX], "length={0} vs count={1}", og.scores[scorerIDX].Length, og.counts[scorerIDX]);
                     }
                 }
                 else
@@ -320,10 +320,9 @@ namespace Lucene.Net.Join
         private void Enroll(ToParentBlockJoinQuery query, ToParentBlockJoinQuery.BlockJoinScorer scorer)
         {
             scorer.TrackPendingChildHits();
-            int? slot;
-            if (joinQueryID.TryGetValue(query, out slot))
+            if (joinQueryID.TryGetValue(query, out int? slot))
             {
-                joinScorers[(int) slot] = scorer;
+                joinScorers[(int)slot] = scorer;
             }
             else
             {
@@ -356,9 +355,9 @@ namespace Lucene.Net.Join
             while (queue2.TryDequeue(out scorer))
             {
                 //System.out.println("  poll: " + value + "; " + value.getWeight().getQuery());
-                if (scorer is ToParentBlockJoinQuery.BlockJoinScorer)
+                if (scorer is ToParentBlockJoinQuery.BlockJoinScorer blockJoinScorer)
                 {
-                    Enroll((ToParentBlockJoinQuery)scorer.Weight.Query, (ToParentBlockJoinQuery.BlockJoinScorer)scorer);
+                    Enroll((ToParentBlockJoinQuery)scorer.Weight.Query, blockJoinScorer);
                 }
 
                 foreach (Scorer.ChildScorer sub in scorer.GetChildren())
@@ -398,8 +397,7 @@ namespace Lucene.Net.Join
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public virtual ITopGroups<int> GetTopGroups(ToParentBlockJoinQuery query, Sort withinGroupSort, int offset, int maxDocsPerGroup, int withinGroupOffset, bool fillSortFields)
         {
-            int? slot;
-            if (!joinQueryID.TryGetValue(query, out slot))
+            if (!joinQueryID.TryGetValue(query, out int? slot))
             {
                 if (totalHitCount == 0)
                 {
@@ -522,7 +520,7 @@ namespace Lucene.Net.Join
                 groups[groupIdx - offset] = new GroupDocs<int>(og.Score, topDocs.MaxScore, numChildDocs, topDocs.ScoreDocs, og.Doc, groupSortValues);
             }
 
-            return new TopGroups<int>(new TopGroups<int>(sort.GetSort(), withinGroupSort == null ? null : withinGroupSort.GetSort(), 0, totalGroupedHitCount, groups, maxScore), totalHitCount);
+            return new TopGroups<int>(new TopGroups<int>(sort.GetSort(), withinGroupSort?.GetSort(), 0, totalGroupedHitCount, groups, maxScore), totalHitCount);
         }
 
         /// <summary>

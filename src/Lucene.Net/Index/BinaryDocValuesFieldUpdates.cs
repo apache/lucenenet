@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
         private FixedBitSet docsWithField;
         private PagedMutable docs;
         private PagedGrowableWriter offsets, lengths;
-        private BytesRef values;
+        private readonly BytesRef values; // LUCENENET: marked readonly
         private int size;
 
         public BinaryDocValuesFieldUpdates(string field, int maxDoc)
@@ -178,23 +178,20 @@ namespace Lucene.Net.Index
             PagedGrowableWriter lengths = this.lengths;
             BytesRef values = this.values;
             FixedBitSet docsWithField = this.docsWithField;
-            new InPlaceMergeSorterAnonymousInnerClassHelper(this, docs, offsets, lengths, docsWithField).Sort(0, size);
+            new InPlaceMergeSorterAnonymousInnerClassHelper(docs, offsets, lengths, docsWithField).Sort(0, size);
 
             return new Iterator(size, offsets, lengths, docs, values, docsWithField);
         }
 
         private class InPlaceMergeSorterAnonymousInnerClassHelper : InPlaceMergeSorter
         {
-            private readonly BinaryDocValuesFieldUpdates outerInstance;
+            private readonly PagedMutable docs;
+            private readonly PagedGrowableWriter offsets;
+            private readonly PagedGrowableWriter lengths;
+            private readonly FixedBitSet docsWithField;
 
-            private PagedMutable docs;
-            private PagedGrowableWriter offsets;
-            private PagedGrowableWriter lengths;
-            private FixedBitSet docsWithField;
-
-            public InPlaceMergeSorterAnonymousInnerClassHelper(BinaryDocValuesFieldUpdates outerInstance, PagedMutable docs, PagedGrowableWriter offsets, PagedGrowableWriter lengths, FixedBitSet docsWithField)
+            public InPlaceMergeSorterAnonymousInnerClassHelper(PagedMutable docs, PagedGrowableWriter offsets, PagedGrowableWriter lengths, FixedBitSet docsWithField)
             {
-                this.outerInstance = outerInstance;
                 this.docs = docs;
                 this.offsets = offsets;
                 this.lengths = lengths;

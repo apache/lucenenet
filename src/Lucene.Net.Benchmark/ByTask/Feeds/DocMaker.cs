@@ -123,8 +123,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     return new Field(name, "", ft);
                 }
 
-                Field f;
-                if (!fields.TryGetValue(name, out f) || f == null)
+                if (!fields.TryGetValue(name, out Field f) || f == null)
                 {
                     f = new Field(name, "", ft);
                     fields[name] = f;
@@ -249,13 +248,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             if (dateString != null)
             {
                 // LUCENENET: TryParseExact needs a non-nullable DateTime to work.
-                DateTime temp;
                 if (DateTime.TryParseExact(dateString, new string[] {
                     // Original format from Java
                     "dd-MMM-yyyy HH:mm:ss",
                     // Actual format from the test files...
                     "yyyyMMddHHmmss"
-                    }, CultureInfo.InvariantCulture, DateTimeStyles.None, out temp))
+                    }, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime temp))
                 {
                     date = temp;
                 }
@@ -294,7 +292,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             // Set TITLE_FIELD
             string title = docData.Title;
             Field titleField = ds.GetField(TITLE_FIELD, m_valType);
-            titleField.SetStringValue(title == null ? "" : title);
+            titleField.SetStringValue(title ?? "");
             doc.Add(titleField);
 
             string body = docData.Body;
@@ -385,7 +383,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             if (disposing)
             {
-                m_source.Dispose();
+                m_source?.Dispose();
+                leftovr?.Dispose(); // LUCENENET specific
+                docState?.Dispose(); // LUCENENET specific
             }
         }
 

@@ -54,7 +54,7 @@ namespace Lucene.Net.Benchmarks
         }
 
 
-        public DirectoryInfo getWorkDir()
+        public static DirectoryInfo getWorkDir() // LUCENENET: CA1822: Mark members as static
         {
             return WORKDIR;
         }

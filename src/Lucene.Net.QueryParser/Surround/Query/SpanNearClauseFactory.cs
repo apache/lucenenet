@@ -68,10 +68,10 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             this.qf = qf;
           }
 
-        private IndexReader reader;
-        private string fieldName;
-        private IDictionary<SpanQuery, float> weightBySpanQuery;
-        private BasicQueryFactory qf;
+        private readonly IndexReader reader; // LUCENENET: marked readonly
+        private readonly string fieldName; // LUCENENET: marked readonly
+        private readonly IDictionary<SpanQuery, float> weightBySpanQuery; // LUCENENET: marked readonly
+        private readonly BasicQueryFactory qf; // LUCENENET: marked readonly
 
         public virtual IndexReader IndexReader => reader;
 

@@ -3,8 +3,8 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -41,7 +41,7 @@ namespace Lucene.Net.Util.Packed
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public class PackedInt32s
+    public static class PackedInt32s // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>
         /// At most 700% memory overhead, always select a direct implementation.
@@ -122,6 +122,7 @@ namespace Lucene.Net.Util.Packed
             /// <para/>
             /// NOTE: This was longCount() in Lucene.
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int Int64Count(int packedIntsVersion, int valueCount, int bitsPerValue)
             {
                 int valuesPerBlock = 64 / bitsPerValue;
@@ -132,6 +133,7 @@ namespace Lucene.Net.Util.Packed
             /// Tests whether the provided number of bits per value is supported by the
             /// format.
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override bool IsSupported(int bitsPerValue)
             {
                 return Packed64SingleBlock.IsSupported(bitsPerValue);
@@ -189,6 +191,7 @@ namespace Lucene.Net.Util.Packed
                 throw new ArgumentException("Unknown format id: " + id);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal Format(int id)
             {
                 this.Id = id;
@@ -203,9 +206,10 @@ namespace Lucene.Net.Util.Packed
             /// Computes how many <see cref="byte"/> blocks are needed to store <paramref name="valueCount"/>
             /// values of size <paramref name="bitsPerValue"/>.
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual long ByteCount(int packedIntsVersion, int valueCount, int bitsPerValue)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue >= 0 && bitsPerValue <= 64, () => bitsPerValue.ToString(CultureInfo.InvariantCulture));
+                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue >= 0 && bitsPerValue <= 64, "{0}", bitsPerValue);
                 // assume long-aligned
                 return 8L * Int64Count(packedIntsVersion, valueCount, bitsPerValue);
             }
@@ -218,7 +222,7 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual int Int64Count(int packedIntsVersion, int valueCount, int bitsPerValue)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue >= 0 && bitsPerValue <= 64, () => bitsPerValue.ToString(CultureInfo.InvariantCulture));
+                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue >= 0 && bitsPerValue <= 64, "{0}", bitsPerValue);
                 long byteCount = ByteCount(packedIntsVersion, valueCount, bitsPerValue);
                 if (Debugging.AssertsEnabled) Debugging.Assert(byteCount < 8L * int.MaxValue);
                 if ((byteCount % 8) == 0)
@@ -231,6 +235,7 @@ namespace Lucene.Net.Util.Packed
             /// Tests whether the provided number of bits per value is supported by the
             /// format.
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual bool IsSupported(int bitsPerValue)
             {
                 return bitsPerValue >= 1 && bitsPerValue <= 64;
@@ -239,6 +244,7 @@ namespace Lucene.Net.Util.Packed
             /// <summary>
             /// Returns the overhead per value, in bits.
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual float OverheadPerValue(int bitsPerValue)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(IsSupported(bitsPerValue));
@@ -248,6 +254,7 @@ namespace Lucene.Net.Util.Packed
             /// <summary>
             /// Returns the overhead ratio (<c>overhead per value / bits per value</c>).
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual float OverheadRatio(int bitsPerValue)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(IsSupported(bitsPerValue));
@@ -533,7 +540,7 @@ namespace Lucene.Net.Util.Packed
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+                    Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
                     Debugging.Assert(index >= 0 && index < Count);
                     Debugging.Assert(off + len <= arr.Length);
                 }
@@ -674,7 +681,7 @@ namespace Lucene.Net.Util.Packed
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+                    Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
                     Debugging.Assert(index >= 0 && index < Count);
                 }
                 len = Math.Min(len, Count - index);
@@ -707,6 +714,7 @@ namespace Lucene.Net.Util.Packed
             /// <summary>
             /// Sets all values to 0.
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual void Clear()
             {
                 Fill(0, Count, 0);
@@ -746,7 +754,7 @@ namespace Lucene.Net.Util.Packed
             protected ReaderImpl(int valueCount, int bitsPerValue)
             {
                 this.m_bitsPerValue = bitsPerValue;
-                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
+                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue={0}", bitsPerValue);
                 this.m_valueCount = valueCount;
             }
 
@@ -765,7 +773,7 @@ namespace Lucene.Net.Util.Packed
             protected MutableImpl(int valueCount, int bitsPerValue)
             {
                 this.m_valueCount = valueCount;
-                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
+                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue={0}", bitsPerValue);
                 this.m_bitsPerValue = bitsPerValue;
             }
 
@@ -787,6 +795,7 @@ namespace Lucene.Net.Util.Packed
                 this.valueCount = valueCount;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long Get(int index)
             {
                 return 0;
@@ -796,7 +805,7 @@ namespace Lucene.Net.Util.Packed
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+                    Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
                     Debugging.Assert(index >= 0 && index < valueCount);
                 }
                 len = Math.Min(len, valueCount - index);
@@ -808,6 +817,7 @@ namespace Lucene.Net.Util.Packed
 
             public override int Count => valueCount;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long RamBytesUsed()
             {
                 return RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT32);
@@ -876,6 +886,7 @@ namespace Lucene.Net.Util.Packed
         /// <param name="version">        The compatibility version. </param>
         /// <param name="bitsPerValue">   The number of bits per value. </param>
         /// <returns> A decoder. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IDecoder GetDecoder(Format format, int version, int bitsPerValue)
         {
             CheckVersion(version);
@@ -889,6 +900,7 @@ namespace Lucene.Net.Util.Packed
         /// <param name="version">        The compatibility version. </param>
         /// <param name="bitsPerValue">   The number of bits per value. </param>
         /// <returns> An encoder. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IEncoder GetEncoder(Format format, int version, int bitsPerValue)
         {
             CheckVersion(version);
@@ -969,6 +981,7 @@ namespace Lucene.Net.Util.Packed
         /// <returns>             A <see cref="Reader"/>. </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         /// <seealso cref="ReadHeader(DataInput)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Reader GetReaderNoHeader(DataInput @in, Header header)
         {
             return GetReaderNoHeader(@in, header.format, header.version, header.valueCount, header.bitsPerValue);
@@ -986,7 +999,7 @@ namespace Lucene.Net.Util.Packed
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
             int bitsPerValue = @in.ReadVInt32();
-            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
+            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue={0}", bitsPerValue);
             int valueCount = @in.ReadVInt32();
             Format format = Format.ById(@in.ReadVInt32());
 
@@ -1009,6 +1022,7 @@ namespace Lucene.Net.Util.Packed
         /// <param name="mem">          How much memory the iterator is allowed to use to read-ahead (likely to speed up iteration). </param>
         /// <returns>             A <see cref="IReaderIterator"/>. </returns>
         /// <seealso cref="PackedInt32s.GetWriterNoHeader(DataOutput, Format, int, int, int)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IReaderIterator GetReaderIteratorNoHeader(DataInput @in, Format format, int version, int valueCount, int bitsPerValue, int mem)
         {
             CheckVersion(version);
@@ -1028,7 +1042,7 @@ namespace Lucene.Net.Util.Packed
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
             int bitsPerValue = @in.ReadVInt32();
-            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
+            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue={0}", bitsPerValue);
             int valueCount = @in.ReadVInt32();
             Format format = Format.ById(@in.ReadVInt32());
             return GetReaderIteratorNoHeader(@in, format, version, valueCount, bitsPerValue, mem);
@@ -1129,6 +1143,7 @@ namespace Lucene.Net.Util.Packed
         /// <returns>             A <see cref="Reader"/>. </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         /// <seealso cref="ReadHeader(DataInput)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Reader GetDirectReaderNoHeader(IndexInput @in, Header header)
         {
             return GetDirectReaderNoHeader(@in, header.format, header.version, header.valueCount, header.bitsPerValue);
@@ -1151,7 +1166,7 @@ namespace Lucene.Net.Util.Packed
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
             int bitsPerValue = @in.ReadVInt32();
-            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
+            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue={0}", bitsPerValue);
             int valueCount = @in.ReadVInt32();
             Format format = Format.ById(@in.ReadVInt32());
             return GetDirectReaderNoHeader(@in, format, version, valueCount, bitsPerValue);
@@ -1176,6 +1191,7 @@ namespace Lucene.Net.Util.Packed
         /// <param name="acceptableOverheadRatio"> An acceptable overhead
         ///        ratio per value. </param>
         /// <returns> A mutable packed integer array. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Mutable GetMutable(int valueCount, int bitsPerValue, float acceptableOverheadRatio)
         {
             FormatAndBits formatAndBits = FastestFormatAndBits(valueCount, bitsPerValue, acceptableOverheadRatio);
@@ -1277,6 +1293,7 @@ namespace Lucene.Net.Util.Packed
         /// <returns>             A <see cref="Writer"/>. </returns>
         /// <seealso cref="PackedInt32s.GetReaderIteratorNoHeader(DataInput, Format, int, int, int, int)"/>
         /// <seealso cref="PackedInt32s.GetReaderNoHeader(DataInput, Format, int, int, int)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Writer GetWriterNoHeader(DataOutput @out, Format format, int valueCount, int bitsPerValue, int mem)
         {
             return new PackedWriter(format, @out, valueCount, bitsPerValue, mem);
@@ -1350,6 +1367,7 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         /// <param name="bitsPerValue"> The number of bits available for any given value. </param>
         /// <returns> The maximum value for the given bits. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long MaxValue(int bitsPerValue)
         {
             return bitsPerValue == 64 ? long.MaxValue : ~(~0L << bitsPerValue);
@@ -1385,6 +1403,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Same as <see cref="Copy(Reader, int, Mutable, int, int, int)"/> but using a pre-allocated buffer. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void Copy(Reader src, int srcPos, Mutable dest, int destPos, int len, long[] buf)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(buf.Length > 0);
@@ -1428,7 +1447,7 @@ namespace Lucene.Net.Util.Packed
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
             int bitsPerValue = @in.ReadVInt32();
-            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
+            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue={0}", bitsPerValue);
             int valueCount = @in.ReadVInt32();
             Format format = Format.ById(@in.ReadVInt32());
             return new Header(format, valueCount, bitsPerValue, version);
@@ -1456,6 +1475,7 @@ namespace Lucene.Net.Util.Packed
         /// Check that the block size is a power of 2, in the right bounds, and return
         /// its log in base 2.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static int CheckBlockSize(int blockSize, int minBlockSize, int maxBlockSize)
         {
             if (blockSize < minBlockSize || blockSize > maxBlockSize)
@@ -1473,6 +1493,7 @@ namespace Lucene.Net.Util.Packed
         /// Return the number of blocks required to store <paramref name="size"/> values on
         /// <paramref name="blockSize"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static int NumBlocks(long size, int blockSize)
         {
             int numBlocks = (int)(size / blockSize) + (size % blockSize == 0 ? 0 : 1);

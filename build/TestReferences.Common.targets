@@ -19,7 +19,12 @@
 
 -->
 <Project>
+  <PropertyGroup Label="Required for LiquidTestReports.Markdown on .NET Core 2.1" Condition=" $(TargetFramework.StartsWith('netcoreapp2.')) ">
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  
   <ItemGroup Label="Test Project Common References">
+    <PackageReference Include="LiquidTestReports.Markdown" Version="$(LiquidTestReportsMarkdownPackageVersion)" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkPackageVersion)" />
     <PackageReference Include="NUnit" Version="$(NUnitPackageVersion)" />
     <PackageReference Include="NUnit3TestAdapter" Version="$(NUnit3TestAdapterPackageVersion)" />

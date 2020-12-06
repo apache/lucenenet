@@ -562,6 +562,7 @@ namespace Lucene.Net.Util
             {
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override AcceptStatus Accept(BytesRef term)
             {
                 return NumericUtils.GetPrefixCodedInt64Shift(term) == 0 ? AcceptStatus.YES : AcceptStatus.END;
@@ -578,6 +579,7 @@ namespace Lucene.Net.Util
         ///          The terms enum to filter </param>
         /// <returns> A filtered <see cref="TermsEnum"/> that only returns prefix coded 32 bit
         ///         terms with a shift value of <c>0</c>. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TermsEnum FilterPrefixCodedInt32s(TermsEnum termsEnum)
         {
             return new FilteredTermsEnumAnonymousInnerClassHelper2(termsEnum);
@@ -590,6 +592,7 @@ namespace Lucene.Net.Util
             {
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override AcceptStatus Accept(BytesRef term)
             {
                 return NumericUtils.GetPrefixCodedInt32Shift(term) == 0 ? AcceptStatus.YES : AcceptStatus.END;

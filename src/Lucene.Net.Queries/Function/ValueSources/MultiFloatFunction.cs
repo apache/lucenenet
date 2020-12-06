@@ -35,7 +35,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     {
         protected readonly ValueSource[] m_sources;
 
-        public MultiSingleFunction(ValueSource[] sources)
+        protected MultiSingleFunction(ValueSource[] sources) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.m_sources = sources;
         }

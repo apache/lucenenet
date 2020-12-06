@@ -24,46 +24,40 @@ namespace Lucene.Net.Analysis.Ja.Util
      * limitations under the License.
      */
 
-    public class ConnectionCostsBuilder
+    public static class ConnectionCostsBuilder // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         private static readonly Regex whiteSpaceRegex = new Regex("\\s+", RegexOptions.Compiled);
 
-        private ConnectionCostsBuilder()
-        {
-        }
-
         public static ConnectionCostsWriter Build(string filename)
         {
-            using (Stream inputStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
+            using Stream inputStream = new FileStream(filename, FileMode.Open, FileAccess.Read);
+            StreamReader streamReader = new StreamReader(inputStream, Encoding.ASCII);
+
+            string line = streamReader.ReadLine();
+            string[] dimensions = whiteSpaceRegex.Split(line).TrimEnd();
+
+            if (Debugging.AssertsEnabled) Debugging.Assert(dimensions.Length == 2);
+
+            int forwardSize = int.Parse(dimensions[0], CultureInfo.InvariantCulture);
+            int backwardSize = int.Parse(dimensions[1], CultureInfo.InvariantCulture);
+
+            if (Debugging.AssertsEnabled) Debugging.Assert(forwardSize > 0 && backwardSize > 0);
+
+            ConnectionCostsWriter costs = new ConnectionCostsWriter(forwardSize, backwardSize);
+
+            while ((line = streamReader.ReadLine()) != null)
             {
-                StreamReader streamReader = new StreamReader(inputStream, Encoding.ASCII);
+                string[] fields = whiteSpaceRegex.Split(line).TrimEnd();
 
-                string line = streamReader.ReadLine();
-                string[] dimensions = whiteSpaceRegex.Split(line).TrimEnd();
+                if (Debugging.AssertsEnabled) Debugging.Assert(fields.Length == 3);
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(dimensions.Length == 2);
+                int forwardId = int.Parse(fields[0], CultureInfo.InvariantCulture);
+                int backwardId = int.Parse(fields[1], CultureInfo.InvariantCulture);
+                int cost = int.Parse(fields[2], CultureInfo.InvariantCulture);
 
-                int forwardSize = int.Parse(dimensions[0], CultureInfo.InvariantCulture);
-                int backwardSize = int.Parse(dimensions[1], CultureInfo.InvariantCulture);
-
-                if (Debugging.AssertsEnabled) Debugging.Assert(forwardSize > 0 && backwardSize > 0);
-
-                ConnectionCostsWriter costs = new ConnectionCostsWriter(forwardSize, backwardSize);
-
-                while ((line = streamReader.ReadLine()) != null)
-                {
-                    string[] fields = whiteSpaceRegex.Split(line).TrimEnd();
-
-                    if (Debugging.AssertsEnabled) Debugging.Assert(fields.Length == 3);
-
-                    int forwardId = int.Parse(fields[0], CultureInfo.InvariantCulture);
-                    int backwardId = int.Parse(fields[1], CultureInfo.InvariantCulture);
-                    int cost = int.Parse(fields[2], CultureInfo.InvariantCulture);
-
-                    costs.Add(forwardId, backwardId, cost);
-                }
-                return costs;
+                costs.Add(forwardId, backwardId, cost);
             }
+            return costs;
         }
     }
 }

@@ -482,7 +482,7 @@ namespace Lucene.Net.Search.Similarities
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        public TFIDFSimilarity()
+        protected TFIDFSimilarity() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
         }
 

@@ -2,7 +2,7 @@ using Lucene.Net.Diagnostics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene45
@@ -39,11 +39,11 @@ namespace Lucene.Net.Codecs.Lucene45
 
     /// <summary>
     /// Writer for <see cref="Lucene45DocValuesFormat"/> </summary>
-    public class Lucene45DocValuesConsumer : DocValuesConsumer, IDisposable
+    public class Lucene45DocValuesConsumer : DocValuesConsumer // LUCENENET specific - removed IDisposable, it is already implemented in base class
     {
-        internal static readonly int BLOCK_SIZE = 16384;
-        internal static readonly int ADDRESS_INTERVAL = 16;
-        internal static readonly long MISSING_ORD = -1L;
+        internal const int BLOCK_SIZE = 16384;
+        internal const int ADDRESS_INTERVAL = 16;
+        internal const long MISSING_ORD = -1L;
 
         /// <summary>
         /// Compressed using packed blocks of <see cref="int"/>s. </summary>
@@ -81,7 +81,9 @@ namespace Lucene.Net.Codecs.Lucene45
         /// </summary>
         public static readonly int SORTED_SET_SINGLE_VALUED_SORTED = 1;
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         internal IndexOutput data, meta;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         internal readonly int maxDoc;
 
         /// <summary>
@@ -109,6 +111,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
             AddNumericField(field, values, true);
@@ -406,8 +409,8 @@ namespace Lucene.Net.Codecs.Lucene45
                 // write addresses of indexed terms
                 termAddresses.Finish();
                 addressBuffer.WriteTo(data);
-                addressBuffer = null;
-                termAddresses = null;
+                //addressBuffer = null; // LUCENENET: IDE0059: Remove unnecessary value assignment
+                //termAddresses = null; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 meta.WriteVInt32(minLength);
                 meta.WriteVInt32(maxLength);
                 meta.WriteVInt64(count);

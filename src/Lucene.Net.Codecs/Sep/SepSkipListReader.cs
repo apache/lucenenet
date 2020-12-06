@@ -35,11 +35,11 @@ namespace Lucene.Net.Codecs.Sep
     internal class SepSkipListReader : MultiLevelSkipListReader
     {
         private bool currentFieldStoresPayloads;
-        private Int32IndexInput.Index[] freqIndex;
-        private Int32IndexInput.Index[] docIndex;
-        private Int32IndexInput.Index[] posIndex;
-        private long[] payloadPointer;
-        private int[] payloadLength;
+        private readonly Int32IndexInput.Index[] freqIndex; // LUCENENET: marked readonly
+        private readonly Int32IndexInput.Index[] docIndex; // LUCENENET: marked readonly
+        private readonly Int32IndexInput.Index[] posIndex; // LUCENENET: marked readonly
+        private readonly long[] payloadPointer; // LUCENENET: marked readonly
+        private readonly int[] payloadLength; // LUCENENET: marked readonly
 
         private readonly Int32IndexInput.Index lastFreqIndex;
         private readonly Int32IndexInput.Index lastDocIndex;

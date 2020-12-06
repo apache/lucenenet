@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.Highlight
         public static readonly int DEFAULT_MAX_CHARS_TO_ANALYZE = 50 * 1024;
 
         private int _maxDocCharsToAnalyze = DEFAULT_MAX_CHARS_TO_ANALYZE;
-        private IFormatter _formatter;
+        private readonly IFormatter _formatter; // LUCENENET: marked readonly
         private IEncoder _encoder;
         private IFragmenter _textFragmenter = new SimpleFragmenter();
         private IScorer _fragmentScorer = null;
@@ -169,8 +169,8 @@ namespace Lucene.Net.Search.Highlight
             tokenStream.Reset();
             var currentFrag = new TextFragment(newText, newText.Length, docFrags.Count);
 
-            if (_fragmentScorer is QueryScorer) {
-                ((QueryScorer)_fragmentScorer).SetMaxDocCharsToAnalyze(_maxDocCharsToAnalyze);
+            if (_fragmentScorer is QueryScorer queryScorer) {
+                queryScorer.SetMaxDocCharsToAnalyze(_maxDocCharsToAnalyze);
             }
 
             var newStream = _fragmentScorer.Init(tokenStream);
@@ -342,7 +342,7 @@ namespace Lucene.Net.Search.Highlight
         /// This will leave a "null" in the array entry for the lesser scored fragment. 
         /// </summary>
         /// <param name="frag">An array of document fragments in descending score</param>
-        private void MergeContiguousFragments(TextFragment[] frag)
+        private static void MergeContiguousFragments(TextFragment[] frag) // LUCENENET: CA1822: Mark members as static
         {
             bool mergingStillBeingDone;
             if (frag.Length > 1)

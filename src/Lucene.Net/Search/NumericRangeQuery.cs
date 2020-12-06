@@ -233,9 +233,8 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            if (o is NumericRangeQuery<T>)
+            if (o is NumericRangeQuery<T> q)
             {
-                var q = (NumericRangeQuery<T>)o;
                 return ((q.min == null ? min == null : q.min.Equals(min)) && (q.max == null ? max == null : q.max.Equals(max)) && minInclusive == q.minInclusive && maxInclusive == q.maxInclusive && precisionStep == q.precisionStep);
             }
             return false;

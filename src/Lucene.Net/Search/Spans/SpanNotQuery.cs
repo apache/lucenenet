@@ -127,26 +127,19 @@ namespace Lucene.Net.Search.Spans
         {
             private readonly SpanNotQuery outerInstance;
 
-            private AtomicReaderContext context;
-            private IBits acceptDocs;
-            private IDictionary<Term, TermContext> termContexts;
-
             public SpansAnonymousInnerClassHelper(SpanNotQuery outerInstance, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
             {
                 this.outerInstance = outerInstance;
-                this.context = context;
-                this.acceptDocs = acceptDocs;
-                this.termContexts = termContexts;
                 includeSpans = outerInstance.include.GetSpans(context, acceptDocs, termContexts);
                 moreInclude = true;
                 excludeSpans = outerInstance.exclude.GetSpans(context, acceptDocs, termContexts);
                 moreExclude = excludeSpans.MoveNext();
             }
 
-            private Spans includeSpans;
+            private readonly Spans includeSpans; // LUCENENET: marked readonly
             private bool moreInclude;
 
-            private Spans excludeSpans;
+            private readonly Spans excludeSpans; // LUCENENET: marked readonly
             private bool moreExclude;
 
             public override bool MoveNext()

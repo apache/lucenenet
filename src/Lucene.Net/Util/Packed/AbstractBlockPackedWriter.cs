@@ -31,6 +31,7 @@ namespace Lucene.Net.Util.Packed
         internal const int MIN_VALUE_EQUALS_0 = 1 << 0;
         internal const int BPV_SHIFT = 1;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static long ZigZagEncode(long n)
         {
             return (n >> 63) ^ (n << 1);
@@ -40,6 +41,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// NOTE: This was writeVLong() in Lucene.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void WriteVInt64(DataOutput @out, long i)
         {
             int k = 0;
@@ -70,6 +72,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Reset this writer to wrap <paramref name="out"/>. The block size remains unchanged. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Reset(DataOutput @out)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(@out != null);
@@ -79,6 +82,7 @@ namespace Lucene.Net.Util.Packed
             m_finished = false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CheckNotFinished()
         {
             if (m_finished)

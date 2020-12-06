@@ -59,12 +59,12 @@ namespace Lucene.Net.Index
                 if (Random.NextBoolean())
                 {
                     pool.Reset(true, false);
-                    Assert.AreEqual(0, bytesUsed.Get());
+                    Assert.AreEqual(0, bytesUsed);
                 }
                 else
                 {
                     pool.Reset(true, true);
-                    Assert.AreEqual(Int32BlockPool.INT32_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT32, bytesUsed.Get());
+                    Assert.AreEqual(Int32BlockPool.INT32_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT32, bytesUsed);
                 }
             }
         }
@@ -116,12 +116,12 @@ namespace Lucene.Net.Index
                 if (Random.NextBoolean())
                 {
                     pool.Reset(true, false);
-                    Assert.AreEqual(0, bytesUsed.Get());
+                    Assert.AreEqual(0, bytesUsed);
                 }
                 else
                 {
                     pool.Reset(true, true);
-                    Assert.AreEqual(Int32BlockPool.INT32_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT32, bytesUsed.Get());
+                    Assert.AreEqual(Int32BlockPool.INT32_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT32, bytesUsed);
                 }
             }
         }

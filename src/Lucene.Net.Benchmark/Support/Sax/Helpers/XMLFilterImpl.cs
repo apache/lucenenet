@@ -349,7 +349,7 @@ namespace Sax.Helpers
         /// <param name="locator">The document locator.</param>
         public virtual void SetDocumentLocator(ILocator locator)
         {
-            this.locator = locator;
+            //this.locator = locator; // LUCENENET: Never read
             if (contentHandler != null)
             {
                 contentHandler.SetDocumentLocator(locator);
@@ -579,7 +579,7 @@ namespace Sax.Helpers
         ////////////////////////////////////////////////////////////////////
 
         private IXMLReader parent = null;
-        private ILocator locator = null;
+        //private ILocator locator = null; // LUCENENET: Never read
         private IEntityResolver entityResolver = null;
         private IDTDHandler dtdHandler = null;
         private IContentHandler contentHandler = null;

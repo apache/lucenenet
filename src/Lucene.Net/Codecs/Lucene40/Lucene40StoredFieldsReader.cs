@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -41,16 +42,18 @@ namespace Lucene.Net.Codecs.Lucene40
     /// @lucene.internal
     /// </summary>
     /// <seealso cref="Lucene40StoredFieldsFormat"/>
-    public sealed class Lucene40StoredFieldsReader : StoredFieldsReader, IDisposable
+    public sealed class Lucene40StoredFieldsReader : StoredFieldsReader // LUCENENET specific - removed IDisposable, it is already implemented in base class
 #if FEATURE_CLONEABLE
         , System.ICloneable
 #endif
     {
         private readonly FieldInfos fieldInfos;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexInput fieldsStream;
         private readonly IndexInput indexStream;
-        private int numTotalDocs;
-        private int size;
+#pragma warning restore CA2213 // Disposable fields should be disposed
+        private readonly int numTotalDocs; // LUCENENET: marked readonly
+        private readonly int size; // LUCENENET: marked readonly
         private bool closed;
 
         /// <summary>
@@ -60,6 +63,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// clones are called (eg, currently <see cref="Index.SegmentReader"/> manages
         /// this logic).
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override object Clone()
         {
             EnsureOpen();
@@ -128,6 +132,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <exception cref="ObjectDisposedException"> if this FieldsReader is disposed. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureOpen()
         {
             if (closed)
@@ -141,6 +146,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// This means that the <see cref="Index.Fields"/> values will not be accessible.
         /// </summary>
         /// <exception cref="IOException"> If an I/O error occurs. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -160,6 +166,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public int Count => size;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SeekIndex(int docID)
         {
             indexStream.Seek(Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX + docID * 8L);
@@ -177,7 +184,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
 
                 int bits = fieldsStream.ReadByte() & 0xFF;
-                if (Debugging.AssertsEnabled) Debugging.Assert(bits <= (Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_MASK | Lucene40StoredFieldsWriter.FIELD_IS_BINARY), () => "bits=" + bits.ToString("x"));
+                if (Debugging.AssertsEnabled) Debugging.Assert(bits <= (Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_MASK | Lucene40StoredFieldsWriter.FIELD_IS_BINARY),"bits={0:x}", bits);
 
                 switch (visitor.NeedsField(fieldInfo))
                 {
@@ -302,11 +309,13 @@ namespace Lucene.Net.Codecs.Lucene40
             return fieldsStream;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long RamBytesUsed()
         {
             return 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void CheckIntegrity()
         {
         }

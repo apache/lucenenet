@@ -46,44 +46,39 @@ namespace Lucene.Net
             Analyzer analyzer = new MockAnalyzer(Random);
 
             // Store the index in memory:
-            using (Directory directory = NewDirectory())
+            using Directory directory = NewDirectory();
+            string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
+            string text = "this is the text to be indexed. " + longTerm;
+
+            // To store an index on disk, use this instead:
+            // Directory directory = FSDirectory.open(new File("/tmp/testindex"));
+            using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, analyzer)))
             {
-                string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
-                string text = "this is the text to be indexed. " + longTerm;
-
-                // To store an index on disk, use this instead:
-                // Directory directory = FSDirectory.open(new File("/tmp/testindex"));
-                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, analyzer)))
-                {
-                    Documents.Document doc = new Documents.Document();
-                    doc.Add(NewTextField("fieldname", text, Field.Store.YES));
-                    iwriter.AddDocument(doc);
-                }
-
-                // Now search the index:
-                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
-                {
-                    IndexSearcher isearcher = NewSearcher(ireader);
-
-                    Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
-                    Query query = new TermQuery(new Term("fieldname", "text"));
-                    TopDocs hits = isearcher.Search(query, null, 1);
-                    Assert.AreEqual(1, hits.TotalHits);
-                    // Iterate through the results:
-                    for (int i = 0; i < hits.ScoreDocs.Length; i++)
-                    {
-                        Documents.Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
-                        Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                    }
-
-                    // Test simple phrase query
-                    PhraseQuery phraseQuery = new PhraseQuery();
-                    phraseQuery.Add(new Term("fieldname", "to"));
-                    phraseQuery.Add(new Term("fieldname", "be"));
-                    Assert.AreEqual(1, isearcher.Search(phraseQuery, null, 1).TotalHits);
-
-                }
+                Documents.Document doc = new Documents.Document();
+                doc.Add(NewTextField("fieldname", text, Field.Store.YES));
+                iwriter.AddDocument(doc);
             }
+
+            // Now search the index:
+            using IndexReader ireader = DirectoryReader.Open(directory);
+            IndexSearcher isearcher = NewSearcher(ireader);
+
+            Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
+            Query query = new TermQuery(new Term("fieldname", "text"));
+            TopDocs hits = isearcher.Search(query, null, 1);
+            Assert.AreEqual(1, hits.TotalHits);
+            // Iterate through the results:
+            for (int i = 0; i < hits.ScoreDocs.Length; i++)
+            {
+                Documents.Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
+                Assert.AreEqual(text, hitDoc.Get("fieldname"));
+            }
+
+            // Test simple phrase query
+            PhraseQuery phraseQuery = new PhraseQuery();
+            phraseQuery.Add(new Term("fieldname", "to"));
+            phraseQuery.Add(new Term("fieldname", "be"));
+            Assert.AreEqual(1, isearcher.Search(phraseQuery, null, 1).TotalHits);
         }
     }
 }

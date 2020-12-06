@@ -3,6 +3,7 @@ using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -626,6 +627,7 @@ namespace Lucene.Net.Util.Automaton
             internal Transition[] transitions = new Transition[2];
             internal int count;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void Add(Transition t)
             {
                 if (transitions.Length == count)
@@ -645,11 +647,13 @@ namespace Lucene.Net.Util.Automaton
             internal readonly TransitionList ends = new TransitionList();
             internal readonly TransitionList starts = new TransitionList();
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public int CompareTo(PointTransitions other)
             {
                 return point - other.point;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void Reset(int point)
             {
                 this.point = point;
@@ -657,11 +661,13 @@ namespace Lucene.Net.Util.Automaton
                 starts.count = 0;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override bool Equals(object other)
             {
                 return ((PointTransitions)other).point == point;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int GetHashCode()
             {
                 return point;
@@ -677,6 +683,7 @@ namespace Lucene.Net.Util.Automaton
             private readonly Dictionary<int?, PointTransitions> map = new Dictionary<int?, PointTransitions>();
             private bool useHash = false;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private PointTransitions Next(int point)
             {
                 // 1st time we are seeing this point
@@ -695,6 +702,7 @@ namespace Lucene.Net.Util.Automaton
                 return points0;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private PointTransitions Find(int point)
             {
                 if (useHash)
@@ -732,6 +740,7 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void Reset()
             {
                 if (useHash)
@@ -742,6 +751,7 @@ namespace Lucene.Net.Util.Automaton
                 count = 0;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void Sort()
             {
                 // Tim sort performs well on already sorted arrays:
@@ -751,6 +761,7 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void Add(Transition t)
             {
                 Find(t.min).starts.Add(t);
@@ -868,7 +879,7 @@ namespace Lucene.Net.Util.Automaton
                         }
                         else
                         {
-                            if (Debugging.AssertsEnabled) Debugging.Assert((accCount > 0) == q.accept, () => "accCount=" + accCount + " vs existing accept=" + q.accept + " states=" + statesSet);
+                            if (Debugging.AssertsEnabled) Debugging.Assert((accCount > 0) == q.accept, "accCount={0} vs existing accept={1} states={2}", accCount, q.accept, statesSet);
                         }
 
                         r.AddTransition(new Transition(lastPoint, point - 1, q));
@@ -902,7 +913,7 @@ namespace Lucene.Net.Util.Automaton
                     points.points[i].starts.count = 0;
                 }
                 points.Reset();
-                if (Debugging.AssertsEnabled) Debugging.Assert(statesSet.upto == 0, () => "upto=" + statesSet.upto);
+                if (Debugging.AssertsEnabled) Debugging.Assert(statesSet.upto == 0,"upto={0}", statesSet.upto);
             }
             a.deterministic = true;
             a.SetNumberedStates(newStatesArray, newStateUpto);
@@ -991,6 +1002,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns <c>true</c> if the given automaton accepts the empty string and nothing
         /// else.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsEmptyString(Automaton a)
         {
             if (a.IsSingleton)
@@ -1006,6 +1018,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns <c>true</c> if the given automaton accepts no strings.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsEmpty(Automaton a)
         {
             if (a.IsSingleton)

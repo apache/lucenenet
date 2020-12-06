@@ -26,7 +26,7 @@ namespace Lucene.Net.Attributes
     /// In other words, apply this attribute to the test if it
     /// did not exist in Java Lucene.
     /// </summary>
-    internal class LuceneNetSpecificAttribute : CategoryAttribute
+    internal sealed class LuceneNetSpecificAttribute : CategoryAttribute
     {
         public LuceneNetSpecificAttribute()
             : base("LUCENENET")

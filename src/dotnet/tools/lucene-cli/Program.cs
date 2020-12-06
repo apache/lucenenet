@@ -20,7 +20,7 @@ namespace Lucene.Net.Cli
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    public class Program
+    public static class Program
     {
         public static int Main(string[] args)
         {

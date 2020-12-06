@@ -510,7 +510,7 @@ namespace Lucene.Net.Analysis.Synonym
                         int outputLen = chIDX - lastStart;
                         // Caller is not allowed to have empty string in
                         // the output:
-                        if (Debugging.AssertsEnabled) Debugging.Assert(outputLen > 0, () => "output contains empty string: " + scratchChars);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(outputLen > 0, "output contains empty string: {0}", scratchChars);
                         int endOffset;
                         int posLen;
                         if (chIDX == chEnd && lastStart == scratchChars.Offset)
@@ -536,7 +536,7 @@ namespace Lucene.Net.Analysis.Synonym
                         lastStart = 1 + chIDX;
                         //System.out.println("  slot=" + outputUpto + " keepOrig=" + keepOrig);
                         outputUpto = RollIncr(outputUpto);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(futureOutputs[outputUpto].posIncr == 1, () => "outputUpto=" + outputUpto + " vs nextWrite=" + nextWrite);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(futureOutputs[outputUpto].posIncr == 1, "outputUpto={0} vs nextWrite={1}", outputUpto, nextWrite);
                     }
                 }
             }
@@ -602,7 +602,7 @@ namespace Lucene.Net.Analysis.Synonym
                         {
                             // Pass-through case: return token we just pulled
                             // but didn't capture:
-                            if (Debugging.AssertsEnabled) Debugging.Assert(inputSkipCount == 1, () => "inputSkipCount=" + inputSkipCount + " nextRead=" + nextRead);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(inputSkipCount == 1, "inputSkipCount={0} nextRead={1}", inputSkipCount, nextRead);
                         }
                         input.Reset();
                         if (outputs.count > 0)

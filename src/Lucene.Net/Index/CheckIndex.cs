@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
     public class CheckIndex
     {
         private TextWriter infoStream;
-        private Directory dir;
+        private readonly Directory dir; // LUCENENET: marked readonly
 
         /// <summary>
         /// Returned from <see cref="CheckIndex.DoCheckIndex()"/> detailing the health and status of the index.
@@ -563,7 +563,7 @@ namespace Lucene.Net.Index
             int numSegments = sis.Count;
             string segmentsFileName = sis.GetSegmentsFileName();
             // note: we only read the format byte (required preamble) here!
-            IndexInput input = null;
+            IndexInput input/* = null*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
             try
             {
                 input = dir.OpenInput(segmentsFileName, IOContext.READ_ONCE);
@@ -582,7 +582,7 @@ namespace Lucene.Net.Index
                 result.CantOpenSegments = true;
                 return result;
             }
-            int format = 0;
+            int format/* = 0*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
             try
             {
                 format = input.ReadInt32();
@@ -625,7 +625,7 @@ namespace Lucene.Net.Index
                 userDataString = "";
             }
 
-            string versionString = null;
+            string versionString/* = null*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
             if (oldSegs != null)
             {
                 if (foundNonNullVersion)
@@ -951,7 +951,7 @@ namespace Lucene.Net.Index
 #pragma warning disable 612, 618
                         if (Debugging.AssertsEnabled) Debugging.Assert(reader.HasNorms(info.Name)); // deprecated path
 #pragma warning restore 612, 618
-                        CheckNorms(info, reader, infoStream);
+                        CheckNorms(info, reader /*, infoStream // LUCENENET: Not used */);
                         ++status.TotFields;
                     }
                     else
@@ -1046,7 +1046,8 @@ namespace Lucene.Net.Index
                 bool hasOffsets = terms.HasOffsets;
 
                 // term vectors cannot omit TF:
-                bool expectedHasFreqs = (isVectors || fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0);
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                bool expectedHasFreqs = (isVectors || IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0);
 
                 if (hasFreqs != expectedHasFreqs)
                 {
@@ -1063,7 +1064,8 @@ namespace Lucene.Net.Index
 
                 if (!isVectors)
                 {
-                    bool expectedHasPositions = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                    // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                    bool expectedHasPositions = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
                     if (hasPositions != expectedHasPositions)
                     {
                         throw new Exception("field \"" + field + "\" should have hasPositions=" + expectedHasPositions + " but got " + hasPositions);
@@ -1075,7 +1077,8 @@ namespace Lucene.Net.Index
                         throw new Exception("field \"" + field + "\" should have hasPayloads=" + expectedHasPayloads + " but got " + hasPayloads);
                     }
 
-                    bool expectedHasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                    // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                    bool expectedHasOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                     if (hasOffsets != expectedHasOffsets)
                     {
                         throw new Exception("field \"" + field + "\" should have hasOffsets=" + expectedHasOffsets + " but got " + hasOffsets);
@@ -1449,9 +1452,9 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (fieldTerms is BlockTreeTermsReader.FieldReader)
+                    if (fieldTerms is BlockTreeTermsReader.FieldReader fieldReader)
                     {
-                        BlockTreeTermsReader.Stats stats = ((BlockTreeTermsReader.FieldReader)fieldTerms).ComputeStats();
+                        BlockTreeTermsReader.Stats stats = fieldReader.ComputeStats();
                         if (Debugging.AssertsEnabled) Debugging.Assert(stats != null);
                         if (status.BlockTreeStats == null)
                         {
@@ -1893,9 +1896,9 @@ namespace Lucene.Net.Index
                         {
                             throw new Exception("ord out of bounds: " + ord);
                         }
-                        if (dv is RandomAccessOrds)
+                        if (dv is RandomAccessOrds randomAccessOrds2)
                         {
-                            long ord2 = ((RandomAccessOrds)dv).OrdAt(ordCount);
+                            long ord2 = randomAccessOrds2.OrdAt(ordCount);
                             if (ord != ord2)
                             {
                                 throw new Exception("ordAt(" + ordCount + ") inconsistent, expected=" + ord + ",got=" + ord2 + " for doc: " + i);
@@ -1910,9 +1913,9 @@ namespace Lucene.Net.Index
                     {
                         throw new Exception("dv for field: " + fieldName + " has no ordinals but is not marked missing for doc: " + i);
                     }
-                    if (dv is RandomAccessOrds)
+                    if (dv is RandomAccessOrds randomAccessOrds)
                     {
-                        long ordCount2 = ((RandomAccessOrds)dv).Cardinality();
+                        long ordCount2 = randomAccessOrds.Cardinality();
                         if (ordCount != ordCount2)
                         {
                             throw new Exception("cardinality inconsistent, expected=" + ordCount + ",got=" + ordCount2 + " for doc: " + i);
@@ -1926,9 +1929,9 @@ namespace Lucene.Net.Index
                     {
                         throw new Exception("dv for field: " + fieldName + " is marked missing but has ord=" + o + " for doc: " + i);
                     }
-                    if (dv is RandomAccessOrds)
+                    if (dv is RandomAccessOrds randomAccessOrds)
                     {
-                        long ordCount2 = ((RandomAccessOrds)dv).Cardinality();
+                        long ordCount2 = randomAccessOrds.Cardinality();
                         if (ordCount2 != 0)
                         {
                             throw new Exception("dv for field: " + fieldName + " is marked missing but has cardinality " + ordCount2 + " for doc: " + i);
@@ -2028,7 +2031,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private static void CheckNorms(FieldInfo fi, AtomicReader reader, TextWriter infoStream)
+        private static void CheckNorms(FieldInfo fi, AtomicReader reader /*, TextWriter infoStream // LUCENENET: Not used */)
         {
             switch (fi.NormType)
             {
@@ -2135,7 +2138,8 @@ namespace Lucene.Net.Index
                             {
                                 Terms terms = tfv.GetTerms(field);
                                 termsEnum = terms.GetEnumerator(termsEnum);
-                                bool postingsHasFreq = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+                                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                                bool postingsHasFreq = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0;
                                 bool postingsHasPayload = fieldInfo.HasPayloads;
                                 bool vectorsHasPayload = terms.HasPayloads;
 
@@ -2493,7 +2497,7 @@ namespace Lucene.Net.Index
             }
 
             Console.WriteLine("\nOpening index @ " + indexPath + "\n");
-            Directory dir = null;
+            Directory dir/* = null*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
             try
             {
                 if (dirImpl == null)

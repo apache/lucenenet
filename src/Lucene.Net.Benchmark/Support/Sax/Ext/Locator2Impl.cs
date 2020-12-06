@@ -43,9 +43,8 @@ namespace Sax.Ext
         public Locator2(ILocator locator)
             : base(locator)
         {
-            if (locator is Locator2) {
-                Locator2 l2 = (Locator2)locator;
-
+            if (locator is Locator2 l2)
+            {
                 version = l2.XMLVersion;
                 encoding = l2.Encoding;
             }

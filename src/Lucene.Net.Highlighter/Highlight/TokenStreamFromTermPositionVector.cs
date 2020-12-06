@@ -32,13 +32,13 @@ namespace Lucene.Net.Search.Highlight
 
         private IEnumerator<Token> tokensAtCurrentPosition;
 
-        private ICharTermAttribute termAttribute;
+        private readonly ICharTermAttribute termAttribute; // LUCENENET: marked readonly
 
-        private IPositionIncrementAttribute positionIncrementAttribute;
+        private readonly IPositionIncrementAttribute positionIncrementAttribute; // LUCENENET: marked readonly
 
-        private IOffsetAttribute offsetAttribute;
+        private readonly IOffsetAttribute offsetAttribute; // LUCENENET: marked readonly
 
-        private IPayloadAttribute payloadAttribute;
+        private readonly IPayloadAttribute payloadAttribute; // LUCENENET: marked readonly
 
         ///<summary>Constructor</summary>
         /// <param name="vector">

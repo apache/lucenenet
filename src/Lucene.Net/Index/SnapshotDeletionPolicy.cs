@@ -150,16 +150,15 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 long gen = ic.Generation;
-                int refCount;
                 int refCountInt;
-                if (!m_refCounts.TryGetValue(gen, out refCount))
+                if (!m_refCounts.TryGetValue(gen, out int refCount))
                 {
                     m_indexCommits[gen] = m_lastCommit;
                     refCountInt = 0;
                 }
                 else
                 {
-                    refCountInt = (int)refCount;
+                    refCountInt = refCount;
                 }
                 m_refCounts[gen] = refCountInt + 1;
             }

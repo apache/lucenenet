@@ -33,7 +33,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         private readonly BytesRef scratchBytesRef = new BytesRef();
         private SortedDocValues index;
 
-        private string groupField;
+        private readonly string groupField; // LUCENENET: marked readonly
 
         /// <summary>
         /// Create the first pass collector.

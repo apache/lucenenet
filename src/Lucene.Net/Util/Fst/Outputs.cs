@@ -65,6 +65,7 @@ namespace Lucene.Net.Util.Fst
         /// <see cref="DataOutput"/>.  By default this just calls 
         /// <see cref="Write(T, DataOutput)"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void WriteFinalOutput(T output, DataOutput @out)
         {
             Write(output, @out);
@@ -81,6 +82,7 @@ namespace Lucene.Net.Util.Fst
         /// <see cref="WriteFinalOutput(T, DataOutput)"/>.  By default this
         /// just calls <see cref="Read(DataInput)"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual T ReadFinalOutput(DataInput @in)
         {
             return Read(@in);

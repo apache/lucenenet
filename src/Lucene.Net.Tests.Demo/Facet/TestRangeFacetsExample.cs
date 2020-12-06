@@ -28,23 +28,19 @@ namespace Lucene.Net.Demo.Facet
         [Test]
         public void TestSimple()
         {
-            using (RangeFacetsExample example = new RangeFacetsExample())
-            {
-                example.Index();
-                FacetResult result = example.Search();
-                assertEquals("dim=timestamp path=[] value=87 childCount=3\n  Past hour (4)\n  Past six hours (22)\n  Past day (87)\n", result.toString());
-            }
+            using RangeFacetsExample example = new RangeFacetsExample();
+            example.Index();
+            FacetResult result = example.Search();
+            assertEquals("dim=timestamp path=[] value=87 childCount=3\n  Past hour (4)\n  Past six hours (22)\n  Past day (87)\n", result.toString());
         }
 
         [Test]
         public void TestDrillDown()
         {
-            using (RangeFacetsExample example = new RangeFacetsExample())
-            {
-                example.Index();
-                TopDocs hits = example.DrillDown(example.PAST_SIX_HOURS);
-                assertEquals(22, hits.TotalHits);
-            }
+            using RangeFacetsExample example = new RangeFacetsExample();
+            example.Index();
+            TopDocs hits = example.DrillDown(example.PAST_SIX_HOURS);
+            assertEquals(22, hits.TotalHits);
         }
     }
 }

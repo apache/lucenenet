@@ -443,24 +443,23 @@ namespace Lucene.Net.Util
                 return s;
             }
             var c = s = currentState[0] = new State();
-            using (var it = attributeImpls.Values.GetEnumerator())
+            using var it = attributeImpls.Values.GetEnumerator();
+            it.MoveNext();
+            c.attribute = it.Current;
+            while (it.MoveNext())
             {
-                it.MoveNext();
+                c.next = new State();
+                c = c.next;
                 c.attribute = it.Current;
-                while (it.MoveNext())
-                {
-                    c.next = new State();
-                    c = c.next;
-                    c.attribute = it.Current;
-                }
-                return s;
             }
+            return s;
         }
 
         /// <summary>
         /// Resets all <see cref="Attribute"/>s in this <see cref="AttributeSource"/> by calling
         /// <see cref="Attribute.Clear()"/> on each <see cref="IAttribute"/> implementation.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearAttributes()
         {
             for (State state = GetCurrentState(); state != null; state = state.next)
@@ -473,6 +472,7 @@ namespace Lucene.Net.Util
         /// Captures the state of all <see cref="Attribute"/>s. The return value can be passed to
         /// <see cref="RestoreState(State)"/> to restore the state of this or another <see cref="AttributeSource"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual State CaptureState()
         {
             State state = this.GetCurrentState();
@@ -578,23 +578,21 @@ namespace Lucene.Net.Util
         /// </list>
         /// </summary>
         /// <seealso cref="ReflectWith(IAttributeReflector)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public string ReflectAsString(bool prependAttClass)
         {
             StringBuilder buffer = new StringBuilder();
-            ReflectWith(new AttributeReflectorAnonymousInnerClassHelper(this, prependAttClass, buffer));
+            ReflectWith(new AttributeReflectorAnonymousInnerClassHelper(prependAttClass, buffer));
             return buffer.ToString();
         }
 
         private class AttributeReflectorAnonymousInnerClassHelper : IAttributeReflector
         {
-            private readonly AttributeSource outerInstance;
+            private readonly bool prependAttClass;
+            private readonly StringBuilder buffer;
 
-            private bool prependAttClass;
-            private StringBuilder buffer;
-
-            public AttributeReflectorAnonymousInnerClassHelper(AttributeSource outerInstance, bool prependAttClass, StringBuilder buffer)
+            public AttributeReflectorAnonymousInnerClassHelper(bool prependAttClass, StringBuilder buffer)
             {
-                this.outerInstance = outerInstance;
                 this.prependAttClass = prependAttClass;
                 this.buffer = buffer;
             }
@@ -615,7 +613,11 @@ namespace Lucene.Net.Util
                 {
                     buffer.Append(attClass.Name).Append('#');
                 }
-                buffer.Append(key).Append('=').Append(object.ReferenceEquals(value, null) ? "null" : value);
+                buffer.Append(key).Append('=');
+                if (value is null)
+                    buffer.Append("null");
+                else
+                    buffer.Append(value);
             }
         }
 
@@ -627,6 +629,7 @@ namespace Lucene.Net.Util
         /// corresponding <see cref="Attribute.ReflectWith(IAttributeReflector)"/> method.</para>
         /// </summary>
         /// <seealso cref="Attribute.ReflectWith(IAttributeReflector)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ReflectWith(IAttributeReflector reflector)
         {
             for (State state = GetCurrentState(); state != null; state = state.next)

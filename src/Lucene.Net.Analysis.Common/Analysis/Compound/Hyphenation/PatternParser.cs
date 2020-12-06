@@ -91,10 +91,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         public virtual void Parse(string path, Encoding encoding)
         {
             var xmlReaderSettings = GetXmlReaderSettings();
-            using (var src = XmlReader.Create(new StreamReader(new FileStream(path, FileMode.Open), encoding), xmlReaderSettings))
-            {
-                Parse(src);
-            }
+            using var src = XmlReader.Create(new StreamReader(new FileStream(path, FileMode.Open), encoding), xmlReaderSettings);
+            Parse(src);
         }
 
         /// <summary>
@@ -117,10 +115,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         {
             var xmlReaderSettings = GetXmlReaderSettings();
 
-            using (var src = XmlReader.Create(new StreamReader(file.OpenRead(), encoding), xmlReaderSettings))
-            {
-                Parse(src);
-            }
+            using var src = XmlReader.Create(new StreamReader(file.OpenRead(), encoding), xmlReaderSettings);
+            Parse(src);
         }
 
         /// <summary>
@@ -138,10 +134,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         {
             var xmlReaderSettings = GetXmlReaderSettings();
 
-            using (var src = XmlReader.Create(xmlStream, xmlReaderSettings))
-            {
-                Parse(src);
-            }
+            using var src = XmlReader.Create(xmlStream, xmlReaderSettings);
+            Parse(src);
         }
 
         /// <summary>

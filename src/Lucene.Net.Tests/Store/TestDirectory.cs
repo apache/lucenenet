@@ -139,7 +139,7 @@ namespace Lucene.Net.Store
                         {
                             try
                             {
-                                using (IndexInput input = outerBDWrapper.OpenInput(file, NewIOContext(Random))) { }
+                                using IndexInput input = outerBDWrapper.OpenInput(file, NewIOContext(Random));
                             }
 #pragma warning disable 168
                             catch (FileNotFoundException fne)
@@ -381,51 +381,49 @@ namespace Lucene.Net.Store
             var path = CreateTempDir("nocreate");
             Console.WriteLine(path.FullName);
 
-            using (Directory fsdir = new SimpleFSDirectory(path))
+            using Directory fsdir = new SimpleFSDirectory(path);
+            // write a file
+            using (var o = fsdir.CreateOutput("afile", NewIOContext(Random)))
             {
-                // write a file
-                using (var o = fsdir.CreateOutput("afile", NewIOContext(Random)))
-                {
-                    o.WriteString("boo");
-                }
-
-                // delete it
-                try
-                {
-                    File.Delete(Path.Combine(path.FullName, "afile"));
-                }
-                catch (Exception e)
-                {
-                    Assert.Fail("Deletion of new Directory should never fail.\nException thrown: {0}", e);
-                }
-
-                // directory is empty
-                Assert.AreEqual(0, fsdir.ListAll().Length);
-
-
-                // LUCENENET specific: Since FSDirectory.Sync() does not actually do anything in .NET
-                // we decided to remove the exception as well. This is safe to ignore here.
-                //// fsync it
-                //try
-                //{
-                //    fsdir.Sync(Collections.Singleton("afile"));
-                //    Assert.Fail("didn't get expected exception, instead fsync created new files: " +
-                //                Collections.ToString(fsdir.ListAll()));
-                //}
-                //catch (FileNotFoundException)
-                //{
-                //    // ok
-                //}
-                //// LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-                //// in Lucene, we need to catch it here to be on the safe side.
-                //catch (DirectoryNotFoundException)
-                //{
-                //    // ok
-                //}
-
-                // directory is still empty
-                Assert.AreEqual(0, fsdir.ListAll().Length);
+                o.WriteString("boo");
             }
+
+            // delete it
+            try
+            {
+                File.Delete(Path.Combine(path.FullName, "afile"));
+            }
+            catch (Exception e)
+            {
+                Assert.Fail("Deletion of new Directory should never fail.\nException thrown: {0}", e);
+            }
+
+            // directory is empty
+            Assert.AreEqual(0, fsdir.ListAll().Length);
+
+
+            // LUCENENET specific: Since FSDirectory.Sync() does not actually do anything in .NET
+            // we decided to remove the exception as well. This is safe to ignore here.
+            //// fsync it
+            //try
+            //{
+            //    fsdir.Sync(Collections.Singleton("afile"));
+            //    Assert.Fail("didn't get expected exception, instead fsync created new files: " +
+            //                Collections.ToString(fsdir.ListAll()));
+            //}
+            //catch (FileNotFoundException)
+            //{
+            //    // ok
+            //}
+            //// LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
+            //// in Lucene, we need to catch it here to be on the safe side.
+            //catch (DirectoryNotFoundException)
+            //{
+            //    // ok
+            //}
+
+            // directory is still empty
+            Assert.AreEqual(0, fsdir.ListAll().Length);
         }
 
         [Test]
@@ -434,51 +432,49 @@ namespace Lucene.Net.Store
         public virtual void ConcurrentIndexAccessThrowsWithoutSynchronizedStaleFiles()
         {
             DirectoryInfo tempDir = CreateTempDir(GetType().Name);
-            using (Directory dir = new SimpleFSDirectory(tempDir))
+            using Directory dir = new SimpleFSDirectory(tempDir);
+            var ioContext = NewIOContext(Random);
+            var threads = new Thread[Environment.ProcessorCount];
+            int file = 0;
+            Exception exception = null;
+            bool stopped = false;
+
+            using (var @event = new ManualResetEvent(false))
             {
-                var ioContext = NewIOContext(Random);
-                var threads = new Thread[Environment.ProcessorCount];
-                int file = 0;
-                Exception exception = null;
-                bool stopped = false;
-
-                using (var @event = new ManualResetEvent(false))
+                for (int i = 0; i < threads.Length; i++)
                 {
-                    for (int i = 0; i < threads.Length; i++)
+                    var thread = new Thread(() =>
                     {
-                        var thread = new Thread(() =>
+                        while (!stopped)
                         {
-                            while (!stopped)
+                            int nextFile = Interlocked.Increment(ref file);
+                            try
                             {
-                                int nextFile = Interlocked.Increment(ref file);
-                                try
-                                {
-                                    dir.CreateOutput("test" + nextFile, ioContext).Dispose();
-                                }
-                                catch (Exception ex)
-                                {
-                                    exception = ex;
-                                    @event.Set();
-                                    break;
-                                }
+                                dir.CreateOutput("test" + nextFile, ioContext).Dispose();
                             }
-                        });
-                        thread.Start();
-                        threads[i] = thread;
-                    }
-
-                    bool raised = @event.WaitOne(TimeSpan.FromSeconds(5));
-
-                    stopped = true;
-
-                    if (raised)
-                        throw new Exception("Test failed", exception);
+                            catch (Exception ex)
+                            {
+                                exception = ex;
+                                @event.Set();
+                                break;
+                            }
+                        }
+                    });
+                    thread.Start();
+                    threads[i] = thread;
                 }
 
-                foreach (var thread in threads)
-                {
-                    thread.Join();
-                }
+                bool raised = @event.WaitOne(TimeSpan.FromSeconds(5));
+
+                stopped = true;
+
+                if (raised)
+                    throw new Exception("Test failed", exception);
+            }
+
+            foreach (var thread in threads)
+            {
+                thread.Join();
             }
         }
 

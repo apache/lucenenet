@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             max = RequireInt32(args, MAX_KEY);
             if (args.Count > 0)
             {
-                throw new ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
             }
         }
 

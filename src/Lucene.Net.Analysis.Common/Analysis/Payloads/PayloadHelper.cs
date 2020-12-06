@@ -20,7 +20,7 @@
     /// <summary>
     /// Utility methods for encoding payloads.
     /// </summary>
-    public class PayloadHelper
+    public static class PayloadHelper // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>
         /// NOTE: This was encodeFloat() in Lucene

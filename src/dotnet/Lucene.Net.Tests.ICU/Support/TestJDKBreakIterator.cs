@@ -33,7 +33,7 @@ namespace Lucene.Net.Tests.ICU.Support
     //	+ "and http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/sun/text/resources/BreakIteratorRules_th.java#BreakIteratorRules_th")]
     public class TestJdkBreakIterator
     {
-        static readonly String TEXT =
+        const String TEXT =
             "Apache Lucene(TM) is a high-performance, full-featured text search engine library written entirely in Java.";
 
         private BreakIterator GetWordInstance(System.Globalization.CultureInfo locale)
@@ -194,7 +194,7 @@ namespace Lucene.Net.Tests.ICU.Support
         }
 
 
-        static readonly String SENTENCE_TEXT =
+        const String SENTENCE_TEXT =
             "Apache Lucene(TM) is a high-performance, full-featured text\nsearch engine library written entirely in Java. " +
             "It is a technology suitable for nearly any application that requires" +
             "full-text search, especially cross-platform. Apache Lucene is an open source project available for free download.\n" +
@@ -283,7 +283,7 @@ namespace Lucene.Net.Tests.ICU.Support
         // NOTE: This test doesn't pass. We need to customize line iteration in order to get it to. However,
         // none of the defaults set in lucene use line iteration, so this is low priority. Leaving in place
         // in case we need to make JDK style line breaks in the future.
-        static readonly String LINE_TEXT =
+        const String LINE_TEXT =
             "Apache\tLucene(TM) is a high-\nperformance, full-featured text search engine library written entirely in Java.";
 
         private BreakIterator GetLineInstance(System.Globalization.CultureInfo locale)

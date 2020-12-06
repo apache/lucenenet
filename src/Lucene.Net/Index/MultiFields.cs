@@ -254,8 +254,7 @@ namespace Lucene.Net.Index
 
         public override Terms GetTerms(string field)
         {
-            Terms result;
-            if (terms.TryGetValue(field, out result) && result != null)
+            if (terms.TryGetValue(field, out Terms result) && result != null)
             {
                 return result;
             }

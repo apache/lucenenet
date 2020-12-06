@@ -59,10 +59,9 @@ namespace Lucene.Net.Search.Spans
             this.m_query = query;
 
             MultiTermQuery.RewriteMethod method = this.m_query.MultiTermRewriteMethod;
-            if (method is ITopTermsRewrite)
+            if (method is ITopTermsRewrite topTermsRewrite)
             {
-                int pqsize = ((ITopTermsRewrite)method).Count;
-                MultiTermRewriteMethod = new TopTermsSpanBooleanQueryRewrite(pqsize);
+                MultiTermRewriteMethod = new TopTermsSpanBooleanQueryRewrite(topTermsRewrite.Count);
             }
             else
             {
@@ -79,11 +78,11 @@ namespace Lucene.Net.Search.Spans
             get
             {
                 MultiTermQuery.RewriteMethod m = m_query.MultiTermRewriteMethod;
-                if (!(m is SpanRewriteMethod))
+                if (!(m is SpanRewriteMethod spanRewriteMethod))
                 {
                     throw new NotSupportedException("You can only use SpanMultiTermQueryWrapper with a suitable SpanRewriteMethod.");
                 }
-                return (SpanRewriteMethod)m;
+                return spanRewriteMethod;
             }
             set => m_query.MultiTermRewriteMethod = value;
         }
@@ -225,17 +224,14 @@ namespace Lucene.Net.Search.Spans
             /// </summary>
             public TopTermsSpanBooleanQueryRewrite(int size)
             {
-                @delegate = new TopTermsRewriteAnonymousInnerClassHelper(this, size);
+                @delegate = new TopTermsRewriteAnonymousInnerClassHelper(size);
             }
 
             private class TopTermsRewriteAnonymousInnerClassHelper : TopTermsRewrite<SpanOrQuery>
             {
-                private readonly TopTermsSpanBooleanQueryRewrite outerInstance;
-
-                public TopTermsRewriteAnonymousInnerClassHelper(TopTermsSpanBooleanQueryRewrite outerInstance, int size)
+                public TopTermsRewriteAnonymousInnerClassHelper(int size)
                     : base(size)
                 {
-                    this.outerInstance = outerInstance;
                 }
 
                 protected override int MaxSize => int.MaxValue;

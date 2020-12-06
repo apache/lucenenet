@@ -25,7 +25,7 @@ namespace Lucene.Net.Support
     /// that are commonly used in .NET method and property names.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Event | AttributeTargets.Class, AllowMultiple = false)]
-    internal class ExceptionToNetNumericConventionAttribute : Attribute
+    internal sealed class ExceptionToNetNumericConventionAttribute : Attribute
     {
     }
 }

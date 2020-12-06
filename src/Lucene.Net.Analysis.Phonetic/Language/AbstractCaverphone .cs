@@ -35,31 +35,12 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Creates an instance of the Caverphone encoder
         /// </summary>
-        public AbstractCaverphone()
+        protected AbstractCaverphone() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base()
         {
         }
 
-        // LUCENENET specific - in .NET we don't need an object overload, since strings are sealed anyway.
-        //    /**
-        //     * Encodes an Object using the caverphone algorithm. This method is provided in order to satisfy the requirements of
-        //     * the Encoder interface, and will throw an EncoderException if the supplied object is not of type java.lang.String.
-        //     *
-        //     * @param source
-        //     *            Object to encode
-        //     * @return An object (or type java.lang.String) containing the caverphone code which corresponds to the String
-        //     *         supplied.
-        //     * @throws EncoderException
-        //     *             if the parameter supplied is not of type java.lang.String
-        //     */
-        //    @Override
-        //public Object encode(final Object source) throws EncoderException
-        //    {
-        //    if (!(source instanceof String)) {
-        //            throw new EncoderException("Parameter supplied to Caverphone encode is not of type java.lang.String");
-        //        }
-        //    return this.encode((String) source);
-        //    }
+        // LUCENENET specific - in .NET we don't need an object overload of Encode(), since strings are sealed anyway.
 
         // LUCENENET specific - must provide implementation for IStringEncoder
         public abstract string Encode(string source);

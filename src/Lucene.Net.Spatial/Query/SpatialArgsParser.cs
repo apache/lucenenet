@@ -120,9 +120,8 @@ namespace Lucene.Net.Spatial.Queries
 
         protected virtual void ReadNameValuePairs(SpatialArgs args, IDictionary<string, string> nameValPairs)
         {
-            string distErrPctStr, distErrStr;
-            nameValPairs.TryGetValue(DIST_ERR_PCT, out distErrPctStr);
-            nameValPairs.TryGetValue(DIST_ERR, out distErrStr);
+            nameValPairs.TryGetValue(DIST_ERR_PCT, out string distErrPctStr);
+            nameValPairs.TryGetValue(DIST_ERR, out string distErrStr);
             args.DistErrPct = ReadDouble(distErrPctStr);
             nameValPairs.Remove(DIST_ERR_PCT);
             args.DistErr = ReadDouble(distErrStr);

@@ -1,10 +1,10 @@
 ---
 uid: contributing/current-status
 ---
-The current status of the Lucene.Net project
-===============
 
----------------
+# The current status of the Lucene.Net project
+
+---
 
 Working toward Lucene.Net 4.8.0 (currently in BETA)
 

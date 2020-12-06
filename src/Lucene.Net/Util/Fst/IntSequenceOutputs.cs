@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -105,7 +106,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(inc.Length < output.Length, () => "inc.length=" + inc.Length + " vs output.length=" + output.Length);
+                    Debugging.Assert(inc.Length < output.Length,"inc.length={0} vs output.length={1}", inc.Length, output.Length);
                     Debugging.Assert(inc.Length > 0);
                 }
                 return new Int32sRef(output.Int32s, output.Offset + inc.Length, output.Length - inc.Length);
@@ -173,6 +174,7 @@ namespace Lucene.Net.Util.Fst
 
         public override Int32sRef NoOutput => NO_OUTPUT;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string OutputToString(Int32sRef output)
         {
             return output.ToString();

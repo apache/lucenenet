@@ -99,5 +99,29 @@ namespace Lucene.Net.Analysis
             m_input.End();
             finalState = CaptureState();
         }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="CachingTokenFilter"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+
+        // LUCENENET specific
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (disposing)
+                {
+                    iterator?.Dispose();
+                    iterator = null;
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
+        }
     }
 }

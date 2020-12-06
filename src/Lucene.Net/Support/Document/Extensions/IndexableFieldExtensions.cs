@@ -32,7 +32,7 @@ namespace Lucene.Net.Documents.Extensions
         /// <returns>The field value or <c>0</c> if the type is non-numeric.</returns>
         public static byte GetByteValueOrDefault(this IIndexableField field)
         {
-            if (field == null) return default(byte);
+            if (field is null) return default;
             return field.GetByteValue().GetValueOrDefault();
         }
 
@@ -44,7 +44,7 @@ namespace Lucene.Net.Documents.Extensions
         /// <returns>The field value or <c>0</c> if the type is non-numeric.</returns>
         public static short GetInt16ValueOrDefault(this IIndexableField field)
         {
-            if (field == null) return default(short);
+            if (field is null) return default;
             return field.GetInt16Value().GetValueOrDefault();
         }
 
@@ -56,7 +56,7 @@ namespace Lucene.Net.Documents.Extensions
         /// <returns>The field value or <c>0</c> if the type is non-numeric.</returns>
         public static int GetInt32ValueOrDefault(this IIndexableField field)
         {
-            if (field == null) return default(int);
+            if (field is null) return default;
             return field.GetInt32Value().GetValueOrDefault();
         }
 
@@ -68,7 +68,7 @@ namespace Lucene.Net.Documents.Extensions
         /// <returns>The field value or <c>0</c> if the type is non-numeric.</returns>
         public static long GetInt64ValueOrDefault(this IIndexableField field)
         {
-            if (field == null) return default(long);
+            if (field is null) return default;
             return field.GetInt64Value().GetValueOrDefault();
         }
 
@@ -80,7 +80,7 @@ namespace Lucene.Net.Documents.Extensions
         /// <returns>The field value or <c>0</c> if the type is non-numeric.</returns>
         public static float GetSingleValueOrDefault(this IIndexableField field)
         {
-            if (field == null) return default(float);
+            if (field is null) return default;
             return field.GetSingleValue().GetValueOrDefault();
         }
 
@@ -92,7 +92,7 @@ namespace Lucene.Net.Documents.Extensions
         /// <returns>The field value or <c>0</c> if the type is non-numeric.</returns>
         public static double GetDoubleValueOrDefault(this IIndexableField field)
         {
-            if (field == null) return default(double);
+            if (field is null) return default;
             return field.GetDoubleValue().GetValueOrDefault();
         }
     }

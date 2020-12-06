@@ -72,11 +72,9 @@ namespace Lucene.Net.Demo
                     string fileName = Regex.Replace(file, ".*" + embeddedDocsLocation.Replace(".", @"\."), "");
                     string destinationPath = Path.Combine(filesDir.FullName, fileName);
 
-                    using (Stream input = thisAssembly.GetManifestResourceStream(file))
-                    using (Stream output = new FileStream(destinationPath, FileMode.Create, FileAccess.Write))
-                    {
-                        input.CopyTo(output);
-                    }
+                    using Stream input = thisAssembly.GetManifestResourceStream(file);
+                    using Stream output = new FileStream(destinationPath, FileMode.Create, FileAccess.Write);
+                    input.CopyTo(output);
                 }
             }
 

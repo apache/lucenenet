@@ -185,9 +185,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         if (Debugging.AssertsEnabled) Debugging.Assert(hasNext == true);
                         term = termAtt.ToString();
                     }
-#pragma warning disable 168
-                    catch (IOException e)
-#pragma warning restore 168
+                    catch (IOException) // LUCENENET: IDE0059: Remove unnecessary value assignment
                     {
                         // safe to ignore, because we know the number of tokens
                     }
@@ -216,9 +214,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                     if (Debugging.AssertsEnabled) Debugging.Assert(hasNext == true);
                                     term = termAtt.ToString();
                                 }
-#pragma warning disable 168
-                                catch (IOException e)
-#pragma warning restore 168
+                                catch (IOException) // LUCENENET: IDE0059: Remove unnecessary value assignment
                                 {
                                     // safe to ignore, because we know the number of tokens
                                 }
@@ -243,9 +239,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                     if (Debugging.AssertsEnabled) Debugging.Assert(hasNext == true);
                                     term = termAtt.ToString();
                                 }
-#pragma warning disable 168
-                                catch (IOException e)
-#pragma warning restore 168
+                                catch (IOException) // LUCENENET: IDE0059: Remove unnecessary value assignment
                                 {
                                     // safe to ignore, because we know the number of tokens
                                 }
@@ -314,9 +308,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                     positionIncrement = posIncrAtt.PositionIncrement;
                                 }
                             }
-#pragma warning disable 168
-                            catch (IOException e)
-#pragma warning restore 168
+                            catch (IOException) // LUCENENET: IDE0059: Remove unnecessary value assignment
                             {
                                 // safe to ignore, because we know the number of tokens
                             }
@@ -387,9 +379,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 positionIncrement = posIncrAtt.PositionIncrement;
                             }
                         }
-#pragma warning disable 168
-                        catch (IOException e)
-#pragma warning restore 168
+                        catch (IOException) // LUCENENET: IDE0059: Remove unnecessary value assignment
                         {
                             // safe to ignore, because we know the number of tokens
                         }

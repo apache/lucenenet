@@ -30,7 +30,7 @@ namespace Lucene.Net.Queries.Function.DocValues
     {
         protected readonly ValueSource m_vs;
 
-        public DoubleDocValues(ValueSource vs)
+        protected DoubleDocValues(ValueSource vs) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.m_vs = vs;
         }

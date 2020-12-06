@@ -102,7 +102,7 @@ stages:
     steps:
     
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
-      fetchDepth: 1  # the depth of commits to ask Git to fetch
+      fetchDepth: '1'  # the depth of commits to ask Git to fetch
 
     - powershell: |
         $configuration = if ($env:BUILDCONFIGURATION) { $env:BUILDCONFIGURATION } else { "Release" }
@@ -110,9 +110,9 @@ stages:
       displayName: 'Setup Default Variable Values'
 
     - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk 3.1.301'
+      displayName: 'Use .NET Core sdk 5.0.100'
       inputs:
-        version: 3.1.301
+        version: 5.0.100
 
     - powershell: |
         Import-Module "$(BuildDirectory)/psake.psm1"
@@ -148,7 +148,7 @@ stages:
         $nightly = if ($Env:IsNightly -eq 'true') { 'true' } else { 'false' }
         $weekly = if ($Env:IsWeekly -eq 'true') { 'true' } else { 'false' }
         $slow = if ($Env:RunSlowTests -ne 'false') { 'true' } else { 'false' }
-        $awaitsFix = if ($Env:RunAwaitsFixTests -eq 'true') { 'true' } else { 'false' }
+        $awaitsFix = if ($Env:RunAwaitsFixTests -ne 'false') { 'true' } else { 'false' }
         $codec = if ($Env:Codec -eq $null) { 'random' } else { $Env:Codec }
         $docValuesFormat = if ($Env:DocValuesFormat -eq $null) { 'random' } else { $Env:DocValuesFormat }
         $postingsFormat = if ($Env:PostingsFormat -eq $null) { 'random' } else { $Env:PostingsFormat }
@@ -202,6 +202,27 @@ stages:
         Contents: '**/bin/$(BuildConfiguration)/**/*.pdb'
         TargetFolder: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
 
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Artifact: $(NuGetArtifactName)'
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
+        artifact: '$(NuGetArtifactName)'
+        publishLocation: 'pipeline'
+    
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Artifact: $(DebugArtifactName)'
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
+        artifact: '$(DebugArtifactName)'
+        publishLocation: 'pipeline'
+
+    - template: 'build/azure-templates/publish-test-binaries.yml'
+      parameters:
+        publishDirectory: $(PublishTempDirectory)
+        framework: 'net5.0'
+        binaryArtifactName: '$(BinaryArtifactName)'
+        testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+
     - template: 'build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
@@ -222,20 +243,6 @@ stages:
         framework: 'net48'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
-
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Artifact: $(NuGetArtifactName)'
-      inputs:
-        targetPath: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
-        artifact: '$(NuGetArtifactName)'
-        publishLocation: 'pipeline'
-    
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Artifact: $(DebugArtifactName)'
-      inputs:
-        targetPath: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
-        artifact: '$(DebugArtifactName)'
-        publishLocation: 'pipeline'
         
   - job: Docs
     condition: and(succeeded(), eq(variables['GenerateDocs'], 'true'))
@@ -246,8 +253,8 @@ stages:
     - powershell: |
          $(Build.SourcesDirectory)/websites/apidocs/docs.ps1 -LuceneNetVersion $(PackageVersion) -Clean -BaseUrl https://lucenenet.apache.org/docs/
       errorActionPreference: 'continue'
-      ignoreLASTEXITCODE: true
-      failOnStderr: false
+      ignoreLASTEXITCODE: 'true'
+      failOnStderr: 'false'
       displayName: 'Generate Documentation'
 
     - task: ArchiveFiles@2
@@ -272,8 +279,8 @@ stages:
     - powershell: |
          $(Build.SourcesDirectory)/websites/site/site.ps1 0 1
       errorActionPreference: 'continue'
-      ignoreLASTEXITCODE: true
-      failOnStderr: false
+      ignoreLASTEXITCODE: 'true'
+      failOnStderr: 'false'
       displayName: 'Generate Website'
 
     - task: ArchiveFiles@2
@@ -293,6 +300,71 @@ stages:
 - stage: Test_Stage
   displayName: 'Test Stage:'
   jobs:
+
+  - job: Test_net5_0_x64
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+    strategy:
+      matrix:
+        Windows:
+          osName: 'Windows'
+          imageName: 'windows-2019'
+          maximumParallelJobs: 8
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+        Linux:
+          osName: 'Linux'
+          imageName: 'ubuntu-16.04'
+          maximumParallelJobs: 7
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+        macOS:
+          osName: 'macOS'
+          imageName: 'macOS-10.14'
+          maximumParallelJobs: 7
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+    displayName: 'Test net5.0,x64 on'
+    pool:
+      vmImage: $(imageName)
+    steps:
+    - template: 'build/azure-templates/run-tests-on-os.yml'
+      parameters:
+        osName: $(osName)
+        framework: 'net5.0'
+        vsTestPlatform: 'x64'
+        testResultsArtifactName: '$(TestResultsArtifactName)'
+        maximumParallelJobs: $(maximumParallelJobs)
+        maximumAllowedFailures: $(maximumAllowedFailures)
+
+  - job: Test_net5_0_x86 # Only run Nightly
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'), eq(variables['IsNightly'], 'true'))
+    strategy:
+      matrix:
+        Windows:
+          osName: 'Windows'
+          imageName: 'windows-2019'
+          maximumParallelJobs: 8
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+        Linux:
+          osName: 'Linux'
+          imageName: 'ubuntu-16.04'
+          maximumParallelJobs: 7
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+        macOS:
+          osName: 'macOS'
+          imageName: 'macOS-10.14'
+          maximumParallelJobs: 7
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+    displayName: 'Test net5.0,x86 on'
+    pool:
+      vmImage: $(imageName)
+    steps:
+    - template: 'build/azure-templates/run-tests-on-os.yml'
+      parameters:
+        osName: $(osName)
+        framework: 'net5.0'
+        vsTestPlatform: 'x86'
+        testResultsArtifactName: '$(TestResultsArtifactName)'
+        maximumParallelJobs: $(maximumParallelJobs)
+        maximumAllowedFailures: $(maximumAllowedFailures)
+
   - job: Test_netcoreapp3_1_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
     strategy:
@@ -436,8 +508,8 @@ stages:
         maximumParallelJobs: 8
         maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
 
-  - job: Test_net48_Windows_x86
-    condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+  - job: Test_net48_Windows_x86 # Only run Nightly
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'), eq(variables['IsNightly'], 'true'))
     displayName: 'Test net48,x86 on Windows'
     pool:
       vmImage: 'windows-2019'
@@ -466,7 +538,7 @@ stages:
     steps:
       # We checkout here because we need to publish the source code along with the symbols for debugging
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
-      fetchDepth: 1  # the depth of commits to ask Git to fetch
+      fetchDepth: '1'  # the depth of commits to ask Git to fetch
 
     - template: 'build/azure-templates/show-all-environment-variables.yml'
 
@@ -509,12 +581,12 @@ stages:
     steps:
     # We checkout here because we need to publish the source code along with the binaries per Apache's releae policy
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
-      fetchDepth: 1  # the depth of commits to ask Git to fetch
+      fetchDepth: '1'  # the depth of commits to ask Git to fetch
 
     - template: 'build/azure-templates/show-all-environment-variables.yml'
 
 
-    - task: DownloadPipelineArtifact@0
+    - task: 'DownloadPipelineArtifact@0'
       displayName: 'Download Build Artifacts: $(NuGetArtifactName)'
       inputs:
         artifactName: '$(NuGetArtifactName)'

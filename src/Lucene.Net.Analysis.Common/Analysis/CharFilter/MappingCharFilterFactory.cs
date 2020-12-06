@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.CharFilters
             mapping = Get(args, "mapping");
             if (args.Count > 0)
             {
-                throw new ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
             }
         }
 
@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.CharFilters
             }
         }
 
-        private char[] @out = new char[256];
+        private readonly char[] @out = new char[256]; // LUCENENET: marked readonly
 
         protected internal virtual string ParseString(string s)
         {

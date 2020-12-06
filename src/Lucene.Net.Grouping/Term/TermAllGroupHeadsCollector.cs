@@ -52,14 +52,9 @@ namespace Lucene.Net.Search.Grouping.Terms
     /// specifying its generic closing type.
     /// (TermAllGroupHeadsCollector.Create() rather than TermAllGroupHeadsCollector{GH}.Create()).
     /// </summary>
-    public class TermAllGroupHeadsCollector
+    public static class TermAllGroupHeadsCollector // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        private static readonly int DEFAULT_INITIAL_SIZE = 128;
-
-        /// <summary>
-        /// Disallow creation
-        /// </summary>
-        private TermAllGroupHeadsCollector() { }
+        private const int DEFAULT_INITIAL_SIZE = 128;
 
         /// <summary>
         /// Creates an <see cref="AbstractAllGroupHeadsCollector"/> instance based on the supplied arguments.
@@ -171,8 +166,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                 groupIndex.LookupOrd(ord, scratchBytesRef);
                 groupValue = scratchBytesRef;
             }
-            GroupHead groupHead;
-            if (!groups.TryGetValue(groupValue, out groupHead))
+            if (!groups.TryGetValue(groupValue, out GroupHead groupHead))
             {
                 groupHead = new GroupHead(this, groupValue, sortWithinGroup, doc);
                 groups[groupValue == null ? null : BytesRef.DeepCopyOf(groupValue)] = groupHead;
@@ -267,7 +261,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         private readonly IList<GroupHead> collectedGroups;
         private readonly SortField[] fields;
 
-        private SortedDocValues[] sortsIndex;
+        private readonly SortedDocValues[] sortsIndex; // LUCENENET: marked readonly
         private Scorer scorer;
         private GroupHead[] segmentGroupHeads;
 
@@ -492,7 +486,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         private readonly IList<GroupHead> collectedGroups;
         private readonly SortField[] fields;
 
-        private SortedDocValues[] sortsIndex;
+        private readonly SortedDocValues[] sortsIndex; // LUCENENET: marked readonly
         private GroupHead[] segmentGroupHeads;
 
         internal OrdAllGroupHeadsCollector(string groupField, Sort sortWithinGroup, int initialSize)

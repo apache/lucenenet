@@ -31,7 +31,7 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestStringToDate()
         {
-            DateTime d = default(DateTime);
+            DateTime d = default;
             d = DateTools.StringToDate("2004");
             Assert.AreEqual("2004-01-01 00:00:00:000", IsoFormat(d));
             d = DateTools.StringToDate("20040705");

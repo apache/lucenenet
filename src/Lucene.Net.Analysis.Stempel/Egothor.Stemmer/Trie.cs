@@ -248,7 +248,7 @@ namespace Egothor.Stemmer
             int cmd = -1;
             StrEnum e = new StrEnum(key, forward);
             char ch;
-            char aux;
+            //char aux; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
             for (int i = 0; i < key.Length;)
             {
@@ -267,7 +267,7 @@ namespace Egothor.Stemmer
                 {
                     if (i < key.Length)
                     {
-                        aux = e.Next();
+                        /*aux =*/e.Next(); // LUCENENET: IDE0059: Remove unnecessary value assignment
                     }
                     else
                     {
@@ -429,9 +429,9 @@ namespace Egothor.Stemmer
         /// </summary>
         internal class StrEnum
         {
-            private string s;
+            private readonly string s; // LUCENENET: marked readonly
             private int from;
-            private int by;
+            private readonly int by; // LUCENENET: marked readonly
 
             /// <summary>
             /// Constructor for the <see cref="StrEnum"/> object

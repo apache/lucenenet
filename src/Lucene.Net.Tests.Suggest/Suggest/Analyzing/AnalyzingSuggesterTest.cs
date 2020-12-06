@@ -1183,17 +1183,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 this.outerInstance = outerInstance;
             }
 
-            public override TokenStream TokenStream
-            {
-                get
-                {
-                    return new CannedTokenStream(new Token[] {
-                        NewToken("hairy", 1, 1),
-                        NewToken("smelly", 0, 1),
-                        NewToken("dog", 1, 1),
-                    });
-                }
-            }
+            public override TokenStream TokenStream => new CannedTokenStream(new Token[] {
+                    NewToken("hairy", 1, 1),
+                    NewToken("smelly", 0, 1),
+                    NewToken("dog", 1, 1),
+                });
 
             protected internal override void SetReader(TextReader reader)
             {

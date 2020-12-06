@@ -248,11 +248,9 @@ namespace Lucene.Net.QueryParsers.Xml
 
         private Query Parse(String xmlFileName)
         {
-            using (Stream xmlStream = typeof(TestParser).getResourceAsStream(xmlFileName))
-            {
-                Query result = builder.Parse(xmlStream);
-                return result;
-            }
+            using Stream xmlStream = typeof(TestParser).getResourceAsStream(xmlFileName);
+            Query result = builder.Parse(xmlStream);
+            return result;
         }
 
         private void DumpResults(String qType, Query q, int numDocs)

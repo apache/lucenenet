@@ -50,39 +50,36 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             };
 
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
-            using (AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3))
-            {
-                suggester.Build(new InputArrayEnumerator(keys));
+            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3);
+            suggester.Build(new InputArrayEnumerator(keys));
 
-                IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
-                assertEquals(2, results.size());
-                assertEquals("a penny saved is a penny <b>ear</b>ned", results[0].Key);
-                assertEquals(10, results[0].Value);
-                assertEquals(new BytesRef("foobaz"), results[0].Payload);
+            IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
+            assertEquals(2, results.size());
+            assertEquals("a penny saved is a penny <b>ear</b>ned", results[0].Key);
+            assertEquals(10, results[0].Value);
+            assertEquals(new BytesRef("foobaz"), results[0].Payload);
 
-                assertEquals("lend me your <b>ear</b>", results[1].Key);
-                assertEquals(8, results[1].Value);
-                assertEquals(new BytesRef("foobar"), results[1].Payload);
+            assertEquals("lend me your <b>ear</b>", results[1].Key);
+            assertEquals(8, results[1].Value);
+            assertEquals(new BytesRef("foobar"), results[1].Payload);
 
-                results = suggester.DoLookup(TestUtil.StringToCharSequence("ear ", Random).ToString(), 10, true, true);
-                assertEquals(1, results.size());
-                assertEquals("lend me your <b>ear</b>", results[0].Key);
-                assertEquals(8, results[0].Value);
-                assertEquals(new BytesRef("foobar"), results[0].Payload);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("ear ", Random).ToString(), 10, true, true);
+            assertEquals(1, results.size());
+            assertEquals("lend me your <b>ear</b>", results[0].Key);
+            assertEquals(8, results[0].Value);
+            assertEquals(new BytesRef("foobar"), results[0].Payload);
 
-                results = suggester.DoLookup(TestUtil.StringToCharSequence("pen", Random).ToString(), 10, true, true);
-                assertEquals(1, results.size());
-                assertEquals("a <b>pen</b>ny saved is a <b>pen</b>ny earned", results[0].Key);
-                assertEquals(10, results[0].Value);
-                assertEquals(new BytesRef("foobaz"), results[0].Payload);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("pen", Random).ToString(), 10, true, true);
+            assertEquals(1, results.size());
+            assertEquals("a <b>pen</b>ny saved is a <b>pen</b>ny earned", results[0].Key);
+            assertEquals(10, results[0].Value);
+            assertEquals(new BytesRef("foobaz"), results[0].Payload);
 
-                results = suggester.DoLookup(TestUtil.StringToCharSequence("p", Random).ToString(), 10, true, true);
-                assertEquals(1, results.size());
-                assertEquals("a <b>p</b>enny saved is a <b>p</b>enny earned", results[0].Key);
-                assertEquals(10, results[0].Value);
-                assertEquals(new BytesRef("foobaz"), results[0].Payload);
-
-            }
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("p", Random).ToString(), 10, true, true);
+            assertEquals(1, results.size());
+            assertEquals("a <b>p</b>enny saved is a <b>p</b>enny earned", results[0].Key);
+            assertEquals(10, results[0].Value);
+            assertEquals(new BytesRef("foobaz"), results[0].Payload);
         }
 
         [Test]
@@ -215,17 +212,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             };
 
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
-            using (AnalyzingInfixSuggester suggester = new TestHighlightAnalyzingInfixSuggester(this, a))
-            {
+            using AnalyzingInfixSuggester suggester = new TestHighlightAnalyzingInfixSuggester(this, a);
+            suggester.Build(new InputArrayEnumerator(keys));
 
-                suggester.Build(new InputArrayEnumerator(keys));
-
-                IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
-                assertEquals(1, results.size());
-                assertEquals("a penny saved is a penny <b>ear</b>ned", ToString((List<LookupHighlightFragment>)results[0].HighlightKey));
-                assertEquals(10, results[0].Value);
-                assertEquals(new BytesRef("foobaz"), results[0].Payload);
-            }
+            IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
+            assertEquals(1, results.size());
+            assertEquals("a penny saved is a penny <b>ear</b>ned", ToString((List<LookupHighlightFragment>)results[0].HighlightKey));
+            assertEquals(10, results[0].Value);
+            assertEquals(new BytesRef("foobaz"), results[0].Payload);
         }
 
         private string ToString(IEnumerable<LookupHighlightFragment> fragments)
@@ -352,13 +346,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             };
 
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
-            using (AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3))
-            {
-                suggester.Build(new InputArrayEnumerator(keys));
-                IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("penn", Random).ToString(), 10, true, true);
-                assertEquals(1, results.size());
-                assertEquals("a <b>penn</b>y saved is a <b>penn</b>y earned", results[0].Key);
-            }
+            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3);
+            suggester.Build(new InputArrayEnumerator(keys));
+            IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("penn", Random).ToString(), 10, true, true);
+            assertEquals(1, results.size());
+            assertEquals("a <b>penn</b>y saved is a <b>penn</b>y earned", results[0].Key);
         }
 
         internal class TestHighlightChangeCaseAnalyzingInfixSuggester : AnalyzingInfixSuggester
@@ -414,11 +406,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             };
 
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
-            using (AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3))
-            {
-                suggester.Build(new InputArrayEnumerator(keys));
-                suggester.Dispose();
-            }
+            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3);
+            suggester.Build(new InputArrayEnumerator(keys));
+            suggester.Dispose();
         }
 
         [Test]
@@ -438,77 +428,69 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     new SuggestStopFilter(tokens, stopWords));
             });
 
-            using (AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), indexAnalyzer, queryAnalyzer, 3))
-            {
-
-                Input[] keys = new Input[] {
+            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), indexAnalyzer, queryAnalyzer, 3);
+            Input[] keys = new Input[] {
                     new Input("a bob for apples", 10, new BytesRef("foobaz")),
                 };
 
-                suggester.Build(new InputArrayEnumerator(keys));
-                IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("a", Random).ToString(), 10, true, true);
-                assertEquals(1, results.size());
-                assertEquals("a bob for <b>a</b>pples", results[0].Key);
-            }
+            suggester.Build(new InputArrayEnumerator(keys));
+            IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("a", Random).ToString(), 10, true, true);
+            assertEquals(1, results.size());
+            assertEquals("a bob for <b>a</b>pples", results[0].Key);
         }
 
         [Test]
         public void TestEmptyAtStart()
         {
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
-            using (AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3))
-            {
-                suggester.Build(new InputArrayEnumerator(new Input[0]));
-                suggester.Add(new BytesRef("a penny saved is a penny earned"), null, 10, new BytesRef("foobaz"));
-                suggester.Add(new BytesRef("lend me your ear"), null, 8, new BytesRef("foobar"));
-                suggester.Refresh();
-                IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
-                assertEquals(2, results.size());
-                assertEquals("a penny saved is a penny <b>ear</b>ned", results[0].Key);
-                assertEquals(10, results[0].Value);
-                assertEquals(new BytesRef("foobaz"), results[0].Payload);
+            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3);
+            suggester.Build(new InputArrayEnumerator(new Input[0]));
+            suggester.Add(new BytesRef("a penny saved is a penny earned"), null, 10, new BytesRef("foobaz"));
+            suggester.Add(new BytesRef("lend me your ear"), null, 8, new BytesRef("foobar"));
+            suggester.Refresh();
+            IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
+            assertEquals(2, results.size());
+            assertEquals("a penny saved is a penny <b>ear</b>ned", results[0].Key);
+            assertEquals(10, results[0].Value);
+            assertEquals(new BytesRef("foobaz"), results[0].Payload);
 
-                assertEquals("lend me your <b>ear</b>", results[1].Key);
-                assertEquals(8, results[1].Value);
-                assertEquals(new BytesRef("foobar"), results[1].Payload);
+            assertEquals("lend me your <b>ear</b>", results[1].Key);
+            assertEquals(8, results[1].Value);
+            assertEquals(new BytesRef("foobar"), results[1].Payload);
 
-                results = suggester.DoLookup(TestUtil.StringToCharSequence("ear ", Random).ToString(), 10, true, true);
-                assertEquals(1, results.size());
-                assertEquals("lend me your <b>ear</b>", results[0].Key);
-                assertEquals(8, results[0].Value);
-                assertEquals(new BytesRef("foobar"), results[0].Payload);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("ear ", Random).ToString(), 10, true, true);
+            assertEquals(1, results.size());
+            assertEquals("lend me your <b>ear</b>", results[0].Key);
+            assertEquals(8, results[0].Value);
+            assertEquals(new BytesRef("foobar"), results[0].Payload);
 
-                results = suggester.DoLookup(TestUtil.StringToCharSequence("pen", Random).ToString(), 10, true, true);
-                assertEquals(1, results.size());
-                assertEquals("a <b>pen</b>ny saved is a <b>pen</b>ny earned", results[0].Key);
-                assertEquals(10, results[0].Value);
-                assertEquals(new BytesRef("foobaz"), results[0].Payload);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("pen", Random).ToString(), 10, true, true);
+            assertEquals(1, results.size());
+            assertEquals("a <b>pen</b>ny saved is a <b>pen</b>ny earned", results[0].Key);
+            assertEquals(10, results[0].Value);
+            assertEquals(new BytesRef("foobaz"), results[0].Payload);
 
-                results = suggester.DoLookup(TestUtil.StringToCharSequence("p", Random).ToString(), 10, true, true);
-                assertEquals(1, results.size());
-                assertEquals("a <b>p</b>enny saved is a <b>p</b>enny earned", results[0].Key);
-                assertEquals(10, results[0].Value);
-                assertEquals(new BytesRef("foobaz"), results[0].Payload);
-
-            }
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("p", Random).ToString(), 10, true, true);
+            assertEquals(1, results.size());
+            assertEquals("a <b>p</b>enny saved is a <b>p</b>enny earned", results[0].Key);
+            assertEquals(10, results[0].Value);
+            assertEquals(new BytesRef("foobaz"), results[0].Payload);
         }
 
         [Test]
         public void TestBothExactAndPrefix()
         {
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
-            using (AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3))
-            {
-                suggester.Build(new InputArrayEnumerator(new Input[0]));
-                suggester.Add(new BytesRef("the pen is pretty"), null, 10, new BytesRef("foobaz"));
-                suggester.Refresh();
+            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3);
+            suggester.Build(new InputArrayEnumerator(new Input[0]));
+            suggester.Add(new BytesRef("the pen is pretty"), null, 10, new BytesRef("foobaz"));
+            suggester.Refresh();
 
-                IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("pen p", Random).ToString(), 10, true, true);
-                assertEquals(1, results.size());
-                assertEquals("the <b>pen</b> is <b>p</b>retty", results[0].Key);
-                assertEquals(10, results[0].Value);
-                assertEquals(new BytesRef("foobaz"), results[0].Payload);
-            }
+            IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("pen p", Random).ToString(), 10, true, true);
+            assertEquals(1, results.size());
+            assertEquals("the <b>pen</b> is <b>p</b>retty", results[0].Key);
+            assertEquals(10, results[0].Value);
+            assertEquals(new BytesRef("foobaz"), results[0].Payload);
         }
 
         private static string RandomText()
@@ -935,65 +917,63 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             };
 
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
-            using (AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3))
-            {
-                suggester.Build(new InputArrayEnumerator(keys));
+            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3);
+            suggester.Build(new InputArrayEnumerator(keys));
 
-                IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
-                assertEquals(1, results.size());
-                assertEquals("lend me your <b>ear</b>", results[0].Key);
-                assertEquals(8, results[0].Value);
-                assertEquals(new BytesRef("foobar"), results[0].Payload);
+            IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
+            assertEquals(1, results.size());
+            assertEquals("lend me your <b>ear</b>", results[0].Key);
+            assertEquals(8, results[0].Value);
+            assertEquals(new BytesRef("foobar"), results[0].Payload);
 
-                // Add a new suggestion:
-                suggester.Add(new BytesRef("a penny saved is a penny earned"), null, 10, new BytesRef("foobaz"));
+            // Add a new suggestion:
+            suggester.Add(new BytesRef("a penny saved is a penny earned"), null, 10, new BytesRef("foobaz"));
 
-                // Must refresh to see any newly added suggestions:
-                suggester.Refresh();
+            // Must refresh to see any newly added suggestions:
+            suggester.Refresh();
 
-                results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
-                assertEquals(2, results.size());
-                assertEquals("a penny saved is a penny <b>ear</b>ned", results[0].Key);
-                assertEquals(10, results[0].Value);
-                assertEquals(new BytesRef("foobaz"), results[0].Payload);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
+            assertEquals(2, results.size());
+            assertEquals("a penny saved is a penny <b>ear</b>ned", results[0].Key);
+            assertEquals(10, results[0].Value);
+            assertEquals(new BytesRef("foobaz"), results[0].Payload);
 
-                assertEquals("lend me your <b>ear</b>", results[1].Key);
-                assertEquals(8, results[1].Value);
-                assertEquals(new BytesRef("foobar"), results[1].Payload);
+            assertEquals("lend me your <b>ear</b>", results[1].Key);
+            assertEquals(8, results[1].Value);
+            assertEquals(new BytesRef("foobar"), results[1].Payload);
 
-                results = suggester.DoLookup(TestUtil.StringToCharSequence("ear ", Random).ToString(), 10, true, true);
-                assertEquals(1, results.size());
-                assertEquals("lend me your <b>ear</b>", results[0].Key);
-                assertEquals(8, results[0].Value);
-                assertEquals(new BytesRef("foobar"), results[0].Payload);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("ear ", Random).ToString(), 10, true, true);
+            assertEquals(1, results.size());
+            assertEquals("lend me your <b>ear</b>", results[0].Key);
+            assertEquals(8, results[0].Value);
+            assertEquals(new BytesRef("foobar"), results[0].Payload);
 
-                results = suggester.DoLookup(TestUtil.StringToCharSequence("pen", Random).ToString(), 10, true, true);
-                assertEquals(1, results.size());
-                assertEquals("a <b>pen</b>ny saved is a <b>pen</b>ny earned", results[0].Key);
-                assertEquals(10, results[0].Value);
-                assertEquals(new BytesRef("foobaz"), results[0].Payload);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("pen", Random).ToString(), 10, true, true);
+            assertEquals(1, results.size());
+            assertEquals("a <b>pen</b>ny saved is a <b>pen</b>ny earned", results[0].Key);
+            assertEquals(10, results[0].Value);
+            assertEquals(new BytesRef("foobaz"), results[0].Payload);
 
-                results = suggester.DoLookup(TestUtil.StringToCharSequence("p", Random).ToString(), 10, true, true);
-                assertEquals(1, results.size());
-                assertEquals("a <b>p</b>enny saved is a <b>p</b>enny earned", results[0].Key);
-                assertEquals(10, results[0].Value);
-                assertEquals(new BytesRef("foobaz"), results[0].Payload);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("p", Random).ToString(), 10, true, true);
+            assertEquals(1, results.size());
+            assertEquals("a <b>p</b>enny saved is a <b>p</b>enny earned", results[0].Key);
+            assertEquals(10, results[0].Value);
+            assertEquals(new BytesRef("foobaz"), results[0].Payload);
 
-                // Change the weight:
-                suggester.Update(new BytesRef("lend me your ear"), null, 12, new BytesRef("foobox"));
+            // Change the weight:
+            suggester.Update(new BytesRef("lend me your ear"), null, 12, new BytesRef("foobox"));
 
-                // Must refresh to see any newly added suggestions:
-                suggester.Refresh();
+            // Must refresh to see any newly added suggestions:
+            suggester.Refresh();
 
-                results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
-                assertEquals(2, results.size());
-                assertEquals("lend me your <b>ear</b>", results[0].Key);
-                assertEquals(12, results[0].Value);
-                assertEquals(new BytesRef("foobox"), results[0].Payload);
-                assertEquals("a penny saved is a penny <b>ear</b>ned", results[1].Key);
-                assertEquals(10, results[1].Value);
-                assertEquals(new BytesRef("foobaz"), results[1].Payload);
-            }
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
+            assertEquals(2, results.size());
+            assertEquals("lend me your <b>ear</b>", results[0].Key);
+            assertEquals(12, results[0].Value);
+            assertEquals(new BytesRef("foobox"), results[0].Payload);
+            assertEquals("a penny saved is a penny <b>ear</b>ned", results[1].Key);
+            assertEquals(10, results[1].Value);
+            assertEquals(new BytesRef("foobaz"), results[1].Payload);
         }
 
         private ISet<BytesRef> AsSet(params string[] values)

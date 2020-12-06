@@ -32,43 +32,39 @@ namespace Lucene.Net.Cli.SourceCode
         {
             var parser = new SourceCodeSectionParser();
 
-            using (var output = new MemoryStream())
+            using var output = new MemoryStream();
+            using (var input = this.GetType().FindAndGetManifestResourceStream("TestInputForParser.cs"))
             {
-                using (var input = this.GetType().FindAndGetManifestResourceStream("TestInputForParser.cs"))
-                {
-                    parser.ParseSourceCodeFiles(input, output);
-                }
-
-                output.Seek(0, SeekOrigin.Begin);
-
-                using (var reader = new StreamReader(output, SourceCodeSectionParser.ENCODING))
-                {
-                    Assert.AreEqual("using System;", reader.ReadLine());
-                    Assert.AreEqual("using System.Collections.Generic;", reader.ReadLine());
-                    Assert.AreEqual("using System.Linq;", reader.ReadLine());
-                    Assert.AreEqual("using System.Threading.Tasks;", reader.ReadLine());
-                    Assert.AreEqual("using System.Reflection;", reader.ReadLine());
-                    Assert.AreEqual("using System.Xml;", reader.ReadLine());
-                    Assert.AreEqual("", reader.ReadLine());
-                    Assert.AreEqual("namespace Lucene.Net.Cli.SourceCode", reader.ReadLine());
-                    Assert.AreEqual("{", reader.ReadLine());
-                    Assert.AreEqual("    public class TestInputForParser", reader.ReadLine());
-                    Assert.AreEqual("    {", reader.ReadLine());
-                    Assert.AreEqual("        public void Foo()", reader.ReadLine());
-                    Assert.AreEqual("        {", reader.ReadLine());
-                    Assert.AreEqual("            Console.WriteLine(\"Foo\");", reader.ReadLine());
-                    Assert.AreEqual("        }", reader.ReadLine());
-                    Assert.AreEqual("", reader.ReadLine());
-                    Assert.AreEqual("        public void Bar()", reader.ReadLine());
-                    Assert.AreEqual("        {", reader.ReadLine());
-                    Assert.AreEqual("            Console.WriteLine(\"Bar2\");", reader.ReadLine());
-                    Assert.AreEqual("        }", reader.ReadLine());
-                    Assert.AreEqual("    }", reader.ReadLine());
-                    Assert.AreEqual("}", reader.ReadLine());
-                    Assert.AreEqual(null, reader.ReadLine());
-                    Assert.AreEqual(null, reader.ReadLine());
-                }
+                parser.ParseSourceCodeFiles(input, output);
             }
+
+            output.Seek(0, SeekOrigin.Begin);
+
+            using var reader = new StreamReader(output, SourceCodeSectionParser.ENCODING);
+            Assert.AreEqual("using System;", reader.ReadLine());
+            Assert.AreEqual("using System.Collections.Generic;", reader.ReadLine());
+            Assert.AreEqual("using System.Linq;", reader.ReadLine());
+            Assert.AreEqual("using System.Threading.Tasks;", reader.ReadLine());
+            Assert.AreEqual("using System.Reflection;", reader.ReadLine());
+            Assert.AreEqual("using System.Xml;", reader.ReadLine());
+            Assert.AreEqual("", reader.ReadLine());
+            Assert.AreEqual("namespace Lucene.Net.Cli.SourceCode", reader.ReadLine());
+            Assert.AreEqual("{", reader.ReadLine());
+            Assert.AreEqual("    public class TestInputForParser", reader.ReadLine());
+            Assert.AreEqual("    {", reader.ReadLine());
+            Assert.AreEqual("        public void Foo()", reader.ReadLine());
+            Assert.AreEqual("        {", reader.ReadLine());
+            Assert.AreEqual("            Console.WriteLine(\"Foo\");", reader.ReadLine());
+            Assert.AreEqual("        }", reader.ReadLine());
+            Assert.AreEqual("", reader.ReadLine());
+            Assert.AreEqual("        public void Bar()", reader.ReadLine());
+            Assert.AreEqual("        {", reader.ReadLine());
+            Assert.AreEqual("            Console.WriteLine(\"Bar2\");", reader.ReadLine());
+            Assert.AreEqual("        }", reader.ReadLine());
+            Assert.AreEqual("    }", reader.ReadLine());
+            Assert.AreEqual("}", reader.ReadLine());
+            Assert.AreEqual(null, reader.ReadLine());
+            Assert.AreEqual(null, reader.ReadLine());
         }
     }
 }

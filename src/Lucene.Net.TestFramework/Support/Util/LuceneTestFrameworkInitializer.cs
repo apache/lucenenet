@@ -160,7 +160,7 @@ namespace Lucene.Net.Util
             catch (Exception ex)
             {
                 // Write the stack trace so we have something to go on if an error occurs here.
-                throw new Exception($"An exception occurred during OneTimeSetUpBeforeTests:\n{ex.ToString()}", ex);
+                throw new Exception($"An exception occurred during OneTimeSetUpBeforeTests:\n{ex}", ex);
             }
         }
 
@@ -178,7 +178,7 @@ namespace Lucene.Net.Util
             catch (Exception ex)
             {
                 // Write the stack trace so we have something to go on if an error occurs here.
-                throw new Exception($"An exception occurred during OneTimeTearDownAfterTests:\n{ex.ToString()}", ex);
+                throw new Exception($"An exception occurred during OneTimeTearDownAfterTests:\n{ex}", ex);
             }
 
             // Cleanup our LineDocsFile and reset LuceneTestCase back to its original state.

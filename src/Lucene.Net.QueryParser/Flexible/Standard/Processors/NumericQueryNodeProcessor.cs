@@ -61,14 +61,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-            if (node is FieldQueryNode
+            if (node is FieldQueryNode fieldNode
                 && !(node.Parent is IRangeQueryNode))
             {
                 QueryConfigHandler config = GetQueryConfigHandler();
 
                 if (config != null)
                 {
-                    FieldQueryNode fieldNode = (FieldQueryNode)node;
                     FieldConfig fieldConfig = config.GetFieldConfig(fieldNode
                         .GetFieldAsString());
 
@@ -82,7 +81,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                             NumberFormat numberFormat = numericConfig.NumberFormat;
                             string text = fieldNode.GetTextAsString();
                             /*Number*/
-                            object number = null;
+                            object number; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
                             if (text.Length > 0)
                             {

@@ -29,9 +29,9 @@ namespace Lucene.Net.Analysis.Cn.Smart
     /// </summary>
     internal class WordSegmenter
     {
-        private HHMMSegmenter hhmmSegmenter = new HHMMSegmenter();
+        private readonly HHMMSegmenter hhmmSegmenter = new HHMMSegmenter(); // LUCENENET: marked readonly
 
-        private SegTokenFilter tokenFilter = new SegTokenFilter();
+        private readonly SegTokenFilter tokenFilter = new SegTokenFilter(); // LUCENENET: marked readonly
 
         /// <summary>
         /// Segment a sentence into words with <see cref="HHMMSegmenter"/>

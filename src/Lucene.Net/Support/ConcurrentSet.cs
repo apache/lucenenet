@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Support
 {
@@ -31,7 +32,7 @@ namespace Lucene.Net.Support
 #if FEATURE_SERIALIZABLE
         [NonSerialized]
 #endif
-        private object syncRoot;
+        private object? syncRoot;
         private readonly ISet<T> set;
 
         public ConcurrentSet(ISet<T> set)
@@ -144,16 +145,20 @@ namespace Lucene.Net.Support
                 //throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
             if (array.Length - index < Count)
                 throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
-                //throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
+            //throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
 
-            T[]/*?*/ tarray = array as T[];
+#pragma warning disable IDE0019 // Use pattern matching
+            T[]? tarray = array as T[];
+#pragma warning restore IDE0019 // Use pattern matching
             if (tarray != null)
             {
                 CopyTo(tarray, index);
             }
             else
             {
-                object/*?*/[]/*?*/ objects = array as object[];
+#pragma warning disable IDE0019 // Use pattern matching
+                object?[]? objects = array as object[];
+#pragma warning restore IDE0019 // Use pattern matching
                 if (objects == null)
                 {
                     throw new ArgumentException("Target array type is not compatible with the type of items in the collection.", nameof(array));
@@ -197,7 +202,7 @@ namespace Lucene.Net.Support
                 {
                     if (set is ICollection col)
                         syncRoot = col.SyncRoot;
-                    System.Threading.Interlocked.CompareExchange<object/*?*/>(ref syncRoot, new object(), null);
+                    System.Threading.Interlocked.CompareExchange<object?>(ref syncRoot, new object(), null);
                 }
                 return syncRoot;
             }

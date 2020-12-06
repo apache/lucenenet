@@ -32,7 +32,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     /// </summary>
     public class SortableSingleDocSource : SingleDocSource
     {
-        private static string[] COUNTRIES = new string[] {
+        private static readonly string[] COUNTRIES = new string[] { // LUCENENET: marked readonly
             "European Union", "United States", "Japan", "Germany", "China (PRC)",
             "United Kingdom", "France", "Italy", "Spain", "Canada", "Brazil", "Russia",
             "India", "South Korea", "Australia", "Mexico", "Netherlands", "Turkey",
@@ -79,10 +79,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         public override DocData GetNextDocData(DocData docData)
         {
             docData = base.GetNextDocData(docData);
-            var props = new Dictionary<string, string>();
-
-            // random int
-            props["sort_field"] = r.Next(sortRange).ToString(CultureInfo.InvariantCulture);
+            var props = new Dictionary<string, string>
+            {
+                // random int
+                ["sort_field"] = r.Next(sortRange).ToString(CultureInfo.InvariantCulture)
+            };
 
             // random string
             int len = NextInt32(2, 20);

@@ -279,10 +279,10 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                         numNegatives++;
                     }
 
-                    if (qc is BooleanQuery)
+                    if (qc is BooleanQuery booleanQuery)
                     {
                         List<SpanQuery> sc = new List<SpanQuery>();
-                        AddComplexPhraseClause(sc, (BooleanQuery)qc);
+                        AddComplexPhraseClause(sc, booleanQuery);
                         if (sc.Count > 0)
                         {
                             allSpanClauses[i] = sc[0];
@@ -298,9 +298,8 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                     }
                     else
                     {
-                        if (qc is TermQuery)
+                        if (qc is TermQuery tq)
                         {
-                            TermQuery tq = (TermQuery)qc;
                             allSpanClauses[i] = new SpanTermQuery(tq.Term);
                         }
                         else
@@ -333,7 +332,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                 SpanQuery[] includeClauses = positiveClauses
                     .ToArray();
 
-                SpanQuery include = null;
+                SpanQuery include; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 if (includeClauses.Length == 1)
                 {
                     include = includeClauses[0]; // only one positive clause
@@ -370,16 +369,14 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                         chosenList = nots;
                     }
 
-                    if (childQuery is TermQuery)
+                    if (childQuery is TermQuery tq)
                     {
-                        TermQuery tq = (TermQuery)childQuery;
                         SpanTermQuery stq = new SpanTermQuery(tq.Term);
                         stq.Boost = tq.Boost;
                         chosenList.Add(stq);
                     }
-                    else if (childQuery is BooleanQuery)
+                    else if (childQuery is BooleanQuery cbq)
                     {
-                        BooleanQuery cbq = (BooleanQuery)childQuery;
                         AddComplexPhraseClause(chosenList, cbq);
                     }
                     else

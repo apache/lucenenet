@@ -73,7 +73,7 @@ namespace Lucene.Net.Queries
             }
 
             // we need to sort for deduplication and to have a common cache key
-            readonly IEnumerator<Term> iter;
+            private readonly IEnumerator<Term> iter;
             public override bool MoveNext()
             {
                 if (iter.MoveNext())
@@ -112,7 +112,7 @@ namespace Lucene.Net.Queries
             }
 
             // we need to sort for deduplication and to have a common cache key
-            readonly IEnumerator<BytesRef> iter;
+            private readonly IEnumerator<BytesRef> iter;
             public override bool MoveNext()
             {
                 if (iter.MoveNext())
@@ -225,7 +225,7 @@ namespace Lucene.Net.Queries
             {
                 return result;
             }
-            Terms terms = null;
+            Terms terms; // LUCENENET: IDE0059: Remove unnecessary value assignment
             TermsEnum termsEnum = null;
             DocsEnum docs = null;
             foreach (TermsAndField termsAndField in this.termsAndFields)

@@ -1,9 +1,9 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -193,37 +193,24 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
-                SimpleTextDocsEnum docsEnum;
-                if (reuse != null && reuse is SimpleTextDocsEnum && ((SimpleTextDocsEnum) reuse).CanReuse(_outerInstance._input))
-                {
-                    docsEnum = (SimpleTextDocsEnum) reuse;
-                }
-                else
-                {
+                if (reuse is null || !(reuse is SimpleTextDocsEnum docsEnum) || !docsEnum.CanReuse(_outerInstance._input))
                     docsEnum = new SimpleTextDocsEnum(_outerInstance);
-                }
-                return docsEnum.Reset(_docsStart, liveDocs, _indexOptions == IndexOptions.DOCS_ONLY,
-                    _docFreq);
+                
+                return docsEnum.Reset(_docsStart, liveDocs, _indexOptions == IndexOptions.DOCS_ONLY, _docFreq);
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
-
-                if (_indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                if (IndexOptionsComparer.Default.Compare(_indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                 {
                     // Positions were not indexed
                     return null;
                 }
 
-                SimpleTextDocsAndPositionsEnum docsAndPositionsEnum;
-                if (reuse != null && reuse is SimpleTextDocsAndPositionsEnum && ((SimpleTextDocsAndPositionsEnum) reuse).CanReuse(_outerInstance._input))
-                {
-                    docsAndPositionsEnum = (SimpleTextDocsAndPositionsEnum) reuse;
-                }
-                else
-                {
+                if (reuse is null || !(reuse is SimpleTextDocsAndPositionsEnum docsAndPositionsEnum) || !docsAndPositionsEnum.CanReuse(_outerInstance._input))
                     docsAndPositionsEnum = new SimpleTextDocsAndPositionsEnum(_outerInstance);
-                }
+
                 return docsAndPositionsEnum.Reset(_docsStart, liveDocs, _indexOptions, _docFreq);
             }
 
@@ -323,7 +310,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(
                             StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.TERM) || StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.FIELD) ||
-                            StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END), () => "scratch=" + _scratch.Utf8ToString());
+                            StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END), "scratch={0}", _scratch.Utf8ToString());
 
                         if (!first && (_liveDocs == null || _liveDocs.Get(_docId)))
                         {
@@ -386,8 +373,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 _liveDocs = liveDocs;
                 _nextDocStart = fp;
                 _docId = -1;
-                _readPositions = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-                _readOffsets = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                _readPositions = IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                _readOffsets = IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
                 if (!_readOffsets)
                 {
@@ -477,7 +465,8 @@ namespace Lucene.Net.Codecs.SimpleText
                 if (_readPositions)
                 {
                     SimpleTextUtil.ReadLine(_in, _scratch);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.POS), () => "got line=" + _scratch.Utf8ToString());
+                    // LUCENENET specific - use wrapper BytesRefFormatter struct to defer building the string unless string.Format() is called
+                    if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.POS), "got line={0}", new BytesRefFormatter(_scratch, BytesRefFormat.UTF8));
                     UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.POS.Length, _scratch.Length - SimpleTextFieldsWriter.POS.Length,
                         _scratchUtf162);
                     pos = ArrayUtil.ParseInt32(_scratchUtf162.Chars, 0, _scratchUtf162.Length);
@@ -490,12 +479,14 @@ namespace Lucene.Net.Codecs.SimpleText
                 if (_readOffsets)
                 {
                     SimpleTextUtil.ReadLine(_in, _scratch);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.START_OFFSET), () => "got line=" + _scratch.Utf8ToString());
+                    // LUCENENET specific - use wrapper BytesRefFormatter struct to defer building the string unless string.Format() is called
+                    if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.START_OFFSET), "got line={0}", new BytesRefFormatter(_scratch, BytesRefFormat.UTF8));
                     UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.START_OFFSET.Length,
                         _scratch.Length - SimpleTextFieldsWriter.START_OFFSET.Length, _scratchUtf162);
                     _startOffset = ArrayUtil.ParseInt32(_scratchUtf162.Chars, 0, _scratchUtf162.Length);
                     SimpleTextUtil.ReadLine(_in, _scratch);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END_OFFSET), () => "got line=" + _scratch.Utf8ToString());
+                    // LUCENENET specific - use wrapper BytesRefFormatter struct to defer building the string unless string.Format() is called
+                    if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END_OFFSET), "got line={0}", new BytesRefFormatter(_scratch, BytesRefFormat.UTF8));
                     UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.END_OFFSET.Length,
                         _scratch.Length - SimpleTextFieldsWriter.END_OFFSET.Length, _scratchUtf162);
                     _endOffset = ArrayUtil.ParseInt32(_scratchUtf162.Chars, 0, _scratchUtf162.Length);
@@ -669,11 +660,12 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override int DocCount => _docCount;
 
-            public override bool HasFreqs => _fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+            public override bool HasFreqs => IndexOptionsComparer.Default.Compare(_fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0;
 
-            public override bool HasOffsets => _fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            public override bool HasOffsets => IndexOptionsComparer.Default.Compare(_fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
-            public override bool HasPositions => _fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            public override bool HasPositions => IndexOptionsComparer.Default.Compare(_fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 
             public override bool HasPayloads => _fieldInfo.HasPayloads;
         }
@@ -687,11 +679,9 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             lock (this)
             {
-                SimpleTextTerms terms;
-                if (!_termsCache.TryGetValue(field, out terms) || terms == null)
+                if (!_termsCache.TryGetValue(field, out SimpleTextTerms terms) || terms == null)
                 {
-                    long? fp;
-                    if (!_fields.TryGetValue(field, out fp) || !fp.HasValue)
+                    if (!_fields.TryGetValue(field, out long? fp) || !fp.HasValue)
                     {
                         return null;
                     }

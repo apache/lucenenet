@@ -117,9 +117,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 // makeFilter() and wrap
 
                 Filter filter = m_strategy.MakeFilter(args);
-                if (filter is QueryWrapperFilter)
+                if (filter is QueryWrapperFilter queryWrapperFilter)
                 {
-                    return ((QueryWrapperFilter)filter).Query;
+                    return queryWrapperFilter.Query;
                 }
                 else
                 {

@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
         /// Sole constructor, passing the 2nd pass query to
         /// assign scores to the 1st pass hits.
         /// </summary>
-        public QueryRescorer(Query query)
+        protected QueryRescorer(Query query) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.query = query;
         }
@@ -188,7 +188,7 @@ namespace Lucene.Net.Search
 
         private class QueryRescorerAnonymousInnerClassHelper : QueryRescorer
         {
-            private double weight;
+            private readonly double weight;
 
             public QueryRescorerAnonymousInnerClassHelper(Lucene.Net.Search.Query query, double weight)
                 : base(query)

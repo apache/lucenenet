@@ -39,7 +39,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         // LUCENENET specific: DateFormatInfo not used
 
         private DirectoryInfo dataDir = null;
-        private List<FileInfo> inputFiles = new List<FileInfo>();
+        private readonly List<FileInfo> inputFiles = new List<FileInfo>(); // LUCENENET: marked readonly
         private int nextFile = 0;
         private int iteration = 0;
 
@@ -48,7 +48,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             base.SetConfig(config);
             DirectoryInfo workDir = new DirectoryInfo(config.Get("work.dir", "work"));
             string d = config.Get("docs.dir", "reuters-out");
-            dataDir = new DirectoryInfo(d);
+            dataDir = new DirectoryInfo(Path.Combine(workDir.FullName, d));
             inputFiles.Clear();
             CollectFiles(dataDir, inputFiles);
             if (inputFiles.Count == 0)
@@ -61,8 +61,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         private DateTime? ParseDate(string dateStr)
         {
-            DateTime temp;
-            if (DateTime.TryParseExact(dateStr, "dd-MMM-yyyy hh:mm:ss.fff", CultureInfo.InvariantCulture, DateTimeStyles.None, out temp))
+            if (DateTime.TryParseExact(dateStr, "dd-MMM-yyyy hh:mm:ss.fff", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime temp))
             {
                 return temp;
             }
@@ -99,33 +98,31 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 name = f.GetCanonicalPath() + "_" + iteration;
             }
 
-            using (TextReader reader = new StreamReader(new FileStream(f.FullName, FileMode.Open, FileAccess.Read), Encoding.UTF8))
+            using TextReader reader = new StreamReader(new FileStream(f.FullName, FileMode.Open, FileAccess.Read), Encoding.UTF8);
+            // First line is the date, 3rd is the title, rest is body
+            string dateStr = reader.ReadLine();
+            reader.ReadLine();// skip an empty line
+            string title = reader.ReadLine();
+            reader.ReadLine();// skip an empty line
+            StringBuilder bodyBuf = new StringBuilder(1024);
+            string line = null;
+            while ((line = reader.ReadLine()) != null)
             {
-                // First line is the date, 3rd is the title, rest is body
-                string dateStr = reader.ReadLine();
-                reader.ReadLine();// skip an empty line
-                string title = reader.ReadLine();
-                reader.ReadLine();// skip an empty line
-                StringBuilder bodyBuf = new StringBuilder(1024);
-                string line = null;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    bodyBuf.Append(line).Append(' ');
-                }
-                reader.Dispose();
-
-
-                AddBytes(f.Length);
-
-                DateTime? date = ParseDate(dateStr.Trim());
-
-                docData.Clear();
-                docData.Name = name;
-                docData.Body = bodyBuf.ToString();
-                docData.Title = title;
-                docData.SetDate(date);
-                return docData;
+                bodyBuf.Append(line).Append(' ');
             }
+            reader.Dispose();
+
+
+            AddBytes(f.Length);
+
+            DateTime? date = ParseDate(dateStr.Trim());
+
+            docData.Clear();
+            docData.Name = name;
+            docData.Body = bodyBuf.ToString();
+            docData.Title = title;
+            docData.SetDate(date);
+            return docData;
         }
 
         public override void ResetInputs()

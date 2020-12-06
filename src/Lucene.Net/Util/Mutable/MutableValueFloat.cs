@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Lucene.Net.Util.Mutable
 {
     /*
@@ -26,11 +28,13 @@ namespace Lucene.Net.Util.Mutable
     {
         public float Value { get; set; }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override object ToObject()
         {
             return Exists ? (object)Value : null;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Copy(MutableValue source)
         {
             MutableValueSingle s = (MutableValueSingle)source;
@@ -38,6 +42,7 @@ namespace Lucene.Net.Util.Mutable
             Exists = s.Exists;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override MutableValue Duplicate()
         {
             return new MutableValueSingle
@@ -47,6 +52,7 @@ namespace Lucene.Net.Util.Mutable
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool EqualsSameType(object other)
         {
             MutableValueSingle b = (MutableValueSingle)other;
@@ -68,6 +74,7 @@ namespace Lucene.Net.Util.Mutable
             return Exists ? 1 : -1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
             return J2N.BitConversion.SingleToInt32Bits(Value);

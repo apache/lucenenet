@@ -99,14 +99,12 @@ namespace Lucene.Net.Analysis.Icu
         [Test]
         public void TestEmptyTerm()
         {
-            using (Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            using Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new ICUFoldingFilter(tokenizer));
-            }))
-            { 
-                CheckOneTerm(a, "", "");
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
     }
 }

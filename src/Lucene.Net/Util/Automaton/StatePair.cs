@@ -27,6 +27,8 @@
  * this SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System.Runtime.CompilerServices;
+
 namespace Lucene.Net.Util.Automaton
 {
     /// <summary>
@@ -92,6 +94,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns hash code.
         /// </summary>
         /// <returns> Hash code. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
             return s1.GetHashCode() + s2.GetHashCode();

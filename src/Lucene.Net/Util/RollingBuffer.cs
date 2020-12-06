@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -97,6 +98,7 @@ namespace Lucene.Net.Util
             return pos < nextPos && pos >= nextPos - count;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int GetIndex(int pos)
         {
             int index = nextWrite - (nextPos - pos);
@@ -157,7 +159,7 @@ namespace Lucene.Net.Util
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(toFree >= 0);
-                Debugging.Assert(toFree <= count, () => "toFree=" + toFree + " count=" + count);
+                Debugging.Assert(toFree <= count, "toFree={0} count={1}", toFree, count);
             }
             int index = nextWrite - count;
             if (index < 0)

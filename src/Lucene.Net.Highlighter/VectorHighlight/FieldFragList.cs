@@ -29,13 +29,15 @@ namespace Lucene.Net.Search.VectorHighlight
     /// </summary>
     public abstract class FieldFragList
     {
-        private List<WeightedFragInfo> fragInfos = new List<WeightedFragInfo>();
+        private readonly List<WeightedFragInfo> fragInfos = new List<WeightedFragInfo>();
 
         /// <summary>
         /// a constructor.
         /// </summary>
         /// <param name="fragCharSize">the length (number of chars) of a fragment</param>
-        public FieldFragList(int fragCharSize)
+#pragma warning disable IDE0060 // Remove unused parameter
+        protected FieldFragList(int fragCharSize) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
         }
 
@@ -57,10 +59,10 @@ namespace Lucene.Net.Search.VectorHighlight
         /// </summary>
         public class WeightedFragInfo
         {
-            private IList<SubInfo> subInfos;
-            private float totalBoost;
-            private int startOffset;
-            private int endOffset;
+            private readonly IList<SubInfo> subInfos; // LUCENENET: marked readonly
+            private readonly float totalBoost; // LUCENENET: marked readonly
+            private readonly int startOffset; // LUCENENET: marked readonly
+            private readonly int endOffset; // LUCENENET: marked readonly
 
             public WeightedFragInfo(int startOffset, int endOffset, IList<SubInfo> subInfos, float totalBoost)
             {

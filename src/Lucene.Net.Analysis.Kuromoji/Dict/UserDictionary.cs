@@ -1,5 +1,6 @@
 ﻿using J2N.Text;
 using Lucene.Net.Analysis.Ja.Util;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
@@ -43,13 +44,13 @@ namespace Lucene.Net.Analysis.Ja.Dict
         // holds readings and POS, indexed by wordid
         private readonly string[] data;
 
-        private static readonly int CUSTOM_DICTIONARY_WORD_ID_OFFSET = 100000000;
+        private const int CUSTOM_DICTIONARY_WORD_ID_OFFSET = 100000000;
 
-        public static readonly int WORD_COST = -100000;
+        public const int WORD_COST = -100000;
 
-        public static readonly int LEFT_ID = 5;
+        public const int LEFT_ID = 5;
 
-        public static readonly int RIGHT_ID = 5;
+        public const int RIGHT_ID = 5;
 
         private static readonly Regex specialChars = new Regex(@"#.*$", RegexOptions.Compiled);
         private static readonly Regex commentLine = new Regex(@"  *", RegexOptions.Compiled);
@@ -169,14 +170,14 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
         public TokenInfoFST FST => fst;
 
-        private static readonly int[][] EMPTY_RESULT = new int[0][];
+        private static readonly int[][] EMPTY_RESULT = Arrays.Empty<int[]>();
 
         /// <summary>
         /// Convert Map of index and wordIdAndLength to array of {wordId, index, length}
         /// </summary>
         /// <param name="input"></param>
         /// <returns>Array of {wordId, index, length}.</returns>
-        private int[][] ToIndexArray(IDictionary<int, int[]> input)
+        private static int[][] ToIndexArray(IDictionary<int, int[]> input) // LUCENENET: CA1822: Mark members as static
         {
             List<int[]> result = new List<int[]>();
             foreach (int i in input.Keys)

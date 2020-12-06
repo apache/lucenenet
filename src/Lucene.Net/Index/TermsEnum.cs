@@ -268,18 +268,11 @@ namespace Lucene.Net.Index
         /// <seealso cref="SeekExact(BytesRef, TermState)"/>
         public virtual TermState GetTermState() // LUCENENET NOTE: Renamed from TermState()
         {
-            return new TermStateAnonymousInnerClassHelper(this);
+            return new TermStateAnonymousInnerClassHelper();
         }
 
         private class TermStateAnonymousInnerClassHelper : TermState
         {
-            private readonly TermsEnum outerInstance;
-
-            public TermStateAnonymousInnerClassHelper(TermsEnum outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override void CopyFrom(TermState other)
             {
                 throw new NotSupportedException();

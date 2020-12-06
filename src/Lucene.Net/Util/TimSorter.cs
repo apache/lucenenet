@@ -65,6 +65,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Minimum run length for an array of length <paramref name="length"/>. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static int MinRun(int length)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(length >= MINRUN);
@@ -80,27 +81,32 @@ namespace Lucene.Net.Util
             return minRun;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int RunLen(int i)
         {
             int off = stackSize - i;
             return runEnds[off] - runEnds[off - 1];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int RunBase(int i)
         {
             return runEnds[stackSize - i - 1];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int RunEnd(int i) // LUCENENET TODO: API - change to indexer
         {
             return runEnds[stackSize - i];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void SetRunEnd(int i, int runEnd)
         {
             runEnds[stackSize - i] = runEnd;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void PushRunLen(int len)
         {
             runEnds[stackSize + 1] = runEnds[stackSize] + len;
@@ -111,6 +117,7 @@ namespace Lucene.Net.Util
         /// Compute the length of the next run, make the run sorted and return its
         /// length.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int NextRun()
         {
             int runBase = RunEnd(0);
@@ -142,6 +149,7 @@ namespace Lucene.Net.Util
             return runHi - runBase;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void EnsureInvariants()
         {
             while (stackSize > 1)
@@ -178,6 +186,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void ExhaustStack()
         {
             while (stackSize > 1)
@@ -186,6 +195,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void Reset(int from, int to)
         {
             stackSize = 0;
@@ -196,6 +206,7 @@ namespace Lucene.Net.Util
             this.minRun = length <= THRESHOLD ? length : MinRun(length);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void MergeAt(int n)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(stackSize >= 2);
@@ -252,6 +263,7 @@ namespace Lucene.Net.Util
             if (Debugging.AssertsEnabled) Debugging.Assert(RunEnd(0) == to);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal override void DoRotate(int lo, int mid, int hi)
         {
             int len1 = mid - lo;
@@ -295,6 +307,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void MergeLo(int lo, int mid, int hi)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(Compare(lo, mid) > 0);
@@ -338,6 +351,7 @@ namespace Lucene.Net.Util
             if (Debugging.AssertsEnabled) Debugging.Assert(j == dest);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void MergeHi(int lo, int mid, int hi)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(Compare(mid - 1, hi - 1) > 0);
@@ -381,6 +395,7 @@ namespace Lucene.Net.Util
             if (Debugging.AssertsEnabled) Debugging.Assert(i == dest);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int LowerSaved(int from, int to, int val)
         {
             int len = to - from;
@@ -401,6 +416,7 @@ namespace Lucene.Net.Util
             return from;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int UpperSaved(int from, int to, int val)
         {
             int len = to - from;
@@ -422,6 +438,7 @@ namespace Lucene.Net.Util
         }
 
         // faster than lowerSaved when val is at the beginning of [from:to[
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int LowerSaved3(int from, int to, int val)
         {
             int f = from, t = f + 1;
@@ -439,6 +456,7 @@ namespace Lucene.Net.Util
         }
 
         //faster than upperSaved when val is at the end of [from:to[
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int UpperSaved3(int from, int to, int val)
         {
             int f = to - 1, t = to;

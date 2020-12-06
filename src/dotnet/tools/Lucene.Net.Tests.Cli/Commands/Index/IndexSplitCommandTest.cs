@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Attributes;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace Lucene.Net.Cli.Commands
             // NOTE: We must order this in the sequence of the expected output.
             return new List<Arg[]>()
             {
-                new Arg[] { new Arg(inputPattern: @"C:\lucene-temp", output: new string[] { /*"-out", @"C:\lucene-temp"*/ }) },
+                new Arg[] { new Arg(inputPattern: @"C:\lucene-temp", output: Arrays.Empty<string>() /*"-out", @"C:\lucene-temp"*/) },
                 new Arg[] {
                     new Arg(inputPattern: @"C:\lucene-temp2 C:\lucene-temp3", output: new string[] { @"C:\lucene-temp2", @"C:\lucene-temp3" }),
                     new Arg(inputPattern: @"C:\lucene-temp2 C:\lucene-temp3 C:\lucene-temp4", output: new string[] { @"C:\lucene-temp2", @"C:\lucene-temp3", @"C:\lucene-temp4" }),
@@ -81,7 +82,7 @@ namespace Lucene.Net.Cli.Commands
                         // Special case: the -num option must be specified when -n is not
                         // because in MultiPassIndexSplitter it is not optional, so we are patching
                         // it in our command to make 2 the default.
-                        .Concat(command.Contains("-n") ? new string[0] : new string[] { "-num", "2" })
+                        .Concat(command.Contains("-n") ? Arrays.Empty<string>() : new string[] { "-num", "2" })
                         .Union(optionalArg.SelectMany(x => x.Output)).ToArray();
                     AssertCommandTranslation(command, expected);
                 }

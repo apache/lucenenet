@@ -25,8 +25,8 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// </summary>
     public class FieldsQuery : SrndQuery /* mostly untested */
     {
-        private SrndQuery q;
-        private IList<string> fieldNames;
+        private readonly SrndQuery q; // LUCENENET: marked readonly
+        private readonly IList<string> fieldNames; // LUCENENET: marked readonly
         private readonly char fieldOp;
         private readonly string orOperatorName = "OR"; /* for expanded queries, not normally visible */
 
@@ -40,8 +40,10 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         public FieldsQuery(SrndQuery q, string fieldName, char fieldOp)
         {
             this.q = q;
-            var fieldNameList = new List<string>();
-            fieldNameList.Add(fieldName);
+            var fieldNameList = new List<string>
+            {
+                fieldName
+            };
             this.fieldNames = fieldNameList;
             this.fieldOp = fieldOp;
         }

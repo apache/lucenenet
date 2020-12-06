@@ -86,16 +86,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         /// </summary>
         public virtual object Clone()
         {
-            object clone = null;
-            try
-            {
-                clone = base.MemberwiseClone();
-            }
-            catch (Exception e)
-            {
-                throw new InvalidOperationException(e.Message, e); // shouldn't happen
-            }
-            return clone;
+            return MemberwiseClone(); // LUCENENET: never throws in .NET
         }
 
         /// <summary>

@@ -29,7 +29,7 @@ namespace TagSoup
     public class PYXWriter : IScanHandler, IContentHandler, ILexicalHandler
     {
         private readonly TextWriter theWriter; // where we Write to
-        private static char[] dummy = new char[1];
+        //private static char[] dummy = new char[1]; // LUCENENET: Never read
         private string attrName; // saved attribute name
 
         // ScanHandler implementation

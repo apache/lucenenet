@@ -274,16 +274,14 @@ namespace Lucene.Net.Store
         [Test]
         public void TestAbuseClosedIndexInput()
         {
-            using (MockDirectoryWrapper dir = NewMockDirectory())
+            using MockDirectoryWrapper dir = NewMockDirectory();
+            using (IndexOutput @out = dir.CreateOutput("foo", IOContext.DEFAULT))
             {
-                using (IndexOutput @out = dir.CreateOutput("foo", IOContext.DEFAULT))
-                {
-                    @out.WriteByte((byte)42);
-                } // @out.close();
-                IndexInput @in = dir.OpenInput("foo", IOContext.DEFAULT);
-                @in.Dispose();
-                Assert.Throws<Exception>(() => @in.ReadByte());
-            } // dir.close();
+                @out.WriteByte((byte)42);
+            } // @out.close();
+            IndexInput @in = dir.OpenInput("foo", IOContext.DEFAULT);
+            @in.Dispose();
+            Assert.Throws<Exception>(() => @in.ReadByte());
         }
 
         // LUCENENET: This test compiles, but is not compatible with 4.8.0 (tested in Java Lucene), as it was ported from 8.2.0

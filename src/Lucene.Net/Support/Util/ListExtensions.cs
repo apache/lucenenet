@@ -61,9 +61,9 @@ namespace Lucene.Net.Util
         /// <param name="list">this <see cref="IList{T}"/></param>
         public static void Sort<T>(this IList<T> list)
         {
-            if (list is List<T>)
+            if (list is List<T> listToSort)
             {
-                ((List<T>)list).Sort();
+                listToSort.Sort();
             }
             else
             {
@@ -81,9 +81,9 @@ namespace Lucene.Net.Util
         /// <param name="comparer">the comparer to use for the sort</param>
         public static void Sort<T>(this IList<T> list, IComparer<T> comparer)
         {
-            if (list is List<T>)
+            if (list is List<T> listToSort)
             {
-                ((List<T>)list).Sort(comparer);
+                listToSort.Sort(comparer);
             }
             else
             {
@@ -159,7 +159,7 @@ namespace Lucene.Net.Util
 
         private sealed class FunctorComparer<T> : IComparer<T>
         {
-            private Comparison<T> comparison;
+            private readonly Comparison<T> comparison; // LUCENENET: marked readonly
 
             public FunctorComparer(Comparison<T> comparison)
             {

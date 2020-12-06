@@ -179,12 +179,9 @@ namespace Lucene.Net.Search.Spans
 
         private class SpanQueue : Util.PriorityQueue<Spans>
         {
-            private readonly SpanOrQuery outerInstance;
-
-            public SpanQueue(SpanOrQuery outerInstance, int size)
+            public SpanQueue(int size)
                 : base(size)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected internal override bool LessThan(Spans spans1, Spans spans2)
@@ -221,9 +218,9 @@ namespace Lucene.Net.Search.Spans
         {
             private readonly SpanOrQuery outerInstance;
 
-            private AtomicReaderContext context;
-            private IBits acceptDocs;
-            private IDictionary<Term, TermContext> termContexts;
+            private readonly AtomicReaderContext context;
+            private readonly IBits acceptDocs;
+            private readonly IDictionary<Term, TermContext> termContexts;
 
             public SpansAnonymousInnerClassHelper(SpanOrQuery outerInstance, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
             {
@@ -239,7 +236,7 @@ namespace Lucene.Net.Search.Spans
 
             private bool InitSpanQueue(int target)
             {
-                queue = new SpanQueue(outerInstance, outerInstance.clauses.Count);
+                queue = new SpanQueue(outerInstance.clauses.Count);
                 foreach (var clause in outerInstance.clauses)
                 {
                     Spans spans = clause.GetSpans(context, acceptDocs, termContexts);

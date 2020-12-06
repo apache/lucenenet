@@ -130,10 +130,9 @@ namespace Lucene.Net.Store
                     {
                         reason += ": " + FailureReason;
                     }
-                    LockObtainFailedException e = new LockObtainFailedException(reason);
-                    e = FailureReason != null
-                                        ? new LockObtainFailedException(reason, FailureReason)
-                                        : new LockObtainFailedException(reason);
+                    LockObtainFailedException e = FailureReason != null
+                        ? new LockObtainFailedException(reason, FailureReason)
+                        : new LockObtainFailedException(reason);
                     throw e;
                 }
 
@@ -178,8 +177,8 @@ namespace Lucene.Net.Store
         /// Utility class for executing code with exclusive access. </summary>
         public abstract class With<T> // LUCENENET specific - made generic so we don't need to deal with casting
         {
-            private Lock @lock;
-            private long lockWaitTimeout;
+            private readonly Lock @lock; // LUCENENET: marked readonly
+            private readonly long lockWaitTimeout; // LUCENENET: marked readonly
 
             /// <summary>
             /// Constructs an executor that will grab the named <paramref name="lock"/>. </summary>
@@ -187,7 +186,7 @@ namespace Lucene.Net.Store
             /// <param name="lockWaitTimeout"> length of time to wait in
             ///        milliseconds or 
             ///        <see cref="LOCK_OBTAIN_WAIT_FOREVER"/> to retry forever </param>
-            public With(Lock @lock, long lockWaitTimeout)
+            protected With(Lock @lock, long lockWaitTimeout) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
                 this.@lock = @lock;
                 this.lockWaitTimeout = lockWaitTimeout;
@@ -233,10 +232,7 @@ namespace Lucene.Net.Store
             public AnonymousWith(Lock @lock, int lockWaitTimeout, Func<T> doBody)
                 : base(@lock, lockWaitTimeout)
             {
-                if (doBody == null)
-                    throw new ArgumentNullException("doBody");
-
-                this.doBody = doBody;
+                this.doBody = doBody ?? throw new ArgumentNullException(nameof(doBody));
             }
 
             protected override T DoBody()

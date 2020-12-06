@@ -2,6 +2,7 @@ using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -90,6 +91,7 @@ namespace Lucene.Net.Util
 
             public override int DocID => doc;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return numBits;
@@ -167,6 +169,7 @@ namespace Lucene.Net.Util
         /// Returns the popcount or cardinality of the intersection of the two sets.
         /// Neither set is modified.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long IntersectionCount(FixedBitSet a, FixedBitSet b)
         {
             return BitUtil.Pop_Intersect(a.bits, b.bits, 0, Math.Min(a.numWords, b.numWords));
@@ -242,6 +245,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Expert. </summary>
         [WritableArray]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long[] GetBits()
         {
             return bits;
@@ -252,6 +256,7 @@ namespace Lucene.Net.Util
         /// <see cref="long"/> in the backing bits array, and the result is not
         /// internally cached!
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int Cardinality()
         {
             return (int)BitUtil.Pop_Array(bits, 0, bits.Length);
@@ -259,7 +264,7 @@ namespace Lucene.Net.Util
 
         public bool Get(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, () => "index=" + index + ", numBits=" + numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, "index={0}, numBits={1}", index, numBits);
             int i = index >> 6; // div 64
             // signed shift will keep a negative index and force an
             // array-index-out-of-bounds-exception, removing the need for an explicit check.
@@ -270,7 +275,7 @@ namespace Lucene.Net.Util
 
         public void Set(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, () => "index=" + index + ", numBits=" + numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, "index={0}, numBits={1}", index, numBits);
             int wordNum = index >> 6; // div 64
             int bit = index & 0x3f; // mod 64
             long bitmask = 1L << bit;
@@ -279,7 +284,7 @@ namespace Lucene.Net.Util
 
         public bool GetAndSet(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, "index={0}, numBits={1}", index, numBits);
             int wordNum = index >> 6; // div 64
             int bit = index & 0x3f; // mod 64
             long bitmask = 1L << bit;
@@ -290,7 +295,7 @@ namespace Lucene.Net.Util
 
         public void Clear(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, "index={0}, numBits={1}", index, numBits);
             int wordNum = index >> 6;
             int bit = index & 0x03f;
             long bitmask = 1L << bit;
@@ -299,7 +304,7 @@ namespace Lucene.Net.Util
 
         public bool GetAndClear(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, "index={0}, numBits={1}", index, numBits);
             int wordNum = index >> 6; // div 64
             int bit = index & 0x3f; // mod 64
             long bitmask = 1L << bit;
@@ -314,7 +319,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public int NextSetBit(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, () => "index=" + index + ", numBits=" + numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, "index={0}, numBits={1}", index, numBits);
             int i = index >> 6;
             int subIndex = index & 0x3f; // index within the word
             long word = bits[i] >> subIndex; // skip all the bits to the right of index
@@ -342,7 +347,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public int PrevSetBit(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, () => "index=" + index + " numBits=" + numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, "index={0}, numBits={1}", index, numBits);
             int i = index >> 6;
             int subIndex = index & 0x3f; // index within the word
             long word = (bits[i] << (63 - subIndex)); // skip all the bits to the left of index
@@ -370,17 +375,15 @@ namespace Lucene.Net.Util
         /// </summary>
         public void Or(DocIdSetIterator iter)
         {
-            if (iter is OpenBitSetIterator && iter.DocID == -1)
+            if (iter.DocID == -1 && iter is OpenBitSetIterator obs)
             {
-                OpenBitSetIterator obs = (OpenBitSetIterator)iter;
                 Or(obs.arr, obs.words);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
                 obs.Advance(numBits);
             }
-            else if (iter is FixedBitSetIterator && iter.DocID == -1)
+            else if (iter.DocID == -1 && iter is FixedBitSetIterator fbs)
             {
-                FixedBitSetIterator fbs = (FixedBitSetIterator)iter;
                 Or(fbs.bits, fbs.numWords);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
@@ -398,6 +401,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// this = this OR other </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Or(FixedBitSet other)
         {
             Or(other.bits, other.numWords);
@@ -405,7 +409,7 @@ namespace Lucene.Net.Util
 
         private void Or(long[] otherArr, int otherNumWords)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(otherNumWords <= numWords, () => "numWords=" + numWords + ", otherNumWords=" + otherNumWords);
+            if (Debugging.AssertsEnabled) Debugging.Assert(otherNumWords <= numWords, "numWords={0}, otherNumWords={1}", numWords, otherNumWords);
             long[] thisArr = this.bits;
             int pos = Math.Min(numWords, otherNumWords);
             while (--pos >= 0)
@@ -418,7 +422,7 @@ namespace Lucene.Net.Util
         /// this = this XOR other </summary>
         public void Xor(FixedBitSet other)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(other.numWords <= numWords, () => "numWords=" + numWords + ", other.numWords=" + other.numWords);
+            if (Debugging.AssertsEnabled) Debugging.Assert(other.numWords <= numWords, "numWords={0}, other.numWords={1}", numWords, other.numWords);
             long[] thisBits = this.bits;
             long[] otherBits = other.bits;
             int pos = Math.Min(numWords, other.numWords);
@@ -445,17 +449,15 @@ namespace Lucene.Net.Util
         /// </summary>
         public void And(DocIdSetIterator iter)
         {
-            if (iter is OpenBitSetIterator && iter.DocID == -1)
+            if (iter.DocID == -1 && iter is OpenBitSetIterator obs)
             {
-                OpenBitSetIterator obs = (OpenBitSetIterator)iter;
                 And(obs.arr, obs.words);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
                 obs.Advance(numBits);
             }
-            else if (iter is FixedBitSetIterator && iter.DocID == -1)
+            else if (iter.DocID == -1 && iter is FixedBitSetIterator fbs)
             {
-                FixedBitSetIterator fbs = (FixedBitSetIterator)iter;
                 And(fbs.bits, fbs.numWords);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
@@ -498,6 +500,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// this = this AND other </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void And(FixedBitSet other)
         {
             And(other.bits, other.numWords);
@@ -523,17 +526,15 @@ namespace Lucene.Net.Util
         /// </summary>
         public void AndNot(DocIdSetIterator iter)
         {
-            if (iter is OpenBitSetIterator && iter.DocID == -1)
+            if (iter.DocID == -1 && iter is OpenBitSetIterator obs)
             {
-                OpenBitSetIterator obs = (OpenBitSetIterator)iter;
                 AndNot(obs.arr, obs.words);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
                 obs.Advance(numBits);
             }
-            else if (iter is FixedBitSetIterator && iter.DocID == -1)
+            else if (iter.DocID == -1 && iter is FixedBitSetIterator fbs)
             {
-                FixedBitSetIterator fbs = (FixedBitSetIterator)iter;
                 AndNot(fbs.bits, fbs.numWords);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
@@ -551,6 +552,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// this = this AND NOT other </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AndNot(FixedBitSet other)
         {
             AndNot(other.bits, other.bits.Length);
@@ -663,8 +665,8 @@ namespace Lucene.Net.Util
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(startIndex >= 0 && startIndex < numBits, () => "startIndex=" + startIndex + ", numBits=" + numBits);
-                Debugging.Assert(endIndex >= 0 && endIndex <= numBits, () => "endIndex=" + endIndex + ", numBits=" + numBits);
+                Debugging.Assert(startIndex >= 0 && startIndex < numBits, "startIndex={0}, numBits={1}", startIndex, numBits);
+                Debugging.Assert(endIndex >= 0 && endIndex <= numBits, "endIndex={0}, numBits={1}", endIndex, numBits);
             }
             if (endIndex <= startIndex)
             {
@@ -694,6 +696,7 @@ namespace Lucene.Net.Util
             bits[endWord] &= endmask;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FixedBitSet Clone()
         {
             long[] bits = new long[this.bits.Length];

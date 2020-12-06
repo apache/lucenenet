@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Payloads
     /// </summary>
     public class PayloadSpanUtil
     {
-        private IndexReaderContext context;
+        private readonly IndexReaderContext context; // LUCENENET: marked readonly
 
         /// <param name="context">
         ///          that contains doc with payloads to extract
@@ -66,9 +66,9 @@ namespace Lucene.Net.Search.Payloads
 
         private void QueryToSpanQuery(Query query, ICollection<byte[]> payloads)
         {
-            if (query is BooleanQuery)
+            if (query is BooleanQuery booleanQuery)
             {
-                BooleanClause[] queryClauses = ((BooleanQuery)query).GetClauses();
+                BooleanClause[] queryClauses = booleanQuery.GetClauses();
 
                 for (int i = 0; i < queryClauses.Length; i++)
                 {
@@ -78,16 +78,16 @@ namespace Lucene.Net.Search.Payloads
                     }
                 }
             }
-            else if (query is PhraseQuery)
+            else if (query is PhraseQuery phraseQuery)
             {
-                Term[] phraseQueryTerms = ((PhraseQuery)query).GetTerms();
+                Term[] phraseQueryTerms = phraseQuery.GetTerms();
                 SpanQuery[] clauses = new SpanQuery[phraseQueryTerms.Length];
                 for (int i = 0; i < phraseQueryTerms.Length; i++)
                 {
                     clauses[i] = new SpanTermQuery(phraseQueryTerms[i]);
                 }
 
-                int slop = ((PhraseQuery)query).Slop;
+                int slop = phraseQuery.Slop;
                 bool inorder = false;
 
                 if (slop == 0)
@@ -95,34 +95,31 @@ namespace Lucene.Net.Search.Payloads
                     inorder = true;
                 }
 
-                SpanNearQuery sp = new SpanNearQuery(clauses, slop, inorder);
-                sp.Boost = query.Boost;
+                SpanNearQuery sp = new SpanNearQuery(clauses, slop, inorder) { Boost = query.Boost };
                 GetPayloads(payloads, sp);
             }
-            else if (query is TermQuery)
+            else if (query is TermQuery termQuery)
             {
-                SpanTermQuery stq = new SpanTermQuery(((TermQuery)query).Term);
-                stq.Boost = query.Boost;
+                SpanTermQuery stq = new SpanTermQuery(termQuery.Term) { Boost = query.Boost };
                 GetPayloads(payloads, stq);
             }
-            else if (query is SpanQuery)
+            else if (query is SpanQuery spanQuery)
             {
-                GetPayloads(payloads, (SpanQuery)query);
+                GetPayloads(payloads, spanQuery);
             }
-            else if (query is FilteredQuery)
+            else if (query is FilteredQuery filteredQuery)
             {
-                QueryToSpanQuery(((FilteredQuery)query).Query, payloads);
+                QueryToSpanQuery(filteredQuery.Query, payloads);
             }
-            else if (query is DisjunctionMaxQuery)
+            else if (query is DisjunctionMaxQuery disjunctionMaxQuery)
             {
-                foreach (var q in ((DisjunctionMaxQuery)query))
+                foreach (var q in disjunctionMaxQuery)
                 {
                     QueryToSpanQuery(q, payloads);
                 }
             }
-            else if (query is MultiPhraseQuery)
+            else if (query is MultiPhraseQuery mpq)
             {
-                MultiPhraseQuery mpq = (MultiPhraseQuery)query;
                 IList<Term[]> termArrays = mpq.GetTermArrays();
                 int[] positions = mpq.GetPositions();
                 if (positions.Length > 0)

@@ -45,16 +45,12 @@ namespace Lucene.Net.Util
             try
             {
                 var binaryFormatter = new BinaryFormatter();
-                using (var serializationStream = new MemoryStream())
-                {
-                    binaryFormatter.Serialize(serializationStream, exception);
-                    serializationStream.Seek(0, SeekOrigin.Begin);
-                    clone = (T)binaryFormatter.Deserialize(serializationStream);
-                }
+                using var serializationStream = new MemoryStream();
+                binaryFormatter.Serialize(serializationStream, exception);
+                serializationStream.Seek(0, SeekOrigin.Begin);
+                clone = (T)binaryFormatter.Deserialize(serializationStream);
             }
-#pragma warning disable 168
-            catch (SerializationException ex)
-#pragma warning restore 168
+            catch (SerializationException)
             {
                 return false;
             }

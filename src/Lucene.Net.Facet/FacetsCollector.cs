@@ -53,7 +53,7 @@ namespace Lucene.Net.Facet
             /// <summary>
             /// Sole constructor.
             /// </summary>
-            public Docs()
+            protected Docs() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
             }
 

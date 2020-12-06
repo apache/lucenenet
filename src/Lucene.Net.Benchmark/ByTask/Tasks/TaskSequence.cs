@@ -51,11 +51,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         private double runTimeSec;                      // how long to run for
         private readonly long logByTimeMsec;
 
-        public TaskSequence(PerfRunData runData, String name, TaskSequence parent, bool parallel)
+        public TaskSequence(PerfRunData runData, string name, TaskSequence parent, bool parallel)
             : base(runData)
         {
-            collapsable = (name == null);
-            name = (name != null ? name : (parallel ? "Par" : "Seq"));
+            collapsable = name == null;
+            name = name ?? (parallel ? "Par" : "Seq");
             SetName(name);
             SetSequenceName();
             this.parent = parent;
@@ -335,9 +335,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 exhausted = false;
                 resetExhausted = true;
             }
-            else if (task is TaskSequence)
+            else if (task is TaskSequence t)
             {
-                TaskSequence t = (TaskSequence)task;
                 if (t.resetExhausted)
                 {
                     exhausted = false;
@@ -407,7 +406,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
         }
 
-        ParallelTask[] runningParallelTasks;
+        private ParallelTask[] runningParallelTasks;
 
         private int DoParallelTasks()
         {
@@ -443,23 +442,19 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             {
                 t[i].Join();
                 count += t[i].Count;
-                if (t[i].Task is TaskSequence)
+                if (t[i].Task is TaskSequence sub && sub.countsByTime != null)
                 {
-                    TaskSequence sub = (TaskSequence)t[i].Task;
-                    if (sub.countsByTime != null)
+                    if (countsByTime == null)
                     {
-                        if (countsByTime == null)
-                        {
-                            countsByTime = new int[sub.countsByTime.Length];
-                        }
-                        else if (countsByTime.Length < sub.countsByTime.Length)
-                        {
-                            countsByTime = ArrayUtil.Grow(countsByTime, sub.countsByTime.Length);
-                        }
-                        for (int j = 0; j < sub.countsByTime.Length; j++)
-                        {
-                            countsByTime[j] += sub.countsByTime[j];
-                        }
+                        countsByTime = new int[sub.countsByTime.Length];
+                    }
+                    else if (countsByTime.Length < sub.countsByTime.Length)
+                    {
+                        countsByTime = ArrayUtil.Grow(countsByTime, sub.countsByTime.Length);
+                    }
+                    for (int j = 0; j < sub.countsByTime.Length; j++)
+                    {
+                        countsByTime[j] += sub.countsByTime[j];
                     }
                 }
             }
@@ -560,9 +555,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             letChildReport = false;
             foreach (PerfTask task in tasks)
             {
-                if (task is TaskSequence)
+                if (task is TaskSequence taskSequence)
                 {
-                    ((TaskSequence)task).SetNoChildReport();
+                    taskSequence.SetNoChildReport();
                 }
             }
         }

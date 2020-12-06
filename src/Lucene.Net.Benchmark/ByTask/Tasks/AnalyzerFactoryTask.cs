@@ -72,16 +72,16 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// </remarks>
     public class AnalyzerFactoryTask : PerfTask
     {
-        private static readonly string LUCENE_ANALYSIS_PACKAGE_PREFIX = "Lucene.Net.Analysis.";
+        private const string LUCENE_ANALYSIS_PACKAGE_PREFIX = "Lucene.Net.Analysis.";
         private static readonly Regex ANALYSIS_COMPONENT_SUFFIX_PATTERN
             = new Regex("(?s:(?:(?:Token|Char)?Filter|Tokenizer)(?:Factory)?)$", RegexOptions.Compiled);
         private static readonly Regex TRAILING_DOT_ZERO_PATTERN = new Regex(@"\.0$", RegexOptions.Compiled);
 
         private enum ArgType { ANALYZER_ARG, ANALYZER_ARG_OR_CHARFILTER_OR_TOKENIZER, TOKENFILTER }
 
-        string factoryName = null;
-        int? positionIncrementGap = null;
-        int? offsetGap = null;
+        private string factoryName = null;
+        private int? positionIncrementGap = null;
+        private int? offsetGap = null;
         private readonly IList<CharFilterFactory> charFilterFactories = new List<CharFilterFactory>();
         private TokenizerFactory tokenizerFactory = null;
         private readonly IList<TokenFilterFactory> tokenFilterFactories = new List<TokenFilterFactory>();
@@ -481,10 +481,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     throw new Exception("Line #" + GetLineNumber(stok) + ": ", e);
                 }
-                if (instance is IResourceLoaderAware)
+                if (instance is IResourceLoaderAware resourceLoaderAware)
                 {
                     DirectoryInfo baseDir = new DirectoryInfo(RunData.Config.Get("work.dir", "work"));
-                    ((IResourceLoaderAware)instance).Inform(new FilesystemResourceLoader(baseDir));
+                    resourceLoaderAware.Inform(new FilesystemResourceLoader(baseDir));
                 }
                 if (typeof(CharFilterFactory).IsAssignableFrom(clazz))
                 {

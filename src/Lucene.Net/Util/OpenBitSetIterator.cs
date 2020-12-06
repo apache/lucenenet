@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Lucene.Net.Util
 {
     /*
@@ -164,6 +166,7 @@ namespace Lucene.Net.Util
 
         public override int DocID => curDocId;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long GetCost()
         {
             return words / 64;

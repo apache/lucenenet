@@ -246,7 +246,7 @@ namespace Lucene.Net.Join
                         }
                     }
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(_childDoc < _parentDoc, () => "childDoc=" + _childDoc + " parentDoc=" + _parentDoc);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(_childDoc < _parentDoc, "childDoc={0} parentDoc={1}", _childDoc, _parentDoc);
                     _childDoc++;
                     if (_acceptDocs != null && !_acceptDocs.Get(_childDoc))
                     {
@@ -289,7 +289,7 @@ namespace Lucene.Net.Join
                     return _childDoc = _parentDoc = NO_MORE_DOCS;
                 }
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(_childDoc == -1 || childTarget != _parentDoc, () => "childTarget=" + childTarget);
+                if (Debugging.AssertsEnabled) Debugging.Assert(_childDoc == -1 || childTarget != _parentDoc, "childTarget={0}", childTarget);
                 if (_childDoc == -1 || childTarget > _parentDoc)
                 {
                     // Advance to new parent:
@@ -355,9 +355,9 @@ namespace Lucene.Net.Join
 
         public override bool Equals(object obj)
         {
-            if (obj is ToChildBlockJoinQuery)
+            if (obj is null) return false;
+            if (obj is ToChildBlockJoinQuery other)
             {
-                ToChildBlockJoinQuery other = (ToChildBlockJoinQuery)obj;
                 return _origParentQuery.Equals(other._origParentQuery) &&
                     _parentsFilter.Equals(other._parentsFilter) &&
                     _doScores == other._doScores &&

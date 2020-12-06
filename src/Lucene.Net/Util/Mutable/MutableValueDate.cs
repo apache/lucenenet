@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Mutable
 {
@@ -25,11 +26,13 @@ namespace Lucene.Net.Util.Mutable
     /// </summary>
     public class MutableValueDate : MutableValueInt64
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override object ToObject()
         {
             return Exists ? new DateTime(Value) as object : null;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override MutableValue Duplicate()
         {
             return new MutableValueDate

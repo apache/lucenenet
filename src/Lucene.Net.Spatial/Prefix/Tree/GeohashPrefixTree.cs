@@ -48,7 +48,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             protected internal override SpatialPrefixTree NewSPT()
             {
-                return new GeohashPrefixTree(m_ctx, m_maxLevels.HasValue ? m_maxLevels.Value : GeohashPrefixTree.MaxLevelsPossible);
+                return new GeohashPrefixTree(m_ctx, m_maxLevels ?? GeohashPrefixTree.MaxLevelsPossible);
             }
         }
 

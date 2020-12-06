@@ -40,22 +40,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// <summary>
         /// Lexical error occurred.
         /// </summary>
-        internal static readonly int LEXICAL_ERROR = 0;
+        internal const int LEXICAL_ERROR = 0;
 
         /// <summary>
         /// An attempt was made to create a second instance of a static token manager.
         /// </summary>
-        internal static readonly int STATIC_LEXER_ERROR = 1;
+        internal const int STATIC_LEXER_ERROR = 1;
 
         /// <summary>
         /// Tried to change to an invalid lexical state.
         /// </summary>
-        internal static readonly int INVALID_LEXICAL_STATE = 2;
+        internal const int INVALID_LEXICAL_STATE = 2;
 
         /// <summary>
         /// Detected (and bailed out of) an infinite loop in the token manager.
         /// </summary>
-        internal static readonly int LOOP_DETECTED = 3;
+        internal const int LOOP_DETECTED = 3;
 
         /// <summary>
         /// Indicates the reason why the exception is thrown. It will have

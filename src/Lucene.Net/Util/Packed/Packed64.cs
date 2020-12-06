@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -74,17 +75,7 @@ namespace Lucene.Net.Util.Packed
             PackedInt32s.Format format = PackedInt32s.Format.PACKED;
             int longCount = format.Int64Count(PackedInt32s.VERSION_CURRENT, valueCount, bitsPerValue);
             this.blocks = new long[longCount];
-            //            MaskRight = ~0L << (int)((uint)(BLOCK_SIZE - bitsPerValue) >> (BLOCK_SIZE - bitsPerValue));    //original
-            //            MaskRight = (uint)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue);          //mod
-
-            /*var a = ~0L << (int)((uint)(BLOCK_SIZE - bitsPerValue) >> (BLOCK_SIZE - bitsPerValue));    //original
-            var b = (uint)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue);          //mod
-            if (Debugging.AssertsEnabled) Debugging.Assert(a == b, "a: " + a, ", b: " + b);*/
-
-            maskRight = (long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue));    //mod
-
-            //if (Debugging.AssertsEnabled) Debugging.Assert((long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue)) == (uint)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue));
-
+            maskRight = (long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue));
             bpvMinusBlockSize = bitsPerValue - BLOCK_SIZE;
         }
 
@@ -130,7 +121,6 @@ namespace Lucene.Net.Util.Packed
             long majorBitPos = (long)index * m_bitsPerValue;
             // The index in the backing long-array
             int elementPos = (int)(((ulong)majorBitPos) >> BLOCK_BITS);
-            //int elementPos = (int)((long)((ulong)majorBitPos >> BLOCK_BITS));
             // The number of value-bits in the second long
             long endBits = (majorBitPos & MOD_MASK) + bpvMinusBlockSize;
 
@@ -142,39 +132,9 @@ namespace Lucene.Net.Util.Packed
             return ((blocks[elementPos] << (int)endBits) | ((long)((ulong)blocks[elementPos + 1] >> (int)(BLOCK_SIZE - endBits)))) & maskRight;
         }
 
-        /*/// <param name="index"> the position of the value. </param>
-        /// <returns> the value at the given index. </returns>
-        public override long Get(int index)
-        {
-            // The abstract index in a bit stream
-            long majorBitPos = (long)index * bitsPerValue;
-            // The index in the backing long-array
-            int elementPos = (int)((long)((ulong)majorBitPos >> BLOCK_BITS));
-            // The number of value-bits in the second long
-            long endBits = (majorBitPos & MOD_MASK) + BpvMinusBlockSize;
-
-            if (endBits <= 0) // Single block
-            {
-                var mod = (long) ((ulong) (Blocks[elementPos]) >> (int) (-endBits)) & MaskRight;
-                var og = ((long) ((ulong) Blocks[elementPos] >> (int) -endBits)) & MaskRight;
-                if (Debugging.AssertsEnabled) Debugging.Assert(mod == og);
-
-                //return (long)((ulong)(Blocks[elementPos]) >> (int)(-endBits)) & MaskRight;
-                return ((long)((ulong)Blocks[elementPos] >> (int)-endBits)) & MaskRight;
-            }
-            // Two blocks
-            var a = (((Blocks[elementPos] << (int)endBits) | (long)(((ulong)(Blocks[elementPos + 1])) >> (int)(BLOCK_SIZE - endBits))) & MaskRight);
-            var b = ((Blocks[elementPos] << (int)endBits) | ((long)((ulong)Blocks[elementPos + 1] >> (int)(BLOCK_SIZE - endBits)))) & MaskRight;
-
-            if (Debugging.AssertsEnabled) Debugging.Assert(a == b);
-
-            //return (((Blocks[elementPos] << (int)endBits) | (long)(((ulong)(Blocks[elementPos + 1])) >> (int)(BLOCK_SIZE - endBits))) & MaskRight);
-            return ((Blocks[elementPos] << (int)endBits) | ((long)((ulong)Blocks[elementPos + 1] >> (int)(BLOCK_SIZE - endBits)))) & MaskRight;
-        }*/
-
         public override int Get(int index, long[] arr, int off, int len)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+            if (Debugging.AssertsEnabled) Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
             if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < m_valueCount);
             len = Math.Min(len, m_valueCount - index);
             if (Debugging.AssertsEnabled) Debugging.Assert(off + len <= arr.Length);
@@ -242,7 +202,7 @@ namespace Lucene.Net.Util.Packed
 
         public override int Set(int index, long[] arr, int off, int len)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+            if (Debugging.AssertsEnabled) Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
             if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < m_valueCount);
             len = Math.Min(len, m_valueCount - index);
             if (Debugging.AssertsEnabled) Debugging.Assert(off + len <= arr.Length);
@@ -379,6 +339,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Clear()
         {
             Arrays.Fill(blocks, 0L);

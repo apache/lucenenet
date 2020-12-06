@@ -66,28 +66,25 @@ namespace Lucene.Net.Queries.Function.ValueSources
             IndexReader topReader = ReaderUtil.GetTopLevelContext(readerContext).Reader;
             AtomicReader r = SlowCompositeReaderWrapper.Wrap(topReader);
             SortedDocValues sindex = FieldCache.DEFAULT.GetTermsIndex(r, m_field);
-            return new Int32DocValuesAnonymousInnerClassHelper(this, this, off, sindex);
+            return new Int32DocValuesAnonymousInnerClassHelper(this, off, sindex);
         }
 
         private sealed class Int32DocValuesAnonymousInnerClassHelper : Int32DocValues
         {
-            private readonly OrdFieldSource outerInstance;
-
             private readonly int off;
             private readonly SortedDocValues sindex;
 
-            public Int32DocValuesAnonymousInnerClassHelper(OrdFieldSource outerInstance, OrdFieldSource @this, int off, SortedDocValues sindex)
+            public Int32DocValuesAnonymousInnerClassHelper(OrdFieldSource @this, int off, SortedDocValues sindex)
                 : base(@this)
             {
-                this.outerInstance = outerInstance;
                 this.off = off;
                 this.sindex = sindex;
             }
 
-            private string ToTerm(string readableValue)
-            {
-                return readableValue;
-            }
+            //private string ToTerm(string readableValue) // LUCENENET: IDE0051: Remove unused private member
+            //{
+            //    return readableValue;
+            //}
 
             /// <summary>
             /// NOTE: This was intVal() in Lucene

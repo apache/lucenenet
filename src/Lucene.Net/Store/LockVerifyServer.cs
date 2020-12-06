@@ -37,7 +37,7 @@ namespace Lucene.Net.Store
     /// </summary>
     /// <seealso cref="VerifyingLockFactory"/>
     /// <seealso cref="LockStressTest"/>
-    public class LockVerifyServer
+    public static class LockVerifyServer // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         [STAThread]
         public static void Main(string[] args)
@@ -56,54 +56,52 @@ namespace Lucene.Net.Store
 
             IPAddress ipAddress = IPAddress.Parse(hostname);
 
-            using (Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+            using Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
+            s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 30000);// SoTimeout = 30000; // initially 30 secs to give clients enough time to startup
+
+            s.Bind(new IPEndPoint(ipAddress, 0));
+            s.Listen(maxClients);
+            Console.WriteLine("Listening on " + ((IPEndPoint)s.LocalEndPoint).Port.ToString() + "...");
+
+            // we set the port as a sysprop, so the ANT task can read it. For that to work, this server must run in-process:
+            Environment.SetEnvironmentVariable("lockverifyserver.port", ((IPEndPoint)s.LocalEndPoint).Port.ToString(CultureInfo.InvariantCulture));
+
+            object localLock = new object();
+            int[] lockedID = new int[1];
+            lockedID[0] = -1;
+            CountdownEvent startingGun = new CountdownEvent(1);
+            ThreadJob[] threads = new ThreadJob[maxClients];
+
+            for (int count = 0; count < maxClients; count++)
             {
-                s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
-                s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 30000);// SoTimeout = 30000; // initially 30 secs to give clients enough time to startup
-
-                s.Bind(new IPEndPoint(ipAddress, 0));
-                s.Listen(maxClients);
-                Console.WriteLine("Listening on " + ((IPEndPoint)s.LocalEndPoint).Port.ToString() + "...");
-
-                // we set the port as a sysprop, so the ANT task can read it. For that to work, this server must run in-process:
-                Environment.SetEnvironmentVariable("lockverifyserver.port", ((IPEndPoint)s.LocalEndPoint).Port.ToString(CultureInfo.InvariantCulture));
-
-                object localLock = new object();
-                int[] lockedID = new int[1];
-                lockedID[0] = -1;
-                CountdownEvent startingGun = new CountdownEvent(1);
-                ThreadJob[] threads = new ThreadJob[maxClients];
-
-                for (int count = 0; count < maxClients; count++)
-                {
-                    Socket cs = s.Accept();
-                    threads[count] = new ThreadAnonymousInnerClassHelper(localLock, lockedID, startingGun, cs);
-                    threads[count].Start();
-                }
-
-                // start
-                Console.WriteLine("All clients started, fire gun...");
-                startingGun.Signal();
-
-                // wait for all threads to finish
-                foreach (ThreadJob t in threads)
-                {
-                    t.Join();
-                }
-
-                // cleanup sysprop
-                Environment.SetEnvironmentVariable("lockverifyserver.port", null);
-
-                Console.WriteLine("Server terminated.");
+                Socket cs = s.Accept();
+                threads[count] = new ThreadAnonymousInnerClassHelper(localLock, lockedID, startingGun, cs);
+                threads[count].Start();
             }
+
+            // start
+            Console.WriteLine("All clients started, fire gun...");
+            startingGun.Signal();
+
+            // wait for all threads to finish
+            foreach (ThreadJob t in threads)
+            {
+                t.Join();
+            }
+
+            // cleanup sysprop
+            Environment.SetEnvironmentVariable("lockverifyserver.port", null);
+
+            Console.WriteLine("Server terminated.");
         }
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private object localLock;
-            private int[] lockedID;
-            private CountdownEvent startingGun;
-            private Socket cs;
+            private readonly object localLock;
+            private readonly int[] lockedID;
+            private readonly CountdownEvent startingGun;
+            private readonly Socket cs;
 
             public ThreadAnonymousInnerClassHelper(object localLock, int[] lockedID, CountdownEvent startingGun, Socket cs)
             {
@@ -115,81 +113,79 @@ namespace Lucene.Net.Store
 
             public override void Run()
             {
-                using (Stream stream = new NetworkStream(cs))
+                using Stream stream = new NetworkStream(cs);
+                BinaryReader intReader = new BinaryReader(stream);
+                BinaryWriter intWriter = new BinaryWriter(stream);
+                try
                 {
-                    BinaryReader intReader = new BinaryReader(stream);
-                    BinaryWriter intWriter = new BinaryWriter(stream);
-                    try
+                    int id = intReader.ReadInt32();
+                    if (id < 0)
                     {
-                        int id = intReader.ReadInt32();
-                        if (id < 0)
+                        throw new IOException("Client closed connection before communication started.");
+                    }
+
+                    startingGun.Wait();
+                    intWriter.Write(43);
+                    stream.Flush();
+
+                    while (true)
+                    {
+                        int command = stream.ReadByte();
+                        if (command < 0)
                         {
-                            throw new IOException("Client closed connection before communication started.");
+                            return; // closed
                         }
 
-                        startingGun.Wait();
-                        intWriter.Write(43);
-                        stream.Flush();
-
-                        while (true)
+                        lock (localLock)
                         {
-                            int command = stream.ReadByte();
-                            if (command < 0)
+                            int currentLock = lockedID[0];
+                            if (currentLock == -2)
                             {
-                                return; // closed
+                                return; // another thread got error, so we exit, too!
                             }
-
-                            lock (localLock)
+                            switch (command)
                             {
-                                int currentLock = lockedID[0];
-                                if (currentLock == -2)
-                                {
-                                    return; // another thread got error, so we exit, too!
-                                }
-                                switch (command)
-                                {
-                                    case 1:
-                                        // Locked
-                                        if (currentLock != -1)
-                                        {
-                                            lockedID[0] = -2;
-                                            throw new InvalidOperationException("id " + id + " got lock, but " + currentLock + " already holds the lock");
-                                        }
-                                        lockedID[0] = id;
-                                        break;
+                                case 1:
+                                    // Locked
+                                    if (currentLock != -1)
+                                    {
+                                        lockedID[0] = -2;
+                                        throw new InvalidOperationException("id " + id + " got lock, but " + currentLock + " already holds the lock");
+                                    }
+                                    lockedID[0] = id;
+                                    break;
 
-                                    case 0:
-                                        // Unlocked
-                                        if (currentLock != id)
-                                        {
-                                            lockedID[0] = -2;
-                                            throw new InvalidOperationException("id " + id + " released the lock, but " + currentLock + " is the one holding the lock");
-                                        }
-                                        lockedID[0] = -1;
-                                        break;
+                                case 0:
+                                    // Unlocked
+                                    if (currentLock != id)
+                                    {
+                                        lockedID[0] = -2;
+                                        throw new InvalidOperationException("id " + id + " released the lock, but " + currentLock + " is the one holding the lock");
+                                    }
+                                    lockedID[0] = -1;
+                                    break;
 
-                                    default:
-                                        throw new Exception("Unrecognized command: " + command);
-                                }
-                                intWriter.Write((byte)command);
-                                stream.Flush();
+                                default:
+                                    throw new Exception("Unrecognized command: " + command);
                             }
+                            intWriter.Write((byte)command);
+                            stream.Flush();
                         }
                     }
-                    catch (IOException ioe)
-                    {
-                        throw new Exception(ioe.ToString(), ioe);
-                    }
-                    catch (Exception e)
-                    {
-                        // LUCENENET NOTE: We need to throw a new exception
-                        // to ensure this is Exception and not some other type.
-                        throw new Exception(e.ToString(), e);
-                    }
-                    finally
-                    {
-                        IOUtils.DisposeWhileHandlingException(cs);
-                    }
+                }
+                catch (IOException ioe)
+                {
+                    throw new Exception(ioe.ToString(), ioe);
+                }
+                catch (Exception e)
+                {
+                    // LUCENENET NOTE: We need to throw a new exception
+                    // to ensure this is Exception and not some other type.
+                    throw new Exception(e.ToString(), e);
+                }
+                finally
+                {
+                    IOUtils.DisposeWhileHandlingException(cs);
                 }
             }
         }

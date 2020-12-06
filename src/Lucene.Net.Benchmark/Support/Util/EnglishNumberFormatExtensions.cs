@@ -59,7 +59,7 @@ namespace Lucene.Net.Util
                 ToWords(Math.Abs(value), builder);
             }
 
-            long unit = 0;
+            long unit;
 
             if (value >= QUADRILLION)
             {

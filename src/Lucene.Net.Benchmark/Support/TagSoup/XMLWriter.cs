@@ -667,7 +667,7 @@ namespace TagSoup
         public override void EndElement(string uri, string localName, string qName)
         {
             if (
-              !(htmlMode && (uri.Equals("http://www.w3.org/1999/xhtml", StringComparison.Ordinal) || uri.Equals("", StringComparison.Ordinal))
+              !(htmlMode && (uri.Equals("http://www.w3.org/1999/xhtml", StringComparison.Ordinal) || uri.Length == 0) // LUCENENET: CA1820: Test for empty strings using string length
                 && (qName.Equals("area", StringComparison.Ordinal) || qName.Equals("base", StringComparison.Ordinal) || qName.Equals("basefont", StringComparison.Ordinal) || qName.Equals("br", StringComparison.Ordinal)
                     || qName.Equals("col", StringComparison.Ordinal) || qName.Equals("frame", StringComparison.Ordinal) || qName.Equals("hr", StringComparison.Ordinal) || qName.Equals("img", StringComparison.Ordinal)
                     || qName.Equals("input", StringComparison.Ordinal) || qName.Equals("isindex", StringComparison.Ordinal) || qName.Equals("link", StringComparison.Ordinal) || qName.Equals("meta", StringComparison.Ordinal)

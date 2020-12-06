@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene45
 {
@@ -63,6 +64,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 this.outerInstance = outerInstance;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
                 return outerInstance.GetPostingsFormatForField(field);
@@ -80,6 +82,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 this.outerInstance = outerInstance;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override DocValuesFormat GetDocValuesFormatForField(string field)
             {
                 return outerInstance.GetDocValuesFormatForField(field);
@@ -113,6 +116,7 @@ namespace Lucene.Net.Codecs.Lucene45
         /// <para/>
         /// The default implementation always returns "Lucene41"
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual PostingsFormat GetPostingsFormatForField(string field)
         {
             // LUCENENET specific - lazy initialize the codec to ensure we get the correct type if overridden.
@@ -129,6 +133,7 @@ namespace Lucene.Net.Codecs.Lucene45
         /// <para/>
         /// The default implementation always returns "Lucene45"
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual DocValuesFormat GetDocValuesFormatForField(string field)
         {
             // LUCENENET specific - lazy initialize the codec to ensure we get the correct type if overridden.

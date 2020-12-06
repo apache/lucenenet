@@ -39,14 +39,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
     /// 
     /// MessageBundle classes may subclass this type.
     /// </summary>
-    public class NLS
+    public abstract class NLS // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>
         /// LUCENENET specific factory reference to inject instances of <see cref="ResourceManager"/>
         /// into this class.
         /// </summary>
         private static IResourceManagerFactory resourceManagerFactory = new BundleResourceManagerFactory();
-        private static IDictionary<string, Type> bundles = new Dictionary<string, Type>(0);
+        private static readonly IDictionary<string, Type> bundles = new Dictionary<string, Type>(0); // LUCENENET: marked readonly
 
         protected NLS()
         {
@@ -73,11 +73,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         // in a centralized DI configuration builder.
         public static void SetResourceManagerFactory(IResourceManagerFactory resourceManagerFactory)
         {
-            if (resourceManagerFactory == null)
-            {
-                throw new ArgumentNullException("resourceManagerFactory");
-            }
-            NLS.resourceManagerFactory = resourceManagerFactory;
+            NLS.resourceManagerFactory = resourceManagerFactory ?? throw new ArgumentNullException(nameof(resourceManagerFactory));
         }
 
         public static string GetLocalizedMessage(string key)
@@ -128,9 +124,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
                 if (!bundles.ContainsKey(bundleName))
                     bundles[bundleName] = clazz;
             }
-#pragma warning disable 168
-            catch (Exception e)
-#pragma warning restore 168
+            catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
             {
                 // ignore all errors and exceptions
                 // because this function is supposed to be called at class load time.
@@ -215,16 +209,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
                     }
                 }
             }
-#pragma warning disable 168
-            catch (MissingManifestResourceException e)
-#pragma warning restore 168
+            catch (MissingManifestResourceException) // LUCENENET: IDE0059: Remove unnecessary value assignment
             {
                 //System.err.println("WARN: Message with key:" + key + " and locale: "
                 //    + Locale.getDefault() + " not found.");
             }
-#pragma warning disable 168
-            catch (Exception e)
-#pragma warning restore 168
+            catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
             {
                 // ignore all other errors and exceptions
                 // since this code is just a test to see if the message is present on the

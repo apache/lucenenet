@@ -35,11 +35,11 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         {
         }
 
-        public static readonly char WORD_SEGMENT_CHAR = '@';
+        public const char WORD_SEGMENT_CHAR = '@';
 
         private static BigramDictionary singleInstance;
 
-        public static readonly int PRIME_BIGRAM_LENGTH = 402137;
+        public const int PRIME_BIGRAM_LENGTH = 402137;
 
         /// <summary>
         /// The word associations are stored as FNV1 hashcodes, which have a small probability of collision, but save memory.  
@@ -50,11 +50,11 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
         private int max = 0;
 
-        private int repeat = 0;
+        //private int repeat = 0; // LUCENENET: Never read
 
         // static Logger log = Logger.getLogger(BigramDictionary.class);
 
-        private static object syncLock = new object();
+        private static readonly object syncLock = new object();
 
         public static BigramDictionary GetInstance()
         {
@@ -78,21 +78,6 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     {
                         singleInstance.Load(dictRoot);
                     }
-
-
-                    //try
-                    //{
-                    //    singleInstance.Load();
-                    //}
-                    //catch (IOException e)
-                    //{
-                    //    string dictRoot = AnalyzerProfile.ANALYSIS_DATA_DIR;
-                    //    singleInstance.Load(dictRoot);
-                    //}
-                    //catch (TypeLoadException e)
-                    //{
-                    //    throw new Exception(e.ToString(), e);
-                    //}
                 }
                 return singleInstance;
             }
@@ -173,30 +158,21 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
         private void LoadFromInputStream(Stream serialObjectInputStream)
         {
-            //ObjectInputStream input = new ObjectInputStream(serialObjectInputStream);
-            //bigramHashTable = (long[])input.readObject();
-            //frequencyTable = (int[])input.readObject();
-            //// log.info("load bigram dict from serialization.");
-            //input.close();
-
-            using (var reader = new BinaryReader(serialObjectInputStream))
-            //using (var reader = new DataInputStream(serialObjectInputStream))
+            using var reader = new BinaryReader(serialObjectInputStream);
+            // Read bigramHashTable
+            int bhLen = reader.ReadInt32();
+            bigramHashTable = new long[bhLen];
+            for (int i = 0; i < bhLen; i++)
             {
-                // Read bigramHashTable
-                int bhLen = reader.ReadInt32();
-                bigramHashTable = new long[bhLen];
-                for (int i = 0; i < bhLen; i++)
-                {
-                    bigramHashTable[i] = reader.ReadInt64();
-                }
+                bigramHashTable[i] = reader.ReadInt64();
+            }
 
-                // Read frequencyTable
-                int fLen = reader.ReadInt32();
-                frequencyTable = new int[fLen];
-                for (int i = 0; i < fLen; i++)
-                {
-                    frequencyTable[i] = reader.ReadInt32();
-                }
+            // Read frequencyTable
+            int fLen = reader.ReadInt32();
+            frequencyTable = new int[fLen];
+            for (int i = 0; i < fLen; i++)
+            {
+                frequencyTable[i] = reader.ReadInt32();
             }
 
             // log.info("load bigram dict from serialization.");
@@ -206,36 +182,26 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         {
             try
             {
-                //ObjectOutputStream output = new ObjectOutputStream(new FileStream(
-                //    serialObj.FullName, FileMode.Create, FileAccess.Write));
-                //output.writeObject(bigramHashTable);
-                //output.writeObject(frequencyTable);
-                //output.close();
-                
-                using (Stream output = new FileStream(serialObj.FullName, FileMode.Create, FileAccess.Write))
+                using Stream output = new FileStream(serialObj.FullName, FileMode.Create, FileAccess.Write);
+                using BinaryWriter writer = new BinaryWriter(output);
+                int bhLen = bigramHashTable.Length;
+                writer.Write(bhLen);
+                for (int i = 0; i < bhLen; i++)
                 {
-                    using (BinaryWriter writer = new BinaryWriter(output))
-                    {
-                        int bhLen = bigramHashTable.Length;
-                        writer.Write(bhLen);
-                        for (int i = 0; i < bhLen; i++)
-                        {
-                            writer.Write(bigramHashTable[i]);
-                        }
+                    writer.Write(bigramHashTable[i]);
+                }
 
-                        int fLen = frequencyTable.Length;
-                        writer.Write(fLen);
-                        for (int i = 0; i < fLen; i++)
-                        {
-                            writer.Write(frequencyTable[i]);
-                        }
-                    }
+                int fLen = frequencyTable.Length;
+                writer.Write(fLen);
+                for (int i = 0; i < fLen; i++)
+                {
+                    writer.Write(frequencyTable[i]);
                 }
                 // log.info("serialize bigram dict.");
             }
-#pragma warning disable 168
+#pragma warning disable 168, IDE0059
             catch (Exception e)
-#pragma warning restore 168
+#pragma warning restore 168, IDE0059
             {
                 // log.warn(e.getMessage());
             }
@@ -243,10 +209,8 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
         private void Load()
         {
-            using (Stream input = this.GetType().FindAndGetManifestResourceStream("bigramdict.mem"))
-            {
-                LoadFromInputStream(input);
-            }
+            using Stream input = this.GetType().FindAndGetManifestResourceStream("bigramdict.mem");
+            LoadFromInputStream(input);
         }
 
         private void Load(string dictRoot)
@@ -296,64 +260,62 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             byte[] intBuffer = new byte[4];
             string tmpword;
             //using (RandomAccessFile dctFile = new RandomAccessFile(dctFilePath, "r"))
-            using (var dctFile = new FileStream(dctFilePath, FileMode.Open, FileAccess.Read))
+            using var dctFile = new FileStream(dctFilePath, FileMode.Open, FileAccess.Read);
+
+            // GB2312 characters 0 - 6768
+            for (i = GB2312_FIRST_CHAR; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
             {
+                string currentStr = GetCCByGB2312Id(i);
+                // if (i == 5231)
+                // System.out.println(i);
 
-                // GB2312 characters 0 - 6768
-                for (i = GB2312_FIRST_CHAR; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
+                dctFile.Read(intBuffer, 0, intBuffer.Length);
+                // the dictionary was developed for C, and byte order must be converted to work with Java
+                cnt = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian).GetInt32();
+                if (cnt <= 0)
                 {
-                    string currentStr = GetCCByGB2312Id(i);
-                    // if (i == 5231)
-                    // System.out.println(i);
-
+                    continue;
+                }
+                total += cnt;
+                int j = 0;
+                while (j < cnt)
+                {
                     dctFile.Read(intBuffer, 0, intBuffer.Length);
-                    // the dictionary was developed for C, and byte order must be converted to work with Java
-                    cnt = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian).GetInt32();
-                    if (cnt <= 0)
-                    {
-                        continue;
-                    }
-                    total += cnt;
-                    int j = 0;
-                    while (j < cnt)
-                    {
-                        dctFile.Read(intBuffer, 0, intBuffer.Length);
-                        buffer[0] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
-                            .GetInt32();// frequency
-                        dctFile.Read(intBuffer, 0, intBuffer.Length);
-                        buffer[1] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
-                            .GetInt32();// length
-                        dctFile.Read(intBuffer, 0, intBuffer.Length);
-                        // buffer[2] = ByteBuffer.wrap(intBuffer).order(
-                        // ByteOrder.LITTLE_ENDIAN).getInt();// handle
+                    buffer[0] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
+                        .GetInt32();// frequency
+                    dctFile.Read(intBuffer, 0, intBuffer.Length);
+                    buffer[1] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
+                        .GetInt32();// length
+                    dctFile.Read(intBuffer, 0, intBuffer.Length);
+                    // buffer[2] = ByteBuffer.wrap(intBuffer).order(
+                    // ByteOrder.LITTLE_ENDIAN).getInt();// handle
 
-                        length = buffer[1];
-                        if (length > 0)
+                    length = buffer[1];
+                    if (length > 0)
+                    {
+                        byte[] lchBuffer = new byte[length];
+                        dctFile.Read(lchBuffer, 0, lchBuffer.Length);
+                        //tmpword = new String(lchBuffer, "GB2312");
+                        tmpword = Encoding.GetEncoding("GB2312").GetString(lchBuffer);
+                        //tmpword = Encoding.GetEncoding("hz-gb-2312").GetString(lchBuffer);
+                        if (i != 3755 + GB2312_FIRST_CHAR)
                         {
-                            byte[] lchBuffer = new byte[length];
-                            dctFile.Read(lchBuffer, 0, lchBuffer.Length);
-                            //tmpword = new String(lchBuffer, "GB2312");
-                            tmpword = Encoding.GetEncoding("GB2312").GetString(lchBuffer);
-                            //tmpword = Encoding.GetEncoding("hz-gb-2312").GetString(lchBuffer);
-                            if (i != 3755 + GB2312_FIRST_CHAR)
-                            {
-                                tmpword = currentStr + tmpword;
-                            }
-                            char[] carray = tmpword.ToCharArray();
-                            long hashId = Hash1(carray);
-                            int index = GetAvaliableIndex(hashId, carray);
-                            if (index != -1)
-                            {
-                                if (bigramHashTable[index] == 0)
-                                {
-                                    bigramHashTable[index] = hashId;
-                                    // bigramStringTable[index] = tmpword;
-                                }
-                                frequencyTable[index] += buffer[0];
-                            }
+                            tmpword = currentStr + tmpword;
                         }
-                        j++;
+                        char[] carray = tmpword.ToCharArray();
+                        long hashId = Hash1(carray);
+                        int index = GetAvaliableIndex(hashId, carray);
+                        if (index != -1)
+                        {
+                            if (bigramHashTable[index] == 0)
+                            {
+                                bigramHashTable[index] = hashId;
+                                // bigramStringTable[index] = tmpword;
+                            }
+                            frequencyTable[index] += buffer[0];
+                        }
                     }
+                    j++;
                 }
             }
             // log.info("load dictionary done! " + dctFilePath + " total:" + total);
@@ -400,13 +362,13 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                 hash2 = PRIME_BIGRAM_LENGTH + hash2;
             int index = hash1;
             int i = 1;
-            repeat++;
+            //repeat++; // LUCENENET: Never read
             while (bigramHashTable[index] != 0 && bigramHashTable[index] != hashId
                 && i < PRIME_BIGRAM_LENGTH)
             {
                 index = (hash1 + i * hash2) % PRIME_BIGRAM_LENGTH;
                 i++;
-                repeat++;
+                //repeat++; // LUCENENET: Never read
                 if (i > max)
                     max = i;
             }

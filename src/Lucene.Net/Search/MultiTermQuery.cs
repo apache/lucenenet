@@ -267,13 +267,9 @@ namespace Lucene.Net.Search
         /// Constructs a query matching terms that cannot be represented with a single
         /// <see cref="Term"/>.
         /// </summary>
-        public MultiTermQuery(string field)
+        protected MultiTermQuery(string field) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
-            if (field == null)
-            {
-                throw new ArgumentException("field must not be null");
-            }
-            this.m_field = field;
+            this.m_field = field ?? throw new ArgumentNullException(nameof(field), "field must not be null");
         }
 
         /// <summary>

@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.VectorHighlight
         internal int termOrPhraseNumber; // used for colored tag support
 
         // The maximum number of different matching terms accumulated from any one MultiTermQuery
-        private static readonly int MAX_MTQ_TERMS = 1024;
+        private const int MAX_MTQ_TERMS = 1024;
 
         internal FieldQuery(Query query, IndexReader reader, bool phraseHighlight, bool fieldMatch)
         {
@@ -57,10 +57,9 @@ namespace Lucene.Net.Search.VectorHighlight
             foreach (Query flatQuery in expandQueries)
             {
                 QueryPhraseMap rootMap = GetRootMap(flatQuery);
-                rootMap.Add(flatQuery, reader);
-                if (!phraseHighlight && flatQuery is PhraseQuery)
+                rootMap.Add(flatQuery /*, reader // LUCENENET: Never read */);
+                if (!phraseHighlight && flatQuery is PhraseQuery pq)
                 {
-                    PhraseQuery pq = (PhraseQuery)flatQuery;
                     if (pq.GetTerms().Length > 1)
                     {
                         foreach (Term term in pq.GetTerms())
@@ -84,9 +83,8 @@ namespace Lucene.Net.Search.VectorHighlight
 
         internal void Flatten(Query sourceQuery, IndexReader reader, ICollection<Query> flatQueries)
         {
-            if (sourceQuery is BooleanQuery)
+            if (sourceQuery is BooleanQuery bq)
             {
-                BooleanQuery bq = (BooleanQuery)sourceQuery;
                 foreach (BooleanClause clause in bq)
                 {
                     if (!clause.IsProhibited)
@@ -95,9 +93,8 @@ namespace Lucene.Net.Search.VectorHighlight
                     }
                 }
             }
-            else if (sourceQuery is DisjunctionMaxQuery)
+            else if (sourceQuery is DisjunctionMaxQuery dmq)
             {
-                DisjunctionMaxQuery dmq = (DisjunctionMaxQuery)sourceQuery;
                 foreach (Query query in dmq)
                 {
                     Flatten(ApplyParentBoost(query, dmq), reader, flatQueries);
@@ -108,32 +105,33 @@ namespace Lucene.Net.Search.VectorHighlight
                 if (!flatQueries.Contains(sourceQuery))
                     flatQueries.Add(sourceQuery);
             }
-            else if (sourceQuery is PhraseQuery)
+            else if (sourceQuery is PhraseQuery pq)
             {
                 if (!flatQueries.Contains(sourceQuery)) // LUCENENET - set semantics, but this is a list. The original logic was already correct.
                 {
-                    PhraseQuery pq = (PhraseQuery)sourceQuery;
                     if (pq.GetTerms().Length > 1)
                         flatQueries.Add(pq);
                     else if (pq.GetTerms().Length == 1)
                     {
-                        Query flat = new TermQuery(pq.GetTerms()[0]);
-                        flat.Boost = pq.Boost;
+                        Query flat = new TermQuery(pq.GetTerms()[0])
+                        {
+                            Boost = pq.Boost
+                        };
                         flatQueries.Add(flat);
                     }
                 }
             }
-            else if (sourceQuery is ConstantScoreQuery)
+            else if (sourceQuery is ConstantScoreQuery constantScoreQuery)
             {
-                Query q = ((ConstantScoreQuery)sourceQuery).Query;
+                Query q = constantScoreQuery.Query;
                 if (q != null)
                 {
                     Flatten(ApplyParentBoost(q, sourceQuery), reader, flatQueries);
                 }
             }
-            else if (sourceQuery is FilteredQuery)
+            else if (sourceQuery is FilteredQuery filteredQuery)
             {
-                Query q = ((FilteredQuery)sourceQuery).Query;
+                Query q = filteredQuery.Query;
                 if (q != null)
                 {
                     Flatten(ApplyParentBoost(q, sourceQuery), reader, flatQueries);
@@ -203,14 +201,12 @@ namespace Lucene.Net.Search.VectorHighlight
                 }
                 expandQueries.Add(query);
                 if (!(query is PhraseQuery)) continue;
-                using (IEnumerator<Query> j = flatQueries.GetEnumerator())
+                using IEnumerator<Query> j = flatQueries.GetEnumerator();
+                while (j.MoveNext())
                 {
-                    while (j.MoveNext())
-                    {
-                        Query qj = j.Current;
-                        if (!(qj is PhraseQuery)) continue;
-                        CheckOverlap(expandQueries, (PhraseQuery)query, (PhraseQuery)qj);
-                    }
+                    Query qj = j.Current;
+                    if (!(qj is PhraseQuery)) continue;
+                    CheckOverlap(expandQueries, (PhraseQuery)query, (PhraseQuery)qj);
                 }
             }
 
@@ -264,7 +260,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// ex8) src="a b c d", dest="b c"   => no overlap
         /// </code>
         /// </summary>
-        private void CheckOverlap(ICollection<Query> expandQueries, Term[] src, Term[] dest, int slop, float boost)
+        private static void CheckOverlap(ICollection<Query> expandQueries, Term[] src, Term[] dest, int slop, float boost) // LUCENENET: CA1822: Mark members as static
         {
             // beginning from 1 (not 0) is safe because that the PhraseQuery has multiple terms
             // is guaranteed in flatten() method (if PhraseQuery has only one term, flatten()
@@ -300,8 +296,7 @@ namespace Lucene.Net.Search.VectorHighlight
         internal QueryPhraseMap GetRootMap(Query query)
         {
             string key = GetKey(query);
-            QueryPhraseMap map;
-            if (!rootMaps.TryGetValue(key, out map) || map == null)
+            if (!rootMaps.TryGetValue(key, out QueryPhraseMap map) || map == null)
             {
                 map = new QueryPhraseMap(this);
                 rootMaps[key] = map;
@@ -316,17 +311,16 @@ namespace Lucene.Net.Search.VectorHighlight
         private string GetKey(Query query)
         {
             if (!fieldMatch) return null;
-            if (query is TermQuery)
-                return ((TermQuery)query).Term.Field;
-            else if (query is PhraseQuery)
+            if (query is TermQuery termQuery)
+                return termQuery.Term.Field;
+            else if (query is PhraseQuery pq)
             {
-                PhraseQuery pq = (PhraseQuery)query;
                 Term[] terms = pq.GetTerms();
                 return terms[0].Field;
             }
-            else if (query is MultiTermQuery)
+            else if (query is MultiTermQuery multiTermQuery)
             {
-                return ((MultiTermQuery)query).Field;
+                return multiTermQuery.Field;
             }
             else
                 throw new Exception("query \"" + query.ToString() + "\" must be flatten first.");
@@ -359,11 +353,11 @@ namespace Lucene.Net.Search.VectorHighlight
             foreach (Query query in flatQueries)
             {
                 ISet<string> termSet = GetTermSet(query);
-                if (query is TermQuery)
-                    termSet.Add(((TermQuery)query).Term.Text());
-                else if (query is PhraseQuery)
+                if (query is TermQuery termQuery)
+                    termSet.Add(termQuery.Term.Text());
+                else if (query is PhraseQuery phraseQuery)
                 {
-                    foreach (Term term in ((PhraseQuery)query).GetTerms())
+                    foreach (Term term in phraseQuery.GetTerms())
                         termSet.Add(term.Text());
                 }
                 else if (query is MultiTermQuery && reader != null)
@@ -458,15 +452,14 @@ namespace Lucene.Net.Search.VectorHighlight
                 return map;
             }
 
-            internal void Add(Query query, IndexReader reader)
+            internal void Add(Query query /*, IndexReader reader // LUCENENET: Never read */)
             {
-                if (query is TermQuery)
+                if (query is TermQuery termQuery)
                 {
-                    AddTerm(((TermQuery)query).Term, query.Boost);
+                    AddTerm(termQuery.Term, query.Boost);
                 }
-                else if (query is PhraseQuery)
+                else if (query is PhraseQuery pq)
                 {
-                    PhraseQuery pq = (PhraseQuery)query;
                     Term[] terms = pq.GetTerms();
                     IDictionary<string, QueryPhraseMap> map = subMap;
                     QueryPhraseMap qpm = null;
@@ -483,8 +476,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
             public virtual QueryPhraseMap GetTermMap(string term)
             {
-                QueryPhraseMap result;
-                subMap.TryGetValue(term, out result);
+                subMap.TryGetValue(term, out QueryPhraseMap result);
                 return result;
             }
 

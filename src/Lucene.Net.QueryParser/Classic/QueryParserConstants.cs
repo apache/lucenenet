@@ -95,7 +95,7 @@ namespace Lucene.Net.QueryParsers.Classic
         public const int DEFAULT = 2;
     }
 
-    // NOTE: In Java, this was an interface. However, in 
+    // LUCENENET NOTE: In Java, this was an interface. However, in 
     // .NET we cannot define constants in an interface.
     // So, instead we are making it a static class so it 
     // can be shared between classes with different base classes.
@@ -107,78 +107,6 @@ namespace Lucene.Net.QueryParsers.Classic
     /// </summary>
     public static class QueryParserConstants
     {
-        ///// <summary>End of File. </summary>
-        //public const int EndOfFileToken = 0;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int NumCharToken = 1;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int EscapedCharToken = 2;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int TermStartCharToken = 3;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int TermCharToken = 4;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int WhitespaceToken = 5;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int QuotedCharToken = 6;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int AndToken = 8;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int OrToken = 9;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int NotToken = 10;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int PlusToken = 11;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int MinusToken = 12;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int BareOperToken = 13;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int LParanToken = 14;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int RParenToken = 15;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int ColonToken = 16;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int StarToken = 17;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int CaratToken = 18;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int QuotedToken = 19;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int TermToken = 20;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int FuzzySlopToken = 21;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int PrefixTermToken = 22;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int WildTermToken = 23;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int RegExpTermToken = 24;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int RangeInStartToken = 25;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int RangeExStartToken = 26;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int NumberToken = 27;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int RangeToToken = 28;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int RangeInEndToken = 29;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int RangeExEndToken = 30;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int RangeQuotedToken = 31;
-        ///// <summary>RegularExpression Id. </summary>
-        //public const int RangeGoopToken = 32;
-
-        ///// <summary>Lexical state. </summary>
-        //public const int BoostToken = 0;
-        ///// <summary>Lexical state. </summary>
-        //public const int RangeToken = 1;
-        ///// <summary>Lexical state. </summary>
-        //public const int DefaultToken = 2;
-
         /// <summary>Literal token values. </summary>
         public static string[] TokenImage = new string[] {
             "<EOF>", 

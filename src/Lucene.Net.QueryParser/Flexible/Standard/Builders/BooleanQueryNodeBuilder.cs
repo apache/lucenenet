@@ -80,9 +80,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
         private static Occur GetModifierValue(IQueryNode node)
         {
-            if (node is ModifierQueryNode)
+            if (node is ModifierQueryNode mNode)
             {
-                ModifierQueryNode mNode = ((ModifierQueryNode)node);
                 switch (mNode.Modifier)
                 {
                     case Modifier.MOD_REQ:

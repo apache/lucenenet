@@ -152,8 +152,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override Terms GetTerms(string field)
             {
-                DirectField result;
-                fields.TryGetValue(field, out result);
+                fields.TryGetValue(field, out DirectField result);
                 return result;
             }
 
@@ -388,9 +387,10 @@ namespace Lucene.Net.Codecs.Memory
 
                 this.minSkipCount = minSkipCount;
 
-                hasFreq = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_ONLY) > 0;
-                hasPos = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) > 0;
-                hasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) > 0;
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                hasFreq = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_ONLY) > 0;
+                hasPos = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS) > 0;
+                hasOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) > 0;
                 hasPayloads = fieldInfo.HasPayloads;
 
                 BytesRef term;
@@ -986,44 +986,26 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override long Ord => termOrd;
 
-                public override int DocFreq
-                {
-                    get
-                    {
-                        if (outerInstance.terms[termOrd] is LowFreqTerm)
-                        {
-                            return ((LowFreqTerm)outerInstance.terms[termOrd]).DocFreq;
-                        }
-                        else
-                        {
-                            return ((HighFreqTerm)outerInstance.terms[termOrd]).DocIDs.Length;
-                        }
-                    }
-                }
+                public override int DocFreq =>
+                    outerInstance.terms[termOrd] is LowFreqTerm lowFreqTerm ?
+                    lowFreqTerm.DocFreq :
+                    ((HighFreqTerm)outerInstance.terms[termOrd]).DocIDs.Length;
 
-                public override long TotalTermFreq
-                {
-                    get
-                    {
-                        if (outerInstance.terms[termOrd] is LowFreqTerm)
-                        {
-                            return ((LowFreqTerm)outerInstance.terms[termOrd]).TotalTermFreq;
-                        }
-                        else
-                        {
-                            return ((HighFreqTerm)outerInstance.terms[termOrd]).TotalTermFreq;
-                        }
-                    }
-                }
+
+                public override long TotalTermFreq =>
+                    outerInstance.terms[termOrd] is LowFreqTerm lowFreqTerm ?
+                    lowFreqTerm.TotalTermFreq :
+                    ((HighFreqTerm)outerInstance.terms[termOrd]).TotalTermFreq;
+
 
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
                     // TODO: implement reuse, something like Pulsing:
                     // it's hairy!
 
-                    if (outerInstance.terms[termOrd] is LowFreqTerm)
+                    if (outerInstance.terms[termOrd] is LowFreqTerm lowFreqTerm)
                     {
-                        int[] postings = ((LowFreqTerm) outerInstance.terms[termOrd]).Postings;
+                        int[] postings = lowFreqTerm.Postings;
                         if (outerInstance.hasFreq)
                         {
                             if (outerInstance.hasPos)
@@ -1041,10 +1023,8 @@ namespace Lucene.Net.Codecs.Memory
                                 {
                                     posLen++;
                                 }
-                                LowFreqDocsEnum docsEnum;
-                                if (reuse is LowFreqDocsEnum)
+                                if (reuse is LowFreqDocsEnum docsEnum)
                                 {
-                                    docsEnum = (LowFreqDocsEnum) reuse;
                                     if (!docsEnum.CanReuse(liveDocs, posLen))
                                     {
                                         docsEnum = new LowFreqDocsEnum(liveDocs, posLen);
@@ -1059,10 +1039,8 @@ namespace Lucene.Net.Codecs.Memory
                             }
                             else
                             {
-                                LowFreqDocsEnumNoPos docsEnum;
-                                if (reuse is LowFreqDocsEnumNoPos)
+                                if (reuse is LowFreqDocsEnumNoPos docsEnum)
                                 {
-                                    docsEnum = (LowFreqDocsEnumNoPos) reuse;
                                     if (!docsEnum.CanReuse(liveDocs))
                                     {
                                         docsEnum = new LowFreqDocsEnumNoPos(liveDocs);
@@ -1078,10 +1056,8 @@ namespace Lucene.Net.Codecs.Memory
                         }
                         else
                         {
-                            LowFreqDocsEnumNoTF docsEnum;
-                            if (reuse is LowFreqDocsEnumNoTF)
+                            if (reuse is LowFreqDocsEnumNoTF docsEnum)
                             {
-                                docsEnum = (LowFreqDocsEnumNoTF) reuse;
                                 if (!docsEnum.CanReuse(liveDocs))
                                 {
                                     docsEnum = new LowFreqDocsEnumNoTF(liveDocs);
@@ -1099,10 +1075,8 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         HighFreqTerm term = (HighFreqTerm) outerInstance.terms[termOrd];
 
-                        HighFreqDocsEnum docsEnum;
-                        if (reuse is HighFreqDocsEnum)
+                        if (reuse is HighFreqDocsEnum docsEnum)
                         {
-                            docsEnum = (HighFreqDocsEnum) reuse;
                             if (!docsEnum.CanReuse(liveDocs))
                             {
                                 docsEnum = new HighFreqDocsEnum(liveDocs);
@@ -1129,11 +1103,10 @@ namespace Lucene.Net.Codecs.Memory
                     // TODO: implement reuse, something like Pulsing:
                     // it's hairy!
 
-                    if (outerInstance.terms[termOrd] is LowFreqTerm)
+                    if (outerInstance.terms[termOrd] is LowFreqTerm lowFreqTerm)
                     {
-                        LowFreqTerm term = ((LowFreqTerm) outerInstance.terms[termOrd]);
-                        int[] postings = term.Postings;
-                        byte[] payloads = term.Payloads;
+                        int[] postings = lowFreqTerm.Postings;
+                        byte[] payloads = lowFreqTerm.Payloads;
                         return
                             (new LowFreqDocsAndPositionsEnum(liveDocs, outerInstance.hasOffsets,
                                 outerInstance.hasPayloads)).Reset(postings, payloads);
@@ -1158,13 +1131,6 @@ namespace Lucene.Net.Codecs.Memory
 
                 private sealed class State
                 {
-                    private readonly DirectPostingsFormat.DirectField.DirectIntersectTermsEnum outerInstance;
-
-                    public State(DirectPostingsFormat.DirectField.DirectIntersectTermsEnum outerInstance)
-                    {
-                        this.outerInstance = outerInstance;
-                    }
-
                     internal int changeOrd;
                     internal int state;
                     internal Transition[] transitions;
@@ -1184,7 +1150,7 @@ namespace Lucene.Net.Codecs.Memory
                     compiledAutomaton = compiled;
                     termOrd = -1;
                     states = new State[1];
-                    states[0] = new State(this);
+                    states[0] = new State();
                     states[0].changeOrd = outerInstance.terms.Length;
                     states[0].state = runAutomaton.InitialState;
                     states[0].transitions = compiledAutomaton.SortedTransitions[states[0].state];
@@ -1379,7 +1345,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         State[] newStates = new State[states.Length + 1];
                         Array.Copy(states, 0, newStates, 0, states.Length);
-                        newStates[states.Length] = new State(this);
+                        newStates[states.Length] = new State();
                         states = newStates;
                     }
                 }
@@ -1447,7 +1413,7 @@ namespace Lucene.Net.Codecs.Memory
 
                         if (Debugging.AssertsEnabled) Debugging.Assert(termOrd < state.changeOrd);
 
-                        if (Debugging.AssertsEnabled) Debugging.Assert(stateUpto <= termLength, () => "term.length=" + termLength + "; stateUpto=" + stateUpto);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(stateUpto <= termLength, "term.length={0}; stateUpto={1}", termLength, stateUpto);
                         int label = outerInstance.termBytes[termOffset + stateUpto] & 0xFF;
 
                         while (label > state.transitionMax)
@@ -1478,7 +1444,7 @@ namespace Lucene.Net.Codecs.Memory
                                 goto nextTermContinue;
                             }
                             if (Debugging.AssertsEnabled) Debugging.Assert(state.transitionUpto < state.transitions.Length,
-                                () => " state.transitionUpto=" + state.transitionUpto + " vs " + state.transitions.Length);
+                                " state.transitionUpto={0} vs {1}", state.transitionUpto, state.transitions.Length);
                             state.transitionMin = state.transitions[state.transitionUpto].Min;
                             state.transitionMax = state.transitions[state.transitionUpto].Max;
                             if (Debugging.AssertsEnabled)
@@ -1697,44 +1663,25 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override long Ord => termOrd;
 
-                public override int DocFreq
-                {
-                    get
-                    {
-                        if (outerInstance.terms[termOrd] is LowFreqTerm)
-                        {
-                            return ((LowFreqTerm)outerInstance.terms[termOrd]).DocFreq;
-                        }
-                        else
-                        {
-                            return ((HighFreqTerm)outerInstance.terms[termOrd]).DocIDs.Length;
-                        }
-                    }
-                }
+                public override int DocFreq =>
+                    outerInstance.terms[termOrd] is LowFreqTerm lowFreqTerm ?
+                    lowFreqTerm.DocFreq :
+                    ((HighFreqTerm)outerInstance.terms[termOrd]).DocIDs.Length;
 
-                public override long TotalTermFreq
-                {
-                    get
-                    {
-                        if (outerInstance.terms[termOrd] is LowFreqTerm)
-                        {
-                            return ((LowFreqTerm)outerInstance.terms[termOrd]).TotalTermFreq;
-                        }
-                        else
-                        {
-                            return ((HighFreqTerm)outerInstance.terms[termOrd]).TotalTermFreq;
-                        }
-                    }
-                }
+                public override long TotalTermFreq =>
+                    outerInstance.terms[termOrd] is LowFreqTerm lowFreqTerm ?
+                    lowFreqTerm.TotalTermFreq :
+                    ((HighFreqTerm)outerInstance.terms[termOrd]).TotalTermFreq;
+
 
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
                     // TODO: implement reuse, something like Pulsing:
                     // it's hairy!
 
-                    if (outerInstance.terms[termOrd] is LowFreqTerm)
+                    if (outerInstance.terms[termOrd] is LowFreqTerm lowFreqTerm)
                     {
-                        int[] postings = ((LowFreqTerm) outerInstance.terms[termOrd]).Postings;
+                        int[] postings = lowFreqTerm.Postings;
                         if (outerInstance.hasFreq)
                         {
                             if (outerInstance.hasPos)

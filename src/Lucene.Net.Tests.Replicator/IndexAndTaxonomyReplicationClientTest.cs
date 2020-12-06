@@ -44,8 +44,10 @@ namespace Lucene.Net.Replicator
         {
             private readonly Directory indexDir;
             private readonly Directory taxoDir;
+#pragma warning disable CA2213 // Disposable fields should be disposed
             private DirectoryReader indexReader;
             private DirectoryTaxonomyReader taxoReader;
+#pragma warning restore CA2213 // Disposable fields should be disposed
             private readonly FacetsConfig config;
             private long lastIndexGeneration = -1;
 
@@ -461,7 +463,7 @@ namespace Lucene.Net.Replicator
                     {
                         // count-down number of failures
                         failures.DecrementAndGet();
-                        if (Debugging.AssertsEnabled) Debugging.Assert(failures >= 0, () => "handler failed too many times: " + failures);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(failures >= 0,"handler failed too many times: {0}", failures);
                         if (Verbose)
                         {
                             if (failures == 0)

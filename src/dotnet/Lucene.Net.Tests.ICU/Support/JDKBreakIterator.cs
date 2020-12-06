@@ -31,21 +31,13 @@ namespace Lucene.Net.Support
     /// </summary>
     public static class JdkBreakIterator
     {
-        private static readonly RuleBasedBreakIterator SentenceInstance;
-        private static readonly RuleBasedBreakIterator WordInstance;
+        private static readonly RuleBasedBreakIterator SentenceInstance = LoadBreakRules("jdksent.brk"); // LUCENENET: CA1810: Initialize reference type static fields inline
+        private static readonly RuleBasedBreakIterator WordInstance = LoadBreakRules("jdkword.brk"); // LUCENENET: CA1810: Initialize reference type static fields inline
 
-        static JdkBreakIterator()
+        private static RuleBasedBreakIterator LoadBreakRules(string fileName)
         {
-            using (Stream @is =
-                typeof(JdkBreakIterator).FindAndGetManifestResourceStream("jdksent.brk"))
-            {
-                SentenceInstance = RuleBasedBreakIterator.GetInstanceFromCompiledRules(@is);
-            }
-            using (Stream @is =
-                typeof(JdkBreakIterator).FindAndGetManifestResourceStream("jdkword.brk"))
-            {
-                WordInstance = RuleBasedBreakIterator.GetInstanceFromCompiledRules(@is);
-            }
+            using Stream @is = typeof(JdkBreakIterator).FindAndGetManifestResourceStream(fileName);
+            return RuleBasedBreakIterator.GetInstanceFromCompiledRules(@is);
         }
 
         /// <summary>

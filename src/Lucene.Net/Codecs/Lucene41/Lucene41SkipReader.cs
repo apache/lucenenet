@@ -1,6 +1,6 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
@@ -54,11 +54,11 @@ namespace Lucene.Net.Codecs.Lucene41
         // private boolean DEBUG = Lucene41PostingsReader.DEBUG;
         private readonly int blockSize;
 
-        private long[] docPointer;
-        private long[] posPointer;
-        private long[] payPointer;
-        private int[] posBufferUpto;
-        private int[] payloadByteUpto;
+        private readonly long[] docPointer; // LUCENENET: marked readonly
+        private readonly long[] posPointer; // LUCENENET: marked readonly
+        private readonly long[] payPointer; // LUCENENET: marked readonly
+        private readonly int[] posBufferUpto; // LUCENENET: marked readonly
+        private readonly int[] payloadByteUpto; // LUCENENET: marked readonly
 
         private long lastPosPointer;
         private long lastPayPointer;
@@ -106,6 +106,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// 1. silly reading a non-existed skip point after the last block boundary
         /// 2. moving into the vInt block
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal int Trim(int df)
         {
             return df % blockSize == 0 ? df - 1 : df;

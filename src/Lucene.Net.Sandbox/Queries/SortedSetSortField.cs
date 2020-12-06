@@ -147,13 +147,11 @@ namespace Lucene.Net.Sandbox.Queries
         internal class TermOrdValComparerAnonymousHelper : FieldComparer.TermOrdValComparer
         {
             private readonly SortedSetSortField outerInstance;
-            private readonly int numHits;
 
             public TermOrdValComparerAnonymousHelper(SortedSetSortField outerInstance, int numHits)
                 : base(numHits, outerInstance.Field, outerInstance.m_missingValue == STRING_LAST)
             {
                 this.outerInstance = outerInstance;
-                this.numHits = numHits;
             }
 
             protected override SortedDocValues GetSortedDocValues(AtomicReaderContext context, string field)

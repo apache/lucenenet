@@ -173,11 +173,9 @@ namespace Lucene.Net.Index
 
         private static void CopyFile(FileInfo src, FileInfo dst)
         {
-            using (Stream @in = new FileStream(src.FullName, FileMode.Open, FileAccess.Read))
-            using (Stream @out = new FileStream(dst.FullName, FileMode.OpenOrCreate, FileAccess.Write))
-            {
-                @in.CopyTo(@out);
-            }
+            using Stream @in = new FileStream(src.FullName, FileMode.Open, FileAccess.Read);
+            using Stream @out = new FileStream(dst.FullName, FileMode.OpenOrCreate, FileAccess.Write);
+            @in.CopyTo(@out);
         }
     }
 }

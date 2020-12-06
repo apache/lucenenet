@@ -1,6 +1,6 @@
 using J2N.Numerics;
 using Lucene.Net.Diagnostics;
-using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -71,7 +71,7 @@ namespace Lucene.Net.Util
             long b = (long)((ulong)(((long)((ulong)SmallerUpTo7_8(s, (r * L8_L)) >> 7)) * L8_L) >> 53); // & (~7L); // Step 3, side ways addition for byte number times 8
 
             long l = r - (((long)((ulong)(s << 8) >> (int)b)) & 0xFFL); // Step 4, byte wise rank, subtract the rank with byte at b-8, or zero for b=0;
-            if (Debugging.AssertsEnabled) Debugging.Assert(0L <= 1, () => l.ToString(CultureInfo.InvariantCulture));
+            if (Debugging.AssertsEnabled) Debugging.Assert(0L <= 1, "{0}", l);
             //assert l < 8 : l; //fails when bit r is not available.
 
             // Select bit l from byte (x >>> b):
@@ -90,6 +90,7 @@ namespace Lucene.Net.Util
         /// A signed bytewise smaller &lt;<sub><small>8</small></sub> operator, for operands 0L&lt;= x, y &lt;=0x7L.
         /// This uses the following numbers of basic <see cref="long"/> operations: 1 or, 2 and, 2 xor, 1 minus, 1 not. </summary>
         /// <returns> A <see cref="long"/> with bits set in the <see cref="H8_L"/> positions corresponding to each input signed byte pair that compares smaller. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long SmallerUpTo7_8(long x, long y)
         {
             // See section 4, page 5, line 14 of the Vigna article:
@@ -100,6 +101,7 @@ namespace Lucene.Net.Util
         /// An unsigned bytewise smaller &lt;<sub><small>8</small></sub> operator.
         /// This uses the following numbers of basic <see cref="long"/> operations: 3 or, 2 and, 2 xor, 1 minus, 1 not. </summary>
         /// <returns> A <see cref="long"/> with bits set in the <see cref="H8_L"/> positions corresponding to each input unsigned byte pair that compares smaller. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Smalleru_8(long x, long y)
         {
             // See section 4, 8th line from the bottom of the page 5, of the Vigna article:
@@ -110,6 +112,7 @@ namespace Lucene.Net.Util
         /// An unsigned bytewise not equals 0 operator.
         /// This uses the following numbers of basic <see cref="long"/> operations: 2 or, 1 and, 1 minus. </summary>
         /// <returns> A <see cref="long"/> with bits set in the <see cref="H8_L"/> positions corresponding to each unsigned byte that does not equal 0. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long NotEquals0_8(long x)
         {
             // See section 4, line 6-8 on page 6, of the Vigna article:
@@ -120,6 +123,7 @@ namespace Lucene.Net.Util
         /// A bytewise smaller &lt;<sub><small>16</small></sub> operator.
         /// This uses the following numbers of basic <see cref="long"/> operations: 1 or, 2 and, 2 xor, 1 minus, 1 not. </summary>
         /// <returns> A <see cref="long"/> with bits set in the <see cref="H16_L"/> positions corresponding to each input signed short pair that compares smaller. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long SmallerUpto15_16(long x, long y)
         {
             return (((x | H16_L) - (y & (~H16_L))) ^ x ^ ~y) & H16_L;

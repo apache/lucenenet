@@ -6,7 +6,8 @@
           "contributing/**.md", 
           "contributing/**/toc.yml", 
           "download/**.md", 
-          "download/**/toc.yml", 
+          "download/**/toc.yml",
+          "release-notes/**.md", 
           "toc.yml", 
           "*.md"]
       }

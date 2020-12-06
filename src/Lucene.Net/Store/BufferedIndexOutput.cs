@@ -39,7 +39,7 @@ namespace Lucene.Net.Store
         /// Creates a new <see cref="BufferedIndexOutput"/> with the default buffer size
         /// (<see cref="DEFAULT_BUFFER_SIZE"/> bytes see <see cref="DEFAULT_BUFFER_SIZE"/>)
         /// </summary>
-        public BufferedIndexOutput()
+        protected BufferedIndexOutput() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : this(DEFAULT_BUFFER_SIZE)
         {
         }
@@ -48,7 +48,9 @@ namespace Lucene.Net.Store
         /// Creates a new <see cref="BufferedIndexOutput"/> with the given buffer size. </summary>
         /// <param name="bufferSize"> the buffer size in bytes used to buffer writes internally. </param>
         /// <exception cref="ArgumentException"> if the given buffer size is less or equal to <c>0</c> </exception>
-        public BufferedIndexOutput(int bufferSize) : this(bufferSize, new CRC32()) { }
+        protected BufferedIndexOutput(int bufferSize) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
+            : this(bufferSize, new CRC32())
+        { }
 
         // LUCENENET specific - added constructor overload so FSDirectory can still subclass BufferedIndexOutput, but
         // utilize its own buffer, since FileStream is already buffered in .NET.

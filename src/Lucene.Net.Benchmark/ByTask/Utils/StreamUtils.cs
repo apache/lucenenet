@@ -25,7 +25,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
     /// <summary>
     /// Stream utilities.
     /// </summary>
-    public class StreamUtils
+    public static class StreamUtils // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>Buffer size used across the benchmark package</summary>
         public static readonly int BUFFER_SIZE = 1 << 16; // 64K
@@ -65,7 +65,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             {
                 extensionToType.TryGetValue(fileName.Substring(idx).ToLowerInvariant(), out type);
             }
-            return !type.HasValue ? FileType.PLAIN : type.Value;
+            return type ?? FileType.PLAIN ;
         }
 
         /// <summary>

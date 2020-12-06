@@ -1,5 +1,6 @@
 using Microsoft.CodeAnalysis;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TestHelper
 {
@@ -23,6 +24,7 @@ namespace TestHelper
     /// <summary>
     /// Location where the diagnostic appears, as determined by path, line number, and column number.
     /// </summary>
+    [SuppressMessage("Performance", "CA1815:Override equals and operator equals on value types", Justification = "Used for testing")]
     public struct DiagnosticResultLocation
     {
         public DiagnosticResultLocation(string path, int line, int column)
@@ -50,17 +52,19 @@ namespace TestHelper
     /// <summary>
     /// Struct that stores information about a Diagnostic appearing in a source
     /// </summary>
+    [SuppressMessage("Performance", "CA1815:Override equals and operator equals on value types", Justification = "Used for testing")]
     public struct DiagnosticResult
     {
         private DiagnosticResultLocation[] locations;
 
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Used for testing")]
         public DiagnosticResultLocation[] Locations
         {
             get
             {
                 if (this.locations == null)
                 {
-                    this.locations = new DiagnosticResultLocation[] { };
+                    this.locations = Array.Empty<DiagnosticResultLocation>();
                 }
                 return this.locations;
             }

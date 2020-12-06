@@ -128,7 +128,7 @@ namespace Lucene.Net.Expressions.JS
         // delegates
         public virtual Parser[] GetDelegates()
         {
-            return new Parser[] { };
+            return Arrays.Empty<Parser>();
         }
 
         public JavascriptParser(CommonTokenStream input)
@@ -381,8 +381,8 @@ namespace Lucene.Net.Expressions.JS
         public AstParserRuleReturnScope<ITree, IToken> Expression()
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
-            CommonTree root = null;
-            IToken EOF2 = null;
+            CommonTree root; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            IToken EOF2; // LUCENENET: IDE0059: Remove unnecessary value assignment
             AstParserRuleReturnScope<ITree, IToken> conditional1;
             //CommonTree EOF2_tree = null; // LUCENENET NOTE: Not used
             try
@@ -420,7 +420,7 @@ namespace Lucene.Net.Expressions.JS
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
             CommonTree root_0;
             IToken AT_COND_QUE4;
-            IToken AT_COLON6 = null;
+            //IToken AT_COLON6 = null; // LUCENENET: IDE0059: Remove unnecessary value assignment
             AstParserRuleReturnScope<ITree, IToken> logical_or3;
             AstParserRuleReturnScope<ITree, IToken> conditional5;
             AstParserRuleReturnScope<ITree, IToken> conditional7;
@@ -455,7 +455,7 @@ namespace Lucene.Net.Expressions.JS
                                 conditional5 = Conditional();
                                 state._fsp--;
                                 m_adaptor.AddChild(root_0, conditional5.Tree);
-                                AT_COLON6 = (IToken)Match(input, AT_COLON, FOLLOW_AT_COLON_in_conditional765);
+                                /*AT_COLON6 = (IToken)*/Match(input, AT_COLON, FOLLOW_AT_COLON_in_conditional765); // LUCENENET: IDE0059: Remove unnecessary value assignment
                                 PushFollow(FOLLOW_conditional_in_conditional768);
                                 conditional7 = Conditional();
                                 state._fsp--;
@@ -558,7 +558,7 @@ namespace Lucene.Net.Expressions.JS
             IToken AT_BOOL_AND12;
             AstParserRuleReturnScope<ITree, IToken> bitwise_or11;
             AstParserRuleReturnScope<ITree, IToken> bitwise_or13;
-            CommonTree AT_BOOL_AND12_tree = null;
+            CommonTree AT_BOOL_AND12_tree; // LUCENENET: IDE0059: Remove unnecessary value assignment
             try
             {
                 {
@@ -1545,9 +1545,9 @@ namespace Lucene.Net.Expressions.JS
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
             CommonTree root = null;
-            IToken AT_LPAREN51 = null;
-            IToken AT_RPAREN53 = null;
-            CommonTree NAMESPACE_ID49_tree = null;
+            IToken AT_LPAREN51; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            IToken AT_RPAREN53; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            CommonTree NAMESPACE_ID49_tree; // LUCENENET: IDE0059: Remove unnecessary value assignment
             //CommonTree AT_LPAREN51_tree = null; // LUCENENET NOTE: Not used
             //CommonTree AT_RPAREN53_tree = null; // LUCENENET NOTE: Not used
             try
@@ -1640,10 +1640,10 @@ namespace Lucene.Net.Expressions.JS
         public AstParserRuleReturnScope<ITree, IToken> Arguments()
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
-            CommonTree root = null;
-            IToken AT_LPAREN54 = null;
-            IToken AT_COMMA56 = null;
-            IToken AT_RPAREN58 = null;
+            CommonTree root; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            IToken AT_LPAREN54; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            IToken AT_COMMA56; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            IToken AT_RPAREN58; // LUCENENET: IDE0059: Remove unnecessary value assignment
             //CommonTree AT_LPAREN54_tree = null; // LUCENENET NOTE: Not used
             //CommonTree AT_COMMA56_tree = null; // LUCENENET NOTE: Not used
             //CommonTree AT_RPAREN58_tree = null; // LUCENENET NOTE: Not used

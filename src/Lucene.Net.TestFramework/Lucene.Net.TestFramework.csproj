@@ -32,7 +32,10 @@
     <Description>Framework for testing third-party code that uses the Lucene.Net API using NUnit.</Description>
     <PackageTags>$(PackageTags);testframework;test;framework;nunit</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    
+    
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
+    <NoWarn Label="Collection initialization can be simplified">$(NoWarn);IDE0028</NoWarn>
 
     <DefineConstants>$(DefineConstants);TESTFRAMEWORK_NUNIT</DefineConstants>
   </PropertyGroup>

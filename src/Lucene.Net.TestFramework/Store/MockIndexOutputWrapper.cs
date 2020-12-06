@@ -30,7 +30,7 @@ namespace Lucene.Net.Store
     /// </summary>
     public class MockIndexOutputWrapper : IndexOutput
     {
-        private MockDirectoryWrapper dir;
+        private readonly MockDirectoryWrapper dir;
         private readonly IndexOutput @delegate;
         private bool first = true;
         internal readonly string name;

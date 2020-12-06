@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 /*
@@ -41,7 +42,7 @@ namespace Lucene.Net.Util.Automaton
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class State : IComparable<State>, IEquatable<State> // LUCENENET specific: Implemented IEquatable, since this class is used in hashtables
+    public class State : IComparable<State>
     {
         internal bool accept;
         [WritableArray]
@@ -220,6 +221,7 @@ namespace Lucene.Net.Util.Automaton
         /// transitions from <paramref name="to"/> to this state, and if 
         /// <paramref name="to"/> is an accept state then set accept for this state.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void AddEpsilon(State to)
         {
             if (to.accept)
@@ -350,65 +352,23 @@ namespace Lucene.Net.Util.Automaton
         /// Compares this object with the specified object for order. States are
         /// ordered by the time of construction.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual int CompareTo(State s)
         {
             return s.id - id;
         }
 
-        #region Equality
-        // LUCENENET specific - implemented IEquatable.
-        public bool Equals(State other)
-        {
-            if (other == null)
-                return false;
-            return id.Equals(other.id);
-        }
+        // LUCENENET NOTE: DO NOT IMPLEMENT Equals()!!!
+        // Although it doesn't match GetHashCode(), checking for
+        // reference equality is by design.
+        // Implementing Equals() causes difficult to diagnose
+        // IndexOutOfRangeExceptions when using FuzzyTermsEnum.
+        // See GH-296.
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
             return id;
         }
-
-        public override bool Equals(object obj)
-        {
-            return ReferenceEquals(this, obj) || obj is State other && Equals(other);
-        }
-
-        public static bool operator ==(State left, State right)
-        {
-            if (left is null)
-            {
-                return right is null;
-            }
-
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(State left, State right)
-        {
-            return !(left == right);
-        }
-
-        public static bool operator <(State left, State right)
-        {
-            return left is null ? !(right is null) : left.CompareTo(right) < 0;
-        }
-
-        public static bool operator <=(State left, State right)
-        {
-            return left is null || left.CompareTo(right) <= 0;
-        }
-
-        public static bool operator >(State left, State right)
-        {
-            return !(left is null) && left.CompareTo(right) > 0;
-        }
-
-        public static bool operator >=(State left, State right)
-        {
-            return left is null ? right is null : left.CompareTo(right) >= 0;
-        }
-
-        #endregion
     }
 }

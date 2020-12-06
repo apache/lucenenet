@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Payloads
     public class PayloadTermQuery : SpanTermQuery
     {
         protected PayloadFunction m_function;
-        private bool includeSpanScore;
+        private readonly bool includeSpanScore; // LUCENENET: marked readonly
 
         public PayloadTermQuery(Term term, PayloadFunction function)
             : this(term, function, true)

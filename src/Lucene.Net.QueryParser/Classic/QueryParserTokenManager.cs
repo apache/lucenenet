@@ -23,6 +23,9 @@ namespace Lucene.Net.QueryParsers.Classic
      */
 
     /// <summary>Token Manager. </summary>
+    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
+    [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "This class is based on generated code")]
+    [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "This class is based on generated code")]
     public class QueryParserTokenManager //: QueryParserConstants
     {
         private void  InitBlock()
@@ -32,9 +35,11 @@ namespace Lucene.Net.QueryParsers.Classic
             temp_writer.AutoFlush = true;
             debugStream = temp_writer;
         }
-        
+
         /// <summary>Debug output. </summary>
+#pragma warning disable IDE0052 // Remove unread private members
         private TextWriter debugStream; // LUCENENET specific - made private, since we already have a setter
+#pragma warning restore IDE0052 // Remove unread private members
         /// <summary>Set debug output. </summary>
         public virtual void SetDebugStream(TextWriter ds)
         {
@@ -50,6 +55,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 
             }
         }
+
         private int JjStartNfa_2(int pos, long active0)
         {
             return JjMoveNfa_2(JjStopStringLiteralDfa_2(pos, active0), pos + 1);
@@ -781,7 +787,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 else if (m_curChar < 128)
                 {
                     ulong l = (ulong) (1L << (m_curChar & 63));
-                    do 
+                    do
                     {
                         switch (jjstateSet[--i])
                         {
@@ -1154,8 +1160,8 @@ namespace Lucene.Net.QueryParsers.Classic
         internal static readonly ulong[] jjtoToken = new ulong[] { 0x1ffffff01L };
         internal static readonly long[] jjtoSkip = new long[] { 0x80L };
         protected ICharStream m_input_stream;
-        private uint[] jjrounds = new uint[49];
-        private int[] jjstateSet = new int[98];
+        private readonly uint[] jjrounds = new uint[49]; // LUCENENET: marked readonly
+        private readonly int[] jjstateSet = new int[98]; // LUCENENET: marked readonly
         protected char m_curChar;
         /// <summary>Constructor. </summary>
         public QueryParserTokenManager(ICharStream stream)
@@ -1211,7 +1217,7 @@ namespace Lucene.Net.QueryParsers.Classic
             int beginColumn;
             int endColumn;
             string im = jjstrLiteralImages[jjmatchedKind];
-            curTokenImage = (im == null)?m_input_stream.Image:im;
+            curTokenImage = im ?? m_input_stream.Image;
             beginLine = m_input_stream.BeginLine;
             beginColumn = m_input_stream.BeginColumn;
             endLine = m_input_stream.EndLine;

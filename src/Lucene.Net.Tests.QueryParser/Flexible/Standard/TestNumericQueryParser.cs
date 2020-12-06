@@ -71,9 +71,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         private static bool checkDateFormatSanity(/*DateFormat*/string dateFormat, long date)
         {
-            DateTime result;
             return DateTime.TryParseExact(new DateTime(NumberDateFormat.EPOCH).AddMilliseconds(date).ToString(dateFormat),
-                dateFormat, CultureInfo.CurrentCulture, DateTimeStyles.RoundtripKind, out result);
+                dateFormat, CultureInfo.CurrentCulture, DateTimeStyles.RoundtripKind, out DateTime _);
         }
 
         [OneTimeSetUp]

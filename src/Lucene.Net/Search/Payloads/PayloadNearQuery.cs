@@ -211,7 +211,9 @@ namespace Lucene.Net.Search.Payloads
             protected internal float m_payloadScore;
             internal int payloadsSeen;
 
+#pragma warning disable IDE0060 // Remove unused parameter
             protected internal PayloadNearSpanScorer(PayloadNearQuery outerInstance, Spans spans, Weight weight, Similarity similarity, Similarity.SimScorer docScorer)
+#pragma warning restore IDE0060 // Remove unused parameter
                 : base(spans, weight, docScorer)
             {
                 this.outerInstance = outerInstance;
@@ -223,8 +225,7 @@ namespace Lucene.Net.Search.Payloads
             {
                 for (var i = 0; i < subSpans.Length; i++)
                 {
-                    var span = subSpans[i] as NearSpansOrdered;
-                    if (span != null)
+                    if (subSpans[i] is NearSpansOrdered span)
                     {
                         if (span.IsPayloadAvailable)
                         {
@@ -234,8 +235,7 @@ namespace Lucene.Net.Search.Payloads
                     }
                     else
                     {
-                        var unordered = subSpans[i] as NearSpansUnordered;
-                        if (unordered != null)
+                        if (subSpans[i] is NearSpansUnordered unordered)
                         {
                             if (unordered.IsPayloadAvailable)
                             {

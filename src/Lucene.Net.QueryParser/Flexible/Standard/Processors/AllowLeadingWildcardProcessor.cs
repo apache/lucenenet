@@ -60,10 +60,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-            if (node is WildcardQueryNode)
+            if (node is WildcardQueryNode wildcardNode)
             {
-                WildcardQueryNode wildcardNode = (WildcardQueryNode)node;
-
                 if (wildcardNode.Text.Length > 0)
                 {
                     // Validate if the wildcard was escaped

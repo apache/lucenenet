@@ -59,9 +59,10 @@ namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
 
         public override bool Equals(object other)
         {
-            if (other is IMorphosyntacticTagsAttribute)
+            if (other is null) return false;
+            if (other is IMorphosyntacticTagsAttribute morphosyntacticTagsAttribute)
             {
-                return Equal(this.Tags, ((IMorphosyntacticTagsAttribute)other).Tags);
+                return Equal(this.Tags, morphosyntacticTagsAttribute.Tags);
             }
             return false;
         }

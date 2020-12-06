@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -40,7 +41,7 @@ namespace Lucene.Net.Util
             IList<Exception> suppressed;
             if (!e.Data.Contains(SUPPRESSED_EXCEPTIONS_KEY))
             {
-                suppressed = new List<Exception>();
+                suppressed = new JCG.List<Exception>();
                 e.Data.Add(SUPPRESSED_EXCEPTIONS_KEY, suppressed);
             }
             else

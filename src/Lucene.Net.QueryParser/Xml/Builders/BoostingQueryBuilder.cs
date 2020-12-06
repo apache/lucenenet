@@ -26,7 +26,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
     /// </summary>
     public class BoostingQueryBuilder : IQueryBuilder
     {
-        private static float DEFAULT_BOOST = 0.01f;
+        private const float DEFAULT_BOOST = 0.01f;
 
         private readonly IQueryBuilder factory;
 

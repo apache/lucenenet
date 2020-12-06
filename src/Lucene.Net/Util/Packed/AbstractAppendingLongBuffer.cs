@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -101,6 +102,7 @@ namespace Lucene.Net.Util.Packed
             pending[pendingOff++] = l;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void Grow(int newBlockCount)
         {
             Array.Resize<PackedInt32s.Reader>(ref values, newBlockCount);
@@ -125,7 +127,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+                Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
                 Debugging.Assert(index >= 0 && index < Count);
                 Debugging.Assert(off + len <= arr.Length);
             }
@@ -215,6 +217,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual long BaseRamBytesUsed()
         {
             return RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 

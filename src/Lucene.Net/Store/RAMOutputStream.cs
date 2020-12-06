@@ -31,7 +31,7 @@ namespace Lucene.Net.Store
     {
         internal const int BUFFER_SIZE = 1024;
 
-        private RAMFile file;
+        private readonly RAMFile file; // LUCENENET: marked readonly
 
         private byte[] currentBuffer;
         private int currentBufferIndex;
@@ -40,7 +40,7 @@ namespace Lucene.Net.Store
         private long bufferStart;
         private int bufferLength;
 
-        private BufferedChecksum crc = new BufferedChecksum(new CRC32());
+        private readonly BufferedChecksum crc = new BufferedChecksum(new CRC32()); // LUCENENET: marked readonly
 
         /// <summary>
         /// Construct an empty output buffer. </summary>

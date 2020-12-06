@@ -27,7 +27,7 @@ namespace Lucene.Net.Search.Suggest.Fst
     /// Try to build a suggester from a large data set. The input is a simple text
     /// file, newline-delimited.
     /// </summary>
-    public class LargeInputFST
+    public static class LargeInputFST // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         // LUCENENET specific - renaming from Main() because we must only have 1 entry point.
         // Not sure why this utility is in a test project anyway - this seems like something that should

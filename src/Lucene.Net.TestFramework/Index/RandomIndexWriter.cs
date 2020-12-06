@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
 
         private class TestPointAnonymousInnerClassHelper : ITestPoint
         {
-            private Random random;
+            private readonly Random random;
 
             public TestPointAnonymousInnerClassHelper(Random random)
             {
@@ -191,7 +191,7 @@ namespace Lucene.Net.Index
                 // (but we need to clone them), and only when
                 // getReader, commit, etc. are called, we do an
                 // addDocuments?  Would be better testing.
-                IndexWriter.AddDocuments(new IterableAnonymousInnerClassHelper<IIndexableField>(this, doc), a);
+                IndexWriter.AddDocuments(new IterableAnonymousInnerClassHelper<IIndexableField>(doc), a);
             }
             else
             {
@@ -203,13 +203,10 @@ namespace Lucene.Net.Index
 
         private class IterableAnonymousInnerClassHelper<IndexableField> : IEnumerable<IEnumerable<IndexableField>>
         {
-            private readonly RandomIndexWriter outerInstance;
-
             private readonly IEnumerable<IndexableField> doc;
 
-            public IterableAnonymousInnerClassHelper(RandomIndexWriter outerInstance, IEnumerable<IndexableField> doc)
+            public IterableAnonymousInnerClassHelper(IEnumerable<IndexableField> doc)
             {
-                this.outerInstance = outerInstance;
                 this.doc = doc;
             }
 
@@ -297,7 +294,7 @@ namespace Lucene.Net.Index
         {
             if (r.Next(5) == 3)
             {
-                IndexWriter.UpdateDocuments(t, new IterableAnonymousInnerClassHelper2(this, doc));
+                IndexWriter.UpdateDocuments(t, new IterableAnonymousInnerClassHelper2(doc));
             }
             else
             {
@@ -308,13 +305,10 @@ namespace Lucene.Net.Index
 
         private class IterableAnonymousInnerClassHelper2 : IEnumerable<IEnumerable<IIndexableField>>
         {
-            private readonly RandomIndexWriter outerInstance;
+            private readonly IEnumerable<IIndexableField> doc;
 
-            private IEnumerable<IIndexableField> doc;
-
-            public IterableAnonymousInnerClassHelper2(RandomIndexWriter outerInstance, IEnumerable<IIndexableField> doc)
+            public IterableAnonymousInnerClassHelper2(IEnumerable<IIndexableField> doc)
             {
-                this.outerInstance = outerInstance;
                 this.doc = doc;
             }
 
@@ -417,7 +411,9 @@ namespace Lucene.Net.Index
             set => doRandomForceMergeAssert = value;
         }
 
+#pragma warning disable IDE1006 // Naming Styles
         private void _DoRandomForceMerge() // LUCENENET specific - added leading underscore to keep this from colliding with the DoRandomForceMerge property
+#pragma warning restore IDE1006 // Naming Styles
         {
             if (doRandomForceMerge)
             {
@@ -440,7 +436,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine("RIW: doRandomForceMerge(" + limit + ")");
                     }
                     IndexWriter.ForceMerge(limit);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(!doRandomForceMergeAssert || IndexWriter.SegmentCount <= limit, () => "limit=" + limit + " actual=" + IndexWriter.SegmentCount);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(!doRandomForceMergeAssert || IndexWriter.SegmentCount <= limit,"limit={0} actual={1}", limit, IndexWriter.SegmentCount);
                 }
             }
         }

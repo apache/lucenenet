@@ -3,7 +3,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using BytesRef = Lucene.Net.Util.BytesRef;
 using Directory = Lucene.Net.Store.Directory;
 
@@ -46,8 +46,10 @@ namespace Lucene.Net.Codecs.Lucene3x
         private readonly string segment;
         private readonly FieldInfos fieldInfos;
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly DisposableThreadLocal<ThreadResources> threadResources = new DisposableThreadLocal<ThreadResources>();
         private readonly SegmentTermEnum origEnum;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly long size;
 
         private readonly TermInfosReaderIndex index;
@@ -90,6 +92,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return term.GetHashCode();
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override object Clone()
             {
                 return new CloneableTerm(term);
@@ -169,6 +172,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public int MaxSkipLevels => origEnum.maxSkipLevels;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dispose()
         {
             IOUtils.Dispose(origEnum, threadResources);
@@ -181,6 +185,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// </summary>
         internal long Count => size;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private ThreadResources GetThreadResources()
         {
             ThreadResources resources = threadResources.Value;
@@ -195,7 +200,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private static readonly IComparer<BytesRef> legacyComparer = BytesRef.UTF8SortedAsUTF16Comparer;
 
-        private int CompareAsUTF16(Term term1, Term term2)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int CompareAsUTF16(Term term1, Term term2) // LUCENENET: CA1822: Mark members as static
         {
             if (term1.Field.Equals(term2.Field, StringComparison.Ordinal))
             {
@@ -209,6 +215,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Returns the <see cref="TermInfo"/> for a <see cref="Term"/> in the set, or <c>null</c>. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal TermInfo Get(Term term)
         {
             return Get(term, false);
@@ -235,16 +242,19 @@ namespace Lucene.Net.Codecs.Lucene3x
             return SeekEnum(resources.termEnum, term, tiOrd, true);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CacheCurrentTerm(SegmentTermEnum enumerator)
         {
             termsCache.Put(new CloneableTerm(enumerator.Term()), new TermInfoAndOrd(enumerator.termInfo, enumerator.position));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Term DeepCopyOf(Term other)
         {
             return new Term(other.Field, BytesRef.DeepCopyOf(other.Bytes));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal TermInfo SeekEnum(SegmentTermEnum enumerator, Term term, bool useCache)
         {
             if (useCache)
@@ -347,7 +357,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         // called only from asserts
-        private bool SameTermInfo(TermInfo ti1, TermInfo ti2, SegmentTermEnum enumerator)
+        private static bool SameTermInfo(TermInfo ti1, TermInfo ti2, SegmentTermEnum enumerator) // LUCENENET: CA1822: Mark members as static
         {
             if (ti1.DocFreq != ti2.DocFreq)
             {
@@ -369,6 +379,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureIndexIsRead()
         {
             if (index == null)
@@ -408,6 +419,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Returns an enumeration of all the <see cref="Term"/>s and <see cref="TermInfo"/>s in the set. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public SegmentTermEnum Terms()
         {
             return (SegmentTermEnum)origEnum.Clone();
@@ -415,12 +427,14 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Returns an enumeration of terms starting at or after the named term. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public SegmentTermEnum Terms(Term term)
         {
             Get(term, true);
             return (SegmentTermEnum)GetThreadResources().termEnum.Clone();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal long RamBytesUsed()
         {
             return index == null ? 0 : index.RamBytesUsed();

@@ -204,7 +204,8 @@ namespace Lucene.Net.Index
             private class IteratorAnonymousInnerClassHelper : IEnumerator<QueryAndLimit>
             {
                 private readonly IterableAnonymousInnerClassHelper2 outerInstance;
-                private int upto, i;
+                private readonly int upto;
+                private int i;
                 private QueryAndLimit current;
 
                 public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper2 outerInstance)

@@ -134,29 +134,23 @@ namespace Lucene.Net.Util
             Rm(destDir);
             destDir.Create();
 
-            using (ZipArchive zip = new ZipArchive(zipFileStream))
+            using ZipArchive zip = new ZipArchive(zipFileStream);
+            foreach (var entry in zip.Entries)
             {
-                foreach (var entry in zip.Entries)
+                // Ignore internal folders - these are tacked onto the FullName anyway
+                if (entry.FullName.EndsWith("/", StringComparison.Ordinal) || entry.FullName.EndsWith("\\", StringComparison.Ordinal))
                 {
-                    // Ignore internal folders - these are tacked onto the FullName anyway
-                    if (entry.FullName.EndsWith("/", StringComparison.Ordinal) || entry.FullName.EndsWith("\\", StringComparison.Ordinal))
-                    {
-                        continue;
-                    }
-                    using (Stream input = entry.Open())
-                    {
-                        FileInfo targetFile = new FileInfo(CorrectPath(Path.Combine(destDir.FullName, entry.FullName)));
-                        if (!targetFile.Directory.Exists)
-                        {
-                            targetFile.Directory.Create();
-                        }
-
-                        using (Stream output = new FileStream(targetFile.FullName, FileMode.Create, FileAccess.Write))
-                        {
-                            input.CopyTo(output);
-                        }
-                    }
+                    continue;
                 }
+                using Stream input = entry.Open();
+                FileInfo targetFile = new FileInfo(CorrectPath(Path.Combine(destDir.FullName, entry.FullName)));
+                if (!targetFile.Directory.Exists)
+                {
+                    targetFile.Directory.Create();
+                }
+
+                using Stream output = new FileStream(targetFile.FullName, FileMode.Create, FileAccess.Write);
+                input.CopyTo(output);
             }
         }
 
@@ -180,9 +174,9 @@ namespace Lucene.Net.Util
 
         public static void SyncConcurrentMerges(IMergeScheduler ms)
         {
-            if (ms is IConcurrentMergeScheduler)
+            if (ms is IConcurrentMergeScheduler concurrentMergeScheduler)
             {
-                ((IConcurrentMergeScheduler)ms).Sync();
+                concurrentMergeScheduler.Sync();
             }
         }
 
@@ -942,9 +936,9 @@ namespace Lucene.Net.Util
         public static string GetPostingsFormat(Codec codec, string field)
         {
             PostingsFormat p = codec.PostingsFormat;
-            if (p is PerFieldPostingsFormat)
+            if (p is PerFieldPostingsFormat perFieldPostingsFormat)
             {
-                return ((PerFieldPostingsFormat)p).GetPostingsFormatForField(field).Name;
+                return perFieldPostingsFormat.GetPostingsFormatForField(field).Name;
             }
             else
             {
@@ -960,9 +954,9 @@ namespace Lucene.Net.Util
         public static string GetDocValuesFormat(Codec codec, string field)
         {
             DocValuesFormat f = codec.DocValuesFormat;
-            if (f is PerFieldDocValuesFormat)
+            if (f is PerFieldDocValuesFormat perFieldDocValuesFormat)
             {
-                return ((PerFieldDocValuesFormat)f).GetDocValuesFormatForField(field).Name;
+                return perFieldDocValuesFormat.GetDocValuesFormatForField(field).Name;
             }
             else
             {
@@ -1004,24 +998,22 @@ namespace Lucene.Net.Util
         {
             // keep number of open files lowish
             MergePolicy mp = w.Config.MergePolicy;
-            if (mp is LogMergePolicy)
+            if (mp is LogMergePolicy lmp)
             {
-                LogMergePolicy lmp = (LogMergePolicy)mp;
                 lmp.MergeFactor = Math.Min(5, lmp.MergeFactor);
                 lmp.NoCFSRatio = 1.0;
             }
-            else if (mp is TieredMergePolicy)
+            else if (mp is TieredMergePolicy tmp)
             {
-                TieredMergePolicy tmp = (TieredMergePolicy)mp;
                 tmp.MaxMergeAtOnce = Math.Min(5, tmp.MaxMergeAtOnce);
                 tmp.SegmentsPerTier = Math.Min(5, tmp.SegmentsPerTier);
                 tmp.NoCFSRatio = 1.0;
             }
             IMergeScheduler ms = w.Config.MergeScheduler;
-            if (ms is IConcurrentMergeScheduler)
+            if (ms is IConcurrentMergeScheduler concurrentMergeScheduler)
             {
                 // wtf... shouldnt it be even lower since its 1 by default?!?!
-                ((IConcurrentMergeScheduler)ms).SetMaxMergesAndThreads(3, 2);
+                concurrentMergeScheduler.SetMaxMergesAndThreads(3, 2);
             }
         }
 
@@ -1068,10 +1060,10 @@ namespace Lucene.Net.Util
                 ScoreDoc actualSD = actual.ScoreDocs[hitIDX];
                 Assert.AreEqual(expectedSD.Doc, actualSD.Doc, "wrong hit docID");
                 Assert.AreEqual(expectedSD.Score, actualSD.Score, "wrong hit score");
-                if (expectedSD is FieldDoc)
+                if (expectedSD is FieldDoc expectedFieldDoc)
                 {
                     Assert.IsTrue(actualSD is FieldDoc);
-                    Assert.AreEqual(((FieldDoc)expectedSD).Fields, ((FieldDoc)actualSD).Fields, "wrong sort field values");
+                    Assert.AreEqual(expectedFieldDoc.Fields, ((FieldDoc)actualSD).Fields, "wrong sort field values");
                 }
                 else
                 {
@@ -1271,9 +1263,9 @@ namespace Lucene.Net.Util
                         return p;
                     }
                 }
-#pragma warning disable 168
+#pragma warning disable 168, IDE0059
                 catch (Exception ignored)
-#pragma warning restore 168
+#pragma warning restore 168, IDE0059
                 {
                     // Loop trying until we hit something that compiles.
                 }

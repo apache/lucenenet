@@ -41,8 +41,8 @@ namespace Lucene.Net.Classification
         private readonly int _k;
         private Query _query;
 
-        private int _minDocsFreq;
-        private int _minTermFreq;
+        private readonly int _minDocsFreq; // LUCENENET: marked readonly
+        private readonly int _minTermFreq; // LUCENENET: marked readonly
 
         /// <summary>Create a <see cref="IClassifier{T}"/> using kNN algorithm</summary>
         /// <param name="k">the number of neighbors to analyze as an <see cref="int"/></param>

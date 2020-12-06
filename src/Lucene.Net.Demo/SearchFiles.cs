@@ -38,10 +38,8 @@ namespace Lucene.Net.Demo
     /// <summary>
     /// Simple command-line based search demo.
     /// </summary>
-    public class SearchFiles
+    public static class SearchFiles // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        private SearchFiles() { }
-
         /// <summary>Simple command-line based search demo.</summary>
         public static void Main(string[] args)
         {
@@ -108,66 +106,64 @@ namespace Lucene.Net.Demo
                 }
             }
 
-            using (IndexReader reader = DirectoryReader.Open(FSDirectory.Open(index)))
+            using IndexReader reader = DirectoryReader.Open(FSDirectory.Open(index));
+            IndexSearcher searcher = new IndexSearcher(reader);
+            // :Post-Release-Update-Version.LUCENE_XY:
+            Analyzer analyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+
+            TextReader input = null;
+            if (queries != null)
             {
-                IndexSearcher searcher = new IndexSearcher(reader);
-                // :Post-Release-Update-Version.LUCENE_XY:
-                Analyzer analyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
-
-                TextReader input = null;
-                if (queries != null)
+                input = new StreamReader(new FileStream(queries, FileMode.Open, FileAccess.Read), Encoding.UTF8);
+            }
+            else
+            {
+                input = Console.In;
+            }
+            // :Post-Release-Update-Version.LUCENE_XY:
+            QueryParser parser = new QueryParser(LuceneVersion.LUCENE_48, field, analyzer);
+            while (true)
+            {
+                if (queries == null && queryString == null)
                 {
-                    input = new StreamReader(new FileStream(queries, FileMode.Open, FileAccess.Read), Encoding.UTF8);
+                    // prompt the user
+                    Console.WriteLine("Enter query (or press Enter to exit): ");
                 }
-                else
+
+                string line = queryString ?? input.ReadLine();
+
+                if (line == null || line.Length == 0)
                 {
-                    input = Console.In;
+                    break;
                 }
-                // :Post-Release-Update-Version.LUCENE_XY:
-                QueryParser parser = new QueryParser(LuceneVersion.LUCENE_48, field, analyzer);
-                while (true)
+
+                line = line.Trim();
+                if (line.Length == 0)
                 {
-                    if (queries == null && queryString == null)
-                    {   
-                        // prompt the user
-                        Console.WriteLine("Enter query (or press Enter to exit): ");
-                    }
-
-                    string line = queryString != null ? queryString : input.ReadLine();
-
-                    if (line == null || line.Length == 0)
-                    {
-                        break;
-                    }
-
-                    line = line.Trim();
-                    if (line.Length == 0)
-                    {
-                        break;
-                    }
-
-                    Query query = parser.Parse(line);
-                    Console.WriteLine("Searching for: " + query.ToString(field));
-
-                    if (repeat > 0) // repeat & time as benchmark
-                    {   
-                        DateTime start = DateTime.UtcNow;
-                        for (int i = 0; i < repeat; i++)
-                        {
-                            searcher.Search(query, null, 100);
-                        }
-                        DateTime end = DateTime.UtcNow;
-                        Console.WriteLine("Time: " + (end - start).TotalMilliseconds + "ms");
-                    }
-
-                    DoPagingSearch(searcher, query, hitsPerPage, raw, queries == null && queryString == null);
-
-                    if (queryString != null)
-                    {
-                        break;
-                    }
+                    break;
                 }
-            } // Disposes reader
+
+                Query query = parser.Parse(line);
+                Console.WriteLine("Searching for: " + query.ToString(field));
+
+                if (repeat > 0) // repeat & time as benchmark
+                {
+                    DateTime start = DateTime.UtcNow;
+                    for (int i = 0; i < repeat; i++)
+                    {
+                        searcher.Search(query, null, 100);
+                    }
+                    DateTime end = DateTime.UtcNow;
+                    Console.WriteLine("Time: " + (end - start).TotalMilliseconds + "ms");
+                }
+
+                DoPagingSearch(searcher, query, hitsPerPage, raw, queries == null && queryString == null);
+
+                if (queryString != null)
+                {
+                    break;
+                }
+            }
         }
 
         /// <summary>

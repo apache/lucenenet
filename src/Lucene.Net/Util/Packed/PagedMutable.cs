@@ -1,4 +1,5 @@
 using Lucene.Net.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -56,17 +57,20 @@ namespace Lucene.Net.Util.Packed
             this.format = format;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override Mutable NewMutable(int valueCount, int bitsPerValue)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(this.bitsPerValue >= bitsPerValue);
             return PackedInt32s.GetMutable(valueCount, this.bitsPerValue, format);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override PagedMutable NewUnfilledCopy(long newSize)
         {
             return new PagedMutable(newSize, PageSize, bitsPerValue, format);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override long BaseRamBytesUsed()
         {
             return base.BaseRamBytesUsed() + RamUsageEstimator.NUM_BYTES_OBJECT_REF;

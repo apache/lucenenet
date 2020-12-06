@@ -42,14 +42,14 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Creates a new instance with the specified collection language model. </summary>
-        public LMSimilarity(ICollectionModel collectionModel)
+        protected LMSimilarity(ICollectionModel collectionModel) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.m_collectionModel = collectionModel;
         }
 
         /// <summary>
         /// Creates a new instance with the default collection language model. </summary>
-        public LMSimilarity()
+        protected LMSimilarity() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : this(new DefaultCollectionModel())
         {
         }

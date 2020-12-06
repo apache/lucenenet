@@ -600,8 +600,7 @@ namespace Lucene.Net.Queries.Mlt
                     }
 
                     // increment frequency
-                    Int32 cnt;
-                    if (!termFreqMap.TryGetValue(word, out cnt))
+                    if (!termFreqMap.TryGetValue(word, out Int32 cnt))
                     {
                         termFreqMap[word] = new Int32();
                     }

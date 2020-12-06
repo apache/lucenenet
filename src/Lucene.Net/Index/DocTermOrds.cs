@@ -112,15 +112,15 @@ namespace Lucene.Net.Index
         /// Term ords are shifted by this, internally, to reserve
         /// values 0 (end term) and 1 (index is a pointer into byte array)
         /// </summary>
-        private static readonly int TNUM_OFFSET = 2;
+        private const int TNUM_OFFSET = 2;
 
         /// <summary>
         /// Every 128th term is indexed, by default. </summary>
-        public static readonly int DEFAULT_INDEX_INTERVAL_BITS = 7; // decrease to a low number like 2 for testing
+        public const int DEFAULT_INDEX_INTERVAL_BITS = 7; // decrease to a low number like 2 for testing
 
-        private int indexIntervalBits;
-        private int indexIntervalMask;
-        private int indexInterval;
+        private readonly int indexIntervalBits; // LUCENENET: marked readonly
+        private readonly int indexIntervalMask; // LUCENENET: marked readonly
+        private readonly int indexInterval; // LUCENENET: marked readonly
 
         /// <summary>
         /// Don't uninvert terms that exceed this count. </summary>
@@ -411,9 +411,7 @@ namespace Lucene.Net.Index
                         m_ordBase = (int)te.Ord;
                         //System.out.println("got ordBase=" + ordBase);
                     }
-#pragma warning disable 168
-                    catch (NotSupportedException uoe)
-#pragma warning restore 168
+                    catch (NotSupportedException) // LUCENENET: IDE0059: Remove unnecessary value assignment
                     {
                         // Reader cannot provide ord support, so we wrap
                         // our own support by creating our own terms index:
@@ -736,11 +734,6 @@ namespace Lucene.Net.Index
         /// </summary>
         private sealed class OrdWrappedTermsEnum : TermsEnum
         {
-            internal void InitializeInstanceFields()
-            {
-                ord = -outerInstance.indexInterval - 1;
-            }
-
             private readonly DocTermOrds outerInstance;
 
             internal readonly TermsEnum termsEnum;
@@ -751,7 +744,7 @@ namespace Lucene.Net.Index
             {
                 this.outerInstance = outerInstance;
 
-                InitializeInstanceFields();
+                ord = -outerInstance.indexInterval - 1;
                 if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.m_indexedTermsArray != null);
                 termsEnum = reader.Fields.GetTerms(outerInstance.m_field).GetEnumerator();
             }
@@ -1070,7 +1063,7 @@ namespace Lucene.Net.Index
 
             public override void LookupOrd(long ord, BytesRef result)
             {
-                BytesRef @ref = null;
+                BytesRef @ref/* = null*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 try
                 {
                     @ref = outerInstance.LookupTerm(te, (int)ord);

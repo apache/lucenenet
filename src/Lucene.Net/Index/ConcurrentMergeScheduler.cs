@@ -606,7 +606,7 @@ namespace Lucene.Net.Index
                     // Strangely, Sun's JDK 1.5 on Linux sometimes
                     // throws NPE out of here...
                 }
-                catch (SecurityException se)
+                catch (SecurityException /*se*/) // LUCENENET: IDE0059: Remove unnecessary value assignment
 #pragma warning restore 168
                 {
                     // Ignore this because we will still run fine with

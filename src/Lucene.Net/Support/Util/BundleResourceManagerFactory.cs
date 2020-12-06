@@ -56,8 +56,7 @@ namespace Lucene.Net.Util
         /// <param name="manager">The <see cref="ResourceManager"/> to release.</param>
         public virtual void Release(ResourceManager manager)
         {
-            var disposable = manager as IDisposable;
-            if (disposable != null)
+            if (manager is IDisposable disposable)
             {
                 disposable.Dispose();
             }

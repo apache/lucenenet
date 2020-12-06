@@ -1,16 +1,16 @@
 ---
 uid: contributing
 ---
-Lucene.Net project contributing guide
-===============
 
----------------
+# Lucene.Net project contributing guide
+
+---
 
 ## Getting involved
 
 _There are lots ways to help contribute to the Lucene.Net project!_
 
-Lucene.Net is a very large project (over 400,000 executable lines of code and nearly 1,000,000 lines of text total) and we welcome any and all help to maintain such an effort. 
+Lucene.Net is a very large project (over 400,000 executable lines of code and nearly 1,000,000 lines of text total) and we welcome any and all help to maintain such an effort.
 
 ### Write a blog post
 
@@ -28,21 +28,21 @@ Alternatively, you can get help via [StackOverflow](https://stackoverflow.com/qu
 
 Please do not submit general how-to questions to GitHub, use GitHub Issues for bug reports and tasks only.
 
-see __[mailing lists](xref:contributing/mailing-lists)__ 
+see **[mailing lists](xref:contributing/mailing-lists)**
 
 ### Start a Discussion
 
-To start a development discussion regarding technical features of Lucene.Net, please email the Apache Lucene.Net-Developer mailing list by sending a message to: 
+To start a development discussion regarding technical features of Lucene.Net, please email the Apache Lucene.Net-Developer mailing list by sending a message to:
 
 [dev@lucenenet.apache.org](mailto:dev@lucenenet.apache.org)
 
 We recommend you join both the [user and dev mailing lists](https://cwiki.apache.org/confluence/display/LUCENENET/Mailing+Lists) to stay looped in to all user and developer discussions.
 
-see __[mailing lists](xref:contributing/mailing-lists)__ 
+see **[mailing lists](xref:contributing/mailing-lists)**
 
 ### Website and Documentation
 
-Help with keeping this website and documentation up to date would be a great help. It would be great to migrate/consolidate a lot of the important information from the wiki to this website. See __[website and documentation](xref:contributing/documentation)__ for more information about contributing to this area.
+Help with keeping this website and documentation up to date would be a great help. It would be great to migrate/consolidate a lot of the important information from the wiki to this website. See **[website and documentation](xref:contributing/documentation)** for more information about contributing to this area.
 
 ### Report a Bug
 
@@ -50,7 +50,7 @@ To report a bug, please use the [GitHub issue tracker](xref:contributing/issue-t
 
 ### Submit a Pull Request
 
-First have a look at the __[Current Status](xref:contributing/current-status)__ of the project to see where things are at.
+First have a look at the **[Current Status](xref:contributing/current-status)** of the project to see where things are at.
 
 There's a [detailed contribution guide here](https://github.com/apache/lucenenet/blob/master/CONTRIBUTING.md). _(it would be good to migrate this guide to this website)_
 

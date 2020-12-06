@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -33,7 +34,6 @@ namespace Lucene.Net.Search
     /// the same time by two threads, because in this case you
     /// cannot in general know which thread "won".
     /// </summary>
-
     public abstract class LiveFieldValues<S, T> : ReferenceManager.IRefreshListener, IDisposable
         where S : class
     {
@@ -42,16 +42,36 @@ namespace Lucene.Net.Search
         private readonly ReferenceManager<S> mgr;
         private readonly T missingValue;
 
-        public LiveFieldValues(ReferenceManager<S> mgr, T missingValue)
+        protected LiveFieldValues(ReferenceManager<S> mgr, T missingValue) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.missingValue = missingValue;
             this.mgr = mgr;
             mgr.AddListener(this);
         }
 
+        /// <summary>
+        /// Releases all resources used by the <see cref="LiveFieldValues{S, T}"/>.
+        /// </summary>
         public void Dispose()
         {
-            mgr.RemoveListener(this);
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="LiveFieldValues{S, T}"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+
+        // LUCENENET specific - implemented proper dispose pattern
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                mgr.RemoveListener(this);
+            }
         }
 
         public virtual void BeforeRefresh()
@@ -109,16 +129,15 @@ namespace Lucene.Net.Search
         public virtual T Get(string id)
         {
             // First try to get the "live" value:
-            T value;
-            current.TryGetValue(id, out value);
-            var comparer = EqualityComparer<T>.Default;
+            current.TryGetValue(id, out T value);
+            var comparer = JCG.EqualityComparer<T>.Default;
             if (comparer.Equals(value, missingValue))
             {
                 // Deleted but the deletion is not yet reflected in
                 // the reader:
-                return default(T);
+                return default;
             }
-            else if (!comparer.Equals(value, default(T)))
+            else if (!comparer.Equals(value, default))
             {
                 return value;
             }
@@ -129,9 +148,9 @@ namespace Lucene.Net.Search
                 {
                     // Deleted but the deletion is not yet reflected in
                     // the reader:
-                    return default(T);
+                    return default;
                 }
-                else if (!comparer.Equals(value, default(T)))
+                else if (!comparer.Equals(value, default))
                 {
                     return value;
                 }

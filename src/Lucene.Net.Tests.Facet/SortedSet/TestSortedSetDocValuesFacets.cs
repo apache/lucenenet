@@ -366,9 +366,7 @@ namespace Lucene.Net.Facet.SortedSet
                         {
                             if (doc.dims[j] != null)
                             {
-                                int? v; 
-                                
-                                if (!expectedCounts[j].TryGetValue(doc.dims[j],out v))
+                                if (!expectedCounts[j].TryGetValue(doc.dims[j], out int? v))
                                 {
                                     expectedCounts[j][doc.dims[j]] = 1;
                                 }

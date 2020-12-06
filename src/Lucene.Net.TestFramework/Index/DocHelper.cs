@@ -189,16 +189,16 @@ namespace Lucene.Net.Index
         /// and the similarity score; returns the <see cref="SegmentInfo"/>
         /// describing the new segment.
         /// </summary>
+#pragma warning disable IDE0060 // Remove unused parameter
         public static SegmentCommitInfo WriteDoc(Random random, Directory dir, Analyzer analyzer, Similarity similarity, Document doc)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
-            using (IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(Util.LuceneTestCase.TEST_VERSION_CURRENT, analyzer)).SetSimilarity(similarity ?? IndexSearcher.DefaultSimilarity))) // LuceneTestCase.newIndexWriterConfig(random,
-            {
-                //writer.SetNoCFSRatio(0.0);
-                writer.AddDocument(doc);
-                writer.Commit();
-                SegmentCommitInfo info = writer.NewestSegment();
-                return info;
-            } // writer.Dispose();
+            using IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(Util.LuceneTestCase.TEST_VERSION_CURRENT, analyzer)).SetSimilarity(similarity ?? IndexSearcher.DefaultSimilarity));
+            //writer.SetNoCFSRatio(0.0);
+            writer.AddDocument(doc);
+            writer.Commit();
+            SegmentCommitInfo info = writer.NewestSegment();
+            return info;
         }
 
         public static int NumFields(Document doc)
@@ -234,6 +234,7 @@ namespace Lucene.Net.Index
             return doc;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "Complexity")]
         static DocHelper()
         {
             //Initialize the large Lazy Field
@@ -247,9 +248,7 @@ namespace Lucene.Net.Index
             {
                 LAZY_FIELD_BINARY_BYTES = "These are some binary field bytes".GetBytes(Encoding.UTF8);
             }
-#pragma warning disable 168
-            catch (EncoderFallbackException e)
-#pragma warning restore 168
+            catch (EncoderFallbackException)
             {
             }
             LazyFieldBinary = new StoredField(LAZY_FIELD_BINARY_KEY, LAZY_FIELD_BINARY_BYTES);

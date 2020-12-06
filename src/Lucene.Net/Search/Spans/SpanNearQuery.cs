@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Spans
         protected bool m_inOrder;
 
         protected string m_field;
-        private bool collectPayloads;
+        private readonly bool collectPayloads; // LUCENENET: marked readonly
 
         /// <summary>
         /// Construct a <see cref="SpanNearQuery"/>.  Matches spans matching a span from each

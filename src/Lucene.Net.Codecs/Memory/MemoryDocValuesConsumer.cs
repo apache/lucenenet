@@ -49,7 +49,9 @@ namespace Lucene.Net.Codecs.Memory
     /// </summary>
     internal class MemoryDocValuesConsumer : DocValuesConsumer
     {
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexOutput data, meta;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly int maxDoc;
         private readonly float acceptableOverheadRatio;
 
@@ -401,7 +403,7 @@ namespace Lucene.Net.Codecs.Memory
             IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
             // write the ordinals as a binary field
-            AddBinaryField(field, new IterableAnonymousInnerClassHelper(this, docToOrdCount, ords));
+            AddBinaryField(field, new IterableAnonymousInnerClassHelper(docToOrdCount, ords));
 
             // write the values as FST
             WriteFST(field, values);
@@ -412,8 +414,7 @@ namespace Lucene.Net.Codecs.Memory
             private readonly IEnumerable<long?> _docToOrdCount;
             private readonly IEnumerable<long?> _ords;
 
-            public IterableAnonymousInnerClassHelper(MemoryDocValuesConsumer outerInstance,
-                IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
+            public IterableAnonymousInnerClassHelper(IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
             {
                 _docToOrdCount = docToOrdCount;
                 _ords = ords;
@@ -434,8 +435,8 @@ namespace Lucene.Net.Codecs.Memory
         internal class SortedSetIterator : IEnumerator<BytesRef>
         {
             private byte[] buffer = new byte[10];
-            private ByteArrayDataOutput @out = new ByteArrayDataOutput();
-            private BytesRef _current = new BytesRef();
+            private readonly ByteArrayDataOutput @out = new ByteArrayDataOutput(); // LUCENENET: marked readonly
+            private readonly BytesRef _current = new BytesRef(); // LUCENENET: marked readonly
 
             private readonly IEnumerator<long?> counts;
             private readonly IEnumerator<long?> ords;

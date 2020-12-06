@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Ja
                     // Remove comments
                     line = Regex.Replace(line, "#.*$", "");
                     // Skip empty lines or comment lines
-                    if (line.Trim() == string.Empty)
+                    if (line.Trim().Length == 0) // LUCENENET: CA1820: Test for empty strings using string length
                     {
                         continue;
                     }

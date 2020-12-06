@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         private readonly PagedBytes termBytes = new PagedBytes(PAGED_BYTES_BITS);
         private readonly PagedBytes.Reader termBytesReader;
 
-        readonly IDictionary<FieldInfo, FieldIndexData> fields = new Dictionary<FieldInfo, FieldIndexData>();
+        private readonly IDictionary<FieldInfo, FieldIndexData> fields = new Dictionary<FieldInfo, FieldIndexData>();
 
         // start of the field info data
         private long dirOffset;
@@ -129,7 +129,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                         throw new CorruptIndexException("invalid packedIndexStart: " + packedIndexStart + " indexStart: " + indexStart + "numIndexTerms: " + numIndexTerms + " (resource=" + input + ")");
                     }
                     FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
-                    FieldIndexData previous = fields.Put(fieldInfo, new FieldIndexData(this, fieldInfo, numIndexTerms, indexStart, termsStart, packedIndexStart, packedOffsetsStart));
+                    FieldIndexData previous = fields.Put(fieldInfo, new FieldIndexData(this, /* fieldInfo, // LUCENENET: Not referenced */
+                        numIndexTerms, indexStart, termsStart, packedIndexStart, packedOffsetsStart));
                     if (previous != null)
                     {
                         throw new CorruptIndexException("duplicate field: " + fieldInfo.Name + " (resource=" + input + ")");
@@ -190,7 +191,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 int lo = 0;          // binary search
                 int hi = fieldIndex.numIndexTerms - 1;
-                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.totalIndexInterval > 0, () => "totalIndexInterval=" + outerInstance.totalIndexInterval);
+                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.totalIndexInterval > 0, "totalIndexInterval={0}", outerInstance.totalIndexInterval);
 
                 while (hi >= lo)
                 {
@@ -276,7 +277,8 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             private readonly int numIndexTerms;
 
-            public FieldIndexData(FixedGapTermsIndexReader outerInstance, FieldInfo fieldInfo, int numIndexTerms, long indexStart, long termsStart,
+            public FieldIndexData(FixedGapTermsIndexReader outerInstance, /*FieldInfo fieldInfo, // LUCENENET: Not Referenced */
+                int numIndexTerms, long indexStart, long termsStart,
                 long packedIndexStart, long packedOffsetsStart)
             {
                 this.outerInstance = outerInstance;
@@ -332,7 +334,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                     this.numIndexTerms = 1 + (numIndexTerms - 1) / outerInstance.outerInstance.indexDivisor;
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(this.numIndexTerms > 0, () => "numIndexTerms=" + numIndexTerms + " indexDivisor=" + outerInstance.outerInstance.indexDivisor);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(this.numIndexTerms > 0, "numIndexTerms={0} indexDivisor={1}", numIndexTerms, outerInstance.outerInstance.indexDivisor);
 
                     if (outerInstance.outerInstance.indexDivisor == 1)
                     {
@@ -400,7 +402,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 clone.Seek(indexStart + termOffset);
                                 if (Debugging.AssertsEnabled)
                                 {
-                                    Debugging.Assert(indexStart + termOffset < clone.Length, () => "indexStart=" + indexStart + " termOffset=" + termOffset + " len=" + clone.Length);
+                                    Debugging.Assert(indexStart + termOffset < clone.Length, "indexStart={0} termOffset={1} len={2}", indexStart, termOffset, clone.Length);
                                     Debugging.Assert(indexStart + termOffset + numTermBytes < clone.Length);
                                 }
 
@@ -444,8 +446,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override FieldIndexEnum GetFieldEnum(FieldInfo fieldInfo)
         {
-            FieldIndexData fieldData;
-            if (!fields.TryGetValue(fieldInfo, out fieldData) || fieldData == null || fieldData.coreIndex == null)
+            if (!fields.TryGetValue(fieldInfo, out FieldIndexData fieldData) || fieldData == null || fieldData.coreIndex == null)
             {
                 return null;
             }

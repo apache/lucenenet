@@ -33,7 +33,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     {
         protected readonly IList<ValueSource> m_sources;
 
-        public MultiBoolFunction(IList<ValueSource> sources)
+        protected MultiBoolFunction(IList<ValueSource> sources) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.m_sources = sources;
         }

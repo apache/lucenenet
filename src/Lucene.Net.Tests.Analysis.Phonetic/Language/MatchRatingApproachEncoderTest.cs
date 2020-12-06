@@ -35,56 +35,56 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         [Test]
         public void TestAccentRemoval_AllLower_SuccessfullyRemoved()
         {
-            Assert.AreEqual("aeiou", this.StringEncoder.RemoveAccents("áéíóú"));
+            Assert.AreEqual("aeiou", MatchRatingApproachEncoder.RemoveAccents("áéíóú")); // LUCENENET: Made RemoveAccents() static per CA1822 - it is internal anyway
         }
 
         [Test]
         public void TestAccentRemoval_WithSpaces_SuccessfullyRemovedAndSpacesInvariant()
         {
-            Assert.AreEqual("ae io  u", this.StringEncoder.RemoveAccents("áé íó  ú"));
+            Assert.AreEqual("ae io  u", MatchRatingApproachEncoder.RemoveAccents("áé íó  ú")); // LUCENENET: Made RemoveAccents() static per CA1822 - it is internal anyway
         }
 
         [Test]
         public void TestAccentRemoval_UpperandLower_SuccessfullyRemovedAndCaseInvariant()
         {
-            Assert.AreEqual("AeiOuu", this.StringEncoder.RemoveAccents("ÁeíÓuu"));
+            Assert.AreEqual("AeiOuu", MatchRatingApproachEncoder.RemoveAccents("ÁeíÓuu")); // LUCENENET: Made RemoveAccents() static per CA1822 - it is internal anyway
         }
 
         [Test]
         public void TestAccentRemoval_MixedWithUnusualChars_SuccessfullyRemovedAndUnusualcharactersInvariant()
         {
-            Assert.AreEqual("A-e'i.,o&u", this.StringEncoder.RemoveAccents("Á-e'í.,ó&ú"));
+            Assert.AreEqual("A-e'i.,o&u", MatchRatingApproachEncoder.RemoveAccents("Á-e'í.,ó&ú")); // LUCENENET: Made RemoveAccents() static per CA1822 - it is internal anyway
         }
 
         [Test]
         public void TestAccentRemoval_GerSpanFrenMix_SuccessfullyRemoved()
         {
-            Assert.AreEqual("aeoußAEOUnNa", this.StringEncoder.RemoveAccents("äëöüßÄËÖÜñÑà"));
+            Assert.AreEqual("aeoußAEOUnNa", MatchRatingApproachEncoder.RemoveAccents("äëöüßÄËÖÜñÑà")); // LUCENENET: Made RemoveAccents() static per CA1822 - it is internal anyway
         }
 
         [Test]
         public void TestAccentRemoval_ComprehensiveAccentMix_AllSuccessfullyRemoved()
         {
             Assert.AreEqual("E,E,E,E,U,U,I,I,A,A,O,e,e,e,e,u,u,i,i,a,a,o,c",
-                    this.StringEncoder.RemoveAccents("È,É,Ê,Ë,Û,Ù,Ï,Î,À,Â,Ô,è,é,ê,ë,û,ù,ï,î,à,â,ô,ç"));
+                    MatchRatingApproachEncoder.RemoveAccents("È,É,Ê,Ë,Û,Ù,Ï,Î,À,Â,Ô,è,é,ê,ë,û,ù,ï,î,à,â,ô,ç")); // LUCENENET: Made RemoveAccents() static per CA1822 - it is internal anyway
         }
 
         [Test]
         public void TestAccentRemovalNormalString_NoChange()
         {
-            Assert.AreEqual("Colorless green ideas sleep furiously", this.StringEncoder.RemoveAccents("Colorless green ideas sleep furiously"));
+            Assert.AreEqual("Colorless green ideas sleep furiously", MatchRatingApproachEncoder.RemoveAccents("Colorless green ideas sleep furiously")); // LUCENENET: Made RemoveAccents() static per CA1822 - it is internal anyway
         }
 
         [Test]
         public void TestAccentRemoval_NINO_NoChange()
         {
-            Assert.AreEqual("", this.StringEncoder.RemoveAccents(""));
+            Assert.AreEqual("", MatchRatingApproachEncoder.RemoveAccents("")); // LUCENENET: Made RemoveAccents() static per CA1822 - it is internal anyway
         }
 
         [Test]
         public void TestAccentRemoval_NullValue_ReturnNullSuccessfully()
         {
-            Assert.AreEqual(null, this.StringEncoder.RemoveAccents(null));
+            Assert.AreEqual(null, MatchRatingApproachEncoder.RemoveAccents(null)); // LUCENENET: Made RemoveAccents() static per CA1822 - it is internal anyway
         }
 
         [Test]
@@ -108,13 +108,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         [Test]
         public void TestIsVowel_CapitalA_ReturnsTrue()
         {
-            Assert.True(this.StringEncoder.IsVowel("A"));
+            Assert.True(MatchRatingApproachEncoder.IsVowel("A")); // LUCENENET: Made IsVowel() static per CA1822 - it is internal anyway
         }
 
         [Test]
         public void TestIsVowel_SmallD_ReturnsFalse()
         {
-            Assert.False(this.StringEncoder.IsVowel("d"));
+            Assert.False(MatchRatingApproachEncoder.IsVowel("d")); // LUCENENET: Made IsVowel() static per CA1822 - it is internal anyway
         }
 
         [Test]
@@ -234,7 +234,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         [Test]
         public void TestIsVowel_SingleVowel_ReturnsTrue()
         {
-            Assert.True(this.StringEncoder.IsVowel(("I")));
+            Assert.True(MatchRatingApproachEncoder.IsVowel(("I"))); // LUCENENET: Made IsVowel() static per CA1822 - it is internal anyway
         }
 
         [Test]

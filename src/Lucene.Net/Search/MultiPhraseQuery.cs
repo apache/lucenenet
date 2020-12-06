@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
     public class MultiPhraseQuery : Query, IEnumerable<Term[]> // LUCENENET specific - implemented IEnumerable<Term[]>, which allows for use of collection initializer. See: https://stackoverflow.com/a/9195144
     {
         private string field;
-        private IList<Term[]> termArrays = new JCG.List<Term[]>();
+        private readonly IList<Term[]> termArrays = new JCG.List<Term[]>(); // LUCENENET: marked readonly
         private readonly IList<int> positions = new JCG.List<int>();
 
         private int slop = 0;
@@ -196,9 +196,7 @@ namespace Lucene.Net.Search
                 {
                     foreach (Term term in terms)
                     {
-                        TermContext termContext;
-                        termContexts.TryGetValue(term, out termContext);
-                        if (termContext == null)
+                        if (!termContexts.TryGetValue(term, out TermContext termContext) || termContext == null)
                         {
                             termContext = TermContext.Build(context, term);
                             termContexts[term] = termContext;
@@ -484,18 +482,16 @@ namespace Lucene.Net.Search
                 return false;
             }
             using (IEnumerator<Term[]> iterator1 = termArrays1.GetEnumerator())
+            using (IEnumerator<Term[]> iterator2 = termArrays2.GetEnumerator())
             {
-                using (IEnumerator<Term[]> iterator2 = termArrays2.GetEnumerator())
+                while (iterator1.MoveNext())
                 {
-                    while (iterator1.MoveNext())
+                    Term[] termArray1 = iterator1.Current;
+                    iterator2.MoveNext();
+                    Term[] termArray2 = iterator2.Current;
+                    if (!(termArray1 == null ? termArray2 == null : Arrays.Equals(termArray1, termArray2)))
                     {
-                        Term[] termArray1 = iterator1.Current;
-                        iterator2.MoveNext();
-                        Term[] termArray2 = iterator2.Current;
-                        if (!(termArray1 == null ? termArray2 == null : Arrays.Equals(termArray1, termArray2)))
-                        {
-                            return false;
-                        }
+                        return false;
                     }
                 }
             }
@@ -556,11 +552,6 @@ namespace Lucene.Net.Search
         private sealed class Int32Queue
         {
             public Int32Queue()
-            {
-                InitializeInstanceFields();
-            }
-
-            internal void InitializeInstanceFields()
             {
                 _array = new int[_arraySize];
             }

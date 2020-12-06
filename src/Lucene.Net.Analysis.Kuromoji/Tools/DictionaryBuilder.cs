@@ -20,13 +20,9 @@ namespace Lucene.Net.Analysis.Ja.Util
      * limitations under the License.
      */
 
-    public class DictionaryBuilder
+    public static class DictionaryBuilder // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         public enum DictionaryFormat { IPADIC, UNIDIC };
-
-        private DictionaryBuilder()
-        {
-        }
 
         static DictionaryBuilder()
         {
@@ -47,16 +43,16 @@ namespace Lucene.Net.Analysis.Ja.Util
             TokenInfoDictionaryBuilder tokenInfoBuilder = new TokenInfoDictionaryBuilder(format, encoding, normalizeEntry);
             TokenInfoDictionaryWriter tokenInfoDictionary = tokenInfoBuilder.Build(inputDirname);
             tokenInfoDictionary.Write(outputDirname);
-            tokenInfoDictionary = null;
-            tokenInfoBuilder = null;
+            //tokenInfoDictionary = null; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            //tokenInfoBuilder = null; // LUCENENET: IDE0059: Remove unnecessary value assignment
             Console.WriteLine("done");
 
             Console.WriteLine("building unknown word dict...");
             UnknownDictionaryBuilder unkBuilder = new UnknownDictionaryBuilder(encoding);
             UnknownDictionaryWriter unkDictionary = unkBuilder.Build(inputDirname);
             unkDictionary.Write(outputDirname);
-            unkDictionary = null;
-            unkBuilder = null;
+            //unkDictionary = null; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            //unkBuilder = null; // LUCENENET: IDE0059: Remove unnecessary value assignment
             Console.WriteLine("done");
 
             Console.WriteLine("building connection costs...");

@@ -97,8 +97,7 @@ namespace Lucene.Net.Index
 
             internal IndexReaderContext Build(CompositeReaderContext parent, IndexReader reader, int ord, int docBase)
             {
-                var ar = reader as AtomicReader;
-                if (ar != null)
+                if (reader is AtomicReader ar)
                 {
                     var atomic = new AtomicReaderContext(parent, ar, ord, docBase, leaves.Count, leafDocBase);
                     leaves.Add(atomic);

@@ -6,6 +6,7 @@ using Lucene.Net.Store;
 using Lucene.Net.TestFramework;
 using Lucene.Net.Util;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using JCG = J2N.Collections.Generic;
 
 #if TESTFRAMEWORK_MSTEST
@@ -102,6 +103,7 @@ namespace Lucene.Net.Index
         /// Return the list of extensions that should be excluded from byte counts when
         /// comparing indices that store the same content.
         /// </summary>
+        [SuppressMessage("Style", "IDE0025:Use expression body for properties", Justification = "Multiple lines")]
         protected virtual ICollection<string> ExcludedExtensionsFromByteCounts
         {
             get
@@ -123,46 +125,38 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestMergeStability()
         {
-            using (Directory dir = NewDirectory())
+            using Directory dir = NewDirectory();
+            // do not use newMergePolicy that might return a MockMergePolicy that ignores the no-CFS ratio
+            MergePolicy mp = NewTieredMergePolicy();
+            mp.NoCFSRatio = 0;
+            var cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetUseCompoundFile(false).SetMergePolicy(mp);
+            using (var w = new RandomIndexWriter(Random, dir, cfg))
             {
-                // do not use newMergePolicy that might return a MockMergePolicy that ignores the no-CFS ratio
-                MergePolicy mp = NewTieredMergePolicy();
-                mp.NoCFSRatio = 0;
-                var cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetUseCompoundFile(false).SetMergePolicy(mp);
-                using (var w = new RandomIndexWriter(Random, dir, cfg))
+                var numDocs = AtLeast(500);
+                for (var i = 0; i < numDocs; ++i)
                 {
-                    var numDocs = AtLeast(500);
-                    for (var i = 0; i < numDocs; ++i)
-                    {
-                        var d = new Document();
-                        AddRandomFields(d);
-                        w.AddDocument(d);
-                    }
-                    w.ForceMerge(1);
-                    w.Commit();
+                    var d = new Document();
+                    AddRandomFields(d);
+                    w.AddDocument(d);
                 }
-                using (IndexReader reader = DirectoryReader.Open(dir))
-                {
-                    using (Directory dir2 = NewDirectory())
-                    {
-                        mp = NewTieredMergePolicy();
-                        mp.NoCFSRatio = 0;
-                        cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetUseCompoundFile(false).SetMergePolicy(mp);
+                w.ForceMerge(1);
+                w.Commit();
+            }
+            using IndexReader reader = DirectoryReader.Open(dir);
+            using Directory dir2 = NewDirectory();
+            mp = NewTieredMergePolicy();
+            mp.NoCFSRatio = 0;
+            cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetUseCompoundFile(false).SetMergePolicy(mp);
 
-                        using (var w = new RandomIndexWriter(Random, dir2, cfg))
-                        {
-                            w.AddIndexes(reader);
-                            w.Commit();
-                        }
+            using (var w = new RandomIndexWriter(Random, dir2, cfg))
+            {
+                w.AddIndexes(reader);
+                w.Commit();
+            }
 
-                        // LUCENENET: We need to explicitly call Equals() and use HashMap in order to ensure our
-                        // equality check is done correctly. Calling Assert.AreEqual doesn't guarantee this is done.
-                        Assert.True(BytesUsedByExtension(dir).Equals(BytesUsedByExtension(dir2)));
-
-                    } // dir2.Dispose();
-                } // reader.Dispose();
-            } // dir.Dispose();
-            
+            // LUCENENET: We need to explicitly call Equals() and use HashMap in order to ensure our
+            // equality check is done correctly. Calling Assert.AreEqual doesn't guarantee this is done.
+            Assert.True(BytesUsedByExtension(dir).Equals(BytesUsedByExtension(dir2)));
         }
     }
 }

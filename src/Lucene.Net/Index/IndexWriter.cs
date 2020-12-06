@@ -1,4 +1,5 @@
 using J2N;
+using J2N.Text;
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
@@ -462,8 +463,8 @@ namespace Lucene.Net.Index
                 lock (this)
                 {
                     int idx = outerInstance.segmentInfos.IndexOf(info);
-                    Debugging.Assert(idx != -1, () => "info=" + info + " isn't live");
-                    Debugging.Assert(outerInstance.segmentInfos.Info(idx) == info, () => "info=" + info + " doesn't match live info in segmentInfos");
+                    Debugging.Assert(idx != -1, "info={0} isn't live", info);
+                    Debugging.Assert(outerInstance.segmentInfos.Info(idx) == info, "info={0} doesn't match live info in segmentInfos", info);
                     return true;
                 }
             }
@@ -472,9 +473,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    ReadersAndUpdates rld;
-                    readerMap.TryGetValue(info, out rld);
-                    if (rld != null)
+                    if (readerMap.TryGetValue(info, out ReadersAndUpdates rld) && rld != null)
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(info == rld.Info);
                         //        System.out.println("[" + Thread.currentThread().getName() + "] ReaderPool.drop: " + info);
@@ -660,8 +659,7 @@ namespace Lucene.Net.Index
                 {
                     foreach (SegmentCommitInfo info in infos.Segments)
                     {
-                        ReadersAndUpdates rld;
-                        if (readerMap.TryGetValue(info, out rld))
+                        if (readerMap.TryGetValue(info, out ReadersAndUpdates rld))
                         {
                             if (Debugging.AssertsEnabled) Debugging.Assert(rld.Info == info);
                             if (rld.WriteLiveDocs(outerInstance.directory))
@@ -691,11 +689,9 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Dir == outerInstance.directory, () => "info.dir=" + info.Info.Dir + " vs " + outerInstance.directory);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Dir == outerInstance.directory,"info.dir={0} vs {1}", info.Info.Dir, outerInstance.directory);
 
-                    ReadersAndUpdates rld;
-                    readerMap.TryGetValue(info, out rld);
-                    if (rld == null)
+                    if (!readerMap.TryGetValue(info, out ReadersAndUpdates rld) || rld == null)
                     {
                         if (!create)
                         {
@@ -707,7 +703,8 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(rld.Info == info, () => "rld.info=" + rld.Info + " info=" + info + " isLive?=" + InfoIsLive(rld.Info) + " vs " + InfoIsLive(info));
+                        if (Debugging.AssertsEnabled && !(rld.Info == info))
+                            throw new AssertionException(string.Format("rld.info={0} info={1} isLive?={2} vs {3}", rld.Info, info, InfoIsLive(rld.Info),InfoIsLive(info)));
                     }
 
                     if (create)
@@ -1109,7 +1106,7 @@ namespace Lucene.Net.Index
             }
             foreach (IEvent e in eventQueue)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(e is DocumentsWriter.MergePendingEvent, () => e.ToString());
+                if (Debugging.AssertsEnabled) Debugging.Assert(e is DocumentsWriter.MergePendingEvent, "{0}", e);
             }
             return true;
         }
@@ -1276,7 +1273,12 @@ namespace Lucene.Net.Index
                 {
                     closed = true;
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(docWriter.perThreadPool.NumDeactivatedThreadStates() == docWriter.perThreadPool.MaxThreadStates, () => "" + docWriter.perThreadPool.NumDeactivatedThreadStates() + " " + docWriter.perThreadPool.MaxThreadStates);
+                if (Debugging.AssertsEnabled)
+                {
+                    // LUCENENET specific - store the number of states so we don't have to call this method twice
+                    int numDeactivatedThreadStates = docWriter.perThreadPool.NumDeactivatedThreadStates();
+                    Debugging.Assert(numDeactivatedThreadStates == docWriter.perThreadPool.MaxThreadStates, "{0} {1}", numDeactivatedThreadStates, docWriter.perThreadPool.MaxThreadStates);
+                }
             }
             catch (OutOfMemoryException oom)
             {
@@ -1629,13 +1631,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                AtomicReader reader;
-                if (readerIn is AtomicReader)
-                {
-                    // Reader is already atomic: use the incoming docID:
-                    reader = (AtomicReader)readerIn;
-                }
-                else
+                if (!(readerIn is AtomicReader reader))
                 {
                     // Composite reader: lookup sub-reader and re-base docID:
                     IList<AtomicReaderContext> leaves = readerIn.Leaves;
@@ -1648,13 +1644,14 @@ namespace Lucene.Net.Index
                         Debugging.Assert(docID < reader.MaxDoc);
                     }
                 }
+                // else: Reader is already atomic: use the incoming docID
 
-                if (!(reader is SegmentReader))
+                if (!(reader is SegmentReader segmentReader))
                 {
                     throw new ArgumentException("the reader must be a SegmentReader or composite reader containing only SegmentReaders");
                 }
 
-                SegmentCommitInfo info = ((SegmentReader)reader).SegmentInfo;
+                SegmentCommitInfo info = segmentReader.SegmentInfo;
 
                 // TODO: this is a slow linear search, but, number of
                 // segments should be contained unless something is
@@ -2402,7 +2399,7 @@ namespace Lucene.Net.Index
                 MergePolicy.MergeSpecification spec;
                 if (maxNumSegments != UNBOUNDED_MAX_MERGE_SEGMENTS)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(trigger == MergeTrigger.EXPLICIT || trigger == MergeTrigger.MERGE_FINISHED, () => "Expected EXPLICT or MERGE_FINISHED as trigger even with maxNumSegments set but was: " + trigger.ToString());
+                    if (Debugging.AssertsEnabled) Debugging.Assert(trigger == MergeTrigger.EXPLICIT || trigger == MergeTrigger.MERGE_FINISHED,"Expected EXPLICT or MERGE_FINISHED as trigger even with maxNumSegments set but was: {0}", trigger);
                     spec = mergePolicy.FindForcedMerges(segmentInfos, maxNumSegments, segmentsToMerge);
                     newMergesFound = spec != null;
                     if (newMergesFound)
@@ -2587,7 +2584,12 @@ namespace Lucene.Net.Index
                     IOUtils.Dispose(writeLock); // release write lock
                     writeLock = null;
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(docWriter.perThreadPool.NumDeactivatedThreadStates() == docWriter.perThreadPool.MaxThreadStates, () => "" + docWriter.perThreadPool.NumDeactivatedThreadStates() + " " + docWriter.perThreadPool.MaxThreadStates);
+                    if (Debugging.AssertsEnabled)
+                    {
+                        // LUCENENET specific - store the number of states so we don't have to call this method twice
+                        int numDeactivatedThreadStates = docWriter.perThreadPool.NumDeactivatedThreadStates();
+                        Debugging.Assert(numDeactivatedThreadStates == docWriter.perThreadPool.MaxThreadStates, "{0} {1}", numDeactivatedThreadStates, docWriter.perThreadPool.MaxThreadStates);
+                    }
                 }
 
                 success = true;
@@ -3061,7 +3063,7 @@ namespace Lucene.Net.Index
                         JCG.HashSet<string> copiedFiles = new JCG.HashSet<string>();
                         foreach (SegmentCommitInfo info in sis.Segments)
                         {
-                            if (Debugging.AssertsEnabled) Debugging.Assert(!infos.Contains(info), () => "dup info dir=" + info.Info.Dir + " name=" + info.Info.Name);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(!infos.Contains(info),"dup info dir={0} name={1}", info.Info.Dir, info.Info.Name);
 
                             string newSegName = NewSegmentName();
 
@@ -3450,8 +3452,8 @@ namespace Lucene.Net.Index
 
                     if (Debugging.AssertsEnabled)
                     {
-                        Debugging.Assert(!SlowFileExists(directory, newFileName), () => "file \"" + newFileName + "\" already exists; siFiles=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", siFiles));
-                        Debugging.Assert(!copiedFiles.Contains(file), () => "file \"" + file + "\" is being copied more than once");
+                        Debugging.Assert(!SlowFileExists(directory, newFileName), "file \"{0}\" already exists; siFiles={1}", newFileName, siFiles);
+                        Debugging.Assert(!copiedFiles.Contains(file), "file \"{0}\" is being copied more than once", file);
                     }
                     copiedFiles.Add(file);
                     info.Info.Dir.Copy(directory, file, newFileName, context);
@@ -4007,7 +4009,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void SkipDeletedDoc(DocValuesFieldUpdates.Iterator[] updatesIters, int deletedDoc)
+        private static void SkipDeletedDoc(DocValuesFieldUpdates.Iterator[] updatesIters, int deletedDoc) // LUCENENET: CA1822: Mark members as static
         {
             foreach (DocValuesFieldUpdates.Iterator iter in updatesIters)
             {
@@ -4018,7 +4020,7 @@ namespace Lucene.Net.Index
                 // when entering the method, all iterators must already be beyond the
                 // deleted document, or right on it, in which case we advance them over
                 // and they must be beyond it now.
-                if (Debugging.AssertsEnabled) Debugging.Assert(iter.Doc > deletedDoc, () => "updateDoc=" + iter.Doc + " deletedDoc=" + deletedDoc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(iter.Doc > deletedDoc,"updateDoc={0} deletedDoc={1}", iter.Doc, deletedDoc);
             }
         }
 
@@ -4070,7 +4072,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(updatesIter.Doc > curDoc, () => "field=" + mergingFields[idx] + " updateDoc=" + updatesIter.Doc + " curDoc=" + curDoc);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(updatesIter.Doc > curDoc, "field={0} updateDoc={1} curDoc={2}", mergingFields[idx], updatesIter.Doc, curDoc);
                 }
             }
         }
@@ -4115,7 +4117,7 @@ namespace Lucene.Net.Index
                     IBits prevLiveDocs = merge.readers[i].LiveDocs;
                     ReadersAndUpdates rld = readerPool.Get(info, false);
                     // We hold a ref so it should still be in the pool:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(rld != null, () => "seg=" + info.Info.Name);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(rld != null,"seg={0}", info.Info.Name);
                     IBits currentLiveDocs = rld.LiveDocs;
                     IDictionary<string, DocValuesFieldUpdates> mergingFieldUpdates = rld.MergingFieldUpdates;
                     string[] mergingFields;
@@ -4812,9 +4814,11 @@ namespace Lucene.Net.Index
                 // names.
                 string mergeSegmentName = NewSegmentName();
                 SegmentInfo si = new SegmentInfo(directory, Constants.LUCENE_MAIN_VERSION, mergeSegmentName, -1, false, codec, null);
-                IDictionary<string, string> details = new Dictionary<string, string>();
-                details["mergeMaxNumSegments"] = "" + merge.MaxNumSegments;
-                details["mergeFactor"] = Convert.ToString(merge.Segments.Count);
+                IDictionary<string, string> details = new Dictionary<string, string>
+                {
+                    ["mergeMaxNumSegments"] = "" + merge.MaxNumSegments,
+                    ["mergeFactor"] = Convert.ToString(merge.Segments.Count)
+                };
                 SetDiagnostics(si, SOURCE_MERGE, details);
                 merge.Info = new SegmentCommitInfo(si, 0, -1L, -1L);
 
@@ -4837,15 +4841,17 @@ namespace Lucene.Net.Index
 
         private static void SetDiagnostics(SegmentInfo info, string source, IDictionary<string, string> details)
         {
-            IDictionary<string, string> diagnostics = new Dictionary<string, string>();
-            diagnostics["source"] = source;
-            diagnostics["lucene.version"] = Constants.LUCENE_VERSION;
-            diagnostics["os"] = Constants.OS_NAME;
-            diagnostics["os.arch"] = Constants.OS_ARCH;
-            diagnostics["os.version"] = Constants.OS_VERSION;
-            diagnostics["java.version"] = Constants.RUNTIME_VERSION;
-            diagnostics["java.vendor"] = Constants.RUNTIME_VENDOR;
-            diagnostics["timestamp"] = Convert.ToString((DateTime.Now));
+            IDictionary<string, string> diagnostics = new Dictionary<string, string>
+            {
+                ["source"] = source,
+                ["lucene.version"] = Constants.LUCENE_VERSION,
+                ["os"] = Constants.OS_NAME,
+                ["os.arch"] = Constants.OS_ARCH,
+                ["os.version"] = Constants.OS_VERSION,
+                ["java.version"] = Constants.RUNTIME_VERSION,
+                ["java.vendor"] = Constants.RUNTIME_VENDOR,
+                ["timestamp"] = Convert.ToString((DateTime.Now))
+            };
             if (details != null)
             {
                 diagnostics.PutAll(details);
@@ -5037,7 +5043,7 @@ namespace Lucene.Net.Index
                     }
 
                     merge.readers.Add(reader);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(delCount <= info.Info.DocCount, () => "delCount=" + delCount + " info.docCount=" + info.Info.DocCount + " rld.pendingDeleteCount=" + rld.PendingDeleteCount + " info.getDelCount()=" + info.DelCount);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(delCount <= info.Info.DocCount, "delCount={0} info.DocCount={1} rld.PendingDeleteCount={2} info.DelCount=", delCount, info.Info.DocCount, rld.PendingDeleteCount, info.DelCount);
                     segUpto++;
                 }
 
@@ -5379,13 +5385,17 @@ namespace Lucene.Net.Index
             ICollection<string> files = toSync.GetFiles(directory, false);
             foreach (string fileName in files)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(SlowFileExists(directory, fileName), () => "file " + fileName + " does not exist; files=" + Arrays.ToString(directory.ListAll()));
-                // If this trips it means we are missing a call to
-                // .checkpoint somewhere, because by the time we
-                // are called, deleter should know about every
-                // file referenced by the current head
-                // segmentInfos:
-                if (Debugging.AssertsEnabled) Debugging.Assert(deleter.Exists(fileName), () => "IndexFileDeleter doesn't know about file " + fileName);
+                if (Debugging.AssertsEnabled)
+                {
+                    // LUCENENET specific - use Directory.ListAllFormatter to defer directory listing/string building until after the condition fails
+                    Debugging.Assert(SlowFileExists(directory, fileName), "file {0} does not exist; files={1}", fileName, new Directory.ListAllFormatter(directory));
+                    // If this trips it means we are missing a call to
+                    // .checkpoint somewhere, because by the time we
+                    // are called, deleter should know about every
+                    // file referenced by the current head
+                    // segmentInfos:
+                    Debugging.Assert(deleter.Exists(fileName), "IndexFileDeleter doesn't know about file {0}", fileName);
+                }
             }
             return true;
         }
@@ -5404,8 +5414,7 @@ namespace Lucene.Net.Index
                 foreach (SegmentCommitInfo info in sis.Segments)
                 {
                     SegmentCommitInfo infoMod = info;
-                    SegmentCommitInfo liveInfo;
-                    if (liveSIS.TryGetValue(info, out liveInfo))
+                    if (liveSIS.TryGetValue(info, out SegmentCommitInfo liveInfo))
                     {
                         infoMod = liveInfo;
                     }
@@ -5445,7 +5454,7 @@ namespace Lucene.Net.Index
 
                 lock (this)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(lastCommitChangeCount <= changeCount, () => "lastCommitChangeCount=" + lastCommitChangeCount + " changeCount=" + changeCount);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(lastCommitChangeCount <= changeCount,"lastCommitChangeCount={0} changeCount={1}", lastCommitChangeCount, changeCount);
 
                     if (pendingCommitChangeCount == lastCommitChangeCount)
                     {
@@ -5567,7 +5576,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static void Unlock(Directory directory)
         {
-            using (var _ = directory.MakeLock(IndexWriter.WRITE_LOCK_NAME)) { }
+            using var _ = directory.MakeLock(IndexWriter.WRITE_LOCK_NAME);
         }
 
         /// <summary>
@@ -5694,13 +5703,8 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void DeletePendingFiles()
-        {
-            lock (this)
-            {
-                deleter.DeletePendingFiles();
-            }
-        }
+        // LUCENENET specific - DeletePendingFiles() excluded because it is not referenced - IDE0051
+
 
         /// <summary>
         /// NOTE: this method creates a compound file for all files returned by
@@ -5763,9 +5767,11 @@ namespace Lucene.Net.Index
             }
 
             // Replace all previous files with the CFS/CFE files:
-            JCG.HashSet<string> siFiles = new JCG.HashSet<string>();
-            siFiles.Add(fileName);
-            siFiles.Add(Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
+            JCG.HashSet<string> siFiles = new JCG.HashSet<string>
+            {
+                fileName,
+                Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION)
+            };
             info.SetFiles(siFiles);
 
             return files;
@@ -5853,9 +5859,8 @@ namespace Lucene.Net.Index
 
         private bool ProcessEvents(ConcurrentQueue<IEvent> queue, bool triggerMerge, bool forcePurge)
         {
-            IEvent @event;
             bool processed = false;
-            while (queue.TryDequeue(out @event))
+            while (queue.TryDequeue(out IEvent @event))
             {
                 processed = true;
                 @event.Process(this, triggerMerge, forcePurge);

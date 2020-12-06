@@ -44,8 +44,8 @@ namespace Lucene.Net.Benchmarks.ByTask
     /// </remarks>
     public class Benchmark
     {
-        private PerfRunData runData;
-        private Algorithm algorithm;
+        private readonly PerfRunData runData; // LUCENENET: marked readonly
+        private readonly Algorithm algorithm; // LUCENENET: marked readonly
         private bool executed;
 
         public Benchmark(TextReader algReader)

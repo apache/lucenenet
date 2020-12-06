@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal void ShrinkHash(int targetSize)
+        internal void ShrinkHash(/* int targetSize // LUCENENET: Not referenced */)
         {
             // Fully free the bytesHash on each flush but keep the pool untouched
             // bytesHash.clear will clear the ByteStartArray and in turn the ParallelPostingsArray too

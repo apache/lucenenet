@@ -35,7 +35,7 @@ namespace Lucene.Net.Demo.Facet
     /// <summary>
     /// Shows simple usage of dynamic range faceting.
     /// </summary>
-    public class RangeFacetsExample : IDisposable
+    public sealed class RangeFacetsExample : IDisposable
     {
         /// <summary>
         /// Using a constant for all functionality related to a specific index
@@ -65,29 +65,26 @@ namespace Lucene.Net.Demo.Facet
         /// <summary>Build the example index.</summary>
         public void Index()
         {
-            using (IndexWriter indexWriter = new IndexWriter(indexDir, new IndexWriterConfig(EXAMPLE_VERSION,
-                new WhitespaceAnalyzer(EXAMPLE_VERSION))))
+            using IndexWriter indexWriter = new IndexWriter(indexDir, new IndexWriterConfig(EXAMPLE_VERSION,
+                new WhitespaceAnalyzer(EXAMPLE_VERSION)));
+            // Add documents with a fake timestamp, 1000 sec before
+            // "now", 2000 sec before "now", ...:
+            for (int i = 0; i < 100; i++)
             {
-                // Add documents with a fake timestamp, 1000 sec before
-                // "now", 2000 sec before "now", ...:
-                for (int i = 0; i < 100; i++)
-                {
-                    Document doc = new Document();
-                    long then = nowSec - i * 1000;
-                    // Add as doc values field, so we can compute range facets:
-                    doc.Add(new NumericDocValuesField("timestamp", then));
-                    // Add as numeric field so we can drill-down:
-                    doc.Add(new Int64Field("timestamp", then, Field.Store.NO));
-                    indexWriter.AddDocument(doc);
-                }
+                Document doc = new Document();
+                long then = nowSec - i * 1000;
+                // Add as doc values field, so we can compute range facets:
+                doc.Add(new NumericDocValuesField("timestamp", then));
+                // Add as numeric field so we can drill-down:
+                doc.Add(new Int64Field("timestamp", then, Field.Store.NO));
+                indexWriter.AddDocument(doc);
+            }
 
-                // Open near-real-time searcher
-                searcher = new IndexSearcher(DirectoryReader.Open(indexWriter, true));
-
-            } // Disposes indexWriter
+            // Open near-real-time searcher
+            searcher = new IndexSearcher(DirectoryReader.Open(indexWriter, true));
         }
 
-        private FacetsConfig GetConfig()
+        private static FacetsConfig GetConfig()
         {
             return new FacetsConfig();
         }
@@ -131,21 +128,18 @@ namespace Lucene.Net.Demo.Facet
         /// <summary>Runs the search and drill-down examples and prints the results.</summary>
         public static void Main(string[] args)
         {
-            using (RangeFacetsExample example = new RangeFacetsExample())
-            {
-                example.Index();
+            using RangeFacetsExample example = new RangeFacetsExample();
+            example.Index();
 
-                Console.WriteLine("Facet counting example:");
-                Console.WriteLine("-----------------------");
-                Console.WriteLine(example.Search());
+            Console.WriteLine("Facet counting example:");
+            Console.WriteLine("-----------------------");
+            Console.WriteLine(example.Search());
 
-                Console.WriteLine("\n");
-                Console.WriteLine("Facet drill-down example (timestamp/Past six hours):");
-                Console.WriteLine("---------------------------------------------");
-                TopDocs hits = example.DrillDown(example.PAST_SIX_HOURS);
-                Console.WriteLine(hits.TotalHits + " TotalHits");
-
-            } // Disposes example
+            Console.WriteLine("\n");
+            Console.WriteLine("Facet drill-down example (timestamp/Past six hours):");
+            Console.WriteLine("---------------------------------------------");
+            TopDocs hits = example.DrillDown(example.PAST_SIX_HOURS);
+            Console.WriteLine(hits.TotalHits + " TotalHits");
         }
     }
 }

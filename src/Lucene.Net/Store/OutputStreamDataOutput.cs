@@ -42,9 +42,29 @@ namespace Lucene.Net.Store
             _writer.Write(b, offset, length);
         }
 
-        public virtual void Dispose()
+        /// <summary>
+        /// Releases all resources used by the <see cref="OutputStreamDataOutput"/>.
+        /// </summary>
+        public void Dispose()
         {
-            _writer.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="OutputStreamDataOutput"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+
+        // LUCENENET specific - implemented proper dispose pattern
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _writer.Dispose();
+            }
         }
     }
 }

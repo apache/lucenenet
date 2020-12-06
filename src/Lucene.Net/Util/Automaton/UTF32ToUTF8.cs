@@ -2,6 +2,7 @@ using J2N;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Util.Automaton
@@ -77,11 +78,13 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual int ByteAt(int idx)
             {
                 return bytes[idx].Value;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual int NumBits(int idx)
             {
                 return bytes[idx].Bits;
@@ -122,6 +125,7 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private void SetRest(int code, int numBytes)
             {
                 for (int i = 0; i < numBytes; i++)
@@ -154,6 +158,7 @@ namespace Lucene.Net.Util.Automaton
         private readonly UTF8Sequence tmpUTF8b = new UTF8Sequence();
 
         // Builds necessary utf8 edges between start & end
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void ConvertOneEdge(State start, State end, int startCodePoint, int endCodePoint)
         {
             startUTF8.Set(startCodePoint);
@@ -163,6 +168,7 @@ namespace Lucene.Net.Util.Automaton
             Build(start, end, startUTF8, endUTF8, 0);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Build(State start, State end, UTF8Sequence startUTF8, UTF8Sequence endUTF8, int upto)
         {
             // Break into start, middle, end:
@@ -231,6 +237,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Start(State start, State end, UTF8Sequence utf8, int upto, bool doAll)
         {
             if (upto == utf8.len - 1)
@@ -251,6 +258,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void End(State start, State end, UTF8Sequence utf8, int upto, bool doAll)
         {
             if (upto == utf8.len - 1)
@@ -282,6 +290,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void All(State start, State end, int startCode, int endCode, int left)
         {
             if (left == 0)
@@ -365,6 +374,7 @@ namespace Lucene.Net.Util.Automaton
             return utf8;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private State NewUTF8State()
         {
             State s = new State();

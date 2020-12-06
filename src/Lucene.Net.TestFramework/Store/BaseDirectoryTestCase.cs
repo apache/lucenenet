@@ -143,147 +143,118 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestDeleteFile()
         {
-            using (Directory dir = GetDirectory(CreateTempDir("testDeleteFile")))
+            using Directory dir = GetDirectory(CreateTempDir("testDeleteFile"));
+            string file = "foo.txt";
+            Assert.IsFalse(ContainsFile(dir, file));
+
+            using (dir.CreateOutput("foo.txt", IOContext.DEFAULT)) { }
+            Assert.IsTrue(ContainsFile(dir, file));
+
+            dir.DeleteFile("foo.txt");
+            Assert.IsFalse(ContainsFile(dir, file));
+
+            Assert.ThrowsAnyOf<DirectoryNotFoundException, FileNotFoundException>(() =>
             {
-                string file = "foo.txt";
-                Assert.IsFalse(ContainsFile(dir, file));
-
-                using (dir.CreateOutput("foo.txt", IOContext.DEFAULT)) { }
-                Assert.IsTrue(ContainsFile(dir, file));
-
                 dir.DeleteFile("foo.txt");
-                Assert.IsFalse(ContainsFile(dir, file));
-
-                Assert.ThrowsAnyOf<DirectoryNotFoundException, FileNotFoundException>(() => {
-                    dir.DeleteFile("foo.txt");
-                });
-            }
+            });
         }
 
         [Test]
         public virtual void TestByte()
         {
-            using (Directory dir = GetDirectory(CreateTempDir("testByte")))
+            using Directory dir = GetDirectory(CreateTempDir("testByte"));
+            using (IndexOutput output = dir.CreateOutput("byte", NewIOContext(Random)))
             {
-                using (IndexOutput output = dir.CreateOutput("byte", NewIOContext(Random)))
-                {
-                    output.WriteByte((byte)128);
-                } // output.close();
+                output.WriteByte((byte)128);
+            } // output.close();
 
-                using (IndexInput input = dir.OpenInput("byte", NewIOContext(Random)))
-                {
-                    assertEquals(1, input.Length);
-                    assertEquals((byte)128, input.ReadByte());
-                } // input.close();
-            }
+            using IndexInput input = dir.OpenInput("byte", NewIOContext(Random));
+            assertEquals(1, input.Length);
+            assertEquals((byte)128, input.ReadByte());
         }
 
         [Test]
         public virtual void TestInt16() // LUCENENET: Changed from TestShort
         {
-            using (Directory dir = GetDirectory(CreateTempDir("testShort")))
+            using Directory dir = GetDirectory(CreateTempDir("testShort"));
+            using (IndexOutput output = dir.CreateOutput("short", NewIOContext(Random)))
             {
-                using (IndexOutput output = dir.CreateOutput("short", NewIOContext(Random)))
-                {
-                    output.WriteInt16((short)-20);
-                } // output.close();
+                output.WriteInt16((short)-20);
+            } // output.close();
 
-                using (IndexInput input = dir.OpenInput("short", NewIOContext(Random)))
-                {
-                    assertEquals(2, input.Length);
-                    assertEquals((short)-20, input.ReadInt16());
-                } // input.close();
-            }
+            using IndexInput input = dir.OpenInput("short", NewIOContext(Random));
+            assertEquals(2, input.Length);
+            assertEquals((short)-20, input.ReadInt16());
         }
 
         [Test]
         public virtual void TestInt32() // LUCENENET: Changed from TestInt
         {
-            using (Directory dir = GetDirectory(CreateTempDir("testInt")))
+            using Directory dir = GetDirectory(CreateTempDir("testInt"));
+            using (IndexOutput output = dir.CreateOutput("int", NewIOContext(Random)))
             {
-                using (IndexOutput output = dir.CreateOutput("int", NewIOContext(Random)))
-                {
-                    output.WriteInt32(-500);
-                } // output.close();
+                output.WriteInt32(-500);
+            } // output.close();
 
-                using (IndexInput input = dir.OpenInput("int", NewIOContext(Random)))
-                {
-                    assertEquals(4, input.Length);
-                    assertEquals(-500, input.ReadInt32());
-                } // input.close();
-            }
+            using IndexInput input = dir.OpenInput("int", NewIOContext(Random));
+            assertEquals(4, input.Length);
+            assertEquals(-500, input.ReadInt32());
         }
 
         [Test]
         public virtual void TestInt64()  // LUCENENET: Changed from TestLong
         {
-            using (Directory dir = GetDirectory(CreateTempDir("testLong")))
+            using Directory dir = GetDirectory(CreateTempDir("testLong"));
+            using (IndexOutput output = dir.CreateOutput("long", NewIOContext(Random)))
             {
-                using (IndexOutput output = dir.CreateOutput("long", NewIOContext(Random)))
-                {
-                    output.WriteInt64(-5000);
-                } // output.close();
+                output.WriteInt64(-5000);
+            } // output.close();
 
-                using (IndexInput input = dir.OpenInput("long", NewIOContext(Random)))
-                {
-                    assertEquals(8, input.Length);
-                    assertEquals(-5000L, input.ReadInt64());
-                } // input.close();
-            }
+            using IndexInput input = dir.OpenInput("long", NewIOContext(Random));
+            assertEquals(8, input.Length);
+            assertEquals(-5000L, input.ReadInt64());
         }
 
         [Test]
         public virtual void TestString()
         {
-            using (Directory dir = GetDirectory(CreateTempDir("testString")))
+            using Directory dir = GetDirectory(CreateTempDir("testString"));
+            using (IndexOutput output = dir.CreateOutput("string", NewIOContext(Random)))
             {
-                using (IndexOutput output = dir.CreateOutput("string", NewIOContext(Random)))
-                {
-                    output.WriteString("hello!");
-                } // output.close();
+                output.WriteString("hello!");
+            } // output.close();
 
-                using (IndexInput input = dir.OpenInput("string", NewIOContext(Random)))
-                {
-                    assertEquals("hello!", input.ReadString());
-                    assertEquals(7, input.Length);
-                } // input.close();
-            }
+            using IndexInput input = dir.OpenInput("string", NewIOContext(Random));
+            assertEquals("hello!", input.ReadString());
+            assertEquals(7, input.Length);
         }
 
         [Test]
         public virtual void TestVInt32() // LUCENENET: Renamed from TestVInt
         {
-            using (Directory dir = GetDirectory(CreateTempDir("testVInt")))
+            using Directory dir = GetDirectory(CreateTempDir("testVInt"));
+            using (IndexOutput output = dir.CreateOutput("vint", NewIOContext(Random)))
             {
-                using (IndexOutput output = dir.CreateOutput("vint", NewIOContext(Random)))
-                {
-                    output.WriteVInt32(500);
-                } // output.close();
+                output.WriteVInt32(500);
+            } // output.close();
 
-                using (IndexInput input = dir.OpenInput("vint", NewIOContext(Random)))
-                {
-                    assertEquals(2, input.Length);
-                    assertEquals(500, input.ReadVInt32());
-                } // input.close();
-            }
+            using IndexInput input = dir.OpenInput("vint", NewIOContext(Random));
+            assertEquals(2, input.Length);
+            assertEquals(500, input.ReadVInt32());
         }
 
         [Test]
         public virtual void TestVInt64() // LUCENENET: Renamed from TestVLong
         {
-            using (Directory dir = GetDirectory(CreateTempDir("testVLong")))
+            using Directory dir = GetDirectory(CreateTempDir("testVLong"));
+            using (IndexOutput output = dir.CreateOutput("vlong", NewIOContext(Random)))
             {
-                using (IndexOutput output = dir.CreateOutput("vlong", NewIOContext(Random)))
-                {
-                    output.WriteVInt64(long.MaxValue);
-                } // output.close();
+                output.WriteVInt64(long.MaxValue);
+            } // output.close();
 
-                using (IndexInput input = dir.OpenInput("vlong", NewIOContext(Random)))
-                {
-                    assertEquals(9, input.Length);
-                    assertEquals(long.MaxValue, input.ReadVInt64());
-                } // input.close();
-            }
+            using IndexInput input = dir.OpenInput("vlong", NewIOContext(Random));
+            assertEquals(9, input.Length);
+            assertEquals(long.MaxValue, input.ReadVInt64());
         }
 
         // LUCENENET: This test is not compatible with 4.8.0, as it was ported from 8.2.0
@@ -474,20 +445,16 @@ namespace Lucene.Net.Store
             Random.NextBytes(bytes);
             expected.Update(bytes);
 
-            using (Directory dir = GetDirectory(CreateTempDir("testChecksum")))
+            using Directory dir = GetDirectory(CreateTempDir("testChecksum"));
+            using (IndexOutput output = dir.CreateOutput("checksum", NewIOContext(Random)))
             {
-                using (IndexOutput output = dir.CreateOutput("checksum", NewIOContext(Random)))
-                {
-                    output.WriteBytes(bytes, 0, bytes.Length);
-                } // output.close();
+                output.WriteBytes(bytes, 0, bytes.Length);
+            } // output.close();
 
-                using (ChecksumIndexInput input = dir.OpenChecksumInput("checksum", NewIOContext(Random)))
-                {
-                    input.SkipBytes(numBytes);
+            using ChecksumIndexInput input = dir.OpenChecksumInput("checksum", NewIOContext(Random));
+            input.SkipBytes(numBytes);
 
-                    assertEquals(expected.Value, input.Checksum);
-                } // input.close();
-            }
+            assertEquals(expected.Value, input.Checksum);
         }
 
         /// <summary>
@@ -641,54 +608,44 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestFileExistsInListAfterCreated()
         {
-            using (Directory dir = GetDirectory(CreateTempDir("testFileExistsInListAfterCreated")))
-            {
-                string name = "file";
-                using (dir.CreateOutput(name, NewIOContext(Random))) { }
-                assertTrue(SlowFileExists(dir, name));
-                assertTrue(ContainsFile(dir, name));
-            }
+            using Directory dir = GetDirectory(CreateTempDir("testFileExistsInListAfterCreated"));
+            string name = "file";
+            using (dir.CreateOutput(name, NewIOContext(Random))) { }
+            assertTrue(SlowFileExists(dir, name));
+            assertTrue(ContainsFile(dir, name));
         }
 
         // LUCENE-2852
         [Test]
         public void TestSeekToEOFThenBack()
         {
-            using (Directory dir = GetDirectory(CreateTempDir("testSeekToEOFThenBack")))
+            using Directory dir = GetDirectory(CreateTempDir("testSeekToEOFThenBack"));
+            int bufferLength = 1024;
+            byte[] bytes = new byte[3 * bufferLength];
+            using (IndexOutput o = dir.CreateOutput("out", NewIOContext(Random)))
             {
-                int bufferLength = 1024;
-                byte[] bytes = new byte[3 * bufferLength];
-                using (IndexOutput o = dir.CreateOutput("out", NewIOContext(Random)))
-                {
-                    o.WriteBytes(bytes, 0, bytes.Length);
-                } // o.close();
+                o.WriteBytes(bytes, 0, bytes.Length);
+            } // o.close();
 
-                using (IndexInput i = dir.OpenInput("out", NewIOContext(Random)))
-                {
-                    i.Seek(2 * bufferLength - 1);
-                    i.Seek(3 * bufferLength);
-                    i.Seek(bufferLength);
-                    i.ReadBytes(bytes, 0, 2 * bufferLength);
-                } // i.close();
-            }
+            using IndexInput i = dir.OpenInput("out", NewIOContext(Random));
+            i.Seek(2 * bufferLength - 1);
+            i.Seek(3 * bufferLength);
+            i.Seek(bufferLength);
+            i.ReadBytes(bytes, 0, 2 * bufferLength);
         }
 
         // LUCENE-1196
         [Test]
         public virtual void TestIllegalEOF()
         {
-            using (Directory dir = GetDirectory(CreateTempDir("testIllegalEOF")))
+            using Directory dir = GetDirectory(CreateTempDir("testIllegalEOF"));
+            using (IndexOutput o = dir.CreateOutput("out", NewIOContext(Random)))
             {
-                using (IndexOutput o = dir.CreateOutput("out", NewIOContext(Random)))
-                {
-                    byte[] b = new byte[1024];
-                    o.WriteBytes(b, 0, 1024);
-                } // o.close();
-                using (IndexInput i = dir.OpenInput("out", NewIOContext(Random)))
-                {
-                    i.Seek(1024);
-                } // i.close();
-            }
+                byte[] b = new byte[1024];
+                o.WriteBytes(b, 0, 1024);
+            } // o.close();
+            using IndexInput i = dir.OpenInput("out", NewIOContext(Random));
+            i.Seek(1024);
         }
 
         // LUCENENET: This test compiles, but is not compatible with 4.8.0 (tested in Java Lucene), as it was ported from 8.2.0
@@ -760,94 +717,91 @@ namespace Lucene.Net.Store
             DirectoryInfo tempDir = CreateTempDir("doesnotexist");
             tempDir.Delete();
             //IOUtils.rm(tempDir);
-            using (Directory dir = GetDirectory(tempDir))
+            using Directory dir = GetDirectory(tempDir);
+            Assert.ThrowsAnyOf<FileNotFoundException, IndexNotFoundException, DirectoryNotFoundException>(() =>
             {
-                Assert.ThrowsAnyOf<FileNotFoundException, IndexNotFoundException, DirectoryNotFoundException>(() => {
-                    DirectoryReader.Open(dir);
-                });
-            }
+                DirectoryReader.Open(dir);
+            });
         }
 
         [Test]
         public virtual void TestCopyBytes()
         {
-            using (Directory dir = GetDirectory(CreateTempDir("testCopyBytes")))
+            using Directory dir = GetDirectory(CreateTempDir("testCopyBytes"));
+            byte[] bytes = new byte[TestUtil.NextInt32(Random, 1, 77777)];
+            int size = TestUtil.NextInt32(Random, 1, 1777777);
+            int upto = 0;
+            int byteUpto = 0;
+            using (IndexOutput @out = dir.CreateOutput("test", NewIOContext(Random)))
             {
-                byte[] bytes = new byte[TestUtil.NextInt32(Random, 1, 77777)];
-                int size = TestUtil.NextInt32(Random, 1, 1777777);
-                int upto = 0;
-                int byteUpto = 0;
-                using (IndexOutput @out = dir.CreateOutput("test", NewIOContext(Random)))
+                while (upto < size)
                 {
-                    while (upto < size)
+                    bytes[byteUpto++] = Value(upto);
+                    upto++;
+                    if (byteUpto == bytes.Length)
                     {
-                        bytes[byteUpto++] = Value(upto);
+                        @out.WriteBytes(bytes, 0, bytes.Length);
+                        byteUpto = 0;
+                    }
+                }
+
+                @out.WriteBytes(bytes, 0, byteUpto);
+                assertEquals(size, @out.GetFilePointer());
+            } // @out.close();
+            assertEquals(size, dir.FileLength("test"));
+
+            // copy from test -> test2
+            using (IndexInput @in = dir.OpenInput("test", NewIOContext(Random)))
+            using (IndexOutput @out = dir.CreateOutput("test2", NewIOContext(Random)))
+            {
+
+                upto = 0;
+                while (upto < size)
+                {
+                    if (Random.nextBoolean())
+                    {
+                        @out.WriteByte(@in.ReadByte());
                         upto++;
-                        if (byteUpto == bytes.Length)
-                        {
-                            @out.WriteBytes(bytes, 0, bytes.Length);
-                            byteUpto = 0;
-                        }
                     }
-
-                    @out.WriteBytes(bytes, 0, byteUpto);
-                    assertEquals(size, @out.GetFilePointer());
-                } // @out.close();
-                assertEquals(size, dir.FileLength("test"));
-
-                // copy from test -> test2
-                using (IndexInput @in = dir.OpenInput("test", NewIOContext(Random)))
-                using (IndexOutput @out = dir.CreateOutput("test2", NewIOContext(Random)))
-                {
-
-                    upto = 0;
-                    while (upto < size)
+                    else
                     {
-                        if (Random.nextBoolean())
+                        int chunk = Math.Min(
+                            TestUtil.NextInt32(Random, 1, bytes.Length), size - upto);
+                        @out.CopyBytes(@in, chunk);
+                        upto += chunk;
+                    }
+                }
+                assertEquals(size, upto);
+            } // @out.close(); @in.close();
+
+            // verify
+            using (IndexInput in2 = dir.OpenInput("test2", NewIOContext(Random)))
+            {
+                upto = 0;
+                while (upto < size)
+                {
+                    if (Random.nextBoolean())
+                    {
+                        byte v = in2.ReadByte();
+                        assertEquals(Value(upto), v);
+                        upto++;
+                    }
+                    else
+                    {
+                        int limit = Math.Min(
+                            TestUtil.NextInt32(Random, 1, bytes.Length), size - upto);
+                        in2.ReadBytes(bytes, 0, limit);
+                        for (int byteIdx = 0; byteIdx < limit; byteIdx++)
                         {
-                            @out.WriteByte(@in.ReadByte());
+                            assertEquals(Value(upto), bytes[byteIdx]);
                             upto++;
                         }
-                        else
-                        {
-                            int chunk = Math.Min(
-                                TestUtil.NextInt32(Random, 1, bytes.Length), size - upto);
-                            @out.CopyBytes(@in, chunk);
-                            upto += chunk;
-                        }
                     }
-                    assertEquals(size, upto);
-                } // @out.close(); @in.close();
+                }
+            } // in2.close();
 
-                // verify
-                using (IndexInput in2 = dir.OpenInput("test2", NewIOContext(Random)))
-                {
-                    upto = 0;
-                    while (upto < size)
-                    {
-                        if (Random.nextBoolean())
-                        {
-                            byte v = in2.ReadByte();
-                            assertEquals(Value(upto), v);
-                            upto++;
-                        }
-                        else
-                        {
-                            int limit = Math.Min(
-                                TestUtil.NextInt32(Random, 1, bytes.Length), size - upto);
-                            in2.ReadBytes(bytes, 0, limit);
-                            for (int byteIdx = 0; byteIdx < limit; byteIdx++)
-                            {
-                                assertEquals(Value(upto), bytes[byteIdx]);
-                                upto++;
-                            }
-                        }
-                    }
-                } // in2.close();
-
-                dir.DeleteFile("test");
-                dir.DeleteFile("test2");
-            }
+            dir.DeleteFile("test");
+            dir.DeleteFile("test2");
         }
 
         private static byte Value(int idx)
@@ -875,10 +829,8 @@ namespace Lucene.Net.Store
                 try
                 {
                     start.SignalAndWait();
-                    using (IndexOutput dst = d.CreateOutput("copy" + i, IOContext.DEFAULT))
-                    {
-                        dst.CopyBytes(src, src.Length - 100);
-                    } // dst.close();
+                    using IndexOutput dst = d.CreateOutput("copy" + i, IOContext.DEFAULT);
+                    dst.CopyBytes(src, src.Length - 100);
                 }
                 catch (Exception e)
                 {
@@ -891,49 +843,43 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestCopyBytesWithThreads()
         {
-            using (Directory d = GetDirectory(CreateTempDir("testCopyBytesWithThreads")))
+            using Directory d = GetDirectory(CreateTempDir("testCopyBytesWithThreads"));
+            byte[] data = RandomBytes.RandomBytesOfLengthBetween(Random, 101, 10000);
+
+            using (IndexOutput output = d.CreateOutput("data", IOContext.DEFAULT))
             {
-                byte[] data = RandomBytes.RandomBytesOfLengthBetween(Random, 101, 10000);
+                output.WriteBytes(data, 0, data.Length);
+            } // output.close();
 
-                using (IndexOutput output = d.CreateOutput("data", IOContext.DEFAULT))
-                {
-                    output.WriteBytes(data, 0, data.Length);
-                } // output.close();
+            using IndexInput input = d.OpenInput("data", IOContext.DEFAULT);
+            using (IndexOutput outputHeader = d.CreateOutput("header", IOContext.DEFAULT))
+            {
+                // copy our 100-byte header
+                outputHeader.CopyBytes(input, 100);
+            } // outputHeader.close();
 
-                using (IndexInput input = d.OpenInput("data", IOContext.DEFAULT))
-                {
-                    using (IndexOutput outputHeader = d.CreateOutput("header", IOContext.DEFAULT))
-                    {
-                        // copy our 100-byte header
-                        outputHeader.CopyBytes(input, 100);
-                    } // outputHeader.close();
+            // now make N copies of the remaining bytes
+            int threads = 10;
+            Barrier start = new Barrier(threads);
+            ThreadJob[] copies = new ThreadJob[threads];
+            for (int i = 0; i < threads; i++)
+            {
+                copies[i] = new CopyBytesThread(start, input, d, i);
+                copies[i].Start();
+            }
 
-                    // now make N copies of the remaining bytes
-                    int threads = 10;
-                    Barrier start = new Barrier(threads);
-                    ThreadJob[] copies = new ThreadJob[threads];
-                    for (int i = 0; i < threads; i++)
-                    {
-                        copies[i] = new CopyBytesThread(start, input, d, i);
-                        copies[i].Start();
-                    }
+            foreach (ThreadJob t in copies)
+            {
+                t.Join();
+            }
 
-                    foreach (ThreadJob t in copies)
-                    {
-                        t.Join();
-                    }
-
-                    for (int i = 0; i < threads; i++)
-                    {
-                        using (IndexInput copiedData = d.OpenInput("copy" + i, IOContext.DEFAULT))
-                        {
-                            byte[] dataCopy = new byte[data.Length];
-                            System.Array.Copy(data, 0, dataCopy, 0, 100);
-                            copiedData.ReadBytes(dataCopy, 100, data.Length - 100);
-                            Assert.AreEqual(data, dataCopy);
-                        }
-                    }
-                } // input.close();
+            for (int i = 0; i < threads; i++)
+            {
+                using IndexInput copiedData = d.OpenInput("copy" + i, IOContext.DEFAULT);
+                byte[] dataCopy = new byte[data.Length];
+                System.Array.Copy(data, 0, dataCopy, 0, 100);
+                copiedData.ReadBytes(dataCopy, 100, data.Length - 100);
+                Assert.AreEqual(data, dataCopy);
             }
         }
 
@@ -943,37 +889,36 @@ namespace Lucene.Net.Store
         public virtual void TestFsyncDoesntCreateNewFiles()
         {
             DirectoryInfo path = CreateTempDir("nocreate");
-            using (Directory fsdir = GetDirectory(path))
+            using Directory fsdir = GetDirectory(path);
+            // this test backdoors the directory via the filesystem. so it must be an FSDir (for now)
+            // TODO: figure a way to test this better/clean it up. E.g. we should be testing for FileSwitchDir,
+            // if it's using two FSdirs and so on
+            if (!(fsdir is FSDirectory))
             {
-                // this test backdoors the directory via the filesystem. so it must be an FSDir (for now)
-                // TODO: figure a way to test this better/clean it up. E.g. we should be testing for FileSwitchDir,
-                // if it's using two FSdirs and so on
-                if (!(fsdir is FSDirectory))
-                {
-                    AssumeTrue("test only works for FSDirectory subclasses", false);
-                    return;
-                }
-
-                // create a file
-                using (IndexOutput @out = fsdir.CreateOutput("afile", NewIOContext(Random)))
-                {
-                    @out.WriteString("boo");
-                } // @out.close();
-
-                // delete it in the file system.
-                File.Delete(Path.Combine(path.FullName, "afile"));
-                //Files.delete(path.resolve("afile"));
-
-                int fileCount = fsdir.ListAll().Length;
-
-                // fsync it
-                Assert.ThrowsAnyOf<FileNotFoundException, DirectoryNotFoundException>(() => {
-                    fsdir.Sync(new string[] { "afile" });
-                });
-
-                // no new files created
-                assertEquals(fileCount, fsdir.ListAll().Length);
+                AssumeTrue("test only works for FSDirectory subclasses", false);
+                return;
             }
+
+            // create a file
+            using (IndexOutput @out = fsdir.CreateOutput("afile", NewIOContext(Random)))
+            {
+                @out.WriteString("boo");
+            } // @out.close();
+
+            // delete it in the file system.
+            File.Delete(Path.Combine(path.FullName, "afile"));
+            //Files.delete(path.resolve("afile"));
+
+            int fileCount = fsdir.ListAll().Length;
+
+            // fsync it
+            Assert.ThrowsAnyOf<FileNotFoundException, DirectoryNotFoundException>(() =>
+            {
+                fsdir.Sync(new string[] { "afile" });
+            });
+
+            // no new files created
+            assertEquals(fileCount, fsdir.ListAll().Length);
         }
 
         // random access APIs
@@ -1303,25 +1248,16 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestLargeWrites()
         {
-            using (Directory dir = GetDirectory(CreateTempDir("largeWrites")))
-            {
-                IndexOutput os = dir.CreateOutput("testBufferStart.txt", NewIOContext(Random));
+            using Directory dir = GetDirectory(CreateTempDir("largeWrites"));
+            using IndexOutput os = dir.CreateOutput("testBufferStart.txt", NewIOContext(Random));
 
-                byte[] largeBuf = new byte[2048];
-                Random.NextBytes(largeBuf);
+            byte[] largeBuf = new byte[2048];
+            Random.NextBytes(largeBuf);
 
-                long currentPos = os.GetFilePointer();
-                os.WriteBytes(largeBuf, largeBuf.Length);
+            long currentPos = os.GetFilePointer();
+            os.WriteBytes(largeBuf, largeBuf.Length);
 
-                try
-                {
-                    assertEquals(currentPos + largeBuf.Length, os.GetFilePointer());
-                }
-                finally
-                {
-                    os.Dispose();
-                }
-            }
+            assertEquals(currentPos + largeBuf.Length, os.GetFilePointer());
         }
 
         // LUCENENET: This test compiles, but is not compatible with 4.8.0 (tested in Java Lucene), as it was ported from 8.2.0
@@ -1428,23 +1364,19 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestSeekToEndOfFile()
         {
-            using (Directory dir = GetDirectory(CreateTempDir()))
+            using Directory dir = GetDirectory(CreateTempDir());
+            using (IndexOutput @out = dir.CreateOutput("a", IOContext.DEFAULT))
             {
-                using (IndexOutput @out = dir.CreateOutput("a", IOContext.DEFAULT))
+                for (int i = 0; i < 1024; ++i)
                 {
-                    for (int i = 0; i < 1024; ++i)
-                    {
-                        @out.WriteByte((byte)0);
-                    }
-                }
-                using (IndexInput @in = dir.OpenInput("a", IOContext.DEFAULT))
-                {
-                    @in.Seek(100);
-                    assertEquals(100, @in.GetFilePointer());
-                    @in.Seek(1024);
-                    assertEquals(1024, @in.GetFilePointer());
+                    @out.WriteByte((byte)0);
                 }
             }
+            using IndexInput @in = dir.OpenInput("a", IOContext.DEFAULT);
+            @in.Seek(100);
+            assertEquals(100, @in.GetFilePointer());
+            @in.Seek(1024);
+            assertEquals(1024, @in.GetFilePointer());
         }
 
         // LUCENENET: This test compiles, but is not compatible with 4.8.0 (tested in Java Lucene), as it was ported from 8.2.0

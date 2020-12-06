@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Fst
@@ -131,7 +132,7 @@ namespace Lucene.Net.Util.Fst
         internal virtual void WriteBytes(long dest, byte[] b, int offset, int len)
         {
             //System.out.println("  BS.writeBytes dest=" + dest + " offset=" + offset + " len=" + len);
-            if (Debugging.AssertsEnabled) Debugging.Assert(dest + len <= Position, () => "dest=" + dest + " pos=" + Position + " len=" + len);
+            if (Debugging.AssertsEnabled) Debugging.Assert(dest + len <= Position, "dest={0} pos={1} len={2}", dest, Position, len);
 
             // Note: weird: must go "backwards" because copyBytes
             // calls us with overlapping src/dest.  If we
@@ -426,6 +427,7 @@ namespace Lucene.Net.Util.Fst
             private int nextBuffer;
             private int nextRead;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override byte ReadByte()
             {
                 if (nextRead == outerInstance.blockSize)
@@ -436,6 +438,7 @@ namespace Lucene.Net.Util.Fst
                 return current[nextRead++];
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void SkipBytes(int count)
             {
                 Position += count;
@@ -475,18 +478,20 @@ namespace Lucene.Net.Util.Fst
                     nextBuffer = bufferIndex + 1;
                     current = outerInstance.blocks[bufferIndex];
                     nextRead = (int)(value & outerInstance.blockMask);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(this.Position == value, () => "pos=" + value + " Position=" + this.Position);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(this.Position == value,"value={0} Position={1}", value, this.Position);
                 }
             }
 
             public override bool IsReversed => false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual FST.BytesReader GetReverseReader()
         {
             return GetReverseReader(true);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual FST.BytesReader GetReverseReader(bool allowSingle)
         {
             if (allowSingle && blocks.Count == 1)
@@ -512,6 +517,7 @@ namespace Lucene.Net.Util.Fst
             private int nextBuffer;
             private int nextRead;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override byte ReadByte()
             {
                 if (nextRead == -1)
@@ -522,11 +528,13 @@ namespace Lucene.Net.Util.Fst
                 return current[nextRead--];
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void SkipBytes(int count)
             {
                 Position -= count;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void ReadBytes(byte[] b, int offset, int len)
             {
                 for (int i = 0; i < len; i++)
@@ -548,7 +556,7 @@ namespace Lucene.Net.Util.Fst
                     nextBuffer = bufferIndex - 1;
                     current = outerInstance.blocks[bufferIndex];
                     nextRead = (int)(value & outerInstance.blockMask);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(this.Position == value, () => "value=" + value + " this.Position=" + this.Position);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(this.Position == value,"value={0} this.Position={1}", value, this.Position);
                 }
             }
 

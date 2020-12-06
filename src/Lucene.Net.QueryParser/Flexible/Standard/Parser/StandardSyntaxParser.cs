@@ -6,6 +6,7 @@ using Lucene.Net.QueryParsers.Flexible.Messages;
 using Lucene.Net.QueryParsers.Flexible.Standard.Nodes;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
@@ -34,11 +35,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     /// <summary>
     /// Parser for the standard Lucene syntax
     /// </summary>
+    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
+    [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "This class is based on generated code")]
+    [SuppressMessage("Style", "IDE0028:Collection initialization can be simplified", Justification = "This class is based on generated code")]
     public class StandardSyntaxParser : ISyntaxParser /*, StandardSyntaxParserConstants*/
     {
-        private static readonly int CONJ_NONE = 0;
-        private static readonly int CONJ_AND = 2;
-        private static readonly int CONJ_OR = 2;
+        private const int CONJ_NONE = 0;
+        private const int CONJ_AND = 2;
+        private const int CONJ_OR = 2;
 
 
         // syntax parser constructor
@@ -156,6 +160,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             { if (true) return q; }
             throw new Exception("Missing return statement in function");
         }
+
 
         // These changes were made to introduce operator precedence:
         // - Clause() now returns a QueryNode. 
@@ -549,10 +554,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         q = new BoostQueryNode(q, f);
                     }
                 }
-#pragma warning disable 168
-                catch (Exception ignored)
-#pragma warning restore 168
+                catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
                 {
+                    //ignored
                     /* Should this be handled somehow? (defaults to "no boost", if
                          * boost number is invalid)
                          */
@@ -775,10 +779,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                             phraseSlop = (int)Convert.ToSingle(fuzzySlop.Image.Substring(1), CultureInfo.InvariantCulture);
                             q = new SlopQueryNode(q, phraseSlop);
                         }
-#pragma warning disable 168
-                        catch (Exception ignored)
-#pragma warning restore 168
+                        catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
                         {
+                            // ignored
                             /* Should this be handled somehow? (defaults to "no PhraseSlop", if
                            * slop number is invalid)
                            */
@@ -802,10 +805,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         q = new BoostQueryNode(q, f);
                     }
                 }
-#pragma warning disable 168
-                catch (Exception ignored)
-#pragma warning restore 168
+                catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
                 {
+                    // ignored
                     /* Should this be handled somehow? (defaults to "no boost", if
                        * boost number is invalid)
                        */
@@ -1160,10 +1162,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 return (jj_ntk = Jj_nt.Kind);
         }
 
-        private List<int[]> jj_expentries = new List<int[]>();
+        private readonly List<int[]> jj_expentries = new List<int[]>(); // LUCENENET: marked readonly
         private int[] jj_expentry;
         private int jj_kind = -1;
-        private int[] jj_lasttokens = new int[100];
+        private readonly int[] jj_lasttokens = new int[100]; // LUCENENET: marked readonly
         private int jj_endpos;
 
         private void Jj_add_error_token(int kind, int pos)
@@ -1251,6 +1253,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
             return new ParseException(Token, exptokseq, StandardSyntaxParserConstants.TokenImage);
         }
+
 
         /// <summary>Enable tracing.</summary>
         public void Enable_tracing()

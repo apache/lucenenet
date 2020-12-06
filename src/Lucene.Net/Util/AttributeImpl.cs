@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Util
@@ -53,6 +54,7 @@ namespace Lucene.Net.Util
                 this.prependAttClass = prependAttClass;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void Reflect<T>(string key, object value)
                 where T : IAttribute
             {
@@ -69,7 +71,11 @@ namespace Lucene.Net.Util
                 {
                     buffer.Append(type.Name).Append('#');
                 }
-                buffer.Append(key).Append('=').Append(object.ReferenceEquals(value, null) ? (object)"null" : value);
+                buffer.Append(key).Append('=');
+                if (value is null)
+                    buffer.Append("null");
+                else
+                    buffer.Append(value);
             }
         }
 

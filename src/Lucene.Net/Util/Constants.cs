@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 #if NETFRAMEWORK
 using Microsoft.Win32;
@@ -89,6 +90,7 @@ namespace Lucene.Net.Util
 #endif
         public static readonly string RUNTIME_VERSION = LoadRuntimeVersion();
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string LoadRuntimeVersion() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
 #if NETFRAMEWORK
@@ -104,6 +106,7 @@ namespace Lucene.Net.Util
         /// NOTE: This was JRE_IS_64BIT in Lucene
         /// </summary>
         public static readonly bool RUNTIME_IS_64BIT = LoadRuntimeIs64Bit(); // LUCENENET NOTE: We still need this constant to indicate 64 bit runtime.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool LoadRuntimeIs64Bit() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             // LUCENENET NOTE: In Java, the check is for sun.misc.Unsafe.addressSize,
@@ -118,6 +121,7 @@ namespace Lucene.Net.Util
 
         // this method prevents inlining the final version constant in compiled classes,
         // see: http://www.javaworld.com/community/node/3400
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string Ident(string s)
         {
             return s.ToString();
@@ -171,18 +175,17 @@ namespace Lucene.Net.Util
 
             // As an alternative, if you know the computers you will query are running .NET Framework 4.5 
             // or later, you can use:
-            using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey))
+            using RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey);
+            object releaseValue;
+            if (ndpKey != null && (releaseValue = ndpKey.GetValue("Release")) != null)
             {
-                if (ndpKey != null && ndpKey.GetValue("Release") != null)
-                {
-                    return CheckFor45PlusVersion((int)ndpKey.GetValue("Release"));
-                }
-                else
-                {
-                    // Fall back to Environment.Version (probably wrong, but this is our best guess if the registry check fails)
-                    return Environment.Version.ToString();
-                    //Console.WriteLine(".NET Framework Version 4.5 or later is not detected.");
-                }
+                return CheckFor45PlusVersion((int)releaseValue);
+            }
+            else
+            {
+                // Fall back to Environment.Version (probably wrong, but this is our best guess if the registry check fails)
+                return Environment.Version.ToString();
+                //Console.WriteLine(".NET Framework Version 4.5 or later is not detected.");
             }
         }
 
@@ -226,6 +229,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="input">The string to examine</param>
         /// <param name="pattern">A regex object to use to extract the string</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string ExtractString(string input, Regex pattern)
         {
             Match m = pattern.Match(input);

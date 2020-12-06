@@ -39,7 +39,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public LabelToOrdinal()
+        protected LabelToOrdinal() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
         }
 

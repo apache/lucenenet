@@ -235,8 +235,10 @@ namespace Lucene.Net.Search.Grouping
             ICollector firstRound;
             if (allGroupHeads || allGroups)
             {
-                List<ICollector> collectors = new List<ICollector>();
-                collectors.Add(firstPassCollector);
+                List<ICollector> collectors = new List<ICollector>
+                {
+                    firstPassCollector
+                };
                 if (allGroups)
                 {
                     collectors.Add(allGroupsCollector);

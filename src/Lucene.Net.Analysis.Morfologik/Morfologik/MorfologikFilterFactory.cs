@@ -71,9 +71,9 @@ namespace Lucene.Net.Analysis.Morfologik
 
             resourceName = Get(args, DICTIONARY_ATTRIBUTE);
 
-            if (args.Count != 0)
+            if (args.Count > 0)
             {
-                throw new ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
             }
         }
 
@@ -86,11 +86,9 @@ namespace Lucene.Net.Analysis.Morfologik
             }
             else
             {
-                using (Stream dict = loader.OpenResource(resourceName))
-                using (Stream meta = loader.OpenResource(DictionaryMetadata.GetExpectedMetadataFileName(resourceName)))
-                {
-                    this.dictionary = Dictionary.Read(dict, meta);
-                }
+                using Stream dict = loader.OpenResource(resourceName);
+                using Stream meta = loader.OpenResource(DictionaryMetadata.GetExpectedMetadataFileName(resourceName));
+                this.dictionary = Dictionary.Read(dict, meta);
             }
         }
 

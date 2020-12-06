@@ -164,10 +164,7 @@ namespace Lucene.Net.Index
 
             IDictionary<string, object> normFields = normsLocal.Value;
 
-            object ret;
-            normFields.TryGetValue(fi.Name, out ret);
-            var norms = ret as NumericDocValues;
-            if (norms == null)
+            if (!normFields.TryGetValue(fi.Name, out object ret) || !(ret is NumericDocValues norms))
             {
                 norms = normsProducer.GetNumeric(fi);
                 normFields[fi.Name] = norms;

@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    throw ioe;
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details
                 }
             }
             Assert.AreEqual(0, psdp.SnapshotCount);

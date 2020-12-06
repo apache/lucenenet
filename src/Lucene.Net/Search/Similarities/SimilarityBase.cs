@@ -57,7 +57,7 @@ namespace Lucene.Net.Search.Similarities
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        public SimilarityBase()
+        protected SimilarityBase() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
         }
 
@@ -194,11 +194,11 @@ namespace Lucene.Net.Search.Similarities
 
         public override SimScorer GetSimScorer(SimWeight stats, AtomicReaderContext context)
         {
-            if (stats is MultiSimilarity.MultiStats)
+            if (stats is MultiSimilarity.MultiStats multiStats)
             {
                 // a multi term query (e.g. phrase). return the summation,
                 // scoring almost as if it were boolean query
-                SimWeight[] subStats = ((MultiSimilarity.MultiStats)stats).subStats;
+                SimWeight[] subStats = multiStats.subStats;
                 SimScorer[] subScorers = new SimScorer[subStats.Length];
                 for (int i = 0; i < subScorers.Length; i++)
                 {

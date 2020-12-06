@@ -65,19 +65,21 @@ namespace Lucene.Net.Analysis.Ja
         // LUCENENET specific: de-nested Type and renamed JapaneseTokenizerType
 
 
-        private static readonly bool VERBOSE = false;
+#pragma warning disable CA1802 // Use literals where appropriate
+        private static readonly bool VERBOSE = false; // For debugging
+#pragma warning restore CA1802 // Use literals where appropriate
 
-        private static readonly int SEARCH_MODE_KANJI_LENGTH = 2;
+        private const int SEARCH_MODE_KANJI_LENGTH = 2;
 
-        private static readonly int SEARCH_MODE_OTHER_LENGTH = 7; // Must be >= SEARCH_MODE_KANJI_LENGTH
+        private const int SEARCH_MODE_OTHER_LENGTH = 7; // Must be >= SEARCH_MODE_KANJI_LENGTH
 
-        private static readonly int SEARCH_MODE_KANJI_PENALTY = 3000;
+        private const int SEARCH_MODE_KANJI_PENALTY = 3000;
 
-        private static readonly int SEARCH_MODE_OTHER_PENALTY = 1700;
+        private const int SEARCH_MODE_OTHER_PENALTY = 1700;
 
         // For safety:
-        private static readonly int MAX_UNKNOWN_WORD_LENGTH = 1024;
-        private static readonly int MAX_BACKTRACE_GAP = 1024;
+        private const int MAX_UNKNOWN_WORD_LENGTH = 1024;
+        private const int MAX_BACKTRACE_GAP = 1024;
 
         private readonly IDictionary<JapaneseTokenizerType, IDictionary> dictionaryMap = new Dictionary<JapaneseTokenizerType, IDictionary>();
 
@@ -916,7 +918,7 @@ namespace Lucene.Net.Analysis.Ja
                 if (Debugging.AssertsEnabled) Debugging.Assert(bestIDX < posData.count);
 
                 int backPos = posData.backPos[bestIDX];
-                if (Debugging.AssertsEnabled) Debugging.Assert(backPos >= lastBackTracePos, () => "backPos=" + backPos + " vs lastBackTracePos=" + lastBackTracePos);
+                if (Debugging.AssertsEnabled) Debugging.Assert(backPos >= lastBackTracePos,"backPos={0} vs lastBackTracePos={1}", backPos, lastBackTracePos);
                 int length = pos - backPos;
                 JapaneseTokenizerType backType = posData.backType[bestIDX];
                 int backID = posData.backID[bestIDX];
@@ -1035,7 +1037,7 @@ namespace Lucene.Net.Analysis.Ja
                     // The pruning we did when we created the altToken
                     // ensures that the back trace will align back with
                     // the start of the altToken:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(altToken.Position == backPos, () => altToken.Position + " vs " + backPos);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(altToken.Position == backPos, "{0} vs {1}", altToken.Position, backPos);
 
                     // NOTE: not quite right: the compound token may
                     // have had all punctuation back traced so far, but
@@ -1177,8 +1179,7 @@ namespace Lucene.Net.Analysis.Ja
 
         internal IDictionary GetDict(JapaneseTokenizerType type)
         {
-            IDictionary result;
-            dictionaryMap.TryGetValue(type, out result);
+            dictionaryMap.TryGetValue(type, out IDictionary result);
             return result;
         }
 
@@ -1355,7 +1356,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             count = 0;
             // forwardCount naturally resets after it runs:
-            if (Debugging.AssertsEnabled) Debugging.Assert(forwardCount == 0, () => "pos=" + pos + " forwardCount=" + forwardCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(forwardCount == 0,"pos={0} forwardCount={1}", pos, forwardCount);
         }
     }
 

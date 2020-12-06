@@ -56,23 +56,21 @@ namespace Lucene.Net.Analysis.Ja.Util
             string filename = System.IO.Path.Combine(baseDir, typeof(ConnectionCosts).Name + CharacterDefinition.FILENAME_SUFFIX);
             //new File(filename).getParentFile().mkdirs();
             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(filename));
-            using (Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write))
+            using Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write);
+            DataOutput @out = new OutputStreamDataOutput(os);
+            CodecUtil.WriteHeader(@out, ConnectionCosts.HEADER, ConnectionCosts.VERSION);
+            @out.WriteVInt32(forwardSize);
+            @out.WriteVInt32(backwardSize);
+            int last = 0;
+            if (Debugging.AssertsEnabled) Debugging.Assert(costs.Length == backwardSize);
+            foreach (short[] a in costs)
             {
-                DataOutput @out = new OutputStreamDataOutput(os);
-                CodecUtil.WriteHeader(@out, ConnectionCosts.HEADER, ConnectionCosts.VERSION);
-                @out.WriteVInt32(forwardSize);
-                @out.WriteVInt32(backwardSize);
-                int last = 0;
-                if (Debugging.AssertsEnabled) Debugging.Assert(costs.Length == backwardSize);
-                foreach (short[] a in costs)
+                if (Debugging.AssertsEnabled) Debugging.Assert(a.Length == forwardSize);
+                for (int i = 0; i < a.Length; i++)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(a.Length == forwardSize);
-                    for (int i = 0; i < a.Length; i++)
-                    {
-                        int delta = (int)a[i] - last;
-                        @out.WriteVInt32((delta >> 31) ^ (delta << 1));
-                        last = a[i];
-                    }
+                    int delta = (int)a[i] - last;
+                    @out.WriteVInt32((delta >> 31) ^ (delta << 1));
+                    last = a[i];
                 }
             }
         }

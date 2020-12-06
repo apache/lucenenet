@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
         /// Reference count for all files in the index.
         /// Counts how many existing commits reference a file.
         /// </summary>
-        private IDictionary<string, RefCount> refCounts = new Dictionary<string, RefCount>();
+        private readonly IDictionary<string, RefCount> refCounts = new Dictionary<string, RefCount>(); // LUCENENET: marked readonly
 
         /// <summary>
         /// Holds all commits (segments_N) currently in the index.
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
         /// Other policies may leave commit points live for longer
         /// in which case this list would be longer than 1:
         /// </summary>
-        private IList<CommitPoint> commits = new List<CommitPoint>();
+        private readonly IList<CommitPoint> commits = new List<CommitPoint>(); // LUCENENET: marked readonly
 
         /// <summary>
         /// Holds files we had incref'd from the previous
@@ -98,14 +98,14 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Commits that the IndexDeletionPolicy have decided to delete:
         /// </summary>
-        private IList<CommitPoint> commitsToDelete = new List<CommitPoint>();
+        private readonly IList<CommitPoint> commitsToDelete = new List<CommitPoint>(); // LUCENENET: marked readonly
 
         private readonly InfoStream infoStream;
-        private Directory directory;
-        private IndexDeletionPolicy policy;
+        private readonly Directory directory; // LUCENENET: marked readonly
+        private readonly IndexDeletionPolicy policy; // LUCENENET: marked readonly
 
         internal readonly bool startingCommitDeleted;
-        private SegmentInfos lastSegmentInfos;
+        private readonly SegmentInfos lastSegmentInfos; // LUCENENET: marked readonly
 
         /// <summary>
         /// Change to true to see details of reference counts when
@@ -146,14 +146,12 @@ namespace Lucene.Net.Index
             long currentGen = segmentInfos.Generation;
 
             CommitPoint currentCommitPoint = null;
-            string[] files = null;
+            string[] files/* = null*/;
             try
             {
                 files = directory.ListAll();
             }
-#pragma warning disable 168
-            catch (DirectoryNotFoundException e)
-#pragma warning restore 168
+            catch (DirectoryNotFoundException) // LUCENENET: IDE0059: Remove unnecessary value assignment
             {
                 // it means the directory is empty, so ignore it.
                 files = Arrays.Empty<string>();
@@ -529,9 +527,12 @@ namespace Lucene.Net.Index
         /// </summary>
         public void Checkpoint(SegmentInfos segmentInfos, bool isCommit)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(IsLocked);
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(Monitor.IsEntered(writer));
+                Debugging.Assert(Monitor.IsEntered(writer));
+            }
             long t0 = 0;
             if (infoStream.IsEnabled("IFD"))
             {
@@ -723,8 +724,6 @@ namespace Lucene.Net.Index
                 // the file is open in another process, and queue
                 // the file for subsequent deletion.
 
-                //if (Debugging.AssertsEnabled) Debugging.Assert(e.Message.Contains("cannot delete"));
-
                 if (infoStream.IsEnabled("IFD"))
                 {
                     infoStream.Message("IFD",
@@ -763,14 +762,14 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(count > 0, () => Thread.CurrentThread.Name + ": RefCount is 0 pre-increment for file \"" + fileName + "\"");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(count > 0, "{0}: RefCount is 0 pre-increment for file \"{1}\"", Thread.CurrentThread.Name, fileName);
                 }
                 return ++count;
             }
 
             public int DecRef()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(count > 0, () => Thread.CurrentThread.Name + ": RefCount is 0 pre-decrement for file \"" + fileName + "\"");
+                if (Debugging.AssertsEnabled) Debugging.Assert(count > 0, "{0}: RefCount is 0 pre-decrement for file \"{1}\"", Thread.CurrentThread.Name, fileName);
                 return --count;
             }
         }

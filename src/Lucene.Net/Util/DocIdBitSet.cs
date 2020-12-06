@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using BitSet = J2N.Collections.BitSet;
 
 namespace Lucene.Net.Util
@@ -50,6 +51,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual BitSet BitSet => this.bitSet;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Get(int index)
         {
             return bitSet.Get(index);
@@ -89,6 +91,7 @@ namespace Lucene.Net.Util
                 return docId;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 // upper bound

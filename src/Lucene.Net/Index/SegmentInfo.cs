@@ -137,12 +137,8 @@ namespace Lucene.Net.Index
             get => codec;
             set
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(this.codec == null);
-                if (value == null)
-                {
-                    throw new ArgumentException("codec must be non-null");
-                }
-                this.codec = value;
+                if (Debugging.AssertsEnabled) Debugging.Assert(this.codec is null);
+                this.codec = value ?? throw new ArgumentNullException(nameof(value), "Codec must be non-null");
             }
         }
 
@@ -200,7 +196,7 @@ namespace Lucene.Net.Index
         public string ToString(Directory dir, int delCount)
         {
             StringBuilder s = new StringBuilder();
-            s.Append(Name).Append('(').Append(version == null ? "?" : version).Append(')').Append(':');
+            s.Append(Name).Append('(').Append(version ?? "?").Append(')').Append(':');
             char cfs = UseCompoundFile ? 'c' : 'C';
             s.Append(cfs);
 
@@ -230,9 +226,8 @@ namespace Lucene.Net.Index
             {
                 return true;
             }
-            if (obj is SegmentInfo)
+            if (obj is SegmentInfo other)
             {
-                SegmentInfo other = (SegmentInfo)obj;
                 return other.Dir == Dir && other.Name.Equals(Name, StringComparison.Ordinal);
             }
             else
@@ -293,7 +288,7 @@ namespace Lucene.Net.Index
             setFiles.Add(file);
         }
 
-        private void CheckFileNames(ICollection<string> files)
+        private static void CheckFileNames(ICollection<string> files) // LUCENENET: CA1822: Mark members as static
         {
             Regex r = IndexFileNames.CODEC_FILE_PATTERN;
             foreach (string file in files)
@@ -317,8 +312,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                string attribute;
-                attributes.TryGetValue(key, out attribute);
+                attributes.TryGetValue(key, out string attribute);
                 return attribute;
             }
         }

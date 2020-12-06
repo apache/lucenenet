@@ -51,7 +51,9 @@ namespace Lucene.Net.Codecs.SimpleText
         internal static readonly BytesRef NUMVALUES = new BytesRef("  numvalues ");
         internal static readonly BytesRef ORDPATTERN = new BytesRef("  ordpattern ");
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexOutput data;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly BytesRef scratch = new BytesRef();
         private readonly int numDocs;
         private readonly ISet<string> _fieldsSeen = new JCG.HashSet<string>(); // for asserting
@@ -69,7 +71,7 @@ namespace Lucene.Net.Codecs.SimpleText
         /// </summary>
         private bool FieldSeen(string field)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(!_fieldsSeen.Contains(field), () => "field \"" + field + "\" was added more than once during flush");
+            if (Debugging.AssertsEnabled) Debugging.Assert(!_fieldsSeen.Contains(field), "field \"{0}\" was added more than once during flush", field);
             _fieldsSeen.Add(field);
             return true;
         }
@@ -134,7 +136,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 if (Debugging.AssertsEnabled) Debugging.Assert(numDocsWritten <= numDocs);
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(numDocs == numDocsWritten, () => "numDocs=" + numDocs + " numDocsWritten=" + numDocsWritten);
+            if (Debugging.AssertsEnabled) Debugging.Assert(numDocs == numDocsWritten, "numDocs={0} numDocsWritten={1}", numDocs, numDocsWritten);
         }
 
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)

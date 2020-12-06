@@ -35,13 +35,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
 #endif
     {
         /// <summary>Task for which data was collected.</summary>
-        private PerfTask task;
+        private readonly PerfTask task; // LUCENENET: marked readonly
 
         /// <summary>Round in which task run started.</summary>
         private int round;
 
-        /// <summary>Task start time.</summary>
-        private long start;
+        ///// <summary>Task start time.</summary>
+        //private long start; // LUCENENET: Never read
 
         /// <summary>Task elapsed time.  elapsed >= 0 indicates run completion!</summary>
         private long elapsed = -1;
@@ -53,7 +53,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         private long maxUsedMem;
 
         /// <summary>Serial run number of this task run in the perf run.</summary>
-        private int taskRunNum;
+        private readonly int taskRunNum; // LUCENENET: marked readonly
 
         /// <summary>Number of other tasks that started to run while this task was still running.</summary>
         private int numParallelTasks;
@@ -83,7 +83,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
             this.round = round;
             maxTotMem = GC.GetTotalMemory(false); //Runtime.getRuntime().totalMemory();
             maxUsedMem = maxTotMem; // - Runtime.getRuntime().freeMemory(); // LUCENENET TODO: available RAM
-            start = Stopwatch.GetTimestamp();
+            //start = Stopwatch.GetTimestamp(); // LUCENENET: Never read
         }
 
         /// <summary>

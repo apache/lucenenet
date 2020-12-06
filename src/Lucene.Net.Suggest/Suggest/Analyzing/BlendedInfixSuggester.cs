@@ -87,12 +87,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
         /// <summary>
-        /// LUCENENET specific to ensure our Queue is only altered by a single
-        /// thread at a time.
-        /// </summary>
-        private static readonly object syncLock = new object();
-
-        /// <summary>
         /// Create a new instance, loading from a previously built
         /// directory, if it exists.
         /// </summary>
@@ -214,7 +208,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <param name="num"> size limit </param>
         private static void BoundedTreeAdd(JCG.SortedSet<Lookup.LookupResult> results, Lookup.LookupResult result, int num)
         {
-
             if (results.Count >= num)
             {
                 var first = results.Min; // "get" our first object so we don't cross threads
@@ -291,11 +284,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return coefficient;
         }
 
-        private static IComparer<Lookup.LookupResult> LOOKUP_COMP = new LookUpComparer();
+        private static readonly IComparer<Lookup.LookupResult> LOOKUP_COMP = new LookUpComparer(); // LUCENENET: marked readonly
 
         private class LookUpComparer : IComparer<Lookup.LookupResult>
         {
-
             public virtual int Compare(Lookup.LookupResult o1, Lookup.LookupResult o2)
             {
                 // order on weight

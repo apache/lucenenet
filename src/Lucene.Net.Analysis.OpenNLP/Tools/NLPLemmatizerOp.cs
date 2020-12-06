@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public virtual string[] Lemmatize(string[] words, string[] postags)
         {
-            string[] lemmas = null;
+            string[] lemmas; // LUCENENET: IDE0059: Remove unnecessary value assignment
             string[] maxEntLemmas = null;
             if (dictionaryLemmatizer != null)
             {

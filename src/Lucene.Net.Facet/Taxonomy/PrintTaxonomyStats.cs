@@ -57,13 +57,9 @@ namespace Lucene.Net.Facet.Taxonomy
                 //Console.WriteLine("\nUsage: java -classpath ... org.apache.lucene.facet.util.PrintTaxonomyStats [-printTree] /path/to/taxononmy/index\n");
                 //return 1;
             }
-            using (Store.Directory dir = FSDirectory.Open(new DirectoryInfo(path)))
-            {
-                using (var r = new DirectoryTaxonomyReader(dir))
-                {
-                    PrintStats(r, System.Console.Out, printTree);
-                }
-            }
+            using Store.Directory dir = FSDirectory.Open(new DirectoryInfo(path));
+            using var r = new DirectoryTaxonomyReader(dir);
+            PrintStats(r, System.Console.Out, printTree);
   
             return 0;
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -55,6 +56,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             SkipOffset = ti.SkipOffset;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Set(int docFreq, long freqPointer, long proxPointer, int skipOffset)
         {
             this.DocFreq = docFreq;
@@ -63,6 +65,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             this.SkipOffset = skipOffset;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Set(TermInfo ti)
         {
             DocFreq = ti.DocFreq;

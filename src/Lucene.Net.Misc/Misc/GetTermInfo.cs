@@ -26,14 +26,14 @@ namespace Lucene.Net.Misc
     /// <summary>
     /// Utility to get document frequency and total number of occurrences (sum of the tf for each doc)  of a term. 
     /// </summary>
-    public class GetTermInfo
+    public static class GetTermInfo // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         public static void Main(string[] args)
         {
 
-            FSDirectory dir = null;
-            string inputStr = null;
-            string field = null;
+            FSDirectory dir; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            string inputStr; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            string field; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
             if (args.Length == 3)
             {

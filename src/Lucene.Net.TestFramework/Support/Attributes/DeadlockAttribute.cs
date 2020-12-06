@@ -27,7 +27,7 @@ namespace Lucene.Net.Attributes
     /// Indicates a test has contention between concurrent processes and may deadlock.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-    internal class DeadlockAttribute : TimeoutAttribute, IApplyToTest
+    internal sealed class DeadlockAttribute : TimeoutAttribute, IApplyToTest
     {
         public DeadlockAttribute() : base(600000) { }
 

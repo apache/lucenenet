@@ -83,7 +83,7 @@ namespace Lucene.Net.Codecs.Memory
                 numerics = new Dictionary<int?, NumericEntry>();
                 binaries = new Dictionary<int?, BinaryEntry>();
                 fsts = new Dictionary<int?, FSTEntry>();
-                ReadFields(@in, state.FieldInfos);
+                ReadFields(@in /*, state.FieldInfos // LUCENENET: Not referenced */);
                 if (version >= VERSION_CHECKSUM)
                 {
                     CodecUtil.CheckFooter(@in);
@@ -133,7 +133,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private void ReadFields(IndexInput meta, FieldInfos infos)
+        private void ReadFields(IndexInput meta /*, FieldInfos infos // LUCENENET: Not referenced */)
         {
             int fieldNumber = meta.ReadVInt32();
             while (fieldNumber != -1)
@@ -209,8 +209,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             lock (this)
             {
-                NumericDocValues instance;
-                if (!numericInstances.TryGetValue(field.Number, out instance))
+                if (!numericInstances.TryGetValue(field.Number, out NumericDocValues instance))
                 {
                     instance = LoadNumeric(field);
                     numericInstances[field.Number] = instance;
@@ -252,7 +251,7 @@ namespace Lucene.Net.Codecs.Memory
                     var ordsReader = PackedInt32s.GetReaderNoHeader(data, PackedInt32s.Format.ById(formatID),
                         entry.packedIntsVersion, maxDoc, bitsPerValue);
                     ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(decode) + ordsReader.RamBytesUsed());
-                    return new NumericDocValuesAnonymousInnerClassHelper(this, decode, ordsReader);
+                    return new NumericDocValuesAnonymousInnerClassHelper(decode, ordsReader);
                 case DELTA_COMPRESSED:
                     int blockSize = data.ReadVInt32();
                     var reader = new BlockPackedReader(data, entry.packedIntsVersion, blockSize, maxDoc,
@@ -264,7 +263,7 @@ namespace Lucene.Net.Codecs.Memory
                     data.ReadBytes(bytes, 0, bytes.Length);
                     ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(bytes));
                     // LUCENENET: IMPORTANT - some bytes are negative here, so we need to pass as sbyte
-                    return new NumericDocValuesAnonymousInnerClassHelper2(this, (sbyte[])(Array)bytes);
+                    return new NumericDocValuesAnonymousInnerClassHelper2((sbyte[])(Array)bytes);
                 case GCD_COMPRESSED:
                     long min = data.ReadInt64();
                     long mult = data.ReadInt64();
@@ -272,7 +271,7 @@ namespace Lucene.Net.Codecs.Memory
                     var quotientReader = new BlockPackedReader(data, entry.packedIntsVersion,
                         quotientBlockSize, maxDoc, false);
                     ramBytesUsed.AddAndGet(quotientReader.RamBytesUsed());
-                    return new NumericDocValuesAnonymousInnerClassHelper3(this, min, mult, quotientReader);
+                    return new NumericDocValuesAnonymousInnerClassHelper3(min, mult, quotientReader);
                 default:
                     throw new InvalidOperationException();
             }
@@ -280,15 +279,11 @@ namespace Lucene.Net.Codecs.Memory
 
         private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
         {
-            private readonly MemoryDocValuesProducer outerInstance;
-
             private readonly long[] decode;
             private readonly PackedInt32s.Reader ordsReader;
 
-            public NumericDocValuesAnonymousInnerClassHelper(MemoryDocValuesProducer outerInstance, long[] decode,
-                PackedInt32s.Reader ordsReader)
+            public NumericDocValuesAnonymousInnerClassHelper(long[] decode, PackedInt32s.Reader ordsReader)
             {
-                this.outerInstance = outerInstance;
                 this.decode = decode;
                 this.ordsReader = ordsReader;
             }
@@ -301,12 +296,10 @@ namespace Lucene.Net.Codecs.Memory
 
         private class NumericDocValuesAnonymousInnerClassHelper2 : NumericDocValues
         {
-            private readonly MemoryDocValuesProducer outerInstance;
             private readonly sbyte[] bytes;
 
-            public NumericDocValuesAnonymousInnerClassHelper2(MemoryDocValuesProducer outerInstance, sbyte[] bytes)
+            public NumericDocValuesAnonymousInnerClassHelper2(sbyte[] bytes)
             {
-                this.outerInstance = outerInstance;
                 this.bytes = bytes;
             }
 
@@ -322,7 +315,7 @@ namespace Lucene.Net.Codecs.Memory
             private readonly long mult;
             private readonly BlockPackedReader quotientReader;
 
-            public NumericDocValuesAnonymousInnerClassHelper3(MemoryDocValuesProducer outerInstance, long min, long mult,
+            public NumericDocValuesAnonymousInnerClassHelper3(long min, long mult,
                 BlockPackedReader quotientReader)
             {
                 this.min = min;
@@ -340,8 +333,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             lock (this)
             {
-                BinaryDocValues instance;
-                if (!binaryInstances.TryGetValue(field.Number, out instance))
+                if (!binaryInstances.TryGetValue(field.Number, out BinaryDocValues instance))
                 {
                     instance = LoadBinary(field);
                     binaryInstances[field.Number] = instance;
@@ -361,7 +353,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 int fixedLength = entry.minLength;
                 ramBytesUsed.AddAndGet(bytes.RamBytesUsed());
-                return new BinaryDocValuesAnonymousInnerClassHelper(this, bytesReader, fixedLength);
+                return new BinaryDocValuesAnonymousInnerClassHelper(bytesReader, fixedLength);
             }
             else
             {
@@ -369,7 +361,7 @@ namespace Lucene.Net.Codecs.Memory
                 var addresses = new MonotonicBlockPackedReader(data, entry.packedIntsVersion,
                     entry.blockSize, maxDoc, false);
                 ramBytesUsed.AddAndGet(bytes.RamBytesUsed() + addresses.RamBytesUsed());
-                return new BinaryDocValuesAnonymousInnerClassHelper2(this, bytesReader, addresses);
+                return new BinaryDocValuesAnonymousInnerClassHelper2(bytesReader, addresses);
             }
         }
 
@@ -378,8 +370,7 @@ namespace Lucene.Net.Codecs.Memory
             private readonly PagedBytes.Reader bytesReader;
             private readonly int fixedLength;
 
-            public BinaryDocValuesAnonymousInnerClassHelper(MemoryDocValuesProducer outerInstance,
-                PagedBytes.Reader bytesReader, int fixedLength)
+            public BinaryDocValuesAnonymousInnerClassHelper(PagedBytes.Reader bytesReader, int fixedLength)
             {
                 this.bytesReader = bytesReader;
                 this.fixedLength = fixedLength;
@@ -393,15 +384,11 @@ namespace Lucene.Net.Codecs.Memory
 
         private class BinaryDocValuesAnonymousInnerClassHelper2 : BinaryDocValues
         {
-            private readonly MemoryDocValuesProducer outerInstance;
-
             private readonly PagedBytes.Reader bytesReader;
             private readonly MonotonicBlockPackedReader addresses;
 
-            public BinaryDocValuesAnonymousInnerClassHelper2(MemoryDocValuesProducer outerInstance,
-                PagedBytes.Reader bytesReader, MonotonicBlockPackedReader addresses)
+            public BinaryDocValuesAnonymousInnerClassHelper2(PagedBytes.Reader bytesReader, MonotonicBlockPackedReader addresses)
             {
-                this.outerInstance = outerInstance;
                 this.bytesReader = bytesReader;
                 this.addresses = addresses;
             }

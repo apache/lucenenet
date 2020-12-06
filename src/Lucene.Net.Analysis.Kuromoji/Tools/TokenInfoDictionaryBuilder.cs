@@ -33,12 +33,12 @@ namespace Lucene.Net.Analysis.Ja.Util
         /// <summary>Internal word id - incrementally assigned as entries are read and added. This will be byte offset of dictionary file</summary>
         private int offset = 0;
 
-        private string encoding = "euc-jp";
+        private readonly string encoding = "euc-jp"; // LUCENENET: marked readonly
 
-        private bool normalizeEntries = false;
+        private readonly bool normalizeEntries = false; // LUCENENET: marked readonly
         //private Normalizer2 normalizer;
 
-        private DictionaryBuilder.DictionaryFormat format = DictionaryBuilder.DictionaryFormat.IPADIC;
+        private readonly DictionaryBuilder.DictionaryFormat format = DictionaryBuilder.DictionaryFormat.IPADIC; // LUCENENET: marked readonly
 
         public TokenInfoDictionaryBuilder(DictionaryBuilder.DictionaryFormat format, string encoding, bool normalizeEntries)
         {
@@ -68,43 +68,41 @@ namespace Lucene.Net.Analysis.Ja.Util
             List<string[]> lines = new List<string[]>(400000);
             foreach (string file in csvFiles)
             {
-                using (Stream inputStream = new FileStream(file, FileMode.Open, FileAccess.Read))
+                using Stream inputStream = new FileStream(file, FileMode.Open, FileAccess.Read);
+                Encoding decoder = Encoding.GetEncoding(encoding);
+                TextReader reader = new StreamReader(inputStream, decoder);
+
+                string line = null;
+                while ((line = reader.ReadLine()) != null)
                 {
-                    Encoding decoder = Encoding.GetEncoding(encoding);
-                    TextReader reader = new StreamReader(inputStream, decoder);
+                    string[] entry = CSVUtil.Parse(line);
 
-                    string line = null;
-                    while ((line = reader.ReadLine()) != null)
+                    if (entry.Length < 13)
                     {
-                        string[] entry = CSVUtil.Parse(line);
+                        Console.WriteLine("Entry in CSV is not valid: " + line);
+                        continue;
+                    }
 
-                        if (entry.Length < 13)
+                    string[] formatted = FormatEntry(entry);
+                    lines.Add(formatted);
+
+                    // NFKC normalize dictionary entry
+                    if (normalizeEntries)
+                    {
+                        //if (normalizer.isNormalized(entry[0])){
+                        if (entry[0].IsNormalized(NormalizationForm.FormKC))
                         {
-                            Console.WriteLine("Entry in CSV is not valid: " + line);
                             continue;
                         }
-
-                        string[] formatted = FormatEntry(entry);
-                        lines.Add(formatted);
-
-                        // NFKC normalize dictionary entry
-                        if (normalizeEntries)
+                        string[] normalizedEntry = new string[entry.Length];
+                        for (int i = 0; i < entry.Length; i++)
                         {
-                            //if (normalizer.isNormalized(entry[0])){
-                            if (entry[0].IsNormalized(NormalizationForm.FormKC))
-                            {
-                                continue;
-                            }
-                            string[] normalizedEntry = new string[entry.Length];
-                            for (int i = 0; i < entry.Length; i++)
-                            {
-                                //normalizedEntry[i] = normalizer.normalize(entry[i]);
-                                normalizedEntry[i] = entry[i].Normalize(NormalizationForm.FormKC);
-                            }
-
-                            formatted = FormatEntry(normalizedEntry);
-                            lines.Add(formatted);
+                            //normalizedEntry[i] = normalizer.normalize(entry[i]);
+                            normalizedEntry[i] = entry[i].Normalize(NormalizationForm.FormKC);
                         }
+
+                        formatted = FormatEntry(normalizedEntry);
+                        lines.Add(formatted);
                     }
                 }
             }

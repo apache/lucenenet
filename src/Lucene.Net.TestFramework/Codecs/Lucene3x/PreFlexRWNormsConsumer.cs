@@ -40,12 +40,14 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Extension of norms file </summary>
         private const string NORMS_EXTENSION = "nrm";
 
-        /// <summary>
-        /// Extension of separate norms file </summary>
-        [Obsolete("Only for reading existing 3.x indexes")]
-        private const string SEPARATE_NORMS_EXTENSION = "s";
+        ///// <summary>
+        ///// Extension of separate norms file </summary>
+        //[Obsolete("Only for reading existing 3.x indexes")]
+        //private const string SEPARATE_NORMS_EXTENSION = "s"; // LUCENENET: IDE0051: Remove unused private member
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexOutput @out;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private int lastFieldNumber = -1; // only for assert
 
         public PreFlexRWNormsConsumer(Directory directory, string segment, IOContext context)
@@ -75,7 +77,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(field.Number > lastFieldNumber, () => "writing norms fields out of order" + lastFieldNumber + " -> " + field.Number);
+            if (Debugging.AssertsEnabled) Debugging.Assert(field.Number > lastFieldNumber,"writing norms fields out of order {0} -> {1}", lastFieldNumber, field.Number);
             foreach (var n in values)
             {
                 if (((sbyte)(byte)(long)n) < sbyte.MinValue || ((sbyte)(byte)(long)n) > sbyte.MaxValue)

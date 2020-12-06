@@ -35,8 +35,8 @@ namespace Lucene.Net.Analysis.Ja
     /// </summary>
     public class JapaneseIterationMarkCharFilterFactory : CharFilterFactory, IMultiTermAwareComponent
     {
-        private static readonly string NORMALIZE_KANJI_PARAM = "normalizeKanji";
-        private static readonly string NORMALIZE_KANA_PARAM = "normalizeKana";
+        private const string NORMALIZE_KANJI_PARAM = "normalizeKanji";
+        private const string NORMALIZE_KANA_PARAM = "normalizeKana";
 
         private readonly bool normalizeKanji;
         private readonly bool normalizeKana;
@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Ja
             normalizeKana = GetBoolean(args, NORMALIZE_KANA_PARAM, JapaneseIterationMarkCharFilter.NORMALIZE_KANA_DEFAULT);
             if (args.Count > 0)
             {
-                throw new ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
             }
         }
 

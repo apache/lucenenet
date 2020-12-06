@@ -31,16 +31,14 @@ namespace Lucene.Net.Analysis
         /// Run a vocabulary test against two data files. </summary>
         public static void AssertVocabulary(Analyzer a, Stream voc, Stream @out)
         {
-            using (TextReader vocReader = new StreamReader(voc, Encoding.UTF8))
-            using (TextReader outputReader = new StreamReader(@out, Encoding.UTF8))
+            using TextReader vocReader = new StreamReader(voc, Encoding.UTF8);
+            using TextReader outputReader = new StreamReader(@out, Encoding.UTF8);
+            string inputWord = null;
+            while ((inputWord = vocReader.ReadLine()) != null)
             {
-                string inputWord = null;
-                while ((inputWord = vocReader.ReadLine()) != null)
-                {
-                    string expectedWord = outputReader.ReadLine();
-                    Assert.IsNotNull(expectedWord);
-                    BaseTokenStreamTestCase.CheckOneTerm(a, inputWord, expectedWord);
-                }
+                string expectedWord = outputReader.ReadLine();
+                Assert.IsNotNull(expectedWord);
+                BaseTokenStreamTestCase.CheckOneTerm(a, inputWord, expectedWord);
             }
         }
 
@@ -48,18 +46,16 @@ namespace Lucene.Net.Analysis
         /// Run a vocabulary test against one file: tab separated. </summary>
         public static void AssertVocabulary(Analyzer a, Stream vocOut)
         {
-            using (TextReader vocReader = new StreamReader(vocOut, Encoding.UTF8))
+            using TextReader vocReader = new StreamReader(vocOut, Encoding.UTF8);
+            string inputLine = null;
+            while ((inputLine = vocReader.ReadLine()) != null)
             {
-                string inputLine = null;
-                while ((inputLine = vocReader.ReadLine()) != null)
+                if (inputLine.StartsWith("#", System.StringComparison.Ordinal) || inputLine.Trim().Length == 0)
                 {
-                    if (inputLine.StartsWith("#", System.StringComparison.Ordinal) || inputLine.Trim().Length == 0)
-                    {
-                        continue; // comment
-                    }
-                    string[] words = inputLine.Split('\t').TrimEnd();
-                    BaseTokenStreamTestCase.CheckOneTerm(a, words[0], words[1]);
+                    continue; // comment
                 }
+                string[] words = inputLine.Split('\t').TrimEnd();
+                BaseTokenStreamTestCase.CheckOneTerm(a, words[0], words[1]);
             }
         }
 
@@ -67,23 +63,19 @@ namespace Lucene.Net.Analysis
         /// Run a vocabulary test against two data files inside a zip file. </summary>
         public static void AssertVocabulary(Analyzer a, Stream zipFile, string voc, string @out)
         {
-            using (ZipArchive zip = new ZipArchive(zipFile, ZipArchiveMode.Read, false, Encoding.UTF8))
-            using (Stream v = zip.GetEntry(voc).Open())
-            using (Stream o = zip.GetEntry(@out).Open())
-            {
-                AssertVocabulary(a, v, o);
-            }
+            using ZipArchive zip = new ZipArchive(zipFile, ZipArchiveMode.Read, false, Encoding.UTF8);
+            using Stream v = zip.GetEntry(voc).Open();
+            using Stream o = zip.GetEntry(@out).Open();
+            AssertVocabulary(a, v, o);
         }
 
         /// <summary>
         /// Run a vocabulary test against a tab-separated data file inside a zip file. </summary>
         public static void AssertVocabulary(Analyzer a, Stream zipFile, string vocOut)
         {
-            using (ZipArchive zip = new ZipArchive(zipFile, ZipArchiveMode.Read, false, Encoding.UTF8))
-            using (Stream vo = zip.GetEntry(vocOut).Open())
-            {
-                AssertVocabulary(a, vo);
-            }
+            using ZipArchive zip = new ZipArchive(zipFile, ZipArchiveMode.Read, false, Encoding.UTF8);
+            using Stream vo = zip.GetEntry(vocOut).Open();
+            AssertVocabulary(a, vo);
         }
     }
 }

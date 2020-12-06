@@ -36,7 +36,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
 #endif
     public class QueryNodeError : Exception, INLSException
     {
-        private IMessage message;
+        private readonly IMessage message; // LUCENENET: marked readonly
 
         /// <summary>
         /// 

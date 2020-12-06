@@ -29,9 +29,9 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
     /// </summary>
     internal class ResourceConstants
     {
-        public static readonly string CMT = "//";
+        public const string CMT = "//";
         public static readonly Encoding ENCODING = Encoding.UTF8;
-        public static readonly string EXT_CMT_END = "*/";
-        public static readonly string EXT_CMT_START = "/*";
+        public const string EXT_CMT_END = "*/";
+        public const string EXT_CMT_START = "/*";
     }
 }

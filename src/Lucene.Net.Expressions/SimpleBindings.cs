@@ -42,7 +42,7 @@ namespace Lucene.Net.Expressions
     /// </code>
     /// @lucene.experimental
     /// </summary>
-    public sealed class SimpleBindings : Bindings
+    public sealed class SimpleBindings : Bindings // LUCENENET TODO: Implement collection initializer to make populating easier
     {
         internal readonly IDictionary<string, object> map = new Dictionary<string, object>();
 
@@ -76,14 +76,12 @@ namespace Lucene.Net.Expressions
 
         public override ValueSource GetValueSource(string name)
         {
-            object o;
             // LUCENENET NOTE: Directly looking up a missing key will throw a KeyNotFoundException
-            if (!map.TryGetValue(name, out o))
+            if (!map.TryGetValue(name, out object o))
             {
                 throw new ArgumentException("Invalid reference '" + name + "'");
             }
-            var expression = o as Expression;
-            if (expression != null)
+            if (o is Expression expression)
             {
                 return expression.GetValueSource(this);
             }
@@ -128,10 +126,8 @@ namespace Lucene.Net.Expressions
         {
             foreach (object o in map.Values)
             {
-                if (o is Expression)
+                if (o is Expression expr)
                 {
-                    Expression expr = (Expression)o;
-
                     expr.GetValueSource(this);
                 }
             }
