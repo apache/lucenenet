@@ -672,12 +672,13 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
                     threads[i] = new ThreadAnonymousInnerClassHelper(this, numIter);
-                }
-
-                for (int i = 0; i < NUM_THREADS; i++)
-                {
                     threads[i].Start();
                 }
+
+                //for (int i = 0; i < NUM_THREADS; i++)
+                //{
+                //    threads[i].Start();
+                //}
             }
 
             private class ThreadAnonymousInnerClassHelper : ThreadJob
@@ -976,7 +977,8 @@ namespace Lucene.Net.Index
         // LUCENE-1335: test simultaneous addIndexes & close
         [Test]
         [Slow]
-        [Deadlock][Timeout(600000)]
+        [Deadlock]
+        [Timeout(600000)]
         public virtual void TestAddIndexesWithCloseNoWait()
         {
             const int NUM_COPY = 50;
@@ -1202,6 +1204,7 @@ namespace Lucene.Net.Index
         /*
          * simple test that ensures we getting expected exceptions
          */
+
         [Test]
         public virtual void TestAddIndexMissingCodec()
         {
