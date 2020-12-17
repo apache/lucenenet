@@ -210,66 +210,75 @@ namespace Lucene.Net.Index
             // seen before (eg suddenly turning on norms or
             // vectors, etc.):
 
-            foreach (IIndexableField field in docState.doc)
+            try
             {
-                string fieldName = field.Name;
-
-                // Make sure we have a PerField allocated
-                int hashPos = fieldName.GetHashCode() & hashMask;
-                DocFieldProcessorPerField fp = fieldHash[hashPos];
-                while (fp != null && !fp.fieldInfo.Name.Equals(fieldName, StringComparison.Ordinal))
+                if (!(docState.doc is null))
                 {
-                    fp = fp.next;
-                }
-
-                if (fp == null)
-                {
-                    // TODO FI: we need to genericize the "flags" that a
-                    // field holds, and, how these flags are merged; it
-                    // needs to be more "pluggable" such that if I want
-                    // to have a new "thing" my Fields can do, I can
-                    // easily add it
-                    FieldInfo fi = fieldInfos.AddOrUpdate(fieldName, field.IndexableFieldType);
-
-                    fp = new DocFieldProcessorPerField(this, fi);
-                    fp.next = fieldHash[hashPos];
-                    fieldHash[hashPos] = fp;
-                    totalFieldCount++;
-
-                    if (totalFieldCount >= fieldHash.Length / 2)
+                    foreach (IIndexableField field in docState.doc)
                     {
-                        Rehash();
+                        string fieldName = field.Name;
+
+                        // Make sure we have a PerField allocated
+                        int hashPos = fieldName.GetHashCode() & hashMask;
+                        DocFieldProcessorPerField fp = fieldHash[hashPos];
+                        while (fp != null && !fp.fieldInfo.Name.Equals(fieldName, StringComparison.Ordinal))
+                        {
+                            fp = fp.next;
+                        }
+
+                        if (fp == null)
+                        {
+                            // TODO FI: we need to genericize the "flags" that a
+                            // field holds, and, how these flags are merged; it
+                            // needs to be more "pluggable" such that if I want
+                            // to have a new "thing" my Fields can do, I can
+                            // easily add it
+                            FieldInfo fi = fieldInfos.AddOrUpdate(fieldName, field.IndexableFieldType);
+
+                            fp = new DocFieldProcessorPerField(this, fi);
+                            fp.next = fieldHash[hashPos];
+                            fieldHash[hashPos] = fp;
+                            totalFieldCount++;
+
+                            if (totalFieldCount >= fieldHash.Length / 2)
+                            {
+                                Rehash();
+                            }
+                        }
+                        else
+                        {
+                            // need to addOrUpdate so that FieldInfos can update globalFieldNumbers
+                            // with the correct DocValue type (LUCENE-5192)
+                            FieldInfo fi = fieldInfos.AddOrUpdate(fieldName, field.IndexableFieldType);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(fi == fp.fieldInfo, "should only have updated an existing FieldInfo instance");
+                        }
+
+                        if (thisFieldGen != fp.lastGen)
+                        {
+                            // First time we're seeing this field for this doc
+                            fp.fieldCount = 0;
+
+                            if (fieldCount == fields.Length)
+                            {
+                                int newSize = fields.Length * 2;
+                                DocFieldProcessorPerField[] newArray = new DocFieldProcessorPerField[newSize];
+                                Array.Copy(fields, 0, newArray, 0, fieldCount);
+                                fields = newArray;
+                            }
+
+                            fields[fieldCount++] = fp;
+                            fp.lastGen = thisFieldGen;
+                        }
+
+                        fp.AddField(field);
+                        storedConsumer.AddField(docState.docID, field, fp.fieldInfo);
                     }
                 }
-                else
-                {
-                    // need to addOrUpdate so that FieldInfos can update globalFieldNumbers
-                    // with the correct DocValue type (LUCENE-5192)
-                    FieldInfo fi = fieldInfos.AddOrUpdate(fieldName, field.IndexableFieldType);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(fi == fp.fieldInfo, "should only have updated an existing FieldInfo instance");
-                }
-
-                if (thisFieldGen != fp.lastGen)
-                {
-                    // First time we're seeing this field for this doc
-                    fp.fieldCount = 0;
-
-                    if (fieldCount == fields.Length)
-                    {
-                        int newSize = fields.Length * 2;
-                        DocFieldProcessorPerField[] newArray = new DocFieldProcessorPerField[newSize];
-                        Array.Copy(fields, 0, newArray, 0, fieldCount);
-                        fields = newArray;
-                    }
-
-                    fields[fieldCount++] = fp;
-                    fp.lastGen = thisFieldGen;
-                }
-
-                fp.AddField(field);
-                storedConsumer.AddField(docState.docID, field, fp.fieldInfo);
             }
-
+            catch (Exception doc)
+            {
+                Console.WriteLine(doc.Message);
+            }
             // If we are writing vectors then we must visit
             // fields in sorted order so they are written in
             // sorted order.  TODO: we actually only need to
