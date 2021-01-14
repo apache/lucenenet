@@ -47,7 +47,7 @@ jobs:
       - name: Checkout Lucene.Net website
         uses: actions/checkout@v2
         with:
-          name: apache/lucenenet-site
+          repository: apache/lucenenet-site
           path: website-repo
       - name: Copy website files
         run: Get-ChildItem -Path "$Env:GITHUB_WORKSPACE\main-repo\websites\site\_site" | Copy-Item -Destination "$Env:GITHUB_WORKSPACE\website-repo" -Recurse
