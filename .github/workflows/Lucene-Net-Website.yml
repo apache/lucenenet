@@ -50,7 +50,7 @@ jobs:
           repository: apache/lucenenet-site
           path: website-repo
       - name: Copy website files
-        run: Get-ChildItem -Path "$Env:GITHUB_WORKSPACE\main-repo\websites\site\_site" | Copy-Item -Destination "$Env:GITHUB_WORKSPACE\website-repo" -Recurse
+        run: Get-ChildItem -Path "$Env:GITHUB_WORKSPACE\main-repo\websites\site\_site" | Copy-Item -Destination "$Env:GITHUB_WORKSPACE\website-repo" -Recurse -Force
         shell: powershell
       - name: Create Pull Request
         id: cpr
