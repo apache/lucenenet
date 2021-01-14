@@ -37,6 +37,24 @@ jobs:
   build-website:
     runs-on: windows-latest
     steps:
+      - name: Set version from tag
+        run: |
+          $ref = "refs/tags/Website_4_8_0_Beta00013"
+          echo "current_tag=$tag" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          $tag = $ref.Substring(10)
+          $parts = $tag.Split("_")
+          $version = "";
+          For ($i=0; $i -le $parts.Length; $i++) {
+              $version += $parts[$i]
+              if ($i -eq ($parts.Length - 2)) {
+                  $version += "-"
+              }
+              elseif ($i -lt ($parts.Length - 1)) {
+                  $version += "."
+              }
+          }
+          echo "release_version=$version" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        shell: powershell
       - name: Checkout Lucene.Net source
         uses: actions/checkout@v2
         with:
@@ -48,6 +66,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: apache/lucenenet-site
+          ref: asf-site
           path: website-repo
       - name: Copy website files
         run: Get-ChildItem -Path "$Env:GITHUB_WORKSPACE\main-repo\websites\site\_site" | Copy-Item -Destination "$Env:GITHUB_WORKSPACE\website-repo" -Recurse -Force
@@ -60,12 +79,12 @@ jobs:
           commit-message: New website version built
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          branch: example-patches
+          branch: ${{ env.current_tag }}
           delete-branch: true
-          title: 'New website version built'
+          title: 'New website version built ${{ env.current_tag }}'
           body: |
-            New website version built
-            - For version TODO: Fill in version
+            New website version built ${{ env.current_tag }}
+            - For version ${{ env.release_version }}
       - name: Check outputs
         run: |
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
