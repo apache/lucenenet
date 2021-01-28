@@ -89,6 +89,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         internal readonly LuceneVersion matchVersion;
         private readonly Directory dir;
         internal readonly int minPrefixChars;
+        private readonly bool commitOnBuild;
 
         /// <summary>
         /// Used for ongoing NRT additions/updates. </summary>
@@ -133,8 +134,33 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///     Prefixes shorter than this are indexed as character
         ///     ngrams (increasing index size but making lookups
         ///     faster). </param>
-        public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer, 
+        // LUCENENET specific - LUCENE-5889, a 4.11 feature. calls new constructor with extra param.
+        //                      TODO: Remove method at version 4.11.0. Was retained for perfect 4.8 compatibility
+        public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer,
             Analyzer queryAnalyzer, int minPrefixChars)
+            : this(matchVersion, dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild:false)
+        {
+        }
+
+
+        /// <summary>
+        /// Create a new instance, loading from a previously built
+        /// <see cref="AnalyzingInfixSuggester"/> directory, if it exists.  This directory must be
+        /// private to the infix suggester (i.e., not an external
+        /// Lucene index).  Note that <see cref="Dispose()"/>
+        /// will also dispose the provided directory.
+        /// </summary>
+        ///  <param name="minPrefixChars"> Minimum number of leading characters
+        ///     before <see cref="PrefixQuery"/> is used (default 4).
+        ///     Prefixes shorter than this are indexed as character
+        ///     ngrams (increasing index size but making lookups
+        ///     faster). </param>
+        ///  <param name="commitOnBuild"> Call commit after the index has finished building. This
+        ///  would persist the suggester index to disk and future instances of this suggester can
+        ///  use this pre-built dictionary. </param>
+        // LUCENENET specific - LUCENE-5889, a 4.11 feature. (Code moved from other constructor to here.)
+        public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer, 
+            Analyzer queryAnalyzer, int minPrefixChars, bool commitOnBuild)
         {
 
             if (minPrefixChars < 0)
@@ -147,6 +173,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             this.matchVersion = matchVersion;
             this.dir = dir;
             this.minPrefixChars = minPrefixChars;
+            this.commitOnBuild = commitOnBuild;
 
             if (DirectoryReader.IndexExists(dir))
             {
@@ -228,7 +255,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
 
                 //System.out.println("initial indexing time: " + ((System.nanoTime()-t0)/1000000) + " msec");
-
+                if (commitOnBuild)                      //LUCENENET specific -Support for LUCENE - 5889.
+                {
+                    Commit();
+                }
                 m_searcherMgr = new SearcherManager(writer, true, null);
                 success = true;
             }
@@ -244,6 +274,15 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     writer = null;
                 }
             }
+        }
+
+        //LUCENENET specific -Support for LUCENE - 5889.
+        public void Commit()
+        {
+            if (writer == null) {
+              throw new NullReferenceException("Cannot commit on an closed writer. Add documents first");
+            }
+            writer.Commit();
         }
 
         private Analyzer GetGramAnalyzer() 
@@ -282,6 +321,29 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
+        //LUCENENET specific -Support for LUCENE - 5889.
+        //use of lock as substitute for Java's synchronized keyword on method 
+        private void EnsureOpen()
+        {
+            if (writer != null)
+                return;
+
+            lock (openLock) 
+            {
+                if (writer == null)
+                {
+                    if (m_searcherMgr != null)
+                    {
+                        m_searcherMgr.Dispose();
+                        m_searcherMgr = null;
+                    }
+                    writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
+                    m_searcherMgr = new SearcherManager(writer, true, null);
+                }
+            }
+        }
+        private object openLock = new object();
+
         /// <summary>
         /// Adds a new suggestion.  Be sure to use <see cref="Update"/>
         /// instead if you want to replace a previous suggestion.
@@ -291,9 +353,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public virtual void Add(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
         {
+            EnsureOpen();    //LUCENENET specific -Support for LUCENE - 5889.       
             writer.AddDocument(BuildDocument(text, contexts, weight, payload));
         }
-
+         
         /// <summary>
         /// Updates a previous suggestion, matching the exact same
         /// text as before.  Use this to change the weight or
@@ -344,6 +407,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public virtual void Refresh()
         {
+            if (m_searcherMgr == null)
+            {
+                throw new NullReferenceException("suggester was not built");
+            }
             m_searcherMgr.MaybeRefreshBlocking();
         }
 
@@ -789,6 +856,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             get
             {
+                if (m_searcherMgr == null)
+                {
+                    return 0;
+                }
                 IndexSearcher searcher = m_searcherMgr.Acquire();
                 try
                 {

@@ -1,4 +1,11 @@
-﻿=================== Release 4.8.0-beta00006 =====================
+﻿=================== Release 4.8.0-beta00014 =====================
+
+New Feature
+• LUCENE-5889: Add commit method to AnalyzingInfixSuggester, and allow just using .add
+  to build up the suggester.  (Varun Thacker via Mike McCandless)
+  ***Java version added this feature in 5.0 and backported it to Lucene 4.11.0 as well***
+
+ =================== Release 4.8.0-beta00006 =====================
 
 Bug
 •	Lucene.Net.Support.Collections::Equals<T>(): Fixed comparison to include a check whether Count

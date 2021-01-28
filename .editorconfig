@@ -2,7 +2,7 @@
 # You can learn more about editorconfig here: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
 
 [*]
-charset = utf-8
+charset = utf-8-bom
 trim_trailing_whitespace = true
 
 [*.md]
