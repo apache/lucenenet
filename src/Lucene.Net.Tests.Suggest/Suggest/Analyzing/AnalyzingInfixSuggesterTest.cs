@@ -978,7 +978,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
 
-        // LUCENENET specific - LUCENE-5889, a 4.11 feature.
+        // LUCENENET specific - LUCENE-5889, a 4.11.0 feature.
         [Test]
         public void TestNRTWithParallelAdds(){
             String[] keys = new String[] {"python", "java", "c", "scala", "ruby", "clojure", "erlang", "go", "swift", "lisp"};
@@ -986,21 +986,30 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             DirectoryInfo tempDir = CreateTempDir("AIS_NRT_PERSIST_TEST");
             AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, 3, false);
             Thread[] multiAddThreads = new Thread[10];
-            try {
-              suggester.Refresh();
-              fail("Cannot call refresh on an suggester when no docs are added to the index");
-            } catch(NullReferenceException e) {
+
+            try
+            {
+                suggester.Refresh();
+                fail("Cannot call refresh on an suggester when no docs are added to the index");
+            }
+            catch(InvalidOperationException e) {
               //Expected
             }
-            for(int i=0; i<10; i++) {
-              multiAddThreads[i] = new Thread(() => IndexDocument(suggester, keys[i]));   // LUCENENET specific: use of closure rather than object.
+
+            for(int i=0; i<10; i++)
+            {
+                string key = keys[i];
+                multiAddThreads[i] = new Thread(() => IndexDocument(suggester, key));   // LUCENENET specific: use of closure rather than object.
             }
-            for(int i=0; i<10; i++) {
-              multiAddThreads[i].Start();
+
+            for(int i=0; i<10; i++)
+            {
+                multiAddThreads[i].Start();
             }
+
             //Make sure all threads have completed indexing
             for(int i=0; i<10; i++) {
-              multiAddThreads[i].Join();
+                multiAddThreads[i].Join();
             }
 
             suggester.Refresh();
@@ -1020,11 +1029,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             suggester.Dispose();
         }
 
-        // LUCENENET specific - LUCENE-5889, a 4.11 feature. Use of method not class due to Thread parameter needs in .Net.
+        // LUCENENET specific - LUCENE-5889, a 4.11.0 feature. Use of method not class due to Thread parameter needs in .Net.
         public void IndexDocument(AnalyzingInfixSuggester suggester, String key) {
-            try {
+            try
+            {
                 suggester.Add(new BytesRef(key), null, 10, null);
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 fail("Could not build suggest dictionary correctly");
             }
         }

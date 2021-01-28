@@ -134,7 +134,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///     Prefixes shorter than this are indexed as character
         ///     ngrams (increasing index size but making lookups
         ///     faster). </param>
-        // LUCENENET specific - LUCENE-5889, a 4.11 feature. calls new constructor with extra param.
+        // LUCENENET specific - LUCENE-5889, a 4.11.0 feature. calls new constructor with extra param.
         //                      TODO: Remove method at version 4.11.0. Was retained for perfect 4.8 compatibility
         public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer,
             Analyzer queryAnalyzer, int minPrefixChars)
@@ -158,7 +158,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///  <param name="commitOnBuild"> Call commit after the index has finished building. This
         ///  would persist the suggester index to disk and future instances of this suggester can
         ///  use this pre-built dictionary. </param>
-        // LUCENENET specific - LUCENE-5889, a 4.11 feature. (Code moved from other constructor to here.)
+        // LUCENENET specific - LUCENE-5889, a 4.11.0 feature. (Code moved from other constructor to here.)
         public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer, 
             Analyzer queryAnalyzer, int minPrefixChars, bool commitOnBuild)
         {
@@ -279,8 +279,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         //LUCENENET specific -Support for LUCENE - 5889.
         public void Commit()
         {
-            if (writer == null) {
-              throw new NullReferenceException("Cannot commit on an closed writer. Add documents first");
+            if (writer == null)
+            {
+              throw new InvalidOperationException("Cannot commit on an closed writer. Add documents first");
             }
             writer.Commit();
         }
@@ -376,13 +377,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             string textString = text.Utf8ToString();
             var ft = GetTextFieldType();
             var doc = new Document
-        {
-            new Field(TEXT_FIELD_NAME, textString, ft),
-            new Field("textgrams", textString, ft),
-            new StringField(EXACT_TEXT_FIELD_NAME, textString, Field.Store.NO),
-            new BinaryDocValuesField(TEXT_FIELD_NAME, text),
-            new NumericDocValuesField("weight", weight)
-        };
+            {
+                new Field(TEXT_FIELD_NAME, textString, ft),
+                new Field("textgrams", textString, ft),
+                new StringField(EXACT_TEXT_FIELD_NAME, textString, Field.Store.NO),
+                new BinaryDocValuesField(TEXT_FIELD_NAME, text),
+                new NumericDocValuesField("weight", weight)
+            };
             if (payload != null)
             {
                 doc.Add(new BinaryDocValuesField("payloads", payload));
@@ -409,7 +410,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             if (m_searcherMgr == null)
             {
-                throw new NullReferenceException("suggester was not built");
+                throw new InvalidOperationException("suggester was not built");
             }
             m_searcherMgr.MaybeRefreshBlocking();
         }
