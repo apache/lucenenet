@@ -63,6 +63,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
     public class AnalyzingInfixSuggester : Lookup, IDisposable
     {
+        private readonly object syncLock = new object();            //uses syncLock as substitute for Java's synchronized (method) keyword
 
         /// <summary>
         /// Field name used for the indexed text. </summary>
@@ -89,6 +90,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         internal readonly LuceneVersion matchVersion;
         private readonly Directory dir;
         internal readonly int minPrefixChars;
+        private readonly bool commitOnBuild;
 
         /// <summary>
         /// Used for ongoing NRT additions/updates. </summary>
@@ -133,8 +135,33 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///     Prefixes shorter than this are indexed as character
         ///     ngrams (increasing index size but making lookups
         ///     faster). </param>
-        public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer, 
+        // LUCENENET specific - LUCENE-5889, a 4.11.0 feature. calls new constructor with extra param.
+        // LUCENENET TODO: Remove method at version 4.11.0. Was retained for perfect 4.8 compatibility
+        public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer,
             Analyzer queryAnalyzer, int minPrefixChars)
+            : this(matchVersion, dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild: false)
+        {
+        }
+
+
+        /// <summary>
+        /// Create a new instance, loading from a previously built
+        /// <see cref="AnalyzingInfixSuggester"/> directory, if it exists.  This directory must be
+        /// private to the infix suggester (i.e., not an external
+        /// Lucene index).  Note that <see cref="Dispose()"/>
+        /// will also dispose the provided directory.
+        /// </summary>
+        ///  <param name="minPrefixChars"> Minimum number of leading characters
+        ///     before <see cref="PrefixQuery"/> is used (default 4).
+        ///     Prefixes shorter than this are indexed as character
+        ///     ngrams (increasing index size but making lookups
+        ///     faster). </param>
+        ///  <param name="commitOnBuild"> Call commit after the index has finished building. This
+        ///  would persist the suggester index to disk and future instances of this suggester can
+        ///  use this pre-built dictionary. </param>
+        // LUCENENET specific - LUCENE-5889, a 4.11.0 feature. (Code moved from other constructor to here.)
+        public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer,
+            Analyzer queryAnalyzer, int minPrefixChars, bool commitOnBuild)
         {
 
             if (minPrefixChars < 0)
@@ -147,6 +174,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             this.matchVersion = matchVersion;
             this.dir = dir;
             this.minPrefixChars = minPrefixChars;
+            this.commitOnBuild = commitOnBuild;
 
             if (DirectoryReader.IndexExists(dir))
             {
@@ -160,7 +188,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Override this to customize index settings, e.g. which
         /// codec to use. 
         /// </summary>
-        protected internal virtual IndexWriterConfig GetIndexWriterConfig(LuceneVersion matchVersion, 
+        protected internal virtual IndexWriterConfig GetIndexWriterConfig(LuceneVersion matchVersion,
             Analyzer indexAnalyzer, OpenMode openMode)
         {
             IndexWriterConfig iwc = new IndexWriterConfig(matchVersion, indexAnalyzer)
@@ -228,7 +256,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
 
                 //System.out.println("initial indexing time: " + ((System.nanoTime()-t0)/1000000) + " msec");
-
+                if (commitOnBuild)                      //LUCENENET specific -Support for LUCENE - 5889.
+                {
+                    Commit();
+                }
                 m_searcherMgr = new SearcherManager(writer, true, null);
                 success = true;
             }
@@ -246,7 +277,17 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private Analyzer GetGramAnalyzer() 
+        //LUCENENET specific -Support for LUCENE - 5889.
+        public void Commit()
+        {
+            if (writer == null)
+            {
+                throw new InvalidOperationException("Cannot commit on an closed writer. Add documents first");
+            }
+            writer.Commit();
+        }
+
+        private Analyzer GetGramAnalyzer()
             => new AnalyzerWrapperAnonymousInnerClassHelper(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
 
         private class AnalyzerWrapperAnonymousInnerClassHelper : AnalyzerWrapper
@@ -268,16 +309,37 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 if (fieldName.Equals("textgrams", StringComparison.Ordinal) && outerInstance.minPrefixChars > 0)
                 {
-                    return new TokenStreamComponents(components.Tokenizer, 
+                    return new TokenStreamComponents(components.Tokenizer,
                         new EdgeNGramTokenFilter(
-                            outerInstance.matchVersion, 
-                            components.TokenStream, 
-                            1, 
+                            outerInstance.matchVersion,
+                            components.TokenStream,
+                            1,
                             outerInstance.minPrefixChars));
                 }
                 else
                 {
                     return components;
+                }
+            }
+        }
+
+        //LUCENENET specific -Support for LUCENE - 5889.
+        private void EnsureOpen()
+        {
+            if (writer != null)
+                return;
+
+            lock (syncLock)
+            {
+                if (writer == null)
+                {
+                    if (m_searcherMgr != null)
+                    {
+                        m_searcherMgr.Dispose();
+                        m_searcherMgr = null;
+                    }
+                    writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
+                    m_searcherMgr = new SearcherManager(writer, true, null);
                 }
             }
         }
@@ -291,6 +353,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public virtual void Add(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
         {
+            EnsureOpen();    //LUCENENET specific -Support for LUCENE - 5889.       
             writer.AddDocument(BuildDocument(text, contexts, weight, payload));
         }
 
@@ -313,13 +376,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             string textString = text.Utf8ToString();
             var ft = GetTextFieldType();
             var doc = new Document
-        {
-            new Field(TEXT_FIELD_NAME, textString, ft),
-            new Field("textgrams", textString, ft),
-            new StringField(EXACT_TEXT_FIELD_NAME, textString, Field.Store.NO),
-            new BinaryDocValuesField(TEXT_FIELD_NAME, text),
-            new NumericDocValuesField("weight", weight)
-        };
+            {
+                new Field(TEXT_FIELD_NAME, textString, ft),
+                new Field("textgrams", textString, ft),
+                new StringField(EXACT_TEXT_FIELD_NAME, textString, Field.Store.NO),
+                new BinaryDocValuesField(TEXT_FIELD_NAME, text),
+                new NumericDocValuesField("weight", weight)
+            };
             if (payload != null)
             {
                 doc.Add(new BinaryDocValuesField("payloads", payload));
@@ -344,6 +407,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public virtual void Refresh()
         {
+            if (m_searcherMgr == null)
+            {
+                throw new InvalidOperationException("suggester was not built");
+            }
             m_searcherMgr.MaybeRefreshBlocking();
         }
 
@@ -789,6 +856,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             get
             {
+                if (m_searcherMgr == null)
+                {
+                    return 0;
+                }
                 IndexSearcher searcher = m_searcherMgr.Acquire();
                 try
                 {
