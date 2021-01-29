@@ -63,6 +63,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
     public class AnalyzingInfixSuggester : Lookup, IDisposable
     {
+        private readonly object syncLock = new object();            //uses syncLock as substitute for Java's synchronized (method) keyword
 
         /// <summary>
         /// Field name used for the indexed text. </summary>
@@ -135,10 +136,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///     ngrams (increasing index size but making lookups
         ///     faster). </param>
         // LUCENENET specific - LUCENE-5889, a 4.11.0 feature. calls new constructor with extra param.
-        //                      TODO: Remove method at version 4.11.0. Was retained for perfect 4.8 compatibility
+        // LUCENENET TODO: Remove method at version 4.11.0. Was retained for perfect 4.8 compatibility
         public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer,
             Analyzer queryAnalyzer, int minPrefixChars)
-            : this(matchVersion, dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild:false)
+            : this(matchVersion, dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild: false)
         {
         }
 
@@ -159,7 +160,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///  would persist the suggester index to disk and future instances of this suggester can
         ///  use this pre-built dictionary. </param>
         // LUCENENET specific - LUCENE-5889, a 4.11.0 feature. (Code moved from other constructor to here.)
-        public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer, 
+        public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer,
             Analyzer queryAnalyzer, int minPrefixChars, bool commitOnBuild)
         {
 
@@ -187,7 +188,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Override this to customize index settings, e.g. which
         /// codec to use. 
         /// </summary>
-        protected internal virtual IndexWriterConfig GetIndexWriterConfig(LuceneVersion matchVersion, 
+        protected internal virtual IndexWriterConfig GetIndexWriterConfig(LuceneVersion matchVersion,
             Analyzer indexAnalyzer, OpenMode openMode)
         {
             IndexWriterConfig iwc = new IndexWriterConfig(matchVersion, indexAnalyzer)
@@ -281,12 +282,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             if (writer == null)
             {
-              throw new InvalidOperationException("Cannot commit on an closed writer. Add documents first");
+                throw new InvalidOperationException("Cannot commit on an closed writer. Add documents first");
             }
             writer.Commit();
         }
 
-        private Analyzer GetGramAnalyzer() 
+        private Analyzer GetGramAnalyzer()
             => new AnalyzerWrapperAnonymousInnerClassHelper(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
 
         private class AnalyzerWrapperAnonymousInnerClassHelper : AnalyzerWrapper
@@ -308,11 +309,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 if (fieldName.Equals("textgrams", StringComparison.Ordinal) && outerInstance.minPrefixChars > 0)
                 {
-                    return new TokenStreamComponents(components.Tokenizer, 
+                    return new TokenStreamComponents(components.Tokenizer,
                         new EdgeNGramTokenFilter(
-                            outerInstance.matchVersion, 
-                            components.TokenStream, 
-                            1, 
+                            outerInstance.matchVersion,
+                            components.TokenStream,
+                            1,
                             outerInstance.minPrefixChars));
                 }
                 else
@@ -323,13 +324,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
         //LUCENENET specific -Support for LUCENE - 5889.
-        //use of lock as substitute for Java's synchronized keyword on method 
         private void EnsureOpen()
         {
             if (writer != null)
                 return;
 
-            lock (openLock) 
+            lock (syncLock)
             {
                 if (writer == null)
                 {
@@ -343,7 +343,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
             }
         }
-        private object openLock = new object();
 
         /// <summary>
         /// Adds a new suggestion.  Be sure to use <see cref="Update"/>
@@ -357,7 +356,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             EnsureOpen();    //LUCENENET specific -Support for LUCENE - 5889.       
             writer.AddDocument(BuildDocument(text, contexts, weight, payload));
         }
-         
+
         /// <summary>
         /// Updates a previous suggestion, matching the exact same
         /// text as before.  Use this to change the weight or
