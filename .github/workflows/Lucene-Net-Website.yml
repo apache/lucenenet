@@ -41,6 +41,9 @@ jobs:
         run: |
           $ref = "refs/tags/Website_4_8_0_Beta00013"
           echo "current_tag=$tag" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          # set the release_version now to something incase parsing fails
+          echo "release_version=UNKNOWN" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
           $tag = $ref.Substring(10)
           $parts = $tag.Split("_")
           $version = "";
