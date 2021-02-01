@@ -40,57 +40,53 @@ namespace Lucene.Net.Demo.Facet
         /// <summary>Build the example index.</summary>
         private void Index()
         {
-            using (IndexWriter indexWriter = new IndexWriter(indexDir, new IndexWriterConfig(EXAMPLE_VERSION,
-                new WhitespaceAnalyzer(EXAMPLE_VERSION))))
+            using IndexWriter indexWriter = new IndexWriter(indexDir, new IndexWriterConfig(EXAMPLE_VERSION,
+                new WhitespaceAnalyzer(EXAMPLE_VERSION)));
             // Writes facet ords to a separate directory from the main index
-            using (DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir))
-            {
+            using DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
 
-                Document doc = new Document();
-                doc.Add(new TextField("c", "foo bar", Field.Store.NO));
-                doc.Add(new NumericDocValuesField("popularity", 5L));
-                doc.Add(new FacetField("A", "B"));
-                indexWriter.AddDocument(config.Build(taxoWriter, doc));
+            indexWriter.AddDocument(config.Build(taxoWriter, new Document
+                {
+                    new TextField("c", "foo bar", Field.Store.NO),
+                    new NumericDocValuesField("popularity", 5L),
+                    new FacetField("A", "B")
+                }));
 
-                doc = new Document();
-                doc.Add(new TextField("c", "foo foo bar", Field.Store.NO));
-                doc.Add(new NumericDocValuesField("popularity", 3L));
-                doc.Add(new FacetField("A", "C"));
-                indexWriter.AddDocument(config.Build(taxoWriter, doc));
-
-            } // Disposes indexWriter and taxoWriter
+            indexWriter.AddDocument(config.Build(taxoWriter, new Document
+                {
+                    new TextField("c", "foo foo bar", Field.Store.NO),
+                    new NumericDocValuesField("popularity", 3L),
+                    new FacetField("A", "C")
+                }));
         }
 
         /// <summary>User runs a query and aggregates facets.</summary>
         private FacetResult Search()
         {
-            using (DirectoryReader indexReader = DirectoryReader.Open(indexDir))
-            using (TaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoDir))
-            {
-                IndexSearcher searcher = new IndexSearcher(indexReader);
+            using DirectoryReader indexReader = DirectoryReader.Open(indexDir);
+            using TaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoDir);
+            IndexSearcher searcher = new IndexSearcher(indexReader);
 
-                // Aggregate categories by an expression that combines the document's score
-                // and its popularity field
-                Expression expr = JavascriptCompiler.Compile("_score * sqrt(popularity)");
-                SimpleBindings bindings = new SimpleBindings();
-                bindings.Add(new SortField("_score", SortFieldType.SCORE)); // the score of the document
-                bindings.Add(new SortField("popularity", SortFieldType.INT64)); // the value of the 'popularity' field
+            // Aggregate categories by an expression that combines the document's score
+            // and its popularity field
+            Expression expr = JavascriptCompiler.Compile("_score * sqrt(popularity)");
+            SimpleBindings bindings = new SimpleBindings();
+            bindings.Add(new SortField("_score", SortFieldType.SCORE)); // the score of the document
+            bindings.Add(new SortField("popularity", SortFieldType.INT64)); // the value of the 'popularity' field
 
-                // Aggregates the facet values
-                FacetsCollector fc = new FacetsCollector(true);
+            // Aggregates the facet values
+            FacetsCollector fc = new FacetsCollector(true);
 
-                // MatchAllDocsQuery is for "browsing" (counts facets
-                // for all non-deleted docs in the index); normally
-                // you'd use a "normal" query:
-                FacetsCollector.Search(searcher, new MatchAllDocsQuery(), 10, fc);
+            // MatchAllDocsQuery is for "browsing" (counts facets
+            // for all non-deleted docs in the index); normally
+            // you'd use a "normal" query:
+            FacetsCollector.Search(searcher, new MatchAllDocsQuery(), 10, fc);
 
-                // Retrieve results
-                Facets facets = new TaxonomyFacetSumValueSource(taxoReader, config, fc, expr.GetValueSource(bindings));
-                FacetResult result = facets.GetTopChildren(10, "A");
+            // Retrieve results
+            Facets facets = new TaxonomyFacetSumValueSource(taxoReader, config, fc, expr.GetValueSource(bindings));
+            FacetResult result = facets.GetTopChildren(10, "A");
 
-                return result;
-
-            } // Disposes indexReader and taxoReader
+            return result;
         }
 
         /// <summary>Runs the search example.</summary>

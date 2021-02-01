@@ -28,7 +28,7 @@ namespace Lucene.Net.Demo.Facet
     /// Shows simple usage of dynamic range faceting, using the
     /// expressions module to calculate distance.
     /// </summary>
-    public class DistanceFacetsExample : IDisposable
+    public sealed class DistanceFacetsExample : IDisposable
     {
         /// <summary>
         /// Using a constant for all functionality related to a specific index
@@ -66,34 +66,34 @@ namespace Lucene.Net.Demo.Facet
         /// <summary>Build the example index.</summary>
         public void Index()
         {
-            using (IndexWriter writer = new IndexWriter(indexDir, new IndexWriterConfig(EXAMPLE_VERSION,
-                new WhitespaceAnalyzer(EXAMPLE_VERSION))))
-            {
-                // TODO: we could index in radians instead ... saves all the conversions in GetBoundingBoxFilter
+            using IndexWriter writer = new IndexWriter(indexDir, new IndexWriterConfig(EXAMPLE_VERSION,
+                new WhitespaceAnalyzer(EXAMPLE_VERSION)));
+            // TODO: we could index in radians instead ... saves all the conversions in GetBoundingBoxFilter
 
-                // Add documents with latitude/longitude location:
-                Document doc = new Document();
-                doc.Add(new DoubleField("latitude", 40.759011, Field.Store.NO));
-                doc.Add(new DoubleField("longitude", -73.9844722, Field.Store.NO));
-                writer.AddDocument(doc);
+            // Add documents with latitude/longitude location:
+            writer.AddDocument(new Document
+                {
+                    new DoubleField("latitude", 40.759011, Field.Store.NO),
+                    new DoubleField("longitude", -73.9844722, Field.Store.NO)
+                });
 
-                doc = new Document();
-                doc.Add(new DoubleField("latitude", 40.718266, Field.Store.NO));
-                doc.Add(new DoubleField("longitude", -74.007819, Field.Store.NO));
-                writer.AddDocument(doc);
+            writer.AddDocument(new Document
+                {
+                    new DoubleField("latitude", 40.718266, Field.Store.NO),
+                    new DoubleField("longitude", -74.007819, Field.Store.NO)
+                });
 
-                doc = new Document();
-                doc.Add(new DoubleField("latitude", 40.7051157, Field.Store.NO));
-                doc.Add(new DoubleField("longitude", -74.0088305, Field.Store.NO));
-                writer.AddDocument(doc);
+            writer.AddDocument(new Document
+                {
+                    new DoubleField("latitude", 40.7051157, Field.Store.NO),
+                    new DoubleField("longitude", -74.0088305, Field.Store.NO)
+                });
 
-                // Open near-real-time searcher
-                searcher = new IndexSearcher(DirectoryReader.Open(writer, true));
-
-            } // Disposes writer
+            // Open near-real-time searcher
+            searcher = new IndexSearcher(DirectoryReader.Open(writer, true));
         }
 
-        private ValueSource GetDistanceValueSource()
+        private static ValueSource GetDistanceValueSource()
         {
             Expression distance = JavascriptCompiler.Compile(
                 string.Format(CultureInfo.InvariantCulture, "haversin({0:R},{1:R},latitude,longitude)", ORIGIN_LATITUDE, ORIGIN_LONGITUDE));
@@ -156,22 +156,31 @@ namespace Lucene.Net.Demo.Facet
                 maxLng = 180.ToRadians();
             }
 
-            BooleanFilter f = new BooleanFilter();
-
-            // Add latitude range filter:
-            f.Add(NumericRangeFilter.NewDoubleRange("latitude", minLat.ToDegrees(), maxLat.ToDegrees(), true, true),
-                  Occur.MUST);
+            BooleanFilter f = new BooleanFilter
+            {
+                // Add latitude range filter:
+                {
+                    NumericRangeFilter.NewDoubleRange("latitude", minLat.ToDegrees(), maxLat.ToDegrees(), true, true),
+                    Occur.MUST
+                }
+            };
 
             // Add longitude range filter:
             if (minLng > maxLng)
             {
                 // The bounding box crosses the international date
                 // line:
-                BooleanFilter lonF = new BooleanFilter();
-                lonF.Add(NumericRangeFilter.NewDoubleRange("longitude", minLng.ToDegrees(), null, true, true),
-                         Occur.SHOULD);
-                lonF.Add(NumericRangeFilter.NewDoubleRange("longitude", null, maxLng.ToDegrees(), true, true),
-                         Occur.SHOULD);
+                BooleanFilter lonF = new BooleanFilter
+                {
+                    {
+                        NumericRangeFilter.NewDoubleRange("longitude", minLng.ToDegrees(), null, true, true),
+                        Occur.SHOULD
+                    },
+                    {
+                        NumericRangeFilter.NewDoubleRange("longitude", null, maxLng.ToDegrees(), true, true),
+                        Occur.SHOULD
+                    }
+                };
                 f.Add(lonF, Occur.MUST);
             }
             else
@@ -238,21 +247,18 @@ namespace Lucene.Net.Demo.Facet
         /// <summary>Runs the search and drill-down examples and prints the results.</summary>
         public static void Main(string[] args)
         {
-            using (DistanceFacetsExample example = new DistanceFacetsExample())
-            {
-                example.Index();
+            using DistanceFacetsExample example = new DistanceFacetsExample();
+            example.Index();
 
-                Console.WriteLine("Distance facet counting example:");
-                Console.WriteLine("-----------------------");
-                Console.WriteLine(example.Search());
+            Console.WriteLine("Distance facet counting example:");
+            Console.WriteLine("-----------------------");
+            Console.WriteLine(example.Search());
 
-                Console.WriteLine("\n");
-                Console.WriteLine("Distance facet drill-down example (field/< 2 km):");
-                Console.WriteLine("---------------------------------------------");
-                TopDocs hits = example.DrillDown(TWO_KM);
-                Console.WriteLine(hits.TotalHits + " totalHits");
-
-            } // Disposes example
+            Console.WriteLine("\n");
+            Console.WriteLine("Distance facet drill-down example (field/< 2 km):");
+            Console.WriteLine("---------------------------------------------");
+            TopDocs hits = example.DrillDown(TWO_KM);
+            Console.WriteLine(hits.TotalHits + " totalHits");
         }
     }
 }

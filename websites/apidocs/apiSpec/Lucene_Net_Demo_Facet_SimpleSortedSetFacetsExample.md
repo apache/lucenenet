@@ -39,87 +39,86 @@ namespace Lucene.Net.Demo.Facet
         /// <summary>Build the example index.</summary>
         private void Index()
         {
-            using (IndexWriter indexWriter = new IndexWriter(indexDir, 
+            using IndexWriter indexWriter = new IndexWriter(indexDir,
                 new IndexWriterConfig(EXAMPLE_VERSION,
-                new WhitespaceAnalyzer(EXAMPLE_VERSION))))
+                new WhitespaceAnalyzer(EXAMPLE_VERSION)));
+
+            indexWriter.AddDocument(config.Build(new Document
             {
-                Document doc = new Document();
-                doc.Add(new SortedSetDocValuesFacetField("Author", "Bob"));
-                doc.Add(new SortedSetDocValuesFacetField("Publish Year", "2010"));
-                indexWriter.AddDocument(config.Build(doc));
+                new SortedSetDocValuesFacetField("Author", "Bob"),
+                new SortedSetDocValuesFacetField("Publish Year", "2010")
+            }));
 
-                doc = new Document();
-                doc.Add(new SortedSetDocValuesFacetField("Author", "Lisa"));
-                doc.Add(new SortedSetDocValuesFacetField("Publish Year", "2010"));
-                indexWriter.AddDocument(config.Build(doc));
+            indexWriter.AddDocument(config.Build(new Document
+            {
+                new SortedSetDocValuesFacetField("Author", "Lisa"),
+                new SortedSetDocValuesFacetField("Publish Year", "2010")
+            }));
 
-                doc = new Document();
-                doc.Add(new SortedSetDocValuesFacetField("Author", "Lisa"));
-                doc.Add(new SortedSetDocValuesFacetField("Publish Year", "2012"));
-                indexWriter.AddDocument(config.Build(doc));
+            indexWriter.AddDocument(config.Build(new Document
+            {
+                new SortedSetDocValuesFacetField("Author", "Lisa"),
+                new SortedSetDocValuesFacetField("Publish Year", "2012")
+            }));
 
-                doc = new Document();
-                doc.Add(new SortedSetDocValuesFacetField("Author", "Susan"));
-                doc.Add(new SortedSetDocValuesFacetField("Publish Year", "2012"));
-                indexWriter.AddDocument(config.Build(doc));
+            indexWriter.AddDocument(config.Build(new Document
+            {
+                new SortedSetDocValuesFacetField("Author", "Susan"),
+                new SortedSetDocValuesFacetField("Publish Year", "2012")
+            }));
 
-                doc = new Document();
-                doc.Add(new SortedSetDocValuesFacetField("Author", "Frank"));
-                doc.Add(new SortedSetDocValuesFacetField("Publish Year", "1999"));
-                indexWriter.AddDocument(config.Build(doc));
-
-            } // Disposes indexWriter
+            indexWriter.AddDocument(config.Build(new Document
+            {
+                new SortedSetDocValuesFacetField("Author", "Frank"),
+                new SortedSetDocValuesFacetField("Publish Year", "1999")
+            }));
         }
 
         /// <summary>User runs a query and counts facets.</summary>
         private IList<FacetResult> Search()
         {
-            using (DirectoryReader indexReader = DirectoryReader.Open(indexDir))
+            using DirectoryReader indexReader = DirectoryReader.Open(indexDir);
+            IndexSearcher searcher = new IndexSearcher(indexReader);
+            SortedSetDocValuesReaderState state = new DefaultSortedSetDocValuesReaderState(indexReader);
+
+            // Aggregatses the facet counts
+            FacetsCollector fc = new FacetsCollector();
+
+            // MatchAllDocsQuery is for "browsing" (counts facets
+            // for all non-deleted docs in the index); normally
+            // you'd use a "normal" query:
+            FacetsCollector.Search(searcher, new MatchAllDocsQuery(), 10, fc);
+
+            // Retrieve results
+            Facets facets = new SortedSetDocValuesFacetCounts(state, fc);
+
+            IList<FacetResult> results = new List<FacetResult>
             {
-                IndexSearcher searcher = new IndexSearcher(indexReader);
-                SortedSetDocValuesReaderState state = new DefaultSortedSetDocValuesReaderState(indexReader);
+                facets.GetTopChildren(10, "Author"),
+                facets.GetTopChildren(10, "Publish Year")
+            };
 
-                // Aggregatses the facet counts
-                FacetsCollector fc = new FacetsCollector();
-
-                // MatchAllDocsQuery is for "browsing" (counts facets
-                // for all non-deleted docs in the index); normally
-                // you'd use a "normal" query:
-                FacetsCollector.Search(searcher, new MatchAllDocsQuery(), 10, fc);
-
-                // Retrieve results
-                Facets facets = new SortedSetDocValuesFacetCounts(state, fc);
-
-                IList<FacetResult> results = new List<FacetResult>();
-                results.Add(facets.GetTopChildren(10, "Author"));
-                results.Add(facets.GetTopChildren(10, "Publish Year"));
-
-                return results;
-
-            } // Disposes indexWriter
+            return results;
         }
 
         /// <summary>User drills down on 'Publish Year/2010'.</summary>
         private FacetResult DrillDown()
         {
-            using (DirectoryReader indexReader = DirectoryReader.Open(indexDir))
-            {
-                IndexSearcher searcher = new IndexSearcher(indexReader);
-                SortedSetDocValuesReaderState state = new DefaultSortedSetDocValuesReaderState(indexReader);
+            using DirectoryReader indexReader = DirectoryReader.Open(indexDir);
+            IndexSearcher searcher = new IndexSearcher(indexReader);
+            SortedSetDocValuesReaderState state = new DefaultSortedSetDocValuesReaderState(indexReader);
 
-                // Now user drills down on Publish Year/2010:
-                DrillDownQuery q = new DrillDownQuery(config);
-                q.Add("Publish Year", "2010");
-                FacetsCollector fc = new FacetsCollector();
-                FacetsCollector.Search(searcher, q, 10, fc);
+            // Now user drills down on Publish Year/2010:
+            DrillDownQuery q = new DrillDownQuery(config);
+            q.Add("Publish Year", "2010");
+            FacetsCollector fc = new FacetsCollector();
+            FacetsCollector.Search(searcher, q, 10, fc);
 
-                // Retrieve results
-                Facets facets = new SortedSetDocValuesFacetCounts(state, fc);
-                FacetResult result = facets.GetTopChildren(10, "Author");
+            // Retrieve results
+            Facets facets = new SortedSetDocValuesFacetCounts(state, fc);
+            FacetResult result = facets.GetTopChildren(10, "Author");
 
-                return result;
-
-            } // Disposes indexReader
+            return result;
         }
 
         /// <summary>Runs the search example.</summary>
