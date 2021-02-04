@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -68,8 +68,8 @@
     <MSTestTestAdapterPackageVersion>$(MSTestTestFrameworkPackageVersion)</MSTestTestAdapterPackageVersion>
     <NETStandardLibrary20PackageVersion>2.0.3</NETStandardLibrary20PackageVersion>
     <NewtonsoftJsonPackageVersion>10.0.1</NewtonsoftJsonPackageVersion>
-    <NUnit3TestAdapterPackageVersion>3.16.1</NUnit3TestAdapterPackageVersion>
-    <NUnitPackageVersion>3.12.0</NUnitPackageVersion>
+    <NUnit3TestAdapterPackageVersion>3.17.0</NUnit3TestAdapterPackageVersion>
+    <NUnitPackageVersion>3.13.1</NUnitPackageVersion>
     <OpenNLPNETPackageVersion>1.9.1</OpenNLPNETPackageVersion>
     <SharpZipLibPackageVersion>1.1.0</SharpZipLibPackageVersion>
     <Spatial4nCorePackageVersion>0.4.1</Spatial4nCorePackageVersion>
