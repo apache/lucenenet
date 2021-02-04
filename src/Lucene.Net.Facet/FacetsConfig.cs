@@ -74,8 +74,6 @@ namespace Lucene.Net.Facet
         // int/float/bytes in a single indexed field:
         private readonly IDictionary<string, string> assocDimTypes = new ConcurrentDictionary<string, string>();
 
-        private readonly object syncLock = new object(); // LUCENENET specific - avoid lock(this)
-
         /// <summary>
         /// Holds the configuration for one dimension
         /// 
@@ -140,14 +138,12 @@ namespace Lucene.Net.Facet
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual DimConfig GetDimConfig(string dimName)
         {
-            lock (syncLock)
+            if (!fieldTypes.TryGetValue(dimName, out DimConfig ft))
             {
-                if (!fieldTypes.TryGetValue(dimName, out DimConfig ft))
-                {
-                    ft = DefaultDimConfig;
-                }
-                return ft;
+                ft = DefaultDimConfig;
             }
+
+            return ft;
         }
 
         /// <summary>
@@ -157,17 +153,14 @@ namespace Lucene.Net.Facet
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void SetHierarchical(string dimName, bool v)
         {
-            lock (syncLock)
+            // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
+            if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
             {
-                // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
-                if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
-                {
-                    fieldTypes[dimName] = new DimConfig { IsHierarchical = v };
-                }
-                else
-                {
-                    fieldType.IsHierarchical = v;
-                }
+                fieldTypes[dimName] = new DimConfig {IsHierarchical = v};
+            }
+            else
+            {
+                fieldType.IsHierarchical = v;
             }
         }
 
@@ -178,17 +171,14 @@ namespace Lucene.Net.Facet
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void SetMultiValued(string dimName, bool v)
         {
-            lock (syncLock)
+            // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
+            if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
             {
-                // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
-                if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
-                {
-                    fieldTypes[dimName] = new DimConfig { IsMultiValued = v };
-                }
-                else
-                {
-                    fieldType.IsMultiValued = v;
-                }
+                fieldTypes[dimName] = new DimConfig {IsMultiValued = v};
+            }
+            else
+            {
+                fieldType.IsMultiValued = v;
             }
         }
 
@@ -200,17 +190,14 @@ namespace Lucene.Net.Facet
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void SetRequireDimCount(string dimName, bool v)
         {
-            lock (syncLock)
+            // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
+            if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
             {
-                // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
-                if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
-                {
-                    fieldTypes[dimName] = new DimConfig { RequireDimCount = v };
-                }
-                else
-                {
-                    fieldType.RequireDimCount = v;
-                }
+                fieldTypes[dimName] = new DimConfig {RequireDimCount = v};
+            }
+            else
+            {
+                fieldType.RequireDimCount = v;
             }
         }
 
@@ -221,17 +208,14 @@ namespace Lucene.Net.Facet
         /// </summary>
         public virtual void SetIndexFieldName(string dimName, string indexFieldName)
         {
-            lock (syncLock)
+            // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
+            if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
             {
-                // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
-                if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
-                {
-                    fieldTypes[dimName] = new DimConfig { IndexFieldName = indexFieldName };
-                }
-                else
-                {
-                    fieldType.IndexFieldName = indexFieldName;
-                }
+                fieldTypes[dimName] = new DimConfig {IndexFieldName = indexFieldName};
+            }
+            else
+            {
+                fieldType.IndexFieldName = indexFieldName;
             }
         }
 
