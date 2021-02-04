@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -423,7 +424,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             public override int GetHashCode()
             {
-                throw new NotImplementedException();
+                return RuntimeHelpers.GetHashCode(this);
             }
 
             public override string GetDescription()
