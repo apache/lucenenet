@@ -5,22 +5,6 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet
 {
-
-    using Directory = Lucene.Net.Store.Directory;
-    using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
-    using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
-    using Document = Lucene.Net.Documents.Document;
-    using FastTaxonomyFacetCounts = Lucene.Net.Facet.Taxonomy.FastTaxonomyFacetCounts;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using MatchingDocs = Lucene.Net.Facet.FacetsCollector.MatchingDocs;
-    using MultiCollector = Lucene.Net.Search.MultiCollector;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Store = Lucene.Net.Documents.Field.Store;
-    using StringField = Lucene.Net.Documents.StringField;
-    using Term = Lucene.Net.Index.Term;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -38,9 +22,23 @@ namespace Lucene.Net.Facet
      * limitations under the License.
      */
 
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
+    using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
+    using Document = Lucene.Net.Documents.Document;
+    using FastTaxonomyFacetCounts = Lucene.Net.Facet.Taxonomy.FastTaxonomyFacetCounts;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+    using MatchingDocs = Lucene.Net.Facet.FacetsCollector.MatchingDocs;
+    using MultiCollector = Lucene.Net.Search.MultiCollector;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using Store = Lucene.Net.Documents.Field.Store;
+    using StringField = Lucene.Net.Documents.StringField;
+    using Term = Lucene.Net.Index.Term;
+    using TermQuery = Lucene.Net.Search.TermQuery;
+
     public class TestRandomSamplingFacetsCollector : FacetTestCase
     {
-
         [Test]
         public virtual void TestRandomSampling()
         {
@@ -52,7 +50,7 @@ namespace Lucene.Net.Facet
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Util.LuceneTestCase.Random, dir);
+                Random, dir);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -78,7 +76,7 @@ namespace Lucene.Net.Facet
             searcher.Search(new TermQuery(new Term("EvenOdd", "NeverMatches")), collectRandomZeroResults);
 
             // There should be no divisions by zero and no null result
-            Assert.NotNull(collectRandomZeroResults.GetMatchingDocs());
+            Assert.IsNotNull(collectRandomZeroResults.GetMatchingDocs());
 
             // There should be no results at all
             foreach (MatchingDocs doc in collectRandomZeroResults.GetMatchingDocs())
@@ -119,9 +117,9 @@ namespace Lucene.Net.Facet
 
             // we should have five children, but there is a small chance we have less.
             // (see above).
-            Assert.True(random10Result.ChildCount <= maxNumChildren);
+            Assert.IsTrue(random10Result.ChildCount <= maxNumChildren);
             // there should be one child at least.
-            Assert.True(random10Result.ChildCount >= 1);
+            Assert.IsTrue(random10Result.ChildCount >= 1);
 
             // now calculate some statistics to determine if the sampled result is 'ok'.
             // because random sampling is used, the results will vary each time.
@@ -146,12 +144,10 @@ namespace Lucene.Net.Facet
 
             // the average should be in the range and the standard deviation should not
             // be too great
-            Assert.True(sigma < 200);
-            Assert.True(targetMu - 3 * sigma < mu && mu < targetMu + 3 * sigma);
+            Assert.IsTrue(sigma < 200);
+            Assert.IsTrue(targetMu - 3 * sigma < mu && mu < targetMu + 3 * sigma);
 
             IOUtils.Dispose(searcher.IndexReader, taxoReader, dir, taxoDir);
         }
-
     }
-
 }

@@ -6,6 +6,7 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -13,7 +14,6 @@ using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -30,7 +30,6 @@ namespace Lucene.Net.Facet
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -177,7 +176,7 @@ namespace Lucene.Net.Facet
             // published once:
             Assert.AreEqual("dim=Author path=[] value=5 childCount=4\n  Lisa (2)\n  Bob (1)\n  Susan (1)\n  Frank (1)\n", r.Facets.GetTopChildren(10, "Author").ToString());
 
-            Assert.True(r.Facets is MultiFacets);
+            Assert.IsTrue(r.Facets is MultiFacets);
             IList<FacetResult> allResults = r.Facets.GetAllDims(10);
             Assert.AreEqual(2, allResults.Count);
             Assert.AreEqual("dim=Author path=[] value=5 childCount=4\n  Lisa (2)\n  Bob (1)\n  Susan (1)\n  Frank (1)\n", allResults[0].ToString());
@@ -218,8 +217,8 @@ namespace Lucene.Net.Facet
             ddq.Add("Foobar", "Baz");
             r = ds.Search(null, ddq, 10);
             Assert.AreEqual(0, r.Hits.TotalHits);
-            Assert.Null(r.Facets.GetTopChildren(10, "Publish Date"));
-            Assert.Null(r.Facets.GetTopChildren(10, "Foobar"));
+            Assert.IsNull(r.Facets.GetTopChildren(10, "Publish Date"));
+            Assert.IsNull(r.Facets.GetTopChildren(10, "Foobar"));
 
             // Test drilling down on valid term or'd with invalid term:
             ddq = new DrillDownQuery(config);
@@ -252,8 +251,8 @@ namespace Lucene.Net.Facet
             r = ds.Search(null, ddq, 10);
 
             Assert.AreEqual(0, r.Hits.TotalHits);
-            Assert.Null(r.Facets.GetTopChildren(10, "Publish Date"));
-            Assert.Null(r.Facets.GetTopChildren(10, "Author"));
+            Assert.IsNull(r.Facets.GetTopChildren(10, "Publish Date"));
+            Assert.IsNull(r.Facets.GetTopChildren(10, "Author"));
             IOUtils.Dispose(searcher.IndexReader, taxoReader, writer, taxoWriter, dir, taxoDir);
         }
 
@@ -369,7 +368,7 @@ namespace Lucene.Net.Facet
 
             DrillDownQuery ddq = new DrillDownQuery(config);
             ddq.Add("dim", "a");
-            DrillSidewaysResult r = (new DrillSideways(searcher, config, taxoReader)).Search(null, ddq, 10);
+            DrillSidewaysResult r = new DrillSideways(searcher, config, taxoReader).Search(null, ddq, 10);
 
             Assert.AreEqual(3, r.Hits.TotalHits);
             Assert.AreEqual("dim=dim path=[] value=6 childCount=4\n  a (3)\n  b (1)\n  c (1)\n  d (1)\n", r.Facets.GetTopChildren(10, "dim").ToString());
@@ -442,7 +441,6 @@ namespace Lucene.Net.Facet
         [Test]
         public virtual void TestRandom()
         {
-
             bool canUseDV = DefaultCodecSupportsSortedSet;
 
             while (aChance == 0.0)
@@ -543,7 +541,7 @@ namespace Lucene.Net.Facet
             Directory td = NewDirectory();
 
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            iwc.SetInfoStream((InfoStream)InfoStream.NO_OUTPUT);
+            iwc.SetInfoStream(InfoStream.NO_OUTPUT);
             var w = new RandomIndexWriter(Random, d, iwc);
             var tw = new DirectoryTaxonomyWriter(td, OpenMode.CREATE);
             FacetsConfig config = new FacetsConfig();
@@ -664,7 +662,6 @@ namespace Lucene.Net.Facet
 
             for (int iter = 0; iter < numIters; iter++)
             {
-
                 string contentToken = Random.Next(30) == 17 ? null : randomContentToken(true);
                 int numDrillDown = TestUtil.NextInt32(Random, 1, Math.Min(4, numDims));
                 if (Verbose)
@@ -765,7 +762,7 @@ namespace Lucene.Net.Facet
                 // Verify docs are always collected in order.  If we
                 // had an AssertingScorer it could catch it when
                 // Weight.scoresDocsOutOfOrder lies!:
-                (new DrillSideways(s, config, tr)).Search(ddq, new CollectorAnonymousInnerClassHelper(this, s));
+                new DrillSideways(s, config, tr).Search(ddq, new CollectorAnonymousInnerClassHelper(this));
 
                 // Also separately verify that DS respects the
                 // scoreSubDocsAtOnce method, to ensure that all
@@ -777,7 +774,7 @@ namespace Lucene.Net.Facet
                     // easily possible for one of the DD terms to be on
                     // a future docID:
                     new DrillSidewaysAnonymousInnerClassHelper(this, s, config, tr)
-                    .Search(ddq, new AssertingSubDocsAtOnceCollector());
+                        .Search(ddq, new AssertingSubDocsAtOnceCollector());
                 }
 
                 TestFacetResult expected = slowDrillSidewaysSearch(s, docs, contentToken, drillDowns, dimValues, filter);
@@ -790,7 +787,7 @@ namespace Lucene.Net.Facet
                 }
                 else
                 {
-                    ds = new DrillSidewaysAnonymousInnerClassHelper2(this, s, config, tr, drillDowns);
+                    ds = new DrillSidewaysAnonymousInnerClassHelper2(this, s, config, tr);
                 }
 
                 // Retrieve all facets:
@@ -850,12 +847,9 @@ namespace Lucene.Net.Facet
         {
             private readonly TestDrillSideways outerInstance;
 
-            private IndexSearcher s;
-
-            public CollectorAnonymousInnerClassHelper(TestDrillSideways outerInstance, IndexSearcher s)
+            public CollectorAnonymousInnerClassHelper(TestDrillSideways outerInstance)
             {
                 this.outerInstance = outerInstance;
-                this.s = s;
             }
 
             internal int lastDocID;
@@ -882,7 +876,7 @@ namespace Lucene.Net.Facet
         {
             private readonly TestDrillSideways outerInstance;
 
-            public DrillSidewaysAnonymousInnerClassHelper(TestDrillSideways outerInstance, IndexSearcher s, Lucene.Net.Facet.FacetsConfig config, TaxonomyReader tr)
+            public DrillSidewaysAnonymousInnerClassHelper(TestDrillSideways outerInstance, IndexSearcher s, FacetsConfig config, TaxonomyReader tr)
                 : base(s, config, tr)
             {
                 this.outerInstance = outerInstance;
@@ -895,13 +889,10 @@ namespace Lucene.Net.Facet
         {
             private readonly TestDrillSideways outerInstance;
 
-            private string[][] drillDowns;
-
-            public DrillSidewaysAnonymousInnerClassHelper2(TestDrillSideways outerInstance, IndexSearcher s, Lucene.Net.Facet.FacetsConfig config, TaxonomyReader tr, string[][] drillDowns)
+            public DrillSidewaysAnonymousInnerClassHelper2(TestDrillSideways outerInstance, IndexSearcher s, FacetsConfig config, TaxonomyReader tr)
                 : base(s, config, tr)
             {
                 this.outerInstance = outerInstance;
-                this.drillDowns = drillDowns;
             }
 
             protected override Facets BuildFacetsResult(FacetsCollector drillDowns, FacetsCollector[] drillSideways, string[] drillSidewaysDims)
@@ -924,7 +915,6 @@ namespace Lucene.Net.Facet
                 {
                     return new MultiFacets(drillSidewaysFacets, drillDownFacets);
                 }
-
             }
         }
 
@@ -1013,9 +1003,9 @@ namespace Lucene.Net.Facet
         {
             private readonly TestDrillSideways outerInstance;
 
-            private int[] counts;
-            private string[] values;
-            private int[] ids;
+            private readonly int[] counts;
+            private readonly string[] values;
+            private readonly int[] ids;
 
             public InPlaceMergeSorterAnonymousInnerClassHelper(TestDrillSideways outerInstance, int[] counts, string[] values, int[] ids)
             {
@@ -1049,7 +1039,7 @@ namespace Lucene.Net.Facet
                 else
                 {
                     // ... then by label ascending:
-                    return (new BytesRef(values[ids[i]])).CompareTo(new BytesRef(values[ids[j]]));
+                    return new BytesRef(values[ids[i]]).CompareTo(new BytesRef(values[ids[j]]));
                 }
             }
 
@@ -1078,7 +1068,7 @@ namespace Lucene.Net.Facet
                 {
                     continue;
                 }
-                if (onlyEven != null & (Convert.ToInt32(doc.id) & 1) != 0)
+                if (onlyEven != null & (Convert.ToInt32(doc.id, CultureInfo.InvariantCulture) & 1) != 0)
                 {
                     continue;
                 }
@@ -1195,7 +1185,7 @@ namespace Lucene.Net.Facet
                 }
                 Assert.AreEqual(expected.Hits[i].id, s.Doc(actual.Hits.ScoreDocs[i].Doc).Get("id"));
                 // Score should be IDENTICAL:
-                Assert.AreEqual(scores[expected.Hits[i].id], actual.Hits.ScoreDocs[i].Score);
+                Assert.AreEqual(scores[expected.Hits[i].id].GetValueOrDefault(), actual.Hits.ScoreDocs[i].Score, 0.0f);
             }
 
             for (int dim = 0; dim < expected.Counts.Length; dim++)
@@ -1289,13 +1279,13 @@ namespace Lucene.Net.Facet
                         string value = dimValues[dim][i];
                         if (expected.Counts[dim][i] != 0)
                         {
-                            Assert.True(actualValues.ContainsKey(value));
+                            Assert.IsTrue(actualValues.ContainsKey(value));
                             Assert.AreEqual(expected.Counts[dim][i], (int)actualValues[value]);
                             setCount++;
                         }
                         else
                         {
-                            Assert.False(actualValues.ContainsKey(value));
+                            Assert.IsFalse(actualValues.ContainsKey(value));
                         }
                     }
                     Assert.AreEqual(setCount, actualValues.Count);

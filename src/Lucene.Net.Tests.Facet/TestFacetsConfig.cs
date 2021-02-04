@@ -4,7 +4,6 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -105,7 +104,7 @@ namespace Lucene.Net.Facet
         {
             FacetsConfig config = new FacetsConfigAnonymousInnerClassHelper(this);
 
-            Assert.True(config.GetDimConfig("foobar").IsHierarchical);
+            Assert.IsTrue(config.GetDimConfig("foobar").IsHierarchical);
         }
 
         private class FacetsConfigAnonymousInnerClassHelper : FacetsConfig
@@ -128,5 +127,4 @@ namespace Lucene.Net.Facet
             }
         }
     }
-
 }

@@ -8,7 +8,6 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -45,6 +44,7 @@ namespace Lucene.Net.Facet
         {
             return GetTaxonomyFacetCounts(taxoReader, config, c, FacetsConfig.DEFAULT_INDEX_FIELD_NAME);
         }
+
         public virtual Facets GetTaxonomyFacetCounts(TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector c, string indexFieldName)
         {
             Facets facets;
@@ -153,9 +153,9 @@ namespace Lucene.Net.Facet
                 {
                     if (numInRow > 1)
                     {
-                        Array.Sort(labelValues, i - numInRow, i - (i - numInRow), Comparer<LabelAndValue>.Create((a,b)=> {
+                        Array.Sort(labelValues, i - numInRow, i - (i - numInRow), Comparer<LabelAndValue>.Create((a,b) => {
                             if (Debugging.AssertsEnabled) Debugging.Assert((double)a.Value == (double)b.Value);
-                            return (new BytesRef(a.Label)).CompareTo(new BytesRef(b.Label));
+                            return new BytesRef(a.Label).CompareTo(new BytesRef(b.Label));
                         }));
                     }
                     numInRow = 1;
@@ -170,7 +170,7 @@ namespace Lucene.Net.Facet
         
         protected internal virtual void SortLabelValues(List<LabelAndValue> labelValues)
         {
-            labelValues.Sort(Comparer<LabelAndValue>.Create((a,b)=> {
+            labelValues.Sort(Comparer<LabelAndValue>.Create((a,b) => {
                 if ((double)a.Value > (double)b.Value)
                 {
                     return -1;
@@ -181,7 +181,7 @@ namespace Lucene.Net.Facet
                 }
                 else
                 {
-                    return (new BytesRef(a.Label)).CompareTo(new BytesRef(b.Label));
+                    return new BytesRef(a.Label).CompareTo(new BytesRef(b.Label));
                 }
             }));
         }
@@ -206,14 +206,14 @@ namespace Lucene.Net.Facet
             }));
         }
 
-        protected internal virtual void AssertFloatValuesEquals(IList<FacetResult> a, IList<FacetResult> b)
+        protected virtual void AssertFloatValuesEquals(IList<FacetResult> a, IList<FacetResult> b)
         {
             Assert.AreEqual(a.Count, b.Count);
             float lastValue = float.PositiveInfinity;
             IDictionary<string, FacetResult> aByDim = new Dictionary<string, FacetResult>();
             for (int i = 0; i < a.Count; i++)
             {
-                Assert.True((float)a[i].Value <= lastValue);
+                Assert.IsTrue((float)a[i].Value <= lastValue);
                 lastValue = (float)a[i].Value;
                 aByDim[a[i].Dim] = a[i];
             }
@@ -222,7 +222,7 @@ namespace Lucene.Net.Facet
             for (int i = 0; i < b.Count; i++)
             {
                 bByDim[b[i].Dim] = b[i];
-                Assert.True((float)b[i].Value <= lastValue);
+                Assert.IsTrue((float)b[i].Value <= lastValue);
                 lastValue = (float)b[i].Value;
             }
             foreach (string dim in aByDim.Keys)
@@ -231,10 +231,10 @@ namespace Lucene.Net.Facet
             }
         }
 
-        protected internal virtual void AssertFloatValuesEquals(FacetResult a, FacetResult b)
+        protected virtual void AssertFloatValuesEquals(FacetResult a, FacetResult b)
         {
             Assert.AreEqual(a.Dim, b.Dim);
-            Assert.True(Arrays.Equals(a.Path, b.Path));
+            Assert.IsTrue(Arrays.Equals(a.Path, b.Path));
             Assert.AreEqual(a.ChildCount, b.ChildCount);
             Assert.AreEqual((float)a.Value, (float)b.Value, (float)a.Value / 1e5);
             Assert.AreEqual(a.LabelValues.Length, b.LabelValues.Length);
@@ -245,5 +245,4 @@ namespace Lucene.Net.Facet
             }
         }
     }
-
 }

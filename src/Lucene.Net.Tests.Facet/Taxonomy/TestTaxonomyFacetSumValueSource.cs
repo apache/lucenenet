@@ -68,7 +68,6 @@ namespace Lucene.Net.Facet.Taxonomy
         [Test]
         public virtual void TestBasic()
         {
-
             Store.Directory dir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
 
@@ -211,7 +210,6 @@ namespace Lucene.Net.Facet.Taxonomy
         [Test]
         public virtual void TestWrongIndexFieldName()
         {
-
             Store.Directory dir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
 
@@ -248,7 +246,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             // Ask for top 10 labels for any dims that have counts:
             IList<FacetResult> results = facets.GetAllDims(10);
-            Assert.True(results.Count == 0);
+            Assert.IsTrue(results.Count == 0);
 
             try
             {
@@ -394,7 +392,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 private readonly ValueSourceAnonymousInnerClassHelper outerInstance;
 
-                private Scorer scorer;
+                private readonly Scorer scorer;
 
                 public DoubleDocValuesAnonymousInnerClassHelper(ValueSourceAnonymousInnerClassHelper outerInstance, Scorer scorer)
                     : base(null) //todo: value source
@@ -618,5 +616,4 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Dispose(w, tw, searcher.IndexReader, tr, indexDir, taxoDir);
         }
     }
-
 }

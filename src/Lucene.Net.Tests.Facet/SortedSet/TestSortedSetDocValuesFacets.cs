@@ -48,7 +48,6 @@ namespace Lucene.Net.Facet.SortedSet
         [Test]
         public virtual void TestBasic()
         {
-
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
@@ -138,7 +137,7 @@ namespace Lucene.Net.Facet.SortedSet
 
             try
             {
-                new SortedSetDocValuesFacetCounts(state, c);
+                _ = new SortedSetDocValuesFacetCounts(state, c);
                 fail("did not hit expected exception");
             }
             catch (InvalidOperationException)
@@ -410,5 +409,4 @@ namespace Lucene.Net.Facet.SortedSet
             IOUtils.Dispose(w, searcher.IndexReader, indexDir, taxoDir);
         }
     }
-
 }

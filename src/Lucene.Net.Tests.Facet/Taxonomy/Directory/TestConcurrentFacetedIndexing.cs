@@ -148,7 +148,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             foreach (string cat in values.Keys)
             {
                 FacetLabel cp = new FacetLabel(FacetsConfig.StringToPath(cat));
-                Assert.True(tr.GetOrdinal(cp) > 0, "category not found " + cp);
+                Assert.IsTrue(tr.GetOrdinal(cp) > 0, "category not found " + cp);
                 int level = cp.Length;
                 int parentOrd = 0; // for root, parent is always virtual ROOT (ord=0)
                 FacetLabel path = null;
@@ -168,13 +168,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         {
             private readonly TestConcurrentFacetedIndexing outerInstance;
 
-            private AtomicInt32 numDocs;
-            private ConcurrentDictionary<string, string> values;
-            private IndexWriter iw;
-            private Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter tw;
-            private FacetsConfig config;
+            private readonly AtomicInt32 numDocs;
+            private readonly ConcurrentDictionary<string, string> values;
+            private readonly IndexWriter iw;
+            private readonly DirectoryTaxonomyWriter tw;
+            private readonly FacetsConfig config;
 
-            public ThreadAnonymousInnerClassHelper(TestConcurrentFacetedIndexing outerInstance, AtomicInt32 numDocs, ConcurrentDictionary<string, string> values, IndexWriter iw, Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter tw, FacetsConfig config)
+            public ThreadAnonymousInnerClassHelper(TestConcurrentFacetedIndexing outerInstance, AtomicInt32 numDocs, ConcurrentDictionary<string, string> values, IndexWriter iw, DirectoryTaxonomyWriter tw, FacetsConfig config)
             {
                 this.outerInstance = outerInstance;
                 this.numDocs = numDocs;
@@ -218,7 +218,5 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
             }
         }
-
     }
-
 }

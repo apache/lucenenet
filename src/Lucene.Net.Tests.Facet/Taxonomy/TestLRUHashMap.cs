@@ -3,7 +3,6 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,7 +20,6 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-    using Lucene.Net.Facet.Taxonomy;
     [TestFixture]
     public class TestLRUHashMap : FacetTestCase
     {
@@ -41,32 +39,31 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(3, lru.Count);
             lru.Put("four", "Shalom");
             Assert.AreEqual(3, lru.Count);
-            Assert.NotNull(lru.Get("three"));
-            Assert.NotNull(lru.Get("two"));
-            Assert.NotNull(lru.Get("four"));
-            Assert.Null(lru.Get("one"));
+            Assert.IsNotNull(lru.Get("three"));
+            Assert.IsNotNull(lru.Get("two"));
+            Assert.IsNotNull(lru.Get("four"));
+            Assert.IsNull(lru.Get("one"));
             lru.Put("five", "Yo!");
             Assert.AreEqual(3, lru.Count);
-            Assert.Null(lru.Get("three")); // three was last used, so it got removed
-            Assert.NotNull(lru.Get("five"));
+            Assert.IsNull(lru.Get("three")); // three was last used, so it got removed
+            Assert.IsNotNull(lru.Get("five"));
             lru.Get("four");
             lru.Put("six", "hi");
             lru.Put("seven", "hey dude");
             Assert.AreEqual(3, lru.Count);
-            Assert.Null(lru.Get("one"));
-            Assert.Null(lru.Get("two"));
-            Assert.Null(lru.Get("three"));
-            Assert.NotNull(lru.Get("four"));
-            Assert.Null(lru.Get("five"));
-            Assert.NotNull(lru.Get("six"));
-            Assert.NotNull(lru.Get("seven"));
+            Assert.IsNull(lru.Get("one"));
+            Assert.IsNull(lru.Get("two"));
+            Assert.IsNull(lru.Get("three"));
+            Assert.IsNotNull(lru.Get("four"));
+            Assert.IsNull(lru.Get("five"));
+            Assert.IsNotNull(lru.Get("six"));
+            Assert.IsNotNull(lru.Get("seven"));
 
             // LUCENENET specific tests to ensure Put is implemented correctly
-            Assert.Null(lru.Put("ten", "oops"));
+            Assert.IsNull(lru.Put("ten", "oops"));
             assertEquals("oops", lru.Put("ten", "not oops"));
             assertEquals("not oops", lru.Put("ten", "new value"));
             assertEquals("new value", lru.Put("ten", "new value2"));
         }
     }
-
 }

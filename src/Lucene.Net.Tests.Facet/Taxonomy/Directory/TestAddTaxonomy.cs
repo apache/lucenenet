@@ -127,7 +127,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             // validate taxo sizes
             int srcSize = srcTR.Count;
-            Assert.True(destSize >= srcSize, "destination taxonomy expected to be larger than source; dest=" + destSize + " src=" + srcSize);
+            Assert.IsTrue(destSize >= srcSize, "destination taxonomy expected to be larger than source; dest=" + destSize + " src=" + srcSize);
 
             // validate that all source categories exist in destination, and their
             // ordinals are as expected.
@@ -135,7 +135,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             {
                 FacetLabel cp = srcTR.GetPath(j);
                 int destOrdinal = destTr.GetOrdinal(cp);
-                Assert.True(destOrdinal > 0, cp + " not found in destination");
+                Assert.IsTrue(destOrdinal > 0, cp + " not found in destination");
                 Assert.AreEqual(destOrdinal, map[j]);
             }
         }
@@ -150,7 +150,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             destTW.Commit();
 
             Directory src = NewDirectory();
-            (new DirectoryTaxonomyWriter(src)).Dispose(); // create an empty taxonomy
+            new DirectoryTaxonomyWriter(src).Dispose(); // create an empty taxonomy
 
             IOrdinalMap map = randomOrdinalMap();
             destTW.AddTaxonomy(src, map);
@@ -200,7 +200,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             int numTests = AtLeast(3);
             for (int i = 0; i < numTests; i++)
             {
-                Dotest(TestUtil.NextInt32(random, 2, 100), TestUtil.NextInt32(random, 100, 1000));
+                Dotest(TestUtil.NextInt32(random, 2, 100),
+                    TestUtil.NextInt32(random, 100, 1000));
             }
         }
 
@@ -265,7 +266,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             for (int i = 1; i < dtr.Count; i++)
             {
                 FacetLabel cat = dtr.GetPath(i);
-                Assert.True(categories.Add(cat), "category " + cat + " already existed");
+                Assert.IsTrue(categories.Add(cat), "category " + cat + " already existed");
             }
             dtr.Dispose();
 
@@ -276,10 +277,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         {
             private readonly TestAddTaxonomy outerInstance;
 
-            private int numCategories;
-            private Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter destTW;
+            private readonly int numCategories;
+            private readonly DirectoryTaxonomyWriter destTW;
 
-            public ThreadAnonymousInnerClassHelper2(TestAddTaxonomy outerInstance, int numCategories, Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter destTW)
+            public ThreadAnonymousInnerClassHelper2(TestAddTaxonomy outerInstance, int numCategories, DirectoryTaxonomyWriter destTW)
             {
                 this.outerInstance = outerInstance;
                 this.numCategories = numCategories;
@@ -302,7 +303,5 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
             }
         }
-
     }
-
 }
