@@ -125,12 +125,12 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             taxoWriter.Commit();
 
             // verify taxoWriter.getCommitData()
-            Assert.NotNull(DirectoryTaxonomyWriter.INDEX_EPOCH + " not found in taoxWriter.commitData", taxoWriter.CommitData[DirectoryTaxonomyWriter.INDEX_EPOCH]);
+            Assert.IsTrue(taxoWriter.CommitData.ContainsKey(DirectoryTaxonomyWriter.INDEX_EPOCH), DirectoryTaxonomyWriter.INDEX_EPOCH + " not found in taoxWriter.commitData");
             taxoWriter.Dispose();
 
             r = DirectoryReader.Open(dir);
             readUserCommitData = r.IndexCommit.UserData;
-            Assert.NotNull(DirectoryTaxonomyWriter.INDEX_EPOCH + " not found in commitData", readUserCommitData[DirectoryTaxonomyWriter.INDEX_EPOCH]);
+            Assert.IsTrue(readUserCommitData.ContainsKey(DirectoryTaxonomyWriter.INDEX_EPOCH), DirectoryTaxonomyWriter.INDEX_EPOCH + " not found in taoxWriter.commitData");
             r.Dispose();
 
             dir.Dispose();
