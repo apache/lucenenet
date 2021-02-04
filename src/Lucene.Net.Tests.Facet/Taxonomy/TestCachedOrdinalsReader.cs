@@ -6,7 +6,6 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -85,11 +84,11 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             private readonly TestCachedOrdinalsReader outerInstance;
 
-            private DirectoryReader reader;
-            private Lucene.Net.Facet.Taxonomy.CachedOrdinalsReader ordsReader;
+            private readonly DirectoryReader reader;
+            private readonly CachedOrdinalsReader ordsReader;
 
-            public ThreadAnonymousInnerClassHelper(TestCachedOrdinalsReader outerInstance, string CachedOrdsThread, DirectoryReader reader, Lucene.Net.Facet.Taxonomy.CachedOrdinalsReader ordsReader)
-                : base("CachedOrdsThread-")
+            public ThreadAnonymousInnerClassHelper(TestCachedOrdinalsReader outerInstance, string threadName, DirectoryReader reader, CachedOrdinalsReader ordsReader)
+                : base(threadName)
             {
                 this.outerInstance = outerInstance;
                 this.reader = reader;
@@ -112,5 +111,4 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
     }
-
 }

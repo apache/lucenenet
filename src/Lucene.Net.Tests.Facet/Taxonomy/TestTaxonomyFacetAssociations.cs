@@ -4,7 +4,6 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -39,7 +38,6 @@ namespace Lucene.Net.Facet.Taxonomy
     [TestFixture]
     public class TestTaxonomyFacetAssociations : FacetTestCase
     {
-
         private static Store.Directory dir;
         private static IndexReader reader;
         private static Store.Directory taxoDir;
@@ -297,7 +295,5 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(100, (int)facets.GetSpecificValue("int", "a"), "Wrong count for category 'a'!");
             Assert.AreEqual(150, (int)facets.GetSpecificValue("int", "b"), "Wrong count for category 'b'!");
         }
-
     }
-
 }

@@ -96,7 +96,12 @@ namespace Lucene.Net.Facet.Range
             IndexSearcher s = NewSearcher(r);
             s.Search(new MatchAllDocsQuery(), fc);
 
-            Facets facets = new Int64RangeFacetCounts("field", fc, new Int64Range("less than 10", 0L, true, 10L, false), new Int64Range("less than or equal to 10", 0L, true, 10L, true), new Int64Range("over 90", 90L, false, 100L, false), new Int64Range("90 or above", 90L, true, 100L, false), new Int64Range("over 1000", 1000L, false, long.MaxValue, true));
+            Facets facets = new Int64RangeFacetCounts("field", fc,
+                new Int64Range("less than 10", 0L, true, 10L, false),
+                new Int64Range("less than or equal to 10", 0L, true, 10L, true),
+                new Int64Range("over 90", 90L, false, 100L, false),
+                new Int64Range("90 or above", 90L, true, 100L, false),
+                new Int64Range("over 1000", 1000L, false, long.MaxValue, true));
 
             FacetResult result = facets.GetTopChildren(10, "field");
 
@@ -111,7 +116,7 @@ namespace Lucene.Net.Facet.Range
         {
             try
             {
-                new Int64Range("useless", 7, true, 6, true);
+                _ = new Int64Range("useless", 7, true, 6, true);
                 fail("did not hit expected exception");
             }
             catch (ArgumentException)
@@ -120,7 +125,7 @@ namespace Lucene.Net.Facet.Range
             }
             try
             {
-                new Int64Range("useless", 7, true, 7, false);
+                _ = new Int64Range("useless", 7, true, 7, false);
                 fail("did not hit expected exception");
             }
             catch (ArgumentException)
@@ -129,7 +134,7 @@ namespace Lucene.Net.Facet.Range
             }
             try
             {
-                new DoubleRange("useless", 7.0, true, 6.0, true);
+                _ = new DoubleRange("useless", 7.0, true, 6.0, true);
                 fail("did not hit expected exception");
             }
             catch (ArgumentException)
@@ -138,7 +143,7 @@ namespace Lucene.Net.Facet.Range
             }
             try
             {
-                new DoubleRange("useless", 7.0, true, 7.0, false);
+                _ = new DoubleRange("useless", 7.0, true, 7.0, false);
                 fail("did not hit expected exception");
             }
             catch (ArgumentException)
@@ -174,7 +179,13 @@ namespace Lucene.Net.Facet.Range
             IndexSearcher s = NewSearcher(r);
             s.Search(new MatchAllDocsQuery(), fc);
 
-            Facets facets = new Int64RangeFacetCounts("field", fc, new Int64Range("min", long.MinValue, true, long.MinValue, true), new Int64Range("max", long.MaxValue, true, long.MaxValue, true), new Int64Range("all0", long.MinValue, true, long.MaxValue, true), new Int64Range("all1", long.MinValue, false, long.MaxValue, true), new Int64Range("all2", long.MinValue, true, long.MaxValue, false), new Int64Range("all3", long.MinValue, false, long.MaxValue, false));
+            Facets facets = new Int64RangeFacetCounts("field", fc,
+                new Int64Range("min", long.MinValue, true, long.MinValue, true),
+                new Int64Range("max", long.MaxValue, true, long.MaxValue, true),
+                new Int64Range("all0", long.MinValue, true, long.MaxValue, true),
+                new Int64Range("all1", long.MinValue, false, long.MaxValue, true),
+                new Int64Range("all2", long.MinValue, true, long.MaxValue, false),
+                new Int64Range("all3", long.MinValue, false, long.MaxValue, false));
 
             FacetResult result = facets.GetTopChildren(10, "field");
             Assert.AreEqual("dim=field path=[] value=3 childCount=6\n  min (1)\n  max (1)\n  all0 (3)\n  all1 (2)\n  all2 (2)\n  all3 (1)\n", result.ToString());
@@ -210,7 +221,11 @@ namespace Lucene.Net.Facet.Range
             IndexSearcher s = NewSearcher(r);
             s.Search(new MatchAllDocsQuery(), fc);
 
-            Facets facets = new Int64RangeFacetCounts("field", fc, new Int64Range("0-10", 0L, true, 10L, true), new Int64Range("10-20", 10L, true, 20L, true), new Int64Range("20-30", 20L, true, 30L, true), new Int64Range("30-40", 30L, true, 40L, true));
+            Facets facets = new Int64RangeFacetCounts("field", fc,
+                new Int64Range("0-10", 0L, true, 10L, true),
+                new Int64Range("10-20", 10L, true, 20L, true),
+                new Int64Range("20-30", 20L, true, 30L, true),
+                new Int64Range("30-40", 30L, true, 40L, true));
 
             FacetResult result = facets.GetTopChildren(10, "field");
             Assert.AreEqual("dim=field path=[] value=41 childCount=4\n  0-10 (11)\n  10-20 (11)\n  20-30 (11)\n  30-40 (11)\n", result.ToString());
@@ -221,7 +236,7 @@ namespace Lucene.Net.Facet.Range
 
         /// <summary>
         /// Tests single request that mixes Range and non-Range
-        ///  faceting, with DrillSideways and taxonomy. 
+        ///  faceting, with <see cref="DrillSideways"/> and taxonomy. 
         /// </summary>
         [Test]
         public virtual void TestMixedRangeAndNonRangeTaxonomy()
@@ -275,7 +290,8 @@ namespace Lucene.Net.Facet.Range
 
             Assert.AreEqual(100, dsr.Hits.TotalHits);
             Assert.AreEqual("dim=dim path=[] value=100 childCount=2\n  b (75)\n  a (25)\n", dsr.Facets.GetTopChildren(10, "dim").ToString());
-            Assert.AreEqual("dim=field path=[] value=21 childCount=5\n  less than 10 (10)\n  less than or equal to 10 (11)\n  over 90 (9)\n  90 or above (10)\n  over 1000 (0)\n", dsr.Facets.GetTopChildren(10, "field").ToString());
+            Assert.AreEqual("dim=field path=[] value=21 childCount=5\n  less than 10 (10)\n  less than or equal to 10 (11)\n  over 90 (9)\n  90 or above (10)\n  over 1000 (0)\n",
+                dsr.Facets.GetTopChildren(10, "field").ToString());
 
             // Second search, drill down on dim=b:
             ddq = new DrillDownQuery(config);
@@ -284,7 +300,8 @@ namespace Lucene.Net.Facet.Range
 
             Assert.AreEqual(75, dsr.Hits.TotalHits);
             Assert.AreEqual("dim=dim path=[] value=100 childCount=2\n  b (75)\n  a (25)\n", dsr.Facets.GetTopChildren(10, "dim").ToString());
-            Assert.AreEqual("dim=field path=[] value=16 childCount=5\n  less than 10 (7)\n  less than or equal to 10 (8)\n  over 90 (7)\n  90 or above (8)\n  over 1000 (0)\n", dsr.Facets.GetTopChildren(10, "field").ToString());
+            Assert.AreEqual("dim=field path=[] value=16 childCount=5\n  less than 10 (7)\n  less than or equal to 10 (8)\n  over 90 (7)\n  90 or above (8)\n  over 1000 (0)\n",
+                dsr.Facets.GetTopChildren(10, "field").ToString());
 
             // Third search, drill down on "less than or equal to 10":
             ddq = new DrillDownQuery(config);
@@ -293,7 +310,8 @@ namespace Lucene.Net.Facet.Range
 
             Assert.AreEqual(11, dsr.Hits.TotalHits);
             Assert.AreEqual("dim=dim path=[] value=11 childCount=2\n  b (8)\n  a (3)\n", dsr.Facets.GetTopChildren(10, "dim").ToString());
-            Assert.AreEqual("dim=field path=[] value=21 childCount=5\n  less than 10 (10)\n  less than or equal to 10 (11)\n  over 90 (9)\n  90 or above (10)\n  over 1000 (0)\n", dsr.Facets.GetTopChildren(10, "field").ToString());
+            Assert.AreEqual("dim=field path=[] value=21 childCount=5\n  less than 10 (10)\n  less than or equal to 10 (11)\n  over 90 (9)\n  90 or above (10)\n  over 1000 (0)\n",
+                dsr.Facets.GetTopChildren(10, "field").ToString());
             IOUtils.Dispose(tw, tr, td, w, r, d);
         }
 
@@ -328,7 +346,12 @@ namespace Lucene.Net.Facet.Range
                 }
 
                 IDictionary<string, Facets> byDim = new Dictionary<string, Facets>();
-                byDim["field"] = new Int64RangeFacetCounts("field", fieldFC, new Int64Range("less than 10", 0L, true, 10L, false), new Int64Range("less than or equal to 10", 0L, true, 10L, true), new Int64Range("over 90", 90L, false, 100L, false), new Int64Range("90 or above", 90L, true, 100L, false), new Int64Range("over 1000", 1000L, false, long.MaxValue, false));
+                byDim["field"] = new Int64RangeFacetCounts("field", fieldFC,
+                    new Int64Range("less than 10", 0L, true, 10L, false),
+                    new Int64Range("less than or equal to 10", 0L, true, 10L, true),
+                    new Int64Range("over 90", 90L, false, 100L, false),
+                    new Int64Range("90 or above", 90L, true, 100L, false),
+                    new Int64Range("over 1000", 1000L, false, long.MaxValue, false));
                 byDim["dim"] = outerInstance.GetTaxonomyFacetCounts(m_taxoReader, m_config, dimFC);
                 return new MultiFacets(byDim, null);
             }
@@ -360,9 +383,15 @@ namespace Lucene.Net.Facet.Range
 
             IndexSearcher s = NewSearcher(r);
             s.Search(new MatchAllDocsQuery(), fc);
-            Facets facets = new DoubleRangeFacetCounts("field", fc, new DoubleRange("less than 10", 0.0, true, 10.0, false), new DoubleRange("less than or equal to 10", 0.0, true, 10.0, true), new DoubleRange("over 90", 90.0, false, 100.0, false), new DoubleRange("90 or above", 90.0, true, 100.0, false), new DoubleRange("over 1000", 1000.0, false, double.PositiveInfinity, false));
+            Facets facets = new DoubleRangeFacetCounts("field", fc,
+                new DoubleRange("less than 10", 0.0, true, 10.0, false),
+                new DoubleRange("less than or equal to 10", 0.0, true, 10.0, true),
+                new DoubleRange("over 90", 90.0, false, 100.0, false),
+                new DoubleRange("90 or above", 90.0, true, 100.0, false),
+                new DoubleRange("over 1000", 1000.0, false, double.PositiveInfinity, false));
 
-            Assert.AreEqual("dim=field path=[] value=21 childCount=5\n  less than 10 (10)\n  less than or equal to 10 (11)\n  over 90 (9)\n  90 or above (10)\n  over 1000 (0)\n", facets.GetTopChildren(10, "field").ToString());
+            Assert.AreEqual("dim=field path=[] value=21 childCount=5\n  less than 10 (10)\n  less than or equal to 10 (11)\n  over 90 (9)\n  90 or above (10)\n  over 1000 (0)\n",
+                facets.GetTopChildren(10, "field").ToString());
 
             IOUtils.Dispose(w, r, d);
         }
@@ -392,9 +421,15 @@ namespace Lucene.Net.Facet.Range
             IndexSearcher s = NewSearcher(r);
             s.Search(new MatchAllDocsQuery(), fc);
 
-            Facets facets = new DoubleRangeFacetCounts("field", new SingleFieldSource("field"), fc, new DoubleRange("less than 10", 0.0f, true, 10.0f, false), new DoubleRange("less than or equal to 10", 0.0f, true, 10.0f, true), new DoubleRange("over 90", 90.0f, false, 100.0f, false), new DoubleRange("90 or above", 90.0f, true, 100.0f, false), new DoubleRange("over 1000", 1000.0f, false, double.PositiveInfinity, false));
+            Facets facets = new DoubleRangeFacetCounts("field", new SingleFieldSource("field"), fc,
+                new DoubleRange("less than 10", 0.0f, true, 10.0f, false),
+                new DoubleRange("less than or equal to 10", 0.0f, true, 10.0f, true),
+                new DoubleRange("over 90", 90.0f, false, 100.0f, false),
+                new DoubleRange("90 or above", 90.0f, true, 100.0f, false),
+                new DoubleRange("over 1000", 1000.0f, false, double.PositiveInfinity, false));
 
-            Assert.AreEqual("dim=field path=[] value=21 childCount=5\n  less than 10 (10)\n  less than or equal to 10 (11)\n  over 90 (9)\n  90 or above (10)\n  over 1000 (0)\n", facets.GetTopChildren(10, "field").ToString());
+            Assert.AreEqual("dim=field path=[] value=21 childCount=5\n  less than 10 (10)\n  less than or equal to 10 (11)\n  over 90 (9)\n  90 or above (10)\n  over 1000 (0)\n",
+                facets.GetTopChildren(10, "field").ToString());
 
             IOUtils.Dispose(w, r, d);
         }
@@ -1028,9 +1063,15 @@ namespace Lucene.Net.Facet.Range
 
             IndexSearcher s = NewSearcher(r);
             s.Search(new MatchAllDocsQuery(), fc);
-            Facets facets = new Int64RangeFacetCounts("field", fc, new Int64Range("less than 10", 0L, true, 10L, false), new Int64Range("less than or equal to 10", 0L, true, 10L, true), new Int64Range("over 90", 90L, false, 100L, false), new Int64Range("90 or above", 90L, true, 100L, false), new Int64Range("over 1000", 1000L, false, long.MaxValue, false));
+            Facets facets = new Int64RangeFacetCounts("field", fc,
+                new Int64Range("less than 10", 0L, true, 10L, false),
+                new Int64Range("less than or equal to 10", 0L, true, 10L, true),
+                new Int64Range("over 90", 90L, false, 100L, false),
+                new Int64Range("90 or above", 90L, true, 100L, false),
+                new Int64Range("over 1000", 1000L, false, long.MaxValue, false));
 
-            Assert.AreEqual("dim=field path=[] value=16 childCount=5\n  less than 10 (8)\n  less than or equal to 10 (8)\n  over 90 (8)\n  90 or above (8)\n  over 1000 (0)\n", facets.GetTopChildren(10, "field").ToString());
+            Assert.AreEqual("dim=field path=[] value=16 childCount=5\n  less than 10 (8)\n  less than or equal to 10 (8)\n  over 90 (8)\n  90 or above (8)\n  over 1000 (0)\n",
+                facets.GetTopChildren(10, "field").ToString());
 
             IOUtils.Dispose(w, r, d);
         }
@@ -1063,7 +1104,14 @@ namespace Lucene.Net.Facet.Range
             IndexSearcher s = NewSearcher(r);
             s.Search(new MatchAllDocsQuery(), fc);
 
-            DoubleRange[] ranges = new DoubleRange[] { new DoubleRange("< 1", 0.0, true, 1.0, false), new DoubleRange("< 2", 0.0, true, 2.0, false), new DoubleRange("< 5", 0.0, true, 5.0, false), new DoubleRange("< 10", 0.0, true, 10.0, false), new DoubleRange("< 20", 0.0, true, 20.0, false), new DoubleRange("< 50", 0.0, true, 50.0, false) };
+            DoubleRange[] ranges = new DoubleRange[] {
+                new DoubleRange("< 1", 0.0, true, 1.0, false),
+                new DoubleRange("< 2", 0.0, true, 2.0, false),
+                new DoubleRange("< 5", 0.0, true, 5.0, false),
+                new DoubleRange("< 10", 0.0, true, 10.0, false),
+                new DoubleRange("< 20", 0.0, true, 20.0, false),
+                new DoubleRange("< 50", 0.0, true, 50.0, false)
+            };
 
             Filter fastMatchFilter;
             AtomicBoolean filterWasUsed = new AtomicBoolean();
@@ -1084,8 +1132,9 @@ namespace Lucene.Net.Facet.Range
 
             Facets facets = new DoubleRangeFacetCounts("field", vs, fc, fastMatchFilter, ranges);
 
-            Assert.AreEqual("dim=field path=[] value=3 childCount=6\n  < 1 (0)\n  < 2 (1)\n  < 5 (3)\n  < 10 (3)\n  < 20 (3)\n  < 50 (3)\n", facets.GetTopChildren(10, "field").ToString());
-            Assert.True(fastMatchFilter == null || filterWasUsed);
+            Assert.AreEqual("dim=field path=[] value=3 childCount=6\n  < 1 (0)\n  < 2 (1)\n  < 5 (3)\n  < 10 (3)\n  < 20 (3)\n  < 50 (3)\n",
+                facets.GetTopChildren(10, "field").ToString());
+            Assert.IsTrue(fastMatchFilter == null || filterWasUsed);
 
             DrillDownQuery ddq = new DrillDownQuery(config);
             ddq.Add("field", ranges[1].GetFilter(fastMatchFilter, vs));
@@ -1099,7 +1148,8 @@ namespace Lucene.Net.Facet.Range
 
             DrillSidewaysResult dsr = ds.Search(ddq, 10);
             Assert.AreEqual(1, dsr.Hits.TotalHits);
-            Assert.AreEqual("dim=field path=[] value=3 childCount=6\n  < 1 (0)\n  < 2 (1)\n  < 5 (3)\n  < 10 (3)\n  < 20 (3)\n  < 50 (3)\n", dsr.Facets.GetTopChildren(10, "field").ToString());
+            Assert.AreEqual("dim=field path=[] value=3 childCount=6\n  < 1 (0)\n  < 2 (1)\n  < 5 (3)\n  < 10 (3)\n  < 20 (3)\n  < 50 (3)\n",
+                dsr.Facets.GetTopChildren(10, "field").ToString());
 
             IOUtils.Dispose(r, writer, dir);
         }
@@ -1108,7 +1158,7 @@ namespace Lucene.Net.Facet.Range
         {
             private readonly TestRangeFacetCounts outerInstance;
 
-            private Document doc;
+            private readonly Document doc;
 
             public ValueSourceAnonymousInnerClassHelper(TestRangeFacetCounts outerInstance, Document doc)
             {
@@ -1158,7 +1208,7 @@ namespace Lucene.Net.Facet.Range
         {
             private readonly TestRangeFacetCounts outerInstance;
 
-            private AtomicBoolean filterWasUsed;
+            private readonly AtomicBoolean filterWasUsed;
 
             public CachingWrapperFilterAnonymousInnerClassHelper(TestRangeFacetCounts outerInstance, QueryWrapperFilter org, AtomicBoolean filterWasUsed)
                 : base(org)
@@ -1180,9 +1230,9 @@ namespace Lucene.Net.Facet.Range
         {
             private readonly TestRangeFacetCounts outerInstance;
 
-            private ValueSource vs;
-            private Lucene.Net.Facet.Range.DoubleRange[] ranges;
-            private Filter fastMatchFilter;
+            private readonly ValueSource vs;
+            private readonly DoubleRange[] ranges;
+            private readonly Filter fastMatchFilter;
 
 
             public DrillSidewaysAnonymousInnerClassHelper2(TestRangeFacetCounts outerInstance, IndexSearcher indexSearcher, FacetsConfig facetsConfig, TaxonomyReader org, ValueSource valueSource, DoubleRange[] doubleRanges, Filter filter)
@@ -1204,5 +1254,4 @@ namespace Lucene.Net.Facet.Range
             protected override bool ScoreSubDocsAtOnce => Random.NextBoolean();
         }
     }
-
 }

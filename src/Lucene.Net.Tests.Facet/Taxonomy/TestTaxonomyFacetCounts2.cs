@@ -9,7 +9,6 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,7 +25,6 @@ namespace Lucene.Net.Facet.Taxonomy
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
 
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
@@ -148,17 +146,14 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
 
-        private static FacetsConfig Config
+        private static FacetsConfig GetConfig()
         {
-            get
-            {
-                FacetsConfig config = new FacetsConfig();
-                config.SetMultiValued("A", true);
-                config.SetMultiValued("B", true);
-                config.SetRequireDimCount("B", true);
-                config.SetHierarchical("D", true);
-                return config;
-            }
+            FacetsConfig config = new FacetsConfig();
+            config.SetMultiValued("A", true);
+            config.SetMultiValued("B", true);
+            config.SetRequireDimCount("B", true);
+            config.SetHierarchical("D", true);
+            return config;
         }
 
         private static void IndexDocsNoFacets(IndexWriter indexWriter)
@@ -177,7 +172,7 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             Random random = Random;
             int numDocs = AtLeast(random, 2);
-            FacetsConfig config = Config;
+            FacetsConfig config = GetConfig();
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
@@ -191,7 +186,7 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             Random random = Random;
             int numDocs = AtLeast(random, 2);
-            FacetsConfig config = Config;
+            FacetsConfig config = GetConfig();
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
@@ -206,7 +201,7 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             Random random = Random;
             int numDocs = AtLeast(random, 2);
-            FacetsConfig config = Config;
+            FacetsConfig config = GetConfig();
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
@@ -296,7 +291,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetsCollector sfc = new FacetsCollector();
             TermQuery q = new TermQuery(A);
             searcher.Search(q, sfc);
-            Facets facets = GetTaxonomyFacetCounts(taxoReader, Config, sfc);
+            Facets facets = GetTaxonomyFacetCounts(taxoReader, GetConfig(), sfc);
             FacetResult result = facets.GetTopChildren(NUM_CHILDREN_CP_A, CP_A);
             Assert.AreEqual(-1, (int)result.Value);
             foreach (LabelAndValue labelValue in result.LabelValues)
@@ -323,7 +318,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetsCollector sfc = new FacetsCollector();
             searcher.Search(new MatchAllDocsQuery(), sfc);
 
-            Facets facets = GetTaxonomyFacetCounts(taxoReader, Config, sfc);
+            Facets facets = GetTaxonomyFacetCounts(taxoReader, GetConfig(), sfc);
 
             FacetResult result = facets.GetTopChildren(NUM_CHILDREN_CP_A, CP_A);
             Assert.AreEqual(-1, (int)result.Value);
@@ -331,7 +326,7 @@ namespace Lucene.Net.Facet.Taxonomy
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
                 Assert.AreEqual(allExpectedCounts[CP_A + "/" + labelValue.Label].GetValueOrDefault(), labelValue.Value);
-                Assert.True((int)labelValue.Value <= prevValue, "wrong sort order of sub results: labelValue.value=" + labelValue.Value + " prevValue=" + prevValue);
+                Assert.IsTrue((int)labelValue.Value <= prevValue, "wrong sort order of sub results: labelValue.value=" + labelValue.Value + " prevValue=" + prevValue);
                 prevValue = (int)labelValue.Value;
             }
 
@@ -341,7 +336,7 @@ namespace Lucene.Net.Facet.Taxonomy
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
                 Assert.AreEqual(allExpectedCounts[CP_B + "/" + labelValue.Label].GetValueOrDefault(), labelValue.Value);
-                Assert.True((int)labelValue.Value <= prevValue, "wrong sort order of sub results: labelValue.value=" + labelValue.Value + " prevValue=" + prevValue);
+                Assert.IsTrue((int)labelValue.Value <= prevValue, "wrong sort order of sub results: labelValue.value=" + labelValue.Value + " prevValue=" + prevValue);
                 prevValue = (int)labelValue.Value;
             }
 
@@ -358,7 +353,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetsCollector sfc = new FacetsCollector();
             searcher.Search(new MatchAllDocsQuery(), sfc);
 
-            Facets facets = GetTaxonomyFacetCounts(taxoReader, Config, sfc);
+            Facets facets = GetTaxonomyFacetCounts(taxoReader, GetConfig(), sfc);
 
             FacetResult result = facets.GetTopChildren(int.MaxValue, CP_A);
             Assert.AreEqual(-1, (int)result.Value);
@@ -386,7 +381,7 @@ namespace Lucene.Net.Facet.Taxonomy
             var sfc = new FacetsCollector();
             searcher.Search(new MatchAllDocsQuery(), sfc);
 
-            Facets facets = GetTaxonomyFacetCounts(taxoReader, Config, sfc);
+            Facets facets = GetTaxonomyFacetCounts(taxoReader, GetConfig(), sfc);
 
             FacetResult result = facets.GetTopChildren(NUM_CHILDREN_CP_C, CP_C);
             Assert.AreEqual(allExpectedCounts[CP_C].GetValueOrDefault(), result.Value);
@@ -404,5 +399,4 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Dispose(indexReader, taxoReader);
         }
     }
-
 }

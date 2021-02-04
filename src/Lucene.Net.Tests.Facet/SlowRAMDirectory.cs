@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Threading;
-using Lucene.Net.Randomized.Generators;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,9 +21,9 @@ namespace Lucene.Net.Facet
      */
 
 
-    using IOContext = Lucene.Net.Store.IOContext;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
+    using IOContext = Lucene.Net.Store.IOContext;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
     /// <summary>
@@ -34,15 +32,14 @@ namespace Lucene.Net.Facet
     // TODO: move to test-framework and sometimes use in tests?
     public class SlowRAMDirectory : RAMDirectory
     {
-
         private const int IO_SLEEP_THRESHOLD = 50;
 
         internal Random random;
         private int sleepMillis;
 
-        public virtual int SleepMillis
+        public virtual void SetSleepMillis(int sleepMillis)
         {
-            set => this.sleepMillis = value;
+            this.sleepMillis = sleepMillis;
         }
 
         public SlowRAMDirectory(int sleepMillis, Random random)
@@ -110,9 +107,9 @@ namespace Lucene.Net.Facet
         {
             private readonly SlowRAMDirectory outerInstance;
 
-            internal IndexInput ii;
-            internal int numRead = 0;
-            internal Random rand;
+            private readonly IndexInput ii;
+            private int numRead = 0;
+            private readonly Random rand;
 
             public SlowIndexInput(SlowRAMDirectory outerInstance, IndexInput ii)
                 : base("SlowIndexInput(" + ii + ")")
@@ -159,26 +156,28 @@ namespace Lucene.Net.Facet
                     ii.Dispose();
                 }
             }
+
             public override bool Equals(object o)
             {
                 return ii.Equals(o);
             }
+
             public override long GetFilePointer()
             {
                 return ii.GetFilePointer();
             }
 
-            public override void Seek(long pos)
-            {
-                ii.Seek(pos);
-            }
-
-
             public override int GetHashCode()
             {
                 return ii.GetHashCode();
             }
+
             public override long Length => ii.Length;
+
+            public override void Seek(long pos)
+            {
+                ii.Seek(pos);
+            }
         }
 
         /// <summary>
@@ -189,10 +188,9 @@ namespace Lucene.Net.Facet
         {
             private readonly SlowRAMDirectory outerInstance;
 
-
-            internal IndexOutput io;
-            internal int numWrote;
-            internal readonly Random rand;
+            private readonly IndexOutput io;
+            private int numWrote;
+            private readonly Random rand;
 
             public SlowIndexOutput(SlowRAMDirectory outerInstance, IndexOutput io)
             {
@@ -223,6 +221,12 @@ namespace Lucene.Net.Facet
                 io.WriteBytes(b, offset, length);
             }
 
+            [Obsolete]
+            public override void Seek(long pos)
+            {
+                io.Seek(pos);
+            }
+
             protected override void Dispose(bool disposing)
             {
                 if (disposing)
@@ -230,24 +234,24 @@ namespace Lucene.Net.Facet
                     io.Dispose();
                 }
             }
+
             public override void Flush()
             {
                 io.Flush();
             }
+
             public override long GetFilePointer()
             {
                 return io.GetFilePointer();
             }
 
-            [Obsolete]
-            public override void Seek(long pos)
+            public override long Length
             {
-                io.Seek(pos);
+                get => io.Length;
+                set => throw new InvalidOperationException("Length is readonly");
             }
 
             public override long Checksum => io.Checksum;
         }
-
     }
-
 }
