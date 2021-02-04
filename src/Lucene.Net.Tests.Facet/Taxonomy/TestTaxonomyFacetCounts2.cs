@@ -1,4 +1,5 @@
 ﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -262,7 +263,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // 4. Segment w/ categories, but only some results
 
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            //conf.MergePolicy = NoMergePolicy.INSTANCE; // prevent merges, so we can control the index segments
+            conf.MergePolicy = NoMergePolicy.COMPOUND_FILES; // prevent merges, so we can control the index segments
             IndexWriter indexWriter = new IndexWriter(indexDir, conf);
             ITaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
 
