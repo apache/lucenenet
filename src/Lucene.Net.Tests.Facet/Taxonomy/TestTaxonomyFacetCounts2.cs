@@ -1,4 +1,5 @@
-﻿using J2N.Collections.Generic.Extensions;
+﻿// Lucene version compatibility level 4.8.1
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using NUnit.Framework;

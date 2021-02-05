@@ -1,4 +1,5 @@
-﻿using J2N.Collections.Generic.Extensions;
+﻿// Lucene version compatibility level 4.8.1 + LUCENE-6001
+using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;

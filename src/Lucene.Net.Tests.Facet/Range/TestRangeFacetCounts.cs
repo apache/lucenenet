@@ -1,4 +1,5 @@
-﻿using J2N.Threading.Atomic;
+﻿// Lucene version compatibility level 4.8.1
+using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
 using NUnit.Framework;

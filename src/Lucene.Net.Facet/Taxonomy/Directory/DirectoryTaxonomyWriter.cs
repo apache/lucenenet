@@ -1,4 +1,5 @@
-﻿using J2N.Threading.Atomic;
+﻿// Lucene version compatibility level 4.8.1
+using J2N.Threading.Atomic;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
@@ -8,9 +9,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Threading;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {

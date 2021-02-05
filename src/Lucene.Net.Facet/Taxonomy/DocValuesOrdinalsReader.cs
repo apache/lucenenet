@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Facet.Taxonomy
+﻿// Lucene version compatibility level 4.8.1
+
+namespace Lucene.Net.Facet.Taxonomy
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

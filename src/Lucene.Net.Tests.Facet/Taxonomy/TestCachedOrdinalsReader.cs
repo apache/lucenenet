@@ -1,4 +1,5 @@
-﻿using J2N.Threading;
+﻿// Lucene version compatibility level 4.8.1
+using J2N.Threading;
 using NUnit.Framework;
 using System;
 using System.IO;

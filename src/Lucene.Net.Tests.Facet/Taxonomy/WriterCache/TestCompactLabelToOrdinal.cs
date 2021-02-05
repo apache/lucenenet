@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Attributes;
+﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

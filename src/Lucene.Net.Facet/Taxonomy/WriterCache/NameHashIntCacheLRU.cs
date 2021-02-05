@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Facet.Taxonomy.WriterCache
+﻿// Lucene version compatibility level 4.8.1
+
+namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
