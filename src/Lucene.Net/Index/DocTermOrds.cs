@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -774,8 +774,7 @@ namespace Lucene.Net.Index
                     term = null;
                     return false;
                 }
-                SetTerm(); // this is extra work if we know we are in bounds...
-                return true;
+                return SetTerm() != null;   // this is extra work if we know we are in bounds...
             }
 
             [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
