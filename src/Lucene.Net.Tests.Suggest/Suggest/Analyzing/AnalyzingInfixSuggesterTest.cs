@@ -1038,7 +1038,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 suggester.Add(new BytesRef(key), null, 10, null);
             }
+#pragma warning disable CS0168 // Variable is declared but never used
             catch (IOException e)
+#pragma warning restore CS0168 // Variable is declared but never used
             {
                 fail("Could not build suggest dictionary correctly");
             }
