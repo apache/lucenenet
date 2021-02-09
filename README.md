@@ -120,6 +120,8 @@ There is also a dotnet command line tool available on NuGet. It contains all of 
 dotnet tool install lucene-cli -g --version 4.8.0-beta00012
 ```
 
+> NOTE: The version of the CLI you install should match the version of Lucene.NET you use.
+
 Once installed, you can explore the commands and options that are available by entering the command `lucene`.
 
 [lucene-cli Documentation](https://github.com/apache/lucenenet/blob/master/src/dotnet/tools/lucene-cli/docs/index.md)
