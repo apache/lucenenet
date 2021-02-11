@@ -107,7 +107,7 @@
             while (offset < upto)
             {
                 byte b = buf.Bytes[offset++];
-                if ((sbyte)b >= 0)
+                if (b <= 127)
                 {
                     ordinals.Int32s[ordinals.Length] = ((value << 7) | b) + prev;
                     value = 0;

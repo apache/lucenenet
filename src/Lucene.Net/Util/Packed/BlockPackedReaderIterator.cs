@@ -48,50 +48,50 @@ namespace Lucene.Net.Util.Packed
         internal static long ReadVInt64(DataInput @in)
         {
             byte b = @in.ReadByte();
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return b;
             }
             long i = b & 0x7FL;
             b = @in.ReadByte();
             i |= (b & 0x7FL) << 7;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }
             b = @in.ReadByte();
             i |= (b & 0x7FL) << 14;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }
             b = @in.ReadByte();
             i |= (b & 0x7FL) << 21;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }
             b = @in.ReadByte();
             i |= (b & 0x7FL) << 28;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }
             b = @in.ReadByte();
             i |= (b & 0x7FL) << 35;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }
             b = @in.ReadByte();
             i |= (b & 0x7FL) << 42;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }
             b = @in.ReadByte();
             i |= (b & 0x7FL) << 49;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }

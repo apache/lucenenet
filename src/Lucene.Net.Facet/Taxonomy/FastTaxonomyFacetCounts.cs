@@ -81,7 +81,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     while (offset < end)
                     {
                         byte b = bytes[offset++];
-                        if ((sbyte)b >= 0)
+                        if (b <= 127)
                         {
                             prev = ord = ((ord << 7) | b) + prev;
                             ++m_values[ord];

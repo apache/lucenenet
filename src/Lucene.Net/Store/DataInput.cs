@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -95,7 +95,7 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataOutput.WriteInt16(short)"/>
         public virtual short ReadInt16()
         {
-            return (short)(ushort)(((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF));
+            return (short)Math.Abs(((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF));
         }
 
         /// <summary>
@@ -123,26 +123,26 @@ namespace Lucene.Net.Store
         public virtual int ReadVInt32()
         {
             byte b = ReadByte();
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return b;
             }
             int i = b & 0x7F;
             b = ReadByte();
             i |= (b & 0x7F) << 7;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }
             b = ReadByte();
             i |= (b & 0x7F) << 14;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }
             b = ReadByte();
             i |= (b & 0x7F) << 21;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }
@@ -191,56 +191,56 @@ namespace Lucene.Net.Store
             return i;
             */
             byte b = ReadByte();
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return b;
             }
             long i = b & 0x7FL;
             b = ReadByte();
             i |= (b & 0x7FL) << 7;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }
             b = ReadByte();
             i |= (b & 0x7FL) << 14;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }
             b = ReadByte();
             i |= (b & 0x7FL) << 21;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }
             b = ReadByte();
             i |= (b & 0x7FL) << 28;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }
             b = ReadByte();
             i |= (b & 0x7FL) << 35;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }
             b = ReadByte();
             i |= (b & 0x7FL) << 42;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }
             b = ReadByte();
             i |= (b & 0x7FL) << 49;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }
             b = ReadByte();
             i |= (b & 0x7FL) << 56;
-            if ((sbyte)b >= 0)
+            if (b <= 127)
             {
                 return i;
             }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Packed
         public override long Get(int index)
         {
             long majorBitPos = (long)index * m_bitsPerValue;
-            long elementPos = (long)((ulong)majorBitPos >> 3);
+            long elementPos = Math.Abs(majorBitPos) >> 3;
             try
             {
                 @in.Seek(startPointer + elementPos);
