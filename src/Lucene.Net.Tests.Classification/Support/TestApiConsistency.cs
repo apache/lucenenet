@@ -1,4 +1,4 @@
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -111,7 +111,7 @@ namespace Lucene.Net.Classification
         public override void TestForPublicMembersContainingNonNetNumeric(Type typeFromTargetAssembly)
         {
             base.TestForPublicMembersContainingNonNetNumeric(typeFromTargetAssembly);
-        }        
+        }
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Classification.KNearestNeighborClassifier))]
@@ -129,12 +129,12 @@ namespace Lucene.Net.Classification
 
         // LUCENENET NOTE: This test is only for identifying members who were changed from
         // ICollection, IList or ISet to IEnumerable during the port (that should be changed back)
-        //[Test, LuceneNetSpecific]
-        //[TestCase(typeof(Lucene.Net.Classification.KNearestNeighborClassifier))]
-        //public override void TestForMembersAcceptingOrReturningIEnumerable(Type typeFromTargetAssembly)
-        //{
-        //    base.TestForMembersAcceptingOrReturningIEnumerable(typeFromTargetAssembly);
-        //}
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Classification.KNearestNeighborClassifier))]
+        public override void TestForMembersAcceptingOrReturningIEnumerable(Type typeFromTargetAssembly)
+        {
+            base.TestForMembersAcceptingOrReturningIEnumerable(typeFromTargetAssembly);
+        }
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Classification.KNearestNeighborClassifier))]

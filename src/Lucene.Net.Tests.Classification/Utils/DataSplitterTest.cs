@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Classification.Utils;
@@ -32,20 +32,20 @@ namespace Lucene.Net.Classification
      */
     public class DataSplitterTest : Util.LuceneTestCase
     {
-        private AtomicReader _originalIndex;
-        private RandomIndexWriter _indexWriter;
+        private AtomicReader originalIndex;
+        private RandomIndexWriter indexWriter;
         private Directory _dir;
 
-        private String _textFieldName = "text";
-        private String _classFieldName = "class";
-        private String _idFieldName = "id";
+        private String textFieldName = "text";
+        private String classFieldName = "class";
+        private String idFieldName = "id";
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
             _dir = NewDirectory();
-            _indexWriter = new RandomIndexWriter(
+            indexWriter = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
@@ -62,23 +62,23 @@ namespace Lucene.Net.Classification
             for (int i = 0; i < 100; i++)
             {
                 doc = new Document();
-                doc.Add(new Field(_idFieldName, Random.toString(), ft));
-                doc.Add(new Field(_textFieldName, new StringBuilder(Random.toString()).append(Random.toString()).append(
+                doc.Add(new Field(idFieldName, Random.toString(), ft));
+                doc.Add(new Field(textFieldName, new StringBuilder(Random.toString()).append(Random.toString()).append(
                     Random.toString()).toString(), ft));
-                doc.Add(new Field(_classFieldName, Random.toString(), ft));
-                _indexWriter.AddDocument(doc, analyzer);
+                doc.Add(new Field(classFieldName, Random.toString(), ft));
+                indexWriter.AddDocument(doc, analyzer);
             }
 
-            _indexWriter.Commit();
+            indexWriter.Commit();
 
-            _originalIndex = SlowCompositeReaderWrapper.Wrap(_indexWriter.GetReader());
+            originalIndex = SlowCompositeReaderWrapper.Wrap(indexWriter.GetReader());
         }
 
         [TearDown]
         public override void TearDown()
         {
-            _originalIndex.Dispose();
-            _indexWriter.Dispose();
+            originalIndex.Dispose();
+            indexWriter.Dispose();
             _dir.Dispose();
             base.TearDown();
         }
@@ -86,14 +86,14 @@ namespace Lucene.Net.Classification
         [Test]
         public void TestSplitOnAllFields()
         {
-            AssertSplit(_originalIndex, 0.1, 0.1);
+            AssertSplit(originalIndex, 0.1, 0.1);
         }
 
 
         [Test]
         public void TestSplitOnSomeFields()
         {
-            AssertSplit(_originalIndex, 0.2, 0.35, _idFieldName, _textFieldName);
+            AssertSplit(originalIndex, 0.2, 0.35, idFieldName, textFieldName);
         }
 
         public static void AssertSplit(AtomicReader originalIndex, double testRatio, double crossValidationRatio, params string[] fieldNames)
