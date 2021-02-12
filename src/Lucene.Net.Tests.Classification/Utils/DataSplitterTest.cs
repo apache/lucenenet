@@ -34,7 +34,7 @@ namespace Lucene.Net.Classification
     {
         private AtomicReader originalIndex;
         private RandomIndexWriter indexWriter;
-        private Directory _dir;
+        private Directory dir;
 
         private String textFieldName = "text";
         private String classFieldName = "class";
@@ -44,12 +44,12 @@ namespace Lucene.Net.Classification
         public override void SetUp()
         {
             base.SetUp();
-            _dir = NewDirectory();
+            dir = NewDirectory();
             indexWriter = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, _dir, new MockAnalyzer(Random));
+                Random, dir, new MockAnalyzer(Random));
 
             FieldType ft = new FieldType(TextField.TYPE_STORED);
             ft.StoreTermVectors = true;
@@ -79,7 +79,7 @@ namespace Lucene.Net.Classification
         {
             originalIndex.Dispose();
             indexWriter.Dispose();
-            _dir.Dispose();
+            dir.Dispose();
             base.TearDown();
         }
 
