@@ -34,11 +34,7 @@ namespace Lucene.Net.Classification
     {
         private AtomicReader originalIndex;
         private RandomIndexWriter indexWriter;
-<<<<<<< HEAD
         private Directory dir;
-=======
-        private Directory _dir;
->>>>>>> 319cb7497 (Revied classification tests. Made minor changes and uncommented 1 test and verified it passes.  See issue #259)
 
         private String textFieldName = "text";
         private String classFieldName = "class";
@@ -48,11 +44,7 @@ namespace Lucene.Net.Classification
         public override void SetUp()
         {
             base.SetUp();
-<<<<<<< HEAD
             dir = NewDirectory();
-=======
-            _dir = NewDirectory();
->>>>>>> 319cb7497 (Revied classification tests. Made minor changes and uncommented 1 test and verified it passes.  See issue #259)
             indexWriter = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
@@ -87,11 +79,7 @@ namespace Lucene.Net.Classification
         {
             originalIndex.Dispose();
             indexWriter.Dispose();
-<<<<<<< HEAD
             dir.Dispose();
-=======
-            _dir.Dispose();
->>>>>>> 319cb7497 (Revied classification tests. Made minor changes and uncommented 1 test and verified it passes.  See issue #259)
             base.TearDown();
         }
 
