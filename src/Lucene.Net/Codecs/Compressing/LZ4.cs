@@ -1,4 +1,4 @@
-using J2N.Numerics;
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -177,16 +177,16 @@ namespace Lucene.Net.Codecs.Compressing
         {
             while (l >= 0xFF)
             {
-                @out.WriteByte(unchecked((byte)(sbyte)0xFF));
+                @out.WriteByte(/*(byte)*/0xFF); // LUCENENET: Removed unnecessary cast
                 l -= 0xFF;
             }
-            @out.WriteByte((byte)(sbyte)l);
+            @out.WriteByte((byte)l);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void EncodeLiterals(byte[] bytes, int token, int anchor, int literalLen, DataOutput @out)
         {
-            @out.WriteByte((byte)(sbyte)token);
+            @out.WriteByte((byte)token);
 
             // encode literal length
             if (literalLen >= 0x0F)
@@ -216,8 +216,8 @@ namespace Lucene.Net.Codecs.Compressing
             // encode match dec
             int matchDec = matchOff - matchRef;
             if (Debugging.AssertsEnabled) Debugging.Assert(matchDec > 0 && matchDec < 1 << 16);
-            @out.WriteByte((byte)(sbyte)matchDec);
-            @out.WriteByte((byte)(sbyte)((int)((uint)matchDec >> 8)));
+            @out.WriteByte((byte)matchDec);
+            @out.WriteByte((byte)(int)((uint)matchDec >> 8));
 
             // encode match len
             if (matchLen >= MIN_MATCH + 0x0F)

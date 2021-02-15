@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -478,7 +478,7 @@ namespace Lucene.Net.Codecs.Compressing
             if (Debugging.AssertsEnabled) Debugging.Assert(numDistinctFields > 0);
             int bitsRequired = PackedInt32s.BitsRequired(fieldNums.Max);
             int token = (Math.Min(numDistinctFields - 1, 0x07) << 5) | bitsRequired;
-            vectorsStream.WriteByte((byte)(sbyte)token);
+            vectorsStream.WriteByte((byte)token);
             if (numDistinctFields - 1 >= 0x07)
             {
                 vectorsStream.WriteVInt32(numDistinctFields - 1 - 0x07);

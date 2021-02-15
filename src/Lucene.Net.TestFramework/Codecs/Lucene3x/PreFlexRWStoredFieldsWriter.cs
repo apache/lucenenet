@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
@@ -159,7 +159,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            fieldsStream.WriteByte((byte)(sbyte)bits);
+            fieldsStream.WriteByte((byte)bits);
 
             if (bytes != null)
             {

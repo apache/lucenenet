@@ -192,7 +192,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 // pad to fit
                 for (int i = length; i < maxLength; i++)
                 {
-                    data.WriteByte((byte)(sbyte) ' ');
+                    data.WriteByte((byte) ' ');
                 }
                 SimpleTextUtil.WriteNewline(data);
                 SimpleTextUtil.Write(data, value == null ? "F" : "T", scratch);

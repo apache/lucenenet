@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -101,7 +101,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         // to allow null norm types we need to indicate if norms are written
                         // only in RW case
-                        output.WriteByte((byte)(sbyte)(fi.NormType == Index.DocValuesType.NONE ? 0 : 1));
+                        output.WriteByte((byte)(fi.NormType == Index.DocValuesType.NONE ? 0 : 1));
                     }
                     if (Debugging.AssertsEnabled) Debugging.Assert(fi.Attributes == null); // not used or supported
                 }

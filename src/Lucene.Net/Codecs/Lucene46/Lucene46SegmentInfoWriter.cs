@@ -1,4 +1,4 @@
-namespace Lucene.Net.Codecs.Lucene46
+﻿namespace Lucene.Net.Codecs.Lucene46
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -56,7 +56,7 @@ namespace Lucene.Net.Codecs.Lucene46
                 output.WriteString(si.Version);
                 output.WriteInt32(si.DocCount);
 
-                output.WriteByte((byte)(sbyte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
+                output.WriteByte((byte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
                 output.WriteStringStringMap(si.Diagnostics);
                 output.WriteStringSet(si.GetFiles());
                 CodecUtil.WriteFooter(output);

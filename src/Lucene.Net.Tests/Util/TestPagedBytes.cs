@@ -1,4 +1,4 @@
-using Lucene.Net.Store;
+﻿using Lucene.Net.Store;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -194,7 +194,7 @@ namespace Lucene.Net.Util
             var arr = new byte[TestUtil.NextInt32(Random, blockSize / 2, blockSize * 2)];
             for (int i = 0; i < arr.Length; ++i)
             {
-                arr[i] = (byte)(sbyte)i;
+                arr[i] = (byte)i;
             }
             long numBytes = (1L << 31) + TestUtil.NextInt32(Random, 1, blockSize * 3);
             var p = new PagedBytes(blockBits);

@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -442,12 +442,12 @@ namespace Lucene.Net.Codecs.Lucene40
             if (Debugging.AssertsEnabled) Debugging.Assert(i >= 0 && i <= short.MaxValue);
             if (i < 128)
             {
-                o.WriteByte((byte)(sbyte)i);
+                o.WriteByte((byte)i);
             }
             else
             {
-                o.WriteByte((byte)unchecked((sbyte)(0x80 | (i >> 8))));
-                o.WriteByte((byte)unchecked((sbyte)(i & 0xff)));
+                o.WriteByte((byte)(0x80 | (i >> 8)));
+                o.WriteByte((byte)(i & 0xff));
             }
         }
 
@@ -466,7 +466,7 @@ namespace Lucene.Net.Codecs.Lucene40
             bool anyMissing = false;
             foreach (long n in docToOrd)
             {
-                if ((long)n == -1)
+                if (n == -1)
                 {
                     anyMissing = true;
                     break;

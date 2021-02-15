@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -324,7 +324,7 @@ namespace Lucene.Net.Util
                 {
                     token |= 1 << 3;
                 }
-                @out.WriteByte((byte)(sbyte)token);
+                @out.WriteByte((byte)token);
                 if (cleanLengthMinus2 > 0x03)
                 {
                     @out.WriteVInt32((int)((uint)cleanLengthMinus2 >> 2));

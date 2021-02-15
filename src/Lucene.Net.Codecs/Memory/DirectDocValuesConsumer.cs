@@ -139,7 +139,7 @@ namespace Lucene.Net.Codecs.Memory
                 switch (byteWidth)
                 {
                     case 1:
-                        data.WriteByte((byte)(sbyte) v);
+                        data.WriteByte((byte) v);
                         break;
                     case 2:
                         data.WriteInt16((short) v);

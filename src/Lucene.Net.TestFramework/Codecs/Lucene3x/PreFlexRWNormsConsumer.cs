@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -80,11 +80,11 @@ namespace Lucene.Net.Codecs.Lucene3x
             if (Debugging.AssertsEnabled) Debugging.Assert(field.Number > lastFieldNumber,"writing norms fields out of order {0} -> {1}", lastFieldNumber, field.Number);
             foreach (var n in values)
             {
-                if (((sbyte)(byte)(long)n) < sbyte.MinValue || ((sbyte)(byte)(long)n) > sbyte.MaxValue)
+                if (((sbyte)n) < sbyte.MinValue || ((sbyte)n) > sbyte.MaxValue)
                 {
-                    throw new NotSupportedException("3.x cannot index norms that won't fit in a byte, got: " + ((sbyte)(byte)(long)n));
+                    throw new NotSupportedException("3.x cannot index norms that won't fit in a byte, got: " + ((sbyte)n));
                 }
-                @out.WriteByte((byte)(sbyte)n);
+                @out.WriteByte((byte)n);
             }
             lastFieldNumber = field.Number;
         }
