@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -58,7 +58,7 @@ namespace Lucene.Net.Util.Packed
             {
                 if (remainingBits == 0)
                 {
-                    @out.WriteByte((byte)(sbyte)current);
+                    @out.WriteByte((byte)current);
                     current = 0L;
                     remainingBits = 8;
                 }
@@ -77,7 +77,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (remainingBits < 8)
             {
-                @out.WriteByte((byte)(sbyte)current);
+                @out.WriteByte((byte)current);
             }
             remainingBits = 8;
             current = 0L;

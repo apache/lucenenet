@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Packed;
@@ -165,7 +165,7 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             if (IsAllEqual(data))
             {
-                @out.WriteByte((byte)(sbyte)ALL_VALUES_EQUAL);
+                @out.WriteByte((byte)ALL_VALUES_EQUAL);
                 @out.WriteVInt32(data[0]);
                 return;
             }

@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
@@ -1347,7 +1347,7 @@ namespace Lucene.Net.Index
             IndexOutput @out = dir.CreateOutput(IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", 1 + gen), NewIOContext(Random));
             @out.CopyBytes(@in, @in.Length - 1);
             byte b = @in.ReadByte();
-            @out.WriteByte((byte)(sbyte)(1 + b));
+            @out.WriteByte((byte)(1 + b));
             @out.Dispose();
             @in.Dispose();
 
