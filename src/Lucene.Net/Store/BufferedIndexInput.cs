@@ -260,26 +260,26 @@ namespace Lucene.Net.Store
             if (5 <= (bufferLength - bufferPosition))
             {
                 byte b = m_buffer[bufferPosition++];
-                if ((sbyte)b >= 0)
+                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
                 {
                     return b;
                 }
                 int i = b & 0x7F;
                 b = m_buffer[bufferPosition++];
                 i |= (b & 0x7F) << 7;
-                if ((sbyte)b >= 0)
+                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
                 {
                     return i;
                 }
                 b = m_buffer[bufferPosition++];
                 i |= (b & 0x7F) << 14;
-                if ((sbyte)b >= 0)
+                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
                 {
                     return i;
                 }
                 b = m_buffer[bufferPosition++];
                 i |= (b & 0x7F) << 21;
-                if ((sbyte)b >= 0)
+                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
                 {
                     return i;
                 }
@@ -306,56 +306,56 @@ namespace Lucene.Net.Store
             if (9 <= bufferLength - bufferPosition)
             {
                 byte b = m_buffer[bufferPosition++];
-                if ((sbyte)b >= 0)
+                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
                 {
                     return b;
                 }
                 long i = b & 0x7FL;
                 b = m_buffer[bufferPosition++];
                 i |= (b & 0x7FL) << 7;
-                if ((sbyte)b >= 0)
+                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
                 {
                     return i;
                 }
                 b = m_buffer[bufferPosition++];
                 i |= (b & 0x7FL) << 14;
-                if ((sbyte)b >= 0)
+                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
                 {
                     return i;
                 }
                 b = m_buffer[bufferPosition++];
                 i |= (b & 0x7FL) << 21;
-                if ((sbyte)b >= 0)
+                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
                 {
                     return i;
                 }
                 b = m_buffer[bufferPosition++];
                 i |= (b & 0x7FL) << 28;
-                if ((sbyte)b >= 0)
+                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
                 {
                     return i;
                 }
                 b = m_buffer[bufferPosition++];
                 i |= (b & 0x7FL) << 35;
-                if ((sbyte)b >= 0)
+                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
                 {
                     return i;
                 }
                 b = m_buffer[bufferPosition++];
                 i |= (b & 0x7FL) << 42;
-                if ((sbyte)b >= 0)
+                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
                 {
                     return i;
                 }
                 b = m_buffer[bufferPosition++];
                 i |= (b & 0x7FL) << 49;
-                if ((sbyte)b >= 0)
+                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
                 {
                     return i;
                 }
                 b = m_buffer[bufferPosition++];
                 i |= (b & 0x7FL) << 56;
-                if ((sbyte)b >= 0)
+                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
                 {
                     return i;
                 }
