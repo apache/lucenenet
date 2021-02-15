@@ -1,4 +1,4 @@
-namespace Lucene.Net.Classification
+﻿namespace Lucene.Net.Classification
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -24,8 +24,8 @@ namespace Lucene.Net.Classification
     public class ClassificationResult<T>
     {
 
-        private readonly T _assignedClass;
-        private readonly double _score;
+        private readonly T assignedClass;
+        private readonly double score;
 
         /// <summary>
         /// Constructor
@@ -34,19 +34,19 @@ namespace Lucene.Net.Classification
         /// </summary>
         public ClassificationResult(T assignedClass, double score) 
         {
-            _assignedClass = assignedClass;
-            _score = score;
+            this.assignedClass = assignedClass;
+            this.score = score;
         }
 
         /// <summary>
         /// retrieve the result class
         /// @return a <typeparamref name="T"/> representing an assigned class
         /// </summary>
-        public virtual T AssignedClass => _assignedClass;
+        public virtual T AssignedClass => assignedClass;
 
         /// <summary>
         /// Gets a <see cref="double"/> representing a result score.
         /// </summary>
-        public virtual double Score => _score;
+        public virtual double Score => score;
     }
 }
