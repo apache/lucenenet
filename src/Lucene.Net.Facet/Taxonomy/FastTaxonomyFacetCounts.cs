@@ -82,7 +82,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     while (offset < end)
                     {
                         byte b = bytes[offset++];
-                        if ((sbyte)b >= 0)
+                        if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
                         {
                             prev = ord = ((ord << 7) | b) + prev;
                             ++m_values[ord];
