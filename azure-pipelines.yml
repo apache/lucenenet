@@ -1,4 +1,4 @@
-# Licensed to the Apache Software Foundation (ASF) under one
+﻿# Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
 # regarding copyright ownership.  The ASF licenses this file
@@ -48,6 +48,8 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 # Directory: 'random' (Optional - set to a specific directory implementation to test the same codec throughout all tests)
 # Verbose: 'false' (Optional - set to true for verbose logging output)
 # Multiplier: '1' (Optional - the number of iterations to multiply applicable tests by)
+
+# RunX86Tests: 'false' (Optional - set to 'true' to enable x86 tests)
 
 variables:
 - name: BuildCounter
@@ -348,8 +350,8 @@ stages:
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
 
-  - job: Test_net5_0_x86 # Only run Nightly
-    condition: and(succeeded(), ne(variables['RunTests'], 'false'), eq(variables['IsNightly'], 'true'))
+  - job: Test_net5_0_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
     strategy:
       matrix:
         Windows:
@@ -412,8 +414,8 @@ stages:
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
 
-  - job: Test_netcoreapp3_1_x86 # Only run Nightly
-    condition: and(succeeded(), ne(variables['RunTests'], 'false'), eq(variables['IsNightly'], 'true'))
+  - job: Test_netcoreapp3_1_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
     strategy:
       matrix:
         Windows:
@@ -476,8 +478,8 @@ stages:
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
 
-  - job: Test_netcoreapp2_2_x86 # Only run Nightly
-    condition: and(succeeded(), ne(variables['RunTests'], 'false'), eq(variables['IsNightly'], 'true'))
+  - job: Test_netcoreapp2_2_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
     strategy:
       matrix:
         Windows:
@@ -523,8 +525,8 @@ stages:
         maximumParallelJobs: 8
         maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
 
-  - job: Test_net48_Windows_x86 # Only run Nightly
-    condition: and(succeeded(), ne(variables['RunTests'], 'false'), eq(variables['IsNightly'], 'true'))
+  - job: Test_net48_Windows_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
     displayName: 'Test net48,x86 on Windows'
     pool:
       vmImage: 'windows-2019'
