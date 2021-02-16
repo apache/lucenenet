@@ -1,4 +1,5 @@
-﻿using System;
+﻿using J2N.Numerics;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -100,7 +101,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             byte v = m_vspace[k++];
             while (v != 0)
             {
-                char c = (char)(((int)((uint)v >> 4)) - 1 + '0');
+                char c = (char)(v.TripleShift(4) - 1 + '0');;
                 buf.Append(c);
                 c = (char)(v & 0x0f);
                 if (c == 0)
@@ -251,7 +252,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             byte v = m_vspace[k++];
             while (v != 0)
             {
-                char c = (char)((((int)((uint)v >> 4))) - 1);
+                char c = (char)(v.TripleShift(4) - 1);
                 buf.Append(c);
                 c = (char)(v & 0x0f);
                 if (c == 0)

@@ -1,3 +1,5 @@
+﻿using J2N.Numerics;
+
 namespace Lucene.Net.Store
 {
     /*
@@ -50,7 +52,7 @@ namespace Lucene.Net.Store
             const int prime = 31;
             int result = 1;
             result = prime * result 
-                + (int)(EstimatedMergeBytes ^ ((long)((ulong)EstimatedMergeBytes >> 32)));
+                + (int)(EstimatedMergeBytes ^ (EstimatedMergeBytes.TripleShift(32)));
             result = prime * result + (IsExternal ? 1231 : 1237);
             result = prime * result + MergeMaxNumSegments;
             result = prime * result + TotalDocCount;

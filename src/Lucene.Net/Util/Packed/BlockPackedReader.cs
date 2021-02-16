@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using System;
@@ -46,7 +47,7 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < numBlocks; ++i)
             {
                 int token = @in.ReadByte() & 0xFF;
-                int bitsPerValue = (int)((uint)token >> AbstractBlockPackedWriter.BPV_SHIFT);
+                int bitsPerValue = token.TripleShift(AbstractBlockPackedWriter.BPV_SHIFT);
                 if (bitsPerValue > 64)
                 {
                     throw new Exception("Corrupted");
@@ -84,7 +85,7 @@ namespace Lucene.Net.Util.Packed
         public override long Get(long index)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < valueCount);
-            int block = (int)((long)((ulong)index >> blockShift));
+            int block = (int)(index.TripleShift(blockShift));
             int idx = (int)(index & blockMask);
             return (minValues == null ? 0 : minValues[block]) + subReaders[block].Get(idx);
         }

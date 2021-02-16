@@ -1,4 +1,5 @@
 ﻿using J2N.Collections;
+using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -1354,7 +1355,7 @@ namespace Lucene.Net.Util.Fst
                 while (low <= high)
                 {
                     //System.out.println("    cycle");
-                    int mid = (int)((uint)(low + high) >> 1);
+                    int mid = (low + high).TripleShift(1);
                     @in.Position = arc.PosArcsStart;
                     @in.SkipBytes(arc.BytesPerArc * mid + 1);
                     int midLabel = ReadLabel(@in);

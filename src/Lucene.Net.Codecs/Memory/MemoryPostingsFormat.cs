@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util.Fst;
 using System;
@@ -438,7 +439,7 @@ namespace Lucene.Net.Codecs.Memory
                     else
                     {
                         int code = @in.ReadVInt32();
-                        accum += (int)((uint)code >> 1);
+                        accum += code.TripleShift(1);
                         //System.out.println("  docID=" + accum + " code=" + code);
                         if ((code & 1) != 0)
                         {
@@ -599,7 +600,7 @@ namespace Lucene.Net.Codecs.Memory
                     docUpto++;
 
                     int code = @in.ReadVInt32();
-                    accum += (int)((uint)code >> 1);
+                    accum += code.TripleShift(1);
                     if ((code & 1) != 0)
                     {
                         freq = 1;
@@ -665,7 +666,7 @@ namespace Lucene.Net.Codecs.Memory
                 else
                 {
                     int code = @in.ReadVInt32();
-                    pos += (int)((uint)code >> 1);
+                    pos += code.TripleShift(1);
                     if ((code & 1) != 0)
                     {
                         payloadLength = @in.ReadVInt32();
@@ -683,7 +684,7 @@ namespace Lucene.Net.Codecs.Memory
                         // new offset length
                         offsetLength = @in.ReadVInt32();
                     }
-                    startOffset += (int)((uint)offsetCode >> 1);
+                    startOffset += offsetCode.TripleShift(1);
                 }
 
                 if (storePayloads)

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System.Diagnostics;
 
@@ -309,7 +310,7 @@ namespace Lucene.Net.Codecs.Memory
             int bit0 = bits & 1;
             int bit1 = bits & 2;
             int bit2 = bits & 4;
-            var bytesSize = ((int) ((uint) bits >> 3));
+            var bytesSize = bits.TripleShift(3);
             if (bit1 > 0 && bytesSize == 0) // determine extra length
             {
                 bytesSize = input.ReadVInt32();
@@ -331,7 +332,7 @@ namespace Lucene.Net.Codecs.Memory
                 int code = input.ReadVInt32();
                 if (_hasPos)
                 {
-                    totalTermFreq = docFreq = (int) ((uint) code >> 1);
+                    totalTermFreq = docFreq = code.TripleShift(1);
                     if ((code & 1) == 0)
                     {
                         totalTermFreq += input.ReadVInt64();

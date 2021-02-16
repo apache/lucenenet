@@ -1,4 +1,6 @@
-// this file has been automatically generated, DO NOT EDIT
+﻿// this file has been automatically generated, DO NOT EDIT
+
+using J2N.Numerics;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -36,7 +38,7 @@ namespace Lucene.Net.Util.Packed
                 long block = blocks[blocksOffset++];
                 for (int shift = 48; shift >= 0; shift -= 16)
                 {
-                    values[valuesOffset++] = (int)(((long)((ulong)block >> shift)) & 65535);
+                    values[valuesOffset++] = (int)((block.TripleShift(shift)) & 65535);
                 }
             }
         }
@@ -56,7 +58,7 @@ namespace Lucene.Net.Util.Packed
                 long block = blocks[blocksOffset++];
                 for (int shift = 48; shift >= 0; shift -= 16)
                 {
-                    values[valuesOffset++] = ((long)((ulong)block >> shift)) & 65535;
+                    values[valuesOffset++] = (block.TripleShift(shift)) & 65535;
                 }
             }
         }

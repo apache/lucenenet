@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
@@ -195,7 +196,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 while (hi >= lo)
                 {
-                    int mid = (int)(((uint)(lo + hi)) >> 1);
+                    int mid = (lo + hi).TripleShift(1);
 
                     long offset2 = fieldIndex.termOffsets.Get(mid);
                     int length2 = (int)(fieldIndex.termOffsets.Get(1 + mid) - offset2);

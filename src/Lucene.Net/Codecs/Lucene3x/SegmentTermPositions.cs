@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using System;
@@ -115,7 +116,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     payloadLength = proxStream.ReadVInt32();
                 }
-                delta = (int)((uint)delta >> 1);
+                delta = delta.TripleShift(1);
                 needToLoadPayload = true;
             }
             else if (delta == -1)

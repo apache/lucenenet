@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using System;
 
@@ -40,7 +41,7 @@ namespace Lucene.Net.Util.Packed
             int blocks = bitsPerValue;
             while ((blocks & 1) == 0)
             {
-                blocks = (int)((uint)blocks >> 1);
+                blocks = blocks.TripleShift(1);
             }
             this.longBlockCount = blocks;
             this.longValueCount = 64 * longBlockCount / bitsPerValue;
@@ -48,8 +49,8 @@ namespace Lucene.Net.Util.Packed
             int byteValueCount = longValueCount;
             while ((byteBlockCount & 1) == 0 && (byteValueCount & 1) == 0)
             {
-                byteBlockCount = (int)((uint)byteBlockCount >> 1);
-                byteValueCount = (int)((uint)byteValueCount >> 1);
+                byteBlockCount = byteBlockCount.TripleShift(1);
+                byteValueCount = byteValueCount.TripleShift(1);
             }
             this.byteBlockCount = byteBlockCount;
             this.byteValueCount = byteValueCount;
@@ -87,12 +88,12 @@ namespace Lucene.Net.Util.Packed
                 bitsLeft -= bitsPerValue;
                 if (bitsLeft < 0)
                 {
-                    values[valuesOffset++] = ((blocks[blocksOffset++] & ((1L << (bitsPerValue + bitsLeft)) - 1)) << -bitsLeft) | ((long)((ulong)blocks[blocksOffset] >> (64 + bitsLeft)));
+                    values[valuesOffset++] = ((blocks[blocksOffset++] & ((1L << (bitsPerValue + bitsLeft)) - 1)) << -bitsLeft) | (blocks[blocksOffset].TripleShift(64 + bitsLeft));
                     bitsLeft += 64;
                 }
                 else
                 {
-                    values[valuesOffset++] = ((long)((ulong)blocks[blocksOffset] >> bitsLeft)) & mask;
+                    values[valuesOffset++] = (blocks[blocksOffset].TripleShift(bitsLeft)) & mask;
                 }
             }
         }
@@ -114,11 +115,11 @@ namespace Lucene.Net.Util.Packed
                 {
                     // flush
                     int bits = 8 - bitsLeft;
-                    values[valuesOffset++] = nextValue | ((long)((ulong)bytes >> bits));
+                    values[valuesOffset++] = nextValue | (bytes.TripleShift(bits));
                     while (bits >= bitsPerValue)
                     {
                         bits -= bitsPerValue;
-                        values[valuesOffset++] = ((long)((ulong)bytes >> bits)) & mask;
+                        values[valuesOffset++] = (bytes.TripleShift(bits)) & mask;
                     }
                     // then buffer
                     bitsLeft = bitsPerValue - bits;
@@ -140,12 +141,12 @@ namespace Lucene.Net.Util.Packed
                 bitsLeft -= bitsPerValue;
                 if (bitsLeft < 0)
                 {
-                    values[valuesOffset++] = (int)(((blocks[blocksOffset++] & ((1L << (bitsPerValue + bitsLeft)) - 1)) << -bitsLeft) | ((long)((ulong)blocks[blocksOffset] >> (64 + bitsLeft))));
+                    values[valuesOffset++] = (int)(((blocks[blocksOffset++] & ((1L << (bitsPerValue + bitsLeft)) - 1)) << -bitsLeft) | (blocks[blocksOffset].TripleShift(64 + bitsLeft)));
                     bitsLeft += 64;
                 }
                 else
                 {
-                    values[valuesOffset++] = (int)(((long)((ulong)blocks[blocksOffset] >> bitsLeft)) & mask);
+                    values[valuesOffset++] = (int)((blocks[blocksOffset].TripleShift(bitsLeft)) & mask);
                 }
             }
         }
@@ -167,11 +168,11 @@ namespace Lucene.Net.Util.Packed
                 {
                     // flush
                     int bits = 8 - bitsLeft;
-                    values[valuesOffset++] = nextValue | ((int)((uint)bytes >> bits));
+                    values[valuesOffset++] = nextValue | (bytes.TripleShift(bits));
                     while (bits >= bitsPerValue)
                     {
                         bits -= bitsPerValue;
-                        values[valuesOffset++] = ((int)((uint)bytes >> bits)) & intMask;
+                        values[valuesOffset++] = (bytes.TripleShift(bits)) & intMask;
                     }
                     // then buffer
                     bitsLeft = bitsPerValue - bits;
@@ -201,7 +202,7 @@ namespace Lucene.Net.Util.Packed
                 } // bitsLeft < 0
                 else
                 {
-                    nextBlock |= (long)((ulong)values[valuesOffset] >> -bitsLeft);
+                    nextBlock |= values[valuesOffset].TripleShift(-bitsLeft);
                     blocks[blocksOffset++] = nextBlock;
                     nextBlock = (values[valuesOffset++] & ((1L << -bitsLeft) - 1)) << (64 + bitsLeft);
                     bitsLeft += 64;
@@ -229,7 +230,7 @@ namespace Lucene.Net.Util.Packed
                 } // bitsLeft < 0
                 else
                 {
-                    nextBlock |= ((uint)(values[valuesOffset] & 0xFFFFFFFFL) >> -bitsLeft);
+                    nextBlock |= (values[valuesOffset] & 0xFFFFFFFFL).TripleShift(-bitsLeft);
                     blocks[blocksOffset++] = nextBlock;
                     nextBlock = (values[valuesOffset++] & ((1L << -bitsLeft) - 1)) << (64 + bitsLeft);
                     bitsLeft += 64;
@@ -255,11 +256,11 @@ namespace Lucene.Net.Util.Packed
                 {
                     // flush as many blocks as possible
                     int bits = bitsPerValue - bitsLeft;
-                    blocks[blocksOffset++] = (byte)((uint)nextBlock | ((long)((ulong)v >> bits)));
+                    blocks[blocksOffset++] = (byte)((uint)nextBlock | (v.TripleShift(bits)));
                     while (bits >= 8)
                     {
                         bits -= 8;
-                        blocks[blocksOffset++] = (byte)((long)((ulong)v >> bits));
+                        blocks[blocksOffset++] = (byte)(v.TripleShift(bits));
                     }
                     // then buffer
                     bitsLeft = 8 - bits;
@@ -287,11 +288,11 @@ namespace Lucene.Net.Util.Packed
                 {
                     // flush as many blocks as possible
                     int bits = bitsPerValue - bitsLeft;
-                    blocks[blocksOffset++] = (byte)(nextBlock | ((int)((uint)v >> bits)));
+                    blocks[blocksOffset++] = (byte)(nextBlock | (v.TripleShift(bits)));
                     while (bits >= 8)
                     {
                         bits -= 8;
-                        blocks[blocksOffset++] = (byte)((int)((uint)v >> bits));
+                        blocks[blocksOffset++] = (byte)(v.TripleShift(bits));
                     }
                     // then buffer
                     bitsLeft = 8 - bits;

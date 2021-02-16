@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Runtime.CompilerServices;
@@ -74,7 +75,7 @@ namespace Lucene.Net.Util
             while (n >= 64)
             {
                 r |= n & 1;
-                n = (int)((uint)n >> 1);
+                n = n.TripleShift(1);
             }
             int minRun = n + r;
             if (Debugging.AssertsEnabled) Debugging.Assert(minRun >= MINRUN && minRun <= THRESHOLD);
@@ -401,7 +402,7 @@ namespace Lucene.Net.Util
             int len = to - from;
             while (len > 0)
             {
-                int half = (int)((uint)len >> 1);
+                int half = len.TripleShift(1);
                 int mid = from + half;
                 if (CompareSaved(val, mid) > 0)
                 {
@@ -422,7 +423,7 @@ namespace Lucene.Net.Util
             int len = to - from;
             while (len > 0)
             {
-                int half = (int)((uint)len >> 1);
+                int half = len.TripleShift(1);
                 int mid = from + half;
                 if (CompareSaved(val, mid) < 0)
                 {

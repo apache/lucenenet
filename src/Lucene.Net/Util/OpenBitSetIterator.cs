@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
@@ -58,17 +59,17 @@ namespace Lucene.Net.Util
             if ((int)word == 0)
             {
                 wordShift += 32;
-                word = (long)((ulong)word >> 32);
+                word = word.TripleShift(32);
             }
             if ((word & 0x0000FFFF) == 0)
             {
                 wordShift += 16;
-                word = (long)((ulong)word >> 16);
+                word = word.TripleShift(16);
             }
             if ((word & 0x000000FF) == 0)
             {
                 wordShift += 8;
-                word = (long)((ulong)word >> 8);
+                word = word.TripleShift(8);
             }
             indexArray = BitUtil.BitList((byte)word);
         }
@@ -101,7 +102,7 @@ namespace Lucene.Net.Util
             {
                 if (word != 0)
                 {
-                    word = (long)((ulong)word >> 8);
+                    word = word.TripleShift(8);
                     wordShift += 8;
                 }
 
@@ -121,7 +122,7 @@ namespace Lucene.Net.Util
             }
 
             int bitIndex = (indexArray & 0x0f) + wordShift;
-            indexArray = (int)((uint)indexArray >> 4);
+            indexArray = indexArray.TripleShift(4);
             // should i<<6 be cached as a separate variable?
             // it would only save one cycle in the best circumstances.
             return curDocId = (i << 6) + bitIndex;
@@ -137,7 +138,7 @@ namespace Lucene.Net.Util
                 return curDocId = NO_MORE_DOCS;
             }
             wordShift = target & 0x3f;
-            word = (long)((ulong)arr[i] >> wordShift);
+            word = arr[i].TripleShift(wordShift);
             if (word != 0)
             {
                 wordShift--; // compensate for 1 based arrIndex
@@ -158,7 +159,7 @@ namespace Lucene.Net.Util
             Shift();
 
             int bitIndex = (indexArray & 0x0f) + wordShift;
-            indexArray = (int)((uint)indexArray >> 4);
+            indexArray = indexArray.TripleShift(4);
             // should i<<6 be cached as a separate variable?
             // it would only save one cycle in the best circumstances.
             return curDocId = (i << 6) + bitIndex;

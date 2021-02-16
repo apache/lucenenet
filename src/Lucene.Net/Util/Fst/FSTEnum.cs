@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Runtime.CompilerServices;
@@ -172,7 +173,7 @@ namespace Lucene.Net.Util.Fst
                     bool found = false;
                     while (low <= high)
                     {
-                        mid = (int)((uint)(low + high) >> 1);
+                        mid = (low + high).TripleShift(1);
                         @in.Position = arc.PosArcsStart;
                         @in.SkipBytes(arc.BytesPerArc * mid + 1);
                         int midLabel = m_fst.ReadLabel(@in);
@@ -345,7 +346,7 @@ namespace Lucene.Net.Util.Fst
                     bool found = false;
                     while (low <= high)
                     {
-                        mid = (int)((uint)(low + high) >> 1);
+                        mid = (low + high).TripleShift(1);
                         @in.Position = arc.PosArcsStart;
                         @in.SkipBytes(arc.BytesPerArc * mid + 1);
                         int midLabel = m_fst.ReadLabel(@in);

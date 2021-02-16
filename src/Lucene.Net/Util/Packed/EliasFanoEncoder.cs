@@ -1,4 +1,4 @@
-using J2N.Numerics;
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -81,7 +81,7 @@ namespace Lucene.Net.Util.Packed
     ///
     /// <para/>The articles originally describing the Elias-Fano representation are:
     /// <para/>Peter Elias, "Efficient storage and retrieval by content and address of static files",
-    /// J. Assoc. Comput. Mach., 21(2):246�"260, 1974.
+    /// J. Assoc. Comput. Mach., 21(2):246â€"260, 1974.
     /// <para/>Robert M. Fano, "On the number of bits required to implement an associative memory",
     ///  Memorandum 61, Computer Structures Group, Project MAC, MIT, Cambridge, Mass., 1971.
     /// <para/>
@@ -169,7 +169,7 @@ namespace Lucene.Net.Util.Packed
                 }
             }
             this.numLowBits = nLowBits;
-            this.lowerBitsMask = (long)(unchecked((ulong)long.MaxValue) >> (sizeof(long) * 8 - 1 - this.numLowBits));
+            this.lowerBitsMask = long.MaxValue.TripleShift(sizeof(long) * 8 - 1 - this.numLowBits);
 
             long numLongsForLowBits = NumInt64sForBits(numValues * numLowBits);
             if (numLongsForLowBits > int.MaxValue)
@@ -178,7 +178,7 @@ namespace Lucene.Net.Util.Packed
             }
             this.lowerLongs = new long[(int)numLongsForLowBits];
 
-            long numHighBitsClear = (long)((ulong)((this.upperBound > 0) ? this.upperBound : 0) >> this.numLowBits);
+            long numHighBitsClear = ((this.upperBound > 0) ? this.upperBound : 0).TripleShift(this.numLowBits);
             if (Debugging.AssertsEnabled) Debugging.Assert(numHighBitsClear <= (2 * this.numValues));
             long numHighBitsSet = this.numValues;
 
@@ -193,7 +193,7 @@ namespace Lucene.Net.Util.Packed
                 throw new ArgumentException("indexInterval should at least 2: " + indexInterval);
             }
             // For the index:
-            long maxHighValue = (long)((ulong)upperBound >> this.numLowBits);
+            long maxHighValue = upperBound.TripleShift(this.numLowBits);
             long nIndexEntries = maxHighValue / indexInterval; // no zero value index entry
             this.numIndexEntries = (nIndexEntries >= 0) ? nIndexEntries : 0;
             long maxIndexEntry = maxHighValue + numValues - 1; // clear upper bits, set upper bits, start at zero
@@ -223,7 +223,7 @@ namespace Lucene.Net.Util.Packed
         private static long NumInt64sForBits(long numBits) // Note: int version in FixedBitSet.bits2words()
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(numBits >= 0, "{0}", numBits);
-            return (long)((ulong)(numBits + (sizeof(long) * 8 - 1)) >> LOG2_INT64_SIZE);
+            return (numBits + (sizeof(long) * 8 - 1)).TripleShift(LOG2_INT64_SIZE);
         }
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace Lucene.Net.Util.Packed
             {
                 throw new ArgumentException(x + " larger than upperBound " + upperBound);
             }
-            long highValue = (long)((ulong)x >> numLowBits);
+            long highValue = x.TripleShift(numLowBits);
             EncodeUpperBits(highValue);
             EncodeLowerBits(x & lowerBitsMask);
             lastEncoded = x;
@@ -269,7 +269,7 @@ namespace Lucene.Net.Util.Packed
         private void EncodeUpperBits(long highValue)
         {
             long nextHighBitNum = numEncoded + highValue; // sequence of unary gaps
-            upperLongs[(int)((long)((ulong)nextHighBitNum >> LOG2_INT64_SIZE))] |= (1L << (int)(nextHighBitNum & ((sizeof(long) * 8) - 1)));
+            upperLongs[(int)(nextHighBitNum.TripleShift(LOG2_INT64_SIZE))] |= (1L << (int)(nextHighBitNum & ((sizeof(long) * 8) - 1)));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -284,12 +284,12 @@ namespace Lucene.Net.Util.Packed
             if (numBits != 0)
             {
                 long bitPos = numBits * packIndex;
-                int index = (int)((long)((ulong)bitPos >> LOG2_INT64_SIZE));
+                int index = (int)(bitPos.TripleShift(LOG2_INT64_SIZE));
                 int bitPosAtIndex = (int)(bitPos & ((sizeof(long) * 8) - 1));
                 longArray[index] |= (value << bitPosAtIndex);
                 if ((bitPosAtIndex + numBits) > (sizeof(long) * 8))
                 {
-                    longArray[index + 1] = ((long)((ulong)value >> ((sizeof(long) * 8) - bitPosAtIndex)));
+                    longArray[index + 1] = value.TripleShift((sizeof(long) * 8) - bitPosAtIndex);
                 }
             }
         }

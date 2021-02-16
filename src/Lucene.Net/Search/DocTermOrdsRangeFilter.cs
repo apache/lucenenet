@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Text;
@@ -187,7 +188,7 @@ namespace Lucene.Net.Search
         {
             int h = field.GetHashCode();
             h ^= (lowerVal != null) ? lowerVal.GetHashCode() : 550356204;
-            h = (h << 1) | ((int)((uint)h >> 31)); // rotate to distinguish lower from upper
+            h = (h << 1) | (h.TripleShift(31)); // rotate to distinguish lower from upper
             h ^= (upperVal != null) ? upperVal.GetHashCode() : -1674416163;
             h ^= (includeLower ? 1549299360 : -365038026) ^ (includeUpper ? 1721088258 : 1948649653);
             return h;

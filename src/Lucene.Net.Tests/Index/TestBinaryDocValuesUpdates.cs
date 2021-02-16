@@ -1,4 +1,5 @@
-using J2N;
+﻿using J2N;
+using J2N.Numerics;
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
@@ -90,7 +91,7 @@ namespace Lucene.Net.Index
             while ((value & ~0x7FL) != 0L)
             {
                 bytes.Bytes[bytes.Length++] = unchecked((byte)((value & 0x7FL) | 0x80L));
-                value = (long)((ulong)value >> 7);
+                value = value.TripleShift(7);
             }
             bytes.Bytes[bytes.Length++] = (byte)value;
             //    System.err.println("[" + Thread.currentThread().getName() + "] value=" + orig + ", bytes=" + bytes);

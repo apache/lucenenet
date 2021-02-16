@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 4.8.1
+using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
@@ -178,7 +179,7 @@ namespace Lucene.Net.Facet.Range
             int hi = boundaries.Length - 1;
             while (true)
             {
-                int mid = (int)((uint)(lo + hi) >> 1);
+                int mid = (lo + hi).TripleShift(1);
                 //System.out.println("  cycle lo=" + lo + " hi=" + hi + " mid=" + mid + " boundary=" + boundaries[mid] + " to " + boundaries[mid+1]);
                 if (v <= boundaries[mid])
                 {
@@ -261,7 +262,7 @@ namespace Lucene.Net.Facet.Range
             }
             else
             {
-                int mid = (int)((uint)(start + end) >> 1);
+                int mid = (start + end).TripleShift(1);
                 Int64RangeNode left = Split(start, mid, elementaryIntervals);
                 Int64RangeNode right = Split(mid, end, elementaryIntervals);
                 return new Int64RangeNode(left.start, right.end, left, right, -1);

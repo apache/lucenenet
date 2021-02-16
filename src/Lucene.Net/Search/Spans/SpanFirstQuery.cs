@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using System.Text;
 
@@ -93,7 +94,7 @@ namespace Lucene.Net.Search.Spans
         public override int GetHashCode()
         {
             int h = m_match.GetHashCode();
-            h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
+            h ^= (h << 8) | (h.TripleShift(25)); // reversible
             h ^= J2N.BitConversion.SingleToRawInt32Bits(Boost) ^ m_end;
             return h;
         }

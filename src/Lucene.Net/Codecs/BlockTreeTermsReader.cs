@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
@@ -574,7 +575,7 @@ namespace Lucene.Net.Codecs
                 //   System.out.println("BTTR: seg=" + segment + " field=" + fieldInfo.name + " rootBlockCode=" + rootCode + " divisor=" + indexDivisor);
                 // }
 
-                rootBlockFP = (int)((uint)(new ByteArrayDataInput(rootCode.Bytes, rootCode.Offset, rootCode.Length)).ReadVInt64() >> BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS);
+                rootBlockFP = new ByteArrayDataInput(rootCode.Bytes, rootCode.Offset, rootCode.Length).ReadVInt64().TripleShift(BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS);
 
                 if (indexIn != null)
                 {
@@ -767,7 +768,7 @@ namespace Lucene.Net.Codecs
 
                         do
                         {
-                            fp = fpOrig + ((int)((uint)floorDataReader.ReadVInt64() >> 1));
+                            fp = fpOrig + (floorDataReader.ReadVInt64().TripleShift(1));
                             numFollowFloorBlocks--;
                             // if (DEBUG) System.out.println("    skip floor block2!  nextFloorLabel=" + (char) nextFloorLabel + " vs target=" + (char) transitions[transitionIndex].getMin() + " newFP=" + fp + " numFollowFloorBlocks=" + numFollowFloorBlocks);
                             if (numFollowFloorBlocks != 0)
@@ -828,7 +829,7 @@ namespace Lucene.Net.Codecs
                                     // Maybe skip floor blocks:
                                     while (numFollowFloorBlocks != 0 && nextFloorLabel <= transitions[0].Min)
                                     {
-                                        fp = fpOrig + ((int)((uint)floorDataReader.ReadVInt64() >> 1));
+                                        fp = fpOrig + (floorDataReader.ReadVInt64().TripleShift(1));
                                         numFollowFloorBlocks--;
                                         // if (DEBUG) System.out.println("    skip floor block!  nextFloorLabel=" + (char) nextFloorLabel + " vs target=" + (char) transitions[0].getMin() + " newFP=" + fp + " numFollowFloorBlocks=" + numFollowFloorBlocks);
                                         if (numFollowFloorBlocks != 0)
@@ -846,14 +847,14 @@ namespace Lucene.Net.Codecs
 
                         outerInstance.@in.Seek(fp);
                         int code_ = outerInstance.@in.ReadVInt32();
-                        entCount = (int)((uint)code_ >> 1);
+                        entCount = code_.TripleShift(1);
                         if (Debugging.AssertsEnabled) Debugging.Assert(entCount > 0);
                         isLastInFloor = (code_ & 1) != 0;
 
                         // term suffixes:
                         code_ = outerInstance.@in.ReadVInt32();
                         isLeafBlock = (code_ & 1) != 0;
-                        int numBytes = (int)((uint)code_ >> 1);
+                        int numBytes = code_.TripleShift(1);
                         // if (DEBUG) System.out.println("      entCount=" + entCount + " lastInFloor?=" + isLastInFloor + " leafBlock?=" + isLeafBlock + " numSuffixBytes=" + numBytes);
                         if (suffixBytes.Length < numBytes)
                         {
@@ -922,7 +923,7 @@ namespace Lucene.Net.Codecs
                         if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt != -1 && nextEnt < entCount, "nextEnt={0} entCount={1} fp={2}", nextEnt, entCount, fp);
                         nextEnt++;
                         int code = suffixesReader.ReadVInt32();
-                        suffix = (int)((uint)code >> 1);
+                        suffix = code.TripleShift(1);
                         startBytePos = suffixesReader.Position;
                         suffixesReader.SkipBytes(suffix);
                         if ((code & 1) == 0)
@@ -1725,7 +1726,7 @@ namespace Lucene.Net.Codecs
                 {
                     scratchReader.Reset(frameData.Bytes, frameData.Offset, frameData.Length);
                     long code = scratchReader.ReadVInt64();
-                    long fpSeek = (long)((ulong)code >> BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS);
+                    long fpSeek = code.TripleShift(BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS);
                     Frame f = GetFrame(1 + currentFrame.ord);
                     f.hasTerms = (code & BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS) != 0;
                     f.hasTermsOrig = f.hasTerms;
@@ -2737,7 +2738,7 @@ namespace Lucene.Net.Codecs
 
                         outerInstance.@in.Seek(fp);
                         int code = outerInstance.@in.ReadVInt32();
-                        entCount = (int)((uint)code >> 1);
+                        entCount = code.TripleShift(1);
                         if (Debugging.AssertsEnabled) Debugging.Assert(entCount > 0);
                         isLastInFloor = (code & 1) != 0;
                         if (Debugging.AssertsEnabled) Debugging.Assert(arc == null || (isLastInFloor || isFloor));
@@ -2750,7 +2751,7 @@ namespace Lucene.Net.Codecs
                         // term suffixes:
                         code = outerInstance.@in.ReadVInt32();
                         isLeafBlock = (code & 1) != 0;
-                        int numBytes = (int)((uint)code >> 1);
+                        int numBytes = code.TripleShift(1);
                         if (suffixBytes.Length < numBytes)
                         {
                             suffixBytes = new byte[ArrayUtil.Oversize(numBytes, 1)];
@@ -2883,7 +2884,7 @@ namespace Lucene.Net.Codecs
                         if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt != -1 && nextEnt < entCount, "nextEnt={0} entCount={1} fp={2}", nextEnt, entCount, fp);
                         nextEnt++;
                         int code = suffixesReader.ReadVInt32();
-                        suffix = (int)((uint)code >> 1);
+                        suffix = code.TripleShift(1);
                         startBytePos = suffixesReader.Position;
                         outerInstance.term.Length = prefix + suffix;
                         if (outerInstance.term.Bytes.Length < outerInstance.term.Length)
@@ -2945,7 +2946,7 @@ namespace Lucene.Net.Codecs
                         while (true)
                         {
                             long code = floorDataReader.ReadVInt64();
-                            newFP = fpOrig + ((long)((ulong)code >> 1));
+                            newFP = fpOrig + (code.TripleShift(1));
                             hasTerms = (code & 1) != 0;
                             // if (DEBUG) {
                             //   System.out.println("      label=" + toHex(nextFloorLabel) + " fp=" + newFP + " hasTerms?=" + hasTerms + " numFollowFloor=" + numFollowFloorBlocks);
@@ -3071,7 +3072,7 @@ namespace Lucene.Net.Codecs
                             if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt < entCount);
                             nextEnt++;
                             int code = suffixesReader.ReadVInt32();
-                            suffixesReader.SkipBytes(isLeafBlock ? code : (int)((uint)code >> 1));
+                            suffixesReader.SkipBytes(isLeafBlock ? code : code.TripleShift(1));
                             //if (DEBUG) System.out.println("    " + nextEnt + " (of " + entCount + ") ent isSubBlock=" + ((code&1)==1));
                             if ((code & 1) != 0)
                             {
@@ -3274,7 +3275,7 @@ namespace Lucene.Net.Codecs
                             nextEnt++;
 
                             int code = suffixesReader.ReadVInt32();
-                            suffix = (int)((uint)code >> 1);
+                            suffix = code.TripleShift(1);
                             // if (DEBUG) {
                             //   BytesRef suffixBytesRef = new BytesRef();
                             //   suffixBytesRef.bytes = suffixBytes;

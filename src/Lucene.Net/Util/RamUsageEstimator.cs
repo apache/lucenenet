@@ -1,4 +1,4 @@
-using J2N.Numerics;
+﻿using J2N.Numerics;
 using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
@@ -929,7 +929,7 @@ namespace Lucene.Net.Util
                 if (Debugging.AssertsEnabled)
                 {
                     Debugging.Assert(current > 0 && ((current & (current - 1)) == 0), "Capacity must be a power of two.");
-                    Debugging.Assert((current << 1) > 0, "Maximum capacity exceeded ({0}).", ((int)((uint)0x80000000 >> 1)));
+                    Debugging.Assert((current << 1) > 0, "Maximum capacity exceeded ({0}).", ((int)(0x80000000 >> 1))); // LUCENENET: No need to cast to uint because it already is
                 }
 
                 if (current < MIN_CAPACITY / 2)
@@ -945,9 +945,9 @@ namespace Lucene.Net.Util
             private int RoundCapacity(int requestedCapacity) // LUCENENET NOTE: made private, since protected is not valid in a sealed class
             {
                 // Maximum positive integer that is a power of two.
-                if (requestedCapacity > ((int)((uint)0x80000000 >> 1)))
+                if (requestedCapacity > ((int)(0x80000000 >> 1))) // LUCENENET: No need to cast to uint because it already is
                 {
-                    return ((int)((uint)0x80000000 >> 1));
+                    return ((int)(0x80000000 >> 1)); // LUCENENET: No need to cast to uint because it already is
                 }
 
                 int capacity = MIN_CAPACITY;

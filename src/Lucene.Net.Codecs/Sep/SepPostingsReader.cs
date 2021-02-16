@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -691,7 +692,7 @@ namespace Lucene.Net.Codecs.Sep
                         payloadLength = posReader.Next();
                         if (Debugging.AssertsEnabled) Debugging.Assert(payloadLength >= 0);
                     }
-                    position += (int)(((uint)code) >> 1);
+                    position += code.TripleShift(1);
                     pendingPayloadBytes += payloadLength;
                     payloadPending = payloadLength > 0;
                 }

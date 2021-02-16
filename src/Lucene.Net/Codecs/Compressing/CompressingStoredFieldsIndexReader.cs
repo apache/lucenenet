@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
@@ -40,7 +41,7 @@ namespace Lucene.Net.Codecs.Compressing
     {
         internal static long MoveLowOrderBitToSign(long n)
         {
-            return (((long)((ulong)n >> 1)) ^ -(n & 1));
+            return ((n.TripleShift(1)) ^ -(n & 1));
         }
 
         internal readonly int maxDoc;
@@ -121,7 +122,7 @@ namespace Lucene.Net.Codecs.Compressing
             int lo = 0, hi = docBases.Length - 1;
             while (lo <= hi)
             {
-                int mid = (int)((uint)(lo + hi) >> 1);
+                int mid = (lo + hi).TripleShift(1);
                 int midValue = docBases[mid];
                 if (midValue == docID)
                 {
@@ -160,7 +161,7 @@ namespace Lucene.Net.Codecs.Compressing
             int lo = 0, hi = docBasesDeltas[block].Count - 1;
             while (lo <= hi)
             {
-                int mid = (int)((uint)(lo + hi) >> 1);
+                int mid = (lo + hi).TripleShift(1);
                 int midValue = RelativeDocBase(block, mid);
                 if (midValue == relativeDoc)
                 {

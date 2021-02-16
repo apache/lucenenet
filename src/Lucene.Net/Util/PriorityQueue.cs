@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -291,12 +292,12 @@ namespace Lucene.Net.Util
         {
             int i = size;
             T node = heap[i]; // save bottom node
-            int j = (int)((uint)i >> 1);
+            int j = i.TripleShift(1);
             while (j > 0 && LessThan(node, heap[j]))
             {
                 heap[i] = heap[j]; // shift parents down
                 i = j;
-                j = (int)((uint)j >> 1);
+                j = j.TripleShift(1);
             }
             heap[i] = node; // install saved node
         }

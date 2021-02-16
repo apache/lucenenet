@@ -1,4 +1,4 @@
-using J2N.Numerics;
+﻿using J2N.Numerics;
 using J2N.Text;
 using System;
 using System.Collections.Generic;
@@ -174,7 +174,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             BytesRef scratch = new BytesRef();
             while (hi >= lo)
             {
-                int mid = (int)((uint)(lo + hi) >> 1);
+                int mid = (lo + hi).TripleShift(1);
                 int delta = CompareTo(term, mid, input, scratch);
                 if (delta < 0)
                 {

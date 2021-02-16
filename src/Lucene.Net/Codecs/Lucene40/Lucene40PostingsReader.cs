@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
@@ -388,7 +389,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 while (low <= hi)
                 {
-                    int mid = (int)((uint)(hi + low) >> 1);
+                    int mid = (hi + low).TripleShift(1);
                     int doc = docs[mid];
                     if (doc < target)
                     {
@@ -474,7 +475,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 for (int i = 0; i < size; i++)
                 {
                     int code = freqIn.ReadVInt32();
-                    docAc += (int)((uint)code >> 1); // shift off low bit
+                    docAc += code.TripleShift(1); // shift off low bit
                     freqs[i] = ReadFreq(freqIn, code);
                     docs[i] = docAc;
                 }
@@ -578,7 +579,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     else
                     {
-                        docAcc += (int)((uint)code >> 1); // shift off low bit
+                        docAcc += code.TripleShift(1); // shift off low bit
                         frq = ReadFreq(freqIn, code);
                     }
                     if (docAcc >= target)
@@ -605,7 +606,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     else
                     {
-                        m_accum += (int)((uint)code >> 1); // shift off low bit
+                        m_accum += code.TripleShift(1); // shift off low bit
                         m_freq = ReadFreq(freqIn, code);
                     }
                     return m_accum;
@@ -677,7 +678,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     else
                     {
-                        docAcc += (int)((uint)code >> 1); // shift off low bit
+                        docAcc += code.TripleShift(1); // shift off low bit
                         frq = ReadFreq(freqIn, code);
                     }
                     if (docAcc >= target && liveDocs.Get(docAcc))
@@ -710,7 +711,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     else
                     {
-                        docAcc += (int)((uint)code >> 1); // shift off low bit
+                        docAcc += code.TripleShift(1); // shift off low bit
                         frq = ReadFreq(freqIn, code);
                     }
                     if (liveDocs.Get(docAcc))
@@ -815,7 +816,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     // Decode next doc/freq pair
                     int code = freqIn.ReadVInt32();
 
-                    accum += (int)((uint)code >> 1); // shift off low bit
+                    accum += code.TripleShift(1); // shift off low bit
                     if ((code & 1) != 0) // if low bit is set
                     {
                         freq = 1; // freq is one
@@ -1046,7 +1047,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     // Decode next doc/freq pair
                     int code = freqIn.ReadVInt32();
 
-                    accum += (int)((uint)code >> 1); // shift off low bit
+                    accum += code.TripleShift(1); // shift off low bit
                     if ((code & 1) != 0) // if low bit is set
                     {
                         freq = 1; // freq is one
@@ -1198,7 +1199,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     if (Debugging.AssertsEnabled) Debugging.Assert(payloadLength != -1);
 
                     payloadPending = true;
-                    code_ = (int)((uint)code_ >> 1);
+                    code_ = code_.TripleShift(1);
                 }
                 position += code_;
 
@@ -1210,7 +1211,7 @@ namespace Lucene.Net.Codecs.Lucene40
                         // new offset length
                         offsetLength = proxIn.ReadVInt32();
                     }
-                    startOffset += (int)((uint)offsetCode >> 1);
+                    startOffset += offsetCode.TripleShift(1);
                 }
 
                 posPendingCount--;

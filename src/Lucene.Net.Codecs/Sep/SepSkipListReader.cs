@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -209,7 +210,7 @@ namespace Lucene.Net.Codecs.Sep
                     payloadLength[level] = skipStream.ReadVInt32();
                 }
                 //delta >>>= 1;
-                delta = (int)((uint)delta >> 1);
+                delta = delta.TripleShift(1);
             }
             else
             {
