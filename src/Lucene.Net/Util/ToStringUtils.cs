@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using System.Globalization;
 using System.Text;
 
@@ -59,7 +60,7 @@ namespace Lucene.Net.Util
         public static string Int64Hex(long x)
         {
             char[] asHex = new char[16];
-            for (int i = 16; --i >= 0; x = (long)((ulong)x >> 4))
+            for (int i = 16; --i >= 0; x = x.TripleShift(4))
             {
                 asHex[i] = HEX[(int)x & 0x0F];
             }

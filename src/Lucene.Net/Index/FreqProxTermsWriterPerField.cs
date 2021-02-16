@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
@@ -544,7 +545,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            docID += (int)((uint)code >> 1);
+                            docID += code.TripleShift(1);
                             if ((code & 1) != 0)
                             {
                                 termFreq = 1;
@@ -610,7 +611,7 @@ namespace Lucene.Net.Index
                             if (readPositions)
                             {
                                 int code = prox.ReadVInt32();
-                                position += (int)((uint)code >> 1);
+                                position += code.TripleShift(1);
 
                                 if ((code & 1) != 0)
                                 {

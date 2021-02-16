@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
@@ -380,7 +381,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     }
                     else
                     {
-                        _accum += (int)((uint)code >> 1); ; // shift off low bit
+                        _accum += code.TripleShift(1); ; // shift off low bit
                         _freq = (code & 1) != 0 ? 1 : _postings.ReadVInt32();
 
                         // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
@@ -519,7 +520,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     }
 
                     var code = _postings.ReadVInt32();
-                    _accum += (int)((uint)code >> 1); // shift off low bit 
+                    _accum += code.TripleShift(1); // shift off low bit 
                     _freq = (code & 1) != 0 ? 1 : _postings.ReadVInt32();
                     _posPending = _freq;
                     _startOffset = _storeOffsets ? 0 : -1; // always return -1 if no offsets are stored
@@ -557,7 +558,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     {
                         _payloadLength = _postings.ReadVInt32();
                     }
-                    _position += (int)((uint)code >> 1);
+                    _position += code.TripleShift(1);
                     _payloadRetrieved = false;
                 }
                 else
@@ -573,7 +574,7 @@ namespace Lucene.Net.Codecs.Pulsing
                         // new offset length
                         _offsetLength = _postings.ReadVInt32();
                     }
-                    _startOffset += (int)((uint)offsetCode >> 1);
+                    _startOffset += offsetCode.TripleShift(1);
                 }
 
                 return _position;

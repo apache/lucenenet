@@ -1,4 +1,5 @@
 ﻿// lucene version compatibility level: 4.8.1
+using J2N.Numerics;
 using System;
 
 namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
@@ -53,7 +54,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             result = prime * result + PreNode;
             long temp;
             temp = J2N.BitConversion.DoubleToInt64Bits(Weight);
-            result = prime * result + (int)(temp ^ (int)((uint)temp >> 32));
+            result = prime * result + (int)(temp ^ temp.TripleShift(32));
             return result;
         }
 

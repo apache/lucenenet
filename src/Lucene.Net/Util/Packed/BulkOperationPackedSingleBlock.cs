@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using System;
 
 namespace Lucene.Net.Util.Packed
@@ -67,7 +68,7 @@ namespace Lucene.Net.Util.Packed
             values[valuesOffset++] = block & mask;
             for (int j = 1; j < valueCount; ++j)
             {
-                block = (long)((ulong)block >> bitsPerValue);
+                block = block.TripleShift(bitsPerValue);
                 values[valuesOffset++] = block & mask;
             }
             return valuesOffset;
@@ -78,7 +79,7 @@ namespace Lucene.Net.Util.Packed
             values[valuesOffset++] = (int)(block & mask);
             for (int j = 1; j < valueCount; ++j)
             {
-                block = (long)((ulong)block >> bitsPerValue);
+                block = block.TripleShift(bitsPerValue);
                 values[valuesOffset++] = (int)(block & mask);
             }
             return valuesOffset;

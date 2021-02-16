@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
@@ -287,7 +288,7 @@ namespace Lucene.Net.Sandbox.Queries
                 }
                 else
                 {
-                    return (int)@in.OrdAt((int)((uint)(count - 1)) >> 1);
+                    return (int)@in.OrdAt((count - 1).TripleShift(1));
                 }
             }
 
@@ -324,7 +325,7 @@ namespace Lucene.Net.Sandbox.Queries
                 }
                 else
                 {
-                    return (int)@in.OrdAt((int)((uint)count >> 1));
+                    return (int)@in.OrdAt(count.TripleShift(1));
                 }
             }
 

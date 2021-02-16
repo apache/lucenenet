@@ -1,4 +1,5 @@
 ﻿using J2N;
+using J2N.Numerics;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
@@ -493,7 +494,7 @@ namespace Lucene.Net.Analysis.Synonym
 
             int code = bytesReader.ReadVInt32();
             bool keepOrig = (code & 0x1) == 0;
-            int count = (int)((uint)code >> 1);
+            int count = code.TripleShift(1);
             //System.out.println("  addOutput count=" + count + " keepOrig=" + keepOrig);
             for (int outputIDX = 0; outputIDX < count; outputIDX++)
             {

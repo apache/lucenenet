@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -63,7 +64,7 @@ namespace Lucene.Net.Util.Packed
                     remainingBits = 8;
                 }
                 int bits = Math.Min(remainingBits, bitsPerValue);
-                current = current | ((((long)((ulong)value >> (bitsPerValue - bits))) & ((1L << bits) - 1)) << (remainingBits - bits));
+                current = current | (((value.TripleShift((bitsPerValue - bits))) & ((1L << bits) - 1)) << (remainingBits - bits));
                 bitsPerValue -= bits;
                 remainingBits -= bits;
             }

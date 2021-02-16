@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using J2N.Numerics;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
 using System.Collections;
@@ -104,9 +105,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override int GetHashCode()
         {
             int h = m_source.GetHashCode();
-            h ^= (h << 10) | ((int)((uint)h >> 23));
+            h ^= (h << 10) | (h.TripleShift(23));
             h += J2N.BitConversion.SingleToInt32Bits(m_min);
-            h ^= (h << 14) | ((int)((uint)h >> 19));
+            h ^= (h << 14) | (h.TripleShift(19));
             h += J2N.BitConversion.SingleToInt32Bits(m_max);
             h += m_target.GetHashCode();
             if (m_defaultVal != null)

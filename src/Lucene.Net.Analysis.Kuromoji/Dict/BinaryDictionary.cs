@@ -1,5 +1,6 @@
 ﻿using J2N;
 using J2N.IO;
+using J2N.Numerics;
 using Lucene.Net.Codecs;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -120,7 +121,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
                         targetMapOffsets[sourceId] = ofs;
                         sourceId++;
                     }
-                    accum += (int)((uint)val) >> 1;
+                    accum += val.TripleShift(1);
                     targetMap[ofs] = accum;
                 }
                 if (sourceId + 1 != targetMapOffsets.Length)
@@ -222,12 +223,12 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
         public virtual int GetLeftId(int wordId)
         {
-            return (short)((ushort)buffer.GetInt16(wordId)) >> 3;
+            return buffer.GetInt16(wordId).TripleShift(3);
         }
 
         public virtual int GetRightId(int wordId)
         {
-            return (short)((ushort)buffer.GetInt16(wordId)) >> 3;
+            return buffer.GetInt16(wordId).TripleShift(3);
         }
 
         public virtual int GetWordCost(int wordId)
@@ -241,7 +242,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             {
                 int offset = BaseFormOffset(wordId);
                 int data = buffer.Get(offset++) & 0xff;
-                int prefix = (int)((uint)data) >> 4;
+                int prefix = data.TripleShift(4);
                 int suffix = data & 0xF;
                 char[] text = new char[prefix + suffix];
                 System.Array.Copy(surfaceForm, off, text, 0, prefix);
@@ -263,7 +264,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             {
                 int offset = ReadingOffset(wordId);
                 int readingData = buffer.Get(offset++) & 0xff;
-                return ReadString(offset, (int)((uint)readingData) >> 1, (readingData & 1) == 1);
+                return ReadString(offset, readingData.TripleShift(1), (readingData & 1) == 1);
             }
             else
             {
@@ -296,7 +297,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             {
                 int offset = PronunciationOffset(wordId);
                 int pronunciationData = buffer.Get(offset++) & 0xff;
-                return ReadString(offset, (int)((uint)pronunciationData) >> 1, (pronunciationData & 1) == 1);
+                return ReadString(offset, pronunciationData.TripleShift(1), (pronunciationData & 1) == 1);
             }
             else
             {
@@ -346,7 +347,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
                 }
                 else
                 {
-                    readingLength = (int)((uint)readingData) >> 1;
+                    readingLength = readingData.TripleShift(1);
                 }
                 return offset + readingLength;
             }

@@ -1,4 +1,5 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
+using J2N.Numerics;
 using J2N.Text;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace Lucene.Net.Util.Automaton
             int b = points.Length;
             while (b - a > 1)
             {
-                int d = (int)((uint)(a + b) >> 1);
+                int d = (a + b).TripleShift(1);
                 if (points[d] > c)
                 {
                     b = d;

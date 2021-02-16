@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -309,15 +310,15 @@ namespace Lucene.Net.Util.Packed
 
             public override long Get(int index)
             {
-                int o = (int)((uint)index >> 6);
+                int o = index.TripleShift(6);
                 int b = index & 63;
                 int shift = b << 0;
-                return ((long)((ulong)blocks[o] >> shift)) & 1L;
+                return (blocks[o].TripleShift(shift)) & 1L;
             }
 
             public override void Set(int index, long value)
             {
-                int o = (int)((uint)index >> 6);
+                int o = index.TripleShift(6);
                 int b = index & 63;
                 int shift = b << 0;
                 blocks[o] = (blocks[o] & ~(1L << shift)) | (value << shift);
@@ -333,15 +334,15 @@ namespace Lucene.Net.Util.Packed
 
             public override long Get(int index)
             {
-                int o = (int)((uint)index >> 5);
+                int o = index.TripleShift(5);
                 int b = index & 31;
                 int shift = b << 1;
-                return ((long)((ulong)blocks[o] >> shift)) & 3L;
+                return (blocks[o].TripleShift(shift)) & 3L;
             }
 
             public override void Set(int index, long value)
             {
-                int o = (int)((uint)index >> 5);
+                int o = index.TripleShift(5);
                 int b = index & 31;
                 int shift = b << 1;
                 blocks[o] = (blocks[o] & ~(3L << shift)) | (value << shift);
@@ -360,7 +361,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 21;
                 int b = index % 21;
                 int shift = b * 3;
-                return ((long)((ulong)blocks[o] >> shift)) & 7L;
+                return (blocks[o].TripleShift(shift)) & 7L;
             }
 
             public override void Set(int index, long value)
@@ -381,15 +382,15 @@ namespace Lucene.Net.Util.Packed
 
             public override long Get(int index)
             {
-                int o = (int)((uint)index >> 4);
+                int o = index.TripleShift(4);
                 int b = index & 15;
                 int shift = b << 2;
-                return ((long)((ulong)blocks[o] >> shift)) & 15L;
+                return (blocks[o].TripleShift(shift)) & 15L;
             }
 
             public override void Set(int index, long value)
             {
-                int o = (int)((uint)index >> 4);
+                int o = index.TripleShift(4);
                 int b = index & 15;
                 int shift = b << 2;
                 blocks[o] = (blocks[o] & ~(15L << shift)) | (value << shift);
@@ -408,7 +409,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 12;
                 int b = index % 12;
                 int shift = b * 5;
-                return ((long)((ulong)blocks[o] >> shift)) & 31L;
+                return (blocks[o].TripleShift(shift)) & 31L;
             }
 
             public override void Set(int index, long value)
@@ -432,7 +433,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 10;
                 int b = index % 10;
                 int shift = b * 6;
-                return ((long)((ulong)blocks[o] >> shift)) & 63L;
+                return (blocks[o].TripleShift(shift)) & 63L;
             }
 
             public override void Set(int index, long value)
@@ -456,7 +457,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 9;
                 int b = index % 9;
                 int shift = b * 7;
-                return ((long)((ulong)blocks[o] >> shift)) & 127L;
+                return (blocks[o].TripleShift(shift)) & 127L;
             }
 
             public override void Set(int index, long value)
@@ -477,15 +478,15 @@ namespace Lucene.Net.Util.Packed
 
             public override long Get(int index)
             {
-                int o = (int)((uint)index >> 3);
+                int o = index.TripleShift(3);
                 int b = index & 7;
                 int shift = b << 3;
-                return ((long)((ulong)blocks[o] >> shift)) & 255L;
+                return (blocks[o].TripleShift(shift)) & 255L;
             }
 
             public override void Set(int index, long value)
             {
-                int o = (int)((uint)index >> 3);
+                int o = index.TripleShift(3);
                 int b = index & 7;
                 int shift = b << 3;
                 blocks[o] = (blocks[o] & ~(255L << shift)) | (value << shift);
@@ -504,7 +505,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 7;
                 int b = index % 7;
                 int shift = b * 9;
-                return ((long)((ulong)blocks[o] >> shift)) & 511L;
+                return (blocks[o].TripleShift(shift)) & 511L;
             }
 
             public override void Set(int index, long value)
@@ -528,7 +529,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 6;
                 int b = index % 6;
                 int shift = b * 10;
-                return ((long)((ulong)blocks[o] >> shift)) & 1023L;
+                return (blocks[o].TripleShift(shift)) & 1023L;
             }
 
             public override void Set(int index, long value)
@@ -552,7 +553,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 5;
                 int b = index % 5;
                 int shift = b * 12;
-                return ((long)((ulong)blocks[o] >> shift)) & 4095L;
+                return (blocks[o].TripleShift(shift)) & 4095L;
             }
 
             public override void Set(int index, long value)
@@ -573,15 +574,15 @@ namespace Lucene.Net.Util.Packed
 
             public override long Get(int index)
             {
-                int o = (int)((uint)index >> 2);
+                int o = index.TripleShift(2);
                 int b = index & 3;
                 int shift = b << 4;
-                return ((long)((ulong)blocks[o] >> shift)) & 65535L;
+                return (blocks[o].TripleShift(shift)) & 65535L;
             }
 
             public override void Set(int index, long value)
             {
-                int o = (int)((uint)index >> 2);
+                int o = index.TripleShift(2);
                 int b = index & 3;
                 int shift = b << 4;
                 blocks[o] = (blocks[o] & ~(65535L << shift)) | (value << shift);
@@ -600,7 +601,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 3;
                 int b = index % 3;
                 int shift = b * 21;
-                return ((long)((ulong)blocks[o] >> shift)) & 2097151L;
+                return (blocks[o].TripleShift(shift)) & 2097151L;
             }
 
             public override void Set(int index, long value)
@@ -621,15 +622,15 @@ namespace Lucene.Net.Util.Packed
 
             public override long Get(int index)
             {
-                int o = (int)((uint)index >> 1);
+                int o = index.TripleShift(1);
                 int b = index & 1;
                 int shift = b << 5;
-                return ((long)((ulong)blocks[o] >> shift)) & 4294967295L;
+                return (blocks[o].TripleShift(shift)) & 4294967295L;
             }
 
             public override void Set(int index, long value)
             {
-                int o = (int)((uint)index >> 1);
+                int o = index.TripleShift(1);
                 int b = index & 1;
                 int shift = b << 5;
                 blocks[o] = (blocks[o] & ~(4294967295L << shift)) | (value << shift);

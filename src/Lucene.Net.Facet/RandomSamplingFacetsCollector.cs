@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 4.8.1
+using J2N.Numerics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -71,7 +72,7 @@ namespace Lucene.Net.Facet
             public virtual long RandomInt64()
             {
                 x ^= (x << 21);
-                x ^= ((long)((ulong)x >> 35));
+                x ^= (x.TripleShift(35));
                 x ^= (x << 4);
                 return x;
             }

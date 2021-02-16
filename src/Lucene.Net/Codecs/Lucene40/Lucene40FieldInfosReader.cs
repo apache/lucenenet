@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
@@ -103,7 +104,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     // DV Types are packed in one byte
                     byte val = input.ReadByte();
                     LegacyDocValuesType oldValuesType = GetDocValuesType((sbyte)(val & 0x0F));
-                    LegacyDocValuesType oldNormsType = GetDocValuesType((sbyte)(((int)((uint)val >> 4)) & 0x0F));
+                    LegacyDocValuesType oldNormsType = GetDocValuesType((sbyte)(val.TripleShift(4) & 0x0F));
                     IDictionary<string, string> attributes = input.ReadStringStringMap();
                     if (oldValuesType.GetMapping() != DocValuesType.NONE)
                     {

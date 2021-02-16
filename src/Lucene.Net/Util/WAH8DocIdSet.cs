@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -257,7 +258,7 @@ namespace Lucene.Net.Util
         internal static int WordNum(int docID)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(docID >= 0);
-            return (int)((uint)docID >> 3);
+            return docID.TripleShift(3);
         }
 
         /// <summary>
@@ -327,11 +328,11 @@ namespace Lucene.Net.Util
                 @out.WriteByte((byte)token);
                 if (cleanLengthMinus2 > 0x03)
                 {
-                    @out.WriteVInt32((int)((uint)cleanLengthMinus2 >> 2));
+                    @out.WriteVInt32(cleanLengthMinus2.TripleShift(2));
                 }
                 if (dirtyLength > 0x07)
                 {
-                    @out.WriteVInt32((int)((uint)dirtyLength >> 3));
+                    @out.WriteVInt32(dirtyLength.TripleShift(3));
                 }
             }
 
@@ -611,7 +612,7 @@ namespace Lucene.Net.Util
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static int ReadCleanLength(ByteArrayDataInput @in, int token)
         {
-            int len = ((int)((uint)token >> 4)) & 0x07;
+            int len = (token.TripleShift(4)) & 0x07;
             int startPosition = @in.Position;
             if ((len & 0x04) != 0)
             {
@@ -792,7 +793,7 @@ namespace Lucene.Net.Util
                 // we found a window containing our target, let's binary search now
                 while (lo <= hi)
                 {
-                    int mid = (int)((uint)(lo + hi) >> 1);
+                    int mid = (lo + hi).TripleShift(1);
                     int midWordNum = (int)wordNums.Get(mid);
                     if (midWordNum <= targetWordNum)
                     {
@@ -865,7 +866,7 @@ namespace Lucene.Net.Util
                 if (bitList != 0) // there are remaining bits in the current word
                 {
                     docID = (wordNum << 3) | ((bitList & 0x0F) - 1);
-                    bitList = (int)((uint)bitList >> 4);
+                    bitList = bitList.TripleShift(4);
                     return docID;
                 }
                 NextWord();
@@ -876,7 +877,7 @@ namespace Lucene.Net.Util
                 bitList = BitUtil.BitList(word);
                 if (Debugging.AssertsEnabled) Debugging.Assert(bitList != 0);
                 docID = (wordNum << 3) | ((bitList & 0x0F) - 1);
-                bitList = (int)((uint)bitList >> 4);
+                bitList = bitList.TripleShift(4);
                 return docID;
             }
 

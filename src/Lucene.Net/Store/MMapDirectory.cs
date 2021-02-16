@@ -1,4 +1,4 @@
-using J2N.IO;
+﻿using J2N.IO;
 using J2N.IO.MemoryMappedFiles;
 using J2N.Numerics;
 using Lucene.Net.Diagnostics;
@@ -298,7 +298,7 @@ namespace Lucene.Net.Store
             long chunkSize = 1L << chunkSizePower;
 
             // we always allocate one more buffer, the last one may be a 0 byte one
-            int nrBuffers = (int)((long)((ulong)length >> chunkSizePower)) + 1;
+            int nrBuffers = (int)length.TripleShift(chunkSizePower) + 1;
 
             ByteBuffer[] buffers = new ByteBuffer[nrBuffers];
 

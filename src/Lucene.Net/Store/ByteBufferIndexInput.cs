@@ -1,4 +1,5 @@
-using J2N.IO;
+﻿using J2N.IO;
+using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util.Fst;
 using System;
@@ -89,7 +90,7 @@ namespace Lucene.Net.Store
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(chunkSizePower >= 0 && chunkSizePower <= 30);
-                Debugging.Assert(((long)((ulong)length >> chunkSizePower)) < int.MaxValue);
+                Debugging.Assert(length.TripleShift(chunkSizePower) < int.MaxValue);
             }
 
             // LUCENENET specific: MMapIndexInput calls SetBuffers() to populate
@@ -327,8 +328,8 @@ namespace Lucene.Net.Store
         {
             long sliceEnd = offset + length;
 
-            int startIndex = (int)((long)((ulong)offset >> chunkSizePower));
-            int endIndex = (int)((long)((ulong)sliceEnd >> chunkSizePower));
+            int startIndex = (int)(offset.TripleShift(chunkSizePower));
+            int endIndex = (int)(sliceEnd.TripleShift(chunkSizePower));
 
             // we always allocate one more slice, the last one may be a 0 byte one
             ByteBuffer[] slices = new ByteBuffer[endIndex - startIndex + 1];

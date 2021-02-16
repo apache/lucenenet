@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -709,7 +710,7 @@ namespace Lucene.Net.Index.Sorter
             public override int NextPosition()
             {
                 int token = postingInput.ReadVInt32();
-                pos += (int)((uint)token >> 1);
+                pos += token.TripleShift(1);
                 if (storeOffsets)
                 {
                     startOffset = endOffset + postingInput.ReadVInt32();

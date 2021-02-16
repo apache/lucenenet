@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
@@ -48,7 +49,7 @@ namespace Lucene.Net.Util.Packed
             while ((i & ~0x7FL) != 0L && k++ < 8)
             {
                 @out.WriteByte((byte)((i & 0x7FL) | 0x80L));
-                i = (long)((ulong)i >> 7);
+                i = i.TripleShift(7);
             }
             @out.WriteByte((byte)i);
         }

@@ -1,4 +1,4 @@
-using J2N.Numerics;
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -1385,7 +1385,7 @@ namespace Lucene.Net.Util.Packed
                 Debugging.Assert(srcPos + len <= src.Count);
                 Debugging.Assert(destPos + len <= dest.Count);
             }
-            int capacity = (int)((uint)mem >> 3);
+            int capacity = mem.TripleShift(3);
             if (capacity == 0)
             {
                 for (int i = 0; i < len; ++i)

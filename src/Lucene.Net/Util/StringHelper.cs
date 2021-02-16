@@ -1,4 +1,4 @@
-using J2N.Numerics;
+﻿using J2N.Numerics;
 using J2N.Text;
 using System;
 using System.Collections.Generic;
@@ -248,11 +248,11 @@ namespace Lucene.Net.Util
             h1 ^= len;
 
             // fmix(h1);
-            h1 ^= (int)((uint)h1 >> 16);
+            h1 ^= h1.TripleShift(16);
             h1 *= unchecked((int)0x85ebca6b);
-            h1 ^= (int)((uint)h1 >> 13);
+            h1 ^= h1.TripleShift(13);
             h1 *= unchecked((int)0xc2b2ae35);
-            h1 ^= (int)((uint)h1 >> 16);
+            h1 ^= h1.TripleShift(16);
 
             return h1;
         }

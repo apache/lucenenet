@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using J2N.Threading.Atomic;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
@@ -1130,7 +1131,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
                     while (low <= high)
                     {
-                        long mid = (int)((uint)(low + high) >> 1);
+                        long mid = (low + high).TripleShift(1);
                         DoSeek(mid * outerInstance.interval);
                         int cmp = termBuffer.CompareTo(text);
 

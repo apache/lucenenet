@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
 using System;
@@ -208,11 +209,11 @@ namespace Lucene.Net.Codecs.Lucene40
                         scratch.Grow(length);
                         scratch.Length = length;
                         positions.ReadBytes(scratch.Bytes, scratch.Offset, scratch.Length);
-                        WritePosition((int)((uint)code >> 1), scratch);
+                        WritePosition(code.TripleShift(1), scratch);
                     }
                     else
                     {
-                        WritePosition((int)((uint)code >> 1), null);
+                        WritePosition(code.TripleShift(1), null);
                     }
                 }
                 tvf.WriteBytes(payloadData.Bytes, payloadData.Offset, payloadData.Length);
@@ -222,7 +223,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 // pure positions, no payloads
                 for (int i = 0; i < numProx; i++)
                 {
-                    tvf.WriteVInt32((int)((uint)positions.ReadVInt32() >> 1));
+                    tvf.WriteVInt32(positions.ReadVInt32().TripleShift(1));
                 }
             }
 

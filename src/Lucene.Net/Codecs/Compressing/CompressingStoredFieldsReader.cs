@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Codecs.Lucene40;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
@@ -356,7 +357,7 @@ namespace Lucene.Net.Codecs.Compressing
             for (int fieldIDX = 0; fieldIDX < numStoredFields; fieldIDX++)
             {
                 long infoAndBits = documentInput.ReadVInt64();
-                int fieldNumber = (int)((long)((ulong)infoAndBits >> CompressingStoredFieldsWriter.TYPE_BITS));
+                int fieldNumber = (int)infoAndBits.TripleShift(CompressingStoredFieldsWriter.TYPE_BITS);
                 FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
 
                 int bits = (int)(infoAndBits & CompressingStoredFieldsWriter.TYPE_MASK);

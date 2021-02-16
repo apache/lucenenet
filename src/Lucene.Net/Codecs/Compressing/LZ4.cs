@@ -111,7 +111,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 // literals
                 int token = compressed.ReadByte() & 0xFF;
-                int literalLen = (int)(((uint)token) >> 4);
+                int literalLen = token.TripleShift(4);
 
                 if (literalLen != 0)
                 {
@@ -217,7 +217,7 @@ namespace Lucene.Net.Codecs.Compressing
             int matchDec = matchOff - matchRef;
             if (Debugging.AssertsEnabled) Debugging.Assert(matchDec > 0 && matchDec < 1 << 16);
             @out.WriteByte((byte)matchDec);
-            @out.WriteByte((byte)(int)((uint)matchDec >> 8));
+            @out.WriteByte((byte)matchDec.TripleShift(8));
 
             // encode match len
             if (matchLen >= MIN_MATCH + 0x0F)

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 
@@ -200,7 +201,7 @@ namespace Lucene.Net.Store
             while ((i & ~0x7F) != 0)
             {
                 WriteByte((byte)((i & 0x7F) | 0x80));
-                i = (int)((uint)i >> 7);
+                i = i.TripleShift(7);
             }
             WriteByte((byte)i);
         }
@@ -235,7 +236,7 @@ namespace Lucene.Net.Store
             while ((i & ~0x7FL) != 0L)
             {
                 WriteByte((byte)((i & 0x7FL) | 0x80L));
-                i = (long)((ulong)i >> 7);
+                i = i.TripleShift(7);
             }
             WriteByte((byte)i);
         }

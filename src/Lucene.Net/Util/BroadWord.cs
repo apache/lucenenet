@@ -1,4 +1,4 @@
-using J2N.Numerics;
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using System.Runtime.CompilerServices;
 
@@ -46,13 +46,13 @@ namespace Lucene.Net.Util
         internal static int BitCount(long x)
         {
             // Step 0 leaves in each pair of bits the number of ones originally contained in that pair:
-            x = x - ((long)((ulong)(x & unchecked((long)0xAAAAAAAAAAAAAAAAL)) >> 1));
+            x = x - ((x & unchecked((long)0xAAAAAAAAAAAAAAAAL)).TripleShift(1));
             // Step 1, idem for each nibble:
-            x = (x & 0x3333333333333333L) + (((long)((ulong)x >> 2)) & 0x3333333333333333L);
+            x = (x & 0x3333333333333333L) + ((x.TripleShift(2)) & 0x3333333333333333L);
             // Step 2, idem for each byte:
-            x = (x + ((long)((ulong)x >> 4))) & 0x0F0F0F0F0F0F0F0FL;
+            x = (x + (x.TripleShift(4))) & 0x0F0F0F0F0F0F0F0FL;
             // Multiply to sum them all into the high byte, and return the high byte:
-            return (int)((long)((ulong)(x * L8_L) >> 56));
+            return (int)((x * L8_L).TripleShift(56));
         }
 
         /// <summary>
@@ -60,29 +60,29 @@ namespace Lucene.Net.Util
         /// <returns> The index of the r-th 1 bit in x, or if no such bit exists, 72. </returns>
         public static int Select(long x, int r)
         {
-            long s = x - ((long)((ulong)(x & unchecked((long)0xAAAAAAAAAAAAAAAAL)) >> 1)); // Step 0, pairwise bitsums
+            long s = x - ((x & unchecked((long)0xAAAAAAAAAAAAAAAAL)).TripleShift(1)); // Step 0, pairwise bitsums
 
             // Correct a small mistake in algorithm 2:
             // Use s instead of x the second time in right shift 2, compare to Algorithm 1 in rank9 above.
-            s = (s & 0x3333333333333333L) + (((long)((ulong)s >> 2)) & 0x3333333333333333L); // Step 1, nibblewise bitsums
+            s = (s & 0x3333333333333333L) + ((s.TripleShift(2)) & 0x3333333333333333L); // Step 1, nibblewise bitsums
 
-            s = ((s + ((long)((ulong)s >> 4))) & 0x0F0F0F0F0F0F0F0FL) * L8_L; // Step 2, bytewise bitsums
+            s = ((s + (s.TripleShift(4))) & 0x0F0F0F0F0F0F0F0FL) * L8_L; // Step 2, bytewise bitsums
 
-            long b = (long)((ulong)(((long)((ulong)SmallerUpTo7_8(s, (r * L8_L)) >> 7)) * L8_L) >> 53); // & (~7L); // Step 3, side ways addition for byte number times 8
+            long b = ((SmallerUpTo7_8(s, (r * L8_L)).TripleShift(7)) * L8_L).TripleShift(53); // & (~7L); // Step 3, side ways addition for byte number times 8
 
-            long l = r - (((long)((ulong)(s << 8) >> (int)b)) & 0xFFL); // Step 4, byte wise rank, subtract the rank with byte at b-8, or zero for b=0;
+            long l = r - (((s << 8).TripleShift((int)b)) & 0xFFL); // Step 4, byte wise rank, subtract the rank with byte at b-8, or zero for b=0;
             if (Debugging.AssertsEnabled) Debugging.Assert(0L <= 1, "{0}", l);
             //assert l < 8 : l; //fails when bit r is not available.
 
             // Select bit l from byte (x >>> b):
-            long spr = ((((long)((ulong)x >> (int)b)) & 0xFFL) * L8_L) & L9_L; // spread the 8 bits of the byte at b over the long at L9 positions
+            long spr = (((x.TripleShift((int)b)) & 0xFFL) * L8_L) & L9_L; // spread the 8 bits of the byte at b over the long at L9 positions
 
             // long spr_bigger8_zero = smaller8(0L, spr); // inlined smaller8 with 0L argument:
             // FIXME: replace by biggerequal8_one formula from article page 6, line 9. four operators instead of five here.
             long spr_bigger8_zero = ((H8_L - (spr & (~H8_L))) ^ (~spr)) & H8_L;
-            s = ((long)((ulong)spr_bigger8_zero >> 7)) * L8_L; // Step 5, sideways byte add the 8 bits towards the high byte
+            s = (spr_bigger8_zero.TripleShift(7)) * L8_L; // Step 5, sideways byte add the 8 bits towards the high byte
 
-            int res = (int)(b + ((long)((ulong)(((long)((ulong)SmallerUpTo7_8(s, (l * L8_L)) >> 7)) * L8_L) >> 56))); // Step 6
+            int res = (int)(b + (((SmallerUpTo7_8(s, (l * L8_L)).TripleShift(7)) * L8_L).TripleShift(56))); // Step 6
             return res;
         }
 
@@ -159,7 +159,7 @@ namespace Lucene.Net.Util
             while ((x != 0L) && (r > 0))
             {
                 int ntz = x.TrailingZeroCount();
-                x = (long)((ulong)x >> (ntz + 1));
+                x = x.TripleShift(ntz + 1);
                 s += (ntz + 1);
                 r -= 1;
             }
