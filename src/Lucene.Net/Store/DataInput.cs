@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -95,7 +95,7 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataOutput.WriteInt16(short)"/>
         public virtual short ReadInt16()
         {
-            return (short)(ushort)(((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF));
+            return (short)(((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF));
         }
 
         /// <summary>
