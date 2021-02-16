@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Store
 {
@@ -93,7 +93,7 @@ namespace Lucene.Net.Store
         /// </summary>
         public override short ReadInt16()
         {
-            return (short)(ushort)(((bytes[pos++] & 0xFF) << 8) | (bytes[pos++] & 0xFF));
+            return (short)(((bytes[pos++] & 0xFF) << 8) | (bytes[pos++] & 0xFF));
         }
 
         /// <summary>
