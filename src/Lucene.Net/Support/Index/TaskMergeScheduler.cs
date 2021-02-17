@@ -40,6 +40,7 @@ namespace Lucene.Net.Index
     ///  
     /// LUCENENET specific
     /// </summary>
+    [Obsolete("Use ConcurrentMergeScheduler instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public class TaskMergeScheduler : MergeScheduler, IConcurrentMergeScheduler
     {
         public const string COMPONENT_NAME = "CMS";
