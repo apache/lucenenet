@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -35,19 +35,19 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestCrash : LuceneTestCase
     {
-        private IndexWriter InitIndex(Func<IConcurrentMergeScheduler> newScheduler, Random random, bool initialCommit)
+        private IndexWriter InitIndex(Random random, bool initialCommit)
         {
-            return InitIndex(newScheduler, random, NewMockDirectory(random), initialCommit);
+            return InitIndex(random, NewMockDirectory(random), initialCommit);
         }
 
-        private IndexWriter InitIndex(Func<IConcurrentMergeScheduler> newScheduler, Random random, MockDirectoryWrapper dir, bool initialCommit)
+        private IndexWriter InitIndex(Random random, MockDirectoryWrapper dir, bool initialCommit)
         {
             dir.SetLockFactory(NoLockFactory.GetNoLockFactory());
 
             IndexWriter writer = new IndexWriter(dir,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random))
                 .SetMaxBufferedDocs(10)
-                .SetMergeScheduler(newScheduler()));
+                .SetMergeScheduler(new ConcurrentMergeScheduler()));
 
             IConcurrentMergeScheduler scheduler = writer.Config.MergeScheduler as IConcurrentMergeScheduler;
             if (scheduler != null)
@@ -82,13 +82,12 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestCrashWhileIndexing(
-            [ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestCrashWhileIndexing()
         {
             // this test relies on being able to open a reader before any commit
             // happened, so we must create an initial commit just to allow that, but
             // before any documents were added.
-            IndexWriter writer = InitIndex(newScheduler, Random, true);
+            IndexWriter writer = InitIndex(Random, true);
             MockDirectoryWrapper dir = (MockDirectoryWrapper)writer.Directory;
 
             // We create leftover files because merging could be
@@ -116,15 +115,13 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestWriterAfterCrash(
-            [ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler1,
-            [ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler2)
+        public virtual void TestWriterAfterCrash()
         {
             // this test relies on being able to open a reader before any commit
             // happened, so we must create an initial commit just to allow that, but
             // before any documents were added.
             Console.WriteLine("TEST: initIndex");
-            IndexWriter writer = InitIndex(newScheduler1, Random, true);
+            IndexWriter writer = InitIndex(Random, true);
             Console.WriteLine("TEST: done initIndex");
             MockDirectoryWrapper dir = (MockDirectoryWrapper)writer.Directory;
 
@@ -135,7 +132,7 @@ namespace Lucene.Net.Index
             dir.PreventDoubleWrite = false;
             Console.WriteLine("TEST: now crash");
             Crash(writer);
-            writer = InitIndex(newScheduler2, Random, dir, false);
+            writer = InitIndex(Random, dir, false);
             writer.Dispose();
 
             IndexReader reader = DirectoryReader.Open(dir);
@@ -157,11 +154,9 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestCrashAfterReopen(
-            [ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler1,
-            [ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler2)
+        public virtual void TestCrashAfterReopen()
         {
-            IndexWriter writer = InitIndex(newScheduler1, Random, false);
+            IndexWriter writer = InitIndex(Random, false);
             MockDirectoryWrapper dir = (MockDirectoryWrapper)writer.Directory;
 
             // We create leftover files because merging could be
@@ -169,7 +164,7 @@ namespace Lucene.Net.Index
             dir.AssertNoUnreferencedFilesOnClose = false;
 
             writer.Dispose();
-            writer = InitIndex(newScheduler2, Random, dir, false);
+            writer = InitIndex(Random, dir, false);
             Assert.AreEqual(314, writer.MaxDoc);
             Crash(writer);
 
@@ -201,10 +196,9 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestCrashAfterClose(
-            [ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestCrashAfterClose()
         {
-            IndexWriter writer = InitIndex(newScheduler, Random, false);
+            IndexWriter writer = InitIndex(Random, false);
             MockDirectoryWrapper dir = (MockDirectoryWrapper)writer.Directory;
 
             writer.Dispose();
@@ -224,10 +218,9 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestCrashAfterCloseNoWait(
-            [ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestCrashAfterCloseNoWait()
         {
-            IndexWriter writer = InitIndex(newScheduler, Random, false);
+            IndexWriter writer = InitIndex(Random, false);
             MockDirectoryWrapper dir = (MockDirectoryWrapper)writer.Directory;
 
             writer.Dispose(false);

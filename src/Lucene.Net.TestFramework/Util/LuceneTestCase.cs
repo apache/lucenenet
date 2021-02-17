@@ -3549,34 +3549,6 @@ namespace Lucene.Net.Util
             }
         }
 
-        /// <summary>
-        /// Contains a list of the Func&lt;IConcurrentMergeSchedulers&gt; to be tested.
-        /// Delegate method allows them to be created on their target thread instead of the test thread
-        /// and also ensures a separate instance is created in each case (which can affect the result of the test).
-        /// <para/>
-        /// The <see cref="TaskMergeScheduler"/> is only rarely included.
-        /// <para/>
-        /// LUCENENET specific for injection into tests (i.e. using NUnit.Framework.ValueSourceAttribute)
-        /// </summary>
-        public static class ConcurrentMergeSchedulerFactories
-        {
-            public static IList<Func<IConcurrentMergeScheduler>> Values
-            {
-                get
-                {
-                    var schedulerFactories = new List<Func<IConcurrentMergeScheduler>>();
-#if FEATURE_CONCURRENTMERGESCHEDULER
-                    schedulerFactories.Add(() => new ConcurrentMergeScheduler());
-                    //if (Rarely())
-                    //    schedulerFactories.Add(() => new TaskMergeScheduler());
-#else
-                    schedulerFactories.Add(() => new TaskMergeScheduler());
-#endif
-                    return schedulerFactories;
-                }
-            }
-        }
-
         internal static void LogNativeFSFactoryDebugInfo()
         {
             // LUCENENET specific - log the current locking strategy used and HResult values

@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
@@ -551,24 +551,22 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestDeletesOnDiskFull(
-            [ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestDeletesOnDiskFull()
         {
-            DoTestOperationsOnDiskFull(newScheduler, false);
+            DoTestOperationsOnDiskFull(false);
         }
 
         [Test]
-        public virtual void TestUpdatesOnDiskFull(
-            [ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestUpdatesOnDiskFull()
         {
-            DoTestOperationsOnDiskFull(newScheduler, true);
+            DoTestOperationsOnDiskFull(true);
         }
 
         /// <summary>
         /// Make sure if modifier tries to commit but hits disk full that modifier
         /// remains consistent and usable. Similar to TestIndexReader.testDiskFull().
         /// </summary>
-        private void DoTestOperationsOnDiskFull(Func<IConcurrentMergeScheduler> newScheduler, bool updates)
+        private void DoTestOperationsOnDiskFull(bool updates)
         {
             Term searchTerm = new Term("content", "aaa");
             int START_COUNT = 157;
@@ -613,7 +611,7 @@ namespace Lucene.Net.Index
                 var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false))
                                 .SetMaxBufferedDocs(1000)
                                 .SetMaxBufferedDeleteTerms(1000)
-                                .SetMergeScheduler(newScheduler());
+                                .SetMergeScheduler(new ConcurrentMergeScheduler());
 
                 IConcurrentMergeScheduler scheduler = config.MergeScheduler as IConcurrentMergeScheduler;
                 if (scheduler != null)
