@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Text;
@@ -272,17 +272,6 @@ namespace Lucene.Net.Index
             set => similarity = value ?? throw new ArgumentNullException(nameof(value), "Similarity must not be null");
         }
 
-
-#if !FEATURE_CONCURRENTMERGESCHEDULER
-        /// <summary>
-        /// Expert: Gets or sets the merge scheduler used by this writer. The default is
-        /// <see cref="TaskMergeScheduler"/>.
-        /// <para/>
-        /// <b>NOTE:</b> the merge scheduler cannot be <c>null</c>.
-        ///
-        /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
-        /// </summary>
-#else
         /// <summary>
         /// Expert: Gets or sets the merge scheduler used by this writer. The default is
         /// <see cref="ConcurrentMergeScheduler"/>.
@@ -291,7 +280,6 @@ namespace Lucene.Net.Index
         ///
         /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-#endif
         // LUCENENET NOTE: We cannot override a getter and add a setter, 
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new public IMergeScheduler MergeScheduler

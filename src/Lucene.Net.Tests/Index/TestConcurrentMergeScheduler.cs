@@ -1,5 +1,4 @@
-#if FEATURE_CONCURRENTMERGESCHEDULER
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -481,4 +480,3 @@ namespace Lucene.Net.Index
         }
     }
 }
-#endif

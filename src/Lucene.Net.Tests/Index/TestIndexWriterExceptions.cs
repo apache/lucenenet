@@ -2397,12 +2397,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ConcurrentMergeSchedulerAnonymousInnerClassHelper :
-#if !FEATURE_CONCURRENTMERGESCHEDULER
-            TaskMergeScheduler
-#else
-            ConcurrentMergeScheduler
-#endif
+        private class ConcurrentMergeSchedulerAnonymousInnerClassHelper : ConcurrentMergeScheduler
         {
             protected override void HandleMergeException(Exception exc)
             {
