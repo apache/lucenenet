@@ -1563,22 +1563,9 @@ namespace Lucene.Net.Util
             {
                 int maxThreadCount = TestUtil.NextInt32(Random, 1, 4);
                 int maxMergeCount = TestUtil.NextInt32(Random, maxThreadCount, maxThreadCount + 4);
-                IConcurrentMergeScheduler mergeScheduler;
-
-#if !FEATURE_CONCURRENTMERGESCHEDULER
-                mergeScheduler = new TaskMergeScheduler();
-#else
-                //if (Rarely(random))
-                //{
-                //    mergeScheduler = new TaskMergeScheduler();
-                //}
-                //else
-                {
-                    mergeScheduler = new ConcurrentMergeScheduler();
-                }
-#endif
-                mergeScheduler.SetMaxMergesAndThreads(maxMergeCount, maxThreadCount);
-                c.SetMergeScheduler(mergeScheduler);
+                IConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
+                cms.SetMaxMergesAndThreads(maxMergeCount, maxThreadCount);
+                c.SetMergeScheduler(cms);
             }
             if (random.NextBoolean())
             {

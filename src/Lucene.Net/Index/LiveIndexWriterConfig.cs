@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using System;
 using System.Text;
 
@@ -153,11 +153,7 @@ namespace Lucene.Net.Index
             useCompoundFile = IndexWriterConfig.DEFAULT_USE_COMPOUND_FILE_SYSTEM;
             openMode = Index.OpenMode.CREATE_OR_APPEND;
             similarity = IndexSearcher.DefaultSimilarity;
-#if !FEATURE_CONCURRENTMERGESCHEDULER
-            mergeScheduler = new TaskMergeScheduler();
-#else
             mergeScheduler = new ConcurrentMergeScheduler();
-#endif
             writeLockTimeout = IndexWriterConfig.WRITE_LOCK_TIMEOUT;
             indexingChain = DocumentsWriterPerThread.DefaultIndexingChain;
             codec = Codec.Default;
