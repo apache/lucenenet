@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
         [Test]
         [Nightly]
         [Ignore("LUCENENET specific - takes too long to run on Azure DevOps")]
-        public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void Test()
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPostings"));
             if (dir is MockDirectoryWrapper)
@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
             var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                             .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
                             .SetRAMBufferSizeMB(256.0)
-                            .SetMergeScheduler(newScheduler())
+                            .SetMergeScheduler(new ConcurrentMergeScheduler())
                             .SetMergePolicy(NewLogMergePolicy(false, 10))
                             .SetOpenMode(OpenMode.CREATE);
 

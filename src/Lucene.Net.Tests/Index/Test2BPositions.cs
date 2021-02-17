@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
     {
         [Ignore("Very slow. Enable manually by removing Ignore.")]
         [Test]
-        public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void Test()
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPositions"));
             if (dir is MockDirectoryWrapper)
@@ -54,8 +54,13 @@ namespace Lucene.Net.Index
                 ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
 
-            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
-           .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(newScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(OpenMode.CREATE));
+            IndexWriter w = new IndexWriter(dir,
+                new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                .SetRAMBufferSizeMB(256.0)
+                .SetMergeScheduler(new ConcurrentMergeScheduler())
+                .SetMergePolicy(NewLogMergePolicy(false, 10))
+                .SetOpenMode(OpenMode.CREATE));
 
             MergePolicy mp = w.Config.MergePolicy;
             if (mp is LogByteSizeMergePolicy)

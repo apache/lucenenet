@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Store;
@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
         [Test]
         [Nightly]
         [Timeout(1200000)]
-        public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void Test()
         {
             // LUCENENET specific - disable the test if not 64 bit
             AssumeTrue("This test consumes too much RAM be run on x86.", Constants.RUNTIME_IS_64BIT);
@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
             var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                             .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
                             .SetRAMBufferSizeMB(256.0)
-                            .SetMergeScheduler(newScheduler())
+                            .SetMergeScheduler(new ConcurrentMergeScheduler())
                             .SetMergePolicy(NewLogMergePolicy(false, 10))
                             .SetOpenMode(OpenMode.CREATE);
             IndexWriter w = new IndexWriter(dir, config);

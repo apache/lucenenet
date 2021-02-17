@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
@@ -749,7 +749,7 @@ namespace Lucene.Net.Index
 
         [Test]
         [Slow]
-        public virtual void TestMergeWarmer([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestMergeWarmer()
         {
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
             // Enroll warmer
@@ -757,7 +757,7 @@ namespace Lucene.Net.Index
             var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                             .SetMaxBufferedDocs(2)
                             .SetMergedSegmentWarmer(warmer)
-                            .SetMergeScheduler(newScheduler())
+                            .SetMergeScheduler(new ConcurrentMergeScheduler())
                             .SetMergePolicy(NewLogMergePolicy());
             IndexWriter writer = new IndexWriter(dir1, config);
 
@@ -792,10 +792,10 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestAfterCommit([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestAfterCommit()
         {
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
-            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(newScheduler());
+            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(new ConcurrentMergeScheduler());
             IndexWriter writer = new IndexWriter(dir1, config);
             writer.Commit();
 
