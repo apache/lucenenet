@@ -68,7 +68,7 @@ namespace Lucene.Net.Codecs.Pulsing
             Field field = NewField("field", "", ft);
             document.Add(field);
 
-            //NumberFormat df = new DecimalFormat("00000", new DecimalFormatSymbols(Locale.ROOT));
+            //NumberFormat df = new DecimalFormat("00000", new DecimalFormatSymbols(Locale.ROOT));  // LUCENENET specific:  Use .ToString formating instead
 
             for (int i = 0; i < 10050; i++)
             {
