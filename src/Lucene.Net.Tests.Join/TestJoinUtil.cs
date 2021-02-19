@@ -251,13 +251,13 @@ namespace Lucene.Net.Tests.Join
             bq.Add(joinQuery, Occur.SHOULD);
             bq.Add(new TermQuery(new Term("id", "3")), Occur.SHOULD);
 
-            indexSearcher.Search(bq, new CollectorAnonymousInnerClassHelper());
+            indexSearcher.Search(bq, new CollectorAnonymousClass());
 
             indexSearcher.IndexReader.Dispose();
             dir.Dispose();
         }
 
-        private class CollectorAnonymousInnerClassHelper : ICollector
+        private class CollectorAnonymousClass : ICollector
         {
             internal bool sawFive;
 
@@ -465,7 +465,7 @@ namespace Lucene.Net.Tests.Join
                     FixedBitSet actualResult = new FixedBitSet(indexSearcher.IndexReader.MaxDoc);
                     TopScoreDocCollector topScoreDocCollector = TopScoreDocCollector.Create(10, false);
                     indexSearcher.Search(joinQuery,
-                        new CollectorAnonymousInnerClassHelper2(scoreDocsInOrder, actualResult,
+                        new CollectorAnonymousClass2(scoreDocsInOrder, actualResult,
                             topScoreDocCollector));
                     // Asserting bit set...
                     if (Verbose)
@@ -518,13 +518,13 @@ namespace Lucene.Net.Tests.Join
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper2 : ICollector
+        private class CollectorAnonymousClass2 : ICollector
         {
             private bool scoreDocsInOrder;
             private FixedBitSet actualResult;
             private TopScoreDocCollector topScoreDocCollector;
 
-            public CollectorAnonymousInnerClassHelper2(bool scoreDocsInOrder,
+            public CollectorAnonymousClass2(bool scoreDocsInOrder,
                 FixedBitSet actualResult,
                 TopScoreDocCollector topScoreDocCollector)
             {
@@ -679,12 +679,12 @@ namespace Lucene.Net.Tests.Join
                 if (multipleValuesPerDocument)
                 {
                     fromSearcher.Search(new TermQuery(new Term("value", uniqueRandomValue)),
-                        new CollectorAnonymousInnerClassHelper3(fromField, joinValueToJoinScores));
+                        new CollectorAnonymousClass3(fromField, joinValueToJoinScores));
                 }
                 else
                 {
                     fromSearcher.Search(new TermQuery(new Term("value", uniqueRandomValue)),
-                        new CollectorAnonymousInnerClassHelper4(fromField, joinValueToJoinScores));
+                        new CollectorAnonymousClass4(fromField, joinValueToJoinScores));
                 }
 
                 IDictionary<int, JoinScore> docToJoinScore = new Dictionary<int, JoinScore>();
@@ -725,14 +725,14 @@ namespace Lucene.Net.Tests.Join
                     else
                     {
                         toSearcher.Search(new MatchAllDocsQuery(),
-                            new CollectorAnonymousInnerClassHelper5(toField, joinValueToJoinScores,
+                            new CollectorAnonymousClass5(toField, joinValueToJoinScores,
                                 docToJoinScore));
                     }
                 }
                 else
                 {
                     toSearcher.Search(new MatchAllDocsQuery(),
-                        new CollectorAnonymousInnerClassHelper6(toField, joinValueToJoinScores,
+                        new CollectorAnonymousClass6(toField, joinValueToJoinScores,
                             docToJoinScore));
                 }
                 queryVals[uniqueRandomValue] = docToJoinScore;
@@ -744,12 +744,12 @@ namespace Lucene.Net.Tests.Join
             return context;
         }
 
-        private class CollectorAnonymousInnerClassHelper3 : ICollector
+        private class CollectorAnonymousClass3 : ICollector
         {
             private readonly string fromField;
             private readonly IDictionary<BytesRef, JoinScore> joinValueToJoinScores;
 
-            public CollectorAnonymousInnerClassHelper3(string fromField,
+            public CollectorAnonymousClass3(string fromField,
                 IDictionary<BytesRef, JoinScore> joinValueToJoinScores)
             {
                 this.fromField = fromField;
@@ -790,12 +790,12 @@ namespace Lucene.Net.Tests.Join
             public virtual bool AcceptsDocsOutOfOrder => false;
         }
 
-        private class CollectorAnonymousInnerClassHelper4 : ICollector
+        private class CollectorAnonymousClass4 : ICollector
         {
             private readonly string fromField;
             private readonly IDictionary<BytesRef, JoinScore> joinValueToJoinScores;
 
-            public CollectorAnonymousInnerClassHelper4(string fromField,
+            public CollectorAnonymousClass4(string fromField,
                 IDictionary<BytesRef, JoinScore> joinValueToJoinScores)
             {
                 this.fromField = fromField;
@@ -839,7 +839,7 @@ namespace Lucene.Net.Tests.Join
             public virtual bool AcceptsDocsOutOfOrder => false;
         }
 
-        private class CollectorAnonymousInnerClassHelper5 : ICollector
+        private class CollectorAnonymousClass5 : ICollector
         {
             private readonly string toField;
             private readonly IDictionary<BytesRef, JoinScore> joinValueToJoinScores;
@@ -849,7 +849,7 @@ namespace Lucene.Net.Tests.Join
             private readonly BytesRef scratch = new BytesRef();
             private int docBase;
 
-            public CollectorAnonymousInnerClassHelper5(
+            public CollectorAnonymousClass5(
                 string toField, IDictionary<BytesRef, JoinScore> joinValueToJoinScores, 
                 IDictionary<int, JoinScore> docToJoinScore)
             {
@@ -892,7 +892,7 @@ namespace Lucene.Net.Tests.Join
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper6 : ICollector
+        private class CollectorAnonymousClass6 : ICollector
         {
             private readonly string toField;
             private readonly IDictionary<BytesRef, JoinScore> joinValueToJoinScores;
@@ -902,7 +902,7 @@ namespace Lucene.Net.Tests.Join
             private int docBase;
             private readonly BytesRef spare = new BytesRef();
 
-            public CollectorAnonymousInnerClassHelper6(
+            public CollectorAnonymousClass6(
                 string toField, 
                 IDictionary<BytesRef, JoinScore> joinValueToJoinScores, 
                 IDictionary<int, JoinScore> docToJoinScore)

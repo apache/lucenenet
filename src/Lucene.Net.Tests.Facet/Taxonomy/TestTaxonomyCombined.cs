@@ -848,7 +848,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Exception[] error = new Exception[] { null };
             int[] retrieval = new int[] { 0 };
 
-            var thread = new ThreadAnonymousInnerClassHelper(this, abPath, abOrd, abYoungChildBase1, abYoungChildBase2, retry, tr, stop, error, retrieval);
+            var thread = new ThreadAnonymousClass(this, abPath, abOrd, abYoungChildBase1, abYoungChildBase2, retry, tr, stop, error, retrieval);
             thread.Start();
 
             indexDir.SetSleepMillis(1); // some delay for refresh
@@ -865,7 +865,7 @@ namespace Lucene.Net.Facet.Taxonomy
             tr.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestTaxonomyCombined outerInstance;
 
@@ -879,7 +879,7 @@ namespace Lucene.Net.Facet.Taxonomy
             private readonly Exception[] error;
             private readonly int[] retrieval;
 
-            public ThreadAnonymousInnerClassHelper(TestTaxonomyCombined outerInstance, FacetLabel abPath, int abOrd, int abYoungChildBase1, int abYoungChildBase2, int retry, DirectoryTaxonomyReader tr, AtomicBoolean stop, Exception[] error, int[] retrieval)
+            public ThreadAnonymousClass(TestTaxonomyCombined outerInstance, FacetLabel abPath, int abOrd, int abYoungChildBase1, int abYoungChildBase2, int retry, DirectoryTaxonomyReader tr, AtomicBoolean stop, Exception[] error, int[] retrieval)
                 : base("Child Arrays Verifier")
             {
                 this.outerInstance = outerInstance;

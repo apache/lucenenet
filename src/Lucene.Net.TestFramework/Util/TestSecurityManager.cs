@@ -51,19 +51,19 @@ namespace Lucene.Net.Util
       /// <exception cref="SecurityException"> if the caller of this method is not the test runner itself. </exception>
       public override void CheckExit(int status)
       {
-        AccessController.doPrivileged(new PrivilegedActionAnonymousInnerClassHelper(this, status));
+        AccessController.doPrivileged(new PrivilegedActionAnonymousClass(this, status));
 
         // we passed the stack check, delegate to super, so default policy can still deny permission:
         base.CheckExit(status);
       }
 
-      private class PrivilegedActionAnonymousInnerClassHelper : PrivilegedAction<Void>
+      private class PrivilegedActionAnonymousClass : PrivilegedAction<Void>
       {
           private readonly TestSecurityManager OuterInstance;
 
           private int Status;
 
-          public PrivilegedActionAnonymousInnerClassHelper(TestSecurityManager outerInstance, int status)
+          public PrivilegedActionAnonymousClass(TestSecurityManager outerInstance, int status)
           {
               this.OuterInstance = outerInstance;
               this.Status = status;

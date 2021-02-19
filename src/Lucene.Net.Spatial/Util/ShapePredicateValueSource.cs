@@ -69,15 +69,15 @@ namespace Lucene.Net.Spatial.Util
         {
             FunctionValues shapeValues = shapeValuesource.GetValues(context, readerContext);
 
-            return new BoolDocValuesAnonymousHelper(this, shapeValues);
+            return new BoolDocValuesAnonymousClass(this, shapeValues);
         }
 
-        internal class BoolDocValuesAnonymousHelper : BoolDocValues
+        internal class BoolDocValuesAnonymousClass : BoolDocValues
         {
             private readonly ShapePredicateValueSource outerInstance;
             private readonly FunctionValues shapeValues;
 
-            public BoolDocValuesAnonymousHelper(ShapePredicateValueSource outerInstance, FunctionValues shapeValues)
+            public BoolDocValuesAnonymousClass(ShapePredicateValueSource outerInstance, FunctionValues shapeValues)
                 : base(outerInstance)
             {
                 this.outerInstance = outerInstance;

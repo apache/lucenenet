@@ -1727,7 +1727,7 @@ namespace Lucene.Net.Search
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("parser", new IntParserAnonymousInnerClassHelper(this)), SortField.FIELD_DOC);
+            Sort sort = new Sort(new SortField("parser", new IntParserAnonymousClass(this)), SortField.FIELD_DOC);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
 
@@ -1743,11 +1743,11 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class IntParserAnonymousInnerClassHelper : FieldCache.IInt32Parser
+        private class IntParserAnonymousClass : FieldCache.IInt32Parser
         {
             private readonly TestSort outerInstance;
 
-            public IntParserAnonymousInnerClassHelper(TestSort outerInstance)
+            public IntParserAnonymousClass(TestSort outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -1792,7 +1792,7 @@ namespace Lucene.Net.Search
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("parser", new ByteParserAnonymousInnerClassHelper(this)), SortField.FIELD_DOC);
+            Sort sort = new Sort(new SortField("parser", new ByteParserAnonymousClass(this)), SortField.FIELD_DOC);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
 
@@ -1809,12 +1809,12 @@ namespace Lucene.Net.Search
         }
 
 #pragma warning disable 612, 618
-        private class ByteParserAnonymousInnerClassHelper : FieldCache.IByteParser
+        private class ByteParserAnonymousClass : FieldCache.IByteParser
 #pragma warning restore 612, 618
         {
             private readonly TestSort outerInstance;
 
-            public ByteParserAnonymousInnerClassHelper(TestSort outerInstance)
+            public ByteParserAnonymousClass(TestSort outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -1856,7 +1856,7 @@ namespace Lucene.Net.Search
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("parser", new ShortParserAnonymousInnerClassHelper(this)), SortField.FIELD_DOC);
+            Sort sort = new Sort(new SortField("parser", new ShortParserAnonymousClass(this)), SortField.FIELD_DOC);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
 
@@ -1873,12 +1873,12 @@ namespace Lucene.Net.Search
         }
 
 #pragma warning disable 612, 618
-        private class ShortParserAnonymousInnerClassHelper : FieldCache.IInt16Parser
+        private class ShortParserAnonymousClass : FieldCache.IInt16Parser
 #pragma warning restore 612, 618
         {
             private readonly TestSort outerInstance;
 
-            public ShortParserAnonymousInnerClassHelper(TestSort outerInstance)
+            public ShortParserAnonymousClass(TestSort outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -1923,7 +1923,7 @@ namespace Lucene.Net.Search
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("parser", new LongParserAnonymousInnerClassHelper(this)), SortField.FIELD_DOC);
+            Sort sort = new Sort(new SortField("parser", new LongParserAnonymousClass(this)), SortField.FIELD_DOC);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
 
@@ -1939,11 +1939,11 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class LongParserAnonymousInnerClassHelper : FieldCache.IInt64Parser
+        private class LongParserAnonymousClass : FieldCache.IInt64Parser
         {
             private readonly TestSort outerInstance;
 
-            public LongParserAnonymousInnerClassHelper(TestSort outerInstance)
+            public LongParserAnonymousClass(TestSort outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -1988,7 +1988,7 @@ namespace Lucene.Net.Search
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("parser", new FloatParserAnonymousInnerClassHelper(this)), SortField.FIELD_DOC);
+            Sort sort = new Sort(new SortField("parser", new FloatParserAnonymousClass(this)), SortField.FIELD_DOC);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
 
@@ -2004,11 +2004,11 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class FloatParserAnonymousInnerClassHelper : FieldCache.ISingleParser
+        private class FloatParserAnonymousClass : FieldCache.ISingleParser
         {
             private readonly TestSort outerInstance;
 
-            public FloatParserAnonymousInnerClassHelper(TestSort outerInstance)
+            public FloatParserAnonymousClass(TestSort outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -2053,7 +2053,7 @@ namespace Lucene.Net.Search
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("parser", new DoubleParserAnonymousInnerClassHelper(this)), SortField.FIELD_DOC);
+            Sort sort = new Sort(new SortField("parser", new DoubleParserAnonymousClass(this)), SortField.FIELD_DOC);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
 
@@ -2069,11 +2069,11 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class DoubleParserAnonymousInnerClassHelper : FieldCache.IDoubleParser
+        private class DoubleParserAnonymousClass : FieldCache.IDoubleParser
         {
             private readonly TestSort outerInstance;
 
-            public DoubleParserAnonymousInnerClassHelper(TestSort outerInstance)
+            public DoubleParserAnonymousClass(TestSort outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

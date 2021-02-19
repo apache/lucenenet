@@ -46,16 +46,16 @@ namespace Lucene.Net.Queries.Function.ValueSources
             Fields fields = readerContext.AtomicReader.Fields;
             Terms terms = fields.GetTerms(m_indexedField);
 
-            return new Int32DocValuesAnonymousInnerClassHelper(this, this, terms);
+            return new Int32DocValuesAnonymousClass(this, this, terms);
         }
 
-        private class Int32DocValuesAnonymousInnerClassHelper : Int32DocValues
+        private class Int32DocValuesAnonymousClass : Int32DocValues
         {
             private readonly TermFreqValueSource outerInstance;
 
             private readonly Terms terms;
 
-            public Int32DocValuesAnonymousInnerClassHelper(TermFreqValueSource outerInstance, TermFreqValueSource @this, Terms terms)
+            public Int32DocValuesAnonymousClass(TermFreqValueSource outerInstance, TermFreqValueSource @this, Terms terms)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
@@ -91,12 +91,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
                 if (docs == null)
                 {
-                    docs = new DocsEnumAnonymousInnerClassHelper();
+                    docs = new DocsEnumAnonymousClass();
                 }
                 atDoc = -1;
             }
 
-            private class DocsEnumAnonymousInnerClassHelper : DocsEnum
+            private class DocsEnumAnonymousClass : DocsEnum
             {
                 public override int Freq => 0;
 

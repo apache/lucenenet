@@ -277,12 +277,12 @@ namespace Lucene.Net.Index.Memory
                 throw new ArgumentException("keywords must not be null");
             }
 
-            return new TokenStreamAnonymousInnerClassHelper<T>(keywords);
+            return new TokenStreamAnonymousClass<T>(keywords);
         }
 
-        private sealed class TokenStreamAnonymousInnerClassHelper<T> : TokenStream
+        private sealed class TokenStreamAnonymousClass<T> : TokenStream
         {
-            public TokenStreamAnonymousInnerClassHelper(ICollection<T> keywords)
+            public TokenStreamAnonymousClass(ICollection<T> keywords)
             {
                 iter = keywords.GetEnumerator();
                 start = 0;
@@ -317,7 +317,7 @@ namespace Lucene.Net.Index.Memory
             }
 
             /// <summary>
-            /// Releases resources used by the <see cref="TokenStreamAnonymousInnerClassHelper{T}"/> and
+            /// Releases resources used by the <see cref="TokenStreamAnonymousClass{T}"/> and
             /// if overridden in a derived class, optionally releases unmanaged resources.
             /// </summary>
             /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
@@ -557,7 +557,7 @@ namespace Lucene.Net.Index.Memory
             try
             {
                 float[] scores = new float[1]; // inits to 0.0f (no match)
-                searcher.Search(query, new CollectorAnonymousInnerClassHelper(scores));
+                searcher.Search(query, new CollectorAnonymousClass(scores));
                 float score = scores[0];
                 return score;
             } // can never happen (RAMDirectory)
@@ -584,11 +584,11 @@ namespace Lucene.Net.Index.Memory
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper : ICollector
+        private class CollectorAnonymousClass : ICollector
         {
             private readonly float[] scores;
 
-            public CollectorAnonymousInnerClassHelper(float[] scores)
+            public CollectorAnonymousClass(float[] scores)
             {
                 this.scores = scores;
             }

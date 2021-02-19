@@ -56,13 +56,13 @@ namespace Lucene.Net.Index
             internal abstract DocConsumer GetChain(DocumentsWriterPerThread documentsWriterPerThread);
         }
 
-        private static readonly IndexingChain defaultIndexingChain = new IndexingChainAnonymousInnerClassHelper();
+        private static readonly IndexingChain defaultIndexingChain = new IndexingChainAnonymousClass();
 
         public static IndexingChain DefaultIndexingChain => defaultIndexingChain;
 
-        private class IndexingChainAnonymousInnerClassHelper : IndexingChain
+        private class IndexingChainAnonymousClass : IndexingChain
         {
-            public IndexingChainAnonymousInnerClassHelper()
+            public IndexingChainAnonymousClass()
             {
             }
 

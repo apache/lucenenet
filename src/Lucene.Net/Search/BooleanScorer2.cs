@@ -167,20 +167,20 @@ namespace Lucene.Net.Search
             // each scorer from the list counted as a single matcher
             if (minNrShouldMatch > 1)
             {
-                return new MinShouldMatchSumScorerAnonymousInnerClassHelper(this, m_weight, scorers, minNrShouldMatch);
+                return new MinShouldMatchSumScorerAnonymousClass(this, m_weight, scorers, minNrShouldMatch);
             }
             else
             {
                 // we pass null for coord[] since we coordinate ourselves and override score()
-                return new DisjunctionSumScorerAnonymousInnerClassHelper(this, m_weight, scorers.ToArray(), null);
+                return new DisjunctionSumScorerAnonymousClass(this, m_weight, scorers.ToArray(), null);
             }
         }
 
-        private class MinShouldMatchSumScorerAnonymousInnerClassHelper : MinShouldMatchSumScorer
+        private class MinShouldMatchSumScorerAnonymousClass : MinShouldMatchSumScorer
         {
             private readonly BooleanScorer2 outerInstance;
 
-            public MinShouldMatchSumScorerAnonymousInnerClassHelper(BooleanScorer2 outerInstance, Weight weight, IList<Scorer> scorers, int minNrShouldMatch)
+            public MinShouldMatchSumScorerAnonymousClass(BooleanScorer2 outerInstance, Weight weight, IList<Scorer> scorers, int minNrShouldMatch)
                 : base(weight, scorers, minNrShouldMatch)
             {
                 this.outerInstance = outerInstance;
@@ -193,11 +193,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class DisjunctionSumScorerAnonymousInnerClassHelper : DisjunctionSumScorer
+        private class DisjunctionSumScorerAnonymousClass : DisjunctionSumScorer
         {
             private readonly BooleanScorer2 outerInstance;
 
-            public DisjunctionSumScorerAnonymousInnerClassHelper(BooleanScorer2 outerInstance, Weight weight, Scorer[] subScorers, float[] coord)
+            public DisjunctionSumScorerAnonymousClass(BooleanScorer2 outerInstance, Weight weight, Scorer[] subScorers, float[] coord)
                 : base(weight, subScorers, coord)
             {
                 this.outerInstance = outerInstance;
@@ -214,16 +214,16 @@ namespace Lucene.Net.Search
         {
             // each scorer from the list counted as a single matcher
             int requiredNrMatchers = requiredScorers.Count;
-            return new ConjunctionScorerAnonymousInnerClassHelper(this, m_weight, requiredScorers.ToArray(), requiredNrMatchers);
+            return new ConjunctionScorerAnonymousClass(this, m_weight, requiredScorers.ToArray(), requiredNrMatchers);
         }
 
-        private class ConjunctionScorerAnonymousInnerClassHelper : ConjunctionScorer
+        private class ConjunctionScorerAnonymousClass : ConjunctionScorer
         {
             private readonly BooleanScorer2 outerInstance;
 
             private readonly int requiredNrMatchers;
 
-            public ConjunctionScorerAnonymousInnerClassHelper(BooleanScorer2 outerInstance, Weight weight, Scorer[] scorers, int requiredNrMatchers)
+            public ConjunctionScorerAnonymousClass(BooleanScorer2 outerInstance, Weight weight, Scorer[] scorers, int requiredNrMatchers)
                 : base(weight, scorers)
             {
                 this.outerInstance = outerInstance;

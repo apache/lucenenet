@@ -1227,19 +1227,19 @@ namespace Lucene.Net.Store
             }
 
             IndexInputSlicer delegateHandle = m_input.CreateSlicer(name, context);
-            IndexInputSlicer handle = new IndexInputSlicerAnonymousInnerClassHelper(this, name, delegateHandle);
+            IndexInputSlicer handle = new IndexInputSlicerAnonymousClass(this, name, delegateHandle);
             AddFileHandle(handle, name, Handle.Slice);
             return handle;
         }
 
-        private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
+        private class IndexInputSlicerAnonymousClass : IndexInputSlicer
         {
             private readonly MockDirectoryWrapper outerInstance;
 
             private readonly string name;
             private readonly IndexInputSlicer delegateHandle;
 
-            public IndexInputSlicerAnonymousInnerClassHelper(MockDirectoryWrapper outerInstance, string name, IndexInputSlicer delegateHandle)
+            public IndexInputSlicerAnonymousClass(MockDirectoryWrapper outerInstance, string name, IndexInputSlicer delegateHandle)
             {
                 this.outerInstance = outerInstance;
                 this.name = name;

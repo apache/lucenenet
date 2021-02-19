@@ -117,10 +117,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
             float maxSource = scaleInfo.MaxVal;
 
             var vals = m_source.GetValues(context, readerContext);
-            return new SingleDocValuesAnonymousInnerClassHelper(this, this, scale, minSource, maxSource, vals);
+            return new SingleDocValuesAnonymousClass(this, this, scale, minSource, maxSource, vals);
         }
 
-        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
+        private class SingleDocValuesAnonymousClass : SingleDocValues
         {
             private readonly ScaleSingleFunction outerInstance;
 
@@ -129,7 +129,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             private readonly float maxSource;
             private readonly FunctionValues vals;
 
-            public SingleDocValuesAnonymousInnerClassHelper(ScaleSingleFunction outerInstance, ScaleSingleFunction @this, float scale, float minSource, float maxSource, FunctionValues vals)
+            public SingleDocValuesAnonymousClass(ScaleSingleFunction outerInstance, ScaleSingleFunction @this, float scale, float minSource, float maxSource, FunctionValues vals)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;

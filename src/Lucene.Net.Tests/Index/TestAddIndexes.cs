@@ -671,7 +671,7 @@ namespace Lucene.Net.Index
             {
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
-                    threads[i] = new ThreadAnonymousInnerClassHelper(this, numIter);
+                    threads[i] = new ThreadAnonymousClass(this, numIter);
                 }
 
                 for (int i = 0; i < NUM_THREADS; i++)
@@ -680,12 +680,12 @@ namespace Lucene.Net.Index
                 }
             }
 
-            private class ThreadAnonymousInnerClassHelper : ThreadJob
+            private class ThreadAnonymousClass : ThreadJob
             {
                 private readonly RunAddIndexesThreads outerInstance;
                 private readonly int numIter;
 
-                public ThreadAnonymousInnerClassHelper(RunAddIndexesThreads outerInstance, int numIter)
+                public ThreadAnonymousClass(RunAddIndexesThreads outerInstance, int numIter)
                 {
                     this.outerInstance = outerInstance;
                     this.numIter = numIter;

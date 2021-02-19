@@ -189,16 +189,16 @@ namespace Lucene.Net.Store
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             var full = (MMapIndexInput)OpenInput(name, context);
-            return new IndexInputSlicerAnonymousInnerClassHelper(this, full);
+            return new IndexInputSlicerAnonymousClass(this, full);
         }
 
-        private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
+        private class IndexInputSlicerAnonymousClass : IndexInputSlicer
         {
             private readonly MMapDirectory outerInstance;
 
             private readonly MMapIndexInput full;
 
-            public IndexInputSlicerAnonymousInnerClassHelper(MMapDirectory outerInstance, MMapIndexInput full)
+            public IndexInputSlicerAnonymousClass(MMapDirectory outerInstance, MMapIndexInput full)
             {
                 this.outerInstance = outerInstance;
                 this.full = full;

@@ -487,10 +487,10 @@ namespace Lucene.Net.Search
             AtomicBoolean failed = new AtomicBoolean();
             AtomicInt32 iters = new AtomicInt32();
             int NUM_ITER = 200 * RandomMultiplier;
-            Barrier restart = new Barrier(NUM_THREADS, (barrier) => new RunnableAnonymousInnerClassHelper(this, cache, iters).Run());
+            Barrier restart = new Barrier(NUM_THREADS, (barrier) => new RunnableAnonymousClass(this, cache, iters).Run());
             for (int threadIDX = 0; threadIDX < NUM_THREADS; threadIDX++)
             {
-                threads[threadIDX] = new ThreadAnonymousInnerClassHelper(this, cache, failed, iters, NUM_ITER, restart);
+                threads[threadIDX] = new ThreadAnonymousClass(this, cache, failed, iters, NUM_ITER, restart);
                 threads[threadIDX].Start();
             }
 
@@ -501,14 +501,14 @@ namespace Lucene.Net.Search
             Assert.IsFalse(failed);
         }
 
-        private class RunnableAnonymousInnerClassHelper //: IThreadRunnable
+        private class RunnableAnonymousClass //: IThreadRunnable
         {
             private readonly TestFieldCache outerInstance;
 
             private readonly IFieldCache cache;
             private readonly AtomicInt32 iters;
 
-            public RunnableAnonymousInnerClassHelper(TestFieldCache outerInstance, IFieldCache cache, AtomicInt32 iters)
+            public RunnableAnonymousClass(TestFieldCache outerInstance, IFieldCache cache, AtomicInt32 iters)
             {
                 this.outerInstance = outerInstance;
                 this.cache = cache;
@@ -522,7 +522,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestFieldCache outerInstance;
 
@@ -532,7 +532,7 @@ namespace Lucene.Net.Search
             private readonly int NUM_ITER;
             private readonly Barrier restart;
 
-            public ThreadAnonymousInnerClassHelper(TestFieldCache outerInstance, IFieldCache cache, AtomicBoolean failed, AtomicInt32 iters, int NUM_ITER, Barrier restart)
+            public ThreadAnonymousClass(TestFieldCache outerInstance, IFieldCache cache, AtomicBoolean failed, AtomicInt32 iters, int NUM_ITER, Barrier restart)
             {
                 this.outerInstance = outerInstance;
                 this.cache = cache;

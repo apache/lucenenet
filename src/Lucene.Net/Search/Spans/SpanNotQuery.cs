@@ -120,14 +120,14 @@ namespace Lucene.Net.Search.Spans
 
         public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
-            return new SpansAnonymousInnerClassHelper(this, context, acceptDocs, termContexts);
+            return new SpansAnonymousClass(this, context, acceptDocs, termContexts);
         }
 
-        private class SpansAnonymousInnerClassHelper : Spans
+        private class SpansAnonymousClass : Spans
         {
             private readonly SpanNotQuery outerInstance;
 
-            public SpansAnonymousInnerClassHelper(SpanNotQuery outerInstance, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
+            public SpansAnonymousClass(SpanNotQuery outerInstance, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
             {
                 this.outerInstance = outerInstance;
                 includeSpans = outerInstance.include.GetSpans(context, acceptDocs, termContexts);

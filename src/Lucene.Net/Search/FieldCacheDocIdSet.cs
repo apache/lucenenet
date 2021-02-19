@@ -67,13 +67,13 @@ namespace Lucene.Net.Search
         /// </summary>
         public override sealed bool IsCacheable => true;
 
-        public override sealed IBits Bits => (m_acceptDocs == null) ? (IBits)new BitsAnonymousInnerClassHelper(this) : new BitsAnonymousInnerClassHelper2(this);
+        public override sealed IBits Bits => (m_acceptDocs == null) ? (IBits)new BitsAnonymousClass(this) : new BitsAnonymousClass2(this);
 
-        private class BitsAnonymousInnerClassHelper : IBits
+        private class BitsAnonymousClass : IBits
         {
             private readonly FieldCacheDocIdSet outerInstance;
 
-            public BitsAnonymousInnerClassHelper(FieldCacheDocIdSet outerInstance)
+            public BitsAnonymousClass(FieldCacheDocIdSet outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -86,11 +86,11 @@ namespace Lucene.Net.Search
             public virtual int Length => outerInstance.m_maxDoc;
         }
 
-        private class BitsAnonymousInnerClassHelper2 : IBits
+        private class BitsAnonymousClass2 : IBits
         {
             private readonly FieldCacheDocIdSet outerInstance;
 
-            public BitsAnonymousInnerClassHelper2(FieldCacheDocIdSet outerInstance)
+            public BitsAnonymousClass2(FieldCacheDocIdSet outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -108,26 +108,26 @@ namespace Lucene.Net.Search
             if (m_acceptDocs == null)
             {
                 // Specialization optimization disregard acceptDocs
-                return new DocIdSetIteratorAnonymousInnerClassHelper(this);
+                return new DocIdSetIteratorAnonymousClass(this);
             }
             else if (m_acceptDocs is FixedBitSet || m_acceptDocs is OpenBitSet)
             {
                 // special case for FixedBitSet / OpenBitSet: use the iterator and filter it
                 // (used e.g. when Filters are chained by FilteredQuery)
-                return new FilteredDocIdSetIteratorAnonymousInnerClassHelper(this, ((DocIdSet)m_acceptDocs).GetIterator());
+                return new FilteredDocIdSetIteratorAnonymousClass(this, ((DocIdSet)m_acceptDocs).GetIterator());
             }
             else
             {
                 // Stupid consultation of acceptDocs and matchDoc()
-                return new DocIdSetIteratorAnonymousInnerClassHelper2(this);
+                return new DocIdSetIteratorAnonymousClass2(this);
             }
         }
 
-        private class DocIdSetIteratorAnonymousInnerClassHelper : DocIdSetIterator
+        private class DocIdSetIteratorAnonymousClass : DocIdSetIterator
         {
             private readonly FieldCacheDocIdSet outerInstance;
 
-            public DocIdSetIteratorAnonymousInnerClassHelper(FieldCacheDocIdSet outerInstance)
+            public DocIdSetIteratorAnonymousClass(FieldCacheDocIdSet outerInstance)
             {
                 this.outerInstance = outerInstance;
                 doc = -1;
@@ -168,11 +168,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class FilteredDocIdSetIteratorAnonymousInnerClassHelper : FilteredDocIdSetIterator
+        private class FilteredDocIdSetIteratorAnonymousClass : FilteredDocIdSetIterator
         {
             private readonly FieldCacheDocIdSet outerInstance;
 
-            public FilteredDocIdSetIteratorAnonymousInnerClassHelper(FieldCacheDocIdSet outerInstance, Lucene.Net.Search.DocIdSetIterator iterator)
+            public FilteredDocIdSetIteratorAnonymousClass(FieldCacheDocIdSet outerInstance, Lucene.Net.Search.DocIdSetIterator iterator)
                 : base(iterator)
             {
                 this.outerInstance = outerInstance;
@@ -184,11 +184,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class DocIdSetIteratorAnonymousInnerClassHelper2 : DocIdSetIterator
+        private class DocIdSetIteratorAnonymousClass2 : DocIdSetIterator
         {
             private readonly FieldCacheDocIdSet outerInstance;
 
-            public DocIdSetIteratorAnonymousInnerClassHelper2(FieldCacheDocIdSet outerInstance)
+            public DocIdSetIteratorAnonymousClass2(FieldCacheDocIdSet outerInstance)
             {
                 this.outerInstance = outerInstance;
                 doc = -1;

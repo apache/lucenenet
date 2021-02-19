@@ -374,15 +374,15 @@ namespace Lucene.Net.Search
         ///          whether documents are allowed to be collected out-of-order </param>
         public static CachingCollector Create(bool acceptDocsOutOfOrder, bool cacheScores, double maxRAMMB)
         {
-            ICollector other = new CollectorAnonymousInnerClassHelper(acceptDocsOutOfOrder);
+            ICollector other = new CollectorAnonymousClass(acceptDocsOutOfOrder);
             return Create(other, cacheScores, maxRAMMB);
         }
 
-        private class CollectorAnonymousInnerClassHelper : ICollector
+        private class CollectorAnonymousClass : ICollector
         {
             private readonly bool acceptDocsOutOfOrder;
 
-            public CollectorAnonymousInnerClassHelper(bool acceptDocsOutOfOrder)
+            public CollectorAnonymousClass(bool acceptDocsOutOfOrder)
             {
                 this.acceptDocsOutOfOrder = acceptDocsOutOfOrder;
             }

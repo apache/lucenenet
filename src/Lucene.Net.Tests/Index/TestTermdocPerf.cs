@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
     {
         internal virtual void AddDocs(Random random, Directory dir, int ndocs, string field, string val, int maxTF, float percentDocs)
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(random, val, maxTF, percentDocs);
+            Analyzer analyzer = new AnalyzerAnonymousClass(random, val, maxTF, percentDocs);
 
             Document doc = new Document();
 
@@ -102,14 +102,14 @@ namespace Lucene.Net.Index
             writer.Dispose();
         }
 
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        private class AnalyzerAnonymousClass : Analyzer
         {
             private readonly Random random;
             private readonly string val;
             private readonly int maxTf;
             private readonly float percentDocs;
 
-            public AnalyzerAnonymousInnerClassHelper(Random random, string val, int maxTF, float percentDocs)
+            public AnalyzerAnonymousClass(Random random, string val, int maxTF, float percentDocs)
             {
                 this.random = random;
                 this.val = val;

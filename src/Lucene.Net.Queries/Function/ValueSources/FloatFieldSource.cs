@@ -54,15 +54,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             var arr = m_cache.GetSingles(readerContext.AtomicReader, m_field, m_parser, true);
             var valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
-            return new SingleDocValuesAnonymousInnerClassHelper(this, arr, valid);
+            return new SingleDocValuesAnonymousClass(this, arr, valid);
         }
 
-        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
+        private class SingleDocValuesAnonymousClass : SingleDocValues
         {
             private readonly FieldCache.Singles arr;
             private readonly IBits valid;
 
-            public SingleDocValuesAnonymousInnerClassHelper(SingleFieldSource @this, FieldCache.Singles arr, IBits valid)
+            public SingleDocValuesAnonymousClass(SingleFieldSource @this, FieldCache.Singles arr, IBits valid)
                 : base(@this)
             {
                 this.arr = arr;

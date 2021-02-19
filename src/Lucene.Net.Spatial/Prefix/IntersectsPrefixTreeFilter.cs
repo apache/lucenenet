@@ -62,16 +62,16 @@ namespace Lucene.Net.Spatial.Prefix
         /// <exception cref="IOException"></exception>
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
-            return new VisitorTemplateAnonymousHelper(this, context, acceptDocs, hasIndexedLeaves).GetDocIdSet();
+            return new VisitorTemplateAnonymousClass(this, context, acceptDocs, hasIndexedLeaves).GetDocIdSet();
         }
 
-        #region Nested type: VisitorTemplateAnonymousHelper
+        #region Nested type: VisitorTemplateAnonymousClass
 
-        private sealed class VisitorTemplateAnonymousHelper : VisitorTemplate
+        private sealed class VisitorTemplateAnonymousClass : VisitorTemplate
         {
             private FixedBitSet results;
 
-            public VisitorTemplateAnonymousHelper(IntersectsPrefixTreeFilter outerInstance, AtomicReaderContext context, IBits acceptDocs, bool hasIndexedLeaves)
+            public VisitorTemplateAnonymousClass(IntersectsPrefixTreeFilter outerInstance, AtomicReaderContext context, IBits acceptDocs, bool hasIndexedLeaves)
                 : base(outerInstance, context, acceptDocs, hasIndexedLeaves)
             {
             }

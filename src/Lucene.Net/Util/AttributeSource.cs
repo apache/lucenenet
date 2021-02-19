@@ -257,7 +257,7 @@ namespace Lucene.Net.Util
             State initState = GetCurrentState();
             if (initState != null)
             {
-                return new IteratorAnonymousInnerClassHelper(initState);
+                return new IteratorAnonymousClass(initState);
             }
             else
             {
@@ -265,9 +265,9 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class IteratorAnonymousInnerClassHelper : IEnumerator<Attribute>
+        private class IteratorAnonymousClass : IEnumerator<Attribute>
         {
-            public IteratorAnonymousInnerClassHelper(AttributeSource.State initState)
+            public IteratorAnonymousClass(AttributeSource.State initState)
             {
                 state = initState;
             }
@@ -582,16 +582,16 @@ namespace Lucene.Net.Util
         public string ReflectAsString(bool prependAttClass)
         {
             StringBuilder buffer = new StringBuilder();
-            ReflectWith(new AttributeReflectorAnonymousInnerClassHelper(prependAttClass, buffer));
+            ReflectWith(new AttributeReflectorAnonymousClass(prependAttClass, buffer));
             return buffer.ToString();
         }
 
-        private class AttributeReflectorAnonymousInnerClassHelper : IAttributeReflector
+        private class AttributeReflectorAnonymousClass : IAttributeReflector
         {
             private readonly bool prependAttClass;
             private readonly StringBuilder buffer;
 
-            public AttributeReflectorAnonymousInnerClassHelper(bool prependAttClass, StringBuilder buffer)
+            public AttributeReflectorAnonymousClass(bool prependAttClass, StringBuilder buffer)
             {
                 this.prependAttClass = prependAttClass;
                 this.buffer = buffer;

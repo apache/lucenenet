@@ -31,11 +31,11 @@ namespace Lucene.Net.Util.Fst
     /// </summary>
     public sealed class NoOutputs : Outputs<object>
     {
-        internal static readonly object NO_OUTPUT = new ObjectAnonymousInnerClassHelper();
+        internal static readonly object NO_OUTPUT = new ObjectAnonymousClass();
 
-        private class ObjectAnonymousInnerClassHelper : object
+        private class ObjectAnonymousClass : object
         {
-            public ObjectAnonymousInnerClassHelper()
+            public ObjectAnonymousClass()
             {
             }
 

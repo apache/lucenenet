@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
                 this,
 #endif
                 ir, false);
-            searcher2.Similarity = new PerFieldSimilarityWrapperAnonymousInnerClassHelper(this, field, @base);
+            searcher2.Similarity = new PerFieldSimilarityWrapperAnonymousClass(this, field, @base);
 
             // in this case, we searched on field "foo". first document should have 2x the score.
             TermQuery tq = new TermQuery(new Term("foo", "quick"));
@@ -157,14 +157,14 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class PerFieldSimilarityWrapperAnonymousInnerClassHelper : PerFieldSimilarityWrapper
+        private class PerFieldSimilarityWrapperAnonymousClass : PerFieldSimilarityWrapper
         {
             private readonly TestDocValuesScoring outerInstance;
 
             private Field field;
             private Similarity @base;
 
-            public PerFieldSimilarityWrapperAnonymousInnerClassHelper(TestDocValuesScoring outerInstance, Field field, Similarity @base)
+            public PerFieldSimilarityWrapperAnonymousClass(TestDocValuesScoring outerInstance, Field field, Similarity @base)
             {
                 this.outerInstance = outerInstance;
                 this.field = field;
@@ -222,17 +222,17 @@ namespace Lucene.Net.Search
                 SimScorer sub = sim.GetSimScorer(stats, context);
                 FieldCache.Singles values = FieldCache.DEFAULT.GetSingles(context.AtomicReader, boostField, false);
 
-                return new SimScorerAnonymousInnerClassHelper(this, sub, values);
+                return new SimScorerAnonymousClass(this, sub, values);
             }
 
-            private class SimScorerAnonymousInnerClassHelper : SimScorer
+            private class SimScorerAnonymousClass : SimScorer
             {
                 private readonly BoostingSimilarity outerInstance;
 
                 private readonly SimScorer sub;
                 private readonly FieldCache.Singles values;
 
-                public SimScorerAnonymousInnerClassHelper(BoostingSimilarity outerInstance, SimScorer sub, FieldCache.Singles values)
+                public SimScorerAnonymousClass(BoostingSimilarity outerInstance, SimScorer sub, FieldCache.Singles values)
                 {
                     this.outerInstance = outerInstance;
                     this.sub = sub;

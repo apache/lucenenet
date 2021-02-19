@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis
         protected internal LookaheadTokenFilter(TokenStream input)
             : base(input)
         {
-            m_positions = new RollingBufferAnonymousInnerClassHelper(this);
+            m_positions = new RollingBufferAnonymousClass(this);
             m_posIncAtt = AddAttribute<IPositionIncrementAttribute>();
             m_posLenAtt = AddAttribute<IPositionLengthAttribute>();
             m_offsetAtt = AddAttribute<IOffsetAttribute>();
@@ -160,11 +160,11 @@ namespace Lucene.Net.Analysis
 
         protected readonly RollingBuffer<T> m_positions;
 
-        private class RollingBufferAnonymousInnerClassHelper : RollingBuffer<T>
+        private class RollingBufferAnonymousClass : RollingBuffer<T>
         {
             private readonly LookaheadTokenFilter<T> outerInstance;
 
-            public RollingBufferAnonymousInnerClassHelper(LookaheadTokenFilter<T> outerInstance)
+            public RollingBufferAnonymousClass(LookaheadTokenFilter<T> outerInstance)
                 : base(outerInstance.NewPosition)
             {
                 this.outerInstance = outerInstance;

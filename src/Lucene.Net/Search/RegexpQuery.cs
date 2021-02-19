@@ -54,9 +54,9 @@ namespace Lucene.Net.Search
         /// <summary>
         /// A provider that provides no named automata
         /// </summary>
-        private static readonly IAutomatonProvider defaultProvider = new AutomatonProviderAnonymousInnerClassHelper();
+        private static readonly IAutomatonProvider defaultProvider = new AutomatonProviderAnonymousClass();
 
-        private class AutomatonProviderAnonymousInnerClassHelper : IAutomatonProvider
+        private class AutomatonProviderAnonymousClass : IAutomatonProvider
         {
             public Automaton GetAutomaton(string name)
             {

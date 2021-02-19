@@ -112,7 +112,7 @@ namespace Lucene.Net.Index
                 this.omitTF = omitTF;
                 this.storePayloads = storePayloads;
                 // TODO: change this test to use all three
-                fieldInfo = fieldInfos.AddOrUpdate(name, new IndexableFieldTypeAnonymousInnerClassHelper(this, omitTF));
+                fieldInfo = fieldInfos.AddOrUpdate(name, new IndexableFieldTypeAnonymousClass(this, omitTF));
                 if (storePayloads)
                 {
                     fieldInfo.SetStorePayloads();
@@ -126,12 +126,12 @@ namespace Lucene.Net.Index
                 Array.Sort(terms);
             }
 
-            private class IndexableFieldTypeAnonymousInnerClassHelper : IIndexableFieldType
+            private class IndexableFieldTypeAnonymousClass : IIndexableFieldType
             {
                 private readonly FieldData outerInstance;
                 private readonly bool omitTF;
 
-                public IndexableFieldTypeAnonymousInnerClassHelper(FieldData outerInstance, bool omitTF)
+                public IndexableFieldTypeAnonymousClass(FieldData outerInstance, bool omitTF)
                 {
                     this.outerInstance = outerInstance;
                     this.omitTF = omitTF;

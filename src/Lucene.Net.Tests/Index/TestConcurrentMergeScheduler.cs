@@ -296,7 +296,7 @@ namespace Lucene.Net.Index
                 Console.WriteLine("TEST: maxMergeCount=" + maxMergeCount + " maxMergeThreads=" + maxMergeThreads);
             }
 
-            ConcurrentMergeScheduler cms = new ConcurrentMergeSchedulerAnonymousInnerClassHelper(this, maxMergeCount, enoughMergesWaiting, runningMergeCount, failed);
+            ConcurrentMergeScheduler cms = new ConcurrentMergeSchedulerAnonymousClass(this, maxMergeCount, enoughMergesWaiting, runningMergeCount, failed);
             cms.SetMaxMergesAndThreads(maxMergeCount, maxMergeThreads);
             iwc.SetMergeScheduler(cms);
             iwc.SetMaxBufferedDocs(2);
@@ -320,7 +320,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ConcurrentMergeSchedulerAnonymousInnerClassHelper : ConcurrentMergeScheduler
+        private class ConcurrentMergeSchedulerAnonymousClass : ConcurrentMergeScheduler
         {
             private readonly TestConcurrentMergeScheduler outerInstance;
 
@@ -329,7 +329,7 @@ namespace Lucene.Net.Index
             private readonly AtomicInt32 runningMergeCount;
             private readonly AtomicBoolean failed;
 
-            public ConcurrentMergeSchedulerAnonymousInnerClassHelper(TestConcurrentMergeScheduler outerInstance, int maxMergeCount, CountdownEvent enoughMergesWaiting, AtomicInt32 runningMergeCount, AtomicBoolean failed)
+            public ConcurrentMergeSchedulerAnonymousClass(TestConcurrentMergeScheduler outerInstance, int maxMergeCount, CountdownEvent enoughMergesWaiting, AtomicInt32 runningMergeCount, AtomicBoolean failed)
             {
                 this.outerInstance = outerInstance;
                 this.maxMergeCount = maxMergeCount;

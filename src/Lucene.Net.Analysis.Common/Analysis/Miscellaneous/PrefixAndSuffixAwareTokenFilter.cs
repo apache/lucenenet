@@ -31,15 +31,15 @@
         public PrefixAndSuffixAwareTokenFilter(TokenStream prefix, TokenStream input, TokenStream suffix) 
             : base(suffix)
         {
-            prefix = new PrefixAwareTokenFilterAnonymousInnerClassHelper(this, prefix, input);
-            this.suffix = new PrefixAwareTokenFilterAnonymousInnerClassHelper2(this, prefix, suffix);
+            prefix = new PrefixAwareTokenFilterAnonymousClass(this, prefix, input);
+            this.suffix = new PrefixAwareTokenFilterAnonymousClass2(this, prefix, suffix);
         }
 
-        private sealed class PrefixAwareTokenFilterAnonymousInnerClassHelper : PrefixAwareTokenFilter
+        private sealed class PrefixAwareTokenFilterAnonymousClass : PrefixAwareTokenFilter
         {
             private readonly PrefixAndSuffixAwareTokenFilter outerInstance;
 
-            public PrefixAwareTokenFilterAnonymousInnerClassHelper(PrefixAndSuffixAwareTokenFilter outerInstance, TokenStream prefix, TokenStream input) 
+            public PrefixAwareTokenFilterAnonymousClass(PrefixAndSuffixAwareTokenFilter outerInstance, TokenStream prefix, TokenStream input) 
                 : base(prefix, input)
             {
                 this.outerInstance = outerInstance;
@@ -51,11 +51,11 @@
             }
         }
 
-        private sealed class PrefixAwareTokenFilterAnonymousInnerClassHelper2 : PrefixAwareTokenFilter
+        private sealed class PrefixAwareTokenFilterAnonymousClass2 : PrefixAwareTokenFilter
         {
             private readonly PrefixAndSuffixAwareTokenFilter outerInstance;
 
-            public PrefixAwareTokenFilterAnonymousInnerClassHelper2(PrefixAndSuffixAwareTokenFilter outerInstance, TokenStream prefix, TokenStream suffix) 
+            public PrefixAwareTokenFilterAnonymousClass2(PrefixAndSuffixAwareTokenFilter outerInstance, TokenStream prefix, TokenStream suffix) 
                 : base(prefix, suffix)
             {
                 this.outerInstance = outerInstance;

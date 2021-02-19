@@ -151,16 +151,16 @@ namespace Lucene.Net.Search.VectorHighlight
         {
             // according to javadoc, doc.getFields(fieldName) cannot be used with lazy loaded field???
             List<Field> fields = new List<Field>();
-            reader.Document(docId, new GetFieldsStoredFieldsVisitorAnonymousHelper(fields, fieldName));
+            reader.Document(docId, new GetFieldsStoredFieldsVisitorAnonymousClass(fields, fieldName));
 
             return fields.ToArray(/*new Field[fields.size()]*/);
         }
 
-        internal class GetFieldsStoredFieldsVisitorAnonymousHelper : StoredFieldVisitor
+        internal class GetFieldsStoredFieldsVisitorAnonymousClass : StoredFieldVisitor
         {
             private readonly IList<Field> fields;
             private readonly string fieldName;
-            public GetFieldsStoredFieldsVisitorAnonymousHelper(IList<Field> fields, string fieldName)
+            public GetFieldsStoredFieldsVisitorAnonymousClass(IList<Field> fields, string fieldName)
             {
                 this.fields = fields;
                 this.fieldName = fieldName;

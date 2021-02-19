@@ -156,10 +156,10 @@ namespace Lucene.Net.Codecs.SimpleText
             var @in = (IndexInput)data.Clone();
             var scratch = new BytesRef();
             
-            return new NumericDocValuesAnonymousInnerClassHelper(this, field, @in, scratch);
+            return new NumericDocValuesAnonymousClass(this, field, @in, scratch);
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
+        private class NumericDocValuesAnonymousClass : NumericDocValues
         {
             private readonly SimpleTextDocValuesReader _outerInstance;
 
@@ -167,7 +167,7 @@ namespace Lucene.Net.Codecs.SimpleText
             private readonly IndexInput _input;
             private readonly BytesRef _scratch;
 
-            public NumericDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance,
+            public NumericDocValuesAnonymousClass(SimpleTextDocValuesReader outerInstance,
                 OneField field, IndexInput input, BytesRef scratch)
             {
                 _outerInstance = outerInstance;
@@ -206,10 +206,10 @@ namespace Lucene.Net.Codecs.SimpleText
             var field = fields[fieldInfo.Name];
             var input = (IndexInput)data.Clone();
             var scratch = new BytesRef();
-            return new BitsAnonymousInnerClassHelper(this, field, input, scratch);
+            return new BitsAnonymousClass(this, field, input, scratch);
         }
 
-        private class BitsAnonymousInnerClassHelper : IBits
+        private class BitsAnonymousClass : IBits
         {
             private readonly SimpleTextDocValuesReader _outerInstance;
 
@@ -217,7 +217,7 @@ namespace Lucene.Net.Codecs.SimpleText
             private readonly IndexInput _input;
             private readonly BytesRef _scratch;
 
-            public BitsAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance,
+            public BitsAnonymousClass(SimpleTextDocValuesReader outerInstance,
                 OneField field, IndexInput @in, BytesRef scratch)
             {
                 _outerInstance = outerInstance;
@@ -251,10 +251,10 @@ namespace Lucene.Net.Codecs.SimpleText
             var input = (IndexInput)data.Clone();
             var scratch = new BytesRef();
 
-            return new BinaryDocValuesAnonymousInnerClassHelper(this, field, input, scratch);
+            return new BinaryDocValuesAnonymousClass(this, field, input, scratch);
         }
 
-        private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
+        private class BinaryDocValuesAnonymousClass : BinaryDocValues
         {
             private readonly SimpleTextDocValuesReader _outerInstance;
 
@@ -262,7 +262,7 @@ namespace Lucene.Net.Codecs.SimpleText
             private readonly IndexInput _input;
             private readonly BytesRef _scratch;
 
-            public BinaryDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance, OneField field,
+            public BinaryDocValuesAnonymousClass(SimpleTextDocValuesReader outerInstance, OneField field,
                 IndexInput input, BytesRef scratch)
             {
                 _outerInstance = outerInstance;
@@ -312,10 +312,10 @@ namespace Lucene.Net.Codecs.SimpleText
             var input = (IndexInput)data.Clone();
             var scratch = new BytesRef();
 
-            return new BitsAnonymousInnerClassHelper2(this, field, input, scratch);
+            return new BitsAnonymousClass2(this, field, input, scratch);
         }
 
-        private class BitsAnonymousInnerClassHelper2 : IBits
+        private class BitsAnonymousClass2 : IBits
         {
             private readonly SimpleTextDocValuesReader _outerInstance;
 
@@ -323,7 +323,7 @@ namespace Lucene.Net.Codecs.SimpleText
             private readonly IndexInput _input;
             private readonly BytesRef _scratch;
 
-            public BitsAnonymousInnerClassHelper2(SimpleTextDocValuesReader outerInstance, OneField field,
+            public BitsAnonymousClass2(SimpleTextDocValuesReader outerInstance, OneField field,
                 IndexInput input, BytesRef scratch)
             {
                 _outerInstance = outerInstance;
@@ -375,10 +375,10 @@ namespace Lucene.Net.Codecs.SimpleText
             var input = (IndexInput)data.Clone();
             var scratch = new BytesRef();
 
-            return new SortedDocValuesAnonymousInnerClassHelper(this, field, input, scratch);
+            return new SortedDocValuesAnonymousClass(this, field, input, scratch);
         }
 
-        private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
+        private class SortedDocValuesAnonymousClass : SortedDocValues
         {
             private readonly SimpleTextDocValuesReader _outerInstance;
 
@@ -386,7 +386,7 @@ namespace Lucene.Net.Codecs.SimpleText
             private readonly IndexInput _input;
             private readonly BytesRef _scratch;
 
-            public SortedDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance,
+            public SortedDocValuesAnonymousClass(SimpleTextDocValuesReader outerInstance,
                 OneField field, IndexInput input, BytesRef scratch)
             {
                 _outerInstance = outerInstance;
@@ -476,10 +476,10 @@ namespace Lucene.Net.Codecs.SimpleText
             var input = (IndexInput) data.Clone();
             var scratch = new BytesRef();
             
-            return new SortedSetDocValuesAnonymousInnerClassHelper(this, field, input, scratch);
+            return new SortedSetDocValuesAnonymousClass(this, field, input, scratch);
         }
 
-        private class SortedSetDocValuesAnonymousInnerClassHelper : SortedSetDocValues
+        private class SortedSetDocValuesAnonymousClass : SortedSetDocValues
         {
             private readonly SimpleTextDocValuesReader _outerInstance;
 
@@ -487,7 +487,7 @@ namespace Lucene.Net.Codecs.SimpleText
             private readonly IndexInput _input;
             private readonly BytesRef _scratch;
 
-            public SortedSetDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance,
+            public SortedSetDocValuesAnonymousClass(SimpleTextDocValuesReader outerInstance,
                 OneField field, IndexInput input, BytesRef scratch)
             {
                 _outerInstance = outerInstance;

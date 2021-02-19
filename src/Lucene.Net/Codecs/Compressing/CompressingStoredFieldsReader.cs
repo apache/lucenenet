@@ -344,7 +344,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
 
                 decompressor.Decompress(fieldsStream, chunkSize, offset, Math.Min(length, chunkSize - offset), bytes);
-                documentInput = new DataInputAnonymousInnerClassHelper(this, length);
+                documentInput = new DataInputAnonymousClass(this, length);
             }
             else
             {
@@ -379,13 +379,13 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
-        private class DataInputAnonymousInnerClassHelper : DataInput
+        private class DataInputAnonymousClass : DataInput
         {
             private readonly CompressingStoredFieldsReader outerInstance;
 
             private readonly int length;
 
-            public DataInputAnonymousInnerClassHelper(CompressingStoredFieldsReader outerInstance, int length)
+            public DataInputAnonymousClass(CompressingStoredFieldsReader outerInstance, int length)
             {
                 this.outerInstance = outerInstance;
                 this.length = length;

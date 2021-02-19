@@ -234,7 +234,7 @@ namespace Lucene.Net.Codecs.Memory
                         data.ReadBytes(values, 0, entry.count);
                         ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
                         // LUCENENET: IMPORTANT - some bytes are negative here, so we need to pass as sbyte
-                        return new NumericDocValuesAnonymousInnerClassHelper((sbyte[])(Array)values);
+                        return new NumericDocValuesAnonymousClass((sbyte[])(Array)values);
                     }
 
                 case 2:
@@ -245,7 +245,7 @@ namespace Lucene.Net.Codecs.Memory
                             values[i] = data.ReadInt16();
                         }
                         ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
-                        return new NumericDocValuesAnonymousInnerClassHelper2(values);
+                        return new NumericDocValuesAnonymousClass2(values);
                     }
 
                 case 4:
@@ -256,7 +256,7 @@ namespace Lucene.Net.Codecs.Memory
                             values[i] = data.ReadInt32();
                         }
                         ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
-                        return new NumericDocValuesAnonymousInnerClassHelper3(values);
+                        return new NumericDocValuesAnonymousClass3(values);
                     }
 
                 case 8:
@@ -267,7 +267,7 @@ namespace Lucene.Net.Codecs.Memory
                             values[i] = data.ReadInt64();
                         }
                         ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
-                        return new NumericDocValuesAnonymousInnerClassHelper4(values);
+                        return new NumericDocValuesAnonymousClass4(values);
                     }
 
                 default:
@@ -275,11 +275,11 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
+        private class NumericDocValuesAnonymousClass : NumericDocValues
         {
             private readonly sbyte[] values;
 
-            public NumericDocValuesAnonymousInnerClassHelper(sbyte[] values)
+            public NumericDocValuesAnonymousClass(sbyte[] values)
             {
                 this.values = values;
             }
@@ -290,11 +290,11 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper2 : NumericDocValues
+        private class NumericDocValuesAnonymousClass2 : NumericDocValues
         {
             private readonly short[] values;
 
-            public NumericDocValuesAnonymousInnerClassHelper2(short[] values)
+            public NumericDocValuesAnonymousClass2(short[] values)
             {
                 this.values = values;
             }
@@ -305,11 +305,11 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper3 : NumericDocValues
+        private class NumericDocValuesAnonymousClass3 : NumericDocValues
         {
             private readonly int[] values;
 
-            public NumericDocValuesAnonymousInnerClassHelper3(int[] values)
+            public NumericDocValuesAnonymousClass3(int[] values)
             {
                 this.values = values;
             }
@@ -320,11 +320,11 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper4 : NumericDocValues
+        private class NumericDocValuesAnonymousClass4 : NumericDocValues
         {
             private readonly long[] values;
 
-            public NumericDocValuesAnonymousInnerClassHelper4(long[] values)
+            public NumericDocValuesAnonymousClass4(long[] values)
             {
                 this.values = values;
             }
@@ -365,15 +365,15 @@ namespace Lucene.Net.Codecs.Memory
 
             ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(bytes) + RamUsageEstimator.SizeOf(address));
 
-            return new BinaryDocValuesAnonymousInnerClassHelper(bytes, address);
+            return new BinaryDocValuesAnonymousClass(bytes, address);
         }
 
-        private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
+        private class BinaryDocValuesAnonymousClass : BinaryDocValues
         {
             private readonly byte[] bytes;
             private readonly int[] address;
 
-            public BinaryDocValuesAnonymousInnerClassHelper(byte[] bytes, int[] address)
+            public BinaryDocValuesAnonymousClass(byte[] bytes, int[] address)
             {
                 this.bytes = bytes;
                 this.address = address;
@@ -407,16 +407,16 @@ namespace Lucene.Net.Codecs.Memory
             NumericDocValues docToOrd = LoadNumeric(entry.docToOrd);
             BinaryDocValues values = LoadBinary(entry.values);
 
-            return new SortedDocValuesAnonymousInnerClassHelper(entry, docToOrd, values);
+            return new SortedDocValuesAnonymousClass(entry, docToOrd, values);
         }
 
-        private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
+        private class SortedDocValuesAnonymousClass : SortedDocValues
         {
             private readonly SortedEntry entry;
             private readonly NumericDocValues docToOrd;
             private readonly BinaryDocValues values;
 
-            public SortedDocValuesAnonymousInnerClassHelper(SortedEntry entry, NumericDocValues docToOrd, BinaryDocValues values)
+            public SortedDocValuesAnonymousClass(SortedEntry entry, NumericDocValues docToOrd, BinaryDocValues values)
             {
                 this.entry = entry;
                 this.docToOrd = docToOrd;
@@ -458,18 +458,18 @@ namespace Lucene.Net.Codecs.Memory
                 var values = instance.values;
 
                 // Must make a new instance since the iterator has state:
-                return new RandomAccessOrdsAnonymousInnerClassHelper(entry, docToOrdAddress, ords, values);
+                return new RandomAccessOrdsAnonymousClass(entry, docToOrdAddress, ords, values);
             }
         }
 
-        private class RandomAccessOrdsAnonymousInnerClassHelper : RandomAccessOrds
+        private class RandomAccessOrdsAnonymousClass : RandomAccessOrds
         {
             private readonly SortedSetEntry entry;
             private readonly NumericDocValues docToOrdAddress;
             private readonly NumericDocValues ords;
             private readonly BinaryDocValues values;
 
-            public RandomAccessOrdsAnonymousInnerClassHelper(SortedSetEntry entry, NumericDocValues docToOrdAddress, NumericDocValues ords, BinaryDocValues values)
+            public RandomAccessOrdsAnonymousClass(SortedSetEntry entry, NumericDocValues docToOrdAddress, NumericDocValues ords, BinaryDocValues values)
             {
                 this.entry = entry;
                 this.docToOrdAddress = docToOrdAddress;

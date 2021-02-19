@@ -374,34 +374,34 @@ namespace Lucene.Net.Index
                 } // else OK because positions are not indexed
             }
 
-            searcher.Search(q1, new CountingHitCollectorAnonymousInnerClassHelper(this));
+            searcher.Search(q1, new CountingHitCollectorAnonymousClass(this));
             //System.out.println(CountingHitCollector.getCount());
 
-            searcher.Search(q2, new CountingHitCollectorAnonymousInnerClassHelper2(this));
+            searcher.Search(q2, new CountingHitCollectorAnonymousClass2(this));
             //System.out.println(CountingHitCollector.getCount());
 
-            searcher.Search(q3, new CountingHitCollectorAnonymousInnerClassHelper3(this));
+            searcher.Search(q3, new CountingHitCollectorAnonymousClass3(this));
             //System.out.println(CountingHitCollector.getCount());
 
-            searcher.Search(q4, new CountingHitCollectorAnonymousInnerClassHelper4(this));
+            searcher.Search(q4, new CountingHitCollectorAnonymousClass4(this));
             //System.out.println(CountingHitCollector.getCount());
 
             BooleanQuery bq = new BooleanQuery();
             bq.Add(q1, Occur.MUST);
             bq.Add(q4, Occur.MUST);
 
-            searcher.Search(bq, new CountingHitCollectorAnonymousInnerClassHelper5(this));
+            searcher.Search(bq, new CountingHitCollectorAnonymousClass5(this));
             Assert.AreEqual(15, CountingHitCollector.Count);
 
             reader.Dispose();
             dir.Dispose();
         }
 
-        private class CountingHitCollectorAnonymousInnerClassHelper : CountingHitCollector
+        private class CountingHitCollectorAnonymousClass : CountingHitCollector
         {
             private readonly TestOmitTf outerInstance;
 
-            public CountingHitCollectorAnonymousInnerClassHelper(TestOmitTf outerInstance)
+            public CountingHitCollectorAnonymousClass(TestOmitTf outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -422,11 +422,11 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class CountingHitCollectorAnonymousInnerClassHelper2 : CountingHitCollector
+        private class CountingHitCollectorAnonymousClass2 : CountingHitCollector
         {
             private readonly TestOmitTf outerInstance;
 
-            public CountingHitCollectorAnonymousInnerClassHelper2(TestOmitTf outerInstance)
+            public CountingHitCollectorAnonymousClass2(TestOmitTf outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -447,11 +447,11 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class CountingHitCollectorAnonymousInnerClassHelper3 : CountingHitCollector
+        private class CountingHitCollectorAnonymousClass3 : CountingHitCollector
         {
             private readonly TestOmitTf outerInstance;
 
-            public CountingHitCollectorAnonymousInnerClassHelper3(TestOmitTf outerInstance)
+            public CountingHitCollectorAnonymousClass3(TestOmitTf outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -473,11 +473,11 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class CountingHitCollectorAnonymousInnerClassHelper4 : CountingHitCollector
+        private class CountingHitCollectorAnonymousClass4 : CountingHitCollector
         {
             private readonly TestOmitTf outerInstance;
 
-            public CountingHitCollectorAnonymousInnerClassHelper4(TestOmitTf outerInstance)
+            public CountingHitCollectorAnonymousClass4(TestOmitTf outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -499,11 +499,11 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class CountingHitCollectorAnonymousInnerClassHelper5 : CountingHitCollector
+        private class CountingHitCollectorAnonymousClass5 : CountingHitCollector
         {
             private readonly TestOmitTf outerInstance;
 
-            public CountingHitCollectorAnonymousInnerClassHelper5(TestOmitTf outerInstance)
+            public CountingHitCollectorAnonymousClass5(TestOmitTf outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

@@ -283,15 +283,15 @@ namespace Lucene.Net.Codecs.PerField
         [Test]
         public virtual void TestSameCodecDifferentInstance()
         {
-            Codec codec = new Lucene46CodecAnonymousInnerClassHelper(this);
+            Codec codec = new Lucene46CodecAnonymousClass(this);
             DoTestMixedPostings(codec);
         }
 
-        private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
+        private class Lucene46CodecAnonymousClass : Lucene46Codec
         {
             private readonly TestPerFieldPostingsFormat2 outerInstance;
 
-            public Lucene46CodecAnonymousInnerClassHelper(TestPerFieldPostingsFormat2 outerInstance)
+            public Lucene46CodecAnonymousClass(TestPerFieldPostingsFormat2 outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -316,15 +316,15 @@ namespace Lucene.Net.Codecs.PerField
         [Test]
         public virtual void TestSameCodecDifferentParams()
         {
-          Codec codec = new Lucene46CodecAnonymousInnerClassHelper2(this);
+          Codec codec = new Lucene46CodecAnonymousClass2(this);
           DoTestMixedPostings(codec);
         }
 
-        private class Lucene46CodecAnonymousInnerClassHelper2 : Lucene46Codec
+        private class Lucene46CodecAnonymousClass2 : Lucene46Codec
         {
             private readonly TestPerFieldPostingsFormat2 outerInstance;
 
-            public Lucene46CodecAnonymousInnerClassHelper2(TestPerFieldPostingsFormat2 outerInstance)
+            public Lucene46CodecAnonymousClass2(TestPerFieldPostingsFormat2 outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

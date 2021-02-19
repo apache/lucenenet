@@ -104,33 +104,33 @@ namespace Lucene.Net.Search
             Term b = new Term("field", "b");
             Term c = new Term("field", "c");
 
-            searcher.Search(new TermQuery(b), new CollectorAnonymousInnerClassHelper(this));
+            searcher.Search(new TermQuery(b), new CollectorAnonymousClass(this));
 
             BooleanQuery bq = new BooleanQuery();
             bq.Add(new TermQuery(a), Occur.SHOULD);
             bq.Add(new TermQuery(b), Occur.SHOULD);
             //System.out.println(bq.toString("field"));
-            searcher.Search(bq, new CollectorAnonymousInnerClassHelper2(this));
+            searcher.Search(bq, new CollectorAnonymousClass2(this));
 
             PhraseQuery pq = new PhraseQuery();
             pq.Add(a);
             pq.Add(c);
             //System.out.println(pq.toString("field"));
-            searcher.Search(pq, new CollectorAnonymousInnerClassHelper3(this));
+            searcher.Search(pq, new CollectorAnonymousClass3(this));
 
             pq.Slop = 2;
             //System.out.println(pq.toString("field"));
-            searcher.Search(pq, new CollectorAnonymousInnerClassHelper4(this));
+            searcher.Search(pq, new CollectorAnonymousClass4(this));
 
             reader.Dispose();
             store.Dispose();
         }
 
-        private class CollectorAnonymousInnerClassHelper : ICollector
+        private class CollectorAnonymousClass : ICollector
         {
             private readonly TestSimilarity outerInstance;
 
-            public CollectorAnonymousInnerClassHelper(TestSimilarity outerInstance)
+            public CollectorAnonymousClass(TestSimilarity outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -154,11 +154,11 @@ namespace Lucene.Net.Search
             public virtual bool AcceptsDocsOutOfOrder => true;
         }
 
-        private class CollectorAnonymousInnerClassHelper2 : ICollector
+        private class CollectorAnonymousClass2 : ICollector
         {
             private readonly TestSimilarity outerInstance;
 
-            public CollectorAnonymousInnerClassHelper2(TestSimilarity outerInstance)
+            public CollectorAnonymousClass2(TestSimilarity outerInstance)
             {
                 this.outerInstance = outerInstance;
                 @base = 0;
@@ -186,11 +186,11 @@ namespace Lucene.Net.Search
             public virtual bool AcceptsDocsOutOfOrder => true;
         }
 
-        private class CollectorAnonymousInnerClassHelper3 : ICollector
+        private class CollectorAnonymousClass3 : ICollector
         {
             private readonly TestSimilarity outerInstance;
 
-            public CollectorAnonymousInnerClassHelper3(TestSimilarity outerInstance)
+            public CollectorAnonymousClass3(TestSimilarity outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -215,11 +215,11 @@ namespace Lucene.Net.Search
             public virtual bool AcceptsDocsOutOfOrder => true;
         }
 
-        private class CollectorAnonymousInnerClassHelper4 : ICollector
+        private class CollectorAnonymousClass4 : ICollector
         {
             private readonly TestSimilarity outerInstance;
 
-            public CollectorAnonymousInnerClassHelper4(TestSimilarity outerInstance)
+            public CollectorAnonymousClass4(TestSimilarity outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

@@ -54,17 +54,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 throw new NotSupportedException("requires a TFIDFSimilarity (such as DefaultSimilarity)");
             }
 
-            return new SingleDocValuesAnonymousInnerClassHelper(this, this, terms, similarity);
+            return new SingleDocValuesAnonymousClass(this, this, terms, similarity);
         }
 
-        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
+        private class SingleDocValuesAnonymousClass : SingleDocValues
         {
             private readonly TFValueSource outerInstance;
 
             private readonly Terms terms;
             private readonly TFIDFSimilarity similarity;
 
-            public SingleDocValuesAnonymousInnerClassHelper(TFValueSource outerInstance, TFValueSource @this, Terms terms, TFIDFSimilarity similarity)
+            public SingleDocValuesAnonymousClass(TFValueSource outerInstance, TFValueSource @this, Terms terms, TFIDFSimilarity similarity)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
@@ -101,12 +101,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
                 if (docs == null)
                 {
-                    docs = new DocsEnumAnonymousInnerClassHelper();
+                    docs = new DocsEnumAnonymousClass();
                 }
                 atDoc = -1;
             }
 
-            private class DocsEnumAnonymousInnerClassHelper : DocsEnum
+            private class DocsEnumAnonymousClass : DocsEnum
             {
                 public override int Freq => 0;
 

@@ -107,14 +107,14 @@ namespace Lucene.Net.Index.Memory
 
                 public override IEnumerator<string> GetEnumerator()
                 {
-                    return new IteratorAnonymousInnerClassHelper(this);
+                    return new IteratorAnonymousClass(this);
                 }
 
-                private class IteratorAnonymousInnerClassHelper : IEnumerator<string>
+                private class IteratorAnonymousClass : IEnumerator<string>
                 {
                     private readonly MemoryFields outerInstance;
 
-                    public IteratorAnonymousInnerClassHelper(MemoryFields outerInstance)
+                    public IteratorAnonymousClass(MemoryFields outerInstance)
                     {
                         this.outerInstance = outerInstance;
                         upto = -1;
@@ -162,17 +162,17 @@ namespace Lucene.Net.Index.Memory
                         Info info = outerInstance.GetInfo(i);
                         info.SortTerms();
 
-                        return new TermsAnonymousInnerClassHelper(this, info);
+                        return new TermsAnonymousClass(this, info);
                     }
                 }
 
-                private class TermsAnonymousInnerClassHelper : Terms
+                private class TermsAnonymousClass : Terms
                 {
                     private readonly MemoryFields outerInstance;
 
                     private readonly MemoryIndex.Info info;
 
-                    public TermsAnonymousInnerClassHelper(MemoryFields outerInstance, MemoryIndex.Info info)
+                    public TermsAnonymousClass(MemoryFields outerInstance, MemoryIndex.Info info)
                     {
                         this.outerInstance = outerInstance;
                         this.info = info;

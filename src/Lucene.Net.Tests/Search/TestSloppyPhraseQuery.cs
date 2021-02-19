@@ -243,7 +243,7 @@ namespace Lucene.Net.Search
         /// checks that no scores or freqs are infinite </summary>
         private void AssertSaneScoring(PhraseQuery pq, IndexSearcher searcher)
         {
-            searcher.Search(pq, new CollectorAnonymousInnerClassHelper(this));
+            searcher.Search(pq, new CollectorAnonymousClass(this));
             QueryUtils.Check(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
@@ -251,11 +251,11 @@ namespace Lucene.Net.Search
                 Random, pq, searcher);
         }
 
-        private class CollectorAnonymousInnerClassHelper : ICollector
+        private class CollectorAnonymousClass : ICollector
         {
             private readonly TestSloppyPhraseQuery outerInstance;
 
-            public CollectorAnonymousInnerClassHelper(TestSloppyPhraseQuery outerInstance)
+            public CollectorAnonymousClass(TestSloppyPhraseQuery outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

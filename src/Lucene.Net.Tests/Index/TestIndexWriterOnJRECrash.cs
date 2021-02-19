@@ -79,7 +79,7 @@
 //                AssumeFalse("does not support PreFlex, see LUCENE-3992", Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal));
 //                // we are the fork, setup a crashing thread
 //                int crashTime = TestUtil.NextInt(Random(), 3000, 4000);
-//                ThreadClass t = new ThreadAnonymousInnerClassHelper(this, crashTime);
+//                ThreadClass t = new ThreadAnonymousClass(this, crashTime);
 //                t.Priority = ThreadPriority.Highest;
 //                t.Start();
 //                // run the test until we crash.
@@ -90,13 +90,13 @@
 //            }
 //        }
 
-//        private class ThreadAnonymousInnerClassHelper : ThreadClass
+//        private class ThreadAnonymousClass : ThreadClass
 //        {
 //            private readonly TestIndexWriterOnJRECrash outerInstance;
 
 //            private int CrashTime;
 
-//            public ThreadAnonymousInnerClassHelper(TestIndexWriterOnJRECrash outerInstance, int crashTime)
+//            public ThreadAnonymousClass(TestIndexWriterOnJRECrash outerInstance, int crashTime)
 //            {
 //                this.outerInstance = outerInstance;
 //                this.CrashTime = crashTime;
@@ -160,17 +160,17 @@
 //        {
 //            public static Thread Start(InputStream from, OutputStream to)
 //            {
-//                ThreadClass t = new ThreadAnonymousInnerClassHelper2(from, to);
+//                ThreadClass t = new ThreadAnonymousClass2(from, to);
 //                t.Start();
 //                return t;
 //            }
 
-//            private class ThreadAnonymousInnerClassHelper2 : ThreadClass
+//            private class ThreadAnonymousClass2 : ThreadClass
 //            {
 //                private InputStream From;
 //                private OutputStream To;
 
-//                public ThreadAnonymousInnerClassHelper2(InputStream from, OutputStream to)
+//                public ThreadAnonymousClass2(InputStream from, OutputStream to)
 //                {
 //                    this.From = from;
 //                    this.To = to;

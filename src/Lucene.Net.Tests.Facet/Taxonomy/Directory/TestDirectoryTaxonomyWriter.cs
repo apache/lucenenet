@@ -52,9 +52,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         // A No-Op ITaxonomyWriterCache which always discards all given categories, and
         // always returns true in put(), to indicate some cache entries were cleared.
-        private static readonly ITaxonomyWriterCache NO_OP_CACHE = new TaxonomyWriterCacheAnonymousInnerClassHelper();
+        private static readonly ITaxonomyWriterCache NO_OP_CACHE = new TaxonomyWriterCacheAnonymousClass();
 
-        private class TaxonomyWriterCacheAnonymousInnerClassHelper : ITaxonomyWriterCache
+        private class TaxonomyWriterCacheAnonymousClass : ITaxonomyWriterCache
         {
             public virtual void Dispose()
             {
@@ -296,7 +296,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             ThreadJob[] addThreads = new ThreadJob[AtLeast(4)];
             for (int z = 0; z < addThreads.Length; z++)
             {
-                addThreads[z] = new ThreadAnonymousInnerClassHelper(range, numCats, values, tw);
+                addThreads[z] = new ThreadAnonymousClass(range, numCats, values, tw);
             }
 
             foreach (var t in addThreads)
@@ -344,14 +344,14 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             IOUtils.Dispose(dtr, dir);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly int range;
             private readonly AtomicInt32 numCats;
             private readonly ConcurrentDictionary<string, string> values;
             private readonly DirectoryTaxonomyWriter tw;
 
-            public ThreadAnonymousInnerClassHelper(int range, AtomicInt32 numCats, ConcurrentDictionary<string, string> values, DirectoryTaxonomyWriter tw)
+            public ThreadAnonymousClass(int range, AtomicInt32 numCats, ConcurrentDictionary<string, string> values, DirectoryTaxonomyWriter tw)
             {
                 this.range = range;
                 this.numCats = numCats;

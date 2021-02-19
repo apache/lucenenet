@@ -325,7 +325,7 @@ namespace Lucene.Net.Search
             for (int i = 0; i < threadArray.Length; ++i)
             {
                 int num = i;
-                threadArray[num] = new ThreadClassAnonymousHelper(this, success, withTimeout, num);
+                threadArray[num] = new ThreadClassAnonymousClass(this, success, withTimeout, num);
             }
             for (int i = 0; i < threadArray.Length; ++i)
             {
@@ -338,13 +338,13 @@ namespace Lucene.Net.Search
             assertEquals("some threads failed!", N_THREADS, success.Cardinality());
         }
 
-        internal class ThreadClassAnonymousHelper : ThreadJob
+        internal class ThreadClassAnonymousClass : ThreadJob
         {
             private readonly TestTimeLimitingCollector outerInstance;
             private readonly OpenBitSet success;
             private readonly bool withTimeout;
             private readonly int num;
-            public ThreadClassAnonymousHelper(TestTimeLimitingCollector outerInstance, OpenBitSet success, bool withTimeout, int num)
+            public ThreadClassAnonymousClass(TestTimeLimitingCollector outerInstance, OpenBitSet success, bool withTimeout, int num)
             {
                 this.outerInstance = outerInstance;
                 this.success = success;

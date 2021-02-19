@@ -43,16 +43,16 @@ namespace Lucene.Net.Util
 
       public override Statement Apply(Statement @base, Description description)
       {
-        return new StatementAnonymousInnerClassHelper(this, @base);
+        return new StatementAnonymousClass(this, @base);
       }
 
-      private class StatementAnonymousInnerClassHelper : Statement
+      private class StatementAnonymousClass : Statement
       {
           private readonly TestRuleSetupTeardownChained OuterInstance;
 
           private Statement @base;
 
-          public StatementAnonymousInnerClassHelper(TestRuleSetupTeardownChained outerInstance, Statement @base)
+          public StatementAnonymousClass(TestRuleSetupTeardownChained outerInstance, Statement @base)
           {
               this.OuterInstance = outerInstance;
               this.@base = @base;

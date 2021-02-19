@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
 
             // test that a class check is done so that no exception is thrown
             // in the implementation of equals()
-            Query whacky = new QueryAnonymousInnerClassHelper();
+            Query whacky = new QueryAnonymousClass();
             whacky.Boost = q.Boost;
             CheckUnequal(q, whacky);
 
@@ -82,9 +82,9 @@ namespace Lucene.Net.Search
             Assert.IsFalse(q.Equals(null));
         }
 
-        private class QueryAnonymousInnerClassHelper : Query
+        private class QueryAnonymousClass : Query
         {
-            public QueryAnonymousInnerClassHelper()
+            public QueryAnonymousClass()
             {
             }
 
@@ -351,7 +351,7 @@ namespace Lucene.Net.Search
                 const float maxDiff = 1e-5f;
                 AtomicReader[] lastReader = new AtomicReader[] { null };
 
-                s.Search(q, new CollectorAnonymousInnerClassHelper(
+                s.Search(q, new CollectorAnonymousClass(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     luceneTestCase,
 #endif
@@ -380,7 +380,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper : ICollector
+        private class CollectorAnonymousClass : ICollector
         {
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
             private readonly LuceneTestCase luceneTestCase;
@@ -395,7 +395,7 @@ namespace Lucene.Net.Search
             private readonly float maxDiff;
             private readonly AtomicReader[] lastReader;
 
-            public CollectorAnonymousInnerClassHelper(
+            public CollectorAnonymousClass(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 LuceneTestCase luceneTestCase,
 #endif                
@@ -515,7 +515,7 @@ namespace Lucene.Net.Search
             int[] lastDoc = new int[] { -1 };
             AtomicReader[] lastReader = new AtomicReader[] { null };
             IList<AtomicReaderContext> context = s.TopReaderContext.Leaves;
-            s.Search(q, new CollectorAnonymousInnerClassHelper2(
+            s.Search(q, new CollectorAnonymousClass2(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 luceneTestCase,
 #endif
@@ -542,7 +542,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper2 : ICollector
+        private class CollectorAnonymousClass2 : ICollector
         {
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
             private readonly LuceneTestCase luceneTestCase;
@@ -554,7 +554,7 @@ namespace Lucene.Net.Search
             private readonly AtomicReader[] lastReader;
             private readonly IList<AtomicReaderContext> context;
 
-            public CollectorAnonymousInnerClassHelper2(
+            public CollectorAnonymousClass2(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION                
                 LuceneTestCase luceneTestCase, 
  #endif                

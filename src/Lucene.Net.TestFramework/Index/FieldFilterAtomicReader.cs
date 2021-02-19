@@ -71,16 +71,16 @@ namespace Lucene.Net.Index
 
         public override void Document(int docID, StoredFieldVisitor visitor)
         {
-            base.Document(docID, new StoredFieldVisitorAnonymousInnerClassHelper(this, visitor));
+            base.Document(docID, new StoredFieldVisitorAnonymousClass(this, visitor));
         }
 
-        private class StoredFieldVisitorAnonymousInnerClassHelper : StoredFieldVisitor
+        private class StoredFieldVisitorAnonymousClass : StoredFieldVisitor
         {
             private readonly FieldFilterAtomicReader outerInstance;
 
             private readonly StoredFieldVisitor visitor;
 
-            public StoredFieldVisitorAnonymousInnerClassHelper(FieldFilterAtomicReader outerInstance, StoredFieldVisitor visitor)
+            public StoredFieldVisitorAnonymousClass(FieldFilterAtomicReader outerInstance, StoredFieldVisitor visitor)
             {
                 this.outerInstance = outerInstance;
                 this.visitor = visitor;

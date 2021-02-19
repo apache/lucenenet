@@ -835,7 +835,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
 
                 Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair> searcher2;
-                searcher2 = new TopNSearcherAnonymousInnerClassHelper(this, fst, num - results.Count,
+                searcher2 = new TopNSearcherAnonymousClass(this, fst, num - results.Count,
                     num * maxAnalyzedPathsForOneInput, weightComparer, utf8Key, results);
 
                 prefixPaths = GetFullPrefixPaths(prefixPaths, lookupAutomaton, fst);
@@ -875,14 +875,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private class TopNSearcherAnonymousInnerClassHelper : Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair>
+        private class TopNSearcherAnonymousClass : Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair>
         {
             private readonly AnalyzingSuggester outerInstance;
 
             private readonly BytesRef utf8Key;
             private readonly IList<LookupResult> results;
 
-            public TopNSearcherAnonymousInnerClassHelper(
+            public TopNSearcherAnonymousClass(
                 AnalyzingSuggester outerInstance,
                 FST<PairOutputs<long?, BytesRef>.Pair> fst,
                 int topN,

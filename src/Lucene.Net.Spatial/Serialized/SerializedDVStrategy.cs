@@ -67,7 +67,7 @@ namespace Lucene.Net.Spatial.Serialized
                 m_ctx.BinaryCodec.WriteShape(new BinaryWriter(byteStream), shape);
 
                 //this is a hack to avoid redundant byte array copying by byteStream.toByteArray()
-                byteStream.WriteTo(new OutputStreamAnonymousHelper(bytesRef));
+                byteStream.WriteTo(new OutputStreamAnonymousClass(bytesRef));
             }
             catch (IOException e)
             {
@@ -77,11 +77,11 @@ namespace Lucene.Net.Spatial.Serialized
             return new Field[] { new BinaryDocValuesField(FieldName, bytesRef) };
         }
 
-        internal class OutputStreamAnonymousHelper : MemoryStream
+        internal class OutputStreamAnonymousClass : MemoryStream
         {
             private readonly BytesRef bytesRef;
 
-            public OutputStreamAnonymousHelper(BytesRef bytesRef)
+            public OutputStreamAnonymousClass(BytesRef bytesRef)
             {
                 this.bytesRef = bytesRef;
             }
@@ -144,16 +144,16 @@ namespace Lucene.Net.Spatial.Serialized
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                return new DocIdSetAnonymousHelper(this, context, acceptDocs);
+                return new DocIdSetAnonymousClass(this, context, acceptDocs);
             }
 
-            internal class DocIdSetAnonymousHelper : DocIdSet
+            internal class DocIdSetAnonymousClass : DocIdSet
             {
                 private readonly PredicateValueSourceFilter outerInstance;
                 private readonly AtomicReaderContext context;
                 private readonly IBits acceptDocs;
 
-                public DocIdSetAnonymousHelper(PredicateValueSourceFilter outerInstance, AtomicReaderContext context, IBits acceptDocs)
+                public DocIdSetAnonymousClass(PredicateValueSourceFilter outerInstance, AtomicReaderContext context, IBits acceptDocs)
                 {
                     this.outerInstance = outerInstance;
                     this.context = context;
@@ -174,17 +174,17 @@ namespace Lucene.Net.Spatial.Serialized
                         //null Map context -- we simply don't have one. That's ok.
                         FunctionValues predFuncValues = outerInstance.predicateValueSource.GetValues(null, context);
 
-                        return new BitsAnonymousHelper(predFuncValues, context, acceptDocs);
+                        return new BitsAnonymousClass(predFuncValues, context, acceptDocs);
                     }
                 }
 
-                internal class BitsAnonymousHelper : IBits
+                internal class BitsAnonymousClass : IBits
                 {
                     private readonly FunctionValues predFuncValues;
                     private readonly AtomicReaderContext context;
                     private readonly IBits acceptDocs;
 
-                    public BitsAnonymousHelper(FunctionValues predFuncValues, AtomicReaderContext context, IBits acceptDocs)
+                    public BitsAnonymousClass(FunctionValues predFuncValues, AtomicReaderContext context, IBits acceptDocs)
                     {
                         this.predFuncValues = predFuncValues;
                         this.context = context;
@@ -240,15 +240,15 @@ namespace Lucene.Net.Spatial.Serialized
             {
                 BinaryDocValues docValues = readerContext.AtomicReader.GetBinaryDocValues(fieldName);
 
-                return new FuctionValuesAnonymousHelper(this, docValues);
+                return new FuctionValuesAnonymousClass(this, docValues);
             }
 
-            internal class FuctionValuesAnonymousHelper : FunctionValues
+            internal class FuctionValuesAnonymousClass : FunctionValues
             {
                 private readonly ShapeDocValueSource outerInstance;
                 private readonly BinaryDocValues docValues;
 
-                public FuctionValuesAnonymousHelper(ShapeDocValueSource outerInstance, BinaryDocValues docValues)
+                public FuctionValuesAnonymousClass(ShapeDocValueSource outerInstance, BinaryDocValues docValues)
                 {
                     this.outerInstance = outerInstance;
                     this.docValues = docValues;

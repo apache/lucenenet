@@ -74,8 +74,8 @@ namespace Lucene.Net.Search
             Init();
 
             //Have to do this here because no 'this' in class definition
-            purgeCore = new CoreClosedListenerAnonymousInnerClassHelper(this);
-            purgeReader = new ReaderClosedListenerAnonymousInnerClassHelper(this);
+            purgeCore = new CoreClosedListenerAnonymousClass(this);
+            purgeReader = new ReaderClosedListenerAnonymousClass(this);
         }
 
         private void Init()
@@ -168,11 +168,11 @@ namespace Lucene.Net.Search
         // per-segment fieldcaches don't purge until the shared core closes.
         internal readonly SegmentReader.ICoreDisposedListener purgeCore;
 
-        private class CoreClosedListenerAnonymousInnerClassHelper : SegmentReader.ICoreDisposedListener
+        private class CoreClosedListenerAnonymousClass : SegmentReader.ICoreDisposedListener
         {
             private readonly FieldCacheImpl outerInstance;
 
-            public CoreClosedListenerAnonymousInnerClassHelper(FieldCacheImpl outerInstance)
+            public CoreClosedListenerAnonymousClass(FieldCacheImpl outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -186,11 +186,11 @@ namespace Lucene.Net.Search
         // composite/SlowMultiReaderWrapper fieldcaches don't purge until composite reader is closed.
         internal readonly IndexReader.IReaderClosedListener purgeReader;
 
-        private class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.IReaderClosedListener
+        private class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
         {
             private readonly FieldCacheImpl outerInstance;
 
-            public ReaderClosedListenerAnonymousInnerClassHelper(FieldCacheImpl outerInstance)
+            public ReaderClosedListenerAnonymousClass(FieldCacheImpl outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -580,7 +580,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_BytesAnonymousInnerClassHelper(valuesIn);
+                return new FieldCache_BytesAnonymousClass(valuesIn);
             }
             else
             {
@@ -604,11 +604,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class FieldCache_BytesAnonymousInnerClassHelper : FieldCache.Bytes
+        private class FieldCache_BytesAnonymousClass : FieldCache.Bytes
         {
             private readonly NumericDocValues valuesIn;
 
-            public FieldCache_BytesAnonymousInnerClassHelper(NumericDocValues valuesIn)
+            public FieldCache_BytesAnonymousClass(NumericDocValues valuesIn)
             {
                 this.valuesIn = valuesIn;
             }
@@ -664,7 +664,7 @@ namespace Lucene.Net.Search
 
                 values = new sbyte[maxDoc];
 
-                Uninvert u = new UninvertAnonymousInnerClassHelper(values, parser);
+                Uninvert u = new UninvertAnonymousClass(values, parser);
 
                 u.DoUninvert(reader, key.field, setDocsWithField);
 
@@ -676,13 +676,13 @@ namespace Lucene.Net.Search
                 return new BytesFromArray(values);
             }
 
-            private class UninvertAnonymousInnerClassHelper : Uninvert
+            private class UninvertAnonymousClass : Uninvert
             {
                 private readonly sbyte[] values;
 #pragma warning disable 612, 618
                 private readonly FieldCache.IByteParser parser;
 
-                public UninvertAnonymousInnerClassHelper(sbyte[] values, FieldCache.IByteParser parser)
+                public UninvertAnonymousClass(sbyte[] values, FieldCache.IByteParser parser)
 #pragma warning restore 612, 618
                 {
                     this.values = values;
@@ -753,7 +753,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_Int16sAnonymousInnerClassHelper(valuesIn);
+                return new FieldCache_Int16sAnonymousClass(valuesIn);
             }
             else
             {
@@ -775,11 +775,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class FieldCache_Int16sAnonymousInnerClassHelper : FieldCache.Int16s
+        private class FieldCache_Int16sAnonymousClass : FieldCache.Int16s
         {
             private readonly NumericDocValues valuesIn;
 
-            public FieldCache_Int16sAnonymousInnerClassHelper(NumericDocValues valuesIn)
+            public FieldCache_Int16sAnonymousClass(NumericDocValues valuesIn)
             {
                 this.valuesIn = valuesIn;
             }
@@ -838,7 +838,7 @@ namespace Lucene.Net.Search
 #pragma warning restore 612, 618
 
                 values = new short[maxDoc];
-                Uninvert u = new UninvertAnonymousInnerClassHelper(values, parser);
+                Uninvert u = new UninvertAnonymousClass(values, parser);
 
                 u.DoUninvert(reader, key.field, setDocsWithField);
 
@@ -849,13 +849,13 @@ namespace Lucene.Net.Search
                 return new Int16sFromArray(values);
             }
 
-            private class UninvertAnonymousInnerClassHelper : Uninvert
+            private class UninvertAnonymousClass : Uninvert
             {
                 private readonly short[] values;
 #pragma warning disable 612, 618
                 private readonly FieldCache.IInt16Parser parser;
 
-                public UninvertAnonymousInnerClassHelper(short[] values, FieldCache.IInt16Parser parser)
+                public UninvertAnonymousClass(short[] values, FieldCache.IInt16Parser parser)
 #pragma warning restore 612, 618
                 {
                     this.values = values;
@@ -925,7 +925,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_Int32sAnonymousInnerClassHelper(valuesIn);
+                return new FieldCache_Int32sAnonymousClass(valuesIn);
             }
             else
             {
@@ -947,11 +947,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class FieldCache_Int32sAnonymousInnerClassHelper : FieldCache.Int32s
+        private class FieldCache_Int32sAnonymousClass : FieldCache.Int32s
         {
             private readonly NumericDocValues valuesIn;
 
-            public FieldCache_Int32sAnonymousInnerClassHelper(NumericDocValues valuesIn)
+            public FieldCache_Int32sAnonymousClass(NumericDocValues valuesIn)
             {
                 this.valuesIn = valuesIn;
             }
@@ -1045,7 +1045,7 @@ namespace Lucene.Net.Search
 
                 HoldsOneThing<GrowableWriterAndMinValue> valuesRef = new HoldsOneThing<GrowableWriterAndMinValue>();
 
-                Uninvert u = new UninvertAnonymousInnerClassHelper(reader, parser, valuesRef);
+                Uninvert u = new UninvertAnonymousClass(reader, parser, valuesRef);
 
                 u.DoUninvert(reader, key.field, setDocsWithField);
 
@@ -1061,13 +1061,13 @@ namespace Lucene.Net.Search
                 return new Int32sFromArray(values.Writer.Mutable, (int)values.MinValue);
             }
 
-            private class UninvertAnonymousInnerClassHelper : Uninvert
+            private class UninvertAnonymousClass : Uninvert
             {
                 private readonly AtomicReader reader;
                 private readonly FieldCache.IInt32Parser parser;
                 private readonly FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef;
 
-                public UninvertAnonymousInnerClassHelper(AtomicReader reader, FieldCache.IInt32Parser parser, FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef)
+                public UninvertAnonymousClass(AtomicReader reader, FieldCache.IInt32Parser parser, FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef)
                 {
                     this.reader = reader;
                     this.parser = parser;
@@ -1220,7 +1220,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_SinglesAnonymousInnerClassHelper(valuesIn);
+                return new FieldCache_SinglesAnonymousClass(valuesIn);
             }
             else
             {
@@ -1242,11 +1242,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class FieldCache_SinglesAnonymousInnerClassHelper : FieldCache.Singles
+        private class FieldCache_SinglesAnonymousClass : FieldCache.Singles
         {
             private readonly NumericDocValues valuesIn;
 
-            public FieldCache_SinglesAnonymousInnerClassHelper(NumericDocValues valuesIn)
+            public FieldCache_SinglesAnonymousClass(NumericDocValues valuesIn)
             {
                 this.valuesIn = valuesIn;
             }
@@ -1309,7 +1309,7 @@ namespace Lucene.Net.Search
 
                 HoldsOneThing<float[]> valuesRef = new HoldsOneThing<float[]>();
 
-                Uninvert u = new UninvertAnonymousInnerClassHelper(reader, parser, valuesRef);
+                Uninvert u = new UninvertAnonymousClass(reader, parser, valuesRef);
 
                 u.DoUninvert(reader, key.field, setDocsWithField);
 
@@ -1326,13 +1326,13 @@ namespace Lucene.Net.Search
                 return new SinglesFromArray(values);
             }
 
-            private class UninvertAnonymousInnerClassHelper : Uninvert
+            private class UninvertAnonymousClass : Uninvert
             {
                 private readonly AtomicReader reader;
                 private readonly FieldCache.ISingleParser parser;
                 private readonly FieldCacheImpl.HoldsOneThing<float[]> valuesRef;
 
-                public UninvertAnonymousInnerClassHelper(AtomicReader reader, FieldCache.ISingleParser parser, FieldCacheImpl.HoldsOneThing<float[]> valuesRef)
+                public UninvertAnonymousClass(AtomicReader reader, FieldCache.ISingleParser parser, FieldCacheImpl.HoldsOneThing<float[]> valuesRef)
                 {
                     this.reader = reader;
                     this.parser = parser;
@@ -1386,7 +1386,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_Int64sAnonymousInnerClassHelper(valuesIn);
+                return new FieldCache_Int64sAnonymousClass(valuesIn);
             }
             else
             {
@@ -1408,11 +1408,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class FieldCache_Int64sAnonymousInnerClassHelper : FieldCache.Int64s
+        private class FieldCache_Int64sAnonymousClass : FieldCache.Int64s
         {
             private readonly NumericDocValues valuesIn;
 
-            public FieldCache_Int64sAnonymousInnerClassHelper(NumericDocValues valuesIn)
+            public FieldCache_Int64sAnonymousClass(NumericDocValues valuesIn)
             {
                 this.valuesIn = valuesIn;
             }
@@ -1477,7 +1477,7 @@ namespace Lucene.Net.Search
 
                 HoldsOneThing<GrowableWriterAndMinValue> valuesRef = new HoldsOneThing<GrowableWriterAndMinValue>();
 
-                Uninvert u = new UninvertAnonymousInnerClassHelper(reader, parser, valuesRef);
+                Uninvert u = new UninvertAnonymousClass(reader, parser, valuesRef);
 
                 u.DoUninvert(reader, key.field, setDocsWithField);
 
@@ -1493,13 +1493,13 @@ namespace Lucene.Net.Search
                 return new Int64sFromArray(values.Writer.Mutable, values.MinValue);
             }
 
-            private class UninvertAnonymousInnerClassHelper : Uninvert
+            private class UninvertAnonymousClass : Uninvert
             {
                 private readonly AtomicReader reader;
                 private readonly FieldCache.IInt64Parser parser;
                 private readonly FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef;
 
-                public UninvertAnonymousInnerClassHelper(AtomicReader reader, FieldCache.IInt64Parser parser, FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef)
+                public UninvertAnonymousClass(AtomicReader reader, FieldCache.IInt64Parser parser, FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef)
                 {
                     this.reader = reader;
                     this.parser = parser;
@@ -1564,7 +1564,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_DoublesAnonymousInnerClassHelper(valuesIn);
+                return new FieldCache_DoublesAnonymousClass(valuesIn);
             }
             else
             {
@@ -1586,11 +1586,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class FieldCache_DoublesAnonymousInnerClassHelper : FieldCache.Doubles
+        private class FieldCache_DoublesAnonymousClass : FieldCache.Doubles
         {
             private readonly NumericDocValues valuesIn;
 
-            public FieldCache_DoublesAnonymousInnerClassHelper(NumericDocValues valuesIn)
+            public FieldCache_DoublesAnonymousClass(NumericDocValues valuesIn)
             {
                 this.valuesIn = valuesIn;
             }
@@ -1647,7 +1647,7 @@ namespace Lucene.Net.Search
 
                 HoldsOneThing<double[]> valuesRef = new HoldsOneThing<double[]>();
 
-                Uninvert u = new UninvertAnonymousInnerClassHelper(reader, parser, valuesRef);
+                Uninvert u = new UninvertAnonymousClass(reader, parser, valuesRef);
 
                 u.DoUninvert(reader, key.field, setDocsWithField);
 
@@ -1663,13 +1663,13 @@ namespace Lucene.Net.Search
                 return new DoublesFromArray(values);
             }
 
-            private class UninvertAnonymousInnerClassHelper : Uninvert
+            private class UninvertAnonymousClass : Uninvert
             {
                 private readonly AtomicReader reader;
                 private readonly FieldCache.IDoubleParser parser;
                 private readonly FieldCacheImpl.HoldsOneThing<double[]> valuesRef;
 
-                public UninvertAnonymousInnerClassHelper(AtomicReader reader, FieldCache.IDoubleParser parser, FieldCacheImpl.HoldsOneThing<double[]> valuesRef)
+                public UninvertAnonymousClass(AtomicReader reader, FieldCache.IDoubleParser parser, FieldCacheImpl.HoldsOneThing<double[]> valuesRef)
                 {
                     this.reader = reader;
                     this.parser = parser;
@@ -2032,18 +2032,18 @@ namespace Lucene.Net.Search
                 PackedInt32s.Reader offsetReader = docToOffset.Mutable;
                 if (setDocsWithField)
                 {
-                    wrapper.SetDocsWithField(reader, key.field, new BitsAnonymousInnerClassHelper(maxDoc, offsetReader));
+                    wrapper.SetDocsWithField(reader, key.field, new BitsAnonymousClass(maxDoc, offsetReader));
                 }
                 // maybe an int-only impl?
                 return new BinaryDocValuesImpl(bytes.Freeze(true), offsetReader);
             }
 
-            private class BitsAnonymousInnerClassHelper : IBits
+            private class BitsAnonymousClass : IBits
             {
                 private readonly int maxDoc;
                 private readonly PackedInt32s.Reader offsetReader;
 
-                public BitsAnonymousInnerClassHelper(int maxDoc, PackedInt32s.Reader offsetReader)
+                public BitsAnonymousClass(int maxDoc, PackedInt32s.Reader offsetReader)
                 {
                     this.maxDoc = maxDoc;
                     this.offsetReader = offsetReader;

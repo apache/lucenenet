@@ -112,14 +112,14 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             }
             else
             {
-                config = new DefaultICUTokenizerConfigAnonymousHelper(cjkAsWords, myanmarAsWords, tailored, loader);
+                config = new DefaultICUTokenizerConfigAnonymousClass(cjkAsWords, myanmarAsWords, tailored, loader);
             }
         }
 
-        private class DefaultICUTokenizerConfigAnonymousHelper : DefaultICUTokenizerConfig
+        private class DefaultICUTokenizerConfigAnonymousClass : DefaultICUTokenizerConfig
         {
             private readonly BreakIterator[] breakers;
-            public DefaultICUTokenizerConfigAnonymousHelper(bool cjkAsWords, bool myanmarAsWords, IDictionary<int, string> tailored, IResourceLoader loader)
+            public DefaultICUTokenizerConfigAnonymousClass(bool cjkAsWords, bool myanmarAsWords, IDictionary<int, string> tailored, IResourceLoader loader)
                 : base(cjkAsWords, myanmarAsWords)
             {
                 breakers = new BreakIterator[1 + UChar.GetIntPropertyMaxValue(UProperty.Script)];

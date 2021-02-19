@@ -68,11 +68,11 @@ namespace Lucene.Net.Analysis.Core
             bool Apply(T o);
         }
 
-        private static readonly IPredicate<object[]> ALWAYS = new PredicateAnonymousInnerClassHelper();
+        private static readonly IPredicate<object[]> ALWAYS = new PredicateAnonymousClass();
 
-        private class PredicateAnonymousInnerClassHelper : IPredicate<object[]>
+        private class PredicateAnonymousClass : IPredicate<object[]>
         {
-            public PredicateAnonymousInnerClassHelper()
+            public PredicateAnonymousClass()
             {
             }
 
@@ -95,9 +95,9 @@ namespace Lucene.Net.Analysis.Core
             try
             {
                 brokenConstructors[typeof(LimitTokenCountFilter).GetConstructor(new Type[] { typeof(TokenStream), typeof(int) })] = ALWAYS;
-                brokenConstructors[typeof(LimitTokenCountFilter).GetConstructor(new Type[] { typeof(TokenStream), typeof(int), typeof(bool) })] = new PredicateAnonymousInnerClassHelper2();
+                brokenConstructors[typeof(LimitTokenCountFilter).GetConstructor(new Type[] { typeof(TokenStream), typeof(int), typeof(bool) })] = new PredicateAnonymousClass2();
                 brokenConstructors[typeof(LimitTokenPositionFilter).GetConstructor(new Type[] { typeof(TokenStream), typeof(int) })] = ALWAYS;
-                brokenConstructors[typeof(LimitTokenPositionFilter).GetConstructor(new Type[] { typeof(TokenStream), typeof(int), typeof(bool) })] = new PredicateAnonymousInnerClassHelper3();
+                brokenConstructors[typeof(LimitTokenPositionFilter).GetConstructor(new Type[] { typeof(TokenStream), typeof(int), typeof(bool) })] = new PredicateAnonymousClass3();
                 foreach (Type c in new Type[] {
                     // TODO: can we promote some of these to be only
                     // offsets offenders?
@@ -166,9 +166,9 @@ namespace Lucene.Net.Analysis.Core
             allowedCharFilterArgs.Add(typeof(TextReader));
         }
 
-        private class PredicateAnonymousInnerClassHelper2 : IPredicate<object[]>
+        private class PredicateAnonymousClass2 : IPredicate<object[]>
         {
-            public PredicateAnonymousInnerClassHelper2()
+            public PredicateAnonymousClass2()
             {
             }
 
@@ -179,9 +179,9 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        private class PredicateAnonymousInnerClassHelper3 : IPredicate<object[]>
+        private class PredicateAnonymousClass3 : IPredicate<object[]>
         {
-            public PredicateAnonymousInnerClassHelper3()
+            public PredicateAnonymousClass3()
             {
             }
 

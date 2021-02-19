@@ -131,7 +131,7 @@ namespace Lucene.Net.Search.Highlight
             assertEquals("<B>This</B> piece of text refers to Kennedy at the beginning then has a longer piece of text that is <B>very</B>", fragment);
         }
 
-        internal class TestHighlightUnknowQueryAnonymousHelper : Query
+        internal class TestHighlightUnknowQueryAnonymousClass : Query
         {
             public override Query Rewrite(IndexReader reader)
             {
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search.Highlight
         [Test]
         public void TestHighlightUnknowQueryAfterRewrite()
         {
-            Query query = new TestHighlightUnknowQueryAnonymousHelper();
+            Query query = new TestHighlightUnknowQueryAnonymousClass();
 
             Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
 
@@ -1510,7 +1510,7 @@ namespace Lucene.Net.Search.Highlight
             // for
             // highlighting but scores a single fragment for selection
 
-            Highlighter highlighter = new Highlighter(this, new SimpleHTMLEncoder(), new TestEncodingScorerAnonymousHelper(this));
+            Highlighter highlighter = new Highlighter(this, new SimpleHTMLEncoder(), new TestEncodingScorerAnonymousClass(this));
 
             highlighter.TextFragmenter = (new SimpleFragmenter(2000));
             TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, rawDocContent);
@@ -1543,11 +1543,11 @@ namespace Lucene.Net.Search.Highlight
             assertEquals("XHTML Encoding should have worked:", rawDocContent, decodedSnippet);
         }
 
-        internal class TestEncodingScorerAnonymousHelper : IScorer
+        internal class TestEncodingScorerAnonymousClass : IScorer
         {
             private readonly HighlighterTest outerInstance;
 
-            public TestEncodingScorerAnonymousHelper(HighlighterTest outerInstance)
+            public TestEncodingScorerAnonymousClass(HighlighterTest outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -1624,13 +1624,13 @@ namespace Lucene.Net.Search.Highlight
         protected TokenStream getTS2()
         {
             // String s = "Hi-Speed10 foo";
-            return new TS2TokenStreamAnonymousHelper();
+            return new TS2TokenStreamAnonymousClass();
         }
 
 
-        protected sealed class TS2TokenStreamAnonymousHelper : TokenStream
+        protected sealed class TS2TokenStreamAnonymousClass : TokenStream
         {
-            public TS2TokenStreamAnonymousHelper()
+            public TS2TokenStreamAnonymousClass()
             {
                 termAtt = AddAttribute<ICharTermAttribute>();
                 posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
@@ -1687,12 +1687,12 @@ namespace Lucene.Net.Search.Highlight
         protected TokenStream getTS2a()
         {
             // String s = "Hi-Speed10 foo";
-            return new TS2aTokenStreamAnonymousHelper();
+            return new TS2aTokenStreamAnonymousClass();
         }
 
-        protected sealed class TS2aTokenStreamAnonymousHelper : TokenStream
+        protected sealed class TS2aTokenStreamAnonymousClass : TokenStream
         {
-            public TS2aTokenStreamAnonymousHelper()
+            public TS2aTokenStreamAnonymousClass()
             {
                 termAtt = AddAttribute<ICharTermAttribute>();
                 posIncrAtt = AddAttribute<IPositionIncrementAttribute>();

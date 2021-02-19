@@ -920,7 +920,7 @@ namespace Lucene.Net.Index
                     ThreadJob[] threads = new ThreadJob[2];
                     for (int i = 0; i < threads.Length; ++i)
                     {
-                        threads[i] = new ThreadAnonymousInnerClassHelper(this, numDocs, docs, reader, exception);
+                        threads[i] = new ThreadAnonymousClass(this, numDocs, docs, reader, exception);
                     }
                     foreach (ThreadJob thread in threads)
                     {
@@ -935,7 +935,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly BaseTermVectorsFormatTestCase outerInstance;
 
@@ -944,7 +944,7 @@ namespace Lucene.Net.Index
             private readonly IndexReader reader;
             private readonly AtomicReference<Exception> exception;
 
-            public ThreadAnonymousInnerClassHelper(BaseTermVectorsFormatTestCase outerInstance, int numDocs, RandomDocument[] docs, IndexReader reader, AtomicReference<Exception> exception)
+            public ThreadAnonymousClass(BaseTermVectorsFormatTestCase outerInstance, int numDocs, RandomDocument[] docs, IndexReader reader, AtomicReference<Exception> exception)
             {
                 this.outerInstance = outerInstance;
                 this.numDocs = numDocs;

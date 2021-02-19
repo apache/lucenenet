@@ -99,13 +99,13 @@ namespace Lucene.Net.Search
             BooleanWeight weight = (BooleanWeight)(new BooleanQuery()).CreateWeight(searcher);
 
             BulkScorer[] scorers = new BulkScorer[] {
-            new BulkScorerAnonymousInnerClassHelper()
+            new BulkScorerAnonymousClass()
         };
 
             BooleanScorer bs = new BooleanScorer(weight, false, 1, scorers, Collections.EmptyList<BulkScorer>(), scorers.Length);
 
             IList<int> hits = new List<int>();
-            bs.Score(new CollectorAnonymousInnerClassHelper(this, hits));
+            bs.Score(new CollectorAnonymousClass(this, hits));
 
             Assert.AreEqual(1, hits.Count, "should have only 1 hit");
             Assert.AreEqual(3000, (int)hits[0], "hit should have been docID=3000");
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search
             directory.Dispose();
         }
 
-        private class BulkScorerAnonymousInnerClassHelper : BulkScorer
+        private class BulkScorerAnonymousClass : BulkScorer
         {
             private int doc = -1;
 
@@ -130,13 +130,13 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper : ICollector
+        private class CollectorAnonymousClass : ICollector
         {
             private readonly TestBooleanScorer outerInstance;
 
             private readonly IList<int> hits;
 
-            public CollectorAnonymousInnerClassHelper(TestBooleanScorer outerInstance, IList<int> hits)
+            public CollectorAnonymousClass(TestBooleanScorer outerInstance, IList<int> hits)
             {
                 this.outerInstance = outerInstance;
                 this.hits = hits;
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search
             q.Add(new BooleanClause(new TermQuery(new Term("field", "33")), Occur.SHOULD));
 
             int[] count = new int[1];
-            s.Search(q, new CollectorAnonymousInnerClassHelper2(this, doc, count));
+            s.Search(q, new CollectorAnonymousClass2(this, doc, count));
 
             Assert.AreEqual(1, count[0]);
 
@@ -197,14 +197,14 @@ namespace Lucene.Net.Search
             d.Dispose();
         }
 
-        private class CollectorAnonymousInnerClassHelper2 : ICollector
+        private class CollectorAnonymousClass2 : ICollector
         {
             private readonly TestBooleanScorer outerInstance;
 
             private Document doc;
             private readonly int[] count;
 
-            public CollectorAnonymousInnerClassHelper2(TestBooleanScorer outerInstance, Document doc, int[] count)
+            public CollectorAnonymousClass2(TestBooleanScorer outerInstance, Document doc, int[] count)
             {
                 this.outerInstance = outerInstance;
                 this.doc = doc;
@@ -241,14 +241,14 @@ namespace Lucene.Net.Search
 
             public override Weight CreateWeight(IndexSearcher searcher)
             {
-                return new WeightAnonymousInnerClassHelper(this);
+                return new WeightAnonymousClass(this);
             }
 
-            private class WeightAnonymousInnerClassHelper : Weight
+            private class WeightAnonymousClass : Weight
             {
                 private readonly CrazyMustUseBulkScorerQuery outerInstance;
 
-                public WeightAnonymousInnerClassHelper(CrazyMustUseBulkScorerQuery outerInstance)
+                public WeightAnonymousClass(CrazyMustUseBulkScorerQuery outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }
@@ -276,14 +276,14 @@ namespace Lucene.Net.Search
 
                 public override BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
                 {
-                    return new BulkScorerAnonymousInnerClassHelper(this);
+                    return new BulkScorerAnonymousClass(this);
                 }
 
-                private class BulkScorerAnonymousInnerClassHelper : BulkScorer
+                private class BulkScorerAnonymousClass : BulkScorer
                 {
-                    private readonly WeightAnonymousInnerClassHelper outerInstance;
+                    private readonly WeightAnonymousClass outerInstance;
 
-                    public BulkScorerAnonymousInnerClassHelper(WeightAnonymousInnerClassHelper outerInstance)
+                    public BulkScorerAnonymousClass(WeightAnonymousClass outerInstance)
                     {
                         this.outerInstance = outerInstance;
                     }

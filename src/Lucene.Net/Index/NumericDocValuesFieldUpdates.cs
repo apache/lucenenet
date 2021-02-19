@@ -145,18 +145,18 @@ namespace Lucene.Net.Index
             PagedMutable docs = this.docs;
             PagedGrowableWriter values = this.values;
             FixedBitSet docsWithField = this.docsWithField;
-            new InPlaceMergeSorterAnonymousInnerClassHelper(docs, values, docsWithField).Sort(0, size);
+            new InPlaceMergeSorterAnonymousClass(docs, values, docsWithField).Sort(0, size);
 
             return new Iterator(size, values, docsWithField, docs);
         }
 
-        private class InPlaceMergeSorterAnonymousInnerClassHelper : InPlaceMergeSorter
+        private class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
         {
             private readonly PagedMutable docs;
             private readonly PagedGrowableWriter values;
             private readonly FixedBitSet docsWithField;
 
-            public InPlaceMergeSorterAnonymousInnerClassHelper(PagedMutable docs, PagedGrowableWriter values, FixedBitSet docsWithField)
+            public InPlaceMergeSorterAnonymousClass(PagedMutable docs, PagedGrowableWriter values, FixedBitSet docsWithField)
             {
                 this.docs = docs;
                 this.values = values;

@@ -335,16 +335,16 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            return new FieldsConsumerAnonymousInnerClassHelper(this, @out);
+            return new FieldsConsumerAnonymousClass(this, @out);
         }
 
-        private class FieldsConsumerAnonymousInnerClassHelper : FieldsConsumer
+        private class FieldsConsumerAnonymousClass : FieldsConsumer
         {
             private readonly MemoryPostingsFormat outerInstance;
 
             private readonly IndexOutput @out;
 
-            public FieldsConsumerAnonymousInnerClassHelper(MemoryPostingsFormat outerInstance, IndexOutput @out)
+            public FieldsConsumerAnonymousClass(MemoryPostingsFormat outerInstance, IndexOutput @out)
             {
                 this.outerInstance = outerInstance;
                 this.@out = @out;
@@ -976,14 +976,14 @@ namespace Lucene.Net.Codecs.Memory
                 @in.Dispose();
             }
 
-            return new FieldsProducerAnonymousInnerClassHelper(fields);
+            return new FieldsProducerAnonymousClass(fields);
         }
 
-        private class FieldsProducerAnonymousInnerClassHelper : FieldsProducer
+        private class FieldsProducerAnonymousClass : FieldsProducer
         {
             private readonly IDictionary<string, TermsReader> _fields;
 
-            public FieldsProducerAnonymousInnerClassHelper(IDictionary<string, TermsReader> fields)
+            public FieldsProducerAnonymousClass(IDictionary<string, TermsReader> fields)
             {
                 _fields = fields;
             }

@@ -59,16 +59,16 @@ namespace Lucene.Net.Facet.Taxonomy
 
             BinaryDocValues values = values0;
 
-            return new OrdinalsSegmentReaderAnonymousInnerClassHelper(this, values);
+            return new OrdinalsSegmentReaderAnonymousClass(this, values);
         }
 
-        private class OrdinalsSegmentReaderAnonymousInnerClassHelper : OrdinalsSegmentReader
+        private class OrdinalsSegmentReaderAnonymousClass : OrdinalsSegmentReader
         {
             private readonly DocValuesOrdinalsReader outerInstance;
 
             private readonly BinaryDocValues values;
 
-            public OrdinalsSegmentReaderAnonymousInnerClassHelper(DocValuesOrdinalsReader outerInstance, BinaryDocValues values)
+            public OrdinalsSegmentReaderAnonymousClass(DocValuesOrdinalsReader outerInstance, BinaryDocValues values)
             {
                 this.outerInstance = outerInstance;
                 this.values = values;

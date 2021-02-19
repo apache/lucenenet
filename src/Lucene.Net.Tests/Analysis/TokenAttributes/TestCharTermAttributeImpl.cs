@@ -339,17 +339,17 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             // finally use a completely custom ICharSequence that is not catched by instanceof checks
             const string longTestString = "012345678901234567890123456789";
-            t.Append(new CharSequenceAnonymousInnerClassHelper(this, longTestString));
+            t.Append(new CharSequenceAnonymousClass(this, longTestString));
             Assert.AreEqual("4567890123456" + longTestString, t.ToString());
         }
 
-        private class CharSequenceAnonymousInnerClassHelper : ICharSequence
+        private class CharSequenceAnonymousClass : ICharSequence
         {
             private readonly TestCharTermAttributeImpl outerInstance;
 
             private string longTestString;
 
-            public CharSequenceAnonymousInnerClassHelper(TestCharTermAttributeImpl outerInstance, string longTestString)
+            public CharSequenceAnonymousClass(TestCharTermAttributeImpl outerInstance, string longTestString)
             {
                 this.outerInstance = outerInstance;
                 this.longTestString = longTestString;

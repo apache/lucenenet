@@ -117,16 +117,16 @@ namespace Lucene.Net.Index.Sorter
                 {
                     return null;
                 }
-                return new BitsAnonymousInnerClassHelper(this, liveDocs);
+                return new BitsAnonymousClass(this, liveDocs);
             }
 
-            private class BitsAnonymousInnerClassHelper : IBits
+            private class BitsAnonymousClass : IBits
             {
                 private readonly SortingTermsEnum outerInstance;
 
                 private readonly IBits liveDocs;
 
-                public BitsAnonymousInnerClassHelper(SortingTermsEnum outerInstance, IBits liveDocs)
+                public BitsAnonymousClass(SortingTermsEnum outerInstance, IBits liveDocs)
                 {
                     this.outerInstance = outerInstance;
                     this.liveDocs = liveDocs;

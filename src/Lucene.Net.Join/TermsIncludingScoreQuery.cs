@@ -117,16 +117,16 @@ namespace Lucene.Net.Join
         public override Weight CreateWeight(IndexSearcher searcher)
         {
             Weight originalWeight = _originalQuery.CreateWeight(searcher);
-            return new WeightAnonymousInnerClassHelper(this, originalWeight);
+            return new WeightAnonymousClass(this, originalWeight);
         }
 
-        private class WeightAnonymousInnerClassHelper : Weight
+        private class WeightAnonymousClass : Weight
         {
             private readonly TermsIncludingScoreQuery outerInstance;
 
             private readonly Weight originalWeight;
 
-            public WeightAnonymousInnerClassHelper(TermsIncludingScoreQuery outerInstance, Weight originalWeight)
+            public WeightAnonymousClass(TermsIncludingScoreQuery outerInstance, Weight originalWeight)
             {
                 this.outerInstance = outerInstance;
                 this.originalWeight = originalWeight;

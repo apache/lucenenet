@@ -50,14 +50,14 @@ namespace Lucene.Net.Index
         /// called from <c>DirectoryReader.Open(...)</c> methods </summary>
         internal static DirectoryReader Open(Directory directory, IndexCommit commit, int termInfosIndexDivisor)
         {
-            return (DirectoryReader)new FindSegmentsFileAnonymousInnerClassHelper(directory, termInfosIndexDivisor).Run(commit);
+            return (DirectoryReader)new FindSegmentsFileAnonymousClass(directory, termInfosIndexDivisor).Run(commit);
         }
 
-        private class FindSegmentsFileAnonymousInnerClassHelper : SegmentInfos.FindSegmentsFile
+        private class FindSegmentsFileAnonymousClass : SegmentInfos.FindSegmentsFile
         {
             private readonly int termInfosIndexDivisor;
 
-            public FindSegmentsFileAnonymousInnerClassHelper(Directory directory, int termInfosIndexDivisor)
+            public FindSegmentsFileAnonymousClass(Directory directory, int termInfosIndexDivisor)
                 : base(directory)
             {
                 this.termInfosIndexDivisor = termInfosIndexDivisor;
@@ -401,14 +401,14 @@ namespace Lucene.Net.Index
 
         private DirectoryReader DoOpenFromCommit(IndexCommit commit)
         {
-            return (DirectoryReader)new FindSegmentsFileAnonymousInnerClassHelper2(this, m_directory).Run(commit);
+            return (DirectoryReader)new FindSegmentsFileAnonymousClass2(this, m_directory).Run(commit);
         }
 
-        private class FindSegmentsFileAnonymousInnerClassHelper2 : SegmentInfos.FindSegmentsFile
+        private class FindSegmentsFileAnonymousClass2 : SegmentInfos.FindSegmentsFile
         {
             private readonly StandardDirectoryReader outerInstance;
 
-            public FindSegmentsFileAnonymousInnerClassHelper2(StandardDirectoryReader outerInstance, Directory directory)
+            public FindSegmentsFileAnonymousClass2(StandardDirectoryReader outerInstance, Directory directory)
                 : base(directory)
             {
                 this.outerInstance = outerInstance;

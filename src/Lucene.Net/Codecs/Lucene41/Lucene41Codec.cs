@@ -48,11 +48,11 @@ namespace Lucene.Net.Codecs.Lucene41
     public class Lucene41Codec : Codec
     {
         // TODO: slightly evil
-        private readonly StoredFieldsFormat fieldsFormat = new CompressingStoredFieldsFormatAnonymousInnerClassHelper("Lucene41StoredFields", CompressionMode.FAST, 1 << 14);
+        private readonly StoredFieldsFormat fieldsFormat = new CompressingStoredFieldsFormatAnonymousClass("Lucene41StoredFields", CompressionMode.FAST, 1 << 14);
 
-        private class CompressingStoredFieldsFormatAnonymousInnerClassHelper : CompressingStoredFieldsFormat
+        private class CompressingStoredFieldsFormatAnonymousClass : CompressingStoredFieldsFormat
         {
-            public CompressingStoredFieldsFormatAnonymousInnerClassHelper(string formatName, CompressionMode compressionMode, int chunkSize)
+            public CompressingStoredFieldsFormatAnonymousClass(string formatName, CompressionMode compressionMode, int chunkSize)
                 : base(formatName, compressionMode, chunkSize)
             {
             }
@@ -70,11 +70,11 @@ namespace Lucene.Net.Codecs.Lucene41
 
         private readonly PostingsFormat postingsFormat;
 
-        private class PerFieldPostingsFormatAnonymousInnerClassHelper : PerFieldPostingsFormat
+        private class PerFieldPostingsFormatAnonymousClass : PerFieldPostingsFormat
         {
             private readonly Lucene41Codec outerInstance;
 
-            public PerFieldPostingsFormatAnonymousInnerClassHelper(Lucene41Codec outerInstance)
+            public PerFieldPostingsFormatAnonymousClass(Lucene41Codec outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -91,7 +91,7 @@ namespace Lucene.Net.Codecs.Lucene41
         public Lucene41Codec()
             : base()
         {
-            postingsFormat = new PerFieldPostingsFormatAnonymousInnerClassHelper(this);
+            postingsFormat = new PerFieldPostingsFormatAnonymousClass(this);
         }
 
         // TODO: slightly evil

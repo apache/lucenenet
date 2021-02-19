@@ -303,10 +303,10 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        private class AnalyzerWrapperAnonymousHelper : AnalyzerWrapper
+        private class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
         {
             private readonly Analyzer @delegate;
-            public AnalyzerWrapperAnonymousHelper(Analyzer @delegate)
+            public AnalyzerWrapperAnonymousClass(Analyzer @delegate)
                 : base(@delegate.Strategy)
             {
                 this.@delegate = @delegate;
@@ -329,7 +329,7 @@ namespace Lucene.Net.Analysis
             Random random = Random;
 
             Analyzer @delegate = new MockAnalyzer(random);
-            Analyzer a = new AnalyzerWrapperAnonymousHelper(@delegate);
+            Analyzer a = new AnalyzerWrapperAnonymousClass(@delegate);
 
 
             CheckOneTerm(a, "abc", "aabc");

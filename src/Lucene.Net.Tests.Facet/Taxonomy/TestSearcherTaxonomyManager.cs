@@ -164,7 +164,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             var mgr = new SearcherTaxonomyManager(w, true, null, tw);
 
-            var reopener = new ThreadAnonymousInnerClassHelper(stop, mgr);
+            var reopener = new ThreadAnonymousClass(stop, mgr);
 
             reopener.Name = "reopener";
             reopener.Start();
@@ -215,12 +215,12 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Dispose(mgr, tw, w, taxoDir, dir);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly AtomicBoolean stop;
             private readonly SearcherTaxonomyManager mgr;
 
-            public ThreadAnonymousInnerClassHelper(AtomicBoolean stop, SearcherTaxonomyManager mgr)
+            public ThreadAnonymousClass(AtomicBoolean stop, SearcherTaxonomyManager mgr)
             {
                 this.stop = stop;
                 this.mgr = mgr;

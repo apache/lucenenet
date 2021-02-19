@@ -105,16 +105,16 @@ namespace Lucene.Net.Analysis.Standard
             TokenStream tok = new StandardFilter(m_matchVersion, src);
             tok = new LowerCaseFilter(m_matchVersion, tok);
             tok = new StopFilter(m_matchVersion, tok, m_stopwords);
-            return new TokenStreamComponentsAnonymousInnerClassHelper(this, src, tok);
+            return new TokenStreamComponentsAnonymousClass(this, src, tok);
         }
 
-        private class TokenStreamComponentsAnonymousInnerClassHelper : TokenStreamComponents
+        private class TokenStreamComponentsAnonymousClass : TokenStreamComponents
         {
             private readonly StandardAnalyzer outerInstance;
 
             private readonly StandardTokenizer src;
 
-            public TokenStreamComponentsAnonymousInnerClassHelper(StandardAnalyzer outerInstance, StandardTokenizer src, TokenStream tok)
+            public TokenStreamComponentsAnonymousClass(StandardAnalyzer outerInstance, StandardTokenizer src, TokenStream tok)
                 : base(src, tok)
             {
                 this.outerInstance = outerInstance;

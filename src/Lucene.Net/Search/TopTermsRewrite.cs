@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
         {
             int maxSize = Math.Min(size, MaxSize);
             JCG.PriorityQueue<ScoreTerm> stQueue = new JCG.PriorityQueue<ScoreTerm>();
-            CollectTerms(reader, query, new TermCollectorAnonymousInnerClassHelper(maxSize, stQueue));
+            CollectTerms(reader, query, new TermCollectorAnonymousClass(maxSize, stQueue));
 
             var q = GetTopLevelQuery();
             ScoreTerm[] scoreTerms = stQueue.ToArray(/*new ScoreTerm[stQueue.Count]*/);
@@ -90,12 +90,12 @@ namespace Lucene.Net.Search
             return q;
         }
 
-        private class TermCollectorAnonymousInnerClassHelper : TermCollector
+        private class TermCollectorAnonymousClass : TermCollector
         {
             private readonly int maxSize;
             private readonly JCG.PriorityQueue<ScoreTerm> stQueue;
 
-            public TermCollectorAnonymousInnerClassHelper(int maxSize, JCG.PriorityQueue<ScoreTerm> stQueue)
+            public TermCollectorAnonymousClass(int maxSize, JCG.PriorityQueue<ScoreTerm> stQueue)
             {
                 this.maxSize = maxSize;
                 this.stQueue = stQueue;

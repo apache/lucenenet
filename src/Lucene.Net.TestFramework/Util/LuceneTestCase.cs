@@ -2412,7 +2412,7 @@ namespace Lucene.Net.Util
                     {
                         Console.WriteLine("NOTE: newSearcher using ExecutorService with " + threads + " threads");
                     }
-                    //r.AddReaderClosedListener(new ReaderClosedListenerAnonymousInnerClassHelper(ex)); // LUCENENET TODO: Implement event (see the commented ReaderClosedListenerAnonymousInnerClassHelper class near the bottom of this file)
+                    //r.AddReaderClosedListener(new ReaderClosedListenerAnonymousClass(ex)); // LUCENENET TODO: Implement event (see the commented ReaderClosedListenerAnonymousClass class near the bottom of this file)
                 }
                 IndexSearcher ret;
                 if (wrapWithAssertions)
@@ -3639,11 +3639,11 @@ namespace Lucene.Net.Util
         }
     }
 
-    //internal class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.IReaderClosedListener
+    //internal class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
     //{
     //    private TaskScheduler ex;
 
-    //    public ReaderClosedListenerAnonymousInnerClassHelper(TaskScheduler ex)
+    //    public ReaderClosedListenerAnonymousClass(TaskScheduler ex)
     //    {
     //        this.ex = ex;
     //    }

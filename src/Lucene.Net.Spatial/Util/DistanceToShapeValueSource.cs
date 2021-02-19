@@ -69,15 +69,15 @@ namespace Lucene.Net.Spatial.Util
         {
             FunctionValues shapeValues = shapeValueSource.GetValues(context, readerContext);
 
-            return new DoubleDocValuesAnonymousHelper(this, shapeValues);
+            return new DoubleDocValuesAnonymousClass(this, shapeValues);
         }
 
-        internal class DoubleDocValuesAnonymousHelper : DoubleDocValues
+        internal class DoubleDocValuesAnonymousClass : DoubleDocValues
         {
             private readonly DistanceToShapeValueSource outerInstance;
             private readonly FunctionValues shapeValues;
 
-            public DoubleDocValuesAnonymousHelper(DistanceToShapeValueSource outerInstance, FunctionValues shapeValues)
+            public DoubleDocValuesAnonymousClass(DistanceToShapeValueSource outerInstance, FunctionValues shapeValues)
                 : base(outerInstance)
             {
                 this.outerInstance = outerInstance;

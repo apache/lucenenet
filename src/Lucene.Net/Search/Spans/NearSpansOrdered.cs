@@ -81,11 +81,11 @@ namespace Lucene.Net.Search.Spans
         // perform better since it has a lower overhead than TimSorter for small arrays
         private readonly InPlaceMergeSorter sorter;
 
-        private class InPlaceMergeSorterAnonymousInnerClassHelper : InPlaceMergeSorter
+        private class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
         {
             private readonly NearSpansOrdered outerInstance;
 
-            public InPlaceMergeSorterAnonymousInnerClassHelper(NearSpansOrdered outerInstance)
+            public InPlaceMergeSorterAnonymousClass(NearSpansOrdered outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search.Spans
 
         public NearSpansOrdered(SpanNearQuery spanNearQuery, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts, bool collectPayloads)
         {
-            sorter = new InPlaceMergeSorterAnonymousInnerClassHelper(this);
+            sorter = new InPlaceMergeSorterAnonymousClass(this);
             if (spanNearQuery.GetClauses().Length < 2)
             {
                 throw new ArgumentException("Less than 2 clauses: " + spanNearQuery);

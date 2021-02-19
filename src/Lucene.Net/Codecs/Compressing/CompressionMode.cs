@@ -42,9 +42,9 @@ namespace Lucene.Net.Codecs.Compressing
         /// very fast. Use this mode with indices that have a high update rate but
         /// should be able to load documents from disk quickly.
         /// </summary>
-        public static readonly CompressionMode FAST = new CompressionModeAnonymousInnerClassHelper();
+        public static readonly CompressionMode FAST = new CompressionModeAnonymousClass();
 
-        private class CompressionModeAnonymousInnerClassHelper : CompressionMode
+        private class CompressionModeAnonymousClass : CompressionMode
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override Compressor NewCompressor()
@@ -71,9 +71,9 @@ namespace Lucene.Net.Codecs.Compressing
         /// provide a good compression ratio. this mode might be interesting if/when
         /// your index size is much bigger than your OS cache.
         /// </summary>
-        public static readonly CompressionMode HIGH_COMPRESSION = new CompressionModeAnonymousInnerClassHelper2();
+        public static readonly CompressionMode HIGH_COMPRESSION = new CompressionModeAnonymousClass2();
 
-        private class CompressionModeAnonymousInnerClassHelper2 : CompressionMode
+        private class CompressionModeAnonymousClass2 : CompressionMode
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override Compressor NewCompressor()
@@ -100,9 +100,9 @@ namespace Lucene.Net.Codecs.Compressing
         /// mode is best used with indices that have a low update rate but should be
         /// able to load documents from disk quickly.
         /// </summary>
-        public static readonly CompressionMode FAST_DECOMPRESSION = new CompressionModeAnonymousInnerClassHelper3();
+        public static readonly CompressionMode FAST_DECOMPRESSION = new CompressionModeAnonymousClass3();
 
-        private class CompressionModeAnonymousInnerClassHelper3 : CompressionMode
+        private class CompressionModeAnonymousClass3 : CompressionMode
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override Compressor NewCompressor()
@@ -139,9 +139,9 @@ namespace Lucene.Net.Codecs.Compressing
         /// </summary>
         public abstract Decompressor NewDecompressor();
 
-        private static readonly Decompressor LZ4_DECOMPRESSOR = new DecompressorAnonymousInnerClassHelper();
+        private static readonly Decompressor LZ4_DECOMPRESSOR = new DecompressorAnonymousClass();
 
-        private class DecompressorAnonymousInnerClassHelper : Decompressor
+        private class DecompressorAnonymousClass : Decompressor
         {
             public override void Decompress(DataInput @in, int originalLength, int offset, int length, BytesRef bytes)
             {

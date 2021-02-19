@@ -115,11 +115,11 @@ namespace Lucene.Net.Codecs.MockRandom
             }
         }
 
-        private class IndexTermSelectorAnonymousHelper : VariableGapTermsIndexWriter.IndexTermSelector
+        private class IndexTermSelectorAnonymousClass : VariableGapTermsIndexWriter.IndexTermSelector
         {
             private readonly Random rand;
             private readonly int gap;
-            public IndexTermSelectorAnonymousHelper(int seed, int gap)
+            public IndexTermSelectorAnonymousClass(int seed, int gap)
             {
                 rand = new Random(seed);
                 this.gap = gap;
@@ -315,7 +315,7 @@ namespace Lucene.Net.Codecs.MockRandom
                             {
                                 Console.WriteLine("MockRandomCodec: random-gap terms index (max gap=" + gap + ")");
                             }
-                            selector = new IndexTermSelectorAnonymousHelper(seed2, gap);
+                            selector = new IndexTermSelectorAnonymousClass(seed2, gap);
                         }
                         indexWriter = new VariableGapTermsIndexWriter(state, selector);
                     }

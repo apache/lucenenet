@@ -53,15 +53,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             FieldCache.Bytes arr = m_cache.GetBytes(readerContext.AtomicReader, m_field, parser, false);
 
-            return new FunctionValuesAnonymousInnerClassHelper(this, arr);
+            return new FunctionValuesAnonymousClass(this, arr);
         }
 
-        private class FunctionValuesAnonymousInnerClassHelper : FunctionValues
+        private class FunctionValuesAnonymousClass : FunctionValues
         {
             private readonly ByteFieldSource outerInstance;
             private readonly FieldCache.Bytes arr;
 
-            public FunctionValuesAnonymousInnerClassHelper(ByteFieldSource outerInstance, FieldCache.Bytes arr)
+            public FunctionValuesAnonymousClass(ByteFieldSource outerInstance, FieldCache.Bytes arr)
             {
                 this.outerInstance = outerInstance;
                 this.arr = arr;

@@ -45,11 +45,11 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private readonly PostingsFormat postingsFormat;
 
-        private class PerFieldPostingsFormatAnonymousInnerClassHelper : PerFieldPostingsFormat
+        private class PerFieldPostingsFormatAnonymousClass : PerFieldPostingsFormat
         {
             private readonly Lucene40Codec outerInstance;
 
-            public PerFieldPostingsFormatAnonymousInnerClassHelper(Lucene40Codec outerInstance)
+            public PerFieldPostingsFormatAnonymousClass(Lucene40Codec outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -66,7 +66,7 @@ namespace Lucene.Net.Codecs.Lucene40
         public Lucene40Codec()
             : base()
         {
-            postingsFormat = new PerFieldPostingsFormatAnonymousInnerClassHelper(this);
+            postingsFormat = new PerFieldPostingsFormatAnonymousClass(this);
         }
 
         public override sealed StoredFieldsFormat StoredFieldsFormat => fieldsFormat;

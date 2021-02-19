@@ -95,15 +95,15 @@ namespace Lucene.Net.Index
 
             if (Debugging.AssertsEnabled) Debugging.Assert(anyReal);
 
-            return new NumericDocValuesAnonymousInnerClassHelper(values, starts);
+            return new NumericDocValuesAnonymousClass(values, starts);
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
+        private class NumericDocValuesAnonymousClass : NumericDocValues
         {
             private readonly NumericDocValues[] values;
             private readonly int[] starts;
 
-            public NumericDocValuesAnonymousInnerClassHelper(NumericDocValues[] values, int[] starts)
+            public NumericDocValuesAnonymousClass(NumericDocValues[] values, int[] starts)
             {
                 this.values = values;
                 this.starts = starts;
@@ -162,16 +162,16 @@ namespace Lucene.Net.Index
             }
             else
             {
-                return new NumericDocValuesAnonymousInnerClassHelper2(values, starts);
+                return new NumericDocValuesAnonymousClass2(values, starts);
             }
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper2 : NumericDocValues
+        private class NumericDocValuesAnonymousClass2 : NumericDocValues
         {
             private readonly NumericDocValues[] values;
             private readonly int[] starts;
 
-            public NumericDocValuesAnonymousInnerClassHelper2(NumericDocValues[] values, int[] starts)
+            public NumericDocValuesAnonymousClass2(NumericDocValues[] values, int[] starts)
             {
                 this.values = values;
                 this.starts = starts;
@@ -291,16 +291,16 @@ namespace Lucene.Net.Index
             }
             else
             {
-                return new BinaryDocValuesAnonymousInnerClassHelper(values, starts);
+                return new BinaryDocValuesAnonymousClass(values, starts);
             }
         }
 
-        private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
+        private class BinaryDocValuesAnonymousClass : BinaryDocValues
         {
             private readonly BinaryDocValues[] values;
             private readonly int[] starts;
 
-            public BinaryDocValuesAnonymousInnerClassHelper(BinaryDocValues[] values, int[] starts)
+            public BinaryDocValuesAnonymousClass(BinaryDocValues[] values, int[] starts)
             {
                 this.values = values;
                 this.starts = starts;

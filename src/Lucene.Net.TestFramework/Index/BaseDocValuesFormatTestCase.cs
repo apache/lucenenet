@@ -1308,15 +1308,15 @@ namespace Lucene.Net.Index
 
         private void DoTestNumericsVsStoredFields(long minValue, long maxValue)
         {
-            DoTestNumericsVsStoredFields(new Int64ProducerAnonymousInnerClassHelper(minValue, maxValue));
+            DoTestNumericsVsStoredFields(new Int64ProducerAnonymousClass(minValue, maxValue));
         }
 
-        private class Int64ProducerAnonymousInnerClassHelper : Int64Producer
+        private class Int64ProducerAnonymousClass : Int64Producer
         {
             private readonly long minValue;
             private readonly long maxValue;
 
-            public Int64ProducerAnonymousInnerClassHelper(long minValue, long maxValue)
+            public Int64ProducerAnonymousClass(long minValue, long maxValue)
             {
                 this.minValue = minValue;
                 this.maxValue = maxValue;
@@ -1390,15 +1390,15 @@ namespace Lucene.Net.Index
 
         private void DoTestMissingVsFieldCache(long minValue, long maxValue)
         {
-            DoTestMissingVsFieldCache(new Int64ProducerAnonymousInnerClassHelper2(minValue, maxValue));
+            DoTestMissingVsFieldCache(new Int64ProducerAnonymousClass2(minValue, maxValue));
         }
 
-        private class Int64ProducerAnonymousInnerClassHelper2 : Int64Producer
+        private class Int64ProducerAnonymousClass2 : Int64Producer
         {
             private readonly long minValue;
             private readonly long maxValue;
 
-            public Int64ProducerAnonymousInnerClassHelper2(long minValue, long maxValue)
+            public Int64ProducerAnonymousClass2(long minValue, long maxValue)
             {
                 this.minValue = minValue;
                 this.maxValue = maxValue;
@@ -2752,17 +2752,17 @@ namespace Lucene.Net.Index
             {
                 long min = -(((long)Random.Next(1 << 30)) << 32);
                 long mul = Random.Next() & 0xFFFFFFFFL;
-                Int64Producer longs = new Int64ProducerAnonymousInnerClassHelper3(min, mul);
+                Int64Producer longs = new Int64ProducerAnonymousClass3(min, mul);
                 DoTestNumericsVsStoredFields(longs);
             }
         }
 
-        private class Int64ProducerAnonymousInnerClassHelper3 : Int64Producer
+        private class Int64ProducerAnonymousClass3 : Int64Producer
         {
             private readonly long min;
             private readonly long mul;
 
-            public Int64ProducerAnonymousInnerClassHelper3(long min, long mul)
+            public Int64ProducerAnonymousClass3(long min, long mul)
             {
                 this.min = min;
                 this.mul = mul;
@@ -2788,12 +2788,12 @@ namespace Lucene.Net.Index
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
-                Int64Producer longs = new Int64ProducerAnonymousInnerClassHelper4();
+                Int64Producer longs = new Int64ProducerAnonymousClass4();
                 DoTestNumericsVsStoredFields(longs);
             }
         }
 
-        private class Int64ProducerAnonymousInnerClassHelper4 : Int64Producer
+        private class Int64ProducerAnonymousClass4 : Int64Producer
         {
             internal override long Next()
             {
@@ -3307,7 +3307,7 @@ namespace Lucene.Net.Index
             using CountdownEvent startingGun = new CountdownEvent(1);
             for (int i = 0; i < threads.Length; i++)
             {
-                threads[i] = new ThreadAnonymousInnerClassHelper(ir, startingGun);
+                threads[i] = new ThreadAnonymousClass(ir, startingGun);
                 threads[i].Start();
             }
             startingGun.Signal();
@@ -3317,12 +3317,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly DirectoryReader ir;
             private readonly CountdownEvent startingGun;
 
-            public ThreadAnonymousInnerClassHelper(DirectoryReader ir, CountdownEvent startingGun)
+            public ThreadAnonymousClass(DirectoryReader ir, CountdownEvent startingGun)
             {
                 this.ir = ir;
                 this.startingGun = startingGun;
@@ -3443,7 +3443,7 @@ namespace Lucene.Net.Index
             using CountdownEvent startingGun = new CountdownEvent(1);
             for (int i = 0; i < threads.Length; i++)
             {
-                threads[i] = new ThreadAnonymousInnerClassHelper2(ir, startingGun);
+                threads[i] = new ThreadAnonymousClass2(ir, startingGun);
                 threads[i].Start();
             }
             startingGun.Signal();
@@ -3453,12 +3453,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
+        private class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly DirectoryReader ir;
             private readonly CountdownEvent startingGun;
 
-            public ThreadAnonymousInnerClassHelper2(DirectoryReader ir, CountdownEvent startingGun)
+            public ThreadAnonymousClass2(DirectoryReader ir, CountdownEvent startingGun)
             {
                 this.ir = ir;
                 this.startingGun = startingGun;

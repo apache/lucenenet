@@ -405,7 +405,7 @@ namespace Lucene.Net.Index
 
                     IndexWriter finalWriter = writer;
                     List<Exception> failure = new List<Exception>();
-                    ThreadJob t1 = new ThreadAnonymousInnerClassHelper(this, doc, finalWriter, failure);
+                    ThreadJob t1 = new ThreadAnonymousClass(this, doc, finalWriter, failure);
 
                     if (failure.Count > 0)
                     {
@@ -430,7 +430,7 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestIndexWriterMerging outerInstance;
 
@@ -438,7 +438,7 @@ namespace Lucene.Net.Index
             private IndexWriter finalWriter;
             private List<Exception> failure;
 
-            public ThreadAnonymousInnerClassHelper(TestIndexWriterMerging outerInstance, Document doc, IndexWriter finalWriter, List<Exception> failure)
+            public ThreadAnonymousClass(TestIndexWriterMerging outerInstance, Document doc, IndexWriter finalWriter, List<Exception> failure)
             {
                 this.outerInstance = outerInstance;
                 this.doc = doc;

@@ -47,7 +47,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 ThreadJob[] addThreads = new ThreadJob[4];
                 for (int j = 0; j < addThreads.Length; j++)
                 {
-                    addThreads[j] = new ThreadAnonymousInnerClassHelper(this, range, numCats, tw);
+                    addThreads[j] = new ThreadAnonymousClass(this, range, numCats, tw);
                 }
 
                 foreach (ThreadJob t in addThreads)
@@ -72,7 +72,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             IOUtils.Dispose(dirs);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestAddTaxonomy outerInstance;
 
@@ -80,7 +80,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             private AtomicInt32 numCats;
             private DirectoryTaxonomyWriter tw;
 
-            public ThreadAnonymousInnerClassHelper(TestAddTaxonomy outerInstance, int range, AtomicInt32 numCats, DirectoryTaxonomyWriter tw)
+            public ThreadAnonymousClass(TestAddTaxonomy outerInstance, int range, AtomicInt32 numCats, DirectoryTaxonomyWriter tw)
             {
                 this.outerInstance = outerInstance;
                 this.range = range;
@@ -250,7 +250,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // again, in parallel -- in the end, no duplicate categories should exist.
             Directory dest = NewDirectory();
             var destTw = new DirectoryTaxonomyWriter(dest);
-            var t = new ThreadAnonymousInnerClassHelper2(this, numCategories, destTw);
+            var t = new ThreadAnonymousClass2(this, numCategories, destTw);
             t.Start();
 
             IOrdinalMap map = new MemoryOrdinalMap();
@@ -274,14 +274,14 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             IOUtils.Dispose(src, dest);
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
+        private class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly TestAddTaxonomy outerInstance;
 
             private readonly int numCategories;
             private readonly DirectoryTaxonomyWriter destTW;
 
-            public ThreadAnonymousInnerClassHelper2(TestAddTaxonomy outerInstance, int numCategories, DirectoryTaxonomyWriter destTW)
+            public ThreadAnonymousClass2(TestAddTaxonomy outerInstance, int numCategories, DirectoryTaxonomyWriter destTW)
             {
                 this.outerInstance = outerInstance;
                 this.numCategories = numCategories;

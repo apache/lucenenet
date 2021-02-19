@@ -98,15 +98,15 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             m_highlighter = new FastVectorHighlighter(false, false);
             Query myq = q;
-            return new BenchmarkHighlighterAnonymousHelper(this, m_highlighter, myq);
+            return new BenchmarkHighlighterAnonymousClass(this, m_highlighter, myq);
         }
 
-        private class BenchmarkHighlighterAnonymousHelper : BenchmarkHighlighter
+        private class BenchmarkHighlighterAnonymousClass : BenchmarkHighlighter
         {
             private readonly SearchTravRetVectorHighlightTask outerInstance;
             private readonly FastVectorHighlighter highlighter;
             private readonly Query myq;
-            public BenchmarkHighlighterAnonymousHelper(SearchTravRetVectorHighlightTask outerInstance, FastVectorHighlighter highlighter, Query myq)
+            public BenchmarkHighlighterAnonymousClass(SearchTravRetVectorHighlightTask outerInstance, FastVectorHighlighter highlighter, Query myq)
             {
                 this.outerInstance = outerInstance;
                 this.highlighter = highlighter;

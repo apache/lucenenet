@@ -333,11 +333,11 @@ namespace Lucene.Net.Search.PostingsHighlight
             return snippets;
         }
 
-        internal class InPlaceMergeSorterAnonymousHelper : InPlaceMergeSorter
+        internal class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
         {
             private readonly string[] fields;
             private readonly int[] maxPassages;
-            public InPlaceMergeSorterAnonymousHelper(string[] fields, int[] maxPassages)
+            public InPlaceMergeSorterAnonymousClass(string[] fields, int[] maxPassages)
             {
                 this.fields = fields;
                 this.maxPassages = maxPassages;
@@ -407,7 +407,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             // sort for sequential io
             ArrayUtil.TimSort(docids);
-            new InPlaceMergeSorterAnonymousHelper(fields, maxPassages).Sort(0, fields.Length);
+            new InPlaceMergeSorterAnonymousClass(fields, maxPassages).Sort(0, fields.Length);
 
             // pull stored data:
             IList<string[]> contents = LoadFieldValues(searcher, fields, docids, maxLength);
@@ -819,13 +819,13 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
         }
 
-        private static readonly DocsAndPositionsEnum EMPTY = new DocsAndPositionsEnumAnonymousHelper();
+        private static readonly DocsAndPositionsEnum EMPTY = new DocsAndPositionsEnumAnonymousClass();
 
         /// <summary>
         /// we rewrite against an empty indexreader: as we don't want things like
         /// rangeQueries that don't summarize the document
         /// </summary>
-        private class DocsAndPositionsEnumAnonymousHelper : DocsAndPositionsEnum
+        private class DocsAndPositionsEnumAnonymousClass : DocsAndPositionsEnum
         {
             public override int NextPosition()
             {

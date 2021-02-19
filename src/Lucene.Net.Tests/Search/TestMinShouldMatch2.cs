@@ -105,12 +105,12 @@ namespace Lucene.Net.Search
             r = DirectoryReader.Open(dir);
             atomicReader = GetOnlySegmentReader(r);
             searcher = new IndexSearcher(atomicReader);
-            searcher.Similarity = new DefaultSimilarityAnonymousInnerClassHelper();
+            searcher.Similarity = new DefaultSimilarityAnonymousClass();
         }
 
-        private class DefaultSimilarityAnonymousInnerClassHelper : DefaultSimilarity
+        private class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
-            public DefaultSimilarityAnonymousInnerClassHelper()
+            public DefaultSimilarityAnonymousClass()
             {
             }
 

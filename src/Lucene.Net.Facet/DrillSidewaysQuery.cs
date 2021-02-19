@@ -104,17 +104,17 @@ namespace Lucene.Net.Facet
                 }
             }
 
-            return new WeightAnonymousInnerClassHelper(this, baseWeight, drillDowns);
+            return new WeightAnonymousClass(this, baseWeight, drillDowns);
         }
 
-        private class WeightAnonymousInnerClassHelper : Weight
+        private class WeightAnonymousClass : Weight
         {
             private readonly DrillSidewaysQuery outerInstance;
 
             private readonly Weight baseWeight;
             private readonly object[] drillDowns;
 
-            public WeightAnonymousInnerClassHelper(DrillSidewaysQuery outerInstance, Weight baseWeight, object[] drillDowns)
+            public WeightAnonymousClass(DrillSidewaysQuery outerInstance, Weight baseWeight, object[] drillDowns)
             {
                 this.outerInstance = outerInstance;
                 this.baseWeight = baseWeight;

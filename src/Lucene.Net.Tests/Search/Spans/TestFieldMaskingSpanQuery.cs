@@ -120,7 +120,7 @@ namespace Lucene.Net.Search.Spans
         public virtual void TestRewrite1()
         {
             // mask an anon SpanQuery class that rewrites to something else.
-            SpanQuery q = new FieldMaskingSpanQuery(new SpanTermQueryAnonymousInnerClassHelper(this, new Term("last", "sally")), "first");
+            SpanQuery q = new FieldMaskingSpanQuery(new SpanTermQueryAnonymousClass(this, new Term("last", "sally")), "first");
 
             SpanQuery qr = (SpanQuery)searcher.Rewrite(q);
 
@@ -131,11 +131,11 @@ namespace Lucene.Net.Search.Spans
             Assert.AreEqual(2, terms.Count);
         }
 
-        private class SpanTermQueryAnonymousInnerClassHelper : SpanTermQuery
+        private class SpanTermQueryAnonymousClass : SpanTermQuery
         {
             private readonly TestFieldMaskingSpanQuery outerInstance;
 
-            public SpanTermQueryAnonymousInnerClassHelper(TestFieldMaskingSpanQuery outerInstance, Term term)
+            public SpanTermQueryAnonymousClass(TestFieldMaskingSpanQuery outerInstance, Term term)
                 : base(term)
             {
                 this.outerInstance = outerInstance;

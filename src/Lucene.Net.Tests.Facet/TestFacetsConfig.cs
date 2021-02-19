@@ -103,16 +103,16 @@ namespace Lucene.Net.Facet
         [Test]
         public virtual void TestCustomDefault()
         {
-            FacetsConfig config = new FacetsConfigAnonymousInnerClassHelper(this);
+            FacetsConfig config = new FacetsConfigAnonymousClass(this);
 
             Assert.IsTrue(config.GetDimConfig("foobar").IsHierarchical);
         }
 
-        private class FacetsConfigAnonymousInnerClassHelper : FacetsConfig
+        private class FacetsConfigAnonymousClass : FacetsConfig
         {
             private readonly TestFacetsConfig outerInstance;
 
-            public FacetsConfigAnonymousInnerClassHelper(TestFacetsConfig outerInstance)
+            public FacetsConfigAnonymousClass(TestFacetsConfig outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

@@ -403,18 +403,18 @@ namespace Lucene.Net.Codecs.Memory
             IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
             // write the ordinals as a binary field
-            AddBinaryField(field, new IterableAnonymousInnerClassHelper(docToOrdCount, ords));
+            AddBinaryField(field, new IterableAnonymousClass(docToOrdCount, ords));
 
             // write the values as FST
             WriteFST(field, values);
         }
 
-        private class IterableAnonymousInnerClassHelper : IEnumerable<BytesRef>
+        private class IterableAnonymousClass : IEnumerable<BytesRef>
         {
             private readonly IEnumerable<long?> _docToOrdCount;
             private readonly IEnumerable<long?> _ords;
 
-            public IterableAnonymousInnerClassHelper(IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
+            public IterableAnonymousClass(IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
             {
                 _docToOrdCount = docToOrdCount;
                 _ords = ords;
