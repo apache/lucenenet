@@ -51,23 +51,23 @@ namespace Lucene.Net.Index
             Directory dir1 = NewDirectory();
 
             CreateIndex(Random, dir1, false);
-            PerformDefaultTests(new TestReopenAnonymousInnerClassHelper(this, dir1));
+            PerformDefaultTests(new TestReopenAnonymousClass(this, dir1));
             dir1.Dispose();
 
             Directory dir2 = NewDirectory();
 
             CreateIndex(Random, dir2, true);
-            PerformDefaultTests(new TestReopenAnonymousInnerClassHelper2(this, dir2));
+            PerformDefaultTests(new TestReopenAnonymousClass2(this, dir2));
             dir2.Dispose();
         }
 
-        private class TestReopenAnonymousInnerClassHelper : TestReopen
+        private class TestReopenAnonymousClass : TestReopen
         {
             private readonly TestDirectoryReaderReopen outerInstance;
 
             private Directory dir1;
 
-            public TestReopenAnonymousInnerClassHelper(TestDirectoryReaderReopen outerInstance, Directory dir1)
+            public TestReopenAnonymousClass(TestDirectoryReaderReopen outerInstance, Directory dir1)
             {
                 this.outerInstance = outerInstance;
                 this.dir1 = dir1;
@@ -84,13 +84,13 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class TestReopenAnonymousInnerClassHelper2 : TestReopen
+        private class TestReopenAnonymousClass2 : TestReopen
         {
             private readonly TestDirectoryReaderReopen outerInstance;
 
             private readonly Directory dir2;
 
-            public TestReopenAnonymousInnerClassHelper2(TestDirectoryReaderReopen outerInstance, Directory dir2)
+            public TestReopenAnonymousClass2(TestDirectoryReaderReopen outerInstance, Directory dir2)
             {
                 this.outerInstance = outerInstance;
                 this.dir2 = dir2;
@@ -248,7 +248,7 @@ namespace Lucene.Net.Index
             writer.ForceMerge(1);
             writer.Dispose();
 
-            TestReopen test = new TestReopenAnonymousInnerClassHelper3(this, dir, n);
+            TestReopen test = new TestReopenAnonymousClass3(this, dir, n);
 
             IList<ReaderCouple> readers = new SynchronizedList<ReaderCouple>();
             DirectoryReader firstReader = DirectoryReader.Open(dir);
@@ -276,11 +276,11 @@ namespace Lucene.Net.Index
 
                 if (i < 4 || (i >= 10 && i < 14) || i > 18)
                 {
-                    task = new ReaderThreadTaskAnonymousInnerClassHelper(this, test, readers, readersToClose, r, index);
+                    task = new ReaderThreadTaskAnonymousClass(this, test, readers, readersToClose, r, index);
                 }
                 else
                 {
-                    task = new ReaderThreadTaskAnonymousInnerClassHelper2(this, readers);
+                    task = new ReaderThreadTaskAnonymousClass2(this, readers);
                 }
 
                 threads[i] = new ReaderThread(task);
@@ -332,14 +332,14 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TestReopenAnonymousInnerClassHelper3 : TestReopen
+        private class TestReopenAnonymousClass3 : TestReopen
         {
             private readonly TestDirectoryReaderReopen outerInstance;
 
             private readonly Directory dir;
             private readonly int n;
 
-            public TestReopenAnonymousInnerClassHelper3(TestDirectoryReaderReopen outerInstance, Directory dir, int n)
+            public TestReopenAnonymousClass3(TestDirectoryReaderReopen outerInstance, Directory dir, int n)
             {
                 this.outerInstance = outerInstance;
                 this.dir = dir;
@@ -359,7 +359,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ReaderThreadTaskAnonymousInnerClassHelper : ReaderThreadTask
+        private class ReaderThreadTaskAnonymousClass : ReaderThreadTask
         {
             private readonly TestDirectoryReaderReopen outerInstance;
 
@@ -369,7 +369,7 @@ namespace Lucene.Net.Index
             private readonly DirectoryReader r;
             private readonly int index;
 
-            public ReaderThreadTaskAnonymousInnerClassHelper(TestDirectoryReaderReopen outerInstance, Lucene.Net.Index.TestDirectoryReaderReopen.TestReopen test, IList<ReaderCouple> readers, ISet<DirectoryReader> readersToClose, DirectoryReader r, int index)
+            public ReaderThreadTaskAnonymousClass(TestDirectoryReaderReopen outerInstance, Lucene.Net.Index.TestDirectoryReaderReopen.TestReopen test, IList<ReaderCouple> readers, ISet<DirectoryReader> readersToClose, DirectoryReader r, int index)
             {
                 this.outerInstance = outerInstance;
                 this.test = test;
@@ -426,13 +426,13 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ReaderThreadTaskAnonymousInnerClassHelper2 : ReaderThreadTask
+        private class ReaderThreadTaskAnonymousClass2 : ReaderThreadTask
         {
             private readonly TestDirectoryReaderReopen outerInstance;
 
             private readonly IList<ReaderCouple> readers;
 
-            public ReaderThreadTaskAnonymousInnerClassHelper2(TestDirectoryReaderReopen outerInstance, IList<ReaderCouple> readers)
+            public ReaderThreadTaskAnonymousClass2(TestDirectoryReaderReopen outerInstance, IList<ReaderCouple> readers)
             {
                 this.outerInstance = outerInstance;
                 this.readers = readers;

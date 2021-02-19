@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
             base.BeforeClass();
 
             directory = NewDirectory();
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
+            Analyzer analyzer = new AnalyzerAnonymousClass();
             RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
@@ -91,9 +91,9 @@ namespace Lucene.Net.Search
             searcher = NewSearcher(reader);
         }
 
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        private class AnalyzerAnonymousClass : Analyzer
         {
-            public AnalyzerAnonymousInnerClassHelper()
+            public AnalyzerAnonymousClass()
             {
             }
 

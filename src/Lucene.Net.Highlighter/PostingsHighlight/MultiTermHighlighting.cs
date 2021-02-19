@@ -89,7 +89,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             {
                 if (aq.Field.Equals(field, StringComparison.Ordinal))
                 {
-                    list.Add(new CharacterRunAutomatonToStringAnonymousHelper(aq.Automaton, () => aq.ToString()));
+                    list.Add(new CharacterRunAutomatonToStringAnonymousClass(aq.Automaton, () => aq.ToString()));
                 }
             }
             else if (query is PrefixQuery pq)
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 Term prefix = pq.Prefix;
                 if (prefix.Field.Equals(field, StringComparison.Ordinal))
                 {
-                    list.Add(new CharacterRunAutomatonToStringAnonymousHelper(
+                    list.Add(new CharacterRunAutomatonToStringAnonymousClass(
                         BasicOperations.Concatenate(BasicAutomata.MakeString(prefix.Text()), BasicAutomata.MakeAnyString()),
                         () => pq.ToString()));
                 }
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                         Automaton prefix = BasicAutomata.MakeString(UnicodeUtil.NewString(termText, 0, prefixLength));
                         automaton = BasicOperations.Concatenate(prefix, automaton);
                     }
-                    list.Add(new CharacterRunAutomatonToStringAnonymousHelper(automaton, () => fq.ToString()));
+                    list.Add(new CharacterRunAutomatonToStringAnonymousClass(automaton, () => fq.ToString()));
                 }
             }
             else if (query is TermRangeQuery tq)
@@ -130,17 +130,17 @@ namespace Lucene.Net.Search.PostingsHighlight
                 if (tq.Field.Equals(field, StringComparison.Ordinal))
                 {
                     // this is *not* an automaton, but its very simple
-                    list.Add(new SimpleCharacterRunAutomatonAnonymousHelper(BasicAutomata.MakeEmpty(), tq));
+                    list.Add(new SimpleCharacterRunAutomatonAnonymousClass(BasicAutomata.MakeEmpty(), tq));
                 }
             }
             return list.ToArray(/*new CharacterRunAutomaton[list.size()]*/);
         }
 
-        internal class CharacterRunAutomatonToStringAnonymousHelper : CharacterRunAutomaton
+        internal class CharacterRunAutomatonToStringAnonymousClass : CharacterRunAutomaton
         {
             private readonly Func<string> toStringMethod;
 
-            public CharacterRunAutomatonToStringAnonymousHelper(Automaton a, Func<string> toStringMethod)
+            public CharacterRunAutomatonToStringAnonymousClass(Automaton a, Func<string> toStringMethod)
                 : base(a)
             {
                 this.toStringMethod = toStringMethod;
@@ -152,7 +152,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
         }
 
-        internal class SimpleCharacterRunAutomatonAnonymousHelper : CharacterRunAutomaton
+        internal class SimpleCharacterRunAutomatonAnonymousClass : CharacterRunAutomaton
         {
             private readonly CharsRef lowerBound;
             private readonly CharsRef upperBound;
@@ -163,7 +163,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             private static readonly IComparer<CharsRef> comparer = CharsRef.UTF16SortedAsUTF8Comparer; // LUCENENET specific - made static
 #pragma warning restore 612, 618
 
-            public SimpleCharacterRunAutomatonAnonymousHelper(Automaton a, TermRangeQuery tq)
+            public SimpleCharacterRunAutomatonAnonymousClass(Automaton a, TermRangeQuery tq)
                 : base(a)
             {
                 if (tq.LowerTerm == null)
@@ -230,16 +230,16 @@ namespace Lucene.Net.Search.PostingsHighlight
             // would only serve to make this method less bogus.
             // instead, we always return freq() = Integer.MAX_VALUE and let PH terminate based on offset...
 
-            return new DocsAndPositionsEnumAnonymousHelper(ts, matchers, charTermAtt, offsetAtt);
+            return new DocsAndPositionsEnumAnonymousClass(ts, matchers, charTermAtt, offsetAtt);
         }
 
-        internal class DocsAndPositionsEnumAnonymousHelper : DocsAndPositionsEnum
+        internal class DocsAndPositionsEnumAnonymousClass : DocsAndPositionsEnum
         {
             private readonly CharacterRunAutomaton[] matchers;
             private readonly ICharTermAttribute charTermAtt;
             private readonly IOffsetAttribute offsetAtt;
 
-            public DocsAndPositionsEnumAnonymousHelper(
+            public DocsAndPositionsEnumAnonymousClass(
                 TokenStream ts, CharacterRunAutomaton[] matchers, ICharTermAttribute charTermAtt, IOffsetAttribute offsetAtt)
             {
                 this.matchers = matchers;

@@ -753,7 +753,7 @@ namespace Lucene.Net.Facet
                     {
                         Console.WriteLine("  only-even filter");
                     }
-                    filter = new FilterAnonymousInnerClassHelper(this);
+                    filter = new FilterAnonymousClass(this);
                 }
                 else
                 {
@@ -763,7 +763,7 @@ namespace Lucene.Net.Facet
                 // Verify docs are always collected in order.  If we
                 // had an AssertingScorer it could catch it when
                 // Weight.scoresDocsOutOfOrder lies!:
-                new DrillSideways(s, config, tr).Search(ddq, new CollectorAnonymousInnerClassHelper(this));
+                new DrillSideways(s, config, tr).Search(ddq, new CollectorAnonymousClass(this));
 
                 // Also separately verify that DS respects the
                 // scoreSubDocsAtOnce method, to ensure that all
@@ -774,7 +774,7 @@ namespace Lucene.Net.Facet
                     // drill-down values, because in that case it's
                     // easily possible for one of the DD terms to be on
                     // a future docID:
-                    new DrillSidewaysAnonymousInnerClassHelper(this, s, config, tr)
+                    new DrillSidewaysAnonymousClass(this, s, config, tr)
                         .Search(ddq, new AssertingSubDocsAtOnceCollector());
                 }
 
@@ -788,7 +788,7 @@ namespace Lucene.Net.Facet
                 }
                 else
                 {
-                    ds = new DrillSidewaysAnonymousInnerClassHelper2(this, s, config, tr);
+                    ds = new DrillSidewaysAnonymousClass2(this, s, config, tr);
                 }
 
                 // Retrieve all facets:
@@ -819,11 +819,11 @@ namespace Lucene.Net.Facet
             IOUtils.Dispose(r, tr, w, tw, d, td);
         }
 
-        private class FilterAnonymousInnerClassHelper : Filter
+        private class FilterAnonymousClass : Filter
         {
             private readonly TestDrillSideways outerInstance;
 
-            public FilterAnonymousInnerClassHelper(TestDrillSideways outerInstance)
+            public FilterAnonymousClass(TestDrillSideways outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -844,11 +844,11 @@ namespace Lucene.Net.Facet
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper : ICollector
+        private class CollectorAnonymousClass : ICollector
         {
             private readonly TestDrillSideways outerInstance;
 
-            public CollectorAnonymousInnerClassHelper(TestDrillSideways outerInstance)
+            public CollectorAnonymousClass(TestDrillSideways outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -873,11 +873,11 @@ namespace Lucene.Net.Facet
             public virtual bool AcceptsDocsOutOfOrder => false;
         }
 
-        private class DrillSidewaysAnonymousInnerClassHelper : DrillSideways
+        private class DrillSidewaysAnonymousClass : DrillSideways
         {
             private readonly TestDrillSideways outerInstance;
 
-            public DrillSidewaysAnonymousInnerClassHelper(TestDrillSideways outerInstance, IndexSearcher s, FacetsConfig config, TaxonomyReader tr)
+            public DrillSidewaysAnonymousClass(TestDrillSideways outerInstance, IndexSearcher s, FacetsConfig config, TaxonomyReader tr)
                 : base(s, config, tr)
             {
                 this.outerInstance = outerInstance;
@@ -886,11 +886,11 @@ namespace Lucene.Net.Facet
             protected override bool ScoreSubDocsAtOnce => true;
         }
 
-        private class DrillSidewaysAnonymousInnerClassHelper2 : DrillSideways
+        private class DrillSidewaysAnonymousClass2 : DrillSideways
         {
             private readonly TestDrillSideways outerInstance;
 
-            public DrillSidewaysAnonymousInnerClassHelper2(TestDrillSideways outerInstance, IndexSearcher s, FacetsConfig config, TaxonomyReader tr)
+            public DrillSidewaysAnonymousClass2(TestDrillSideways outerInstance, IndexSearcher s, FacetsConfig config, TaxonomyReader tr)
                 : base(s, config, tr)
             {
                 this.outerInstance = outerInstance;
@@ -978,7 +978,7 @@ namespace Lucene.Net.Facet
 
             // Naive (on purpose, to reduce bug in tester/gold):
             // sort all ids, then return top N slice:
-            new InPlaceMergeSorterAnonymousInnerClassHelper(this, counts, values, ids).Sort(0, ids.Length);
+            new InPlaceMergeSorterAnonymousClass(this, counts, values, ids).Sort(0, ids.Length);
 
             if (topN > ids.Length)
             {
@@ -1000,7 +1000,7 @@ namespace Lucene.Net.Facet
             return topNIDs;
         }
 
-        private class InPlaceMergeSorterAnonymousInnerClassHelper : InPlaceMergeSorter
+        private class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
         {
             private readonly TestDrillSideways outerInstance;
 
@@ -1008,7 +1008,7 @@ namespace Lucene.Net.Facet
             private readonly string[] values;
             private readonly int[] ids;
 
-            public InPlaceMergeSorterAnonymousInnerClassHelper(TestDrillSideways outerInstance, int[] counts, string[] values, int[] ids)
+            public InPlaceMergeSorterAnonymousClass(TestDrillSideways outerInstance, int[] counts, string[] values, int[] ids)
             {
                 this.outerInstance = outerInstance;
                 this.counts = counts;

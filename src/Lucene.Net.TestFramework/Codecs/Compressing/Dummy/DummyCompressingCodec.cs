@@ -28,11 +28,11 @@ namespace Lucene.Net.Codecs.Compressing.Dummy
     [CodecName("DummyCompressingStoredFields")]
     public class DummyCompressingCodec : CompressingCodec
     {
-        public static readonly CompressionMode DUMMY = new CompressionModeAnonymousInnerClassHelper();
+        public static readonly CompressionMode DUMMY = new CompressionModeAnonymousClass();
 
-        private class CompressionModeAnonymousInnerClassHelper : CompressionMode
+        private class CompressionModeAnonymousClass : CompressionMode
         {
-            public CompressionModeAnonymousInnerClassHelper()
+            public CompressionModeAnonymousClass()
             { }
 
             public override Compressor NewCompressor()
@@ -51,9 +51,9 @@ namespace Lucene.Net.Codecs.Compressing.Dummy
             }
         }
 
-        private static readonly Decompressor DUMMY_DECOMPRESSOR = new DecompressorAnonymousInnerClassHelper();
+        private static readonly Decompressor DUMMY_DECOMPRESSOR = new DecompressorAnonymousClass();
 
-        private class DecompressorAnonymousInnerClassHelper : Decompressor
+        private class DecompressorAnonymousClass : Decompressor
         {
             public override void Decompress(DataInput @in, int originalLength, int offset, int length, BytesRef bytes)
             {
@@ -73,9 +73,9 @@ namespace Lucene.Net.Codecs.Compressing.Dummy
             }
         }
 
-        private static readonly Compressor DUMMY_COMPRESSOR = new CompressorAnonymousInnerClassHelper();
+        private static readonly Compressor DUMMY_COMPRESSOR = new CompressorAnonymousClass();
 
-        private class CompressorAnonymousInnerClassHelper : Compressor
+        private class CompressorAnonymousClass : Compressor
         {
             public override void Compress(byte[] bytes, int off, int len, DataOutput @out)
             {

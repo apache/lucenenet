@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
                 {
                     int iFinal = i;
                     IndexWriter writerFinal = writer;
-                    threads[i] = new ThreadAnonymousInnerClassHelper(this, iterFinal, customType, iFinal, writerFinal);
+                    threads[i] = new ThreadAnonymousClass(this, iterFinal, customType, iFinal, writerFinal);
                 }
 
                 for (int i = 0; i < NUM_THREADS; i++)
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestThreadedForceMerge outerInstance;
 
@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
             private readonly int iFinal;
             private readonly IndexWriter writerFinal;
 
-            public ThreadAnonymousInnerClassHelper(TestThreadedForceMerge outerInstance, int iterFinal, FieldType customType, int iFinal, IndexWriter writerFinal)
+            public ThreadAnonymousClass(TestThreadedForceMerge outerInstance, int iterFinal, FieldType customType, int iFinal, IndexWriter writerFinal)
             {
                 this.outerInstance = outerInstance;
                 this.iterFinal = iterFinal;

@@ -417,7 +417,7 @@ namespace Lucene.Net.Search.Spans
             {
                 AtomicReaderContext ctx = leaves[i];
 
-                Similarity sim = new DefaultSimilarityAnonymousInnerClassHelper(this);
+                Similarity sim = new DefaultSimilarityAnonymousClass(this);
 
                 Similarity oldSim = searcher.Similarity;
                 Scorer spanScorer;
@@ -446,11 +446,11 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        private class DefaultSimilarityAnonymousInnerClassHelper : DefaultSimilarity
+        private class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
             private readonly TestSpans outerInstance;
 
-            public DefaultSimilarityAnonymousInnerClassHelper(TestSpans outerInstance)
+            public DefaultSimilarityAnonymousClass(TestSpans outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

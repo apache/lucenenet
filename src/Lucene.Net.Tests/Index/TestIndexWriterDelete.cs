@@ -349,7 +349,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numThreads; i++)
             {
                 int offset = i;
-                threads[i] = new ThreadAnonymousInnerClassHelper(this, modifier, latch, doneLatch, offset);
+                threads[i] = new ThreadAnonymousClass(this, modifier, latch, doneLatch, offset);
                 threads[i].Start();
             }
             latch.Signal();
@@ -379,7 +379,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestIndexWriterDelete outerInstance;
 
@@ -388,7 +388,7 @@ namespace Lucene.Net.Index
             private readonly CountdownEvent doneLatch;
             private readonly int offset;
 
-            public ThreadAnonymousInnerClassHelper(TestIndexWriterDelete outerInstance, RandomIndexWriter modifier, CountdownEvent latch, CountdownEvent doneLatch, int offset)
+            public ThreadAnonymousClass(TestIndexWriterDelete outerInstance, RandomIndexWriter modifier, CountdownEvent latch, CountdownEvent doneLatch, int offset)
             {
                 this.outerInstance = outerInstance;
                 this.modifier = modifier;
@@ -828,7 +828,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestErrorAfterApplyDeletes()
         {
-            Failure failure = new FailureAnonymousInnerClassHelper(this);
+            Failure failure = new FailureAnonymousClass(this);
 
             // create a couple of files
 
@@ -943,11 +943,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailureAnonymousInnerClassHelper : Failure
+        private class FailureAnonymousClass : Failure
         {
             private readonly TestIndexWriterDelete outerInstance;
 
-            public FailureAnonymousInnerClassHelper(TestIndexWriterDelete outerInstance)
+            public FailureAnonymousClass(TestIndexWriterDelete outerInstance)
             {
                 this.outerInstance = outerInstance;
                 sawMaybe = false;
@@ -1015,7 +1015,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestErrorInDocsWriterAdd()
         {
-            Failure failure = new FailureAnonymousInnerClassHelper2(this);
+            Failure failure = new FailureAnonymousClass2(this);
 
             // create a couple of files
 
@@ -1058,11 +1058,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailureAnonymousInnerClassHelper2 : Failure
+        private class FailureAnonymousClass2 : Failure
         {
             private readonly TestIndexWriterDelete outerInstance;
 
-            public FailureAnonymousInnerClassHelper2(TestIndexWriterDelete outerInstance)
+            public FailureAnonymousClass2(TestIndexWriterDelete outerInstance)
             {
                 this.outerInstance = outerInstance;
                 failed = false;
@@ -1312,7 +1312,7 @@ namespace Lucene.Net.Index
             AtomicInt32 docsInSegment = new AtomicInt32();
             AtomicBoolean closing = new AtomicBoolean();
             AtomicBoolean sawAfterFlush = new AtomicBoolean();
-            IndexWriter w = new IndexWriterAnonymousInnerClassHelper(this, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetRAMBufferSizeMB(0.5).SetMaxBufferedDocs(-1).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetReaderPooling(false), docsInSegment, closing, sawAfterFlush);
+            IndexWriter w = new IndexWriterAnonymousClass(this, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetRAMBufferSizeMB(0.5).SetMaxBufferedDocs(-1).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetReaderPooling(false), docsInSegment, closing, sawAfterFlush);
             int id = 0;
             while (true)
             {
@@ -1347,7 +1347,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class IndexWriterAnonymousInnerClassHelper : IndexWriter
+        private class IndexWriterAnonymousClass : IndexWriter
         {
             private readonly TestIndexWriterDelete outerInstance;
 
@@ -1355,7 +1355,7 @@ namespace Lucene.Net.Index
             private readonly AtomicBoolean closing;
             private readonly AtomicBoolean sawAfterFlush;
 
-            public IndexWriterAnonymousInnerClassHelper(TestIndexWriterDelete outerInstance, Directory dir, IndexWriterConfig setReaderPooling, AtomicInt32 docsInSegment, AtomicBoolean closing, AtomicBoolean sawAfterFlush)
+            public IndexWriterAnonymousClass(TestIndexWriterDelete outerInstance, Directory dir, IndexWriterConfig setReaderPooling, AtomicInt32 docsInSegment, AtomicBoolean closing, AtomicBoolean sawAfterFlush)
                 : base(dir, setReaderPooling)
             {
                 this.outerInstance = outerInstance;

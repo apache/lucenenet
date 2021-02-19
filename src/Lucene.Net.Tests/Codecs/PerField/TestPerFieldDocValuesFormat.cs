@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.PerField
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             DocValuesFormat fast = DocValuesFormat.ForName("Lucene45");
             DocValuesFormat slow = DocValuesFormat.ForName("SimpleText");
-            iwc.SetCodec(new Lucene46CodecAnonymousInnerClassHelper(this, fast, slow));
+            iwc.SetCodec(new Lucene46CodecAnonymousClass(this, fast, slow));
             IndexWriter iwriter = new IndexWriter(directory, iwc);
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
@@ -125,14 +125,14 @@ namespace Lucene.Net.Codecs.PerField
             directory.Dispose();
         }
 
-        private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
+        private class Lucene46CodecAnonymousClass : Lucene46Codec
         {
             private readonly TestPerFieldDocValuesFormat outerInstance;
 
             private readonly DocValuesFormat fast;
             private readonly DocValuesFormat slow;
 
-            public Lucene46CodecAnonymousInnerClassHelper(TestPerFieldDocValuesFormat outerInstance, DocValuesFormat fast, DocValuesFormat slow)
+            public Lucene46CodecAnonymousClass(TestPerFieldDocValuesFormat outerInstance, DocValuesFormat fast, DocValuesFormat slow)
             {
                 this.outerInstance = outerInstance;
                 this.fast = fast;

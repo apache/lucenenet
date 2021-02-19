@@ -78,14 +78,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 }
             }
             long ttf = sumTotalTermFreq;
-            context[this] = new Int64DocValuesAnonymousInnerClassHelper(this, ttf);
+            context[this] = new Int64DocValuesAnonymousClass(this, ttf);
         }
 
-        private class Int64DocValuesAnonymousInnerClassHelper : Int64DocValues
+        private class Int64DocValuesAnonymousClass : Int64DocValues
         {
             private readonly long ttf;
 
-            public Int64DocValuesAnonymousInnerClassHelper(SumTotalTermFreqValueSource @this, long ttf)
+            public Int64DocValuesAnonymousClass(SumTotalTermFreqValueSource @this, long ttf)
                 : base(@this)
             {
                 this.ttf = ttf;

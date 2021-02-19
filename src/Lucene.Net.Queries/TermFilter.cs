@@ -59,15 +59,15 @@ namespace Lucene.Net.Queries
             {
                 return null;
             }
-            return new DocIdSetAnonymousInnerClassHelper(acceptDocs, termsEnum);
+            return new DocIdSetAnonymousClass(acceptDocs, termsEnum);
         }
 
-        private class DocIdSetAnonymousInnerClassHelper : DocIdSet
+        private class DocIdSetAnonymousClass : DocIdSet
         {
             private readonly IBits acceptDocs;
             private readonly TermsEnum termsEnum;
 
-            public DocIdSetAnonymousInnerClassHelper(IBits acceptDocs, TermsEnum termsEnum)
+            public DocIdSetAnonymousClass(IBits acceptDocs, TermsEnum termsEnum)
             {
                 this.acceptDocs = acceptDocs;
                 this.termsEnum = termsEnum;

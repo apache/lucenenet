@@ -470,14 +470,14 @@ namespace Lucene.Net.Index
         {
             generation = lastGeneration = -1;
 
-            new FindSegmentsFileAnonymousInnerClassHelper(this, directory).Run();
+            new FindSegmentsFileAnonymousClass(this, directory).Run();
         }
 
-        private class FindSegmentsFileAnonymousInnerClassHelper : FindSegmentsFile
+        private class FindSegmentsFileAnonymousClass : FindSegmentsFile
         {
             private readonly SegmentInfos outerInstance;
 
-            public FindSegmentsFileAnonymousInnerClassHelper(SegmentInfos outerInstance, Directory directory)
+            public FindSegmentsFileAnonymousClass(SegmentInfos outerInstance, Directory directory)
                 : base(directory)
             {
                 this.outerInstance = outerInstance;

@@ -401,7 +401,7 @@ namespace Lucene.Net.Search
 
             IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
-            searcher.Similarity = new DefaultSimilarityAnonymousInnerClassHelper(this);
+            searcher.Similarity = new DefaultSimilarityAnonymousClass(this);
 
             MultiPhraseQuery query = new MultiPhraseQuery();
             query.Add(new Term[] { new Term("body", "this"), new Term("body", "that") });
@@ -414,11 +414,11 @@ namespace Lucene.Net.Search
             indexStore.Dispose();
         }
 
-        private class DefaultSimilarityAnonymousInnerClassHelper : DefaultSimilarity
+        private class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
             private readonly TestMultiPhraseQuery outerInstance;
 
-            public DefaultSimilarityAnonymousInnerClassHelper(TestMultiPhraseQuery outerInstance)
+            public DefaultSimilarityAnonymousClass(TestMultiPhraseQuery outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

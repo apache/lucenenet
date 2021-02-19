@@ -63,10 +63,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
             FunctionValues vals = m_source.GetValues(context, readerContext);
             FunctionValues targets = m_target.GetValues(context, readerContext);
             FunctionValues defaults = (this.m_defaultVal == null) ? null : m_defaultVal.GetValues(context, readerContext);
-            return new SingleDocValuesAnonymousInnerClassHelper(this, this, vals, targets, defaults);
+            return new SingleDocValuesAnonymousClass(this, this, vals, targets, defaults);
         }
 
-        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
+        private class SingleDocValuesAnonymousClass : SingleDocValues
         {
             private readonly RangeMapSingleFunction outerInstance;
 
@@ -74,7 +74,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             private readonly FunctionValues targets;
             private readonly FunctionValues defaults;
 
-            public SingleDocValuesAnonymousInnerClassHelper(RangeMapSingleFunction outerInstance, RangeMapSingleFunction @this, FunctionValues vals, FunctionValues targets, FunctionValues defaults)
+            public SingleDocValuesAnonymousClass(RangeMapSingleFunction outerInstance, RangeMapSingleFunction @this, FunctionValues vals, FunctionValues targets, FunctionValues defaults)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;

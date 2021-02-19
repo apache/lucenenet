@@ -94,16 +94,16 @@ namespace Lucene.Net.Store
             EnsureOpen();
             var file = new FileInfo(Path.Combine(Directory.FullName, name));
             var descriptor = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            return new IndexInputSlicerAnonymousInnerClassHelper(context, file, descriptor);
+            return new IndexInputSlicerAnonymousClass(context, file, descriptor);
         }
 
-        private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
+        private class IndexInputSlicerAnonymousClass : IndexInputSlicer
         {
             private readonly IOContext context;
             private readonly FileInfo file;
             private readonly FileStream descriptor;
 
-            public IndexInputSlicerAnonymousInnerClassHelper(IOContext context, FileInfo file, FileStream descriptor)
+            public IndexInputSlicerAnonymousClass(IOContext context, FileInfo file, FileStream descriptor)
             {
                 this.context = context;
                 this.file = file;

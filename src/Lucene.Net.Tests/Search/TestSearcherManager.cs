@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
 
         protected override void DoAfterWriter(TaskScheduler es)
         {
-            SearcherFactory factory = new SearcherFactoryAnonymousInnerClassHelper(this, es);
+            SearcherFactory factory = new SearcherFactoryAnonymousClass(this, es);
             if (Random.NextBoolean())
             {
                 // TODO: can we randomize the applyAllDeletes?  But
@@ -95,13 +95,13 @@ namespace Lucene.Net.Search
             lifetimeMGR = new SearcherLifetimeManager();
         }
 
-        private class SearcherFactoryAnonymousInnerClassHelper : SearcherFactory
+        private class SearcherFactoryAnonymousClass : SearcherFactory
         {
             private readonly TestSearcherManager outerInstance;
 
             private TaskScheduler es;
 
-            public SearcherFactoryAnonymousInnerClassHelper(TestSearcherManager outerInstance, TaskScheduler es)
+            public SearcherFactoryAnonymousClass(TestSearcherManager outerInstance, TaskScheduler es)
             {
                 this.outerInstance = outerInstance;
                 this.es = es;
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
 
         protected override void DoSearching(TaskScheduler es, long stopTime)
         {
-            ThreadJob reopenThread = new ThreadAnonymousInnerClassHelper(this, stopTime);
+            ThreadJob reopenThread = new ThreadAnonymousClass(this, stopTime);
             reopenThread.IsBackground = (true);
             reopenThread.Start();
 
@@ -127,13 +127,13 @@ namespace Lucene.Net.Search
             reopenThread.Join();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestSearcherManager outerInstance;
 
             private long stopTime;
 
-            public ThreadAnonymousInnerClassHelper(TestSearcherManager outerInstance, long stopTime)
+            public ThreadAnonymousClass(TestSearcherManager outerInstance, long stopTime)
             {
                 this.outerInstance = outerInstance;
                 this.stopTime = stopTime;
@@ -264,7 +264,7 @@ namespace Lucene.Net.Search
             AtomicBoolean triedReopen = new AtomicBoolean(false);
             //TaskScheduler es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory("testIntermediateClose"));
             TaskScheduler es = Random.NextBoolean() ? null : TaskScheduler.Default;
-            SearcherFactory factory = new SearcherFactoryAnonymousInnerClassHelper2(this, awaitEnterWarm, awaitClose, triedReopen, es);
+            SearcherFactory factory = new SearcherFactoryAnonymousClass2(this, awaitEnterWarm, awaitClose, triedReopen, es);
             SearcherManager searcherManager = Random.NextBoolean() ? new SearcherManager(dir, factory) : new SearcherManager(writer, Random.NextBoolean(), factory);
             if (Verbose)
             {
@@ -283,7 +283,7 @@ namespace Lucene.Net.Search
             writer.Commit();
             AtomicBoolean success = new AtomicBoolean(false);
             Exception[] exc = new Exception[1];
-            ThreadJob thread = new ThreadJob(() => new RunnableAnonymousInnerClassHelper(this, triedReopen, searcherManager, success, exc).Run());
+            ThreadJob thread = new ThreadJob(() => new RunnableAnonymousClass(this, triedReopen, searcherManager, success, exc).Run());
             thread.Start();
             if (Verbose)
             {
@@ -320,7 +320,7 @@ namespace Lucene.Net.Search
             //}
         }
 
-        private class SearcherFactoryAnonymousInnerClassHelper2 : SearcherFactory
+        private class SearcherFactoryAnonymousClass2 : SearcherFactory
         {
             private readonly TestSearcherManager outerInstance;
 
@@ -329,7 +329,7 @@ namespace Lucene.Net.Search
             private AtomicBoolean triedReopen;
             private TaskScheduler es;
 
-            public SearcherFactoryAnonymousInnerClassHelper2(TestSearcherManager outerInstance, CountdownEvent awaitEnterWarm, CountdownEvent awaitClose, AtomicBoolean triedReopen, TaskScheduler es)
+            public SearcherFactoryAnonymousClass2(TestSearcherManager outerInstance, CountdownEvent awaitEnterWarm, CountdownEvent awaitClose, AtomicBoolean triedReopen, TaskScheduler es)
             {
                 this.outerInstance = outerInstance;
                 this.awaitEnterWarm = awaitEnterWarm;
@@ -362,7 +362,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class RunnableAnonymousInnerClassHelper //: IThreadRunnable
+        private class RunnableAnonymousClass //: IThreadRunnable
         {
             private readonly TestSearcherManager outerInstance;
 
@@ -371,7 +371,7 @@ namespace Lucene.Net.Search
             private AtomicBoolean success;
             private Exception[] exc;
 
-            public RunnableAnonymousInnerClassHelper(TestSearcherManager outerInstance, AtomicBoolean triedReopen, SearcherManager searcherManager, AtomicBoolean success, Exception[] exc)
+            public RunnableAnonymousClass(TestSearcherManager outerInstance, AtomicBoolean triedReopen, SearcherManager searcherManager, AtomicBoolean success, Exception[] exc)
             {
                 this.outerInstance = outerInstance;
                 this.triedReopen = triedReopen;
@@ -495,7 +495,7 @@ namespace Lucene.Net.Search
             IndexWriter iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
             AtomicBoolean afterRefreshCalled = new AtomicBoolean(false);
             SearcherManager sm = new SearcherManager(iw, false, new SearcherFactory());
-            sm.AddListener(new RefreshListenerAnonymousInnerClassHelper(this, afterRefreshCalled));
+            sm.AddListener(new RefreshListenerAnonymousClass(this, afterRefreshCalled));
             iw.AddDocument(new Document());
             iw.Commit();
             assertFalse(afterRefreshCalled);
@@ -506,13 +506,13 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class RefreshListenerAnonymousInnerClassHelper : ReferenceManager.IRefreshListener
+        private class RefreshListenerAnonymousClass : ReferenceManager.IRefreshListener
         {
             private readonly TestSearcherManager outerInstance;
 
             private AtomicBoolean afterRefreshCalled;
 
-            public RefreshListenerAnonymousInnerClassHelper(TestSearcherManager outerInstance, AtomicBoolean afterRefreshCalled)
+            public RefreshListenerAnonymousClass(TestSearcherManager outerInstance, AtomicBoolean afterRefreshCalled)
             {
                 this.outerInstance = outerInstance;
                 this.afterRefreshCalled = afterRefreshCalled;
@@ -545,7 +545,7 @@ namespace Lucene.Net.Search
 
             IndexReader other = DirectoryReader.Open(dir);
 
-            SearcherFactory theEvilOne = new SearcherFactoryAnonymousInnerClassHelper3(this, other);
+            SearcherFactory theEvilOne = new SearcherFactoryAnonymousClass3(this, other);
 
             try
             {
@@ -572,13 +572,13 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class SearcherFactoryAnonymousInnerClassHelper3 : SearcherFactory
+        private class SearcherFactoryAnonymousClass3 : SearcherFactory
         {
             private readonly TestSearcherManager outerInstance;
 
             private IndexReader other;
 
-            public SearcherFactoryAnonymousInnerClassHelper3(TestSearcherManager outerInstance, IndexReader other)
+            public SearcherFactoryAnonymousClass3(TestSearcherManager outerInstance, IndexReader other)
             {
                 this.outerInstance = outerInstance;
                 this.other = other;
@@ -609,7 +609,7 @@ namespace Lucene.Net.Search
 
             SearcherManager sm = new SearcherManager(dir, null);
 
-            ThreadJob t = new ThreadAnonymousInnerClassHelper2(this, sm);
+            ThreadJob t = new ThreadAnonymousClass2(this, sm);
             t.Start();
             t.Join();
 
@@ -620,13 +620,13 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
+        private class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly TestSearcherManager outerInstance;
 
             private SearcherManager sm;
 
-            public ThreadAnonymousInnerClassHelper2(TestSearcherManager outerInstance, SearcherManager sm)
+            public ThreadAnonymousClass2(TestSearcherManager outerInstance, SearcherManager sm)
             {
                 this.outerInstance = outerInstance;
                 this.sm = sm;

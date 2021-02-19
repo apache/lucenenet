@@ -170,11 +170,11 @@ namespace Lucene.Net.Search
         /// Pass this to <see cref="MissingValue"/> to have missing
         /// string values sort first.
         /// </summary>
-        public static readonly object STRING_FIRST = new ObjectAnonymousInnerClassHelper();
+        public static readonly object STRING_FIRST = new ObjectAnonymousClass();
 
-        private class ObjectAnonymousInnerClassHelper : object
+        private class ObjectAnonymousClass : object
         {
-            public ObjectAnonymousInnerClassHelper()
+            public ObjectAnonymousClass()
             {
             }
 
@@ -188,11 +188,11 @@ namespace Lucene.Net.Search
         /// Pass this to <see cref="MissingValue"/> to have missing
         /// string values sort last.
         /// </summary>
-        public static readonly object STRING_LAST = new ObjectAnonymousInnerClassHelper2();
+        public static readonly object STRING_LAST = new ObjectAnonymousClass2();
 
-        private class ObjectAnonymousInnerClassHelper2 : object
+        private class ObjectAnonymousClass2 : object
         {
-            public ObjectAnonymousInnerClassHelper2()
+            public ObjectAnonymousClass2()
             {
             }
 

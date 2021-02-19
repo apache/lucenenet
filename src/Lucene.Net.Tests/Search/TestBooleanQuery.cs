@@ -403,7 +403,7 @@ namespace Lucene.Net.Search
             w.AddDocument(doc);
             IndexReader r = w.GetReader();
             w.Dispose();
-            IndexSearcher s = new IndexSearcherAnonymousInnerClassHelper(this, r);
+            IndexSearcher s = new IndexSearcherAnonymousClass(this, r);
             BooleanQuery bq = new BooleanQuery();
             bq.Add(new TermQuery(new Term("field", "some")), Occur.SHOULD);
             bq.Add(new TermQuery(new Term("field", "text")), Occur.SHOULD);
@@ -414,11 +414,11 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class IndexSearcherAnonymousInnerClassHelper : IndexSearcher
+        private class IndexSearcherAnonymousClass : IndexSearcher
         {
             private readonly TestBooleanQuery outerInstance;
 
-            public IndexSearcherAnonymousInnerClassHelper(TestBooleanQuery outerInstance, IndexReader r)
+            public IndexSearcherAnonymousClass(TestBooleanQuery outerInstance, IndexReader r)
                 : base(r)
             {
                 this.outerInstance = outerInstance;

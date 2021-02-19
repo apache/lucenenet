@@ -63,12 +63,12 @@ namespace Lucene.Net.Search
         /// </summary>
         public static DocTermOrdsRangeFilter NewBytesRefRange(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
         {
-            return new DocTermOrdsRangeFilterAnonymousInnerClassHelper(field, lowerVal, upperVal, includeLower, includeUpper);
+            return new DocTermOrdsRangeFilterAnonymousClass(field, lowerVal, upperVal, includeLower, includeUpper);
         }
 
-        private class DocTermOrdsRangeFilterAnonymousInnerClassHelper : DocTermOrdsRangeFilter
+        private class DocTermOrdsRangeFilterAnonymousClass : DocTermOrdsRangeFilter
         {
-            public DocTermOrdsRangeFilterAnonymousInnerClassHelper(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
+            public DocTermOrdsRangeFilterAnonymousClass(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
                 : base(field, lowerVal, upperVal, includeLower, includeUpper)
             {
             }

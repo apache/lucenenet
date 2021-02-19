@@ -28,9 +28,9 @@ namespace Lucene.Net.Codecs.Lucene42
         private readonly DocValuesFormat dv = new Lucene42RWDocValuesFormat();
         private readonly NormsFormat norms = new Lucene42NormsFormat();
 
-        private readonly FieldInfosFormat fieldInfosFormat = new Lucene42FieldInfosFormatAnonymousInnerClassHelper();
+        private readonly FieldInfosFormat fieldInfosFormat = new Lucene42FieldInfosFormatAnonymousClass();
 
-        private class Lucene42FieldInfosFormatAnonymousInnerClassHelper : Lucene42FieldInfosFormat
+        private class Lucene42FieldInfosFormatAnonymousClass : Lucene42FieldInfosFormat
         {
             public override FieldInfosWriter FieldInfosWriter
             {

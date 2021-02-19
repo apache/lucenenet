@@ -217,7 +217,7 @@ namespace Lucene.Net.Index
                 BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.Instance);
             ReentrantLock @lock = (ReentrantLock)field.GetValue(queue);
             @lock.Lock();
-            var t = new ThreadAnonymousInnerClassHelper(this, queue);
+            var t = new ThreadAnonymousClass(this, queue);
             t.Start();
             t.Join();
             @lock.Unlock();
@@ -230,13 +230,13 @@ namespace Lucene.Net.Index
             Assert.IsFalse(queue.AnyChanges(), "all changes applied");
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestDocumentsWriterDeleteQueue outerInstance;
 
             private DocumentsWriterDeleteQueue queue;
 
-            public ThreadAnonymousInnerClassHelper(TestDocumentsWriterDeleteQueue outerInstance, DocumentsWriterDeleteQueue queue)
+            public ThreadAnonymousClass(TestDocumentsWriterDeleteQueue outerInstance, DocumentsWriterDeleteQueue queue)
             {
                 this.outerInstance = outerInstance;
                 this.queue = queue;

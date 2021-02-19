@@ -51,14 +51,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
         public Analyzer Create()
         {
-            return new AnalyzerAnonymousHelper(this);
+            return new AnalyzerAnonymousClass(this);
         }
 
-        private sealed class AnalyzerAnonymousHelper : Analyzer
+        private sealed class AnalyzerAnonymousClass : Analyzer
         {
             private readonly AnalyzerFactory outerInstance;
 
-            public AnalyzerAnonymousHelper(AnalyzerFactory outerInstance)
+            public AnalyzerAnonymousClass(AnalyzerFactory outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

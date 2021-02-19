@@ -53,32 +53,32 @@ namespace Lucene.Net.Queries
 
         public override Query Rewrite(IndexReader reader)
         {
-            return new BooleanQueryAnonymousInnerClassHelper(this)
+            return new BooleanQueryAnonymousClass(this)
             {
                 { match, Occur.MUST },
                 { context, Occur.SHOULD }
             };
         }
 
-        private class BooleanQueryAnonymousInnerClassHelper : BooleanQuery
+        private class BooleanQueryAnonymousClass : BooleanQuery
         {
             private readonly BoostingQuery outerInstance;
 
-            public BooleanQueryAnonymousInnerClassHelper(BoostingQuery outerInstance)
+            public BooleanQueryAnonymousClass(BoostingQuery outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
 
             public override Weight CreateWeight(IndexSearcher searcher)
             {
-                return new BooleanWeightAnonymousInnerClassHelper(this, searcher);
+                return new BooleanWeightAnonymousClass(this, searcher);
             }
 
-            private class BooleanWeightAnonymousInnerClassHelper : BooleanWeight
+            private class BooleanWeightAnonymousClass : BooleanWeight
             {
-                private readonly BooleanQueryAnonymousInnerClassHelper outerInstance;
+                private readonly BooleanQueryAnonymousClass outerInstance;
 
-                public BooleanWeightAnonymousInnerClassHelper(BooleanQueryAnonymousInnerClassHelper outerInstance, IndexSearcher searcher)
+                public BooleanWeightAnonymousClass(BooleanQueryAnonymousClass outerInstance, IndexSearcher searcher)
                     : base(outerInstance, searcher, false)
                 {
                     this.outerInstance = outerInstance;

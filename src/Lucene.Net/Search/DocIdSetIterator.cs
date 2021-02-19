@@ -32,12 +32,12 @@ namespace Lucene.Net.Search
         /// An empty <see cref="DocIdSetIterator"/> instance </summary>
         public static DocIdSetIterator GetEmpty()
         {
-            return new DocIdSetIteratorAnonymousInnerClassHelper();
+            return new DocIdSetIteratorAnonymousClass();
         }
 
-        private class DocIdSetIteratorAnonymousInnerClassHelper : DocIdSetIterator
+        private class DocIdSetIteratorAnonymousClass : DocIdSetIterator
         {
-            public DocIdSetIteratorAnonymousInnerClassHelper()
+            public DocIdSetIteratorAnonymousClass()
             {
             }
 

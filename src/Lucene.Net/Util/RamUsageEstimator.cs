@@ -979,7 +979,7 @@ namespace Lucene.Net.Util
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public IEnumerator<KType> GetEnumerator()
             {
-                return new IteratorAnonymousInnerClassHelper(this);
+                return new IteratorAnonymousClass(this);
             }
 
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -987,11 +987,11 @@ namespace Lucene.Net.Util
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousInnerClassHelper : IEnumerator<KType>
+            private class IteratorAnonymousClass : IEnumerator<KType>
             {
                 private readonly IdentityHashSet<KType> outerInstance;
 
-                public IteratorAnonymousInnerClassHelper(IdentityHashSet<KType> outerInstance)
+                public IteratorAnonymousClass(IdentityHashSet<KType> outerInstance)
                 {
                     this.outerInstance = outerInstance;
                     pos = -1;

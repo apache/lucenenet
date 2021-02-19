@@ -69,30 +69,30 @@ namespace Lucene.Net.Codecs.MockIntBlock
             {
                 IndexInput input = dir.OpenInput(fileName, context);
                 int baseBlockSize = input.ReadInt32();
-                return new VariableInt32BlockIndexInputAnonymousHelper(input, baseBlockSize);
+                return new VariableInt32BlockIndexInputAnonymousClass(input, baseBlockSize);
             }
 
-            private class VariableInt32BlockIndexInputAnonymousHelper : VariableInt32BlockIndexInput
+            private class VariableInt32BlockIndexInputAnonymousClass : VariableInt32BlockIndexInput
             {
                 private readonly int baseBlockSize;
 
-                public VariableInt32BlockIndexInputAnonymousHelper(IndexInput input, int baseBlockSize)
+                public VariableInt32BlockIndexInputAnonymousClass(IndexInput input, int baseBlockSize)
                     : base(input)
                 {
                     this.baseBlockSize = baseBlockSize;
                 }
                 protected override IBlockReader GetBlockReader(IndexInput @in, int[] buffer)
                 {
-                    return new BlockReaderAnonymousHelper(@in, buffer, baseBlockSize);
+                    return new BlockReaderAnonymousClass(@in, buffer, baseBlockSize);
                 }
 
-                private class BlockReaderAnonymousHelper : IBlockReader
+                private class BlockReaderAnonymousClass : IBlockReader
                 {
                     private readonly IndexInput input;
                     private readonly int[] buffer;
                     private readonly int baseBlockSize;
 
-                    public BlockReaderAnonymousHelper(IndexInput input, int[] buffer, int baseBlockSize)
+                    public BlockReaderAnonymousClass(IndexInput input, int[] buffer, int baseBlockSize)
                     {
                         this.input = input;
                         this.buffer = buffer;
@@ -124,7 +124,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
                 try
                 {
                     output.WriteInt32(baseBlockSize);
-                    VariableInt32BlockIndexOutput ret = new VariableInt32BlockIndexOutputAnonymousHelper(output, baseBlockSize);
+                    VariableInt32BlockIndexOutput ret = new VariableInt32BlockIndexOutputAnonymousClass(output, baseBlockSize);
                     success = true;
                     return ret;
                 }
@@ -137,11 +137,11 @@ namespace Lucene.Net.Codecs.MockIntBlock
                 }
             }
 
-            private class VariableInt32BlockIndexOutputAnonymousHelper : VariableInt32BlockIndexOutput
+            private class VariableInt32BlockIndexOutputAnonymousClass : VariableInt32BlockIndexOutput
             {
                 private readonly int baseBlockSize;
                 private readonly IndexOutput output;
-                public VariableInt32BlockIndexOutputAnonymousHelper(IndexOutput output, int baseBlockSize)
+                public VariableInt32BlockIndexOutputAnonymousClass(IndexOutput output, int baseBlockSize)
                     : base(output, 2 * baseBlockSize)
                 {
                     this.output = output;

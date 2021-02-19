@@ -283,7 +283,7 @@ namespace Lucene.Net.Facet.Range
                 Console.WriteLine("TEST: searcher=" + s);
             }
 
-            DrillSideways ds = new DrillSidewaysAnonymousInnerClassHelper(this, s, config, tr);
+            DrillSideways ds = new DrillSidewaysAnonymousClass(this, s, config, tr);
 
             // First search, no drill downs:
             DrillDownQuery ddq = new DrillDownQuery(config);
@@ -316,11 +316,11 @@ namespace Lucene.Net.Facet.Range
             IOUtils.Dispose(tw, tr, td, w, r, d);
         }
 
-        private class DrillSidewaysAnonymousInnerClassHelper : DrillSideways
+        private class DrillSidewaysAnonymousClass : DrillSideways
         {
             private readonly TestRangeFacetCounts outerInstance;
 
-            public DrillSidewaysAnonymousInnerClassHelper(TestRangeFacetCounts outerInstance, IndexSearcher s, FacetsConfig config, TaxonomyReader tr)
+            public DrillSidewaysAnonymousClass(TestRangeFacetCounts outerInstance, IndexSearcher s, FacetsConfig config, TaxonomyReader tr)
                 : base(s, config, tr)
             {
                 this.outerInstance = outerInstance;
@@ -1095,7 +1095,7 @@ namespace Lucene.Net.Facet.Range
             // Test wants 3 docs in one segment:
             writer.ForceMerge(1);
 
-            var vs = new ValueSourceAnonymousInnerClassHelper(this, doc);
+            var vs = new ValueSourceAnonymousClass(this, doc);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -1119,7 +1119,7 @@ namespace Lucene.Net.Facet.Range
             if (Random.NextBoolean())
             {
                 // Sort of silly:
-                fastMatchFilter = new CachingWrapperFilterAnonymousInnerClassHelper(this, new QueryWrapperFilter(new MatchAllDocsQuery()), filterWasUsed);
+                fastMatchFilter = new CachingWrapperFilterAnonymousClass(this, new QueryWrapperFilter(new MatchAllDocsQuery()), filterWasUsed);
             }
             else
             {
@@ -1144,7 +1144,7 @@ namespace Lucene.Net.Facet.Range
             Assert.AreEqual(1, s.Search(ddq, 10).TotalHits);
 
             // Test drill-sideways after drill-down
-            DrillSideways ds = new DrillSidewaysAnonymousInnerClassHelper2(this, s, config, (TaxonomyReader)null, vs, ranges, fastMatchFilter);
+            DrillSideways ds = new DrillSidewaysAnonymousClass2(this, s, config, (TaxonomyReader)null, vs, ranges, fastMatchFilter);
 
 
             DrillSidewaysResult dsr = ds.Search(ddq, 10);
@@ -1155,13 +1155,13 @@ namespace Lucene.Net.Facet.Range
             IOUtils.Dispose(r, writer, dir);
         }
 
-        private class ValueSourceAnonymousInnerClassHelper : ValueSource
+        private class ValueSourceAnonymousClass : ValueSource
         {
             private readonly TestRangeFacetCounts outerInstance;
 
             private readonly Document doc;
 
-            public ValueSourceAnonymousInnerClassHelper(TestRangeFacetCounts outerInstance, Document doc)
+            public ValueSourceAnonymousClass(TestRangeFacetCounts outerInstance, Document doc)
             {
                 this.outerInstance = outerInstance;
                 this.doc = doc;
@@ -1169,14 +1169,14 @@ namespace Lucene.Net.Facet.Range
 
             public override FunctionValues GetValues(IDictionary ignored, AtomicReaderContext ignored2)
             {
-                return new DoubleDocValuesAnonymousInnerClassHelper(this);
+                return new DoubleDocValuesAnonymousClass(this);
             }
 
-            private class DoubleDocValuesAnonymousInnerClassHelper : DoubleDocValues
+            private class DoubleDocValuesAnonymousClass : DoubleDocValues
             {
-                private readonly ValueSourceAnonymousInnerClassHelper outerInstance;
+                private readonly ValueSourceAnonymousClass outerInstance;
 
-                public DoubleDocValuesAnonymousInnerClassHelper(ValueSourceAnonymousInnerClassHelper outerInstance)
+                public DoubleDocValuesAnonymousClass(ValueSourceAnonymousClass outerInstance)
                     : base(null)
                 {
                     this.outerInstance = outerInstance;
@@ -1205,13 +1205,13 @@ namespace Lucene.Net.Facet.Range
 
         }
 
-        private class CachingWrapperFilterAnonymousInnerClassHelper : CachingWrapperFilter
+        private class CachingWrapperFilterAnonymousClass : CachingWrapperFilter
         {
             private readonly TestRangeFacetCounts outerInstance;
 
             private readonly AtomicBoolean filterWasUsed;
 
-            public CachingWrapperFilterAnonymousInnerClassHelper(TestRangeFacetCounts outerInstance, QueryWrapperFilter org, AtomicBoolean filterWasUsed)
+            public CachingWrapperFilterAnonymousClass(TestRangeFacetCounts outerInstance, QueryWrapperFilter org, AtomicBoolean filterWasUsed)
                 : base(org)
             {
                 this.outerInstance = outerInstance;
@@ -1227,7 +1227,7 @@ namespace Lucene.Net.Facet.Range
             }
         }
 
-        private class DrillSidewaysAnonymousInnerClassHelper2 : DrillSideways
+        private class DrillSidewaysAnonymousClass2 : DrillSideways
         {
             private readonly TestRangeFacetCounts outerInstance;
 
@@ -1236,7 +1236,7 @@ namespace Lucene.Net.Facet.Range
             private readonly Filter fastMatchFilter;
 
 
-            public DrillSidewaysAnonymousInnerClassHelper2(TestRangeFacetCounts outerInstance, IndexSearcher indexSearcher, FacetsConfig facetsConfig, TaxonomyReader org, ValueSource valueSource, DoubleRange[] doubleRanges, Filter filter)
+            public DrillSidewaysAnonymousClass2(TestRangeFacetCounts outerInstance, IndexSearcher indexSearcher, FacetsConfig facetsConfig, TaxonomyReader org, ValueSource valueSource, DoubleRange[] doubleRanges, Filter filter)
                 : base(indexSearcher, facetsConfig, org)
             {
                 this.outerInstance = outerInstance;

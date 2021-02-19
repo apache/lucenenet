@@ -61,7 +61,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 parser.SetFeature(TagSoup.Parser.NAMESPACES_FEATURE, true);
 
                 StringBuilder title = new StringBuilder(), body = new StringBuilder();
-                DefaultHandler handler = new DefaultHandlerAnonymousHelper(this, title, body);
+                DefaultHandler handler = new DefaultHandlerAnonymousClass(this, title, body);
 
                 parser.ContentHandler = handler;
                 parser.ErrorHandler = handler;
@@ -74,7 +74,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 this.body = body.ToString();
             }
 
-            private class DefaultHandlerAnonymousHelper : DefaultHandler
+            private class DefaultHandlerAnonymousClass : DefaultHandler
             {
                 private int inBODY = 0, inHEAD = 0, inTITLE = 0, suppressed = 0;
 
@@ -82,7 +82,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 private readonly StringBuilder title;
                 private readonly StringBuilder body;
 
-                public DefaultHandlerAnonymousHelper(Parser outerInstance, StringBuilder title, StringBuilder body)
+                public DefaultHandlerAnonymousClass(Parser outerInstance, StringBuilder title, StringBuilder body)
                 {
                     this.outerInstance = outerInstance;
                     this.title = title;

@@ -54,17 +54,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             FunctionValues aVals = m_a.GetValues(context, readerContext);
             FunctionValues bVals = m_b.GetValues(context, readerContext);
-            return new SingleDocValuesAnonymousInnerClassHelper(this, this, aVals, bVals);
+            return new SingleDocValuesAnonymousClass(this, this, aVals, bVals);
         }
 
-        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
+        private class SingleDocValuesAnonymousClass : SingleDocValues
         {
             private readonly DualSingleFunction outerInstance;
 
             private readonly FunctionValues aVals;
             private readonly FunctionValues bVals;
 
-            public SingleDocValuesAnonymousInnerClassHelper(DualSingleFunction outerInstance, DualSingleFunction @this, FunctionValues aVals, FunctionValues bVals)
+            public SingleDocValuesAnonymousClass(DualSingleFunction outerInstance, DualSingleFunction @this, FunctionValues aVals, FunctionValues bVals)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;

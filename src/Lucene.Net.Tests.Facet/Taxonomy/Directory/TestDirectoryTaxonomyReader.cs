@@ -230,7 +230,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // test openIfChanged() when the taxonomy contains many segments
             Directory dir = NewDirectory();
 
-            DirectoryTaxonomyWriter writer = new DirectoryTaxonomyWriterAnonymousInnerClassHelper(this, dir);
+            DirectoryTaxonomyWriter writer = new DirectoryTaxonomyWriterAnonymousClass(this, dir);
             var reader = new DirectoryTaxonomyReader(writer);
 
             int numRounds = Random.Next(10) + 10;
@@ -265,11 +265,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             dir.Dispose();
         }
 
-        private class DirectoryTaxonomyWriterAnonymousInnerClassHelper : DirectoryTaxonomyWriter
+        private class DirectoryTaxonomyWriterAnonymousClass : DirectoryTaxonomyWriter
         {
             private readonly TestDirectoryTaxonomyReader outerInstance;
 
-            public DirectoryTaxonomyWriterAnonymousInnerClassHelper(TestDirectoryTaxonomyReader outerInstance, Directory dir)
+            public DirectoryTaxonomyWriterAnonymousClass(TestDirectoryTaxonomyReader outerInstance, Directory dir)
                 : base(dir)
             {
                 this.outerInstance = outerInstance;
@@ -300,8 +300,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // LUCENENET: We need to set the index writer before the constructor of the base class is called
             // because the DirectoryTaxonomyWriter class constructor is the consumer of the OpenIndexWriter method.
             // The only option seems to be to set it statically before creating the instance.
-            DirectoryTaxonomyWriterAnonymousInnerClassHelper2.iw = iw;
-            var writer = new DirectoryTaxonomyWriterAnonymousInnerClassHelper2(dir);
+            DirectoryTaxonomyWriterAnonymousClass2.iw = iw;
+            var writer = new DirectoryTaxonomyWriterAnonymousClass2(dir);
 
             var reader = new DirectoryTaxonomyReader(writer);
             Assert.AreEqual(1, reader.Count);
@@ -325,11 +325,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             dir.Dispose();
         }
 
-        private class DirectoryTaxonomyWriterAnonymousInnerClassHelper2 : DirectoryTaxonomyWriter
+        private class DirectoryTaxonomyWriterAnonymousClass2 : DirectoryTaxonomyWriter
         {
             internal static IndexWriter iw = null;
 
-            public DirectoryTaxonomyWriterAnonymousInnerClassHelper2(Directory dir)
+            public DirectoryTaxonomyWriterAnonymousClass2(Directory dir)
                 : base(dir)
             {
             }
@@ -356,8 +356,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // LUCENENET: We need to set the index writer before the constructor of the base class is called
             // because the DirectoryTaxonomyWriter class constructor is the consumer of the OpenIndexWriter method.
             // The only option seems to be to set it statically before creating the instance.
-            DirectoryTaxonomyWriterAnonymousInnerClassHelper3.iw = iw;
-            DirectoryTaxonomyWriter writer = new DirectoryTaxonomyWriterAnonymousInnerClassHelper3(dir);
+            DirectoryTaxonomyWriterAnonymousClass3.iw = iw;
+            DirectoryTaxonomyWriter writer = new DirectoryTaxonomyWriterAnonymousClass3(dir);
 
 
             // add a category so that the following DTR open will cause a flush and 
@@ -384,11 +384,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             dir.Dispose();
         }
 
-        private class DirectoryTaxonomyWriterAnonymousInnerClassHelper3 : DirectoryTaxonomyWriter
+        private class DirectoryTaxonomyWriterAnonymousClass3 : DirectoryTaxonomyWriter
         {
             internal static IndexWriter iw;
 
-            public DirectoryTaxonomyWriterAnonymousInnerClassHelper3(Directory dir)
+            public DirectoryTaxonomyWriterAnonymousClass3(Directory dir)
                 : base(dir)
             {
             }

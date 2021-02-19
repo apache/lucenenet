@@ -122,14 +122,14 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < nWriteThreads; i++)
             {
-                ThreadJob thread = new ThreadAnonymousInnerClassHelper(this, "WRITER" + i, commitPercent, softCommitPercent, deletePercent, deleteByQueryPercent, ndocs, maxConcurrentCommits, tombstones, operations, storedOnlyType, numCommitting, writer);
+                ThreadJob thread = new ThreadAnonymousClass(this, "WRITER" + i, commitPercent, softCommitPercent, deletePercent, deleteByQueryPercent, ndocs, maxConcurrentCommits, tombstones, operations, storedOnlyType, numCommitting, writer);
 
                 threads.Add(thread);
             }
 
             for (int i = 0; i < nReadThreads; i++)
             {
-                ThreadJob thread = new ThreadAnonymousInnerClassHelper2(this, "READER" + i, ndocs, tombstones, operations);
+                ThreadJob thread = new ThreadAnonymousClass2(this, "READER" + i, ndocs, tombstones, operations);
 
                 threads.Add(thread);
             }
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestStressNRT outerInstance;
 
@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
             private readonly AtomicInt32 numCommitting;
             private readonly RandomIndexWriter writer;
 
-            public ThreadAnonymousInnerClassHelper(TestStressNRT outerInstance, string str, int commitPercent, int softCommitPercent, int deletePercent, int deleteByQueryPercent, int ndocs, int maxConcurrentCommits, bool tombstones, AtomicInt64 operations, FieldType storedOnlyType, AtomicInt32 numCommitting, RandomIndexWriter writer)
+            public ThreadAnonymousClass(TestStressNRT outerInstance, string str, int commitPercent, int softCommitPercent, int deletePercent, int deleteByQueryPercent, int ndocs, int maxConcurrentCommits, bool tombstones, AtomicInt64 operations, FieldType storedOnlyType, AtomicInt32 numCommitting, RandomIndexWriter writer)
                 : base(str)
             {
                 this.outerInstance = outerInstance;
@@ -406,7 +406,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
+        private class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly TestStressNRT outerInstance;
 
@@ -414,7 +414,7 @@ namespace Lucene.Net.Index
             private readonly bool tombstones;
             private readonly AtomicInt64 operations;
 
-            public ThreadAnonymousInnerClassHelper2(TestStressNRT outerInstance, string str, int ndocs, bool tombstones, AtomicInt64 operations)
+            public ThreadAnonymousClass2(TestStressNRT outerInstance, string str, int ndocs, bool tombstones, AtomicInt64 operations)
                 : base(str)
             {
                 this.outerInstance = outerInstance;

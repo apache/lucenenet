@@ -360,7 +360,7 @@ namespace Lucene.Net.Facet.Taxonomy
             DirectoryReader r = DirectoryReader.Open(iw, true);
             DirectoryTaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoWriter);
 
-            ValueSource valueSource = new ValueSourceAnonymousInnerClassHelper(this);
+            ValueSource valueSource = new ValueSourceAnonymousClass(this);
 
             FacetsCollector fc = new FacetsCollector(true);
             // score documents by their 'price' field - makes asserting the correct counts for the categories easier
@@ -373,11 +373,11 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
 
-        private class ValueSourceAnonymousInnerClassHelper : ValueSource
+        private class ValueSourceAnonymousClass : ValueSource
         {
             private readonly TestTaxonomyFacetSumValueSource outerInstance;
 
-            public ValueSourceAnonymousInnerClassHelper(TestTaxonomyFacetSumValueSource outerInstance)
+            public ValueSourceAnonymousClass(TestTaxonomyFacetSumValueSource outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -386,16 +386,16 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 Scorer scorer = (Scorer)context["scorer"];
                 if (Debugging.AssertsEnabled) Debugging.Assert(scorer != null);
-                return new DoubleDocValuesAnonymousInnerClassHelper(this, scorer);
+                return new DoubleDocValuesAnonymousClass(this, scorer);
             }
 
-            private class DoubleDocValuesAnonymousInnerClassHelper : DoubleDocValues
+            private class DoubleDocValuesAnonymousClass : DoubleDocValues
             {
-                private readonly ValueSourceAnonymousInnerClassHelper outerInstance;
+                private readonly ValueSourceAnonymousClass outerInstance;
 
                 private readonly Scorer scorer;
 
-                public DoubleDocValuesAnonymousInnerClassHelper(ValueSourceAnonymousInnerClassHelper outerInstance, Scorer scorer)
+                public DoubleDocValuesAnonymousClass(ValueSourceAnonymousClass outerInstance, Scorer scorer)
                     : base(null) //todo: value source
                 {
                     this.outerInstance = outerInstance;

@@ -189,11 +189,11 @@ namespace Lucene.Net.Analysis.Core
         }
 
         // some silly classes just so we can use checkRandomData
-        private readonly TokenizerFactory assertingTokenizer = new AnonymousInnerClassHelperTokenizerFactory(new Dictionary<string, string>());
+        private readonly TokenizerFactory assertingTokenizer = new TokenizerFactoryAnonymousClass(new Dictionary<string, string>());
 
-        private sealed class AnonymousInnerClassHelperTokenizerFactory : TokenizerFactory
+        private sealed class TokenizerFactoryAnonymousClass : TokenizerFactory
         {
-            public AnonymousInnerClassHelperTokenizerFactory(IDictionary<string, string> java) : base(java)
+            public TokenizerFactoryAnonymousClass(IDictionary<string, string> java) : base(java)
             {
             }
 

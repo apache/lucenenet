@@ -129,12 +129,12 @@ namespace Lucene.Net.Facet
         /// </summary>
         protected virtual Docs CreateDocs(int maxDoc)
         {
-            return new DocsAnonymousInnerClassHelper(maxDoc);
+            return new DocsAnonymousClass(maxDoc);
         }
 
-        private class DocsAnonymousInnerClassHelper : Docs
+        private class DocsAnonymousClass : Docs
         {
-            public DocsAnonymousInnerClassHelper(int maxDoc)
+            public DocsAnonymousClass(int maxDoc)
             {
                 bits = new FixedBitSet(maxDoc);
             }

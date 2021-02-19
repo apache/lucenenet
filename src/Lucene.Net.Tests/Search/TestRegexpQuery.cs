@@ -119,16 +119,16 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestCustomProvider()
         {
-            IAutomatonProvider myProvider = new AutomatonProviderAnonymousInnerClassHelper(this);
+            IAutomatonProvider myProvider = new AutomatonProviderAnonymousClass(this);
             RegexpQuery query = new RegexpQuery(NewTerm("<quickBrown>"), RegExpSyntax.ALL, myProvider);
             Assert.AreEqual(1, searcher.Search(query, 5).TotalHits);
         }
 
-        private class AutomatonProviderAnonymousInnerClassHelper : IAutomatonProvider
+        private class AutomatonProviderAnonymousClass : IAutomatonProvider
         {
             private readonly TestRegexpQuery outerInstance;
 
-            public AutomatonProviderAnonymousInnerClassHelper(TestRegexpQuery outerInstance)
+            public AutomatonProviderAnonymousClass(TestRegexpQuery outerInstance)
             {
                 this.outerInstance = outerInstance;
                 quickBrownAutomaton = BasicOperations.Union(new Automaton[] { BasicAutomata.MakeString("quick"), BasicAutomata.MakeString("brown"), BasicAutomata.MakeString("bob") });

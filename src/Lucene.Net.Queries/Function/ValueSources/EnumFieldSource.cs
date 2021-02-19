@@ -110,17 +110,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var arr = m_cache.GetInt32s(readerContext.AtomicReader, m_field, parser, true);
             var valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
 
-            return new Int32DocValuesAnonymousInnerClassHelper(this, this, arr, valid);
+            return new Int32DocValuesAnonymousClass(this, this, arr, valid);
         }
 
-        private class Int32DocValuesAnonymousInnerClassHelper : Int32DocValues
+        private class Int32DocValuesAnonymousClass : Int32DocValues
         {
             private readonly EnumFieldSource outerInstance;
 
             private readonly FieldCache.Int32s arr;
             private readonly IBits valid;
 
-            public Int32DocValuesAnonymousInnerClassHelper(EnumFieldSource outerInstance, EnumFieldSource @this, FieldCache.Int32s arr, IBits valid)
+            public Int32DocValuesAnonymousClass(EnumFieldSource outerInstance, EnumFieldSource @this, FieldCache.Int32s arr, IBits valid)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;

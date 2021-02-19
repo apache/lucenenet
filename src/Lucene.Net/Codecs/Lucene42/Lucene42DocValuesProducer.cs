@@ -265,7 +265,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     int bitsPerValue = data.ReadVInt32();
                     PackedInt32s.Reader ordsReader = PackedInt32s.GetReaderNoHeader(data, PackedInt32s.Format.ById(formatID), entry.PackedInt32sVersion, maxDoc, bitsPerValue);
                     ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(decode) + ordsReader.RamBytesUsed());
-                    return new NumericDocValuesAnonymousInnerClassHelper(decode, ordsReader);
+                    return new NumericDocValuesAnonymousClass(decode, ordsReader);
 
                 case DELTA_COMPRESSED:
                     int blockSize = data.ReadVInt32();
@@ -277,7 +277,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     byte[] bytes = new byte[maxDoc];
                     data.ReadBytes(bytes, 0, bytes.Length);
                     ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(bytes));
-                    return new NumericDocValuesAnonymousInnerClassHelper2(bytes);
+                    return new NumericDocValuesAnonymousClass2(bytes);
 
                 case GCD_COMPRESSED:
                     long min = data.ReadInt64();
@@ -285,19 +285,19 @@ namespace Lucene.Net.Codecs.Lucene42
                     int quotientBlockSize = data.ReadVInt32();
                     BlockPackedReader quotientReader = new BlockPackedReader(data, entry.PackedInt32sVersion, quotientBlockSize, maxDoc, false);
                     ramBytesUsed.AddAndGet(quotientReader.RamBytesUsed());
-                    return new NumericDocValuesAnonymousInnerClassHelper3(min, mult, quotientReader);
+                    return new NumericDocValuesAnonymousClass3(min, mult, quotientReader);
 
                 default:
                     throw new InvalidOperationException();
             }
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
+        private class NumericDocValuesAnonymousClass : NumericDocValues
         {
             private readonly long[] decode;
             private readonly PackedInt32s.Reader ordsReader;
 
-            public NumericDocValuesAnonymousInnerClassHelper(long[] decode, PackedInt32s.Reader ordsReader)
+            public NumericDocValuesAnonymousClass(long[] decode, PackedInt32s.Reader ordsReader)
             {
                 this.decode = decode;
                 this.ordsReader = ordsReader;
@@ -310,11 +310,11 @@ namespace Lucene.Net.Codecs.Lucene42
             }
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper2 : NumericDocValues
+        private class NumericDocValuesAnonymousClass2 : NumericDocValues
         {
             private readonly byte[] bytes;
 
-            public NumericDocValuesAnonymousInnerClassHelper2(byte[] bytes)
+            public NumericDocValuesAnonymousClass2(byte[] bytes)
             {
                 this.bytes = bytes;
             }
@@ -326,13 +326,13 @@ namespace Lucene.Net.Codecs.Lucene42
             }
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper3 : NumericDocValues
+        private class NumericDocValuesAnonymousClass3 : NumericDocValues
         {
             private readonly long min;
             private readonly long mult;
             private readonly BlockPackedReader quotientReader;
 
-            public NumericDocValuesAnonymousInnerClassHelper3(long min, long mult, BlockPackedReader quotientReader)
+            public NumericDocValuesAnonymousClass3(long min, long mult, BlockPackedReader quotientReader)
             {
                 this.min = min;
                 this.mult = mult;
@@ -370,22 +370,22 @@ namespace Lucene.Net.Codecs.Lucene42
             {
                 int fixedLength = entry.MinLength;
                 ramBytesUsed.AddAndGet(bytes.RamBytesUsed());
-                return new BinaryDocValuesAnonymousInnerClassHelper(bytesReader, fixedLength);
+                return new BinaryDocValuesAnonymousClass(bytesReader, fixedLength);
             }
             else
             {
                 MonotonicBlockPackedReader addresses = new MonotonicBlockPackedReader(data, entry.PackedInt32sVersion, entry.BlockSize, maxDoc, false);
                 ramBytesUsed.AddAndGet(bytes.RamBytesUsed() + addresses.RamBytesUsed());
-                return new BinaryDocValuesAnonymousInnerClassHelper2(bytesReader, addresses);
+                return new BinaryDocValuesAnonymousClass2(bytesReader, addresses);
             }
         }
 
-        private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
+        private class BinaryDocValuesAnonymousClass : BinaryDocValues
         {
             private readonly PagedBytes.Reader bytesReader;
             private readonly int fixedLength;
 
-            public BinaryDocValuesAnonymousInnerClassHelper(PagedBytes.Reader bytesReader, int fixedLength)
+            public BinaryDocValuesAnonymousClass(PagedBytes.Reader bytesReader, int fixedLength)
             {
                 this.bytesReader = bytesReader;
                 this.fixedLength = fixedLength;
@@ -398,12 +398,12 @@ namespace Lucene.Net.Codecs.Lucene42
             }
         }
 
-        private class BinaryDocValuesAnonymousInnerClassHelper2 : BinaryDocValues
+        private class BinaryDocValuesAnonymousClass2 : BinaryDocValues
         {
             private readonly PagedBytes.Reader bytesReader;
             private readonly MonotonicBlockPackedReader addresses;
 
-            public BinaryDocValuesAnonymousInnerClassHelper2(PagedBytes.Reader bytesReader, MonotonicBlockPackedReader addresses)
+            public BinaryDocValuesAnonymousClass2(PagedBytes.Reader bytesReader, MonotonicBlockPackedReader addresses)
             {
                 this.bytesReader = bytesReader;
                 this.addresses = addresses;
@@ -442,10 +442,10 @@ namespace Lucene.Net.Codecs.Lucene42
             var scratchInts = new Int32sRef();
             var fstEnum = new BytesRefFSTEnum<long?>(fst);
 
-            return new SortedDocValuesAnonymousInnerClassHelper(entry, docToOrd, fst, @in, firstArc, scratchArc, scratchInts, fstEnum);
+            return new SortedDocValuesAnonymousClass(entry, docToOrd, fst, @in, firstArc, scratchArc, scratchInts, fstEnum);
         }
 
-        private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
+        private class SortedDocValuesAnonymousClass : SortedDocValues
         {
             private readonly FSTEntry entry;
             private readonly NumericDocValues docToOrd;
@@ -456,7 +456,7 @@ namespace Lucene.Net.Codecs.Lucene42
             private readonly Int32sRef scratchInts;
             private readonly BytesRefFSTEnum<long?> fstEnum;
 
-            public SortedDocValuesAnonymousInnerClassHelper(FSTEntry entry, NumericDocValues docToOrd, FST<long?> fst, FST.BytesReader @in, FST.Arc<long?> firstArc, FST.Arc<long?> scratchArc, Int32sRef scratchInts, BytesRefFSTEnum<long?> fstEnum)
+            public SortedDocValuesAnonymousClass(FSTEntry entry, NumericDocValues docToOrd, FST<long?> fst, FST.BytesReader @in, FST.Arc<long?> firstArc, FST.Arc<long?> scratchArc, Int32sRef scratchInts, BytesRefFSTEnum<long?> fstEnum)
             {
                 this.entry = entry;
                 this.docToOrd = docToOrd;
@@ -554,10 +554,10 @@ namespace Lucene.Net.Codecs.Lucene42
             var fstEnum = new BytesRefFSTEnum<long?>(fst);
             var @ref = new BytesRef();
             var input = new ByteArrayDataInput();
-            return new SortedSetDocValuesAnonymousInnerClassHelper(entry, docToOrds, fst, @in, firstArc, scratchArc, scratchInts, fstEnum, @ref, input);
+            return new SortedSetDocValuesAnonymousClass(entry, docToOrds, fst, @in, firstArc, scratchArc, scratchInts, fstEnum, @ref, input);
         }
 
-        private class SortedSetDocValuesAnonymousInnerClassHelper : SortedSetDocValues
+        private class SortedSetDocValuesAnonymousClass : SortedSetDocValues
         {
             private readonly FSTEntry entry;
             private readonly BinaryDocValues docToOrds;
@@ -570,7 +570,7 @@ namespace Lucene.Net.Codecs.Lucene42
             private readonly BytesRef @ref;
             private readonly ByteArrayDataInput input;
 
-            public SortedSetDocValuesAnonymousInnerClassHelper(FSTEntry entry, BinaryDocValues docToOrds, FST<long?> fst, FST.BytesReader @in, FST.Arc<long?> firstArc, FST.Arc<long?> scratchArc, Int32sRef scratchInts, BytesRefFSTEnum<long?> fstEnum, BytesRef @ref, ByteArrayDataInput input)
+            public SortedSetDocValuesAnonymousClass(FSTEntry entry, BinaryDocValues docToOrds, FST<long?> fst, FST.BytesReader @in, FST.Arc<long?> firstArc, FST.Arc<long?> scratchArc, Int32sRef scratchInts, BytesRefFSTEnum<long?> fstEnum, BytesRef @ref, ByteArrayDataInput input)
             {
                 this.entry = entry;
                 this.docToOrds = docToOrds;

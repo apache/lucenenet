@@ -46,11 +46,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             return document;
         }
 
-        private class BenchmarkHighlighterAnonymousHelper : BenchmarkHighlighter
+        private class BenchmarkHighlighterAnonymousClass : BenchmarkHighlighter
         {
             private readonly CountingHighlighterTestTask outerInstance;
             private readonly Highlighter highlighter;
-            public BenchmarkHighlighterAnonymousHelper(CountingHighlighterTestTask outerInstance, Highlighter highlighter)
+            public BenchmarkHighlighterAnonymousClass(CountingHighlighterTestTask outerInstance, Highlighter highlighter)
             {
                 this.outerInstance = outerInstance;
                 this.highlighter = highlighter;
@@ -68,7 +68,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         protected override BenchmarkHighlighter GetBenchmarkHighlighter(Query q)
         {
             m_highlighter = new Highlighter(new SimpleHTMLFormatter(), new QueryScorer(q));
-            return new BenchmarkHighlighterAnonymousHelper(this, m_highlighter);
+            return new BenchmarkHighlighterAnonymousClass(this, m_highlighter);
             //        return new BenchmarkHighlighter() {
             //  @Override
             //  public int doHighlight(IndexReader reader, int doc, String field, Document document, Analyzer analyzer, String text) 

@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
                 ThreadJob[] threads = new ThreadJob[numThreads];
                 for (int threadID = 0; threadID < numThreads; threadID++)
                 {
-                    ThreadJob thread = new ThreadAnonymousInnerClassHelper(this, s, answers, startingGun);
+                    ThreadJob thread = new ThreadAnonymousClass(this, s, answers, startingGun);
                     threads[threadID] = thread;
                     thread.Start();
                 }
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestSameScoresWithThreads outerInstance;
 
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
             private readonly IDictionary<BytesRef, TopDocs> answers;
             private readonly CountdownEvent startingGun;
 
-            public ThreadAnonymousInnerClassHelper(TestSameScoresWithThreads outerInstance, IndexSearcher s, IDictionary<BytesRef, TopDocs> answers, CountdownEvent startingGun)
+            public ThreadAnonymousClass(TestSameScoresWithThreads outerInstance, IndexSearcher s, IDictionary<BytesRef, TopDocs> answers, CountdownEvent startingGun)
             {
                 this.outerInstance = outerInstance;
                 this.s = s;

@@ -317,14 +317,14 @@ namespace Lucene.Net.Replicator
             ISourceDirectoryFactory @in = sourceDirFactory;
             AtomicInt32 failures = new AtomicInt32(AtLeast(10));
 
-            sourceDirFactory = new SourceDirectoryFactoryAnonymousInnerClass(this, @in, failures);
+            sourceDirFactory = new SourceDirectoryFactoryAnonymousClass(this, @in, failures);
             handler = new IndexAndTaxonomyReplicationHandler(handlerIndexDir, handlerTaxoDir, () =>
             {
                 if (Random.NextDouble() < 0.2 && failures > 0)
                     throw new Exception("random exception from callback");
                 return null;
             });
-            client = new ReplicationClientAnonymousInnerClass(this, replicator, handler, @in, failures);
+            client = new ReplicationClientAnonymousClass(this, replicator, handler, @in, failures);
             client.StartUpdateThread(10, "indexAndTaxo");
 
             Directory baseHandlerIndexDir = handlerIndexDir.Delegate;
@@ -345,7 +345,7 @@ namespace Lucene.Net.Replicator
             handlerTaxoDir.RandomIOExceptionRateOnOpen = (0.0);
         }
 
-        private class SourceDirectoryFactoryAnonymousInnerClass : ISourceDirectoryFactory
+        private class SourceDirectoryFactoryAnonymousClass : ISourceDirectoryFactory
         {
             private long clientMaxSize = 100, handlerIndexMaxSize = 100, handlerTaxoMaxSize = 100;
             private double clientExRate = 1.0, handlerIndexExRate = 1.0, handlerTaxoExRate = 1.0;
@@ -354,7 +354,7 @@ namespace Lucene.Net.Replicator
             private readonly ISourceDirectoryFactory @in;
             private readonly AtomicInt32 failures;
 
-            public SourceDirectoryFactoryAnonymousInnerClass(IndexAndTaxonomyReplicationClientTest test, ISourceDirectoryFactory @in, AtomicInt32 failures)
+            public SourceDirectoryFactoryAnonymousClass(IndexAndTaxonomyReplicationClientTest test, ISourceDirectoryFactory @in, AtomicInt32 failures)
             {
                 this.test = test;
                 this.@in = @in;
@@ -417,12 +417,12 @@ namespace Lucene.Net.Replicator
 
 
 
-        private class ReplicationClientAnonymousInnerClass : ReplicationClient
+        private class ReplicationClientAnonymousClass : ReplicationClient
         {
             private readonly IndexAndTaxonomyReplicationClientTest test;
             private readonly AtomicInt32 failures;
 
-            public ReplicationClientAnonymousInnerClass(IndexAndTaxonomyReplicationClientTest test, IReplicator replicator, IReplicationHandler handler, ISourceDirectoryFactory factory, AtomicInt32 failures)
+            public ReplicationClientAnonymousClass(IndexAndTaxonomyReplicationClientTest test, IReplicator replicator, IReplicationHandler handler, ISourceDirectoryFactory factory, AtomicInt32 failures)
                 : base(replicator, handler, factory)
             {
                 this.test = test;

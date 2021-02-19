@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
             IList<TestHit> docs = new List<TestHit>();
             // must call next first
 
-            ts.Score(new CollectorAnonymousInnerClassHelper(this, context, docs));
+            ts.Score(new CollectorAnonymousClass(this, context, docs));
             Assert.IsTrue(docs.Count == 2, "docs Size: " + docs.Count + " is not: " + 2);
             TestHit doc0 = docs[0];
             TestHit doc5 = docs[1];
@@ -105,14 +105,14 @@ namespace Lucene.Net.Search
             Assert.IsTrue(doc0.Score == 1.6931472f, doc0.Score + " does not equal: " + 1.6931472f);
         }
 
-        private class CollectorAnonymousInnerClassHelper : ICollector
+        private class CollectorAnonymousClass : ICollector
         {
             private readonly TestTermScorer outerInstance;
 
             private AtomicReaderContext context;
             private readonly IList<TestHit> docs;
 
-            public CollectorAnonymousInnerClassHelper(TestTermScorer outerInstance, AtomicReaderContext context, IList<TestHit> docs)
+            public CollectorAnonymousClass(TestTermScorer outerInstance, AtomicReaderContext context, IList<TestHit> docs)
             {
                 this.outerInstance = outerInstance;
                 this.context = context;

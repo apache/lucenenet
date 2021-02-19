@@ -792,34 +792,34 @@ namespace Lucene.Net.Util.Fst
                 PositiveIntOutputs o1 = PositiveIntOutputs.Singleton;
                 PositiveIntOutputs o2 = PositiveIntOutputs.Singleton;
                 PairOutputs<long, long> outputs = new PairOutputs<long, long>(o1, o2);
-                new VisitTermsAnonymousInnerClassHelper(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays).Run(limit, verify, false);
+                new VisitTermsAnonymousClass(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays).Run(limit, verify, false);
             }
             else if (storeOrds)
             {
                 // Store only ords
                 PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-                new VisitTermsAnonymousInnerClassHelper2(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays).Run(limit, verify, true);
+                new VisitTermsAnonymousClass2(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays).Run(limit, verify, true);
             }
             else if (storeDocFreqs)
             {
                 // Store only docFreq
                 PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-                new VisitTermsAnonymousInnerClassHelper3(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays).Run(limit, verify, false);
+                new VisitTermsAnonymousClass3(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays).Run(limit, verify, false);
             }
             else
             {
                 // Store nothing
                 NoOutputs outputs = NoOutputs.Singleton;
                 object NO_OUTPUT = outputs.NoOutput;
-                new VisitTermsAnonymousInnerClassHelper4(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays, NO_OUTPUT).Run(limit, verify, false);
+                new VisitTermsAnonymousClass4(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays, NO_OUTPUT).Run(limit, verify, false);
             }
         }*/
 
-        private class VisitTermsAnonymousInnerClassHelper : VisitTerms<Pair>
+        private class VisitTermsAnonymousClass : VisitTerms<Pair>
         {
             private readonly PairOutputs<long?, long?> outputs;
 
-            public VisitTermsAnonymousInnerClassHelper(string dirOut, string wordsFileIn, int inputMode, int prune, PairOutputs<long?, long?> outputs, bool doPack, bool noArcArrays)
+            public VisitTermsAnonymousClass(string dirOut, string wordsFileIn, int inputMode, int prune, PairOutputs<long?, long?> outputs, bool doPack, bool noArcArrays)
                 : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
             {
                 this.outputs = outputs;
@@ -836,9 +836,9 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private class VisitTermsAnonymousInnerClassHelper2 : VisitTerms<long?>
+        private class VisitTermsAnonymousClass2 : VisitTerms<long?>
         {
-            public VisitTermsAnonymousInnerClassHelper2(string dirOut, string wordsFileIn, int inputMode, int prune, PositiveInt32Outputs outputs, bool doPack, bool noArcArrays)
+            public VisitTermsAnonymousClass2(string dirOut, string wordsFileIn, int inputMode, int prune, PositiveInt32Outputs outputs, bool doPack, bool noArcArrays)
                 : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
             {
             }
@@ -849,9 +849,9 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private class VisitTermsAnonymousInnerClassHelper3 : VisitTerms<long?>
+        private class VisitTermsAnonymousClass3 : VisitTerms<long?>
         {
-            public VisitTermsAnonymousInnerClassHelper3(string dirOut, string wordsFileIn, int inputMode, int prune, PositiveInt32Outputs outputs, bool doPack, bool noArcArrays)
+            public VisitTermsAnonymousClass3(string dirOut, string wordsFileIn, int inputMode, int prune, PositiveInt32Outputs outputs, bool doPack, bool noArcArrays)
                 : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
             {
             }
@@ -867,11 +867,11 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private class VisitTermsAnonymousInnerClassHelper4 : VisitTerms<object>
+        private class VisitTermsAnonymousClass4 : VisitTerms<object>
         {
             private readonly object NO_OUTPUT;
 
-            public VisitTermsAnonymousInnerClassHelper4(string dirOut, string wordsFileIn, int inputMode, int prune, NoOutputs outputs, bool doPack, bool noArcArrays, object NO_OUTPUT)
+            public VisitTermsAnonymousClass4(string dirOut, string wordsFileIn, int inputMode, int prune, NoOutputs outputs, bool doPack, bool noArcArrays, object NO_OUTPUT)
                 : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
             {
                 this.NO_OUTPUT = NO_OUTPUT;
@@ -1495,7 +1495,7 @@ namespace Lucene.Net.Util.Fst
             builder.Add(Util.ToInt32sRef(new BytesRef("ax"), scratch), 17L);
             FST<long?> fst = builder.Finish();
             AtomicInt32 rejectCount = new AtomicInt32();
-            Util.TopNSearcher<long?> searcher = new TopNSearcherAnonymousInnerClassHelper(fst, minLongComparer, rejectCount);
+            Util.TopNSearcher<long?> searcher = new TopNSearcherAnonymousClass(fst, minLongComparer, rejectCount);
 
             searcher.AddStartPaths(fst.GetFirstArc(new FST.Arc<long?>()), outputs.NoOutput, true, new Int32sRef());
             Util.TopResults<long?> res = searcher.Search();
@@ -1506,7 +1506,7 @@ namespace Lucene.Net.Util.Fst
             Assert.AreEqual(Util.ToInt32sRef(new BytesRef("aac"), scratch), res.TopN[0].Input);
             Assert.AreEqual(7L, res.TopN[0].Output);
             rejectCount.Value = (0);
-            searcher = new TopNSearcherAnonymousInnerClassHelper2(fst, minLongComparer, rejectCount);
+            searcher = new TopNSearcherAnonymousClass2(fst, minLongComparer, rejectCount);
 
             searcher.AddStartPaths(fst.GetFirstArc(new FST.Arc<long?>()), outputs.NoOutput, true, new Int32sRef());
             res = searcher.Search();
@@ -1514,11 +1514,11 @@ namespace Lucene.Net.Util.Fst
             Assert.IsFalse(res.IsComplete); // rejected(4) + topN(2) > maxQueueSize(5)
         }
 
-        private class TopNSearcherAnonymousInnerClassHelper : Util.TopNSearcher<long?>
+        private class TopNSearcherAnonymousClass : Util.TopNSearcher<long?>
         {
             private readonly AtomicInt32 rejectCount;
 
-            public TopNSearcherAnonymousInnerClassHelper(FST<long?> fst, IComparer<long?> minLongComparer, AtomicInt32 rejectCount)
+            public TopNSearcherAnonymousClass(FST<long?> fst, IComparer<long?> minLongComparer, AtomicInt32 rejectCount)
                 : base(fst, 2, 6, minLongComparer)
             {
                 this.rejectCount = rejectCount;
@@ -1535,11 +1535,11 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private class TopNSearcherAnonymousInnerClassHelper2 : Util.TopNSearcher<long?>
+        private class TopNSearcherAnonymousClass2 : Util.TopNSearcher<long?>
         {
             private readonly AtomicInt32 rejectCount;
 
-            public TopNSearcherAnonymousInnerClassHelper2(FST<long?> fst, IComparer<long?> minLongComparer, AtomicInt32 rejectCount)
+            public TopNSearcherAnonymousClass2(FST<long?> fst, IComparer<long?> minLongComparer, AtomicInt32 rejectCount)
                 : base(fst, 2, 5, minLongComparer)
             {
                 this.rejectCount = rejectCount;

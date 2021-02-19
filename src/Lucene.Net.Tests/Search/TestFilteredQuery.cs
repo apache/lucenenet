@@ -103,12 +103,12 @@ namespace Lucene.Net.Search
         // must be static for serialization tests
         private static Filter NewStaticFilterB()
         {
-            return new FilterAnonymousInnerClassHelper();
+            return new FilterAnonymousClass();
         }
 
-        private class FilterAnonymousInnerClassHelper : Filter
+        private class FilterAnonymousClass : Filter
         {
-            public FilterAnonymousInnerClassHelper()
+            public FilterAnonymousClass()
             {
             }
 
@@ -226,12 +226,12 @@ namespace Lucene.Net.Search
         // must be static for serialization tests
         private static Filter NewStaticFilterA()
         {
-            return new FilterAnonymousInnerClassHelper2();
+            return new FilterAnonymousClass2();
         }
 
-        private class FilterAnonymousInnerClassHelper2 : Filter
+        private class FilterAnonymousClass2 : Filter
         {
-            public FilterAnonymousInnerClassHelper2()
+            public FilterAnonymousClass2()
             {
             }
 
@@ -500,14 +500,14 @@ namespace Lucene.Net.Search
         {
             if (useRandomAccess)
             {
-                return new RandomAccessFilterStrategyAnonymousInnerClassHelper();
+                return new RandomAccessFilterStrategyAnonymousClass();
             }
             return TestUtil.RandomFilterStrategy(random);
         }
 
-        private class RandomAccessFilterStrategyAnonymousInnerClassHelper : FilteredQuery.RandomAccessFilterStrategy
+        private class RandomAccessFilterStrategyAnonymousClass : FilteredQuery.RandomAccessFilterStrategy
         {
-            public RandomAccessFilterStrategyAnonymousInnerClassHelper()
+            public RandomAccessFilterStrategyAnonymousClass()
             {
             }
 
@@ -544,20 +544,20 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);
-            Query query = new FilteredQuery(new TermQuery(new Term("field", "0")), new FilterAnonymousInnerClassHelper3(this, reader), FilteredQuery.QUERY_FIRST_FILTER_STRATEGY);
+            Query query = new FilteredQuery(new TermQuery(new Term("field", "0")), new FilterAnonymousClass3(this, reader), FilteredQuery.QUERY_FIRST_FILTER_STRATEGY);
 
             TopDocs search = searcher.Search(query, 10);
             Assert.AreEqual(totalDocsWithZero, search.TotalHits);
             IOUtils.Dispose(reader, writer, directory);
         }
 
-        private class FilterAnonymousInnerClassHelper3 : Filter
+        private class FilterAnonymousClass3 : Filter
         {
             private readonly TestFilteredQuery outerInstance;
 
             private IndexReader reader;
 
-            public FilterAnonymousInnerClassHelper3(TestFilteredQuery outerInstance, IndexReader reader)
+            public FilterAnonymousClass3(TestFilteredQuery outerInstance, IndexReader reader)
             {
                 this.outerInstance = outerInstance;
                 this.reader = reader;
@@ -578,18 +578,18 @@ namespace Lucene.Net.Search
                 {
                     bitSet.Set(d);
                 }
-                return new DocIdSetAnonymousInnerClassHelper(this, nullBitset, reader, bitSet);
+                return new DocIdSetAnonymousClass(this, nullBitset, reader, bitSet);
             }
 
-            private class DocIdSetAnonymousInnerClassHelper : DocIdSet
+            private class DocIdSetAnonymousClass : DocIdSet
             {
-                private readonly FilterAnonymousInnerClassHelper3 outerInstance;
+                private readonly FilterAnonymousClass3 outerInstance;
 
                 private readonly bool nullBitset;
                 private readonly AtomicReader reader;
                 private readonly BitSet bitSet;
 
-                public DocIdSetAnonymousInnerClassHelper(FilterAnonymousInnerClassHelper3 outerInstance, bool nullBitset, AtomicReader reader, BitSet bitSet)
+                public DocIdSetAnonymousClass(FilterAnonymousClass3 outerInstance, bool nullBitset, AtomicReader reader, BitSet bitSet)
                 {
                     this.outerInstance = outerInstance;
                     this.nullBitset = nullBitset;
@@ -605,15 +605,15 @@ namespace Lucene.Net.Search
                         {
                             return null;
                         }
-                        return new BitsAnonymousInnerClassHelper(this);
+                        return new BitsAnonymousClass(this);
                     }
                 }
 
-                private class BitsAnonymousInnerClassHelper : IBits
+                private class BitsAnonymousClass : IBits
                 {
-                    private readonly DocIdSetAnonymousInnerClassHelper outerInstance;
+                    private readonly DocIdSetAnonymousClass outerInstance;
 
-                    public BitsAnonymousInnerClassHelper(DocIdSetAnonymousInnerClassHelper outerInstance)
+                    public BitsAnonymousClass(DocIdSetAnonymousClass outerInstance)
                     {
                         this.outerInstance = outerInstance;
                     }
@@ -662,7 +662,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
             bool queryFirst = Random.NextBoolean();
             IndexSearcher searcher = NewSearcher(reader);
-            Query query = new FilteredQuery(new TermQuery(new Term("field", "0")), new FilterAnonymousInnerClassHelper4(this, queryFirst), queryFirst ? FilteredQuery.LEAP_FROG_QUERY_FIRST_STRATEGY : Random
+            Query query = new FilteredQuery(new TermQuery(new Term("field", "0")), new FilterAnonymousClass4(this, queryFirst), queryFirst ? FilteredQuery.LEAP_FROG_QUERY_FIRST_STRATEGY : Random
                   .NextBoolean() ? FilteredQuery.RANDOM_ACCESS_FILTER_STRATEGY : FilteredQuery.LEAP_FROG_FILTER_FIRST_STRATEGY); // if filterFirst, we can use random here since bits are null
 
             TopDocs search = searcher.Search(query, 10);
@@ -670,13 +670,13 @@ namespace Lucene.Net.Search
             IOUtils.Dispose(reader, writer, directory);
         }
 
-        private class FilterAnonymousInnerClassHelper4 : Filter
+        private class FilterAnonymousClass4 : Filter
         {
             private readonly TestFilteredQuery outerInstance;
 
             private readonly bool queryFirst;
 
-            public FilterAnonymousInnerClassHelper4(TestFilteredQuery outerInstance, bool queryFirst)
+            public FilterAnonymousClass4(TestFilteredQuery outerInstance, bool queryFirst)
             {
                 this.outerInstance = outerInstance;
                 this.queryFirst = queryFirst;
@@ -684,16 +684,16 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                return new DocIdSetAnonymousInnerClassHelper2(this, context);
+                return new DocIdSetAnonymousClass2(this, context);
             }
 
-            private class DocIdSetAnonymousInnerClassHelper2 : DocIdSet
+            private class DocIdSetAnonymousClass2 : DocIdSet
             {
-                private readonly FilterAnonymousInnerClassHelper4 outerInstance;
+                private readonly FilterAnonymousClass4 outerInstance;
 
                 private readonly AtomicReaderContext context;
 
-                public DocIdSetAnonymousInnerClassHelper2(FilterAnonymousInnerClassHelper4 outerInstance, AtomicReaderContext context)
+                public DocIdSetAnonymousClass2(FilterAnonymousClass4 outerInstance, AtomicReaderContext context)
                 {
                     this.outerInstance = outerInstance;
                     this.context = context;
@@ -708,16 +708,16 @@ namespace Lucene.Net.Search
                     {
                         return null;
                     }
-                    return new DocIdSetIteratorAnonymousInnerClassHelper(this, termDocsEnum);
+                    return new DocIdSetIteratorAnonymousClass(this, termDocsEnum);
                 }
 
-                private class DocIdSetIteratorAnonymousInnerClassHelper : DocIdSetIterator
+                private class DocIdSetIteratorAnonymousClass : DocIdSetIterator
                 {
-                    private readonly DocIdSetAnonymousInnerClassHelper2 outerInstance;
+                    private readonly DocIdSetAnonymousClass2 outerInstance;
 
                     private readonly DocsEnum termDocsEnum;
 
-                    public DocIdSetIteratorAnonymousInnerClassHelper(DocIdSetAnonymousInnerClassHelper2 outerInstance, DocsEnum termDocsEnum)
+                    public DocIdSetIteratorAnonymousClass(DocIdSetAnonymousClass2 outerInstance, DocsEnum termDocsEnum)
                     {
                         this.outerInstance = outerInstance;
                         this.termDocsEnum = termDocsEnum;

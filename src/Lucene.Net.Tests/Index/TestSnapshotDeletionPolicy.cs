@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
             dp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
             writer.Commit();
 
-            ThreadJob t = new ThreadAnonymousInnerClassHelper(stopTime, writer, NewField);
+            ThreadJob t = new ThreadAnonymousClass(stopTime, writer, NewField);
 
             t.Start();
 
@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
             TestIndexWriter.AssertNoUnreferencedFiles(dir, "some files were not deleted but should have been");
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly long stopTime;
             private readonly IndexWriter writer;
@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
             /// Passed in because <see cref="LuceneTestCase.NewField(string, string, FieldType)"/>
             /// is no longer static. 
             /// </param>
-            public ThreadAnonymousInnerClassHelper(long stopTime, IndexWriter writer, Func<string, string, FieldType, Field> newFieldFunc)
+            public ThreadAnonymousClass(long stopTime, IndexWriter writer, Func<string, string, FieldType, Field> newFieldFunc)
             {
                 this.stopTime = stopTime;
                 this.writer = writer;
@@ -360,7 +360,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < threads.Length; i++)
             {
                 int finalI = i;
-                threads[i] = new ThreadAnonymousInnerClassHelper2(this, writer, sdp, snapshots, finalI);
+                threads[i] = new ThreadAnonymousClass2(this, writer, sdp, snapshots, finalI);
                 threads[i].Name = "t" + i;
             }
 
@@ -388,7 +388,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
+        private class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly TestSnapshotDeletionPolicy outerInstance;
 
@@ -397,7 +397,7 @@ namespace Lucene.Net.Index
             private readonly IndexCommit[] snapshots;
             private readonly int finalI;
 
-            public ThreadAnonymousInnerClassHelper2(TestSnapshotDeletionPolicy outerInstance, IndexWriter writer, SnapshotDeletionPolicy sdp, IndexCommit[] snapshots, int finalI)
+            public ThreadAnonymousClass2(TestSnapshotDeletionPolicy outerInstance, IndexWriter writer, SnapshotDeletionPolicy sdp, IndexCommit[] snapshots, int finalI)
             {
                 this.outerInstance = outerInstance;
                 this.writer = writer;

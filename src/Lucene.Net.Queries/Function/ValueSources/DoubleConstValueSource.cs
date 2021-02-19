@@ -47,14 +47,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            return new DoubleDocValuesAnonymousInnerClassHelper(this, this);
+            return new DoubleDocValuesAnonymousClass(this, this);
         }
 
-        private class DoubleDocValuesAnonymousInnerClassHelper : DoubleDocValues
+        private class DoubleDocValuesAnonymousClass : DoubleDocValues
         {
             private readonly DoubleConstValueSource outerInstance;
 
-            public DoubleDocValuesAnonymousInnerClassHelper(DoubleConstValueSource outerInstance, DoubleConstValueSource @this)
+            public DoubleDocValuesAnonymousClass(DoubleConstValueSource outerInstance, DoubleConstValueSource @this)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;

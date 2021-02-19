@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
                 DirectoryReader open = DirectoryReader.Open(dir);
                 bool throwOnClose = !Rarely();
                 AtomicReader wrap = SlowCompositeReaderWrapper.Wrap(open);
-                FilterAtomicReader reader = new FilterAtomicReaderAnonymousInnerClassHelper(this, wrap, throwOnClose);
+                FilterAtomicReader reader = new FilterAtomicReaderAnonymousClass(this, wrap, throwOnClose);
                 IList<IndexReader.IReaderClosedListener> listeners = new List<IndexReader.IReaderClosedListener>();
                 int listenerCount = Random.Next(20);
                 AtomicInt32 count = new AtomicInt32();
@@ -104,13 +104,13 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class FilterAtomicReaderAnonymousInnerClassHelper : FilterAtomicReader
+        private class FilterAtomicReaderAnonymousClass : FilterAtomicReader
         {
             private readonly TestIndexReaderClose outerInstance;
 
             private bool throwOnClose;
 
-            public FilterAtomicReaderAnonymousInnerClassHelper(TestIndexReaderClose outerInstance, AtomicReader wrap, bool throwOnClose)
+            public FilterAtomicReaderAnonymousClass(TestIndexReaderClose outerInstance, AtomicReader wrap, bool throwOnClose)
                 : base(wrap)
             {
                 this.outerInstance = outerInstance;

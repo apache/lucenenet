@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestPositionIncrementGap()
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
+            Analyzer analyzer = new AnalyzerAnonymousClass();
 
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
 
@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
             reader.Dispose();
         }
 
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        private class AnalyzerAnonymousClass : Analyzer
         {
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestTokenReuse()
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this);
+            Analyzer analyzer = new AnalyzerAnonymousClass2(this);
 
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
 
@@ -182,11 +182,11 @@ namespace Lucene.Net.Index
             reader.Dispose();
         }
 
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        private class AnalyzerAnonymousClass2 : Analyzer
         {
             private readonly TestDocumentWriter outerInstance;
 
-            public AnalyzerAnonymousInnerClassHelper2(TestDocumentWriter outerInstance)
+            public AnalyzerAnonymousClass2(TestDocumentWriter outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -194,14 +194,14 @@ namespace Lucene.Net.Index
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new TokenFilterAnonymousInnerClassHelper(this, tokenizer));
+                return new TokenStreamComponents(tokenizer, new TokenFilterAnonymousClass(this, tokenizer));
             }
 
-            private class TokenFilterAnonymousInnerClassHelper : TokenFilter
+            private class TokenFilterAnonymousClass : TokenFilter
             {
-                private readonly AnalyzerAnonymousInnerClassHelper2 outerInstance;
+                private readonly AnalyzerAnonymousClass2 outerInstance;
 
-                public TokenFilterAnonymousInnerClassHelper(AnalyzerAnonymousInnerClassHelper2 outerInstance, Tokenizer tokenizer)
+                public TokenFilterAnonymousClass(AnalyzerAnonymousClass2 outerInstance, Tokenizer tokenizer)
                     : base(tokenizer)
                 {
                     this.outerInstance = outerInstance;
@@ -266,7 +266,7 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
 
-            doc.Add(new TextField("preanalyzed", new TokenStreamAnonymousInnerClassHelper(this)));
+            doc.Add(new TextField("preanalyzed", new TokenStreamAnonymousClass(this)));
 
             writer.AddDocument(doc);
             writer.Commit();
@@ -292,11 +292,11 @@ namespace Lucene.Net.Index
             reader.Dispose();
         }
 
-        private class TokenStreamAnonymousInnerClassHelper : TokenStream
+        private class TokenStreamAnonymousClass : TokenStream
         {
             private readonly TestDocumentWriter outerInstance;
 
-            public TokenStreamAnonymousInnerClassHelper(TestDocumentWriter outerInstance) 
+            public TokenStreamAnonymousClass(TestDocumentWriter outerInstance) 
             {
                 this.outerInstance = outerInstance;
                 tokens = new string[] { "term1", "term2", "term3", "term2" };

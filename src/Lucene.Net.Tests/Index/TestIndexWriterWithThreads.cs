@@ -683,7 +683,7 @@ namespace Lucene.Net.Index
             ReentrantLock commitLock = new ReentrantLock();
             for (int threadID = 0; threadID < threadCount; threadID++)
             {
-                threads[threadID] = new ThreadAnonymousInnerClassHelper(this, d, writerRef, docs, iters, failed, rollbackLock, commitLock);
+                threads[threadID] = new ThreadAnonymousClass(this, d, writerRef, docs, iters, failed, rollbackLock, commitLock);
                 threads[threadID].Start();
             }
 
@@ -695,7 +695,7 @@ namespace Lucene.Net.Index
                 } 
                 catch (Exception e)
                 {
-                    Console.WriteLine("EXCEPTION in ThreadAnonymousInnerClassHelper: " + Environment.NewLine + e);
+                    Console.WriteLine("EXCEPTION in ThreadAnonymousClass: " + Environment.NewLine + e);
                 }
             }
 
@@ -704,7 +704,7 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
             private readonly TestIndexWriterWithThreads outerInstance;
@@ -718,7 +718,7 @@ namespace Lucene.Net.Index
             private readonly ReentrantLock rollbackLock;
             private readonly ReentrantLock commitLock;
 
-            public ThreadAnonymousInnerClassHelper(TestIndexWriterWithThreads outerInstance, BaseDirectoryWrapper d, AtomicReference<IndexWriter> writerRef, LineFileDocs docs, int iters, AtomicBoolean failed, ReentrantLock rollbackLock, ReentrantLock commitLock)
+            public ThreadAnonymousClass(TestIndexWriterWithThreads outerInstance, BaseDirectoryWrapper d, AtomicReference<IndexWriter> writerRef, LineFileDocs docs, int iters, AtomicBoolean failed, ReentrantLock rollbackLock, ReentrantLock commitLock)
             {
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this.outerInstance = outerInstance;

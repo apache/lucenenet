@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
                 SortedDocValues fcsi = FieldCache.DEFAULT.GetTermsIndex((context.AtomicReader), m_query.m_field);
                 // Cannot use FixedBitSet because we require long index (ord):
                 Int64BitSet termSet = new Int64BitSet(fcsi.ValueCount);
-                TermsEnum termsEnum = m_query.GetTermsEnum(new TermsAnonymousInnerClassHelper(fcsi));
+                TermsEnum termsEnum = m_query.GetTermsEnum(new TermsAnonymousClass(fcsi));
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
                 if (termsEnum.MoveNext())
@@ -130,11 +130,11 @@ namespace Lucene.Net.Search
                 });
             }
 
-            private class TermsAnonymousInnerClassHelper : Terms
+            private class TermsAnonymousClass : Terms
             {
                 private readonly SortedDocValues fcsi;
 
-                public TermsAnonymousInnerClassHelper(SortedDocValues fcsi)
+                public TermsAnonymousClass(SortedDocValues fcsi)
                 {
                     this.fcsi = fcsi;
                 }

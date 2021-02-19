@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestSetPosition()
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
+            Analyzer analyzer = new AnalyzerAnonymousClass(this);
             Directory store = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
@@ -170,23 +170,23 @@ namespace Lucene.Net.Search
             store.Dispose();
         }
 
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        private class AnalyzerAnonymousClass : Analyzer
         {
             private readonly TestPositionIncrement outerInstance;
 
-            public AnalyzerAnonymousInnerClassHelper(TestPositionIncrement outerInstance)
+            public AnalyzerAnonymousClass(TestPositionIncrement outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
-                return new TokenStreamComponents(new TokenizerAnonymousInnerClassHelper(reader));
+                return new TokenStreamComponents(new TokenizerAnonymousClass(reader));
             }
 
-            private class TokenizerAnonymousInnerClassHelper : Tokenizer
+            private class TokenizerAnonymousClass : Tokenizer
             {
-                public TokenizerAnonymousInnerClassHelper(TextReader reader)
+                public TokenizerAnonymousClass(TextReader reader)
                     : base(reader)
                 {
                     TOKENS = new string[] { "1", "2", "3", "4", "5" };

@@ -41,9 +41,9 @@ namespace Lucene.Net.Search
         public virtual void TestFilteredDocIdSet()
         {
             const int maxdoc = 10;
-            DocIdSet innerSet = new DocIdSetAnonymousInnerClassHelper(this, maxdoc);
+            DocIdSet innerSet = new DocIdSetAnonymousClass(this, maxdoc);
 
-            DocIdSet filteredSet = new FilteredDocIdSetAnonymousInnerClassHelper(this, innerSet);
+            DocIdSet filteredSet = new FilteredDocIdSetAnonymousClass(this, innerSet);
 
             DocIdSetIterator iter = filteredSet.GetIterator();
             List<int?> list = new List<int?>();
@@ -74,13 +74,13 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class DocIdSetAnonymousInnerClassHelper : DocIdSet
+        private class DocIdSetAnonymousClass : DocIdSet
         {
             private readonly TestDocIdSet outerInstance;
 
             private readonly int maxdoc;
 
-            public DocIdSetAnonymousInnerClassHelper(TestDocIdSet outerInstance, int maxdoc)
+            public DocIdSetAnonymousClass(TestDocIdSet outerInstance, int maxdoc)
             {
                 this.outerInstance = outerInstance;
                 this.maxdoc = maxdoc;
@@ -88,14 +88,14 @@ namespace Lucene.Net.Search
 
             public override DocIdSetIterator GetIterator()
             {
-                return new DocIdSetIteratorAnonymousInnerClassHelper(this);
+                return new DocIdSetIteratorAnonymousClass(this);
             }
 
-            private class DocIdSetIteratorAnonymousInnerClassHelper : DocIdSetIterator
+            private class DocIdSetIteratorAnonymousClass : DocIdSetIterator
             {
-                private readonly DocIdSetAnonymousInnerClassHelper outerInstance;
+                private readonly DocIdSetAnonymousClass outerInstance;
 
-                public DocIdSetIteratorAnonymousInnerClassHelper(DocIdSetAnonymousInnerClassHelper outerInstance)
+                public DocIdSetIteratorAnonymousClass(DocIdSetAnonymousClass outerInstance)
                 {
                     this.outerInstance = outerInstance;
                     docid = -1;
@@ -123,11 +123,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class FilteredDocIdSetAnonymousInnerClassHelper : FilteredDocIdSet
+        private class FilteredDocIdSetAnonymousClass : FilteredDocIdSet
         {
             private readonly TestDocIdSet outerInstance;
 
-            public FilteredDocIdSetAnonymousInnerClassHelper(TestDocIdSet outerInstance, DocIdSet innerSet)
+            public FilteredDocIdSetAnonymousClass(TestDocIdSet outerInstance, DocIdSet innerSet)
                 : base(innerSet)
             {
                 this.outerInstance = outerInstance;
@@ -161,18 +161,18 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, searcher.Search(new MatchAllDocsQuery(), 10).TotalHits);
 
             // Now search w/ a Filter which returns a null DocIdSet
-            Filter f = new FilterAnonymousInnerClassHelper(this);
+            Filter f = new FilterAnonymousClass(this);
 
             Assert.AreEqual(0, searcher.Search(new MatchAllDocsQuery(), f, 10).TotalHits);
             reader.Dispose();
             dir.Dispose();
         }
 
-        private class FilterAnonymousInnerClassHelper : Filter
+        private class FilterAnonymousClass : Filter
         {
             private readonly TestDocIdSet outerInstance;
 
-            public FilterAnonymousInnerClassHelper(TestDocIdSet outerInstance)
+            public FilterAnonymousClass(TestDocIdSet outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -203,33 +203,33 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, searcher.Search(new MatchAllDocsQuery(), 10).TotalHits);
 
             // Now search w/ a Filter which returns a null DocIdSet
-            Filter f = new FilterAnonymousInnerClassHelper2(this);
+            Filter f = new FilterAnonymousClass2(this);
 
             Assert.AreEqual(0, searcher.Search(new MatchAllDocsQuery(), f, 10).TotalHits);
             reader.Dispose();
             dir.Dispose();
         }
 
-        private class FilterAnonymousInnerClassHelper2 : Filter
+        private class FilterAnonymousClass2 : Filter
         {
             private readonly TestDocIdSet outerInstance;
 
-            public FilterAnonymousInnerClassHelper2(TestDocIdSet outerInstance)
+            public FilterAnonymousClass2(TestDocIdSet outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                DocIdSet innerNullIteratorSet = new DocIdSetAnonymousInnerClassHelper2(this);
-                return new FilteredDocIdSetAnonymousInnerClassHelper2(this, innerNullIteratorSet);
+                DocIdSet innerNullIteratorSet = new DocIdSetAnonymousClass2(this);
+                return new FilteredDocIdSetAnonymousClass2(this, innerNullIteratorSet);
             }
 
-            private class DocIdSetAnonymousInnerClassHelper2 : DocIdSet
+            private class DocIdSetAnonymousClass2 : DocIdSet
             {
-                private readonly FilterAnonymousInnerClassHelper2 outerInstance;
+                private readonly FilterAnonymousClass2 outerInstance;
 
-                public DocIdSetAnonymousInnerClassHelper2(FilterAnonymousInnerClassHelper2 outerInstance)
+                public DocIdSetAnonymousClass2(FilterAnonymousClass2 outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }
@@ -240,11 +240,11 @@ namespace Lucene.Net.Search
                 }
             }
 
-            private class FilteredDocIdSetAnonymousInnerClassHelper2 : FilteredDocIdSet
+            private class FilteredDocIdSetAnonymousClass2 : FilteredDocIdSet
             {
-                private readonly FilterAnonymousInnerClassHelper2 outerInstance;
+                private readonly FilterAnonymousClass2 outerInstance;
 
-                public FilteredDocIdSetAnonymousInnerClassHelper2(FilterAnonymousInnerClassHelper2 outerInstance, DocIdSet innerNullIteratorSet)
+                public FilteredDocIdSetAnonymousClass2(FilterAnonymousClass2 outerInstance, DocIdSet innerNullIteratorSet)
                     : base(innerNullIteratorSet)
                 {
                     this.outerInstance = outerInstance;

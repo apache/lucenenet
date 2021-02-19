@@ -596,7 +596,7 @@ namespace Lucene.Net.Search.VectorHighlight
                   token("red", 0, 0, 3)
                 ), matched));
 
-            Analyzer analyzer = new AnalyzerWrapperAnonymousHelper();
+            Analyzer analyzer = new AnalyzerWrapperAnonymousClass();
 
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
@@ -642,12 +642,12 @@ namespace Lucene.Net.Search.VectorHighlight
             dir.Dispose();
         }
 
-        internal class AnalyzerWrapperAnonymousHelper : AnalyzerWrapper
+        internal class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
         {
             IDictionary<String, Analyzer> fieldAnalyzers = new JCG.SortedDictionary<String, Analyzer>(StringComparer.Ordinal);
 
 #pragma warning disable 612, 618 // LUCENENET NOTE: Class calls obsolete (default) constructor
-            public AnalyzerWrapperAnonymousHelper()
+            public AnalyzerWrapperAnonymousClass()
             {
                 fieldAnalyzers.Put("field", new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET));
                 fieldAnalyzers.Put("field_exact", new MockAnalyzer(Random));

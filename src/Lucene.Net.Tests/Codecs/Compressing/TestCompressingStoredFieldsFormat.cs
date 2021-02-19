@@ -64,7 +64,7 @@ namespace Lucene.Net.Codecs.Compressing
             Document invalidDoc = new Document();
             FieldType fieldType = new FieldType();
             fieldType.IsStored = true;
-            invalidDoc.Add(new FieldAnonymousInnerClassHelper(this, fieldType));
+            invalidDoc.Add(new FieldAnonymousClass(this, fieldType));
 
             try
             {
@@ -90,11 +90,11 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
-        private class FieldAnonymousInnerClassHelper : Field
+        private class FieldAnonymousClass : Field
         {
             private readonly TestCompressingStoredFieldsFormat outerInstance;
 
-            public FieldAnonymousInnerClassHelper(TestCompressingStoredFieldsFormat outerInstance, FieldType fieldType)
+            public FieldAnonymousClass(TestCompressingStoredFieldsFormat outerInstance, FieldType fieldType)
                 : base("invalid", fieldType)
             {
                 this.outerInstance = outerInstance;

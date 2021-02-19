@@ -59,11 +59,11 @@ namespace Lucene.Net.Search
         private void CheckHits(IndexSearcher searcher, Query q, float expectedScore, string scorerClassName, string innerScorerClassName)
         {
             int[] count = new int[1];
-            searcher.Search(q, new CollectorAnonymousInnerClassHelper(this, expectedScore, scorerClassName, innerScorerClassName, count));
+            searcher.Search(q, new CollectorAnonymousClass(this, expectedScore, scorerClassName, innerScorerClassName, count));
             Assert.AreEqual(1, count[0], "invalid number of results");
         }
 
-        private class CollectorAnonymousInnerClassHelper : ICollector
+        private class CollectorAnonymousClass : ICollector
         {
             private readonly TestConstantScoreQuery outerInstance;
 
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
             private readonly string innerScorerClassName;
             private readonly int[] count;
 
-            public CollectorAnonymousInnerClassHelper(TestConstantScoreQuery outerInstance, float expectedScore, string scorerClassName, string innerScorerClassName, int[] count)
+            public CollectorAnonymousClass(TestConstantScoreQuery outerInstance, float expectedScore, string scorerClassName, string innerScorerClassName, int[] count)
             {
                 this.outerInstance = outerInstance;
                 this.expectedScore = expectedScore;
@@ -132,7 +132,7 @@ namespace Lucene.Net.Search
                 searcher = NewSearcher(reader, true, false);
 
                 // set a similarity that does not normalize our boost away
-                searcher.Similarity = new DefaultSimilarityAnonymousInnerClassHelper(this);
+                searcher.Similarity = new DefaultSimilarityAnonymousClass(this);
 
                 Query csq1 = new ConstantScoreQuery(new TermQuery(new Term("field", "term")));
                 csq1.Boost = 2.0f;
@@ -167,11 +167,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class DefaultSimilarityAnonymousInnerClassHelper : DefaultSimilarity
+        private class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
             private readonly TestConstantScoreQuery outerInstance;
 
-            public DefaultSimilarityAnonymousInnerClassHelper(TestConstantScoreQuery outerInstance)
+            public DefaultSimilarityAnonymousClass(TestConstantScoreQuery outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

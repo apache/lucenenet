@@ -351,11 +351,11 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             ts.End();
         }
 
-        private class ThreadAnonymousHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly CountdownEvent startingGun;
 
-            public ThreadAnonymousHelper(CountdownEvent startingGun)
+            public ThreadAnonymousClass(CountdownEvent startingGun)
             {
                 this.startingGun = startingGun;
             }
@@ -399,10 +399,10 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         {
             int numThreads = 8;
             CountdownEvent startingGun = new CountdownEvent(1);
-            ThreadAnonymousHelper[] threads = new ThreadAnonymousHelper[numThreads];
+            ThreadAnonymousClass[] threads = new ThreadAnonymousClass[numThreads];
             for (int i = 0; i < threads.Length; i++)
             {
-                threads[i] = new ThreadAnonymousHelper(startingGun);
+                threads[i] = new ThreadAnonymousClass(startingGun);
 
                 threads[i].Start();
             }

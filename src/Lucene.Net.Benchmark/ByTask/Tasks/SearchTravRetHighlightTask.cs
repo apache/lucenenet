@@ -94,15 +94,15 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             m_highlighter = new Highlighter(new SimpleHTMLFormatter(), new QueryScorer(q));
             m_highlighter.MaxDocCharsToAnalyze = m_maxDocCharsToAnalyze;
-            return new BenchmarkHighlighterAnonymousHelper(this, m_highlighter);
+            return new BenchmarkHighlighterAnonymousClass(this, m_highlighter);
         }
 
-        private class BenchmarkHighlighterAnonymousHelper : BenchmarkHighlighter
+        private class BenchmarkHighlighterAnonymousClass : BenchmarkHighlighter
         {
             private readonly SearchTravRetHighlightTask outerInstance;
             private readonly Highlighter highlighter;
 
-            public BenchmarkHighlighterAnonymousHelper(SearchTravRetHighlightTask outerInstance, Highlighter highlighter)
+            public BenchmarkHighlighterAnonymousClass(SearchTravRetHighlightTask outerInstance, Highlighter highlighter)
             {
                 this.outerInstance = outerInstance;
                 this.highlighter = highlighter;

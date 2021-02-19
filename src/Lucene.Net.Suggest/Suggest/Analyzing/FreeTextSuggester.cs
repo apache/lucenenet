@@ -258,16 +258,16 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 // TODO: use ShingleAnalyzerWrapper?
                 // Tack on ShingleFilter to the end, to generate token ngrams:
-                return new AnalyzerWrapperAnonymousInnerClassHelper(this, other.Strategy, other);
+                return new AnalyzerWrapperAnonymousClass(this, other.Strategy, other);
             }
         }
 
-        private class AnalyzerWrapperAnonymousInnerClassHelper : AnalyzerWrapper
+        private class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
         {
             private readonly FreeTextSuggester outerInstance;
             private readonly Analyzer other;
 
-            public AnalyzerWrapperAnonymousInnerClassHelper(FreeTextSuggester outerInstance, ReuseStrategy reuseStrategy, Analyzer other)
+            public AnalyzerWrapperAnonymousClass(FreeTextSuggester outerInstance, ReuseStrategy reuseStrategy, Analyzer other)
                 : base(reuseStrategy)
             {
                 this.outerInstance = outerInstance;
@@ -712,7 +712,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                         // Must do num+seen.size() for queue depth because we may
                         // reject up to seen.size() paths in acceptResult():
-                        Util.Fst.Util.TopNSearcher<long?> searcher = new TopNSearcherAnonymousInnerClassHelper(this, fst, num, num + seen.Count, weightComparer, seen, finalLastToken);
+                        Util.Fst.Util.TopNSearcher<long?> searcher = new TopNSearcherAnonymousClass(this, fst, num, num + seen.Count, weightComparer, seen, finalLastToken);
 
                         // since this search is initialized with a single start node 
                         // it is okay to start with an empty input path here
@@ -802,14 +802,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private class TopNSearcherAnonymousInnerClassHelper : Util.Fst.Util.TopNSearcher<long?>
+        private class TopNSearcherAnonymousClass : Util.Fst.Util.TopNSearcher<long?>
         {
             private readonly FreeTextSuggester outerInstance;
 
             private readonly ISet<BytesRef> seen;
             private readonly BytesRef finalLastToken;
 
-            public TopNSearcherAnonymousInnerClassHelper(
+            public TopNSearcherAnonymousClass(
                 FreeTextSuggester outerInstance,
                 FST<long?> fst,
                 int num,

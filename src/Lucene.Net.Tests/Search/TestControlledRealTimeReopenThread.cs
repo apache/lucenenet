@@ -274,7 +274,7 @@ namespace Lucene.Net.Search
 
             genWriter = new TrackingIndexWriter(m_writer);
 
-            SearcherFactory sf = new SearcherFactoryAnonymousInnerClassHelper(this, es);
+            SearcherFactory sf = new SearcherFactoryAnonymousClass(this, es);
 
             nrtNoDeletes = new SearcherManager(m_writer, false, sf);
             nrtDeletes = new SearcherManager(m_writer, true, sf);
@@ -296,13 +296,13 @@ namespace Lucene.Net.Search
             nrtNoDeletesThread.Start();
         }
 
-        private class SearcherFactoryAnonymousInnerClassHelper : SearcherFactory
+        private class SearcherFactoryAnonymousClass : SearcherFactory
         {
             private readonly TestControlledRealTimeReopenThread outerInstance;
 
             private TaskScheduler es;
 
-            public SearcherFactoryAnonymousInnerClassHelper(TestControlledRealTimeReopenThread outerInstance, TaskScheduler es)
+            public SearcherFactoryAnonymousClass(TestControlledRealTimeReopenThread outerInstance, TaskScheduler es)
             {
                 this.outerInstance = outerInstance;
                 this.es = es;
@@ -399,7 +399,7 @@ namespace Lucene.Net.Search
             doc.Add(NewTextField("test", "test", Field.Store.YES));
             writer.AddDocument(doc);
             manager.MaybeRefresh();
-            var t = new ThreadAnonymousInnerClassHelper(this, latch, signal, writer, manager);
+            var t = new ThreadAnonymousClass(this, latch, signal, writer, manager);
             t.Start();
             _writer.waitAfterUpdate = true; // wait in addDocument to let some reopens go through
             long lastGen = writer.UpdateDocument(new Term("foo", "bar"), doc); // once this returns the doc is already reflected in the last reopen
@@ -423,7 +423,7 @@ namespace Lucene.Net.Search
             }
 
             AtomicBoolean finished = new AtomicBoolean(false);
-            var waiter = new ThreadAnonymousInnerClassHelper2(this, lastGen, thread, finished);
+            var waiter = new ThreadAnonymousClass2(this, lastGen, thread, finished);
             waiter.Start();
             manager.MaybeRefresh();
             waiter.Join(1000);
@@ -437,7 +437,7 @@ namespace Lucene.Net.Search
             IOUtils.Dispose(manager, _writer, d);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestControlledRealTimeReopenThread outerInstance;
 
@@ -446,7 +446,7 @@ namespace Lucene.Net.Search
             private readonly TrackingIndexWriter writer;
             private readonly SearcherManager manager;
 
-            public ThreadAnonymousInnerClassHelper(TestControlledRealTimeReopenThread outerInstance, CountdownEvent latch, CountdownEvent signal, TrackingIndexWriter writer, SearcherManager manager)
+            public ThreadAnonymousClass(TestControlledRealTimeReopenThread outerInstance, CountdownEvent latch, CountdownEvent signal, TrackingIndexWriter writer, SearcherManager manager)
             {
                 this.outerInstance = outerInstance;
                 this.latch = latch;
@@ -476,7 +476,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
+        private class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly TestControlledRealTimeReopenThread outerInstance;
 
@@ -484,7 +484,7 @@ namespace Lucene.Net.Search
             private readonly ControlledRealTimeReopenThread<IndexSearcher> thread;
             private readonly AtomicBoolean finished;
 
-            public ThreadAnonymousInnerClassHelper2(TestControlledRealTimeReopenThread outerInstance, long lastGen, ControlledRealTimeReopenThread<IndexSearcher> thread, AtomicBoolean finished)
+            public ThreadAnonymousClass2(TestControlledRealTimeReopenThread outerInstance, long lastGen, ControlledRealTimeReopenThread<IndexSearcher> thread, AtomicBoolean finished)
             {
                 this.outerInstance = outerInstance;
                 this.lastGen = lastGen;
@@ -561,7 +561,7 @@ namespace Lucene.Net.Search
 
             IndexReader other = DirectoryReader.Open(dir);
 
-            SearcherFactory theEvilOne = new SearcherFactoryAnonymousInnerClassHelper2(this, other);
+            SearcherFactory theEvilOne = new SearcherFactoryAnonymousClass2(this, other);
 
             try
             {
@@ -579,13 +579,13 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class SearcherFactoryAnonymousInnerClassHelper2 : SearcherFactory
+        private class SearcherFactoryAnonymousClass2 : SearcherFactory
         {
             private readonly TestControlledRealTimeReopenThread outerInstance;
 
             private readonly IndexReader other;
 
-            public SearcherFactoryAnonymousInnerClassHelper2(TestControlledRealTimeReopenThread outerInstance, IndexReader other)
+            public SearcherFactoryAnonymousClass2(TestControlledRealTimeReopenThread outerInstance, IndexReader other)
             {
                 this.outerInstance = outerInstance;
                 this.other = other;
@@ -608,7 +608,7 @@ namespace Lucene.Net.Search
             IndexWriter iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
             AtomicBoolean afterRefreshCalled = new AtomicBoolean(false);
             SearcherManager sm = new SearcherManager(iw, true, new SearcherFactory());
-            sm.AddListener(new RefreshListenerAnonymousInnerClassHelper(this, afterRefreshCalled));
+            sm.AddListener(new RefreshListenerAnonymousClass(this, afterRefreshCalled));
             iw.AddDocument(new Document());
             iw.Commit();
             assertFalse(afterRefreshCalled);
@@ -619,13 +619,13 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class RefreshListenerAnonymousInnerClassHelper : ReferenceManager.IRefreshListener
+        private class RefreshListenerAnonymousClass : ReferenceManager.IRefreshListener
         {
             private readonly TestControlledRealTimeReopenThread outerInstance;
 
             private AtomicBoolean afterRefreshCalled;
 
-            public RefreshListenerAnonymousInnerClassHelper(TestControlledRealTimeReopenThread outerInstance, AtomicBoolean afterRefreshCalled)
+            public RefreshListenerAnonymousClass(TestControlledRealTimeReopenThread outerInstance, AtomicBoolean afterRefreshCalled)
             {
                 this.outerInstance = outerInstance;
                 this.afterRefreshCalled = afterRefreshCalled;
@@ -686,7 +686,7 @@ namespace Lucene.Net.Search
             {
                 if (i > 0 && i % 50 == 0)
                 {
-                    ThreadJob commitThread = new RunnableAnonymousInnerClassHelper(this, sdp, dir, iw);
+                    ThreadJob commitThread = new RunnableAnonymousClass(this, sdp, dir, iw);
                     commitThread.Start();
                     commitThreads.Add(commitThread);
                 }
@@ -715,7 +715,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class RunnableAnonymousInnerClassHelper : ThreadJob
+        private class RunnableAnonymousClass : ThreadJob
         {
             private readonly TestControlledRealTimeReopenThread outerInstance;
 
@@ -723,7 +723,7 @@ namespace Lucene.Net.Search
             private Directory dir;
             private IndexWriter iw;
 
-            public RunnableAnonymousInnerClassHelper(TestControlledRealTimeReopenThread outerInstance, SnapshotDeletionPolicy sdp, Directory dir, IndexWriter iw)
+            public RunnableAnonymousClass(TestControlledRealTimeReopenThread outerInstance, SnapshotDeletionPolicy sdp, Directory dir, IndexWriter iw)
             {
                 this.outerInstance = outerInstance;
                 this.sdp = sdp;

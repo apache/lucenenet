@@ -53,16 +53,16 @@ namespace Lucene.Net.Search
             // get a private context that is used to rewrite, createWeight and score eventually
             AtomicReaderContext privateContext = context.AtomicReader.AtomicContext;
             Weight weight = (new IndexSearcher(privateContext)).CreateNormalizedWeight(query);
-            return new DocIdSetAnonymousInnerClassHelper(acceptDocs, privateContext, weight);
+            return new DocIdSetAnonymousClass(acceptDocs, privateContext, weight);
         }
 
-        private class DocIdSetAnonymousInnerClassHelper : DocIdSet
+        private class DocIdSetAnonymousClass : DocIdSet
         {
             private readonly IBits acceptDocs;
             private readonly AtomicReaderContext privateContext;
             private readonly Weight weight;
 
-            public DocIdSetAnonymousInnerClassHelper(IBits acceptDocs, AtomicReaderContext privateContext, Weight weight)
+            public DocIdSetAnonymousClass(IBits acceptDocs, AtomicReaderContext privateContext, Weight weight)
             {
                 this.acceptDocs = acceptDocs;
                 this.privateContext = privateContext;

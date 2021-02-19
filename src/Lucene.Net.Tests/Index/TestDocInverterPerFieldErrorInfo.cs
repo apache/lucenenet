@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
                 Tokenizer tokenizer = new MockTokenizer(input);
                 if (fieldName.Equals("distinctiveFieldName", StringComparison.Ordinal))
                 {
-                    TokenFilter tosser = new TokenFilterAnonymousInnerClassHelper(this, tokenizer);
+                    TokenFilter tosser = new TokenFilterAnonymousClass(this, tokenizer);
                     return new TokenStreamComponents(tokenizer, tosser);
                 }
                 else
@@ -69,11 +69,11 @@ namespace Lucene.Net.Index
                 }
             }
 
-            private class TokenFilterAnonymousInnerClassHelper : TokenFilter
+            private class TokenFilterAnonymousClass : TokenFilter
             {
                 private readonly ThrowingAnalyzer outerInstance;
 
-                public TokenFilterAnonymousInnerClassHelper(ThrowingAnalyzer outerInstance, Tokenizer tokenizer)
+                public TokenFilterAnonymousClass(ThrowingAnalyzer outerInstance, Tokenizer tokenizer)
                     : base(tokenizer)
                 {
                     this.outerInstance = outerInstance;

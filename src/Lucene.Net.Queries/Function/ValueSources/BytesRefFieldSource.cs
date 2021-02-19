@@ -42,22 +42,22 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 BinaryDocValues binaryValues = Search.FieldCache.DEFAULT.GetTerms(readerContext.AtomicReader, m_field, true);
                 IBits docsWithField = Search.FieldCache.DEFAULT.GetDocsWithField(readerContext.AtomicReader, m_field);
-                return new FunctionValuesAnonymousInnerClassHelper(this, binaryValues, docsWithField);
+                return new FunctionValuesAnonymousClass(this, binaryValues, docsWithField);
             }
             else
             {
-                return new DocTermsIndexDocValuesAnonymousInnerClassHelper(this, this, readerContext, m_field);
+                return new DocTermsIndexDocValuesAnonymousClass(this, this, readerContext, m_field);
             }
         }
 
-        private class FunctionValuesAnonymousInnerClassHelper : FunctionValues
+        private class FunctionValuesAnonymousClass : FunctionValues
         {
             private readonly BytesRefFieldSource outerInstance;
 
             private readonly BinaryDocValues binaryValues;
             private readonly IBits docsWithField;
 
-            public FunctionValuesAnonymousInnerClassHelper(BytesRefFieldSource outerInstance, BinaryDocValues binaryValues, IBits docsWithField)
+            public FunctionValuesAnonymousClass(BytesRefFieldSource outerInstance, BinaryDocValues binaryValues, IBits docsWithField)
             {
                 this.outerInstance = outerInstance;
                 this.binaryValues = binaryValues;
@@ -93,11 +93,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
         }
 
-        private class DocTermsIndexDocValuesAnonymousInnerClassHelper : DocTermsIndexDocValues
+        private class DocTermsIndexDocValuesAnonymousClass : DocTermsIndexDocValues
         {
             private readonly BytesRefFieldSource outerInstance;
 
-            public DocTermsIndexDocValuesAnonymousInnerClassHelper(BytesRefFieldSource outerInstance, BytesRefFieldSource @this, AtomicReaderContext readerContext, string field)
+            public DocTermsIndexDocValuesAnonymousClass(BytesRefFieldSource outerInstance, BytesRefFieldSource @this, AtomicReaderContext readerContext, string field)
                 : base(@this, readerContext, field)
             {
                 this.outerInstance = outerInstance;

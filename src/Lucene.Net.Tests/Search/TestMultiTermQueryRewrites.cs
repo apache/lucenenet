@@ -196,7 +196,7 @@ namespace Lucene.Net.Search
 
         private void CheckBoosts(MultiTermQuery.RewriteMethod method)
         {
-            MultiTermQuery mtq = new MultiTermQueryAnonymousInnerClassHelper(this);
+            MultiTermQuery mtq = new MultiTermQueryAnonymousClass(this);
             mtq.MultiTermRewriteMethod = (method);
             Query q1 = searcher.Rewrite(mtq);
             Query q2 = multiSearcher.Rewrite(mtq);
@@ -215,11 +215,11 @@ namespace Lucene.Net.Search
             CheckBooleanQueryBoosts((BooleanQuery)q3);
         }
 
-        private class MultiTermQueryAnonymousInnerClassHelper : MultiTermQuery
+        private class MultiTermQueryAnonymousClass : MultiTermQuery
         {
             private readonly TestMultiTermQueryRewrites outerInstance;
 
-            public MultiTermQueryAnonymousInnerClassHelper(TestMultiTermQueryRewrites outerInstance)
+            public MultiTermQueryAnonymousClass(TestMultiTermQueryRewrites outerInstance)
                 : base("data")
             {
                 this.outerInstance = outerInstance;
@@ -227,14 +227,14 @@ namespace Lucene.Net.Search
 
             protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
             {
-                return new TermRangeTermsEnumAnonymousInnerClassHelper(this, terms.GetEnumerator(), new BytesRef("2"), new BytesRef("7"));
+                return new TermRangeTermsEnumAnonymousClass(this, terms.GetEnumerator(), new BytesRef("2"), new BytesRef("7"));
             }
 
-            private class TermRangeTermsEnumAnonymousInnerClassHelper : TermRangeTermsEnum
+            private class TermRangeTermsEnumAnonymousClass : TermRangeTermsEnum
             {
-                private readonly MultiTermQueryAnonymousInnerClassHelper outerInstance;
+                private readonly MultiTermQueryAnonymousClass outerInstance;
 
-                public TermRangeTermsEnumAnonymousInnerClassHelper(MultiTermQueryAnonymousInnerClassHelper outerInstance, TermsEnum iterator, BytesRef bref1, BytesRef bref2)
+                public TermRangeTermsEnumAnonymousClass(MultiTermQueryAnonymousClass outerInstance, TermsEnum iterator, BytesRef bref1, BytesRef bref2)
                     : base(iterator, bref1, bref2, true, true)
                 {
                     this.outerInstance = outerInstance;

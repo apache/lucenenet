@@ -1085,7 +1085,7 @@ namespace Lucene.Net.Util.Packed
                     // stream, but this is not true because packed ints storage used to be
                     // long-aligned and is now byte-aligned, hence this additional
                     // condition when reading the last value
-                    return new DirectPackedReaderAnonymousInnerClassHelper(bitsPerValue, valueCount, @in, endPointer);
+                    return new DirectPackedReaderAnonymousClass(bitsPerValue, valueCount, @in, endPointer);
                 }
                 else
                 {
@@ -1098,13 +1098,13 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        private class DirectPackedReaderAnonymousInnerClassHelper : DirectPackedReader
+        private class DirectPackedReaderAnonymousClass : DirectPackedReader
         {
             private readonly IndexInput @in;
             private readonly int valueCount;
             private readonly long endPointer;
 
-            public DirectPackedReaderAnonymousInnerClassHelper(int bitsPerValue, int valueCount, IndexInput @in, long endPointer)
+            public DirectPackedReaderAnonymousClass(int bitsPerValue, int valueCount, IndexInput @in, long endPointer)
                 : base(bitsPerValue, valueCount, @in)
             {
                 this.@in = @in;

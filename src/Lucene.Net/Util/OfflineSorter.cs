@@ -388,7 +388,7 @@ namespace Lucene.Net.Util
 
             var @out = new ByteSequencesWriter(outputFile);
 
-            PriorityQueue<FileAndTop> queue = new PriorityQueueAnonymousInnerClassHelper(this, merges.Count);
+            PriorityQueue<FileAndTop> queue = new PriorityQueueAnonymousClass(this, merges.Count);
 
             var streams = new ByteSequencesReader[merges.Count];
             try
@@ -440,11 +440,11 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class PriorityQueueAnonymousInnerClassHelper : PriorityQueue<FileAndTop>
+        private class PriorityQueueAnonymousClass : PriorityQueue<FileAndTop>
         {
             private readonly OfflineSorter outerInstance;
 
-            public PriorityQueueAnonymousInnerClassHelper(OfflineSorter outerInstance, int size)
+            public PriorityQueueAnonymousClass(OfflineSorter outerInstance, int size)
                 : base(size)
             {
                 this.outerInstance = outerInstance;

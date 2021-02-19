@@ -388,26 +388,26 @@ namespace Lucene.Net.Codecs.Lucene45
                     long min = entry.minValue;
                     long mult = entry.gcd;
                     BlockPackedReader quotientReader = new BlockPackedReader(data, entry.PackedInt32sVersion, entry.BlockSize, entry.Count, true);
-                    return new Int64ValuesAnonymousInnerClassHelper(min, mult, quotientReader);
+                    return new Int64ValuesAnonymousClass(min, mult, quotientReader);
 
                 case Lucene45DocValuesConsumer.TABLE_COMPRESSED:
                     long[] table = entry.table;
                     int bitsRequired = PackedInt32s.BitsRequired(table.Length - 1);
                     PackedInt32s.Reader ords = PackedInt32s.GetDirectReaderNoHeader(data, PackedInt32s.Format.PACKED, entry.PackedInt32sVersion, (int)entry.Count, bitsRequired);
-                    return new Int64ValuesAnonymousInnerClassHelper2(table, ords);
+                    return new Int64ValuesAnonymousClass2(table, ords);
 
                 default:
                     throw new Exception();
             }
         }
 
-        private class Int64ValuesAnonymousInnerClassHelper : Int64Values
+        private class Int64ValuesAnonymousClass : Int64Values
         {
             private readonly long min;
             private readonly long mult;
             private readonly BlockPackedReader quotientReader;
 
-            public Int64ValuesAnonymousInnerClassHelper(long min, long mult, BlockPackedReader quotientReader)
+            public Int64ValuesAnonymousClass(long min, long mult, BlockPackedReader quotientReader)
             {
                 this.min = min;
                 this.mult = mult;
@@ -421,12 +421,12 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
-        private class Int64ValuesAnonymousInnerClassHelper2 : Int64Values
+        private class Int64ValuesAnonymousClass2 : Int64Values
         {
             private readonly long[] table;
             private readonly PackedInt32s.Reader ords;
 
-            public Int64ValuesAnonymousInnerClassHelper2(long[] table, PackedInt32s.Reader ords)
+            public Int64ValuesAnonymousClass2(long[] table, PackedInt32s.Reader ords)
             {
                 this.table = table;
                 this.ords = ords;
@@ -463,15 +463,15 @@ namespace Lucene.Net.Codecs.Lucene45
         {
             IndexInput data = (IndexInput)this.data.Clone();
 
-            return new Int64BinaryDocValuesAnonymousInnerClassHelper(bytes, data);
+            return new Int64BinaryDocValuesAnonymousClass(bytes, data);
         }
 
-        private class Int64BinaryDocValuesAnonymousInnerClassHelper : Int64BinaryDocValues
+        private class Int64BinaryDocValuesAnonymousClass : Int64BinaryDocValues
         {
             private readonly Lucene45DocValuesProducer.BinaryEntry bytes;
             private readonly IndexInput data;
 
-            public Int64BinaryDocValuesAnonymousInnerClassHelper(Lucene45DocValuesProducer.BinaryEntry bytes, IndexInput data)
+            public Int64BinaryDocValuesAnonymousClass(Lucene45DocValuesProducer.BinaryEntry bytes, IndexInput data)
             {
                 this.bytes = bytes;
                 this.data = data;
@@ -527,16 +527,16 @@ namespace Lucene.Net.Codecs.Lucene45
 
             MonotonicBlockPackedReader addresses = GetAddressInstance(data, field, bytes);
 
-            return new Int64BinaryDocValuesAnonymousInnerClassHelper2(bytes, data, addresses);
+            return new Int64BinaryDocValuesAnonymousClass2(bytes, data, addresses);
         }
 
-        private class Int64BinaryDocValuesAnonymousInnerClassHelper2 : Int64BinaryDocValues
+        private class Int64BinaryDocValuesAnonymousClass2 : Int64BinaryDocValues
         {
             private readonly Lucene45DocValuesProducer.BinaryEntry bytes;
             private readonly IndexInput data;
             private readonly MonotonicBlockPackedReader addresses;
 
-            public Int64BinaryDocValuesAnonymousInnerClassHelper2(Lucene45DocValuesProducer.BinaryEntry bytes, IndexInput data, MonotonicBlockPackedReader addresses)
+            public Int64BinaryDocValuesAnonymousClass2(Lucene45DocValuesProducer.BinaryEntry bytes, IndexInput data, MonotonicBlockPackedReader addresses)
             {
                 this.bytes = bytes;
                 this.data = data;
@@ -617,16 +617,16 @@ namespace Lucene.Net.Codecs.Lucene45
             data.Seek(entry.Offset);
             BlockPackedReader ordinals = new BlockPackedReader(data, entry.PackedInt32sVersion, entry.BlockSize, entry.Count, true);
 
-            return new SortedDocValuesAnonymousInnerClassHelper(valueCount, binary, ordinals);
+            return new SortedDocValuesAnonymousClass(valueCount, binary, ordinals);
         }
 
-        private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
+        private class SortedDocValuesAnonymousClass : SortedDocValues
         {
             private readonly int valueCount;
             private readonly BinaryDocValues binary;
             private readonly BlockPackedReader ordinals;
 
-            public SortedDocValuesAnonymousInnerClassHelper(int valueCount, BinaryDocValues binary, BlockPackedReader ordinals)
+            public SortedDocValuesAnonymousClass(int valueCount, BinaryDocValues binary, BlockPackedReader ordinals)
             {
                 this.valueCount = valueCount;
                 this.binary = binary;
@@ -717,17 +717,17 @@ namespace Lucene.Net.Codecs.Lucene45
             // but the addresses to the ord stream are in RAM
             MonotonicBlockPackedReader ordIndex = GetOrdIndexInstance(data, field, ordIndexes[field.Number]);
 
-            return new RandomAccessOrdsAnonymousInnerClassHelper(valueCount, binary, ordinals, ordIndex);
+            return new RandomAccessOrdsAnonymousClass(valueCount, binary, ordinals, ordIndex);
         }
 
-        private class RandomAccessOrdsAnonymousInnerClassHelper : RandomAccessOrds
+        private class RandomAccessOrdsAnonymousClass : RandomAccessOrds
         {
             private readonly long valueCount;
             private readonly Lucene45DocValuesProducer.Int64BinaryDocValues binary;
             private readonly Int64Values ordinals;
             private readonly MonotonicBlockPackedReader ordIndex;
 
-            public RandomAccessOrdsAnonymousInnerClassHelper(long valueCount, Lucene45DocValuesProducer.Int64BinaryDocValues binary, Int64Values ordinals, MonotonicBlockPackedReader ordIndex)
+            public RandomAccessOrdsAnonymousClass(long valueCount, Lucene45DocValuesProducer.Int64BinaryDocValues binary, Int64Values ordinals, MonotonicBlockPackedReader ordIndex)
             {
                 this.valueCount = valueCount;
                 this.binary = binary;
@@ -818,18 +818,18 @@ namespace Lucene.Net.Codecs.Lucene45
             else
             {
                 IndexInput @in = (IndexInput)data.Clone();
-                return new BitsAnonymousInnerClassHelper(this, offset, @in);
+                return new BitsAnonymousClass(this, offset, @in);
             }
         }
 
-        private class BitsAnonymousInnerClassHelper : IBits
+        private class BitsAnonymousClass : IBits
         {
             private readonly Lucene45DocValuesProducer outerInstance;
 
             private readonly long offset;
             private readonly IndexInput @in;
 
-            public BitsAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, long offset, IndexInput @in)
+            public BitsAnonymousClass(Lucene45DocValuesProducer outerInstance, long offset, IndexInput @in)
             {
                 this.outerInstance = outerInstance;
                 this.offset = offset;
@@ -1071,16 +1071,16 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 input.Seek(bytes.offset);
 
-                return new TermsEnumAnonymousInnerClassHelper(this, input);
+                return new TermsEnumAnonymousClass(this, input);
             }
 
-            private class TermsEnumAnonymousInnerClassHelper : TermsEnum
+            private class TermsEnumAnonymousClass : TermsEnum
             {
                 private readonly CompressedBinaryDocValues outerInstance;
 
                 private readonly IndexInput input;
 
-                public TermsEnumAnonymousInnerClassHelper(CompressedBinaryDocValues outerInstance, IndexInput input)
+                public TermsEnumAnonymousClass(CompressedBinaryDocValues outerInstance, IndexInput input)
                 {
                     this.outerInstance = outerInstance;
                     this.input = input;

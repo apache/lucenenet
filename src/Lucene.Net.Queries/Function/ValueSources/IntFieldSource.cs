@@ -57,17 +57,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
             FieldCache.Int32s arr = m_cache.GetInt32s(readerContext.AtomicReader, m_field, parser, true);
             IBits valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
 
-            return new Int32DocValuesAnonymousInnerClassHelper(this, this, arr, valid);
+            return new Int32DocValuesAnonymousClass(this, this, arr, valid);
         }
 
-        private class Int32DocValuesAnonymousInnerClassHelper : Int32DocValues
+        private class Int32DocValuesAnonymousClass : Int32DocValues
         {
             private readonly Int32FieldSource outerInstance;
 
             private readonly FieldCache.Int32s arr;
             private readonly IBits valid;
 
-            public Int32DocValuesAnonymousInnerClassHelper(Int32FieldSource outerInstance, Int32FieldSource @this, FieldCache.Int32s arr, IBits valid)
+            public Int32DocValuesAnonymousClass(Int32FieldSource outerInstance, Int32FieldSource @this, FieldCache.Int32s arr, IBits valid)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;

@@ -242,7 +242,7 @@ namespace Lucene.Net.Search
             search.Similarity = new DefaultSimilarity();
             Query q = Csrq("data", "1", "6", T, T);
             q.Boost = 100;
-            search.Search(q, null, new CollectorAnonymousInnerClassHelper(this));
+            search.Search(q, null, new CollectorAnonymousClass(this));
 
             //
             // Ensure that boosting works to score one clause of a query higher
@@ -285,11 +285,11 @@ namespace Lucene.Net.Search
             Assert.IsTrue(hits[0].Score > hits[1].Score);
         }
 
-        private class CollectorAnonymousInnerClassHelper : ICollector
+        private class CollectorAnonymousClass : ICollector
         {
             private readonly TestMultiTermConstantScore outerInstance;
 
-            public CollectorAnonymousInnerClassHelper(TestMultiTermConstantScore outerInstance)
+            public CollectorAnonymousClass(TestMultiTermConstantScore outerInstance)
             {
                 this.outerInstance = outerInstance;
                 @base = 0;

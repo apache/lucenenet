@@ -41,11 +41,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         // A No-Op ITaxonomyWriterCache which always discards all given categories, and
         // always returns true in put(), to indicate some cache entries were cleared.
-        private static ITaxonomyWriterCache NO_OP_CACHE = new TaxonomyWriterCacheAnonymousInnerClassHelper();
+        private static ITaxonomyWriterCache NO_OP_CACHE = new TaxonomyWriterCacheAnonymousClass();
 
-        private class TaxonomyWriterCacheAnonymousInnerClassHelper : ITaxonomyWriterCache
+        private class TaxonomyWriterCacheAnonymousClass : ITaxonomyWriterCache
         {
-            public TaxonomyWriterCacheAnonymousInnerClassHelper()
+            public TaxonomyWriterCacheAnonymousClass()
             {
             }
 
@@ -119,7 +119,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             for (int i = 0; i < indexThreads.Length; i++)
             {
-                indexThreads[i] = new ThreadAnonymousInnerClassHelper(this, numDocs, values, iw, tw, config);
+                indexThreads[i] = new ThreadAnonymousClass(this, numDocs, values, iw, tw, config);
             }
 
             foreach (ThreadJob t in indexThreads)
@@ -165,7 +165,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             IOUtils.Dispose(tw, iw, tr, taxoDir, indexDir);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestConcurrentFacetedIndexing outerInstance;
 
@@ -175,7 +175,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             private readonly DirectoryTaxonomyWriter tw;
             private readonly FacetsConfig config;
 
-            public ThreadAnonymousInnerClassHelper(TestConcurrentFacetedIndexing outerInstance, AtomicInt32 numDocs, ConcurrentDictionary<string, string> values, IndexWriter iw, DirectoryTaxonomyWriter tw, FacetsConfig config)
+            public ThreadAnonymousClass(TestConcurrentFacetedIndexing outerInstance, AtomicInt32 numDocs, ConcurrentDictionary<string, string> values, IndexWriter iw, DirectoryTaxonomyWriter tw, FacetsConfig config)
             {
                 this.outerInstance = outerInstance;
                 this.numDocs = numDocs;

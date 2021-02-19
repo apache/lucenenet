@@ -288,13 +288,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
         private Analyzer GetGramAnalyzer()
-            => new AnalyzerWrapperAnonymousInnerClassHelper(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
+            => new AnalyzerWrapperAnonymousClass(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
 
-        private class AnalyzerWrapperAnonymousInnerClassHelper : AnalyzerWrapper
+        private class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
         {
             private readonly AnalyzingInfixSuggester outerInstance;
 
-            public AnalyzerWrapperAnonymousInnerClassHelper(AnalyzingInfixSuggester outerInstance, ReuseStrategy reuseStrategy)
+            public AnalyzerWrapperAnonymousClass(AnalyzingInfixSuggester outerInstance, ReuseStrategy reuseStrategy)
                 : base(reuseStrategy)
             {
                 this.outerInstance = outerInstance;

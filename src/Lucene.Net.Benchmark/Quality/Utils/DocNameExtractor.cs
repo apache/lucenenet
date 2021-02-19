@@ -49,17 +49,17 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
         public virtual string DocName(IndexSearcher searcher, int docid)
         {
             IList<string> name = new List<string>();
-            searcher.IndexReader.Document(docid, new StoredFieldVisitorAnonymousHelper(this, name));
+            searcher.IndexReader.Document(docid, new StoredFieldVisitorAnonymousClass(this, name));
 
             return name.Count > 0 ? name[0] : null;
         }
 
-        private class StoredFieldVisitorAnonymousHelper : StoredFieldVisitor
+        private class StoredFieldVisitorAnonymousClass : StoredFieldVisitor
         {
             private readonly DocNameExtractor outerInstance;
             private readonly IList<string> name;
 
-            public StoredFieldVisitorAnonymousHelper(DocNameExtractor outerInstance, IList<string> name)
+            public StoredFieldVisitorAnonymousClass(DocNameExtractor outerInstance, IList<string> name)
             {
                 this.outerInstance = outerInstance;
                 this.name = name;

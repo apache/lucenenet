@@ -161,19 +161,19 @@ namespace Lucene.Net.Search.Spans
         /// scores as computed by the query.
         /// </summary>
         /// <seealso cref="MultiTermRewriteMethod"/>
-        public static readonly SpanRewriteMethod SCORING_SPAN_QUERY_REWRITE = new SpanRewriteMethodAnonymousInnerClassHelper();
+        public static readonly SpanRewriteMethod SCORING_SPAN_QUERY_REWRITE = new SpanRewriteMethodAnonymousClass();
 
-        private class SpanRewriteMethodAnonymousInnerClassHelper : SpanRewriteMethod
+        private class SpanRewriteMethodAnonymousClass : SpanRewriteMethod
         {
-            public SpanRewriteMethodAnonymousInnerClassHelper()
+            public SpanRewriteMethodAnonymousClass()
             {
             }
 
-            private readonly ScoringRewrite<SpanOrQuery> @delegate = new ScoringRewriteAnonymousInnerClassHelper();
+            private readonly ScoringRewrite<SpanOrQuery> @delegate = new ScoringRewriteAnonymousClass();
 
-            private class ScoringRewriteAnonymousInnerClassHelper : ScoringRewrite<SpanOrQuery>
+            private class ScoringRewriteAnonymousClass : ScoringRewrite<SpanOrQuery>
             {
-                public ScoringRewriteAnonymousInnerClassHelper()
+                public ScoringRewriteAnonymousClass()
                 {
                 }
 
@@ -224,12 +224,12 @@ namespace Lucene.Net.Search.Spans
             /// </summary>
             public TopTermsSpanBooleanQueryRewrite(int size)
             {
-                @delegate = new TopTermsRewriteAnonymousInnerClassHelper(size);
+                @delegate = new TopTermsRewriteAnonymousClass(size);
             }
 
-            private class TopTermsRewriteAnonymousInnerClassHelper : TopTermsRewrite<SpanOrQuery>
+            private class TopTermsRewriteAnonymousClass : TopTermsRewrite<SpanOrQuery>
             {
-                public TopTermsRewriteAnonymousInnerClassHelper(int size)
+                public TopTermsRewriteAnonymousClass(int size)
                     : base(size)
                 {
                 }

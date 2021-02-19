@@ -580,7 +580,7 @@ namespace Lucene.Net.Index
                 Document doc = new Document();
                 doc.Add(field);
 
-                threads[i] = new ThreadAnonymousInnerClassHelper(this, w, startingGun, hitExc, doc);
+                threads[i] = new ThreadAnonymousClass(this, w, startingGun, hitExc, doc);
                 threads[i].Start();
             }
 
@@ -595,7 +595,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestDocValuesIndexing outerInstance;
 
@@ -604,7 +604,7 @@ namespace Lucene.Net.Index
             private readonly AtomicBoolean hitExc;
             private readonly Document doc;
 
-            public ThreadAnonymousInnerClassHelper(TestDocValuesIndexing outerInstance, IndexWriter w, CountdownEvent startingGun, AtomicBoolean hitExc, Document doc)
+            public ThreadAnonymousClass(TestDocValuesIndexing outerInstance, IndexWriter w, CountdownEvent startingGun, AtomicBoolean hitExc, Document doc)
             {
                 this.outerInstance = outerInstance;
                 this.w = w;

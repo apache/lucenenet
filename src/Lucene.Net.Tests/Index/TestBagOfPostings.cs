@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
 
             for (int threadID = 0; threadID < threadCount; threadID++)
             {
-                threads[threadID] = new ThreadAnonymousInnerClassHelper(this, maxTermsPerDoc, postings, iw, startingGun);
+                threads[threadID] = new ThreadAnonymousClass(this, maxTermsPerDoc, postings, iw, startingGun);
                 threads[threadID].Start();
             }
             startingGun.Signal();
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestBagOfPostings outerInstance;
 
@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
             private readonly RandomIndexWriter iw;
             private readonly CountdownEvent startingGun;
 
-            public ThreadAnonymousInnerClassHelper(TestBagOfPostings outerInstance, int maxTermsPerDoc, ConcurrentQueue<string> postings, RandomIndexWriter iw, CountdownEvent startingGun)
+            public ThreadAnonymousClass(TestBagOfPostings outerInstance, int maxTermsPerDoc, ConcurrentQueue<string> postings, RandomIndexWriter iw, CountdownEvent startingGun)
             {
                 this.outerInstance = outerInstance;
                 this.maxTermsPerDoc = maxTermsPerDoc;

@@ -95,11 +95,11 @@ namespace Lucene.Net.Index.Sorter
 
             // NOTE: we could return parent ID as value but really our sort "value" is more complex...
             // So we throw UOE for now. At the moment you really should only use this at indexing time.
-            return new FieldComparerAnonymousInnerClassHelper(this, parentSlots,
+            return new FieldComparerAnonymousClass(this, parentSlots,
                 childSlots, parentReverseMul, parentComparers, childReverseMul, childComparers);
         }
 
-        private class FieldComparerAnonymousInnerClassHelper : FieldComparer<int?>
+        private class FieldComparerAnonymousClass : FieldComparer<int?>
         {
             private readonly BlockJoinComparerSource outerInstance;
 
@@ -110,7 +110,7 @@ namespace Lucene.Net.Index.Sorter
             private readonly int[] childReverseMul;
             private readonly FieldComparer[] childComparers;
 
-            public FieldComparerAnonymousInnerClassHelper(BlockJoinComparerSource outerInstance,
+            public FieldComparerAnonymousClass(BlockJoinComparerSource outerInstance,
                 int[] parentSlots, int[] childSlots, int[] parentReverseMul, FieldComparer[] parentComparers,
                 int[] childReverseMul, FieldComparer[] childComparers)
             {

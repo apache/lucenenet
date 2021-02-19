@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
             ThreadJob[] threads = new ThreadJob[NUM_SEARCH_THREADS];
             for (int threadID = 0; threadID < NUM_SEARCH_THREADS; threadID++)
             {
-                threads[threadID] = new ThreadAnonymousInnerClassHelper(this, s, failed, netSearch);
+                threads[threadID] = new ThreadAnonymousClass(this, s, failed, netSearch);
                 threads[threadID].IsBackground = (true);
             }
 
@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestSearchWithThreads outerInstance;
 
@@ -128,7 +128,7 @@ namespace Lucene.Net.Search
             private readonly AtomicBoolean failed;
             private readonly AtomicInt64 netSearch;
 
-            public ThreadAnonymousInnerClassHelper(TestSearchWithThreads outerInstance, IndexSearcher s, AtomicBoolean failed, AtomicInt64 netSearch)
+            public ThreadAnonymousClass(TestSearchWithThreads outerInstance, IndexSearcher s, AtomicBoolean failed, AtomicInt64 netSearch)
             {
                 this.outerInstance = outerInstance;
                 this.s = s;

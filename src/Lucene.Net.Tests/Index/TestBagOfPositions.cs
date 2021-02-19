@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
                 Document document = new Document();
                 Field field = new Field("field", "", fieldType);
                 document.Add(field);
-                threads[threadID] = new ThreadAnonymousInnerClassHelper(this, numTerms, maxTermsPerDoc, postings, iw, startingGun, threadRandom, document, field);
+                threads[threadID] = new ThreadAnonymousClass(this, numTerms, maxTermsPerDoc, postings, iw, startingGun, threadRandom, document, field);
                 threads[threadID].Start();
             }
             startingGun.Signal();
@@ -155,7 +155,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestBagOfPositions outerInstance;
 
@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
             private readonly Document document;
             private readonly Field field;
 
-            public ThreadAnonymousInnerClassHelper(TestBagOfPositions outerInstance, int numTerms, int maxTermsPerDoc, ConcurrentQueue<string> postings, RandomIndexWriter iw, CountdownEvent startingGun, Random threadRandom, Document document, Field field)
+            public ThreadAnonymousClass(TestBagOfPositions outerInstance, int numTerms, int maxTermsPerDoc, ConcurrentQueue<string> postings, RandomIndexWriter iw, CountdownEvent startingGun, Random threadRandom, Document document, Field field)
             {
                 this.outerInstance = outerInstance;
                 this.numTerms = numTerms;

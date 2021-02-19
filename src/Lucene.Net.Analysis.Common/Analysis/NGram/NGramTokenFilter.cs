@@ -106,14 +106,14 @@ namespace Lucene.Net.Analysis.NGram
             }
             else
             {
-                posIncAtt = new PositionIncrementAttributeAnonymousInnerClassHelper();
-                posLenAtt = new PositionLengthAttributeAnonymousInnerClassHelper();
+                posIncAtt = new PositionIncrementAttributeAnonymousClass();
+                posLenAtt = new PositionLengthAttributeAnonymousClass();
             }
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
-        private class PositionIncrementAttributeAnonymousInnerClassHelper : PositionIncrementAttribute
+        private class PositionIncrementAttributeAnonymousClass : PositionIncrementAttribute
         {
             public override int PositionIncrement
             {
@@ -122,7 +122,7 @@ namespace Lucene.Net.Analysis.NGram
             }
         }
 
-        private class PositionLengthAttributeAnonymousInnerClassHelper : PositionLengthAttribute
+        private class PositionLengthAttributeAnonymousClass : PositionLengthAttribute
         {
             public override int PositionLength
             {

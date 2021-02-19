@@ -278,7 +278,7 @@ namespace Lucene.Net.Index
             {
                 string f = "f" + i;
                 string cf = "cf" + i;
-                threads[i] = new ThreadAnonymousInnerClassHelper(this, "UpdateThread-" + i, writer, numDocs, done, numUpdates, f, cf);
+                threads[i] = new ThreadAnonymousClass(this, "UpdateThread-" + i, writer, numDocs, done, numUpdates, f, cf);
             }
 
             foreach (ThreadJob t in threads)
@@ -323,7 +323,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestMixedDocValuesUpdates outerInstance;
 
@@ -334,7 +334,7 @@ namespace Lucene.Net.Index
             private readonly string f;
             private readonly string cf;
 
-            public ThreadAnonymousInnerClassHelper(TestMixedDocValuesUpdates outerInstance, string str, IndexWriter writer, int numDocs, CountdownEvent done, AtomicInt32 numUpdates, string f, string cf)
+            public ThreadAnonymousClass(TestMixedDocValuesUpdates outerInstance, string str, IndexWriter writer, int numDocs, CountdownEvent done, AtomicInt32 numUpdates, string f, string cf)
                 : base(str)
             {
                 this.outerInstance = outerInstance;

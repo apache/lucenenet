@@ -208,7 +208,7 @@ namespace Lucene.Net.Search
 
             FixedBitSet hits = new FixedBitSet(docCount);
             AtomicInt32 end = new AtomicInt32();
-            ICollector c = new CollectorAnonymousInnerClassHelper(this, scorer, hits, end);
+            ICollector c = new CollectorAnonymousClass(this, scorer, hits, end);
 
             while (end < docCount)
             {
@@ -222,7 +222,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class CollectorAnonymousInnerClassHelper : ICollector
+        private class CollectorAnonymousClass : ICollector
         {
             private readonly TestBooleanOr outerInstance;
 
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search
             private readonly FixedBitSet hits;
             private readonly AtomicInt32 end;
 
-            public CollectorAnonymousInnerClassHelper(TestBooleanOr outerInstance, BulkScorer scorer, FixedBitSet hits, AtomicInt32 end)
+            public CollectorAnonymousClass(TestBooleanOr outerInstance, BulkScorer scorer, FixedBitSet hits, AtomicInt32 end)
             {
                 this.outerInstance = outerInstance;
                 this.scorer = scorer;

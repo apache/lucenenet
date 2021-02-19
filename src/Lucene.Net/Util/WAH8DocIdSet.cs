@@ -201,7 +201,7 @@ namespace Lucene.Net.Util
             }
             // The logic below is very similar to DisjunctionScorer
             int numSets = docIdSets.Count;
-            PriorityQueue<Iterator> iterators = new PriorityQueueAnonymousInnerClassHelper(numSets);
+            PriorityQueue<Iterator> iterators = new PriorityQueueAnonymousClass(numSets);
             foreach (WAH8DocIdSet set in docIdSets)
             {
                 Iterator iterator = (Iterator)set.GetIterator();
@@ -240,9 +240,9 @@ namespace Lucene.Net.Util
             return builder.Build();
         }
 
-        private class PriorityQueueAnonymousInnerClassHelper : PriorityQueue<WAH8DocIdSet.Iterator>
+        private class PriorityQueueAnonymousClass : PriorityQueue<WAH8DocIdSet.Iterator>
         {
-            public PriorityQueueAnonymousInnerClassHelper(int numSets)
+            public PriorityQueueAnonymousClass(int numSets)
                 : base(numSets)
             {
             }

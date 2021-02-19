@@ -51,16 +51,16 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 vals[i++] = source.GetValues(context, readerContext);
             }
 
-            return new BoolDocValuesAnonymousInnerClassHelper(this, this, vals);
+            return new BoolDocValuesAnonymousClass(this, this, vals);
         }
 
-        private class BoolDocValuesAnonymousInnerClassHelper : BoolDocValues
+        private class BoolDocValuesAnonymousClass : BoolDocValues
         {
             private readonly MultiBoolFunction outerInstance;
 
             private readonly FunctionValues[] vals;
 
-            public BoolDocValuesAnonymousInnerClassHelper(MultiBoolFunction outerInstance, MultiBoolFunction @this, FunctionValues[] vals)
+            public BoolDocValuesAnonymousClass(MultiBoolFunction outerInstance, MultiBoolFunction @this, FunctionValues[] vals)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;

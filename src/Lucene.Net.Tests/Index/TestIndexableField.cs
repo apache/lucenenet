@@ -55,14 +55,14 @@ namespace Lucene.Net.Index
 
             public MyField()
             {
-                fieldType = new IndexableFieldTypeAnonymousInnerClassHelper(this);
+                fieldType = new IndexableFieldTypeAnonymousClass(this);
             }
 
-            private class IndexableFieldTypeAnonymousInnerClassHelper : IIndexableFieldType
+            private class IndexableFieldTypeAnonymousClass : IIndexableFieldType
             {
                 private MyField outerInstance;
 
-                public IndexableFieldTypeAnonymousInnerClassHelper(MyField outerInstance)
+                public IndexableFieldTypeAnonymousClass(MyField outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }
@@ -261,7 +261,7 @@ namespace Lucene.Net.Index
                 int finalBaseCount = baseCount;
                 baseCount += fieldCount - 1;
 
-                w.AddDocument(new IterableAnonymousInnerClassHelper(this, fieldCount, finalDocCount, finalBaseCount));
+                w.AddDocument(new IterableAnonymousClass(this, fieldCount, finalDocCount, finalBaseCount));
             }
 
             IndexReader r = w.GetReader();
@@ -379,7 +379,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class IterableAnonymousInnerClassHelper : IEnumerable<IIndexableField>
+        private class IterableAnonymousClass : IEnumerable<IIndexableField>
         {
             private readonly TestIndexableField outerInstance;
 
@@ -387,7 +387,7 @@ namespace Lucene.Net.Index
             private int finalDocCount;
             private int finalBaseCount;
 
-            public IterableAnonymousInnerClassHelper(TestIndexableField outerInstance, int fieldCount, int finalDocCount, int finalBaseCount)
+            public IterableAnonymousClass(TestIndexableField outerInstance, int fieldCount, int finalDocCount, int finalBaseCount)
             {
                 this.outerInstance = outerInstance;
                 this.fieldCount = fieldCount;
@@ -397,7 +397,7 @@ namespace Lucene.Net.Index
 
             public virtual IEnumerator<IIndexableField> GetEnumerator()
             {
-                return new IteratorAnonymousInnerClassHelper(this, outerInstance);
+                return new IteratorAnonymousClass(this, outerInstance);
             }
 
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -405,12 +405,12 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousInnerClassHelper : IEnumerator<IIndexableField>
+            private class IteratorAnonymousClass : IEnumerator<IIndexableField>
             {
-                private readonly IterableAnonymousInnerClassHelper outerInstance;
+                private readonly IterableAnonymousClass outerInstance;
                 private readonly TestIndexableField outerTextIndexableField;
 
-                public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance, TestIndexableField outerTextIndexableField)
+                public IteratorAnonymousClass(IterableAnonymousClass outerInstance, TestIndexableField outerTextIndexableField)
                 {
                     this.outerInstance = outerInstance;
                     this.outerTextIndexableField = outerTextIndexableField;

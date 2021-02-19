@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < stallThreads.Length; i++)
             {
                 int stallProbability = 1 + Random.Next(10);
-                stallThreads[i] = new ThreadAnonymousInnerClassHelper(ctrl, stallProbability);
+                stallThreads[i] = new ThreadAnonymousClass(ctrl, stallProbability);
             }
             Start(stallThreads);
             long time = Environment.TickCount;
@@ -92,12 +92,12 @@ namespace Lucene.Net.Index
             Join(stallThreads);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly DocumentsWriterStallControl ctrl;
             private readonly int stallProbability;
 
-            public ThreadAnonymousInnerClassHelper(DocumentsWriterStallControl ctrl, int stallProbability)
+            public ThreadAnonymousClass(DocumentsWriterStallControl ctrl, int stallProbability)
             {
                 this.ctrl = ctrl;
                 this.stallProbability = stallProbability;
@@ -401,16 +401,16 @@ namespace Lucene.Net.Index
             ThreadJob[] array = new ThreadJob[num];
             for (int i = 0; i < array.Length; i++)
             {
-                array[i] = new ThreadAnonymousInnerClassHelper2(ctrl);
+                array[i] = new ThreadAnonymousClass2(ctrl);
             }
             return array;
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
+        private class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly DocumentsWriterStallControl ctrl;
 
-            public ThreadAnonymousInnerClassHelper2(DocumentsWriterStallControl ctrl)
+            public ThreadAnonymousClass2(DocumentsWriterStallControl ctrl)
             {
                 this.ctrl = ctrl;
             }
