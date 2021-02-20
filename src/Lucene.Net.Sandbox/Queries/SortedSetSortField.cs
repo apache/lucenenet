@@ -145,7 +145,7 @@ namespace Lucene.Net.Sandbox.Queries
             }
         }
 
-        internal class TermOrdValComparerAnonymousClass : FieldComparer.TermOrdValComparer
+        private class TermOrdValComparerAnonymousClass : FieldComparer.TermOrdValComparer
         {
             private readonly SortedSetSortField outerInstance;
 

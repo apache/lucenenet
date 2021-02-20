@@ -290,7 +290,7 @@ namespace Lucene.Net.Analysis.Synonym
             AssertTokIncludes(synMap, "b", "b");
         }
 
-        internal sealed class ResourceLoaderAnonymousClass : IResourceLoader
+        private sealed class ResourceLoaderAnonymousClass : IResourceLoader
         {
             public T NewInstance<T>(string cname)
             {

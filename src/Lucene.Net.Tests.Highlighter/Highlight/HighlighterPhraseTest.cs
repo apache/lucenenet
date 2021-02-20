@@ -135,7 +135,7 @@ namespace Lucene.Net.Search.Highlight
             }
         }
 
-        internal class ConcurrentSpanCollectorAnonymousClass : ICollector
+        private class ConcurrentSpanCollectorAnonymousClass : ICollector
         {
             private readonly HighlighterPhraseTest outerInstance;
             private readonly FixedBitSet bitset;

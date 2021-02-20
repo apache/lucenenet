@@ -156,7 +156,7 @@ namespace Lucene.Net.Search.VectorHighlight
             return fields.ToArray(/*new Field[fields.size()]*/);
         }
 
-        internal class GetFieldsStoredFieldsVisitorAnonymousClass : StoredFieldVisitor
+        private class GetFieldsStoredFieldsVisitorAnonymousClass : StoredFieldVisitor
         {
             private readonly IList<Field> fields;
             private readonly string fieldName;

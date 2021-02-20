@@ -77,7 +77,7 @@ namespace Lucene.Net.Spatial.Serialized
             return new Field[] { new BinaryDocValuesField(FieldName, bytesRef) };
         }
 
-        internal class OutputStreamAnonymousClass : MemoryStream
+        private class OutputStreamAnonymousClass : MemoryStream
         {
             private readonly BytesRef bytesRef;
 
@@ -147,7 +147,7 @@ namespace Lucene.Net.Spatial.Serialized
                 return new DocIdSetAnonymousClass(this, context, acceptDocs);
             }
 
-            internal class DocIdSetAnonymousClass : DocIdSet
+            private class DocIdSetAnonymousClass : DocIdSet
             {
                 private readonly PredicateValueSourceFilter outerInstance;
                 private readonly AtomicReaderContext context;
@@ -178,7 +178,7 @@ namespace Lucene.Net.Spatial.Serialized
                     }
                 }
 
-                internal class BitsAnonymousClass : IBits
+                private class BitsAnonymousClass : IBits
                 {
                     private readonly FunctionValues predFuncValues;
                     private readonly AtomicReaderContext context;
@@ -243,7 +243,7 @@ namespace Lucene.Net.Spatial.Serialized
                 return new FuctionValuesAnonymousClass(this, docValues);
             }
 
-            internal class FuctionValuesAnonymousClass : FunctionValues
+            private class FuctionValuesAnonymousClass : FunctionValues
             {
                 private readonly ShapeDocValueSource outerInstance;
                 private readonly BinaryDocValues docValues;
