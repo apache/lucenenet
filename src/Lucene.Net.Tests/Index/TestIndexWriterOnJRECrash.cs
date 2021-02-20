@@ -1,4 +1,4 @@
-// LUCENENET NOTE: Clearly this test is not applicable to .NET, but just 
+﻿// LUCENENET NOTE: Clearly this test is not applicable to .NET, but just 
 // adding the file to the project for completedness.
 
 //using System;
@@ -79,7 +79,7 @@
 //                AssumeFalse("does not support PreFlex, see LUCENE-3992", Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal));
 //                // we are the fork, setup a crashing thread
 //                int crashTime = TestUtil.NextInt(Random(), 3000, 4000);
-//                ThreadClass t = new ThreadAnonymousClass(this, crashTime);
+//                ThreadJob t = new ThreadAnonymousClass(this, crashTime);
 //                t.Priority = ThreadPriority.Highest;
 //                t.Start();
 //                // run the test until we crash.
@@ -90,7 +90,7 @@
 //            }
 //        }
 
-//        private class ThreadAnonymousClass : ThreadClass
+//        private class ThreadAnonymousClass : ThreadJob
 //        {
 //            private readonly TestIndexWriterOnJRECrash outerInstance;
 
@@ -160,12 +160,12 @@
 //        {
 //            public static Thread Start(InputStream from, OutputStream to)
 //            {
-//                ThreadClass t = new ThreadAnonymousClass2(from, to);
+//                ThreadJob t = new ThreadAnonymousClass2(from, to);
 //                t.Start();
 //                return t;
 //            }
 
-//            private class ThreadAnonymousClass2 : ThreadClass
+//            private class ThreadAnonymousClass2 : ThreadJob
 //            {
 //                private InputStream From;
 //                private OutputStream To;

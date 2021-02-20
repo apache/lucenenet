@@ -472,7 +472,7 @@ namespace Lucene.Net.Store
             });
         }
 
-        //        private class ListAllThread : ThreadClass
+        //        private class ListAllThread : ThreadJob
         //        {
         //            private readonly BaseDirectoryTestCase outerInstance;
         //            private readonly Directory dir;
@@ -516,7 +516,7 @@ namespace Lucene.Net.Store
         //            }
         //        }
 
-        //        private class ListAllThread2 : ThreadClass
+        //        private class ListAllThread2 : ThreadJob
         //        {
         //            private readonly BaseDirectoryTestCase outerInstance;
         //            private readonly Directory dir;
@@ -590,8 +590,8 @@ namespace Lucene.Net.Store
         //                }
 
         //                AtomicBoolean stop = new AtomicBoolean();
-        //                ThreadClass writer = new ListAllThread(this, dir, stop);
-        //                ThreadClass reader = new ListAllThread2(this, dir, stop);
+        //                ThreadJob writer = new ListAllThread(this, dir, stop);
+        //                ThreadJob reader = new ListAllThread2(this, dir, stop);
 
         //                reader.Start();
         //                writer.Start();
