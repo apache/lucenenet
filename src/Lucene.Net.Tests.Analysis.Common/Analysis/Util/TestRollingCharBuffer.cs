@@ -28,7 +28,16 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void Test()
         {
-            var ITERS = AtLeast(1000);
+            int ITERS;
+
+            // LUCENENET specific: NUnit will crash with an OOM if we do the full test
+            // with verbosity enabled. So, decreasing the number of iterations by 1/2
+            // to keep it from crashing.
+            if (Verbose)
+                ITERS = AtLeast(500);
+            else
+                ITERS = AtLeast(1000);
+
 
             var buffer = new RollingCharBuffer();
 
