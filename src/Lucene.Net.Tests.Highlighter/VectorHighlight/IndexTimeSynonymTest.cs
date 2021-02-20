@@ -323,7 +323,7 @@ namespace Lucene.Net.Search.VectorHighlight
             return token;
         }
 
-        internal sealed class TokenizerAnonymousClass : Tokenizer
+        private sealed class TokenizerAnonymousClass : Tokenizer
         {
             private readonly Token[] tokens;
 

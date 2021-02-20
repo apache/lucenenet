@@ -3639,7 +3639,7 @@ namespace Lucene.Net.Util
         }
     }
 
-    //internal class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
+    //private class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
     //{
     //    private TaskScheduler ex;
 

@@ -338,7 +338,7 @@ namespace Lucene.Net.Search
             assertEquals("some threads failed!", N_THREADS, success.Cardinality());
         }
 
-        internal class ThreadClassAnonymousClass : ThreadJob
+        private class ThreadClassAnonymousClass : ThreadJob
         {
             private readonly TestTimeLimitingCollector outerInstance;
             private readonly OpenBitSet success;

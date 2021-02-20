@@ -333,7 +333,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             return snippets;
         }
 
-        internal class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
+        private class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
         {
             private readonly string[] fields;
             private readonly int[] maxPassages;
