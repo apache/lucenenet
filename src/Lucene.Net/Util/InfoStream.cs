@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Lucene.Net.Diagnostics;
 
 namespace Lucene.Net.Util
@@ -110,14 +110,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual object Clone()
         {
-            try
-            {
-                return (InfoStream)base.MemberwiseClone();
-            }
-            catch (InvalidOperationException e)
-            {
-                throw new Exception(e.ToString(), e);
-            }
+            return MemberwiseClone(); // LUCENENET: No exception can occur in .NET and there is no need to cast.
         }
     }
 }

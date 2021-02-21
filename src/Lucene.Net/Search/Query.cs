@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -117,14 +117,7 @@ namespace Lucene.Net.Search
         /// Returns a clone of this query. </summary>
         public virtual object Clone()
         {
-            try
-            {
-                return (Query)base.MemberwiseClone();
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Clone not supported: " + e.Message);
-            }
+            return MemberwiseClone(); // LUCENENET: MemberwiseClone() never throws in .NET and there is no need to cast the result here.
         }
 
         public override int GetHashCode()
