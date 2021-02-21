@@ -1,14 +1,14 @@
 {
-    "_appTitle":  "Apache Lucene.NET 4.8.0-beta00013 Documentation",
-    "_disableContribution":  false,
-    "_appFaviconPath":  "logo/favicon.ico",
-    "_enableSearch":  true,
-    "_appLogoPath":  "logo/lucene-net-color.png",
-    "_appFooter":  "Copyright © 2020 The Apache Software Foundation, Licensed under the \u003ca href=\u0027http://www.apache.org/licenses/LICENSE-2.0\u0027 target=\u0027_blank\u0027\u003eApache License, Version 2.0\u003c/a\u003e\u003cbr/\u003e \u003csmall\u003eApache Lucene.Net, Lucene.Net, Apache, the Apache feather logo, and the Apache Lucene.Net project logo are trademarks of The Apache Software Foundation. \u003cbr/\u003eAll other marks mentioned may be trademarks or registered trademarks of their respective owners.\u003c/small\u003e",
-    "_gitContribute":  {
-                           "repo":  "https://github.com/apache/lucenenet",
-                           "branch":  "docs/4.8.0-beta00013",
-                           "apiSpecFolder":  "websites/apidocs/apiSpec"
-                       },
-    "_gitSource":  "https://github.com/apache/lucenenet.git"
+  "_appTitle": "Apache Lucene.NET 4.8.0-beta00013 Documentation",
+  "_disableContribution": false,
+  "_appFaviconPath": "logo/favicon.ico",
+  "_enableSearch": true,
+  "_appLogoPath": "logo/lucene-net-color.png",
+  "_appFooter": "Copyright © 2021 The Apache Software Foundation, Licensed under the <a href='http://www.apache.org/licenses/LICENSE-2.0' target='_blank'>Apache License, Version 2.0</a><br/> <small>Apache Lucene.Net, Lucene.Net, Apache, the Apache feather logo, and the Apache Lucene.Net project logo are trademarks of The Apache Software Foundation. <br/>All other marks mentioned may be trademarks or registered trademarks of their respective owners.</small>",
+  "_gitContribute": {
+    "repo": "https://github.com/apache/lucenenet",
+    "branch": "docs/4.8.0-beta00013",
+    "apiSpecFolder": "websites/apidocs/apiSpec"
+  },
+  "_gitSource": "https://github.com/apache/lucenenet.git"
 }
