@@ -339,11 +339,48 @@ namespace Lucene.Net.Tests.Queries
         [Test]
         public void TestSingleFieldEquals()
         {
-            // Two terms with the same hash code
+            //// Two terms with the same hash code
             //assertEquals("AaAaBB".GetHashCode(), "BBBBBB".GetHashCode());
-            TermsFilter left = TermsFilter(true, new Term("id", "AaAaAa"), new Term("id", "AaAaBB"));
-            TermsFilter right = TermsFilter(true, new Term("id", "AaAaAa"), new Term("id", "BBBBBB"));
+            //TermsFilter left = TermsFilter(true, new Term("id", "AaAaAa"), new Term("id", "AaAaBB"));
+            //TermsFilter right = TermsFilter(true, new Term("id", "AaAaAa"), new Term("id", "BBBBBB"));
+            //assertFalse(left.Equals(right));
+
+            // LUCENENET specific - since in .NET the hash code is dependent on the underlying
+            // target framework, we need to generate a collision at runtime.
+            GenerateHashCollision(out string theString, out string stringWithCollision);
+            assertEquals(theString.GetHashCode(), stringWithCollision.GetHashCode());
+            TermsFilter left = TermsFilter(true, new Term("id", "AaAaAa"), new Term("id", theString));
+            TermsFilter right = TermsFilter(true, new Term("id", "AaAaAa"), new Term("id", stringWithCollision));
             assertFalse(left.Equals(right));
+        }
+
+        // LUCENENET specific - since in .NET the hash code is dependent on the underlying
+        // target framework, we need to generate a collision at runtime.
+        // Source: https://stackoverflow.com/a/32027473
+        private static void GenerateHashCollision(out string theString, out string stringWithCollision)
+        {
+            var words = new Dictionary<int, string>();
+
+            int i = 0;
+            string teststring;
+            while (true)
+            {
+                i++;
+                teststring = i.ToString();
+                try
+                {
+                    words.Add(teststring.GetHashCode(), teststring);
+                }
+                catch (Exception)
+                {
+                    break;
+                }
+            }
+
+            var collisionHash = teststring.GetHashCode();
+
+            theString = teststring;
+            stringWithCollision = words[collisionHash];
         }
 
         [Test]
