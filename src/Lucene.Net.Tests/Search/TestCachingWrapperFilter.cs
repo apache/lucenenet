@@ -219,7 +219,7 @@ namespace Lucene.Net.Search
             IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
             AtomicReaderContext context = (AtomicReaderContext)reader.Context;
 
-            Filter filter = new FilterAnonymousInnerClassHelper(this, context);
+            Filter filter = new FilterAnonymousClass(this, context);
             CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
 
             // the caching filter should return the empty set constant
@@ -230,13 +230,13 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class FilterAnonymousInnerClassHelper : Filter
+        private class FilterAnonymousClass : Filter
         {
             private readonly TestCachingWrapperFilter outerInstance;
 
             private AtomicReaderContext context;
 
-            public FilterAnonymousInnerClassHelper(TestCachingWrapperFilter outerInstance, AtomicReaderContext context)
+            public FilterAnonymousClass(TestCachingWrapperFilter outerInstance, AtomicReaderContext context)
             {
                 this.outerInstance = outerInstance;
                 this.context = context;
@@ -262,7 +262,7 @@ namespace Lucene.Net.Search
             IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
             AtomicReaderContext context = (AtomicReaderContext)reader.Context;
 
-            Filter filter = new FilterAnonymousInnerClassHelper2(this, context);
+            Filter filter = new FilterAnonymousClass2(this, context);
             CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
 
             // the caching filter should return the empty set constant
@@ -272,13 +272,13 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class FilterAnonymousInnerClassHelper2 : Filter
+        private class FilterAnonymousClass2 : Filter
         {
             private readonly TestCachingWrapperFilter outerInstance;
 
             private AtomicReaderContext context;
 
-            public FilterAnonymousInnerClassHelper2(TestCachingWrapperFilter outerInstance, AtomicReaderContext context)
+            public FilterAnonymousClass2(TestCachingWrapperFilter outerInstance, AtomicReaderContext context)
             {
                 this.outerInstance = outerInstance;
                 this.context = context;
@@ -286,14 +286,14 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                return new DocIdSetAnonymousInnerClassHelper(this);
+                return new DocIdSetAnonymousClass(this);
             }
 
-            private class DocIdSetAnonymousInnerClassHelper : DocIdSet
+            private class DocIdSetAnonymousClass : DocIdSet
             {
-                private readonly FilterAnonymousInnerClassHelper2 outerInstance;
+                private readonly FilterAnonymousClass2 outerInstance;
 
-                public DocIdSetAnonymousInnerClassHelper(FilterAnonymousInnerClassHelper2 outerInstance)
+                public DocIdSetAnonymousClass(FilterAnonymousClass2 outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }
@@ -357,17 +357,17 @@ namespace Lucene.Net.Search
             // is cacheable:
             AssertDocIdSetCacheable(reader, FieldCacheRangeFilter.NewInt32Range("test", Convert.ToInt32(10), Convert.ToInt32(20), true, true), true);
             // a fixedbitset filter is always cacheable
-            AssertDocIdSetCacheable(reader, new FilterAnonymousInnerClassHelper3(this), true);
+            AssertDocIdSetCacheable(reader, new FilterAnonymousClass3(this), true);
 
             reader.Dispose();
             dir.Dispose();
         }
 
-        private class FilterAnonymousInnerClassHelper3 : Filter
+        private class FilterAnonymousClass3 : Filter
         {
             private readonly TestCachingWrapperFilter outerInstance;
 
-            public FilterAnonymousInnerClassHelper3(TestCachingWrapperFilter outerInstance)
+            public FilterAnonymousClass3(TestCachingWrapperFilter outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

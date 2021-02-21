@@ -1,4 +1,5 @@
-using J2N.Collections;
+﻿using J2N.Collections;
+using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -594,7 +595,7 @@ namespace Lucene.Net.Util.Fst
             if (inputType == FST.INPUT_TYPE.BYTE1)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(v <= 255,"v={0}", v);
-                @out.WriteByte((byte)(sbyte)v);
+                @out.WriteByte((byte)v);
             }
             else if (inputType == FST.INPUT_TYPE.BYTE2)
             {
@@ -723,7 +724,7 @@ namespace Lucene.Net.Util.Fst
                     flags += FST.BIT_ARC_HAS_OUTPUT;
                 }
 
-                bytes.WriteByte((byte)(sbyte)flags);
+                bytes.WriteByte((byte)flags);
                 WriteLabel(bytes, arc.Label);
 
                 // System.out.println("  write arc: label=" + (char) arc.Label + " flags=" + flags + " target=" + target.Node + " pos=" + bytes.getPosition() + " output=" + outputs.outputToString(arc.Output));
@@ -1354,7 +1355,7 @@ namespace Lucene.Net.Util.Fst
                 while (low <= high)
                 {
                     //System.out.println("    cycle");
-                    int mid = (int)((uint)(low + high) >> 1);
+                    int mid = (low + high).TripleShift(1);
                     @in.Position = arc.PosArcsStart;
                     @in.SkipBytes(arc.BytesPerArc * mid + 1);
                     int midLabel = ReadLabel(@in);
@@ -1886,7 +1887,7 @@ namespace Lucene.Net.Util.Fst
                             }
 
                             if (Debugging.AssertsEnabled) Debugging.Assert(flags != FST.ARCS_AS_FIXED_ARRAY);
-                            writer.WriteByte((byte)(sbyte)flags);
+                            writer.WriteByte((byte)flags);
 
                             fst.WriteLabel(writer, arc.Label);
 

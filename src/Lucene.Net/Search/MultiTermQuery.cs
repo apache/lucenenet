@@ -92,11 +92,11 @@ namespace Lucene.Net.Search
         /// exception.
         /// </summary>
         /// <seealso cref="MultiTermRewriteMethod"/>
-        public static readonly RewriteMethod CONSTANT_SCORE_FILTER_REWRITE = new RewriteMethodAnonymousInnerClassHelper();
+        public static readonly RewriteMethod CONSTANT_SCORE_FILTER_REWRITE = new RewriteMethodAnonymousClass();
 
-        private class RewriteMethodAnonymousInnerClassHelper : RewriteMethod
+        private class RewriteMethodAnonymousClass : RewriteMethod
         {
-            public RewriteMethodAnonymousInnerClassHelper()
+            public RewriteMethodAnonymousClass()
             {
             }
 
@@ -242,11 +242,11 @@ namespace Lucene.Net.Search
         /// instance; you'll need to create a private instance
         /// instead.
         /// </summary>
-        public static readonly RewriteMethod CONSTANT_SCORE_AUTO_REWRITE_DEFAULT = new ConstantScoreAutoRewriteAnonymousInnerClassHelper();
+        public static readonly RewriteMethod CONSTANT_SCORE_AUTO_REWRITE_DEFAULT = new ConstantScoreAutoRewriteAnonymousClass();
 
-        private class ConstantScoreAutoRewriteAnonymousInnerClassHelper : ConstantScoreAutoRewrite
+        private class ConstantScoreAutoRewriteAnonymousClass : ConstantScoreAutoRewrite
         {
-            public ConstantScoreAutoRewriteAnonymousInnerClassHelper()
+            public ConstantScoreAutoRewriteAnonymousClass()
             {
             }
 

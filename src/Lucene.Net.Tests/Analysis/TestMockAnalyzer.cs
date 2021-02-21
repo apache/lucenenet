@@ -273,18 +273,18 @@ namespace Lucene.Net.Analysis
             Random random = Random;
 
             Analyzer @delegate = new MockAnalyzer(random);
-            Analyzer a = new AnalyzerWrapperAnonymousInnerClassHelper(this, @delegate.Strategy, @delegate);
+            Analyzer a = new AnalyzerWrapperAnonymousClass(this, @delegate.Strategy, @delegate);
 
             CheckOneTerm(a, "abc", "aabc");
         }
 
-        private class AnalyzerWrapperAnonymousInnerClassHelper : AnalyzerWrapper
+        private class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
         {
             private readonly TestMockAnalyzer outerInstance;
 
             private Analyzer @delegate;
 
-            public AnalyzerWrapperAnonymousInnerClassHelper(TestMockAnalyzer outerInstance, ReuseStrategy getReuseStrategy, Analyzer @delegate)
+            public AnalyzerWrapperAnonymousClass(TestMockAnalyzer outerInstance, ReuseStrategy getReuseStrategy, Analyzer @delegate)
                 : base(getReuseStrategy)
             {
                 this.outerInstance = outerInstance;
@@ -314,7 +314,7 @@ namespace Lucene.Net.Analysis
             int positionGap = Random.Next(1000);
             int offsetGap = Random.Next(1000);
             Analyzer @delegate = new MockAnalyzer(Random);
-            Analyzer a = new AnalyzerWrapperAnonymousInnerClassHelper2(this, @delegate.Strategy, positionGap, offsetGap, @delegate);
+            Analyzer a = new AnalyzerWrapperAnonymousClass2(this, @delegate.Strategy, positionGap, offsetGap, @delegate);
 
             RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
@@ -352,7 +352,7 @@ namespace Lucene.Net.Analysis
             writer.IndexWriter.Directory.Dispose();
         }
 
-        private class AnalyzerWrapperAnonymousInnerClassHelper2 : AnalyzerWrapper
+        private class AnalyzerWrapperAnonymousClass2 : AnalyzerWrapper
         {
             private readonly TestMockAnalyzer outerInstance;
 
@@ -360,7 +360,7 @@ namespace Lucene.Net.Analysis
             private int offsetGap;
             private Analyzer @delegate;
 
-            public AnalyzerWrapperAnonymousInnerClassHelper2(TestMockAnalyzer outerInstance, ReuseStrategy getReuseStrategy, int positionGap, int offsetGap, Analyzer @delegate)
+            public AnalyzerWrapperAnonymousClass2(TestMockAnalyzer outerInstance, ReuseStrategy getReuseStrategy, int positionGap, int offsetGap, Analyzer @delegate)
                 : base(getReuseStrategy)
             {
                 this.outerInstance = outerInstance;

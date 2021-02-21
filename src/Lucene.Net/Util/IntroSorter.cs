@@ -1,4 +1,4 @@
-using J2N.Numerics;
+﻿using J2N.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
@@ -69,7 +69,7 @@ namespace Lucene.Net.Util
                 return;
             }
 
-            int mid = (int)((uint)(from + to) >> 1);
+            int mid = (from + to).TripleShift(1);
 
             if (Compare(from, mid) > 0)
             {

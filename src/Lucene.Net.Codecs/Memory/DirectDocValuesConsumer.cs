@@ -139,7 +139,7 @@ namespace Lucene.Net.Codecs.Memory
                 switch (byteWidth)
                 {
                     case 1:
-                        data.WriteByte((byte)(sbyte) v);
+                        data.WriteByte((byte) v);
                         break;
                     case 2:
                         data.WriteInt16((short) v);
@@ -295,7 +295,7 @@ namespace Lucene.Net.Codecs.Memory
             // First write docToOrdCounts, except we "aggregate" the
             // counts so they turn into addresses, and add a final
             // value = the total aggregate:
-            AddNumericFieldValues(field, new EnumerableAnonymousInnerClassHelper(docToOrdCount));
+            AddNumericFieldValues(field, new EnumerableAnonymousClass(docToOrdCount));
 
             // Write ordinals for all docs, appended into one big
             // numerics:
@@ -305,11 +305,11 @@ namespace Lucene.Net.Codecs.Memory
             AddBinaryFieldValues(field, values);
         }
 
-        private class EnumerableAnonymousInnerClassHelper : IEnumerable<long?>
+        private class EnumerableAnonymousClass : IEnumerable<long?>
         {
             private readonly IEnumerable<long?> _docToOrdCount;
 
-            public EnumerableAnonymousInnerClassHelper(IEnumerable<long?> docToOrdCount)
+            public EnumerableAnonymousClass(IEnumerable<long?> docToOrdCount)
             {
                 _docToOrdCount = docToOrdCount;
             }

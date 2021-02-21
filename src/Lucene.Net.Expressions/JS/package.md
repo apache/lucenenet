@@ -32,7 +32,7 @@ A Javascript expression is a numeric expression specified using an expression sy
 
 *   Boolean operators (including the ternary operator): `&& || ! ?:`
 
-*   Comparison operators: `< <= == >= >`
+*   Comparison operators: `&lt; <= == >= >`
 
 *   Common mathematic functions: `abs ceil exp floor ln log2 log10 logn max min sqrt pow`
 

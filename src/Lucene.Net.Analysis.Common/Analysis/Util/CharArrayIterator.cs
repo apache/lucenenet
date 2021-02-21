@@ -129,10 +129,10 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public static CharArrayIterator NewSentenceInstance()
         {
-            return new CharArrayIteratorAnonymousInnerClassHelper2();
+            return new CharArrayIteratorAnonymousClass2();
         }
 
-        private class CharArrayIteratorAnonymousInnerClassHelper2 : CharArrayIterator
+        private class CharArrayIteratorAnonymousClass2 : CharArrayIterator
         {
             // no bugs
             protected override char JreBugWorkaround(char ch)
@@ -147,10 +147,10 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public static CharArrayIterator NewWordInstance()
         {
-            return new CharArrayIteratorAnonymousInnerClassHelper4();
+            return new CharArrayIteratorAnonymousClass4();
         }
 
-        private class CharArrayIteratorAnonymousInnerClassHelper4 : CharArrayIterator
+        private class CharArrayIteratorAnonymousClass4 : CharArrayIterator
         {
             // no bugs
             protected override char JreBugWorkaround(char ch)

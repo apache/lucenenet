@@ -552,12 +552,12 @@ namespace Lucene.Net.Util
         ///         terms with a shift value of <c>0</c>. </returns>
         public static TermsEnum FilterPrefixCodedInt64s(TermsEnum termsEnum)
         {
-            return new FilteredTermsEnumAnonymousInnerClassHelper(termsEnum);
+            return new FilteredTermsEnumAnonymousClass(termsEnum);
         }
 
-        private class FilteredTermsEnumAnonymousInnerClassHelper : FilteredTermsEnum
+        private class FilteredTermsEnumAnonymousClass : FilteredTermsEnum
         {
-            public FilteredTermsEnumAnonymousInnerClassHelper(TermsEnum termsEnum)
+            public FilteredTermsEnumAnonymousClass(TermsEnum termsEnum)
                 : base(termsEnum, false)
             {
             }
@@ -582,12 +582,12 @@ namespace Lucene.Net.Util
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TermsEnum FilterPrefixCodedInt32s(TermsEnum termsEnum)
         {
-            return new FilteredTermsEnumAnonymousInnerClassHelper2(termsEnum);
+            return new FilteredTermsEnumAnonymousClass2(termsEnum);
         }
 
-        private class FilteredTermsEnumAnonymousInnerClassHelper2 : FilteredTermsEnum
+        private class FilteredTermsEnumAnonymousClass2 : FilteredTermsEnum
         {
-            public FilteredTermsEnumAnonymousInnerClassHelper2(TermsEnum termsEnum)
+            public FilteredTermsEnumAnonymousClass2(TermsEnum termsEnum)
                 : base(termsEnum, false)
             {
             }

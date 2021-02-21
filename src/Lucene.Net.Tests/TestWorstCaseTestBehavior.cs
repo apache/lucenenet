@@ -31,7 +31,7 @@ namespace Lucene.Net
         [Test]
         public virtual void TestThreadLeak()
         {
-            ThreadJob t = new ThreadAnonymousInnerClassHelper(this);
+            ThreadJob t = new ThreadAnonymousClass(this);
             t.Start();
 
             while (!t.IsAlive)
@@ -43,11 +43,11 @@ namespace Lucene.Net
         }
 #endif
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestWorstCaseTestBehavior outerInstance;
 
-            public ThreadAnonymousInnerClassHelper(TestWorstCaseTestBehavior outerInstance)
+            public ThreadAnonymousClass(TestWorstCaseTestBehavior outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -108,16 +108,16 @@ namespace Lucene.Net
         [Test]
         public virtual void TestUncaughtException()
         {
-            ThreadJob t = new ThreadAnonymousInnerClassHelper2(this);
+            ThreadJob t = new ThreadAnonymousClass2(this);
             t.Start();
             t.Join();
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
+        private class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly TestWorstCaseTestBehavior outerInstance;
 
-            public ThreadAnonymousInnerClassHelper2(TestWorstCaseTestBehavior outerInstance)
+            public ThreadAnonymousClass2(TestWorstCaseTestBehavior outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

@@ -51,10 +51,10 @@ namespace Lucene.Net.Search.Highlight
             AssertTokenStreamContents(filter, new String[] {"short", "toolong",
                 "evenmuchlongertext"});
 
-            CheckOneTerm(new AnalyzerAnonymousHelper(), "llenges", "llenges");
+            CheckOneTerm(new AnalyzerAnonymousClass(), "llenges", "llenges");
         }
 
-        internal class AnalyzerAnonymousHelper : Analyzer
+        private class AnalyzerAnonymousClass : Analyzer
         {
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {

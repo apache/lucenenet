@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
             long stopTime = Environment.TickCount + AtLeast(1000);
             for (int x = 0; x < indexThreads.Length; x++)
             {
-                indexThreads[x] = new ThreadAnonymousInnerClassHelper(w, stopTime, NewStringField, NewTextField);
+                indexThreads[x] = new ThreadAnonymousClass(w, stopTime, NewStringField, NewTextField);
                 indexThreads[x].Name = "Thread " + x;
                 indexThreads[x].Start();
             }
@@ -105,7 +105,7 @@ namespace Lucene.Net.Index
             System.IO.Directory.Delete(tmpDir.FullName, true);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly Func<string, string, Field.Store, Field> newStringField;
             private readonly Func<string, string, Field.Store, Field> newTextField;
@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
             /// Passed in because <see cref="LuceneTestCase.NewTextField(string, string, Field.Store)"/>
             /// is no longer static
             /// </param>
-            public ThreadAnonymousInnerClassHelper(RandomIndexWriter w, long stopTime, 
+            public ThreadAnonymousClass(RandomIndexWriter w, long stopTime, 
                 Func<string, string, Field.Store, Field> newStringField, Func<string, string, Field.Store, Field> newTextField)
             {
                 this.w = w;

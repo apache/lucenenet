@@ -141,7 +141,7 @@ namespace Lucene.Net.Index
             ThreadJob[] threads = new ThreadJob[numThreads];
             for (int thread = 0; thread < numThreads; thread++)
             {
-                threads[thread] = new ThreadAnonymousInnerClassHelper(this, docs, stopTime, delIDs, delPackIDs, allSubDocs);
+                threads[thread] = new ThreadAnonymousClass(this, docs, stopTime, delIDs, delPackIDs, allSubDocs);
                 threads[thread].IsBackground = (true);
                 threads[thread].Start();
             }
@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
             return threads;
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly ThreadedIndexingAndSearchingTestCase outerInstance;
 
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
             private readonly ISet<string> delPackIDs;
             private readonly ConcurrentQueue<SubDocs> allSubDocs;
 
-            public ThreadAnonymousInnerClassHelper(ThreadedIndexingAndSearchingTestCase outerInstance, LineFileDocs docs, long stopTime, ISet<string> delIDs, ISet<string> delPackIDs, ConcurrentQueue<SubDocs> allSubDocs)
+            public ThreadAnonymousClass(ThreadedIndexingAndSearchingTestCase outerInstance, LineFileDocs docs, long stopTime, ISet<string> delIDs, ISet<string> delPackIDs, ConcurrentQueue<SubDocs> allSubDocs)
             {
                 this.outerInstance = outerInstance;
                 this.docs = docs;
@@ -415,7 +415,7 @@ namespace Lucene.Net.Index
             // TODO: we should enrich this to do more interesting searches
             for (int thread = 0; thread < searchThreads.Length; thread++)
             {
-                searchThreads[thread] = new ThreadAnonymousInnerClassHelper2(this, stopTime, totHits, totTermCount);
+                searchThreads[thread] = new ThreadAnonymousClass2(this, stopTime, totHits, totTermCount);
                 searchThreads[thread].IsBackground = (true);
                 searchThreads[thread].Start();
             }
@@ -431,7 +431,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
+        private class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly ThreadedIndexingAndSearchingTestCase outerInstance;
 
@@ -439,7 +439,7 @@ namespace Lucene.Net.Index
             private readonly AtomicInt32 totHits;
             private readonly AtomicInt32 totTermCount;
 
-            public ThreadAnonymousInnerClassHelper2(ThreadedIndexingAndSearchingTestCase outerInstance, long stopTimeMS, AtomicInt32 totHits, AtomicInt32 totTermCount)
+            public ThreadAnonymousClass2(ThreadedIndexingAndSearchingTestCase outerInstance, long stopTimeMS, AtomicInt32 totHits, AtomicInt32 totTermCount)
             {
                 this.outerInstance = outerInstance;
                 this.stopTimeMS = stopTimeMS;
@@ -602,11 +602,11 @@ namespace Lucene.Net.Index
                 }
             }
 
-            conf.SetMergedSegmentWarmer(new IndexReaderWarmerAnonymousInnerClassHelper(this));
+            conf.SetMergedSegmentWarmer(new IndexReaderWarmerAnonymousClass(this));
 
             if (Verbose)
             {
-                conf.SetInfoStream(new PrintStreamInfoStreamAnonymousInnerClassHelper(Console.Out));
+                conf.SetInfoStream(new PrintStreamInfoStreamAnonymousClass(Console.Out));
             }
             m_writer = new IndexWriter(m_dir, conf);
             TestUtil.ReduceOpenFiles(m_writer);
@@ -795,11 +795,11 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class IndexReaderWarmerAnonymousInnerClassHelper : IndexWriter.IndexReaderWarmer
+        private class IndexReaderWarmerAnonymousClass : IndexWriter.IndexReaderWarmer
         {
             private readonly ThreadedIndexingAndSearchingTestCase outerInstance;
 
-            public IndexReaderWarmerAnonymousInnerClassHelper(ThreadedIndexingAndSearchingTestCase outerInstance)
+            public IndexReaderWarmerAnonymousClass(ThreadedIndexingAndSearchingTestCase outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -842,9 +842,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class PrintStreamInfoStreamAnonymousInnerClassHelper : TextWriterInfoStream
+        private class PrintStreamInfoStreamAnonymousClass : TextWriterInfoStream
         {
-            public PrintStreamInfoStreamAnonymousInnerClassHelper(TextWriter @out)
+            public PrintStreamInfoStreamAnonymousClass(TextWriter @out)
                 : base(@out)
             {
             }

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -366,7 +367,7 @@ namespace Lucene.Net.Codecs.Memory
                         int code = statsReader.ReadVInt32();
                         if (outerInstance.HasFreqs)
                         {
-                            docFreq[i] = ((int)((uint)code >> 1));
+                            docFreq[i] = code.TripleShift(1);
                             if ((code & 1) == 1)
                             {
                                 totalTermFreq[i] = docFreq[i];

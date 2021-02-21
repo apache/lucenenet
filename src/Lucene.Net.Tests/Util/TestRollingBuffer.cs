@@ -38,7 +38,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void Test()
         {
-            RollingBuffer<Position> buffer = new RollingBufferAnonymousInnerClassHelper();
+            RollingBuffer<Position> buffer = new RollingBufferAnonymousClass();
 
             for (int iter = 0; iter < 100 * RandomMultiplier; iter++)
             {
@@ -88,9 +88,9 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class RollingBufferAnonymousInnerClassHelper : RollingBuffer<Position>
+        private class RollingBufferAnonymousClass : RollingBuffer<Position>
         {
-            public RollingBufferAnonymousInnerClassHelper()
+            public RollingBufferAnonymousClass()
                 : base(NewInstanceFunc)
             {
             }

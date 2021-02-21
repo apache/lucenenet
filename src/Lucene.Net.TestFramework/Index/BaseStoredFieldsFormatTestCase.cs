@@ -501,7 +501,7 @@ namespace Lucene.Net.Index
 
                 for (int i = 0; i < concurrentReads; ++i)
                 {
-                    readThreads.Add(new ThreadAnonymousInnerClassHelper(numDocs, rd, searcher, readsPerThread, ex));
+                    readThreads.Add(new ThreadAnonymousClass(numDocs, rd, searcher, readsPerThread, ex));
                 }
                 foreach (ThreadJob thread in readThreads)
                 {
@@ -518,7 +518,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly int numDocs;
             private readonly DirectoryReader rd;
@@ -527,7 +527,7 @@ namespace Lucene.Net.Index
             private readonly AtomicReference<Exception> ex;
             private readonly int[] queries;
 
-            public ThreadAnonymousInnerClassHelper(int numDocs, DirectoryReader rd, IndexSearcher searcher, int readsPerThread, AtomicReference<Exception> ex)
+            public ThreadAnonymousClass(int numDocs, DirectoryReader rd, IndexSearcher searcher, int readsPerThread, AtomicReference<Exception> ex)
             {
                 this.numDocs = numDocs;
                 this.rd = rd;

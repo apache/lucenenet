@@ -155,7 +155,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     values[i] = input.ReadInt64();
                 }
                 ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
-                return new NumericDocValuesAnonymousInnerClassHelper(values);
+                return new NumericDocValuesAnonymousClass(values);
             }
             else if (header == Lucene40DocValuesFormat.VAR_INTS_PACKED)
             {
@@ -163,7 +163,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 long defaultValue = input.ReadInt64();
                 PackedInt32s.Reader reader = PackedInt32s.GetReader(input);
                 ramBytesUsed.AddAndGet(reader.RamBytesUsed());
-                return new NumericDocValuesAnonymousInnerClassHelper2(minValue, defaultValue, reader);
+                return new NumericDocValuesAnonymousClass2(minValue, defaultValue, reader);
             }
             else
             {
@@ -171,11 +171,11 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
+        private class NumericDocValuesAnonymousClass : NumericDocValues
         {
             private readonly long[] values;
 
-            public NumericDocValuesAnonymousInnerClassHelper(long[] values)
+            public NumericDocValuesAnonymousClass(long[] values)
             {
                 this.values = values;
             }
@@ -187,13 +187,13 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper2 : NumericDocValues
+        private class NumericDocValuesAnonymousClass2 : NumericDocValues
         {
             private readonly long minValue;
             private readonly long defaultValue;
             private readonly PackedInt32s.Reader reader;
 
-            public NumericDocValuesAnonymousInnerClassHelper2(long minValue, long defaultValue, PackedInt32s.Reader reader)
+            public NumericDocValuesAnonymousClass2(long minValue, long defaultValue, PackedInt32s.Reader reader)
             {
                 this.minValue = minValue;
                 this.defaultValue = defaultValue;
@@ -227,14 +227,14 @@ namespace Lucene.Net.Codecs.Lucene40
             var values = new byte[maxDoc];
             input.ReadBytes(values, 0, values.Length);
             ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
-            return new NumericDocValuesAnonymousInnerClassHelper3(values);
+            return new NumericDocValuesAnonymousClass3(values);
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper3 : NumericDocValues
+        private class NumericDocValuesAnonymousClass3 : NumericDocValues
         {
             private readonly byte[] values;
 
-            public NumericDocValuesAnonymousInnerClassHelper3(byte[] values)
+            public NumericDocValuesAnonymousClass3(byte[] values)
             {
                 this.values = values;
             }
@@ -264,14 +264,14 @@ namespace Lucene.Net.Codecs.Lucene40
                 values[i] = input.ReadInt16();
             }
             ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
-            return new NumericDocValuesAnonymousInnerClassHelper4(values);
+            return new NumericDocValuesAnonymousClass4(values);
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper4 : NumericDocValues
+        private class NumericDocValuesAnonymousClass4 : NumericDocValues
         {
             private readonly short[] values;
 
-            public NumericDocValuesAnonymousInnerClassHelper4(short[] values)
+            public NumericDocValuesAnonymousClass4(short[] values)
             {
                 this.values = values;
             }
@@ -301,14 +301,14 @@ namespace Lucene.Net.Codecs.Lucene40
                 values[i] = input.ReadInt32();
             }
             ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
-            return new NumericDocValuesAnonymousInnerClassHelper5(values);
+            return new NumericDocValuesAnonymousClass5(values);
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper5 : NumericDocValues
+        private class NumericDocValuesAnonymousClass5 : NumericDocValues
         {
             private readonly int[] values;
 
-            public NumericDocValuesAnonymousInnerClassHelper5(int[] values)
+            public NumericDocValuesAnonymousClass5(int[] values)
             {
                 this.values = values;
             }
@@ -338,14 +338,14 @@ namespace Lucene.Net.Codecs.Lucene40
                 values[i] = input.ReadInt64();
             }
             ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
-            return new NumericDocValuesAnonymousInnerClassHelper6(values);
+            return new NumericDocValuesAnonymousClass6(values);
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper6 : NumericDocValues
+        private class NumericDocValuesAnonymousClass6 : NumericDocValues
         {
             private readonly long[] values;
 
-            public NumericDocValuesAnonymousInnerClassHelper6(long[] values)
+            public NumericDocValuesAnonymousClass6(long[] values)
             {
                 this.values = values;
             }
@@ -375,14 +375,14 @@ namespace Lucene.Net.Codecs.Lucene40
                 values[i] = input.ReadInt32();
             }
             ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
-            return new NumericDocValuesAnonymousInnerClassHelper7(values);
+            return new NumericDocValuesAnonymousClass7(values);
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper7 : NumericDocValues
+        private class NumericDocValuesAnonymousClass7 : NumericDocValues
         {
             private readonly int[] values;
 
-            public NumericDocValuesAnonymousInnerClassHelper7(int[] values)
+            public NumericDocValuesAnonymousClass7(int[] values)
             {
                 this.values = values;
             }
@@ -409,14 +409,14 @@ namespace Lucene.Net.Codecs.Lucene40
                 values[i] = input.ReadInt64();
             }
             ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
-            return new NumericDocValuesAnonymousInnerClassHelper8(values);
+            return new NumericDocValuesAnonymousClass8(values);
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper8 : NumericDocValues
+        private class NumericDocValuesAnonymousClass8 : NumericDocValues
         {
             private readonly long[] values;
 
-            public NumericDocValuesAnonymousInnerClassHelper8(long[] values)
+            public NumericDocValuesAnonymousClass8(long[] values)
             {
                 this.values = values;
             }
@@ -477,7 +477,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 CodecUtil.CheckEOF(input);
                 success = true;
                 ramBytesUsed.AddAndGet(bytes.RamBytesUsed());
-                return new BinaryDocValuesAnonymousInnerClassHelper(fixedLength, bytesReader);
+                return new BinaryDocValuesAnonymousClass(fixedLength, bytesReader);
             }
             finally
             {
@@ -492,12 +492,12 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
+        private class BinaryDocValuesAnonymousClass : BinaryDocValues
         {
             private readonly int fixedLength;
             private readonly PagedBytes.Reader bytesReader;
 
-            public BinaryDocValuesAnonymousInnerClassHelper(int fixedLength, PagedBytes.Reader bytesReader)
+            public BinaryDocValuesAnonymousClass(int fixedLength, PagedBytes.Reader bytesReader)
             {
                 this.fixedLength = fixedLength;
                 this.bytesReader = bytesReader;
@@ -532,7 +532,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 CodecUtil.CheckEOF(index);
                 success = true;
                 ramBytesUsed.AddAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
-                return new BinaryDocValuesAnonymousInnerClassHelper2(bytesReader, reader);
+                return new BinaryDocValuesAnonymousClass2(bytesReader, reader);
             }
             finally
             {
@@ -547,12 +547,12 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private class BinaryDocValuesAnonymousInnerClassHelper2 : BinaryDocValues
+        private class BinaryDocValuesAnonymousClass2 : BinaryDocValues
         {
             private readonly PagedBytes.Reader bytesReader;
             private readonly PackedInt32s.Reader reader;
 
-            public BinaryDocValuesAnonymousInnerClassHelper2(PagedBytes.Reader bytesReader, PackedInt32s.Reader reader)
+            public BinaryDocValuesAnonymousClass2(PagedBytes.Reader bytesReader, PackedInt32s.Reader reader)
             {
                 this.bytesReader = bytesReader;
                 this.reader = reader;
@@ -591,7 +591,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 CodecUtil.CheckEOF(index);
                 ramBytesUsed.AddAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
                 success = true;
-                return new BinaryDocValuesAnonymousInnerClassHelper3(fixedLength, bytesReader, reader);
+                return new BinaryDocValuesAnonymousClass3(fixedLength, bytesReader, reader);
             }
             finally
             {
@@ -606,13 +606,13 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private class BinaryDocValuesAnonymousInnerClassHelper3 : BinaryDocValues
+        private class BinaryDocValuesAnonymousClass3 : BinaryDocValues
         {
             private readonly int fixedLength;
             private readonly PagedBytes.Reader bytesReader;
             private readonly PackedInt32s.Reader reader;
 
-            public BinaryDocValuesAnonymousInnerClassHelper3(int fixedLength, PagedBytes.Reader bytesReader, PackedInt32s.Reader reader)
+            public BinaryDocValuesAnonymousClass3(int fixedLength, PagedBytes.Reader bytesReader, PackedInt32s.Reader reader)
             {
                 this.fixedLength = fixedLength;
                 this.bytesReader = bytesReader;
@@ -650,7 +650,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 CodecUtil.CheckEOF(index);
                 ramBytesUsed.AddAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
                 success = true;
-                return new BinaryDocValuesAnonymousInnerClassHelper4(bytesReader, reader);
+                return new BinaryDocValuesAnonymousClass4(bytesReader, reader);
             }
             finally
             {
@@ -665,12 +665,12 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private class BinaryDocValuesAnonymousInnerClassHelper4 : BinaryDocValues
+        private class BinaryDocValuesAnonymousClass4 : BinaryDocValues
         {
             private readonly PagedBytes.Reader bytesReader;
             private readonly PackedInt32s.Reader reader;
 
-            public BinaryDocValuesAnonymousInnerClassHelper4(PagedBytes.Reader bytesReader, PackedInt32s.Reader reader)
+            public BinaryDocValuesAnonymousClass4(PagedBytes.Reader bytesReader, PackedInt32s.Reader reader)
             {
                 this.bytesReader = bytesReader;
                 this.reader = reader;
@@ -762,17 +762,17 @@ namespace Lucene.Net.Codecs.Lucene40
             PackedInt32s.Reader reader = PackedInt32s.GetReader(index);
             ramBytesUsed.AddAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
 
-            return CorrectBuggyOrds(new SortedDocValuesAnonymousInnerClassHelper(fixedLength, valueCount, bytesReader, reader));
+            return CorrectBuggyOrds(new SortedDocValuesAnonymousClass(fixedLength, valueCount, bytesReader, reader));
         }
 
-        private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
+        private class SortedDocValuesAnonymousClass : SortedDocValues
         {
             private readonly int fixedLength;
             private readonly int valueCount;
             private readonly PagedBytes.Reader bytesReader;
             private readonly PackedInt32s.Reader reader;
 
-            public SortedDocValuesAnonymousInnerClassHelper(int fixedLength, int valueCount, PagedBytes.Reader bytesReader, PackedInt32s.Reader reader)
+            public SortedDocValuesAnonymousClass(int fixedLength, int valueCount, PagedBytes.Reader bytesReader, PackedInt32s.Reader reader)
             {
                 this.fixedLength = fixedLength;
                 this.valueCount = valueCount;
@@ -810,17 +810,17 @@ namespace Lucene.Net.Codecs.Lucene40
             int valueCount = addressReader.Count - 1;
             ramBytesUsed.AddAndGet(bytes.RamBytesUsed() + addressReader.RamBytesUsed() + ordsReader.RamBytesUsed());
 
-            return CorrectBuggyOrds(new SortedDocValuesAnonymousInnerClassHelper2(bytesReader, addressReader, ordsReader, valueCount));
+            return CorrectBuggyOrds(new SortedDocValuesAnonymousClass2(bytesReader, addressReader, ordsReader, valueCount));
         }
 
-        private class SortedDocValuesAnonymousInnerClassHelper2 : SortedDocValues
+        private class SortedDocValuesAnonymousClass2 : SortedDocValues
         {
             private readonly PagedBytes.Reader bytesReader;
             private readonly PackedInt32s.Reader addressReader;
             private readonly PackedInt32s.Reader ordsReader;
             private readonly int valueCount;
 
-            public SortedDocValuesAnonymousInnerClassHelper2(PagedBytes.Reader bytesReader, PackedInt32s.Reader addressReader, PackedInt32s.Reader ordsReader, int valueCount)
+            public SortedDocValuesAnonymousClass2(PagedBytes.Reader bytesReader, PackedInt32s.Reader addressReader, PackedInt32s.Reader ordsReader, int valueCount)
             {
                 this.bytesReader = bytesReader;
                 this.addressReader = addressReader;
@@ -858,14 +858,14 @@ namespace Lucene.Net.Codecs.Lucene40
             }
 
             // we had ord holes, return an ord-shifting-impl that corrects the bug
-            return new SortedDocValuesAnonymousInnerClassHelper3(@in);
+            return new SortedDocValuesAnonymousClass3(@in);
         }
 
-        private class SortedDocValuesAnonymousInnerClassHelper3 : SortedDocValues
+        private class SortedDocValuesAnonymousClass3 : SortedDocValues
         {
             private readonly SortedDocValues @in;
 
-            public SortedDocValuesAnonymousInnerClassHelper3(SortedDocValues @in)
+            public SortedDocValuesAnonymousClass3(SortedDocValues @in)
             {
                 this.@in = @in;
             }

@@ -427,16 +427,16 @@ namespace Lucene.Net.Store
                     " found (fileName=" + name + " files: " + 
                     string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", entries.Keys) + ")");
             }
-            return new IndexInputSlicerAnonymousInnerClassHelper(this, entry);
+            return new IndexInputSlicerAnonymousClass(this, entry);
         }
 
-        private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
+        private class IndexInputSlicerAnonymousClass : IndexInputSlicer
         {
             private readonly CompoundFileDirectory outerInstance;
 
             private readonly FileEntry entry;
 
-            public IndexInputSlicerAnonymousInnerClassHelper(CompoundFileDirectory outerInstance, FileEntry entry)
+            public IndexInputSlicerAnonymousClass(CompoundFileDirectory outerInstance, FileEntry entry)
             {
                 this.outerInstance = outerInstance;
                 this.entry = entry;

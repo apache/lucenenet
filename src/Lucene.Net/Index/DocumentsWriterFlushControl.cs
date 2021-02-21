@@ -511,17 +511,17 @@ namespace Lucene.Net.Index
 
         private IEnumerator<ThreadState> GetPerThreadsIterator(int upto)
         {
-            return new IteratorAnonymousInnerClassHelper(this, upto);
+            return new IteratorAnonymousClass(this, upto);
         }
 
-        private class IteratorAnonymousInnerClassHelper : IEnumerator<ThreadState>
+        private class IteratorAnonymousClass : IEnumerator<ThreadState>
         {
             private readonly DocumentsWriterFlushControl outerInstance;
             private ThreadState current;
             private readonly int upto;
             private int i;
 
-            public IteratorAnonymousInnerClassHelper(DocumentsWriterFlushControl outerInstance, int upto)
+            public IteratorAnonymousClass(DocumentsWriterFlushControl outerInstance, int upto)
             {
                 this.outerInstance = outerInstance;
                 this.upto = upto;

@@ -209,16 +209,16 @@ namespace Lucene.Net.Index.Sorter
             }
             oldToNew.Freeze();
 
-            return new DocMapAnonymousInnerClassHelper(maxDoc, newToOld, oldToNew);
+            return new DocMapAnonymousClass(maxDoc, newToOld, oldToNew);
         }
 
-        private class DocMapAnonymousInnerClassHelper : Sorter.DocMap
+        private class DocMapAnonymousClass : Sorter.DocMap
         {
             private readonly int maxDoc;
             private readonly MonotonicAppendingInt64Buffer newToOld;
             private readonly MonotonicAppendingInt64Buffer oldToNew;
 
-            public DocMapAnonymousInnerClassHelper(int maxDoc, MonotonicAppendingInt64Buffer newToOld, MonotonicAppendingInt64Buffer oldToNew)
+            public DocMapAnonymousClass(int maxDoc, MonotonicAppendingInt64Buffer newToOld, MonotonicAppendingInt64Buffer oldToNew)
             {
                 this.maxDoc = maxDoc;
                 this.newToOld = newToOld;
@@ -266,16 +266,16 @@ namespace Lucene.Net.Index.Sorter
                 comparers[i].SetNextReader(reader.AtomicContext);
                 comparers[i].SetScorer(FAKESCORER);
             }
-            DocComparer comparer = new DocComparerAnonymousInnerClassHelper(reverseMul, comparers);
+            DocComparer comparer = new DocComparerAnonymousClass(reverseMul, comparers);
             return Sort(reader.MaxDoc, comparer);
         }
 
-        private class DocComparerAnonymousInnerClassHelper : DocComparer
+        private class DocComparerAnonymousClass : DocComparer
         {
             private readonly int[] reverseMul;
             private readonly FieldComparer[] comparers;
 
-            public DocComparerAnonymousInnerClassHelper(int[] reverseMul, FieldComparer[] comparers)
+            public DocComparerAnonymousClass(int[] reverseMul, FieldComparer[] comparers)
             {
                 this.reverseMul = reverseMul;
                 this.comparers = comparers;
@@ -321,11 +321,11 @@ namespace Lucene.Net.Index.Sorter
             return ID;
         }
 
-        internal static readonly Scorer FAKESCORER = new ScorerAnonymousInnerClassHelper();
+        internal static readonly Scorer FAKESCORER = new ScorerAnonymousClass();
 
-        private class ScorerAnonymousInnerClassHelper : Scorer
+        private class ScorerAnonymousClass : Scorer
         {
-            public ScorerAnonymousInnerClassHelper() 
+            public ScorerAnonymousClass() 
                 : base(null)
             {
             }

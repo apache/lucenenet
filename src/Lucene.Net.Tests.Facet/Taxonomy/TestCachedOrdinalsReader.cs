@@ -1,4 +1,5 @@
-﻿using J2N.Threading;
+﻿// Lucene version compatibility level 4.8.1
+using J2N.Threading;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -6,7 +7,6 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -60,7 +60,7 @@ namespace Lucene.Net.Facet.Taxonomy
             ThreadJob[] threads = new ThreadJob[3];
             for (int i = 0; i < threads.Length; i++)
             {
-                threads[i] = new ThreadAnonymousInnerClassHelper(this, "CachedOrdsThread-" + i, reader, ordsReader);
+                threads[i] = new ThreadAnonymousClass(this, "CachedOrdsThread-" + i, reader, ordsReader);
             }
 
             long ramBytesUsed = 0;
@@ -81,15 +81,15 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Dispose(writer, taxoWriter, reader, indexDir, taxoDir);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestCachedOrdinalsReader outerInstance;
 
-            private DirectoryReader reader;
-            private Lucene.Net.Facet.Taxonomy.CachedOrdinalsReader ordsReader;
+            private readonly DirectoryReader reader;
+            private readonly CachedOrdinalsReader ordsReader;
 
-            public ThreadAnonymousInnerClassHelper(TestCachedOrdinalsReader outerInstance, string CachedOrdsThread, DirectoryReader reader, Lucene.Net.Facet.Taxonomy.CachedOrdinalsReader ordsReader)
-                : base("CachedOrdsThread-")
+            public ThreadAnonymousClass(TestCachedOrdinalsReader outerInstance, string threadName, DirectoryReader reader, CachedOrdinalsReader ordsReader)
+                : base(threadName)
             {
                 this.outerInstance = outerInstance;
                 this.reader = reader;
@@ -112,5 +112,4 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
     }
-
 }

@@ -1,10 +1,10 @@
-﻿using NUnit.Framework;
+﻿// Lucene version compatibility level 4.8.1
+using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -47,14 +47,12 @@ namespace Lucene.Net.Facet
     [TestFixture]
     public class TestDrillDownQuery : FacetTestCase
     {
-
         private static IndexReader reader;
         private static DirectoryTaxonomyReader taxo;
         private static Directory dir;
         private static Directory taxoDir;
         private static FacetsConfig config;
 
-      
         [OneTimeTearDown]
         public override void AfterClass() // LUCENENET specific - renamed from AfterClassDrillDownQueryTest() to ensure calling order
         {
@@ -266,10 +264,10 @@ namespace Lucene.Net.Facet
             var q = new DrillDownQuery(config, new MatchAllDocsQuery());
             q.Add("a");
 
-            var clone = q.Clone() as DrillDownQuery;
-            Assert.NotNull(clone);
+            var clone = (DrillDownQuery)q.Clone();
+            Assert.IsNotNull(clone);
             clone.Add("b");
-            Assert.False(q.ToString().Equals(clone.ToString(), StringComparison.Ordinal), "query wasn't cloned: source=" + q + " clone=" + clone);
+            Assert.IsFalse(q.ToString().Equals(clone.ToString(), StringComparison.Ordinal), "query wasn't cloned: source=" + q + " clone=" + clone);
         }
 
         [Test]
@@ -281,5 +279,4 @@ namespace Lucene.Net.Facet
             Assert.AreSame(@base, rewrite);
         }
     }
-
 }

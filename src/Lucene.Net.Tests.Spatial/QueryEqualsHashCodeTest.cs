@@ -52,11 +52,11 @@ namespace Lucene.Net.Spatial
             }
         }
 
-        private class ObjGeneratorQueryAnonymousHelper : ObjGenerator
+        private class ObjGeneratorQueryAnonymousClass : ObjGenerator
         {
             private readonly SpatialStrategy strategy;
 
-            public ObjGeneratorQueryAnonymousHelper(SpatialStrategy strategy)
+            public ObjGeneratorQueryAnonymousClass(SpatialStrategy strategy)
             {
                 this.strategy = strategy;
             }
@@ -67,11 +67,11 @@ namespace Lucene.Net.Spatial
             }
         }
 
-        private class ObjGeneratorFilterAnonymousHelper : ObjGenerator
+        private class ObjGeneratorFilterAnonymousClass : ObjGenerator
         {
             private readonly SpatialStrategy strategy;
 
-            public ObjGeneratorFilterAnonymousHelper(SpatialStrategy strategy)
+            public ObjGeneratorFilterAnonymousClass(SpatialStrategy strategy)
             {
                 this.strategy = strategy;
             }
@@ -82,11 +82,11 @@ namespace Lucene.Net.Spatial
             }
         }
 
-        private class ObjGeneratorDistanceValueSourceAnonymousHelper : ObjGenerator
+        private class ObjGeneratorDistanceValueSourceAnonymousClass : ObjGenerator
         {
             private readonly SpatialStrategy strategy;
 
-            public ObjGeneratorDistanceValueSourceAnonymousHelper(SpatialStrategy strategy)
+            public ObjGeneratorDistanceValueSourceAnonymousClass(SpatialStrategy strategy)
             {
                 this.strategy = strategy;
             }
@@ -101,9 +101,9 @@ namespace Lucene.Net.Spatial
         {
             SpatialArgs args1 = MakeArgs1();
             SpatialArgs args2 = MakeArgs2();
-            TestEqualsHashcode(args1, args2, new ObjGeneratorQueryAnonymousHelper(strategy));
-            TestEqualsHashcode(args1, args2, new ObjGeneratorFilterAnonymousHelper(strategy));
-            TestEqualsHashcode(args1, args2, new ObjGeneratorDistanceValueSourceAnonymousHelper(strategy));
+            TestEqualsHashcode(args1, args2, new ObjGeneratorQueryAnonymousClass(strategy));
+            TestEqualsHashcode(args1, args2, new ObjGeneratorFilterAnonymousClass(strategy));
+            TestEqualsHashcode(args1, args2, new ObjGeneratorDistanceValueSourceAnonymousClass(strategy));
         }
 
         private void TestEqualsHashcode(SpatialArgs args1, SpatialArgs args2, ObjGenerator generator)

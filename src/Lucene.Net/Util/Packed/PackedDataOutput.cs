@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Runtime.CompilerServices;
@@ -58,12 +59,12 @@ namespace Lucene.Net.Util.Packed
             {
                 if (remainingBits == 0)
                 {
-                    @out.WriteByte((byte)(sbyte)current);
+                    @out.WriteByte((byte)current);
                     current = 0L;
                     remainingBits = 8;
                 }
                 int bits = Math.Min(remainingBits, bitsPerValue);
-                current = current | ((((long)((ulong)value >> (bitsPerValue - bits))) & ((1L << bits) - 1)) << (remainingBits - bits));
+                current = current | (((value.TripleShift((bitsPerValue - bits))) & ((1L << bits) - 1)) << (remainingBits - bits));
                 bitsPerValue -= bits;
                 remainingBits -= bits;
             }
@@ -77,7 +78,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (remainingBits < 8)
             {
-                @out.WriteByte((byte)(sbyte)current);
+                @out.WriteByte((byte)current);
             }
             remainingBits = 8;
             current = 0L;

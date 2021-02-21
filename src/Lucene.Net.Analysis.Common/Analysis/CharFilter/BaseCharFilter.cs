@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Diagnostics;
@@ -61,7 +62,7 @@ namespace Lucene.Net.Analysis.CharFilters
 
             while (hi >= lo)
             {
-                mid = (int)((uint)(lo + hi) >> 1);
+                mid = (lo + hi).TripleShift(1);
                 if (currentOff < offsets[mid])
                 {
                     hi = mid - 1;

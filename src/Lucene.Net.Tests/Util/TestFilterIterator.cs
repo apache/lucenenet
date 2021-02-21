@@ -131,14 +131,14 @@ namespace Lucene.Net.Util
         [Obsolete("This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public virtual void TestEmptyIterator()
         {
-            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper(set.GetEnumerator());
+            IEnumerator<string> it = new FilterIteratorAnonymousClass(set.GetEnumerator());
             AssertNoMore(it);
         }
 
         [Obsolete("This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private class FilterIteratorAnonymousInnerClassHelper : FilterIterator<string>
+        private class FilterIteratorAnonymousClass : FilterIterator<string>
         {
-            public FilterIteratorAnonymousInnerClassHelper(IEnumerator<string> iterator)
+            public FilterIteratorAnonymousClass(IEnumerator<string> iterator)
                 : base(iterator)
             {
             }
@@ -153,16 +153,16 @@ namespace Lucene.Net.Util
         [Obsolete("This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public virtual void TestA1Iterator()
         {
-            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper2(set.GetEnumerator());
+            IEnumerator<string> it = new FilterIteratorAnonymousClass2(set.GetEnumerator());
             Assert.IsTrue(it.MoveNext());
             Assert.AreEqual("a", it.Current);
             AssertNoMore(it);
         }
 
         [Obsolete("This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private class FilterIteratorAnonymousInnerClassHelper2 : FilterIterator<string>
+        private class FilterIteratorAnonymousClass2 : FilterIterator<string>
         {
-            public FilterIteratorAnonymousInnerClassHelper2(IEnumerator<string> iterator)
+            public FilterIteratorAnonymousClass2(IEnumerator<string> iterator)
                 : base(iterator)
             {
             }
@@ -177,7 +177,7 @@ namespace Lucene.Net.Util
         [Obsolete("This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public virtual void TestA2Iterator()
         {
-            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper3(set.GetEnumerator());
+            IEnumerator<string> it = new FilterIteratorAnonymousClass3(set.GetEnumerator());
             // this time without check: Assert.IsTrue(it.hasNext());
             it.MoveNext();
             Assert.AreEqual("a", it.Current);
@@ -185,9 +185,9 @@ namespace Lucene.Net.Util
         }
 
         [Obsolete("This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private class FilterIteratorAnonymousInnerClassHelper3 : FilterIterator<string>
+        private class FilterIteratorAnonymousClass3 : FilterIterator<string>
         {
-            public FilterIteratorAnonymousInnerClassHelper3(IEnumerator<string> iterator)
+            public FilterIteratorAnonymousClass3(IEnumerator<string> iterator)
                 : base(iterator)
             {
             }
@@ -202,16 +202,16 @@ namespace Lucene.Net.Util
         [Obsolete("This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public virtual void TestB1Iterator()
         {
-            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper4(set.GetEnumerator());
+            IEnumerator<string> it = new FilterIteratorAnonymousClass4(set.GetEnumerator());
             Assert.IsTrue(it.MoveNext());
             Assert.AreEqual("b", it.Current);
             AssertNoMore(it);
         }
 
         [Obsolete("This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private class FilterIteratorAnonymousInnerClassHelper4 : FilterIterator<string>
+        private class FilterIteratorAnonymousClass4 : FilterIterator<string>
         {
-            public FilterIteratorAnonymousInnerClassHelper4(IEnumerator<string> iterator)
+            public FilterIteratorAnonymousClass4(IEnumerator<string> iterator)
                 : base(iterator)
             {
             }
@@ -226,7 +226,7 @@ namespace Lucene.Net.Util
         [Obsolete("This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public virtual void TestB2Iterator()
         {
-            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper5(set.GetEnumerator());
+            IEnumerator<string> it = new FilterIteratorAnonymousClass5(set.GetEnumerator());
             // this time without check: Assert.IsTrue(it.hasNext());
             it.MoveNext();
             Assert.AreEqual("b", it.Current);
@@ -234,9 +234,9 @@ namespace Lucene.Net.Util
         }
 
         [Obsolete("This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private class FilterIteratorAnonymousInnerClassHelper5 : FilterIterator<string>
+        private class FilterIteratorAnonymousClass5 : FilterIterator<string>
         {
-            public FilterIteratorAnonymousInnerClassHelper5(IEnumerator<string> iterator)
+            public FilterIteratorAnonymousClass5(IEnumerator<string> iterator)
                 : base(iterator)
             {
             }
@@ -251,7 +251,7 @@ namespace Lucene.Net.Util
         [Obsolete("This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public virtual void TestAll1Iterator()
         {
-            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper6(set.GetEnumerator());
+            IEnumerator<string> it = new FilterIteratorAnonymousClass6(set.GetEnumerator());
             Assert.IsTrue(it.MoveNext());
             Assert.AreEqual("a", it.Current);
             Assert.IsTrue(it.MoveNext());
@@ -262,9 +262,9 @@ namespace Lucene.Net.Util
         }
 
         [Obsolete("This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private class FilterIteratorAnonymousInnerClassHelper6 : FilterIterator<string>
+        private class FilterIteratorAnonymousClass6 : FilterIterator<string>
         {
-            public FilterIteratorAnonymousInnerClassHelper6(IEnumerator<string> iterator)
+            public FilterIteratorAnonymousClass6(IEnumerator<string> iterator)
                 : base(iterator)
             {
             }
@@ -279,7 +279,7 @@ namespace Lucene.Net.Util
         [Obsolete("This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public virtual void TestAll2Iterator()
         {
-            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper7(set.GetEnumerator());
+            IEnumerator<string> it = new FilterIteratorAnonymousClass7(set.GetEnumerator());
             it.MoveNext();
             Assert.AreEqual("a", it.Current);
             it.MoveNext();
@@ -290,9 +290,9 @@ namespace Lucene.Net.Util
         }
 
         [Obsolete("This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private class FilterIteratorAnonymousInnerClassHelper7 : FilterIterator<string>
+        private class FilterIteratorAnonymousClass7 : FilterIterator<string>
         {
-            public FilterIteratorAnonymousInnerClassHelper7(IEnumerator<string> iterator)
+            public FilterIteratorAnonymousClass7(IEnumerator<string> iterator)
                 : base(iterator)
             {
             }

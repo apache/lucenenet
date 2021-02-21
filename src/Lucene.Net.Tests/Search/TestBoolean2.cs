@@ -268,7 +268,7 @@ namespace Lucene.Net.Search
             Similarity oldSimilarity = searcher.Similarity;
             try
             {
-                searcher.Similarity = new DefaultSimilarityAnonymousInnerClassHelper(this);
+                searcher.Similarity = new DefaultSimilarityAnonymousClass(this);
                 QueriesTest(query, expDocNrs);
             }
             finally
@@ -277,11 +277,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class DefaultSimilarityAnonymousInnerClassHelper : DefaultSimilarity
+        private class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
             private readonly TestBoolean2 outerInstance;
 
-            public DefaultSimilarityAnonymousInnerClassHelper(TestBoolean2 outerInstance)
+            public DefaultSimilarityAnonymousClass(TestBoolean2 outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

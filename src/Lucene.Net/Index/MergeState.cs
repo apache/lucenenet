@@ -96,17 +96,17 @@ namespace Lucene.Net.Index
                 docMap.Freeze();
                 int numDeletedDocs = del;
                 if (Debugging.AssertsEnabled) Debugging.Assert(docMap.Count == maxDoc);
-                return new DocMapAnonymousInnerClassHelper(maxDoc, liveDocs, docMap, numDeletedDocs);
+                return new DocMapAnonymousClass(maxDoc, liveDocs, docMap, numDeletedDocs);
             }
 
-            private class DocMapAnonymousInnerClassHelper : DocMap
+            private class DocMapAnonymousClass : DocMap
             {
                 private readonly int maxDoc;
                 private readonly IBits liveDocs;
                 private readonly MonotonicAppendingInt64Buffer docMap;
                 private readonly int numDeletedDocs;
 
-                public DocMapAnonymousInnerClassHelper(int maxDoc, IBits liveDocs, MonotonicAppendingInt64Buffer docMap, int numDeletedDocs)
+                public DocMapAnonymousClass(int maxDoc, IBits liveDocs, MonotonicAppendingInt64Buffer docMap, int numDeletedDocs)
                 {
                     this.maxDoc = maxDoc;
                     this.liveDocs = liveDocs;
@@ -249,11 +249,11 @@ namespace Lucene.Net.Index
         /// <para/>
         /// @lucene.internal
         /// </summary>
-        public static readonly CheckAbort NONE = new CheckAbortAnonymousInnerClassHelper();
+        public static readonly CheckAbort NONE = new CheckAbortAnonymousClass();
 
-        private class CheckAbortAnonymousInnerClassHelper : CheckAbort
+        private class CheckAbortAnonymousClass : CheckAbort
         {
-            public CheckAbortAnonymousInnerClassHelper()
+            public CheckAbortAnonymousClass()
                 : base(null, null)
             {
             }

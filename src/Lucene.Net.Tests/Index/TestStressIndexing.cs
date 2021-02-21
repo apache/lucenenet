@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
@@ -227,7 +227,7 @@ namespace Lucene.Net.Index
 
         [Test]
         [Slow]
-        public virtual void TestStressIndexAndSearching([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestStressIndexAndSearching()
         {
             Directory directory = NewDirectory();
             MockDirectoryWrapper wrapper = directory as MockDirectoryWrapper;
@@ -236,7 +236,7 @@ namespace Lucene.Net.Index
                 wrapper.AssertNoUnreferencedFilesOnClose = true;
             }
 
-            RunStressTest(directory, newScheduler());
+            RunStressTest(directory, new ConcurrentMergeScheduler());
             directory.Dispose();
         }
     }

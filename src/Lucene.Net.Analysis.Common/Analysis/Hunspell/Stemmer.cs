@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Util;
+﻿using J2N.Numerics;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -197,7 +198,7 @@ namespace Lucene.Net.Analysis.Hunspell
                         char stripOrd = (char)(affixReader.ReadInt16() & 0xffff);
                         int condition = (char)(affixReader.ReadInt16() & 0xffff);
                         bool crossProduct = (condition & 1) == 1;
-                        condition = (int)((uint)condition >> 1);
+                        condition = condition.TripleShift(1);
                         char append = (char)(affixReader.ReadInt16() & 0xffff);
 
                         bool compatible;
@@ -266,7 +267,7 @@ namespace Lucene.Net.Analysis.Hunspell
                         char stripOrd = (char)(affixReader.ReadInt16() & 0xffff);
                         int condition = (char)(affixReader.ReadInt16() & 0xffff);
                         bool crossProduct = (condition & 1) == 1;
-                        condition = (int)((uint)condition >> 1);
+                        condition = condition.TripleShift(1);
                         char append = (char)(affixReader.ReadInt16() & 0xffff);
 
                         bool compatible;
@@ -368,7 +369,7 @@ namespace Lucene.Net.Analysis.Hunspell
             affixReader.SkipBytes(2); // strip
             int condition = (char)(affixReader.ReadInt16() & 0xffff);
             bool crossProduct = (condition & 1) == 1;
-            condition = (int)((uint)condition >> 1);
+            condition = condition.TripleShift(1);
             char append = (char)(affixReader.ReadInt16() & 0xffff);
 
             List<CharsRef> stems = new List<CharsRef>();

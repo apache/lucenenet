@@ -68,7 +68,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         protected virtual SpatialStrategy MakeSpatialStrategy(Config config)
         {
             //A Map view of Config that prefixes keys with "spatial."
-            var configMap = new DictionaryAnonymousHelper(config);
+            var configMap = new DictionaryAnonymousClass(config);
 
             SpatialContext ctx = SpatialContextFactory.MakeSpatialContext(configMap /*, null*/); // LUCENENET TODO: What is this extra param?
 
@@ -77,10 +77,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             return MakeSpatialStrategy(config, configMap, ctx);
         }
 
-        private class DictionaryAnonymousHelper : Dictionary<string, string>
+        private class DictionaryAnonymousClass : Dictionary<string, string>
         {
             private readonly Config config;
-            public DictionaryAnonymousHelper(Config config)
+            public DictionaryAnonymousClass(Config config)
             {
                 this.config = config;
             }
@@ -96,7 +96,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             //A factory for the prefix tree grid
             SpatialPrefixTree grid = SpatialPrefixTreeFactory.MakeSPT(configMap, /*null,*/ ctx); // LUCENENET TODO: What is this extra param?
 
-            RecursivePrefixTreeStrategy strategy = new RecursivePrefixTreeStrategyAnonymousHelper(grid, SPATIAL_FIELD, config);
+            RecursivePrefixTreeStrategy strategy = new RecursivePrefixTreeStrategyAnonymousClass(grid, SPATIAL_FIELD, config);
 
             int prefixGridScanLevel = config.Get("query.spatial.prefixGridScanLevel", -4);
             if (prefixGridScanLevel < 0)
@@ -108,9 +108,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             return strategy;
         }
 
-        private class RecursivePrefixTreeStrategyAnonymousHelper : RecursivePrefixTreeStrategy
+        private class RecursivePrefixTreeStrategyAnonymousClass : RecursivePrefixTreeStrategy
         {
-            public RecursivePrefixTreeStrategyAnonymousHelper(SpatialPrefixTree grid, string fieldName, Config config)
+            public RecursivePrefixTreeStrategyAnonymousClass(SpatialPrefixTree grid, string fieldName, Config config)
                 : base(grid, fieldName)
             {
                 this.m_pointsOnly = config.Get("spatial.docPointsOnly", false);
@@ -142,17 +142,17 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             double plusMinus = config.Get(configKeyPrefix + "radiusDegreesRandPlusMinus", 0.0);
             bool bbox = config.Get(configKeyPrefix + "bbox", false);
 
-            return new ShapeConverterAnonymousHelper(spatialStrategy, radiusDegrees, plusMinus, bbox);
+            return new ShapeConverterAnonymousClass(spatialStrategy, radiusDegrees, plusMinus, bbox);
         }
 
-        private class ShapeConverterAnonymousHelper : IShapeConverter
+        private class ShapeConverterAnonymousClass : IShapeConverter
         {
             private readonly SpatialStrategy spatialStrategy;
             private readonly double radiusDegrees;
             private readonly double plusMinus;
             private readonly bool bbox;
 
-            public ShapeConverterAnonymousHelper(SpatialStrategy spatialStrategy, double radiusDegrees, double plusMinus, bool bbox)
+            public ShapeConverterAnonymousClass(SpatialStrategy spatialStrategy, double radiusDegrees, double plusMinus, bool bbox)
             {
                 this.spatialStrategy = spatialStrategy;
                 this.radiusDegrees = radiusDegrees;

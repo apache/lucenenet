@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
 
             foreach (AtomicReaderContext cxt in pr.Leaves)
             {
-                cxt.Reader.AddReaderClosedListener(new ReaderClosedListenerAnonymousInnerClassHelper(this, listenerClosedCount));
+                cxt.Reader.AddReaderClosedListener(new ReaderClosedListenerAnonymousClass(this, listenerClosedCount));
             }
             pr.Dispose();
             ir1.Dispose();
@@ -168,13 +168,13 @@ namespace Lucene.Net.Index
             dir1.Dispose();
         }
 
-        private class ReaderClosedListenerAnonymousInnerClassHelper : IReaderClosedListener
+        private class ReaderClosedListenerAnonymousClass : IReaderClosedListener
         {
             private readonly TestParallelCompositeReader outerInstance;
 
             private readonly int[] listenerClosedCount;
 
-            public ReaderClosedListenerAnonymousInnerClassHelper(TestParallelCompositeReader outerInstance, int[] listenerClosedCount)
+            public ReaderClosedListenerAnonymousClass(TestParallelCompositeReader outerInstance, int[] listenerClosedCount)
             {
                 this.outerInstance = outerInstance;
                 this.listenerClosedCount = listenerClosedCount;
@@ -202,20 +202,20 @@ namespace Lucene.Net.Index
 
             foreach (AtomicReaderContext cxt in pr.Leaves)
             {
-                cxt.Reader.AddReaderClosedListener(new ReaderClosedListenerAnonymousInnerClassHelper2(this, listenerClosedCount));
+                cxt.Reader.AddReaderClosedListener(new ReaderClosedListenerAnonymousClass2(this, listenerClosedCount));
             }
             pr.Dispose();
             Assert.AreEqual(3, listenerClosedCount[0]);
             dir1.Dispose();
         }
 
-        private class ReaderClosedListenerAnonymousInnerClassHelper2 : IReaderClosedListener
+        private class ReaderClosedListenerAnonymousClass2 : IReaderClosedListener
         {
             private readonly TestParallelCompositeReader outerInstance;
 
             private readonly int[] listenerClosedCount;
 
-            public ReaderClosedListenerAnonymousInnerClassHelper2(TestParallelCompositeReader outerInstance, int[] listenerClosedCount)
+            public ReaderClosedListenerAnonymousClass2(TestParallelCompositeReader outerInstance, int[] listenerClosedCount)
             {
                 this.outerInstance = outerInstance;
                 this.listenerClosedCount = listenerClosedCount;
@@ -491,7 +491,7 @@ namespace Lucene.Net.Index
 
             string s = pr.ToString();
 
-            Assert.IsTrue(s.StartsWith("ParallelCompositeReader(ParallelCompositeReaderAnonymousInnerClassHelper(ParallelAtomicReader(", StringComparison.Ordinal), "toString incorrect: " + s);
+            Assert.IsTrue(s.StartsWith("ParallelCompositeReader(ParallelCompositeReaderAnonymousClass(ParallelAtomicReader(", StringComparison.Ordinal), "toString incorrect: " + s);
 
             pr.Dispose();
             dir1.Dispose();

@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
             float[] scores = new float[4];
 
             IndexSearcher searcher = NewSearcher(reader);
-            searcher.Search(new TermQuery(new Term("field", "word")), new CollectorAnonymousInnerClassHelper(this, scores));
+            searcher.Search(new TermQuery(new Term("field", "word")), new CollectorAnonymousClass(this, scores));
 
             float lastScore = 0.0f;
 
@@ -82,13 +82,13 @@ namespace Lucene.Net.Search
             store.Dispose();
         }
 
-        private class CollectorAnonymousInnerClassHelper : ICollector
+        private class CollectorAnonymousClass : ICollector
         {
             private readonly TestDocBoost outerInstance;
 
             private readonly float[] scores;
 
-            public CollectorAnonymousInnerClassHelper(TestDocBoost outerInstance, float[] scores)
+            public CollectorAnonymousClass(TestDocBoost outerInstance, float[] scores)
             {
                 this.outerInstance = outerInstance;
                 this.scores = scores;

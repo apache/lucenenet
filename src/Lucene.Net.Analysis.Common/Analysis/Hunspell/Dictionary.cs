@@ -1,5 +1,6 @@
 ﻿using J2N;
 using J2N.Collections.Generic.Extensions;
+using J2N.Numerics;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
@@ -946,7 +947,7 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 return CharsRef.EMPTY_CHARS;
             }
-            int len = (int)((uint)b.Length >> 1);
+            int len = b.Length.TripleShift(1);
             char[] flags = new char[len];
             int upto = 0;
             int end = b.Offset + b.Length;

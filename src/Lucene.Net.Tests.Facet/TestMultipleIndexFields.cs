@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿// Lucene version compatibility level 4.8.1
+using System.Collections.Generic;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -45,16 +45,23 @@ namespace Lucene.Net.Facet
     public class TestMultipleIndexFields : FacetTestCase
     {
 
-        private static readonly FacetField[] CATEGORIES = new FacetField[] { new FacetField("Author", "Mark Twain"), new FacetField("Author", "Stephen King"), new FacetField("Author", "Kurt Vonnegut"), new FacetField("Band", "Rock & Pop", "The Beatles"), new FacetField("Band", "Punk", "The Ramones"), new FacetField("Band", "Rock & Pop", "U2"), new FacetField("Band", "Rock & Pop", "REM"), new FacetField("Band", "Rock & Pop", "Dave Matthews Band"), new FacetField("Composer", "Bach") };
+        private static readonly FacetField[] CATEGORIES = new FacetField[] {
+            new FacetField("Author", "Mark Twain"),
+            new FacetField("Author", "Stephen King"),
+            new FacetField("Author", "Kurt Vonnegut"),
+            new FacetField("Band", "Rock & Pop", "The Beatles"),
+            new FacetField("Band", "Punk", "The Ramones"),
+            new FacetField("Band", "Rock & Pop", "U2"),
+            new FacetField("Band", "Rock & Pop", "REM"),
+            new FacetField("Band", "Rock & Pop", "Dave Matthews Band"),
+            new FacetField("Composer", "Bach")
+        };
 
-        private FacetsConfig Config
+        private FacetsConfig GetConfig()
         {
-            get
-            {
-                FacetsConfig config = new FacetsConfig();
-                config.SetHierarchical("Band", true);
-                return config;
-            }
+            FacetsConfig config = new FacetsConfig();
+            config.SetHierarchical("Band", true);
+            return config;
         }
 
         [Test]
@@ -64,10 +71,11 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             // create and open an index writer
-            var iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
+            var iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
             var tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
-            var config = Config;
+            var config = GetConfig();
 
             seedIndex(tw, iw, config);
 
@@ -97,11 +105,12 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             // create and open an index writer
-            RandomIndexWriter iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
+            RandomIndexWriter iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
             var tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
-            FacetsConfig config = Config;
+            FacetsConfig config = GetConfig();
             config.SetIndexFieldName("Author", "$author");
             seedIndex(tw, iw, config);
 
@@ -136,11 +145,12 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             // create and open an index writer
-            RandomIndexWriter iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
+            RandomIndexWriter iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
             var tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
-            FacetsConfig config = Config;
+            FacetsConfig config = GetConfig();
             config.SetIndexFieldName("Band", "$music");
             config.SetIndexFieldName("Composer", "$music");
             seedIndex(tw, iw, config);
@@ -192,11 +202,12 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             // create and open an index writer
-            var iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
+            var iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
             var tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
-            FacetsConfig config = Config;
+            FacetsConfig config = GetConfig();
             config.SetIndexFieldName("Band", "$bands");
             config.SetIndexFieldName("Composer", "$composers");
             seedIndex(tw, iw, config);
@@ -233,11 +244,12 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             // create and open an index writer
-            RandomIndexWriter iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
+            RandomIndexWriter iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
             ITaxonomyWriter tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
-            FacetsConfig config = Config;
+            FacetsConfig config = GetConfig();
             config.SetIndexFieldName("Band", "$music");
             config.SetIndexFieldName("Composer", "$music");
             config.SetIndexFieldName("Author", "$literature");

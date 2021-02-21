@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using J2N.Numerics;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
 using System.Collections;
@@ -62,10 +63,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
             FunctionValues vals = m_source.GetValues(context, readerContext);
             FunctionValues targets = m_target.GetValues(context, readerContext);
             FunctionValues defaults = (this.m_defaultVal == null) ? null : m_defaultVal.GetValues(context, readerContext);
-            return new SingleDocValuesAnonymousInnerClassHelper(this, this, vals, targets, defaults);
+            return new SingleDocValuesAnonymousClass(this, this, vals, targets, defaults);
         }
 
-        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
+        private class SingleDocValuesAnonymousClass : SingleDocValues
         {
             private readonly RangeMapSingleFunction outerInstance;
 
@@ -73,7 +74,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             private readonly FunctionValues targets;
             private readonly FunctionValues defaults;
 
-            public SingleDocValuesAnonymousInnerClassHelper(RangeMapSingleFunction outerInstance, RangeMapSingleFunction @this, FunctionValues vals, FunctionValues targets, FunctionValues defaults)
+            public SingleDocValuesAnonymousClass(RangeMapSingleFunction outerInstance, RangeMapSingleFunction @this, FunctionValues vals, FunctionValues targets, FunctionValues defaults)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
@@ -104,9 +105,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override int GetHashCode()
         {
             int h = m_source.GetHashCode();
-            h ^= (h << 10) | ((int)((uint)h >> 23));
+            h ^= (h << 10) | (h.TripleShift(23));
             h += J2N.BitConversion.SingleToInt32Bits(m_min);
-            h ^= (h << 14) | ((int)((uint)h >> 19));
+            h ^= (h << 14) | (h.TripleShift(19));
             h += J2N.BitConversion.SingleToInt32Bits(m_max);
             h += m_target.GetHashCode();
             if (m_defaultVal != null)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Lucene version compatibility level 4.8.1
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -166,14 +167,14 @@ namespace Lucene.Net.Facet.Taxonomy
                 {
                     throw new ThreadStateException("scores are missing; be sure to pass keepScores=true to FacetsCollector");
                 }
-                return new DoubleDocValuesAnonymousInnerClassHelper(this, scorer);
+                return new DoubleDocValuesAnonymousClass(this, scorer);
             }
 
-            private class DoubleDocValuesAnonymousInnerClassHelper : DoubleDocValues
+            private class DoubleDocValuesAnonymousClass : DoubleDocValues
             {
                 private readonly Scorer scorer;
 
-                public DoubleDocValuesAnonymousInnerClassHelper(ScoreValueSource outerInstance, Scorer scorer)
+                public DoubleDocValuesAnonymousClass(ScoreValueSource outerInstance, Scorer scorer)
                     : base(outerInstance)
                 {
                     this.scorer = scorer;

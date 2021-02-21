@@ -41,13 +41,13 @@ namespace Lucene.Net.Codecs.RAMOnly
         // For fun, test that we can override how terms are
         // sorted, and basic things still work -- this comparer
         // sorts in reversed unicode code point order:
-        private static readonly IComparer<BytesRef> reverseUnicodeComparer = new ComparerAnonymousInnerClassHelper();
+        private static readonly IComparer<BytesRef> reverseUnicodeComparer = new ComparerAnonymousClass();
 
 #pragma warning disable 659 // LUCENENET: Overrides Equals but not GetHashCode
-        private class ComparerAnonymousInnerClassHelper : IComparer<BytesRef>
+        private class ComparerAnonymousClass : IComparer<BytesRef>
 #pragma warning restore 659
         {
-            public ComparerAnonymousInnerClassHelper()
+            public ComparerAnonymousClass()
             { }
 
             public virtual int Compare(BytesRef t1, BytesRef t2)

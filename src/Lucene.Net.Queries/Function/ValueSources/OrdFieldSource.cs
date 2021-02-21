@@ -66,15 +66,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
             IndexReader topReader = ReaderUtil.GetTopLevelContext(readerContext).Reader;
             AtomicReader r = SlowCompositeReaderWrapper.Wrap(topReader);
             SortedDocValues sindex = FieldCache.DEFAULT.GetTermsIndex(r, m_field);
-            return new Int32DocValuesAnonymousInnerClassHelper(this, off, sindex);
+            return new Int32DocValuesAnonymousClass(this, off, sindex);
         }
 
-        private sealed class Int32DocValuesAnonymousInnerClassHelper : Int32DocValues
+        private sealed class Int32DocValuesAnonymousClass : Int32DocValues
         {
             private readonly int off;
             private readonly SortedDocValues sindex;
 
-            public Int32DocValuesAnonymousInnerClassHelper(OrdFieldSource @this, int off, SortedDocValues sindex)
+            public Int32DocValuesAnonymousClass(OrdFieldSource @this, int off, SortedDocValues sindex)
                 : base(@this)
             {
                 this.off = off;

@@ -141,7 +141,7 @@ namespace Lucene.Net.Index
                         }
                         // We pass true for closeSubs and we prevent closing of subreaders in doClose():
                         // By this the synthetic throw-away readers used here are completely invisible to ref-counting
-                        subReaders[i] = new ParallelAtomicReaderAnonymousInnerClassHelper(atomicSubs, storedSubs);
+                        subReaders[i] = new ParallelAtomicReaderAnonymousClass(atomicSubs, storedSubs);
                     }
                     else
                     {
@@ -158,16 +158,16 @@ namespace Lucene.Net.Index
                         }
                         // We pass true for closeSubs and we prevent closing of subreaders in doClose():
                         // By this the synthetic throw-away readers used here are completely invisible to ref-counting
-                        subReaders[i] = new ParallelCompositeReaderAnonymousInnerClassHelper(compositeSubs, storedSubs);
+                        subReaders[i] = new ParallelCompositeReaderAnonymousClass(compositeSubs, storedSubs);
                     }
                 }
                 return subReaders;
             }
         }
 
-        private class ParallelAtomicReaderAnonymousInnerClassHelper : ParallelAtomicReader
+        private class ParallelAtomicReaderAnonymousClass : ParallelAtomicReader
         {
-            public ParallelAtomicReaderAnonymousInnerClassHelper(Lucene.Net.Index.AtomicReader[] atomicSubs, Lucene.Net.Index.AtomicReader[] storedSubs)
+            public ParallelAtomicReaderAnonymousClass(Lucene.Net.Index.AtomicReader[] atomicSubs, Lucene.Net.Index.AtomicReader[] storedSubs)
                 : base(true, atomicSubs, storedSubs)
             {
             }
@@ -177,9 +177,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ParallelCompositeReaderAnonymousInnerClassHelper : ParallelCompositeReader
+        private class ParallelCompositeReaderAnonymousClass : ParallelCompositeReader
         {
-            public ParallelCompositeReaderAnonymousInnerClassHelper(Lucene.Net.Index.CompositeReader[] compositeSubs, Lucene.Net.Index.CompositeReader[] storedSubs)
+            public ParallelCompositeReaderAnonymousClass(Lucene.Net.Index.CompositeReader[] compositeSubs, Lucene.Net.Index.CompositeReader[] storedSubs)
                 : base(true, compositeSubs, storedSubs)
             {
             }

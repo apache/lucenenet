@@ -174,11 +174,11 @@ namespace Lucene.Net.Util
         public int[] Sort(IComparer<BytesRef> comp)
         {
             int[] compact = Compact();
-            new IntroSorterAnonymousInnerClassHelper(this, comp, compact).Sort(0, count);
+            new IntroSorterAnonymousClass(this, comp, compact).Sort(0, count);
             return compact;
         }
 
-        private class IntroSorterAnonymousInnerClassHelper : IntroSorter
+        private class IntroSorterAnonymousClass : IntroSorter
         {
             private readonly BytesRefHash outerInstance;
 
@@ -186,7 +186,7 @@ namespace Lucene.Net.Util
             private readonly int[] compact;
             private readonly BytesRef pivot = new BytesRef(), /*scratch1 = new BytesRef(), // LUCENENET: Never read */ scratch2 = new BytesRef();
 
-            public IntroSorterAnonymousInnerClassHelper(BytesRefHash outerInstance, IComparer<BytesRef> comp, int[] compact)
+            public IntroSorterAnonymousClass(BytesRefHash outerInstance, IComparer<BytesRef> comp, int[] compact)
             {
                 this.outerInstance = outerInstance;
                 this.comp = comp;

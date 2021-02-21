@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestMaxNumSegments2([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestMaxNumSegments2()
         {
             Directory dir = NewDirectory();
 
@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
             var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                             .SetMaxBufferedDocs(2)
                             .SetMergePolicy(ldmp)
-                            .SetMergeScheduler(newScheduler());
+                            .SetMergeScheduler(new ConcurrentMergeScheduler());
             IndexWriter writer = new IndexWriter(dir, config);
 
             for (int iter = 0; iter < 10; iter++)

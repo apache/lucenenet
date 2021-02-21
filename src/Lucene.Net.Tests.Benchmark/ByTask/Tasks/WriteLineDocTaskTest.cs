@@ -368,10 +368,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 br.Dispose();
             }
         }
-        private class ThreadAnonymousHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly WriteLineDocTask wldt;
-            public ThreadAnonymousHelper(string name, WriteLineDocTask wldt)
+            public ThreadAnonymousClass(string name, WriteLineDocTask wldt)
                 : base(name)
             {
                 this.IsDebug = true;
@@ -401,7 +401,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             {
                 for (int i = 0; i < threads.Length; i++)
                 {
-                    threads[i] = new ThreadAnonymousHelper("t" + i, wldt);
+                    threads[i] = new ThreadAnonymousClass("t" + i, wldt);
                 }
 
                 foreach (ThreadJob t in threads) t.Start();

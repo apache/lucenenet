@@ -38,15 +38,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             FunctionValues vals = m_source.GetValues(context, readerContext);
-            return new SingleDocValuesAnonymousInnerClassHelper(this, this, vals);
+            return new SingleDocValuesAnonymousClass(this, this, vals);
         }
 
-        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
+        private class SingleDocValuesAnonymousClass : SingleDocValues
         {
             private readonly SimpleSingleFunction outerInstance;
             private readonly FunctionValues vals;
 
-            public SingleDocValuesAnonymousInnerClassHelper(SimpleSingleFunction outerInstance, SimpleSingleFunction @this, FunctionValues vals)
+            public SingleDocValuesAnonymousClass(SimpleSingleFunction outerInstance, SimpleSingleFunction @this, FunctionValues vals)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;

@@ -192,7 +192,7 @@
 //            public IEnumerator<TKey> GetEnumerator()
 //            {
 //                outerInstance.Reap();
-//                return new IteratorAnonymousInnerClassHelper(outerInstance);
+//                return new IteratorAnonymousClass(outerInstance);
 //            }
 
 //            IEnumerator IEnumerable.GetEnumerator()
@@ -259,12 +259,12 @@
 //            }
 //        }
 
-//        private class IteratorAnonymousInnerClassHelper : IEnumerator<TKey>
+//        private class IteratorAnonymousClass : IEnumerator<TKey>
 //        {
 //            private readonly WeakIdentityMap<TKey, TValue> outerInstance;
 //            private readonly IEnumerator<KeyValuePair<IdentityWeakReference, TValue>> enumerator;
 
-//            public IteratorAnonymousInnerClassHelper(WeakIdentityMap<TKey, TValue> outerInstance)
+//            public IteratorAnonymousClass(WeakIdentityMap<TKey, TValue> outerInstance)
 //            {
 //                this.outerInstance = outerInstance;
 //                enumerator = outerInstance.backingStore.GetEnumerator();

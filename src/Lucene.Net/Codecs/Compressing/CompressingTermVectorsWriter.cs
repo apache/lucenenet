@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+using J2N.Numerics;
 
 namespace Lucene.Net.Codecs.Compressing
 {
@@ -478,7 +479,7 @@ namespace Lucene.Net.Codecs.Compressing
             if (Debugging.AssertsEnabled) Debugging.Assert(numDistinctFields > 0);
             int bitsRequired = PackedInt32s.BitsRequired(fieldNums.Max);
             int token = (Math.Min(numDistinctFields - 1, 0x07) << 5) | bitsRequired;
-            vectorsStream.WriteByte((byte)(sbyte)token);
+            vectorsStream.WriteByte((byte)token);
             if (numDistinctFields - 1 >= 0x07)
             {
                 vectorsStream.WriteVInt32(numDistinctFields - 1 - 0x07);
@@ -843,7 +844,7 @@ namespace Lucene.Net.Codecs.Compressing
                         {
                             payloadLengthsBuf[payStart + i] = 0;
                         }
-                        position += (int)((uint)code >> 1);
+                        position += code.TripleShift(1);
                         positionsBuf[posStart + i] = position;
                     }
                 }
@@ -851,7 +852,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     for (int i = 0; i < numProx; ++i)
                     {
-                        position += ((int)((uint)positions.ReadVInt32() >> 1));
+                        position += positions.ReadVInt32().TripleShift(1);
                         positionsBuf[posStart + i] = position;
                     }
                 }

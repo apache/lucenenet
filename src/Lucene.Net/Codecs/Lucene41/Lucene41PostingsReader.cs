@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
@@ -109,7 +110,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 for (int i = 0; i < num; i++)
                 {
                     int code = docIn.ReadVInt32();
-                    docBuffer[i] = (int)((uint)code >> 1);
+                    docBuffer[i] = code.TripleShift(1);
                     if ((code & 1) != 0)
                     {
                         freqBuffer[i] = 1;
@@ -766,7 +767,7 @@ namespace Lucene.Net.Codecs.Lucene41
                             {
                                 payloadLength = posIn.ReadVInt32();
                             }
-                            posDeltaBuffer[i] = (int)((uint)code >> 1);
+                            posDeltaBuffer[i] = code.TripleShift(1);
                             if (payloadLength != 0)
                             {
                                 posIn.Seek(posIn.GetFilePointer() + payloadLength);
@@ -1281,7 +1282,7 @@ namespace Lucene.Net.Codecs.Lucene41
                             //   System.out.println("        i=" + i + " payloadLen=" + payloadLength);
                             // }
                             payloadLengthBuffer[i] = payloadLength;
-                            posDeltaBuffer[i] = (int)((uint)code >> 1);
+                            posDeltaBuffer[i] = code.TripleShift(1);
                             if (payloadLength != 0)
                             {
                                 if (payloadByteUpto + payloadLength > payloadBytes.Length)
@@ -1308,7 +1309,7 @@ namespace Lucene.Net.Codecs.Lucene41
                             {
                                 offsetLength = posIn.ReadVInt32();
                             }
-                            offsetStartDeltaBuffer[i] = (int)((uint)deltaCode >> 1);
+                            offsetStartDeltaBuffer[i] = deltaCode.TripleShift(1);
                             offsetLengthBuffer[i] = offsetLength;
                             // if (DEBUG) {
                             //   System.out.println("          startOffDelta=" + offsetStartDeltaBuffer[i] + " offsetLen=" + offsetLengthBuffer[i]);

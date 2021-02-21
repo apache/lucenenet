@@ -1,4 +1,4 @@
-using J2N.IO;
+﻿using J2N.IO;
 using J2N.IO.MemoryMappedFiles;
 using J2N.Numerics;
 using Lucene.Net.Diagnostics;
@@ -189,16 +189,16 @@ namespace Lucene.Net.Store
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             var full = (MMapIndexInput)OpenInput(name, context);
-            return new IndexInputSlicerAnonymousInnerClassHelper(this, full);
+            return new IndexInputSlicerAnonymousClass(this, full);
         }
 
-        private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
+        private class IndexInputSlicerAnonymousClass : IndexInputSlicer
         {
             private readonly MMapDirectory outerInstance;
 
             private readonly MMapIndexInput full;
 
-            public IndexInputSlicerAnonymousInnerClassHelper(MMapDirectory outerInstance, MMapIndexInput full)
+            public IndexInputSlicerAnonymousClass(MMapDirectory outerInstance, MMapIndexInput full)
             {
                 this.outerInstance = outerInstance;
                 this.full = full;
@@ -298,7 +298,7 @@ namespace Lucene.Net.Store
             long chunkSize = 1L << chunkSizePower;
 
             // we always allocate one more buffer, the last one may be a 0 byte one
-            int nrBuffers = (int)((long)((ulong)length >> chunkSizePower)) + 1;
+            int nrBuffers = (int)length.TripleShift(chunkSizePower) + 1;
 
             ByteBuffer[] buffers = new ByteBuffer[nrBuffers];
 

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis;
+﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Analysis;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -10,6 +11,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
@@ -129,7 +131,7 @@ namespace Lucene.Net.Tests.Join
         public void TestOverflowTermsWithScoreCollectorRandom()
         {
             var scoreModeLength = Enum.GetNames(typeof(ScoreMode)).Length;
-            Test300spartans(Random.NextBoolean(), (ScoreMode) Random.Next(scoreModeLength));
+            Test300spartans(Random.NextBoolean(), (ScoreMode)Random.Next(scoreModeLength));
         }
 
         protected virtual void Test300spartans(bool multipleValues, ScoreMode scoreMode)
@@ -249,13 +251,13 @@ namespace Lucene.Net.Tests.Join
             bq.Add(joinQuery, Occur.SHOULD);
             bq.Add(new TermQuery(new Term("id", "3")), Occur.SHOULD);
 
-            indexSearcher.Search(bq, new CollectorAnonymousInnerClassHelper());
+            indexSearcher.Search(bq, new CollectorAnonymousClass());
 
             indexSearcher.IndexReader.Dispose();
             dir.Dispose();
         }
 
-        private class CollectorAnonymousInnerClassHelper : ICollector
+        private class CollectorAnonymousClass : ICollector
         {
             internal bool sawFive;
 
@@ -463,7 +465,7 @@ namespace Lucene.Net.Tests.Join
                     FixedBitSet actualResult = new FixedBitSet(indexSearcher.IndexReader.MaxDoc);
                     TopScoreDocCollector topScoreDocCollector = TopScoreDocCollector.Create(10, false);
                     indexSearcher.Search(joinQuery,
-                        new CollectorAnonymousInnerClassHelper2(scoreDocsInOrder, actualResult,
+                        new CollectorAnonymousClass2(scoreDocsInOrder, actualResult,
                             topScoreDocCollector));
                     // Asserting bit set...
                     if (Verbose)
@@ -502,8 +504,8 @@ namespace Lucene.Net.Tests.Join
                     {
                         if (Verbose)
                         {
-                            string.Format("Expected doc: {0} | Actual doc: {1}\n", expectedTopDocs.ScoreDocs[i].Doc, actualTopDocs.ScoreDocs[i].Doc);
-                            string.Format("Expected score: {0} | Actual score: {1}\n", expectedTopDocs.ScoreDocs[i].Score, actualTopDocs.ScoreDocs[i].Score);
+                            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Expected doc: {0} | Actual doc: {1}\n", expectedTopDocs.ScoreDocs[i].Doc, actualTopDocs.ScoreDocs[i].Doc));
+                            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Expected score: {0} | Actual score: {1}\n", expectedTopDocs.ScoreDocs[i].Score, actualTopDocs.ScoreDocs[i].Score));
                         }
                         assertEquals(expectedTopDocs.ScoreDocs[i].Doc, actualTopDocs.ScoreDocs[i].Doc);
                         assertEquals(expectedTopDocs.ScoreDocs[i].Score, actualTopDocs.ScoreDocs[i].Score, 0.0f);
@@ -516,13 +518,13 @@ namespace Lucene.Net.Tests.Join
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper2 : ICollector
+        private class CollectorAnonymousClass2 : ICollector
         {
             private bool scoreDocsInOrder;
             private FixedBitSet actualResult;
             private TopScoreDocCollector topScoreDocCollector;
 
-            public CollectorAnonymousInnerClassHelper2(bool scoreDocsInOrder,
+            public CollectorAnonymousClass2(bool scoreDocsInOrder,
                 FixedBitSet actualResult,
                 TopScoreDocCollector topScoreDocCollector)
             {
@@ -554,8 +556,7 @@ namespace Lucene.Net.Tests.Join
             public virtual bool AcceptsDocsOutOfOrder => scoreDocsInOrder;
         }
         
-        private IndexIterationContext CreateContext(int nDocs, RandomIndexWriter writer, bool multipleValuesPerDocument,
-            bool scoreDocsInOrder)
+        private IndexIterationContext CreateContext(int nDocs, RandomIndexWriter writer, bool multipleValuesPerDocument, bool scoreDocsInOrder)
         {
             return CreateContext(nDocs, writer, writer, multipleValuesPerDocument, scoreDocsInOrder);
         }
@@ -564,7 +565,7 @@ namespace Lucene.Net.Tests.Join
             bool multipleValuesPerDocument, bool scoreDocsInOrder)
         {
             IndexIterationContext context = new IndexIterationContext();
-            int numRandomValues = nDocs/2;
+            int numRandomValues = nDocs / 2;
             context.RandomUniqueValues = new string[numRandomValues];
             ISet<string> trackSet = new JCG.HashSet<string>();
             context.RandomFrom = new bool[numRandomValues];
@@ -585,7 +586,7 @@ namespace Lucene.Net.Tests.Join
             RandomDoc[] docs = new RandomDoc[nDocs];
             for (int i = 0; i < nDocs; i++)
             {
-                string id = Convert.ToString(i);
+                string id = Convert.ToString(i, CultureInfo.InvariantCulture);
                 int randomI = Random.Next(context.RandomUniqueValues.Length);
                 string value = context.RandomUniqueValues[randomI];
                 Document document = new Document();
@@ -678,12 +679,12 @@ namespace Lucene.Net.Tests.Join
                 if (multipleValuesPerDocument)
                 {
                     fromSearcher.Search(new TermQuery(new Term("value", uniqueRandomValue)),
-                        new CollectorAnonymousInnerClassHelper3(fromField, joinValueToJoinScores));
+                        new CollectorAnonymousClass3(fromField, joinValueToJoinScores));
                 }
                 else
                 {
                     fromSearcher.Search(new TermQuery(new Term("value", uniqueRandomValue)),
-                        new CollectorAnonymousInnerClassHelper4(fromField, joinValueToJoinScores));
+                        new CollectorAnonymousClass4(fromField, joinValueToJoinScores));
                 }
 
                 IDictionary<int, JoinScore> docToJoinScore = new Dictionary<int, JoinScore>();
@@ -708,9 +709,7 @@ namespace Lucene.Net.Tests.Join
                                     docsEnum = termsEnum.Docs(slowCompositeReader.LiveDocs, docsEnum, DocsFlags.NONE);
                                     JoinScore joinScore = joinValueToJoinScores[joinValue];
 
-                                    for (int doc = docsEnum.NextDoc();
-                                        doc != DocIdSetIterator.NO_MORE_DOCS;
-                                        doc = docsEnum.NextDoc())
+                                    for (int doc = docsEnum.NextDoc(); doc != DocIdSetIterator.NO_MORE_DOCS; doc = docsEnum.NextDoc())
                                     {
                                         // First encountered join value determines the score.
                                         // Something to keep in mind for many-to-many relations.
@@ -726,14 +725,14 @@ namespace Lucene.Net.Tests.Join
                     else
                     {
                         toSearcher.Search(new MatchAllDocsQuery(),
-                            new CollectorAnonymousInnerClassHelper5(toField, joinValueToJoinScores,
+                            new CollectorAnonymousClass5(toField, joinValueToJoinScores,
                                 docToJoinScore));
                     }
                 }
                 else
                 {
                     toSearcher.Search(new MatchAllDocsQuery(),
-                        new CollectorAnonymousInnerClassHelper6(toField, joinValueToJoinScores,
+                        new CollectorAnonymousClass6(toField, joinValueToJoinScores,
                             docToJoinScore));
                 }
                 queryVals[uniqueRandomValue] = docToJoinScore;
@@ -745,12 +744,12 @@ namespace Lucene.Net.Tests.Join
             return context;
         }
 
-        private class CollectorAnonymousInnerClassHelper3 : ICollector
+        private class CollectorAnonymousClass3 : ICollector
         {
             private readonly string fromField;
             private readonly IDictionary<BytesRef, JoinScore> joinValueToJoinScores;
 
-            public CollectorAnonymousInnerClassHelper3(string fromField,
+            public CollectorAnonymousClass3(string fromField,
                 IDictionary<BytesRef, JoinScore> joinValueToJoinScores)
             {
                 this.fromField = fromField;
@@ -791,12 +790,12 @@ namespace Lucene.Net.Tests.Join
             public virtual bool AcceptsDocsOutOfOrder => false;
         }
 
-        private class CollectorAnonymousInnerClassHelper4 : ICollector
+        private class CollectorAnonymousClass4 : ICollector
         {
             private readonly string fromField;
             private readonly IDictionary<BytesRef, JoinScore> joinValueToJoinScores;
 
-            public CollectorAnonymousInnerClassHelper4(string fromField,
+            public CollectorAnonymousClass4(string fromField,
                 IDictionary<BytesRef, JoinScore> joinValueToJoinScores)
             {
                 this.fromField = fromField;
@@ -840,7 +839,7 @@ namespace Lucene.Net.Tests.Join
             public virtual bool AcceptsDocsOutOfOrder => false;
         }
 
-        private class CollectorAnonymousInnerClassHelper5 : ICollector
+        private class CollectorAnonymousClass5 : ICollector
         {
             private readonly string toField;
             private readonly IDictionary<BytesRef, JoinScore> joinValueToJoinScores;
@@ -850,7 +849,7 @@ namespace Lucene.Net.Tests.Join
             private readonly BytesRef scratch = new BytesRef();
             private int docBase;
 
-            public CollectorAnonymousInnerClassHelper5(
+            public CollectorAnonymousClass5(
                 string toField, IDictionary<BytesRef, JoinScore> joinValueToJoinScores, 
                 IDictionary<int, JoinScore> docToJoinScore)
             {
@@ -893,7 +892,7 @@ namespace Lucene.Net.Tests.Join
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper6 : ICollector
+        private class CollectorAnonymousClass6 : ICollector
         {
             private readonly string toField;
             private readonly IDictionary<BytesRef, JoinScore> joinValueToJoinScores;
@@ -903,7 +902,7 @@ namespace Lucene.Net.Tests.Join
             private int docBase;
             private readonly BytesRef spare = new BytesRef();
 
-            public CollectorAnonymousInnerClassHelper6(
+            public CollectorAnonymousClass6(
                 string toField, 
                 IDictionary<BytesRef, JoinScore> joinValueToJoinScores, 
                 IDictionary<int, JoinScore> docToJoinScore)
@@ -936,7 +935,9 @@ namespace Lucene.Net.Tests.Join
             }
         }
 
-        private TopDocs CreateExpectedTopDocs(string queryValue, bool from, ScoreMode scoreMode,
+        private TopDocs CreateExpectedTopDocs(string queryValue,
+            bool from,
+            ScoreMode scoreMode,
             IndexIterationContext context)
         {
             var hitsToJoinScores = @from
@@ -1071,7 +1072,7 @@ namespace Lucene.Net.Tests.Join
                     case ScoreMode.Total:
                         return total;
                     case ScoreMode.Avg:
-                        return total/count;
+                        return total / count;
                     case ScoreMode.Max:
                         return maxScore;
                 }

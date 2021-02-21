@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
@@ -144,11 +145,11 @@ namespace Lucene.Net.Sandbox.Queries
             }
         }
 
-        internal class TermOrdValComparerAnonymousHelper : FieldComparer.TermOrdValComparer
+        private class TermOrdValComparerAnonymousClass : FieldComparer.TermOrdValComparer
         {
             private readonly SortedSetSortField outerInstance;
 
-            public TermOrdValComparerAnonymousHelper(SortedSetSortField outerInstance, int numHits)
+            public TermOrdValComparerAnonymousClass(SortedSetSortField outerInstance, int numHits)
                 : base(numHits, outerInstance.Field, outerInstance.m_missingValue == STRING_LAST)
             {
                 this.outerInstance = outerInstance;
@@ -198,7 +199,7 @@ namespace Lucene.Net.Sandbox.Queries
 
         public override FieldComparer GetComparer(int numHits, int sortPos)
         {
-            return new TermOrdValComparerAnonymousHelper(this, numHits);
+            return new TermOrdValComparerAnonymousClass(this, numHits);
         }
 
         /// <summary>Wraps a <see cref="SortedSetDocValues"/> and returns the first ordinal (min)</summary>
@@ -287,7 +288,7 @@ namespace Lucene.Net.Sandbox.Queries
                 }
                 else
                 {
-                    return (int)@in.OrdAt((int)((uint)(count - 1)) >> 1);
+                    return (int)@in.OrdAt((count - 1).TripleShift(1));
                 }
             }
 
@@ -324,7 +325,7 @@ namespace Lucene.Net.Sandbox.Queries
                 }
                 else
                 {
-                    return (int)@in.OrdAt((int)((uint)count >> 1));
+                    return (int)@in.OrdAt(count.TripleShift(1));
                 }
             }
 

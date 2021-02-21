@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index.Extensions;
+﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support.IO;
 using NUnit.Framework;
 using System;
@@ -12,7 +13,6 @@ using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -131,7 +131,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             Assert.AreEqual(1, facets.GetSpecificValue("Author", "Lisa"));
 
-            Assert.Null(facets.GetTopChildren(10, "Non exitent dim"));
+            Assert.IsNull(facets.GetTopChildren(10, "Non exitent dim"));
 
             // Smoke test PrintTaxonomyStats:
             string result;
@@ -143,12 +143,12 @@ namespace Lucene.Net.Facet.Taxonomy
                 }
                 result = bos.ToString();
             }
-            Assert.True(result.IndexOf("/Author: 4 immediate children; 5 total categories", StringComparison.Ordinal) != -1);
-            Assert.True(result.IndexOf("/Publish Date: 3 immediate children; 12 total categories", StringComparison.Ordinal) != -1);
+            Assert.IsTrue(result.IndexOf("/Author: 4 immediate children; 5 total categories", StringComparison.Ordinal) != -1);
+            Assert.IsTrue(result.IndexOf("/Publish Date: 3 immediate children; 12 total categories", StringComparison.Ordinal) != -1);
             // Make sure at least a few nodes of the tree came out:
-            Assert.True(result.IndexOf("  /1999", StringComparison.Ordinal) != -1);
-            Assert.True(result.IndexOf("  /2012", StringComparison.Ordinal) != -1);
-            Assert.True(result.IndexOf("      /20", StringComparison.Ordinal) != -1);
+            Assert.IsTrue(result.IndexOf("  /1999", StringComparison.Ordinal) != -1);
+            Assert.IsTrue(result.IndexOf("  /2012", StringComparison.Ordinal) != -1);
+            Assert.IsTrue(result.IndexOf("      /20", StringComparison.Ordinal) != -1);
 
             IOUtils.Dispose(writer, taxoWriter, searcher.IndexReader, taxoReader, taxoDir, dir);
         }
@@ -267,7 +267,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             // Ask for top 10 labels for any dims that have counts:
             IList<FacetResult> results = facets.GetAllDims(10);
-            Assert.True(results.Count == 0);
+            Assert.IsTrue(results.Count == 0);
 
             try
             {
@@ -298,7 +298,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Store.Directory dir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            iwc.SetSimilarity(new PerFieldSimilarityWrapperAnonymousInnerClassHelper(this));
+            iwc.SetSimilarity(new PerFieldSimilarityWrapperAnonymousClass(this));
             ITaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
             FacetsConfig config = new FacetsConfig();
@@ -310,17 +310,17 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Dispose(writer, taxoWriter, dir, taxoDir);
         }
 
-        private class PerFieldSimilarityWrapperAnonymousInnerClassHelper : PerFieldSimilarityWrapper
+        private class PerFieldSimilarityWrapperAnonymousClass : PerFieldSimilarityWrapper
         {
             private readonly TestTaxonomyFacetCounts outerInstance;
 
-            public PerFieldSimilarityWrapperAnonymousInnerClassHelper(TestTaxonomyFacetCounts outerInstance)
+            public PerFieldSimilarityWrapperAnonymousClass(TestTaxonomyFacetCounts outerInstance)
             {
                 this.outerInstance = outerInstance;
                 sim = new DefaultSimilarity();
             }
 
-            internal readonly Similarity sim;
+            private readonly Similarity sim;
 
             public override Similarity Get(string name)
             {
@@ -890,5 +890,4 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Dispose(w, tw, searcher.IndexReader, tr, indexDir, taxoDir);
         }
     }
-
 }

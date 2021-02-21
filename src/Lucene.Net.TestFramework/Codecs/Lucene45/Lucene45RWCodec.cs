@@ -26,9 +26,9 @@ namespace Lucene.Net.Codecs.Lucene45
 #pragma warning disable 612, 618
     public class Lucene45RWCodec : Lucene45Codec
     {
-        private readonly FieldInfosFormat fieldInfosFormat = new Lucene42FieldInfosFormatAnonymousInnerClassHelper();
+        private readonly FieldInfosFormat fieldInfosFormat = new Lucene42FieldInfosFormatAnonymousClass();
 
-        private class Lucene42FieldInfosFormatAnonymousInnerClassHelper : Lucene42FieldInfosFormat
+        private class Lucene42FieldInfosFormatAnonymousClass : Lucene42FieldInfosFormat
         {
             public override FieldInfosWriter FieldInfosWriter
             {

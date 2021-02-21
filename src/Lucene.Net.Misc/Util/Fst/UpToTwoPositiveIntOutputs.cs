@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using System;
 using System.Runtime.CompilerServices;
@@ -95,7 +96,7 @@ namespace Lucene.Net.Util.Fst
 
             public override int GetHashCode()
             {
-                return (int)((first ^ ((long)((ulong)first >> 32))) ^ (second ^ (second >> 32)));
+                return (int)((first ^ (first.TripleShift(32))) ^ (second ^ (second >> 32)));
             }
         }
 
@@ -239,7 +240,7 @@ namespace Lucene.Net.Util.Fst
             if ((code & 1) == 0)
             {
                 // single long
-                long v = (long)((ulong)code >> 1);
+                long v = code.TripleShift(1);
                 if (v == 0)
                 {
                     return NO_OUTPUT;
@@ -252,7 +253,7 @@ namespace Lucene.Net.Util.Fst
             else
             {
                 // two longs
-                long first = (long)((ulong)code >> 1);
+                long first = code.TripleShift(1);
                 long second = @in.ReadVInt64();
                 return new TwoInt64s(first, second);
             }

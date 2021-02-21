@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Numerics;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -415,18 +416,8 @@ namespace Lucene.Net.Search.VectorHighlight
                 result = prime * result + StartOffset;
                 result = prime * result + EndOffset;
                 long b = J2N.BitConversion.DoubleToInt64Bits(Boost);
-                result = prime * result + (int)(b ^ TripleShift(b, 32));
+                result = prime * result + (int)(b ^ b.TripleShift(32));
                 return result;
-            }
-
-            // LUCENENET NOTE: For some reason the standard way of correcting the >>>
-            // operator (int)((uint)b >> 32) didn't work here. Got this solution from http://stackoverflow.com/a/6625912
-            // and it works just like in Java.
-            private static long TripleShift(long n, int s)
-            {
-                if (n >= 0)
-                    return n >> s;
-                return (n >> s) + (2 << ~s);
             }
 
             public override bool Equals(object obj)

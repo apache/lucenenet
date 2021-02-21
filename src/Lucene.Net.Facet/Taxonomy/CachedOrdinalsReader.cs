@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -116,14 +117,14 @@ namespace Lucene.Net.Facet.Taxonomy
         public override OrdinalsSegmentReader GetReader(AtomicReaderContext context)
         {
             CachedOrds cachedOrds = GetCachedOrds(context);
-            return new OrdinalsSegmentReaderAnonymousInnerClassHelper(cachedOrds);
+            return new OrdinalsSegmentReaderAnonymousClass(cachedOrds);
         }
 
-        private class OrdinalsSegmentReaderAnonymousInnerClassHelper : OrdinalsSegmentReader
+        private class OrdinalsSegmentReaderAnonymousClass : OrdinalsSegmentReader
         {
             private readonly CachedOrds cachedOrds;
 
-            public OrdinalsSegmentReaderAnonymousInnerClassHelper(CachedOrds cachedOrds)
+            public OrdinalsSegmentReaderAnonymousClass(CachedOrds cachedOrds)
             {
                 this.cachedOrds = cachedOrds;
             }

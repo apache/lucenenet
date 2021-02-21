@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Attributes;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -155,6 +157,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// LUCENENET specific test similar to TestL2O without any randomness, useful for debugging
         /// </summary>
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestL2OBasic()
         {
             LabelToOrdinal map = new LabelToOrdinalMap();

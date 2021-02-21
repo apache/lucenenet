@@ -280,7 +280,7 @@ namespace Lucene.Net.Analysis.Synonym
             IDictionary<string, string> args = new Dictionary<string, string>();
             args["synonyms"] = "something.txt";
             SlowSynonymFilterFactory ff = new SlowSynonymFilterFactory(args);
-            ff.Inform(new ResourceLoaderAnonymousInnerClassHelper());
+            ff.Inform(new ResourceLoaderAnonymousClass());
 
             SlowSynonymMap synMap = ff.SynonymMap;
             assertEquals(2, synMap.Submap.size());
@@ -290,7 +290,7 @@ namespace Lucene.Net.Analysis.Synonym
             AssertTokIncludes(synMap, "b", "b");
         }
 
-        internal sealed class ResourceLoaderAnonymousInnerClassHelper : IResourceLoader
+        private sealed class ResourceLoaderAnonymousClass : IResourceLoader
         {
             public T NewInstance<T>(string cname)
             {

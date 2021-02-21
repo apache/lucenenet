@@ -261,14 +261,14 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(new BufferedCharFilter(new StringReader(new string(new char[5], 1, 0)), 2).Read() == -1);
         }
 
-        private sealed class ReaderAnonymousInnerClassHelper : CharFilter
+        private sealed class ReaderAnonymousClass : CharFilter
         {
             private const int SIZE = 2;
             private int pos = 0;
 
             private readonly char[] contents = new char[SIZE];
 
-            public ReaderAnonymousInnerClassHelper()
+            public ReaderAnonymousClass()
                 : base(null)
             { }
 
@@ -435,7 +435,7 @@ namespace Lucene.Net.Analysis.Util
                 fail("Exception during read test");
             }
 
-            BufferedCharFilter bufin = new BufferedCharFilter(new ReaderAnonymousInnerClassHelper());
+            BufferedCharFilter bufin = new BufferedCharFilter(new ReaderAnonymousClass());
 
             //BufferedCharFilter bufin = new BufferedCharFilter(new Reader() {
             //            int size = 2, pos = 0;

@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
@@ -470,14 +470,14 @@ namespace Lucene.Net.Index
         {
             generation = lastGeneration = -1;
 
-            new FindSegmentsFileAnonymousInnerClassHelper(this, directory).Run();
+            new FindSegmentsFileAnonymousClass(this, directory).Run();
         }
 
-        private class FindSegmentsFileAnonymousInnerClassHelper : FindSegmentsFile
+        private class FindSegmentsFileAnonymousClass : FindSegmentsFile
         {
             private readonly SegmentInfos outerInstance;
 
-            public FindSegmentsFileAnonymousInnerClassHelper(SegmentInfos outerInstance, Directory directory)
+            public FindSegmentsFileAnonymousClass(SegmentInfos outerInstance, Directory directory)
                 : base(directory)
             {
                 this.outerInstance = outerInstance;
@@ -672,7 +672,7 @@ namespace Lucene.Net.Index
 
                 output.WriteStringStringMap(si.Attributes);
 
-                output.WriteByte((byte)(sbyte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
+                output.WriteByte((byte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
                 output.WriteStringStringMap(si.Diagnostics);
                 output.WriteStringSet(si.GetFiles());
 

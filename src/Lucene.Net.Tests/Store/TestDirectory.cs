@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using J2N.Threading;
 using Lucene.Net.Attributes;
 using Lucene.Net.Support;
@@ -194,7 +194,7 @@ namespace Lucene.Net.Store
                 string fname = "foo." + i;
                 string lockname = "foo" + i + ".lck";
                 IndexOutput @out = dir.CreateOutput(fname, NewIOContext(Random));
-                @out.WriteByte((byte)(sbyte)i);
+                @out.WriteByte((byte)i);
                 @out.WriteBytes(largeBuffer, largeBuffer.Length);
                 @out.Dispose();
 

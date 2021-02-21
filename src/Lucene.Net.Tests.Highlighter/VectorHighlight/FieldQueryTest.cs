@@ -990,7 +990,7 @@ namespace Lucene.Net.Search.VectorHighlight
             phraseCandidate.Add(new TermInfo("defg", 0, 12, 0, 1));
             assertNotNull(fq.SearchPhrase(F, phraseCandidate));
         }
-        internal class TestStopRewriteQueryAnonymousHelper : Query
+        private class TestStopRewriteQueryAnonymousClass : Query
         {
             public override string ToString(string field)
             {
@@ -1001,13 +1001,13 @@ namespace Lucene.Net.Search.VectorHighlight
         [Test]
         public void TestStopRewrite()
         {
-            Query q = new TestStopRewriteQueryAnonymousHelper();
+            Query q = new TestStopRewriteQueryAnonymousClass();
             make1d1fIndex("a");
             assertNotNull(reader);
             new FieldQuery(q, reader, true, true);
         }
 
-        internal class TestFlattenFilteredQueryFilterAnonymousHelper : Filter
+        private class TestFlattenFilteredQueryFilterAnonymousClass : Filter
         {
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
@@ -1019,7 +1019,7 @@ namespace Lucene.Net.Search.VectorHighlight
         public void TestFlattenFilteredQuery()
         {
             initBoost();
-            Query query = new FilteredQuery(pqF("A"), new TestFlattenFilteredQueryFilterAnonymousHelper());
+            Query query = new FilteredQuery(pqF("A"), new TestFlattenFilteredQueryFilterAnonymousClass());
             query.Boost = (boost);
             FieldQuery fq = new FieldQuery(query, true, true);
             ISet<Query> flatQueries = new JCG.HashSet<Query>();

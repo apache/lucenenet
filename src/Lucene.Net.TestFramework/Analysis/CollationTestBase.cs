@@ -288,7 +288,7 @@ namespace Lucene.Net.Analysis
             ThreadJob[] threads = new ThreadJob[numThreads];
             for (int i = 0; i < numThreads; i++)
             {
-                threads[i] = new ThreadAnonymousInnerClassHelper(analyzer, map);
+                threads[i] = new ThreadAnonymousClass(analyzer, map);
             }
             for (int i = 0; i < numThreads; i++)
             {
@@ -300,12 +300,12 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly Analyzer analyzer;
             private readonly IDictionary<string, BytesRef> map;
 
-            public ThreadAnonymousInnerClassHelper(Analyzer analyzer, IDictionary<string, BytesRef> map)
+            public ThreadAnonymousClass(Analyzer analyzer, IDictionary<string, BytesRef> map)
             {
                 this.analyzer = analyzer;
                 this.map = map;

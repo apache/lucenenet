@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -117,7 +118,7 @@ namespace Lucene.Net.Util
             long end = Offset + Length;
             for (int i = Offset; i < end; i++)
             {
-                result = prime * result + (int)(longs[i] ^ ((long)((ulong)longs[i] >> 32)));
+                result = prime * result + (int)(longs[i] ^ (longs[i].TripleShift(32)));
             }
             return result;
         }

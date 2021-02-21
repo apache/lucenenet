@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -33,8 +33,8 @@ namespace Lucene.Net.Classification.Utils
     public class DatasetSplitter
     {
 
-        private readonly double _crossValidationRatio;
-        private readonly double _testRatio;
+        private readonly double crossValidationRatio;
+        private readonly double testRatio;
 
         /// <summary>
         /// Create a <see cref="DatasetSplitter"/> by giving test and cross validation IDXs sizes
@@ -43,8 +43,8 @@ namespace Lucene.Net.Classification.Utils
         /// <param name="crossValidationRatio">the ratio of the original index to be used for the c.v. IDX as a <see cref="double"/> between 0.0 and 1.0</param>
         public DatasetSplitter(double testRatio, double crossValidationRatio)
         {
-            this._crossValidationRatio = crossValidationRatio;
-            this._testRatio = testRatio;
+            this.crossValidationRatio = crossValidationRatio;
+            this.testRatio = testRatio;
         }
 
         /// <summary>
@@ -127,11 +127,11 @@ namespace Lucene.Net.Classification.Utils
                     }
 
                     // add it to one of the IDXs
-                    if (b % 2 == 0 && testWriter.MaxDoc < size * _testRatio)
+                    if (b % 2 == 0 && testWriter.MaxDoc < size * testRatio)
                     {
                         testWriter.AddDocument(doc);
                     }
-                    else if (cvWriter.MaxDoc < size * _crossValidationRatio)
+                    else if (cvWriter.MaxDoc < size * crossValidationRatio)
                     {
                         cvWriter.AddDocument(doc);
                     }

@@ -54,11 +54,11 @@ namespace Lucene.Net.Search
         /// exceeds <see cref="BooleanQuery.MaxClauseCount"/>.
         /// </summary>
         ///  <seealso cref="MultiTermQuery.MultiTermRewriteMethod"/>
-        public static readonly ScoringRewrite<BooleanQuery> SCORING_BOOLEAN_QUERY_REWRITE = new ScoringRewriteAnonymousInnerClassHelper();
+        public static readonly ScoringRewrite<BooleanQuery> SCORING_BOOLEAN_QUERY_REWRITE = new ScoringRewriteAnonymousClass();
 
-        private class ScoringRewriteAnonymousInnerClassHelper : ScoringRewrite<BooleanQuery>
+        private class ScoringRewriteAnonymousClass : ScoringRewrite<BooleanQuery>
         {
-            public ScoringRewriteAnonymousInnerClassHelper()
+            public ScoringRewriteAnonymousClass()
             {
             }
 
@@ -94,11 +94,11 @@ namespace Lucene.Net.Search
         /// exceeds <see cref="BooleanQuery.MaxClauseCount"/>.
         /// </summary>
         /// <seealso cref="MultiTermQuery.MultiTermRewriteMethod"/>
-        public static readonly RewriteMethod CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE = new RewriteMethodAnonymousInnerClassHelper();
+        public static readonly RewriteMethod CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE = new RewriteMethodAnonymousClass();
 
-        private class RewriteMethodAnonymousInnerClassHelper : RewriteMethod
+        private class RewriteMethodAnonymousClass : RewriteMethod
         {
-            public RewriteMethodAnonymousInnerClassHelper()
+            public RewriteMethodAnonymousClass()
             {
             }
 

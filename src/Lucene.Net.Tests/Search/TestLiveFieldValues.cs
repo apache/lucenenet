@@ -52,11 +52,11 @@ namespace Lucene.Net.Search
 
             IndexWriter w = new IndexWriter(dir, iwc);
 
-            SearcherManager mgr = new SearcherManager(w, true, new SearcherFactoryAnonymousInnerClassHelper());
+            SearcherManager mgr = new SearcherManager(w, true, new SearcherFactoryAnonymousClass());
 
             const int missing = -1;
 
-            LiveFieldValues<IndexSearcher, int?> rt = new LiveFieldValuesAnonymousInnerClassHelper(mgr, missing);
+            LiveFieldValues<IndexSearcher, int?> rt = new LiveFieldValuesAnonymousClass(mgr, missing);
 
             int numThreads = TestUtil.NextInt32(Random, 2, 5);
             if (Verbose)
@@ -78,7 +78,7 @@ namespace Lucene.Net.Search
             {
                 int threadID = t;
                 Random threadRandom = new Random(Random.Next());
-                ThreadJob thread = new ThreadAnonymousInnerClassHelper(w, mgr, missing, rt, startingGun, iters, idCount, reopenChance, deleteChance, addChance, t, threadID, threadRandom);
+                ThreadJob thread = new ThreadAnonymousClass(w, mgr, missing, rt, startingGun, iters, idCount, reopenChance, deleteChance, addChance, t, threadID, threadRandom);
                 threads.Add(thread);
                 thread.Start();
             }
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class SearcherFactoryAnonymousInnerClassHelper : SearcherFactory
+        private class SearcherFactoryAnonymousClass : SearcherFactory
         {
             public override IndexSearcher NewSearcher(IndexReader r)
             {
@@ -106,9 +106,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class LiveFieldValuesAnonymousInnerClassHelper : LiveFieldValues<IndexSearcher, int?>
+        private class LiveFieldValuesAnonymousClass : LiveFieldValues<IndexSearcher, int?>
         {
-            public LiveFieldValuesAnonymousInnerClassHelper(SearcherManager mgr, int missing)
+            public LiveFieldValuesAnonymousClass(SearcherManager mgr, int missing)
                 : base(mgr, missing)
             {
             }
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly IndexWriter w;
             private readonly SearcherManager mgr;
@@ -146,7 +146,7 @@ namespace Lucene.Net.Search
             private readonly int threadID;
             private readonly Random threadRandom;
 
-            public ThreadAnonymousInnerClassHelper(IndexWriter w, SearcherManager mgr, int? missing, LiveFieldValues<IndexSearcher, int?> rt, CountdownEvent startingGun, int iters, int idCount, double reopenChance, double deleteChance, double addChance, int t, int threadID, Random threadRandom)
+            public ThreadAnonymousClass(IndexWriter w, SearcherManager mgr, int? missing, LiveFieldValues<IndexSearcher, int?> rt, CountdownEvent startingGun, int iters, int idCount, double reopenChance, double deleteChance, double addChance, int t, int threadID, Random threadRandom)
             {
                 this.w = w;
                 this.mgr = mgr;

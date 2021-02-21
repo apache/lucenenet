@@ -1,4 +1,4 @@
-using J2N.Numerics;
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -183,7 +183,7 @@ namespace Lucene.Net.Util
                 {
                     deltaSum += 1 + buffer[i];
                 }
-                int blockSize = (int)((uint)(deltaSum + 0x07) >> 3); // round to the next byte
+                int blockSize = (deltaSum + 0x07).TripleShift(3); // round to the next byte
                 ++blockSize; // header
                 if (bufferSize < BLOCK_SIZE)
                 {
@@ -233,7 +233,7 @@ namespace Lucene.Net.Util
                         if (buffer[i] > mask)
                         {
                             exceptionIndices[ex] = i;
-                            exceptions[ex++] = (int)((uint)buffer[i] >> bitsPerValue);
+                            exceptions[ex++] = buffer[i].TripleShift(bitsPerValue);
                             buffer[i] &= mask;
                         }
                     }
@@ -252,15 +252,15 @@ namespace Lucene.Net.Util
                 if (numExceptions > 0)
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerException > 0);
-                    data.WriteByte((byte)(sbyte)numExceptions);
-                    data.WriteByte((byte)(sbyte)bitsPerException);
+                    data.WriteByte((byte)numExceptions);
+                    data.WriteByte((byte)bitsPerException);
                     PackedInt32s.IEncoder encoder = PackedInt32s.GetEncoder(PackedInt32s.Format.PACKED, PackedInt32s.VERSION_CURRENT, bitsPerException);
                     int numIterations = (numExceptions + encoder.ByteValueCount - 1) / encoder.ByteValueCount;
                     encoder.Encode(exceptions, 0, data.Bytes, data.Length, numIterations);
                     data.Length += (int)PackedInt32s.Format.PACKED.ByteCount(PackedInt32s.VERSION_CURRENT, numExceptions, bitsPerException);
                     for (int i = 0; i < numExceptions; ++i)
                     {
-                        data.WriteByte((byte)(sbyte)exceptionIndices[i]);
+                        data.WriteByte((byte)exceptionIndices[i]);
                     }
                 }
             }
@@ -274,7 +274,7 @@ namespace Lucene.Net.Util
                     doc += 1 + buffer[i];
                     while (doc >= 8)
                     {
-                        data.WriteByte((byte)(sbyte)current);
+                        data.WriteByte((byte)current);
                         current = 0;
                         doc -= 8;
                     }
@@ -282,7 +282,7 @@ namespace Lucene.Net.Util
                 }
                 if (current != 0)
                 {
-                    data.WriteByte((byte)(sbyte)current);
+                    data.WriteByte((byte)current);
                 }
             }
 
@@ -305,7 +305,7 @@ namespace Lucene.Net.Util
                     {
                         token |= HAS_EXCEPTIONS;
                     }
-                    data.WriteByte((byte)(sbyte)token);
+                    data.WriteByte((byte)token);
                     PforEncode();
                 }
                 else
@@ -313,13 +313,13 @@ namespace Lucene.Net.Util
                     // use unary
                     blockSize = unaryBlockSize;
                     int token = UNARY | (bufferSize < BLOCK_SIZE ? LAST_BLOCK : 0);
-                    data.WriteByte((byte)(sbyte)token);
+                    data.WriteByte((byte)token);
                     UnaryEncode();
                 }
 
                 if (bufferSize < BLOCK_SIZE)
                 {
-                    data.WriteByte((byte)(sbyte)bufferSize);
+                    data.WriteByte((byte)bufferSize);
                 }
 
                 ++numBlocks;
@@ -483,7 +483,7 @@ namespace Lucene.Net.Util
                 for (int i = 0; i < BLOCK_SIZE; )
                 {
                     var b = data[offset++];
-                    for (int bitList = BitUtil.BitList(b); bitList != 0; ++i, bitList = (int)((uint)bitList >> 4))
+                    for (int bitList = BitUtil.BitList(b); bitList != 0; ++i, bitList = bitList.TripleShift(4))
                     {
                         nextDocs[i] = docID + (bitList & 0x0F);
                     }
@@ -561,7 +561,7 @@ namespace Lucene.Net.Util
                 // we found a window containing our target, let's binary search now
                 while (lo <= hi)
                 {
-                    int mid = (int)((uint)(lo + hi) >> 1);
+                    int mid = (lo + hi).TripleShift(1);
                     int midDocID = (int)docIDs.Get(mid);
                     if (midDocID <= target)
                     {

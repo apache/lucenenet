@@ -1,10 +1,12 @@
-﻿using Lucene.Net.Diagnostics;
+﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Diagnostics;
 using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -67,7 +69,6 @@ namespace Lucene.Net.Facet.Taxonomy
         [Test]
         public virtual void TestBasic()
         {
-
             Store.Directory dir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
 
@@ -210,7 +211,6 @@ namespace Lucene.Net.Facet.Taxonomy
         [Test]
         public virtual void TestWrongIndexFieldName()
         {
-
             Store.Directory dir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
 
@@ -247,7 +247,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             // Ask for top 10 labels for any dims that have counts:
             IList<FacetResult> results = facets.GetAllDims(10);
-            Assert.True(results.Count == 0);
+            Assert.IsTrue(results.Count == 0);
 
             try
             {
@@ -360,7 +360,7 @@ namespace Lucene.Net.Facet.Taxonomy
             DirectoryReader r = DirectoryReader.Open(iw, true);
             DirectoryTaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoWriter);
 
-            ValueSource valueSource = new ValueSourceAnonymousInnerClassHelper(this);
+            ValueSource valueSource = new ValueSourceAnonymousClass(this);
 
             FacetsCollector fc = new FacetsCollector(true);
             // score documents by their 'price' field - makes asserting the correct counts for the categories easier
@@ -373,11 +373,11 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
 
-        private class ValueSourceAnonymousInnerClassHelper : ValueSource
+        private class ValueSourceAnonymousClass : ValueSource
         {
             private readonly TestTaxonomyFacetSumValueSource outerInstance;
 
-            public ValueSourceAnonymousInnerClassHelper(TestTaxonomyFacetSumValueSource outerInstance)
+            public ValueSourceAnonymousClass(TestTaxonomyFacetSumValueSource outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -386,16 +386,16 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 Scorer scorer = (Scorer)context["scorer"];
                 if (Debugging.AssertsEnabled) Debugging.Assert(scorer != null);
-                return new DoubleDocValuesAnonymousInnerClassHelper(this, scorer);
+                return new DoubleDocValuesAnonymousClass(this, scorer);
             }
 
-            private class DoubleDocValuesAnonymousInnerClassHelper : DoubleDocValues
+            private class DoubleDocValuesAnonymousClass : DoubleDocValues
             {
-                private readonly ValueSourceAnonymousInnerClassHelper outerInstance;
+                private readonly ValueSourceAnonymousClass outerInstance;
 
-                private Scorer scorer;
+                private readonly Scorer scorer;
 
-                public DoubleDocValuesAnonymousInnerClassHelper(ValueSourceAnonymousInnerClassHelper outerInstance, Scorer scorer)
+                public DoubleDocValuesAnonymousClass(ValueSourceAnonymousClass outerInstance, Scorer scorer)
                     : base(null) //todo: value source
                 {
                     this.outerInstance = outerInstance;
@@ -423,7 +423,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             public override int GetHashCode()
             {
-                throw new NotImplementedException();
+                return RuntimeHelpers.GetHashCode(this);
             }
 
             public override string GetDescription()
@@ -617,5 +617,4 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Dispose(w, tw, searcher.IndexReader, tr, indexDir, taxoDir);
         }
     }
-
 }

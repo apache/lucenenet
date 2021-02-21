@@ -305,17 +305,17 @@ namespace Lucene.Net.Spatial.Prefix
                 int size = d;
                 //sort them
                 Array.Sort(docs, 0, size);
-                return new DocIdSetIteratorAnonymousHelper(size, docs);
+                return new DocIdSetIteratorAnonymousClass(size, docs);
             }
 
-            #region Nested Type: DocIdSetIteratorAnonymousHelper
+            #region Nested Type: DocIdSetIteratorAnonymousClass
 
-            private sealed class DocIdSetIteratorAnonymousHelper : DocIdSetIterator
+            private sealed class DocIdSetIteratorAnonymousClass : DocIdSetIterator
             {
                 private readonly int size;
                 private readonly int[] docs;
 
-                public DocIdSetIteratorAnonymousHelper(int size, int[] docs)
+                public DocIdSetIteratorAnonymousClass(int size, int[] docs)
                 {
                     this.size = size;
                     this.docs = docs;

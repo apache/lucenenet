@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -47,10 +48,10 @@ namespace Lucene.Net.Util.Packed
             int k = 0;
             while ((i & ~0x7FL) != 0L && k++ < 8)
             {
-                @out.WriteByte(unchecked((byte)(sbyte)((i & 0x7FL) | 0x80L)));
-                i = (long)((ulong)i >> 7);
+                @out.WriteByte((byte)((i & 0x7FL) | 0x80L));
+                i = i.TripleShift(7);
             }
-            @out.WriteByte((byte)(sbyte)i);
+            @out.WriteByte((byte)i);
         }
 
         protected DataOutput m_out;

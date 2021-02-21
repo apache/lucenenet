@@ -398,12 +398,12 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             }
         }
 
-        private class RuleAnonymousHelper : Rule
+        private class RuleAnonymousClass : Rule
         {
             private readonly int myLine;
             private readonly string loc;
 
-            public RuleAnonymousHelper(string pat, string lCon, string rCon, IPhonemeExpr ph, int cLine, string location)
+            public RuleAnonymousClass(string pat, string lCon, string rCon, IPhonemeExpr ph, int cLine, string location)
                 : base(pat, lCon, rCon, ph)
             {
                 this.myLine = cLine;
@@ -497,7 +497,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                                         string rCon = StripQuotes(parts[2]);
                                         IPhonemeExpr ph = ParsePhonemeExpr(StripQuotes(parts[3]));
                                         int cLine = currentLine;
-                                        Rule r = new RuleAnonymousHelper(pat, lCon, rCon, ph, cLine, location);
+                                        Rule r = new RuleAnonymousClass(pat, lCon, rCon, ph, cLine, location);
 
                                         string patternKey = r.pattern.Substring(0, 1 - 0);
                                         if (!lines.TryGetValue(patternKey, out IList<Rule> rules) || rules == null)

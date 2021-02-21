@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -76,7 +77,7 @@ namespace Lucene.Net.Codecs.Lucene40
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int GetNumBytes(int size) // LUCENENET: CA1822: Mark members as static
         {
-            int bytesLength = (int)((uint)size >> 3);
+            int bytesLength = size.TripleShift(3);
             if ((size & 7) != 0)
             {
                 bytesLength++;

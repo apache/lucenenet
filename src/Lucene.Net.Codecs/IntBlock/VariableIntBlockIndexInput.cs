@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Codecs.Sep;
+﻿using J2N.Numerics;
+using Lucene.Net.Codecs.Sep;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -193,12 +194,12 @@ namespace Lucene.Net.Codecs.IntBlock
                     if ((uptoDelta & 1) == 1)
                     {
                         // same block
-                        upto += (int)((uint)uptoDelta >> 1);
+                        upto += uptoDelta.TripleShift(1);
                     }
                     else
                     {
                         // new block
-                        upto = (int)((uint)uptoDelta >> 1);
+                        upto = uptoDelta.TripleShift(1);
                         fp += indexIn.ReadVInt64();
                     }
                 }

@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using J2N.Text;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -268,7 +269,7 @@ namespace Lucene.Net.Util
             using IEnumerator<long> neededBounds = expectedBounds?.GetEnumerator();
             using IEnumerator<int> neededShifts = expectedShifts?.GetEnumerator();
 
-            NumericUtils.SplitInt64Range(new LongRangeBuilderAnonymousInnerClassHelper(lower, upper, useBitSet, bits, neededBounds, neededShifts), precisionStep, lower, upper);
+            NumericUtils.SplitInt64Range(new LongRangeBuilderAnonymousClass(lower, upper, useBitSet, bits, neededBounds, neededShifts), precisionStep, lower, upper);
 
             if (useBitSet)
             {
@@ -278,7 +279,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class LongRangeBuilderAnonymousInnerClassHelper : NumericUtils.Int64RangeBuilder
+        private class LongRangeBuilderAnonymousClass : NumericUtils.Int64RangeBuilder
         {
             private readonly long lower;
             private readonly long upper;
@@ -287,7 +288,7 @@ namespace Lucene.Net.Util
             private readonly IEnumerator<long> neededBounds;
             private readonly IEnumerator<int> neededShifts;
 
-            public LongRangeBuilderAnonymousInnerClassHelper(long lower, long upper, bool useBitSet, Int64BitSet bits, IEnumerator<long> neededBounds, IEnumerator<int> neededShifts)
+            public LongRangeBuilderAnonymousClass(long lower, long upper, bool useBitSet, Int64BitSet bits, IEnumerator<long> neededBounds, IEnumerator<int> neededShifts)
             {
                 this.lower = lower;
                 this.upper = upper;
@@ -323,9 +324,9 @@ namespace Lucene.Net.Util
                 neededShifts.MoveNext();
                 Assert.AreEqual(neededShifts.Current, shift, "shift");
                 neededBounds.MoveNext();
-                Assert.AreEqual(neededBounds.Current, (long)((ulong)min >> shift), "inner min bound");
+                Assert.AreEqual(neededBounds.Current, min.TripleShift(shift), "inner min bound");
                 neededBounds.MoveNext();
-                Assert.AreEqual(neededBounds.Current, (long)((ulong)max >> shift), "inner max bound");
+                Assert.AreEqual(neededBounds.Current, max.TripleShift(shift), "inner max bound");
             }
         }
 
@@ -414,7 +415,7 @@ namespace Lucene.Net.Util
                 }
                 if (random.NextBoolean())
                 {
-                    val = (long)((ulong)val >> 1);
+                    val = val.TripleShift(1);
                 }
             }
 
@@ -461,7 +462,7 @@ namespace Lucene.Net.Util
             IEnumerator<int> neededBounds = (expectedBounds == null) ? null : expectedBounds.GetEnumerator();
             IEnumerator<int> neededShifts = (expectedShifts == null) ? null : expectedShifts.GetEnumerator();
 
-            NumericUtils.SplitInt32Range(new IntRangeBuilderAnonymousInnerClassHelper(lower, upper, useBitSet, bits, neededBounds, neededShifts), precisionStep, lower, upper);
+            NumericUtils.SplitInt32Range(new IntRangeBuilderAnonymousClass(lower, upper, useBitSet, bits, neededBounds, neededShifts), precisionStep, lower, upper);
 
             if (useBitSet)
             {
@@ -471,7 +472,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class IntRangeBuilderAnonymousInnerClassHelper : NumericUtils.Int32RangeBuilder
+        private class IntRangeBuilderAnonymousClass : NumericUtils.Int32RangeBuilder
         {
             private readonly int lower;
             private readonly int upper;
@@ -480,7 +481,7 @@ namespace Lucene.Net.Util
             private readonly IEnumerator<int> neededBounds;
             private readonly IEnumerator<int> neededShifts;
 
-            public IntRangeBuilderAnonymousInnerClassHelper(int lower, int upper, bool useBitSet, FixedBitSet bits, IEnumerator<int> neededBounds, IEnumerator<int> neededShifts)
+            public IntRangeBuilderAnonymousClass(int lower, int upper, bool useBitSet, FixedBitSet bits, IEnumerator<int> neededBounds, IEnumerator<int> neededShifts)
             {
                 this.lower = lower;
                 this.upper = upper;
@@ -516,9 +517,9 @@ namespace Lucene.Net.Util
                 neededShifts.MoveNext();
                 Assert.AreEqual(neededShifts.Current, shift, "shift");
                 neededBounds.MoveNext();
-                Assert.AreEqual(neededBounds.Current, (int)((uint)min >> shift), "inner min bound");
+                Assert.AreEqual(neededBounds.Current, min.TripleShift(shift), "inner min bound");
                 neededBounds.MoveNext();
-                Assert.AreEqual(neededBounds.Current, (int)((uint)max >> shift), "inner max bound");
+                Assert.AreEqual(neededBounds.Current, max.TripleShift(shift), "inner max bound");
             }
         }
 

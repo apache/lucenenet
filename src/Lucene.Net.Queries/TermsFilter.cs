@@ -55,13 +55,13 @@ namespace Lucene.Net.Queries
         /// can contain duplicate terms and multiple fields.
         /// </summary>
         public TermsFilter(IList<Term> terms)
-            : this(new FieldAndTermEnumAnonymousInnerClassHelper(terms), terms.Count)
+            : this(new FieldAndTermEnumAnonymousClass(terms), terms.Count)
         {
         }
 
-        private class FieldAndTermEnumAnonymousInnerClassHelper : FieldAndTermEnum
+        private class FieldAndTermEnumAnonymousClass : FieldAndTermEnum
         {            
-            public FieldAndTermEnumAnonymousInnerClassHelper(IList<Term> terms)
+            public FieldAndTermEnumAnonymousClass(IList<Term> terms)
             {
                 if (terms.Count == 0)
                 {
@@ -93,13 +93,13 @@ namespace Lucene.Net.Queries
         /// a single field.
         /// </summary>
         public TermsFilter(string field, IList<BytesRef> terms)
-            : this(new FieldAndTermEnumAnonymousInnerClassHelper2(field, terms), terms.Count)
+            : this(new FieldAndTermEnumAnonymousClass2(field, terms), terms.Count)
         {
         }
 
-        private class FieldAndTermEnumAnonymousInnerClassHelper2 : FieldAndTermEnum
+        private class FieldAndTermEnumAnonymousClass2 : FieldAndTermEnum
         {
-            public FieldAndTermEnumAnonymousInnerClassHelper2(string field, IList<BytesRef> terms)
+            public FieldAndTermEnumAnonymousClass2(string field, IList<BytesRef> terms)
                 : base(field)
             {
                 if (terms.Count == 0)

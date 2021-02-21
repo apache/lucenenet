@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using System;
@@ -282,11 +283,6 @@ namespace Lucene.Net.Index
         internal int[] intUptos;
         internal int intUptoStart;
 
-        internal void WriteByte(int stream, sbyte b)
-        {
-            WriteByte(stream, (byte)b);
-        }
-
         internal void WriteByte(int stream, byte b)
         {
             int upto = intUptos[intUptoStart + stream];
@@ -322,10 +318,10 @@ namespace Lucene.Net.Index
             if (Debugging.AssertsEnabled) Debugging.Assert(stream < streamCount);
             while ((i & ~0x7F) != 0)
             {
-                WriteByte(stream, (sbyte)((i & 0x7f) | 0x80));
-                i = (int)((uint)i >> 7);
+                WriteByte(stream, (byte)((i & 0x7f) | 0x80));
+                i = i.TripleShift(7);
             }
-            WriteByte(stream, (sbyte)i);
+            WriteByte(stream, (byte)i);
         }
 
         internal override void Finish()

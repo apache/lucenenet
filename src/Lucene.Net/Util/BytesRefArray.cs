@@ -114,18 +114,18 @@ namespace Lucene.Net.Util
             {
                 orderedEntries[i] = i;
             }
-            new IntroSorterAnonymousInnerClassHelper(this, comp, orderedEntries).Sort(0, Length);
+            new IntroSorterAnonymousClass(this, comp, orderedEntries).Sort(0, Length);
             return orderedEntries;
         }
 
-        private class IntroSorterAnonymousInnerClassHelper : IntroSorter
+        private class IntroSorterAnonymousClass : IntroSorter
         {
             private readonly BytesRefArray outerInstance;
 
             private readonly IComparer<BytesRef> comp;
             private readonly int[] orderedEntries;
 
-            public IntroSorterAnonymousInnerClassHelper(BytesRefArray outerInstance, IComparer<BytesRef> comp, int[] orderedEntries)
+            public IntroSorterAnonymousClass(BytesRefArray outerInstance, IComparer<BytesRef> comp, int[] orderedEntries)
             {
                 this.outerInstance = outerInstance;
                 this.comp = comp;
@@ -198,11 +198,11 @@ namespace Lucene.Net.Util
             BytesRef spare = new BytesRef();
             int size = Length;
             int[] indices = comp == null ? null : Sort(comp);
-            return new BytesRefIteratorAnonymousInnerClassHelper(this, comp, spare, size, indices);
+            return new BytesRefIteratorAnonymousClass(this, comp, spare, size, indices);
         }
 
         [Obsolete("This class will be removed in 4.8.0 release candidate"), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private class BytesRefIteratorAnonymousInnerClassHelper : IBytesRefIterator
+        private class BytesRefIteratorAnonymousClass : IBytesRefIterator
         {
             private readonly BytesRefArray outerInstance;
 
@@ -211,7 +211,7 @@ namespace Lucene.Net.Util
             private readonly int size;
             private readonly int[] indices;
 
-            public BytesRefIteratorAnonymousInnerClassHelper(BytesRefArray outerInstance, IComparer<BytesRef> comp, BytesRef spare, int size, int[] indices)
+            public BytesRefIteratorAnonymousClass(BytesRefArray outerInstance, IComparer<BytesRef> comp, BytesRef spare, int size, int[] indices)
             {
                 this.outerInstance = outerInstance;
                 this.comp = comp;

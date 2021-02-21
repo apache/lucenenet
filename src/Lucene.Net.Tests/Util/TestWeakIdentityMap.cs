@@ -207,7 +207,7 @@
 //            // don't make threadCount and keyCount random, otherwise easily OOMs or fails otherwise:
 //            const int threadCount = 8, keyCount = 1024;
 
-//            RunnableAnonymousInnerClassHelper[] workers = new RunnableAnonymousInnerClassHelper[threadCount];
+//            RunnableAnonymousClass[] workers = new RunnableAnonymousClass[threadCount];
 //            WeakIdentityMap<object, int?> map = WeakIdentityMap<object, int?>.NewConcurrentHashMap(Random.NextBoolean());
 //            // we keep strong references to the keys,
 //            // so WeakIdentityMap will not forget about them:
@@ -222,7 +222,7 @@
 //                for (int t = 0; t < threadCount; t++)
 //                {
 //                    Random rnd = new Random(Random.Next());
-//                    var worker = new RunnableAnonymousInnerClassHelper(this, keyCount, map, keys, rnd);
+//                    var worker = new RunnableAnonymousClass(this, keyCount, map, keys, rnd);
 //                    workers[t] = worker;
 //                    worker.Start();
 //                }
@@ -285,7 +285,7 @@
 //            }
 //        }
 
-//        private class RunnableAnonymousInnerClassHelper : ThreadJob
+//        private class RunnableAnonymousClass : ThreadJob
 //        {
 //            private readonly TestWeakIdentityMap outerInstance;
 
@@ -295,7 +295,7 @@
 //            private readonly Random rnd;
 //            private volatile Exception error;
 
-//            public RunnableAnonymousInnerClassHelper(TestWeakIdentityMap outerInstance, int keyCount, WeakIdentityMap<object, int?> map, AtomicReferenceArray<object> keys, Random rnd)
+//            public RunnableAnonymousClass(TestWeakIdentityMap outerInstance, int keyCount, WeakIdentityMap<object, int?> map, AtomicReferenceArray<object> keys, Random rnd)
 //            {
 //                this.outerInstance = outerInstance;
 //                this.keyCount = keyCount;

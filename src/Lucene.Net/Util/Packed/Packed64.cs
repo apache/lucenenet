@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -75,7 +76,7 @@ namespace Lucene.Net.Util.Packed
             PackedInt32s.Format format = PackedInt32s.Format.PACKED;
             int longCount = format.Int64Count(PackedInt32s.VERSION_CURRENT, valueCount, bitsPerValue);
             this.blocks = new long[longCount];
-            maskRight = (long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue));
+            maskRight = (~0L << (BLOCK_SIZE - bitsPerValue)).TripleShift(BLOCK_SIZE - bitsPerValue);
             bpvMinusBlockSize = bitsPerValue - BLOCK_SIZE;
         }
 
@@ -109,7 +110,7 @@ namespace Lucene.Net.Util.Packed
                 }
                 blocks[blocks.Length - 1] = lastLong;
             }
-            maskRight = (long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue));
+            maskRight = (~0L << (BLOCK_SIZE - bitsPerValue)).TripleShift(BLOCK_SIZE - bitsPerValue);
             bpvMinusBlockSize = bitsPerValue - BLOCK_SIZE;
         }
 
@@ -120,16 +121,16 @@ namespace Lucene.Net.Util.Packed
             // The abstract index in a bit stream
             long majorBitPos = (long)index * m_bitsPerValue;
             // The index in the backing long-array
-            int elementPos = (int)(((ulong)majorBitPos) >> BLOCK_BITS);
+            int elementPos = (int)majorBitPos.TripleShift(BLOCK_BITS);
             // The number of value-bits in the second long
             long endBits = (majorBitPos & MOD_MASK) + bpvMinusBlockSize;
 
             if (endBits <= 0) // Single block
             {
-                return ((long)((ulong)blocks[elementPos] >> (int)-endBits)) & maskRight;
+                return (blocks[elementPos].TripleShift((int)-endBits)) & maskRight;
             }
             // Two blocks
-            return ((blocks[elementPos] << (int)endBits) | ((long)((ulong)blocks[elementPos + 1] >> (int)(BLOCK_SIZE - endBits)))) & maskRight;
+            return ((blocks[elementPos] << (int)endBits) | (blocks[elementPos + 1].TripleShift((int)(BLOCK_SIZE - endBits)))) & maskRight;
         }
 
         public override int Get(int index, long[] arr, int off, int len)
@@ -159,7 +160,7 @@ namespace Lucene.Net.Util.Packed
 
             // bulk get
             if (Debugging.AssertsEnabled) Debugging.Assert(index % decoder.Int64ValueCount == 0);
-            int blockIndex = (int)((ulong)((long)index * m_bitsPerValue) >> BLOCK_BITS);
+            int blockIndex = (int)(((long)index * m_bitsPerValue).TripleShift(BLOCK_BITS));
             if (Debugging.AssertsEnabled) Debugging.Assert((((long)index * m_bitsPerValue) & MOD_MASK) == 0);
             int iterations = len / decoder.Int64ValueCount;
             decoder.Decode(blocks, blockIndex, arr, off, iterations);
@@ -186,7 +187,7 @@ namespace Lucene.Net.Util.Packed
             // The abstract index in a contiguous bit stream
             long majorBitPos = (long)index * m_bitsPerValue;
             // The index in the backing long-array
-            int elementPos = (int)((long)((ulong)majorBitPos >> BLOCK_BITS)); // / BLOCK_SIZE
+            int elementPos = (int)(majorBitPos.TripleShift(BLOCK_BITS)); // / BLOCK_SIZE
             // The number of value-bits in the second long
             long endBits = (majorBitPos & MOD_MASK) + bpvMinusBlockSize;
 
@@ -196,8 +197,10 @@ namespace Lucene.Net.Util.Packed
                 return;
             }
             // Two blocks
-            blocks[elementPos] = blocks[elementPos] & ~((long)((ulong)maskRight >> (int)endBits)) | ((long)((ulong)value >> (int)endBits));
-            blocks[elementPos + 1] = blocks[elementPos + 1] & ((long)(unchecked((ulong)~0L) >> (int)endBits)) | (value << (int)(BLOCK_SIZE - endBits));
+            blocks[elementPos] = blocks[elementPos] & ~(maskRight.TripleShift((int)endBits))
+                | (value.TripleShift((int)endBits));
+            blocks[elementPos + 1] = blocks[elementPos + 1] & (~0L).TripleShift((int)endBits)
+                | (value << (int)(BLOCK_SIZE - endBits));
         }
 
         public override int Set(int index, long[] arr, int off, int len)
@@ -227,7 +230,7 @@ namespace Lucene.Net.Util.Packed
 
             // bulk set
             if (Debugging.AssertsEnabled) Debugging.Assert(index % encoder.Int64ValueCount == 0);
-            int blockIndex = (int)((ulong)((long)index * m_bitsPerValue) >> BLOCK_BITS);
+            int blockIndex = (int)(((long)index * m_bitsPerValue).TripleShift(BLOCK_BITS));
             if (Debugging.AssertsEnabled) Debugging.Assert((((long)index * m_bitsPerValue) & MOD_MASK) == 0);
             int iterations = len / encoder.Int64ValueCount;
             encoder.Encode(arr, off, blocks, blockIndex, iterations);
@@ -308,8 +311,8 @@ namespace Lucene.Net.Util.Packed
                 nAlignedValuesBlocks = values.blocks;
                 if (Debugging.AssertsEnabled) Debugging.Assert(nAlignedBlocks <= nAlignedValuesBlocks.Length);
             }
-            int startBlock = (int)((ulong)((long)fromIndex * m_bitsPerValue) >> 6);
-            int endBlock = (int)((ulong)((long)toIndex * m_bitsPerValue) >> 6);
+            int startBlock = (int)(((long)fromIndex * m_bitsPerValue).TripleShift(6));
+            int endBlock = (int)(((long)toIndex * m_bitsPerValue).TripleShift(6));
             for (int block = startBlock; block < endBlock; ++block)
             {
                 long blockValue = nAlignedValuesBlocks[block % nAlignedBlocks];

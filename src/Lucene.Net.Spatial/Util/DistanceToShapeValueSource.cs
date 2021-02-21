@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using J2N.Numerics;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
@@ -68,15 +69,15 @@ namespace Lucene.Net.Spatial.Util
         {
             FunctionValues shapeValues = shapeValueSource.GetValues(context, readerContext);
 
-            return new DoubleDocValuesAnonymousHelper(this, shapeValues);
+            return new DoubleDocValuesAnonymousClass(this, shapeValues);
         }
 
-        internal class DoubleDocValuesAnonymousHelper : DoubleDocValues
+        private class DoubleDocValuesAnonymousClass : DoubleDocValues
         {
             private readonly DistanceToShapeValueSource outerInstance;
             private readonly FunctionValues shapeValues;
 
-            public DoubleDocValuesAnonymousHelper(DistanceToShapeValueSource outerInstance, FunctionValues shapeValues)
+            public DoubleDocValuesAnonymousClass(DistanceToShapeValueSource outerInstance, FunctionValues shapeValues)
                 : base(outerInstance)
             {
                 this.outerInstance = outerInstance;
@@ -122,7 +123,7 @@ namespace Lucene.Net.Spatial.Util
             result = shapeValueSource.GetHashCode();
             result = 31 * result + queryPoint.GetHashCode();
             temp = J2N.BitConversion.DoubleToInt64Bits(multiplier);
-            result = 31 * result + (int)(temp ^ ((long)((ulong)temp) >> 32));
+            result = 31 * result + (int)(temp ^ (temp.TripleShift(32)));
             return result;
         }
     }

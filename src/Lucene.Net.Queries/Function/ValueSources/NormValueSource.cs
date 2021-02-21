@@ -68,15 +68,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return new ConstDoubleDocValues(0.0, this);
             }
 
-            return new SingleDocValuesAnonymousInnerClassHelper(this, similarity, norms);
+            return new SingleDocValuesAnonymousClass(this, similarity, norms);
         }
 
-        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
+        private class SingleDocValuesAnonymousClass : SingleDocValues
         {
             private readonly TFIDFSimilarity similarity;
             private readonly NumericDocValues norms;
 
-            public SingleDocValuesAnonymousInnerClassHelper(NormValueSource @this, TFIDFSimilarity similarity, NumericDocValues norms)
+            public SingleDocValuesAnonymousClass(NormValueSource @this, TFIDFSimilarity similarity, NumericDocValues norms)
                 : base(@this)
             {
                 this.similarity = similarity;

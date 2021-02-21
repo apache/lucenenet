@@ -58,11 +58,11 @@ namespace Lucene.Net.Codecs.Lucene3x
         private readonly LiveDocsFormat liveDocsFormat = new Lucene40LiveDocsFormat();
 
         // 3.x doesn't support docvalues
-        private readonly DocValuesFormat docValuesFormat = new DocValuesFormatAnonymousInnerClassHelper();
+        private readonly DocValuesFormat docValuesFormat = new DocValuesFormatAnonymousClass();
 
-        private class DocValuesFormatAnonymousInnerClassHelper : DocValuesFormat
+        private class DocValuesFormatAnonymousClass : DocValuesFormat
         {
-            public DocValuesFormatAnonymousInnerClassHelper()
+            public DocValuesFormatAnonymousClass()
                 : base()
             {
             }

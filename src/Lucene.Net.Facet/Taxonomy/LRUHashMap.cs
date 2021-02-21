@@ -1,4 +1,5 @@
-﻿using J2N.Collections.Concurrent;
+﻿// Lucene version compatibility level 4.8.1
+using J2N.Collections.Concurrent;
 using System;
 using System.Collections;
 using System.Collections.Generic;

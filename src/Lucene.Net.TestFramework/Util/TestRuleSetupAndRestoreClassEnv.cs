@@ -242,7 +242,7 @@ namespace Lucene.Net.Util
                     dvFormat = DocValuesFormat.ForName(LuceneTestCase.TestDocValuesFormat);
                 }
 
-                codec = new Lucene46CodecAnonymousInnerClassHelper(format, dvFormat);
+                codec = new Lucene46CodecAnonymousClass(format, dvFormat);
             }
             else if ("SimpleText".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) 
                 || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) && randomVal == 9 && LuceneTestCase.Rarely(random) && !ShouldAvoidCodec("SimpleText")))
@@ -315,12 +315,12 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
+        private class Lucene46CodecAnonymousClass : Lucene46Codec
         {
             private readonly PostingsFormat format;
             private readonly DocValuesFormat dvFormat;
 
-            public Lucene46CodecAnonymousInnerClassHelper(PostingsFormat format, DocValuesFormat dvFormat)
+            public Lucene46CodecAnonymousClass(PostingsFormat format, DocValuesFormat dvFormat)
             {
                 this.format = format;
                 this.dvFormat = dvFormat;

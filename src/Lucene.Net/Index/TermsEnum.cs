@@ -268,10 +268,10 @@ namespace Lucene.Net.Index
         /// <seealso cref="SeekExact(BytesRef, TermState)"/>
         public virtual TermState GetTermState() // LUCENENET NOTE: Renamed from TermState()
         {
-            return new TermStateAnonymousInnerClassHelper();
+            return new TermStateAnonymousClass();
         }
 
-        private class TermStateAnonymousInnerClassHelper : TermState
+        private class TermStateAnonymousClass : TermState
         {
             public override void CopyFrom(TermState other)
             {
@@ -287,9 +287,9 @@ namespace Lucene.Net.Index
         /// This should not be a problem, as the enum is always empty and
         /// the existence of unused Attributes does not matter.
         /// </summary>
-        public static readonly TermsEnum EMPTY = new TermsEnumAnonymousInnerClassHelper();
+        public static readonly TermsEnum EMPTY = new TermsEnumAnonymousClass();
 
-        private class TermsEnumAnonymousInnerClassHelper : TermsEnum
+        private class TermsEnumAnonymousClass : TermsEnum
         {
             public override SeekStatus SeekCeil(BytesRef term)
             {

@@ -79,12 +79,12 @@ namespace Lucene.Net.Util.Packed
             {
                 throw new NotSupportedException("Highest encoded value too high for DocIdSetIterator.NO_MORE_DOCS: " + efEncoder.lastEncoded);
             }
-            return new DocIdSetIteratorAnonymousInnerClassHelper(this);
+            return new DocIdSetIteratorAnonymousClass(this);
         }
 
-        private class DocIdSetIteratorAnonymousInnerClassHelper : DocIdSetIterator
+        private class DocIdSetIteratorAnonymousClass : DocIdSetIterator
         {
-            public DocIdSetIteratorAnonymousInnerClassHelper(EliasFanoDocIdSet outerInstance)
+            public DocIdSetIteratorAnonymousClass(EliasFanoDocIdSet outerInstance)
             {
                 curDocId = -1;
                 efDecoder = outerInstance.efEncoder.GetDecoder();

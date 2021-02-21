@@ -486,7 +486,7 @@ namespace Lucene.Net.Index
             ThreadJob[] ingesters = new ThreadJob[numThreads];
             for (int i = 0; i < numThreads; i++)
             {
-                ingesters[i] = new ThreadAnonymousInnerClassHelper(this, numDocs, pool, writer, field);
+                ingesters[i] = new ThreadAnonymousClass(this, numDocs, pool, writer, field);
                 ingesters[i].Start();
             }
 
@@ -519,7 +519,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(pool.Count, numThreads);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestPayloads outerInstance;
 
@@ -528,7 +528,7 @@ namespace Lucene.Net.Index
             private readonly IndexWriter writer;
             private readonly string field;
 
-            public ThreadAnonymousInnerClassHelper(TestPayloads outerInstance, int numDocs, ByteArrayPool pool, IndexWriter writer, string field)
+            public ThreadAnonymousClass(TestPayloads outerInstance, int numDocs, ByteArrayPool pool, IndexWriter writer, string field)
             {
                 this.outerInstance = outerInstance;
                 this.numDocs = numDocs;

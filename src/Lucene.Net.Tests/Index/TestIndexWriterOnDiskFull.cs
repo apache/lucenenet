@@ -1,4 +1,4 @@
-using Lucene.Net.Codecs;
+﻿using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -637,12 +637,12 @@ namespace Lucene.Net.Index
         // an IndexWriter (hit during DW.ThreadState.Init()) is
         // OK:
         [Test]
-        public virtual void TestImmediateDiskFull([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestImmediateDiskFull()
         {
             MockDirectoryWrapper dir = NewMockDirectory();
             var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                             .SetMaxBufferedDocs(2)
-                            .SetMergeScheduler(newScheduler());
+                            .SetMergeScheduler(new ConcurrentMergeScheduler());
             IndexWriter writer = new IndexWriter(dir, config);
             dir.MaxSizeInBytes = Math.Max(1, dir.GetRecomputedActualSizeInBytes());
             Document doc = new Document();

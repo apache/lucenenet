@@ -76,7 +76,7 @@ namespace Lucene.Net.Store
             for (int count = 0; count < maxClients; count++)
             {
                 Socket cs = s.Accept();
-                threads[count] = new ThreadAnonymousInnerClassHelper(localLock, lockedID, startingGun, cs);
+                threads[count] = new ThreadAnonymousClass(localLock, lockedID, startingGun, cs);
                 threads[count].Start();
             }
 
@@ -96,14 +96,14 @@ namespace Lucene.Net.Store
             Console.WriteLine("Server terminated.");
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly object localLock;
             private readonly int[] lockedID;
             private readonly CountdownEvent startingGun;
             private readonly Socket cs;
 
-            public ThreadAnonymousInnerClassHelper(object localLock, int[] lockedID, CountdownEvent startingGun, Socket cs)
+            public ThreadAnonymousClass(object localLock, int[] lockedID, CountdownEvent startingGun, Socket cs)
             {
                 this.localLock = localLock;
                 this.lockedID = lockedID;

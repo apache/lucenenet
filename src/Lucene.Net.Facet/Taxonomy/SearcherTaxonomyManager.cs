@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Search;
+﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Search;
 using System;
 
 namespace Lucene.Net.Facet.Taxonomy

@@ -147,17 +147,17 @@ namespace Lucene.Net.Search
 
         public override FieldComparer NewComparer(string fieldname, int numHits, int sortPos, bool reversed)
         {
-            return new FieldComparerAnonymousInnerClassHelper(this, fieldname, numHits);
+            return new FieldComparerAnonymousClass(this, fieldname, numHits);
         }
 
-        private class FieldComparerAnonymousInnerClassHelper : FieldComparer
+        private class FieldComparerAnonymousClass : FieldComparer
         {
             private readonly ElevationComparerSource outerInstance;
 
             private readonly string fieldname;
             private int numHits;
 
-            public FieldComparerAnonymousInnerClassHelper(ElevationComparerSource outerInstance, string fieldname, int numHits)
+            public FieldComparerAnonymousClass(ElevationComparerSource outerInstance, string fieldname, int numHits)
             {
                 this.outerInstance = outerInstance;
                 this.fieldname = fieldname;

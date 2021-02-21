@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
@@ -72,10 +73,10 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataInput.ReadInt32()"/>
         public virtual void WriteInt32(int i)
         {
-            WriteByte((byte)(sbyte)(i >> 24));
-            WriteByte((byte)(sbyte)(i >> 16));
-            WriteByte((byte)(sbyte)(i >> 8));
-            WriteByte((byte)(sbyte)i);
+            WriteByte((byte)(i >> 24));
+            WriteByte((byte)(i >> 16));
+            WriteByte((byte)(i >> 8));
+            WriteByte((byte)i);
         }
 
         /// <summary>
@@ -86,8 +87,8 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataInput.ReadInt16()"/>
         public virtual void WriteInt16(short i)
         {
-            WriteByte((byte)(sbyte)((ushort)i >> 8));
-            WriteByte((byte)(sbyte)(ushort)i);
+            WriteByte((byte)((ushort)i >> 8));
+            WriteByte((byte)(ushort)i);
         }
 
         /// <summary>
@@ -199,10 +200,10 @@ namespace Lucene.Net.Store
         {
             while ((i & ~0x7F) != 0)
             {
-                WriteByte((byte)unchecked((sbyte)((i & 0x7F) | 0x80)));
-                i = (int)((uint)i >> 7);
+                WriteByte((byte)((i & 0x7F) | 0x80));
+                i = i.TripleShift(7);
             }
-            WriteByte((byte)(sbyte)i);
+            WriteByte((byte)i);
         }
 
         /// <summary>
@@ -234,10 +235,10 @@ namespace Lucene.Net.Store
             if (Debugging.AssertsEnabled) Debugging.Assert(i >= 0L);
             while ((i & ~0x7FL) != 0L)
             {
-                WriteByte((byte)unchecked((sbyte)((i & 0x7FL) | 0x80L)));
-                i = (long)((ulong)i >> 7);
+                WriteByte((byte)((i & 0x7FL) | 0x80L));
+                i = i.TripleShift(7);
             }
-            WriteByte((byte)(sbyte)i);
+            WriteByte((byte)i);
         }
 
         /// <summary>

@@ -21,10 +21,6 @@ namespace Lucene.Net.Codecs.IntBlock
      * limitations under the License.
      */
 
-    //using MockVariableIntBlockPostingsFormat = org.apache.lucene.codecs.mockintblock.MockVariableIntBlockPostingsFormat;
-    //using BasePostingsFormatTestCase = org.apache.lucene.index.BasePostingsFormatTestCase;
-    //using TestUtil = org.apache.lucene.util.TestUtil;
-    //using TestUtil = org.apache.lucene.util.TestUtil;
 
     /// <summary>
     /// Basic tests for VariableIntBlock

@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using J2N.Threading;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -242,14 +242,13 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestChangesAfterClose([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestChangesAfterClose()
         {
             Directory dir = NewDirectory();
 
             IndexWriter writer = null;
 
-            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(newScheduler());
-            writer = new IndexWriter(dir, config);
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             AddDoc(writer);
 
             // close
@@ -1020,7 +1019,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestNegativePositions()
         {
-            TokenStream tokens = new TokenStreamAnonymousInnerClassHelper(this);
+            TokenStream tokens = new TokenStreamAnonymousClass(this);
 
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
@@ -1041,11 +1040,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TokenStreamAnonymousInnerClassHelper : TokenStream
+        private class TokenStreamAnonymousClass : TokenStream
         {
             private readonly TestIndexWriter outerInstance;
 
-            public TokenStreamAnonymousInnerClassHelper(TestIndexWriter outerInstance)
+            public TokenStreamAnonymousClass(TestIndexWriter outerInstance)
             {
                 this.outerInstance = outerInstance;
                 termAtt = AddAttribute<ICharTermAttribute>();
@@ -2283,7 +2282,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestDontInvokeAnalyzerForUnAnalyzedFields()
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
+            Analyzer analyzer = new AnalyzerAnonymousClass(this);
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             Document doc = new Document();
@@ -2302,11 +2301,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        private class AnalyzerAnonymousClass : Analyzer
         {
             private readonly TestIndexWriter outerInstance;
 
-            public AnalyzerAnonymousInnerClassHelper(TestIndexWriter outerInstance)
+            public AnalyzerAnonymousClass(TestIndexWriter outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -2341,7 +2340,7 @@ namespace Lucene.Net.Index
             {
                 // Create my own random file:
                 IndexOutput @out = dir.CreateOutput("myrandomfile", NewIOContext(Random));
-                @out.WriteByte((byte)(sbyte)42);
+                @out.WriteByte((byte)42);
                 @out.Dispose();
 
                 (new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)))).Dispose();
@@ -2432,7 +2431,7 @@ namespace Lucene.Net.Index
             {
                 // Create my own random file:
                 IndexOutput @out = dir.CreateOutput("_a.frq", NewIOContext(Random));
-                @out.WriteByte((byte)(sbyte)42);
+                @out.WriteByte((byte)42);
                 @out.Dispose();
 
                 (new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)))).Dispose();
@@ -2646,7 +2645,7 @@ namespace Lucene.Net.Index
             public virtual IEnumerator<IEnumerable<IIndexableField>> GetEnumerator()
             {
                 return docList.GetEnumerator();
-                //return new IteratorAnonymousInnerClassHelper(this, docIter);
+                //return new IteratorAnonymousClass(this, docIter);
             }
 
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -2655,13 +2654,13 @@ namespace Lucene.Net.Index
             }
 
             /*
-          private class IteratorAnonymousInnerClassHelper : IEnumerator<IEnumerable<IndexableField>>
+          private class IteratorAnonymousClass : IEnumerator<IEnumerable<IndexableField>>
           {
               private readonly RandomFailingFieldIterable outerInstance;
 
               private IEnumerator<IEnumerable<IndexableField>> DocIter;
 
-              public IteratorAnonymousInnerClassHelper(RandomFailingFieldIterable outerInstance, IEnumerator<IEnumerable<IndexableField>> docIter)
+              public IteratorAnonymousClass(RandomFailingFieldIterable outerInstance, IEnumerator<IEnumerable<IndexableField>> docIter)
               {
                   this.outerInstance = outerInstance;
                   this.DocIter = docIter;
@@ -2812,7 +2811,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             SetOnce<IndexWriter> iwRef = new SetOnce<IndexWriter>();
-            iwc.SetInfoStream(new TestPointInfoStream(iwc.InfoStream, new TestPointAnonymousInnerClassHelper(this, iwRef)));
+            iwc.SetInfoStream(new TestPointInfoStream(iwc.InfoStream, new TestPointAnonymousClass(this, iwRef)));
             IndexWriter evilWriter = new IndexWriter(dir, iwc);
             iwRef.Set(evilWriter);
             for (int i = 0; i < 1000; i++)
@@ -2829,13 +2828,13 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TestPointAnonymousInnerClassHelper : ITestPoint
+        private class TestPointAnonymousClass : ITestPoint
         {
             private readonly TestIndexWriter outerInstance;
 
             private SetOnce<IndexWriter> iwRef;
 
-            public TestPointAnonymousInnerClassHelper(TestIndexWriter outerInstance, SetOnce<IndexWriter> iwRef)
+            public TestPointAnonymousClass(TestIndexWriter outerInstance, SetOnce<IndexWriter> iwRef)
             {
                 this.outerInstance = outerInstance;
                 this.iwRef = iwRef;

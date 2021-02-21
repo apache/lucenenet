@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Store;
 using NUnit.Framework;
 using System;
@@ -310,7 +310,7 @@ namespace Lucene.Net.Index
             IndexOutput os = fsdir.CreateOutput(file, IOContext.DEFAULT);
             for (int i = 0; i < 2000; i++)
             {
-                os.WriteByte((byte)(sbyte)i);
+                os.WriteByte((byte)i);
             }
             os.Dispose();
 
@@ -632,7 +632,7 @@ namespace Lucene.Net.Index
             var largeBuf = new byte[2048];
             for (int i = 0; i < largeBuf.Length; i++)
             {
-                largeBuf[i] = (byte)unchecked((sbyte)(new Random(1).NextDouble() * 256));
+                largeBuf[i] = (byte)(new Random(1).NextDouble() * 256);
             }
 
             long currentPos = os.GetFilePointer();
@@ -823,7 +823,7 @@ namespace Lucene.Net.Index
             for (int fileIdx = 0; fileIdx < FILE_COUNT; fileIdx++)
             {
                 IndexOutput @out = d.CreateOutput("file." + fileIdx, NewIOContext(Random));
-                @out.WriteByte((byte)(sbyte)fileIdx);
+                @out.WriteByte((byte)fileIdx);
                 @out.Dispose();
             }
 

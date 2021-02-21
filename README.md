@@ -120,6 +120,8 @@ There is also a dotnet command line tool available on NuGet. It contains all of 
 dotnet tool install lucene-cli -g --version 4.8.0-beta00012
 ```
 
+> NOTE: The version of the CLI you install should match the version of Lucene.NET you use.
+
 Once installed, you can explore the commands and options that are available by entering the command `lucene`.
 
 [lucene-cli Documentation](https://github.com/apache/lucenenet/blob/master/src/dotnet/tools/lucene-cli/docs/index.md)
@@ -243,7 +245,7 @@ Then all you need to do is choose the `Lucene.Net Local Packages` feed from the 
 #### Execution
 
 1. Open `Lucene.Net.sln` in Visual Studio.
-2. Choose the target framework to test by opening `build/TestTargetFramework.proj` and uncommenting the corresponding `<TargetFramework>`.
+2. Choose the target framework to test by opening `build/TestTargetFramework.props` and uncommenting the corresponding `<TargetFramework>` (and commenting all others).
 3. Build a project or the entire solution, and wait for Visual Studio to discover the tests - this may take several minutes.
 4. Run or debug the tests in Test Explorer, optionally using the desired filters.
 
@@ -251,7 +253,7 @@ Then all you need to do is choose the `Lucene.Net Local Packages` feed from the 
 
 ### Azure DevOps
 
-We have setup our `azure-pipelines.yml` file with logical defaults so anyone with an Azure DevOps account can build Lucene.Net and run the tests with minimal effort. Even a free Azure DevOps account will work, but tests will run much faster if the account is setup as public, which enables up to 10 parallel jobs to run simultaneously.
+We have setup our `azure-pipelines.yml` file with logical defaults so anyone with an Azure DevOps account can build Lucene.NET and run the tests with minimal effort. Even a free Azure DevOps account will work, but tests will run much faster if the account is setup as public, which enables up to 10 parallel jobs to run simultaneously.
 
 #### Prerequisites
 

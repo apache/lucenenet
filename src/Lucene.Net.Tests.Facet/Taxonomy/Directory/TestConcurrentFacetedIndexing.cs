@@ -1,4 +1,5 @@
-﻿using J2N.Threading.Atomic;
+﻿// Lucene version compatibility level 4.8.1
+using J2N.Threading.Atomic;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
@@ -40,11 +41,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         // A No-Op ITaxonomyWriterCache which always discards all given categories, and
         // always returns true in put(), to indicate some cache entries were cleared.
-        private static ITaxonomyWriterCache NO_OP_CACHE = new TaxonomyWriterCacheAnonymousInnerClassHelper();
+        private static ITaxonomyWriterCache NO_OP_CACHE = new TaxonomyWriterCacheAnonymousClass();
 
-        private class TaxonomyWriterCacheAnonymousInnerClassHelper : ITaxonomyWriterCache
+        private class TaxonomyWriterCacheAnonymousClass : ITaxonomyWriterCache
         {
-            public TaxonomyWriterCacheAnonymousInnerClassHelper()
+            public TaxonomyWriterCacheAnonymousClass()
             {
             }
 
@@ -118,7 +119,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             for (int i = 0; i < indexThreads.Length; i++)
             {
-                indexThreads[i] = new ThreadAnonymousInnerClassHelper(this, numDocs, values, iw, tw, config);
+                indexThreads[i] = new ThreadAnonymousClass(this, numDocs, values, iw, tw, config);
             }
 
             foreach (ThreadJob t in indexThreads)
@@ -148,7 +149,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             foreach (string cat in values.Keys)
             {
                 FacetLabel cp = new FacetLabel(FacetsConfig.StringToPath(cat));
-                Assert.True(tr.GetOrdinal(cp) > 0, "category not found " + cp);
+                Assert.IsTrue(tr.GetOrdinal(cp) > 0, "category not found " + cp);
                 int level = cp.Length;
                 int parentOrd = 0; // for root, parent is always virtual ROOT (ord=0)
                 FacetLabel path = null;
@@ -164,17 +165,17 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             IOUtils.Dispose(tw, iw, tr, taxoDir, indexDir);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestConcurrentFacetedIndexing outerInstance;
 
-            private AtomicInt32 numDocs;
-            private ConcurrentDictionary<string, string> values;
-            private IndexWriter iw;
-            private Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter tw;
-            private FacetsConfig config;
+            private readonly AtomicInt32 numDocs;
+            private readonly ConcurrentDictionary<string, string> values;
+            private readonly IndexWriter iw;
+            private readonly DirectoryTaxonomyWriter tw;
+            private readonly FacetsConfig config;
 
-            public ThreadAnonymousInnerClassHelper(TestConcurrentFacetedIndexing outerInstance, AtomicInt32 numDocs, ConcurrentDictionary<string, string> values, IndexWriter iw, Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter tw, FacetsConfig config)
+            public ThreadAnonymousClass(TestConcurrentFacetedIndexing outerInstance, AtomicInt32 numDocs, ConcurrentDictionary<string, string> values, IndexWriter iw, DirectoryTaxonomyWriter tw, FacetsConfig config)
             {
                 this.outerInstance = outerInstance;
                 this.numDocs = numDocs;
@@ -218,7 +219,5 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
             }
         }
-
     }
-
 }

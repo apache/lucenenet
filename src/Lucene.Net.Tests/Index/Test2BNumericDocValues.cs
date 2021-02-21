@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using NUnit.Framework;
@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
     {
         // indexes Integer.MAX_VALUE docs with an increasing dv field
         [Test]
-        public virtual void TestNumerics([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestNumerics()
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BNumerics"));
             if (dir is MockDirectoryWrapper)
@@ -48,8 +48,13 @@ namespace Lucene.Net.Index
                 ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
 
-            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
-           .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(newScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(OpenMode.CREATE));
+            IndexWriter w = new IndexWriter(dir,
+                new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                .SetRAMBufferSizeMB(256.0)
+                .SetMergeScheduler(new ConcurrentMergeScheduler())
+                .SetMergePolicy(NewLogMergePolicy(false, 10))
+                .SetOpenMode(OpenMode.CREATE));
 
             Document doc = new Document();
             NumericDocValuesField dvField = new NumericDocValuesField("dv", 0);

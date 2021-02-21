@@ -1563,22 +1563,9 @@ namespace Lucene.Net.Util
             {
                 int maxThreadCount = TestUtil.NextInt32(Random, 1, 4);
                 int maxMergeCount = TestUtil.NextInt32(Random, maxThreadCount, maxThreadCount + 4);
-                IConcurrentMergeScheduler mergeScheduler;
-
-#if !FEATURE_CONCURRENTMERGESCHEDULER
-                mergeScheduler = new TaskMergeScheduler();
-#else
-                //if (Rarely(random))
-                //{
-                //    mergeScheduler = new TaskMergeScheduler();
-                //}
-                //else
-                {
-                    mergeScheduler = new ConcurrentMergeScheduler();
-                }
-#endif
-                mergeScheduler.SetMaxMergesAndThreads(maxMergeCount, maxThreadCount);
-                c.SetMergeScheduler(mergeScheduler);
+                IConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
+                cms.SetMaxMergesAndThreads(maxMergeCount, maxThreadCount);
+                c.SetMergeScheduler(cms);
             }
             if (random.NextBoolean())
             {
@@ -2425,7 +2412,7 @@ namespace Lucene.Net.Util
                     {
                         Console.WriteLine("NOTE: newSearcher using ExecutorService with " + threads + " threads");
                     }
-                    //r.AddReaderClosedListener(new ReaderClosedListenerAnonymousInnerClassHelper(ex)); // LUCENENET TODO: Implement event (see the commented ReaderClosedListenerAnonymousInnerClassHelper class near the bottom of this file)
+                    //r.AddReaderClosedListener(new ReaderClosedListenerAnonymousClass(ex)); // LUCENENET TODO: Implement event (see the commented ReaderClosedListenerAnonymousClass class near the bottom of this file)
                 }
                 IndexSearcher ret;
                 if (wrapWithAssertions)
@@ -3549,34 +3536,6 @@ namespace Lucene.Net.Util
             }
         }
 
-        /// <summary>
-        /// Contains a list of the Func&lt;IConcurrentMergeSchedulers&gt; to be tested.
-        /// Delegate method allows them to be created on their target thread instead of the test thread
-        /// and also ensures a separate instance is created in each case (which can affect the result of the test).
-        /// <para/>
-        /// The <see cref="TaskMergeScheduler"/> is only rarely included.
-        /// <para/>
-        /// LUCENENET specific for injection into tests (i.e. using NUnit.Framework.ValueSourceAttribute)
-        /// </summary>
-        public static class ConcurrentMergeSchedulerFactories
-        {
-            public static IList<Func<IConcurrentMergeScheduler>> Values
-            {
-                get
-                {
-                    var schedulerFactories = new List<Func<IConcurrentMergeScheduler>>();
-#if FEATURE_CONCURRENTMERGESCHEDULER
-                    schedulerFactories.Add(() => new ConcurrentMergeScheduler());
-                    //if (Rarely())
-                    //    schedulerFactories.Add(() => new TaskMergeScheduler());
-#else
-                    schedulerFactories.Add(() => new TaskMergeScheduler());
-#endif
-                    return schedulerFactories;
-                }
-            }
-        }
-
         internal static void LogNativeFSFactoryDebugInfo()
         {
             // LUCENENET specific - log the current locking strategy used and HResult values
@@ -3680,11 +3639,11 @@ namespace Lucene.Net.Util
         }
     }
 
-    //internal class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.IReaderClosedListener
+    //private class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
     //{
     //    private TaskScheduler ex;
 
-    //    public ReaderClosedListenerAnonymousInnerClassHelper(TaskScheduler ex)
+    //    public ReaderClosedListenerAnonymousClass(TaskScheduler ex)
     //    {
     //        this.ex = ex;
     //    }

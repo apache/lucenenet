@@ -1,4 +1,5 @@
-﻿using J2N.Threading;
+﻿// Lucene version compatibility level 4.8.1
+using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Index.Extensions;
@@ -45,16 +46,14 @@ namespace Lucene.Net.Facet.Taxonomy
     [TestFixture]
     public class TestSearcherTaxonomyManager : FacetTestCase
     {
-
         private class IndexerThread : ThreadJob
         {
-
-            internal IndexWriter w;
-            internal FacetsConfig config;
-            internal ITaxonomyWriter tw;
-            internal ReferenceManager<SearcherAndTaxonomy> mgr;
-            internal int ordLimit;
-            internal AtomicBoolean stop;
+            private readonly IndexWriter w;
+            private readonly FacetsConfig config;
+            private readonly ITaxonomyWriter tw;
+            private readonly ReferenceManager<SearcherAndTaxonomy> mgr;
+            private readonly int ordLimit;
+            private readonly AtomicBoolean stop;
 
             public IndexerThread(IndexWriter w, FacetsConfig config, ITaxonomyWriter tw, ReferenceManager<SearcherAndTaxonomy> mgr, int ordLimit, AtomicBoolean stop)
             {
@@ -165,7 +164,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             var mgr = new SearcherTaxonomyManager(w, true, null, tw);
 
-            var reopener = new ThreadAnonymousInnerClassHelper(stop, mgr);
+            var reopener = new ThreadAnonymousClass(stop, mgr);
 
             reopener.Name = "reopener";
             reopener.Start();
@@ -188,8 +187,8 @@ namespace Lucene.Net.Facet.Taxonomy
                         if (pair.Searcher.IndexReader.NumDocs > 0)
                         {
                             //System.out.println(pair.taxonomyReader.getSize());
-                            Assert.True(result.ChildCount > 0);
-                            Assert.True(result.LabelValues.Length > 0);
+                            Assert.IsTrue(result.ChildCount > 0);
+                            Assert.IsTrue(result.LabelValues.Length > 0);
                         }
 
                         //if (VERBOSE) {
@@ -216,12 +215,12 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Dispose(mgr, tw, w, taxoDir, dir);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly AtomicBoolean stop;
             private readonly SearcherTaxonomyManager mgr;
 
-            public ThreadAnonymousInnerClassHelper(AtomicBoolean stop, SearcherTaxonomyManager mgr)
+            public ThreadAnonymousClass(AtomicBoolean stop, SearcherTaxonomyManager mgr)
             {
                 this.stop = stop;
                 this.mgr = mgr;
@@ -298,8 +297,8 @@ namespace Lucene.Net.Facet.Taxonomy
                         if (pair.Searcher.IndexReader.NumDocs > 0)
                         {
                             //System.out.println(pair.taxonomyReader.getSize());
-                            Assert.True(result.ChildCount > 0);
-                            Assert.True(result.LabelValues.Length > 0);
+                            Assert.IsTrue(result.ChildCount > 0);
+                            Assert.IsTrue(result.LabelValues.Length > 0);
                         }
 
                         //if (VERBOSE) {
@@ -400,7 +399,5 @@ namespace Lucene.Net.Facet.Taxonomy
 
             IOUtils.Dispose(mgr, tw, w, taxoDir, indexDir);
         }
-
     }
-
 }

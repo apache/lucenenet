@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
 
             AtomicBoolean doStop = new AtomicBoolean();
             w.Config.SetMaxBufferedDocs(2);
-            ThreadJob t = new ThreadAnonymousInnerClassHelper(this, w, numStartDocs, docs, doStop);
+            ThreadJob t = new ThreadAnonymousClass(this, w, numStartDocs, docs, doStop);
             t.Start();
             w.ForceMerge(1);
             doStop.Value = true;
@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
             docs.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestForceMergeForever outerInstance;
 
@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
             private readonly LineFileDocs docs;
             private readonly AtomicBoolean doStop;
 
-            public ThreadAnonymousInnerClassHelper(TestForceMergeForever outerInstance, Lucene.Net.Index.TestForceMergeForever.MyIndexWriter w, int numStartDocs, LineFileDocs docs, AtomicBoolean doStop)
+            public ThreadAnonymousClass(TestForceMergeForever outerInstance, Lucene.Net.Index.TestForceMergeForever.MyIndexWriter w, int numStartDocs, LineFileDocs docs, AtomicBoolean doStop)
             {
                 this.outerInstance = outerInstance;
                 this.w = w;

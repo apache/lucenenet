@@ -259,9 +259,9 @@ namespace Lucene.Net.Analysis.Sinks
             }
         }
 
-        private static readonly SinkFilter ACCEPT_ALL_FILTER = new SinkFilterAnonymousInnerClassHelper();
+        private static readonly SinkFilter ACCEPT_ALL_FILTER = new SinkFilterAnonymousClass();
 
-        private class SinkFilterAnonymousInnerClassHelper : SinkFilter
+        private class SinkFilterAnonymousClass : SinkFilter
         {
             public override bool Accept(AttributeSource source)
             {

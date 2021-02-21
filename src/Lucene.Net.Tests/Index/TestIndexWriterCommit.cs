@@ -346,7 +346,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < NUM_THREADS; i++)
             {
                 int finalI = i;
-                threads[i] = new ThreadAnonymousInnerClassHelper(dir, w, failed, endTime, finalI, NewStringField);
+                threads[i] = new ThreadAnonymousClass(dir, w, failed, endTime, finalI, NewStringField);
                 threads[i].Start();
             }
             for (int i = 0; i < NUM_THREADS; i++)
@@ -358,7 +358,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly Func<string, string, Field.Store, Field> newStringField;
             private Directory dir;
@@ -372,7 +372,7 @@ namespace Lucene.Net.Index
             /// This is passed in because <see cref="LuceneTestCase.NewStringField(string, string, Field.Store)"/>
             /// is no longer static.
             /// </param>
-            public ThreadAnonymousInnerClassHelper(Directory dir, RandomIndexWriter w, AtomicBoolean failed, long endTime, int finalI, Func<string, string, Field.Store, Field> newStringField)
+            public ThreadAnonymousClass(Directory dir, RandomIndexWriter w, AtomicBoolean failed, long endTime, int finalI, Func<string, string, Field.Store, Field> newStringField)
             {
                 this.newStringField = newStringField;
                 this.dir = dir;

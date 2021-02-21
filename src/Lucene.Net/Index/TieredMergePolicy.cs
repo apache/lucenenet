@@ -545,16 +545,16 @@ namespace Lucene.Net.Index
 
             double finalMergeScore = mergeScore;
 
-            return new MergeScoreAnonymousInnerClassHelper(skew, nonDelRatio, finalMergeScore);
+            return new MergeScoreAnonymousClass(skew, nonDelRatio, finalMergeScore);
         }
 
-        private class MergeScoreAnonymousInnerClassHelper : MergeScore
+        private class MergeScoreAnonymousClass : MergeScore
         {
             private readonly double skew;
             private readonly double nonDelRatio;
             private readonly double finalMergeScore;
 
-            public MergeScoreAnonymousInnerClassHelper(double skew, double nonDelRatio, double finalMergeScore)
+            public MergeScoreAnonymousClass(double skew, double nonDelRatio, double finalMergeScore)
             {
                 this.skew = skew;
                 this.nonDelRatio = nonDelRatio;

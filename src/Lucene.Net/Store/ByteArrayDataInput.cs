@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Store
 {
@@ -93,7 +93,7 @@ namespace Lucene.Net.Store
         /// </summary>
         public override short ReadInt16()
         {
-            return (short)(ushort)(((bytes[pos++] & 0xFF) << 8) | (bytes[pos++] & 0xFF));
+            return (short)(((bytes[pos++] & 0xFF) << 8) | (bytes[pos++] & 0xFF));
         }
 
         /// <summary>
@@ -123,26 +123,26 @@ namespace Lucene.Net.Store
         public override int ReadVInt32()
         {
             byte b = bytes[pos++];
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return b;
             }
             int i = b & 0x7F;
             b = bytes[pos++];
             i |= (b & 0x7F) << 7;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
             b = bytes[pos++];
             i |= (b & 0x7F) << 14;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
             b = bytes[pos++];
             i |= (b & 0x7F) << 21;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
@@ -162,56 +162,56 @@ namespace Lucene.Net.Store
         public override long ReadVInt64()
         {
             byte b = bytes[pos++];
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return b;
             }
             long i = b & 0x7FL;
             b = bytes[pos++];
             i |= (b & 0x7FL) << 7;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
             b = bytes[pos++];
             i |= (b & 0x7FL) << 14;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
             b = bytes[pos++];
             i |= (b & 0x7FL) << 21;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
             b = bytes[pos++];
             i |= (b & 0x7FL) << 28;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
             b = bytes[pos++];
             i |= (b & 0x7FL) << 35;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
             b = bytes[pos++];
             i |= (b & 0x7FL) << 42;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
             b = bytes[pos++];
             i |= (b & 0x7FL) << 49;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
             b = bytes[pos++];
             i |= (b & 0x7FL) << 56;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }

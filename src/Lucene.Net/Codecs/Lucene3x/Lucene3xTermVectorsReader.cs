@@ -277,17 +277,17 @@ namespace Lucene.Net.Codecs.Lucene3x
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override IEnumerator<string> GetEnumerator()
             {
-                return new IteratorAnonymousInnerClassHelper(this);
+                return new IteratorAnonymousClass(this);
             }
 
-            private class IteratorAnonymousInnerClassHelper : IEnumerator<string>
+            private class IteratorAnonymousClass : IEnumerator<string>
             {
                 private readonly TVFields outerInstance;
                 private string current;
                 private int i;
                 private readonly int upTo;
 
-                public IteratorAnonymousInnerClassHelper(TVFields outerInstance)
+                public IteratorAnonymousClass(TVFields outerInstance)
                 {
                     this.outerInstance = outerInstance;
                     upTo = this.outerInstance.fieldNumbers.Length;

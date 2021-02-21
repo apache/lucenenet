@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Facet.Taxonomy
+﻿// Lucene version compatibility level 4.8.1
+
+namespace Lucene.Net.Facet.Taxonomy
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -57,16 +59,16 @@
 
             BinaryDocValues values = values0;
 
-            return new OrdinalsSegmentReaderAnonymousInnerClassHelper(this, values);
+            return new OrdinalsSegmentReaderAnonymousClass(this, values);
         }
 
-        private class OrdinalsSegmentReaderAnonymousInnerClassHelper : OrdinalsSegmentReader
+        private class OrdinalsSegmentReaderAnonymousClass : OrdinalsSegmentReader
         {
             private readonly DocValuesOrdinalsReader outerInstance;
 
             private readonly BinaryDocValues values;
 
-            public OrdinalsSegmentReaderAnonymousInnerClassHelper(DocValuesOrdinalsReader outerInstance, BinaryDocValues values)
+            public OrdinalsSegmentReaderAnonymousClass(DocValuesOrdinalsReader outerInstance, BinaryDocValues values)
             {
                 this.outerInstance = outerInstance;
                 this.values = values;
@@ -107,7 +109,7 @@
             while (offset < upto)
             {
                 byte b = buf.Bytes[offset++];
-                if ((sbyte)b >= 0)
+                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
                 {
                     ordinals.Int32s[ordinals.Length] = ((value << 7) | b) + prev;
                     value = 0;

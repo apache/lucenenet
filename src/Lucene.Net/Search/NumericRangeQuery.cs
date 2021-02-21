@@ -351,7 +351,7 @@ namespace Lucene.Net.Search
                                 maxBound--;
                             }
 
-                            NumericUtils.SplitInt64Range(new Int64RangeBuilderAnonymousInnerClassHelper(this), this.outerInstance.precisionStep, minBound, maxBound);
+                            NumericUtils.SplitInt64Range(new Int64RangeBuilderAnonymousClass(this), this.outerInstance.precisionStep, minBound, maxBound);
                             break;
                         }
 
@@ -398,7 +398,7 @@ namespace Lucene.Net.Search
                                 maxBound--;
                             }
 
-                            NumericUtils.SplitInt32Range(new Int32RangeBuilderAnonymousInnerClassHelper(this), this.outerInstance.precisionStep, minBound, maxBound);
+                            NumericUtils.SplitInt32Range(new Int32RangeBuilderAnonymousClass(this), this.outerInstance.precisionStep, minBound, maxBound);
                             break;
                         }
 
@@ -410,11 +410,11 @@ namespace Lucene.Net.Search
                 termComp = Comparer;
             }
 
-            private class Int64RangeBuilderAnonymousInnerClassHelper : NumericUtils.Int64RangeBuilder
+            private class Int64RangeBuilderAnonymousClass : NumericUtils.Int64RangeBuilder
             {
                 private readonly NumericRangeTermsEnum outerInstance;
 
-                public Int64RangeBuilderAnonymousInnerClassHelper(NumericRangeTermsEnum outerInstance)
+                public Int64RangeBuilderAnonymousClass(NumericRangeTermsEnum outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }
@@ -426,11 +426,11 @@ namespace Lucene.Net.Search
                 }
             }
 
-            private class Int32RangeBuilderAnonymousInnerClassHelper : NumericUtils.Int32RangeBuilder
+            private class Int32RangeBuilderAnonymousClass : NumericUtils.Int32RangeBuilder
             {
                 private readonly NumericRangeTermsEnum outerInstance;
 
-                public Int32RangeBuilderAnonymousInnerClassHelper(NumericRangeTermsEnum outerInstance)
+                public Int32RangeBuilderAnonymousClass(NumericRangeTermsEnum outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }

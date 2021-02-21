@@ -1,4 +1,4 @@
-using J2N.Numerics;
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -157,7 +157,7 @@ namespace Lucene.Net.Util
         /// Returns the number of 64 bit words it would take to hold <paramref name="numBits"/> </summary>
         public static int Bits2words(int numBits)
         {
-            int numLong = (int)((uint)numBits >> 6);
+            int numLong = numBits.TripleShift(6);
             if ((numBits & 63) != 0)
             {
                 numLong++;
@@ -602,8 +602,7 @@ namespace Lucene.Net.Util
             */
 
             long startmask = -1L << startIndex;
-            long endmask = (long)(unchecked((ulong)-1) >> -endIndex);
-            //long endmask = -(int)((uint)1L >> -endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+            long endmask = (-1L).TripleShift(-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
             if (startWord == endWord)
             {
@@ -642,8 +641,7 @@ namespace Lucene.Net.Util
             int endWord = (endIndex - 1) >> 6;
 
             long startmask = -1L << startIndex;
-            long endmask = (long)(unchecked((ulong)-1) >> -endIndex);
-            //long endmask = -(int)((uint)1UL >> -endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+            long endmask = (-1L).TripleShift(-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
             if (startWord == endWord)
             {
@@ -730,7 +728,7 @@ namespace Lucene.Net.Util
             for (int i = numWords; --i >= 0; )
             {
                 h ^= bits[i];
-                h = (h << 1) | ((long)((ulong)h >> 63)); // rotate left
+                h = (h << 1) | (h.TripleShift(63)); // rotate left
             }
             // fold leftmost bits into right and add a constant to prevent
             // empty sets from returning 0, which is too common.

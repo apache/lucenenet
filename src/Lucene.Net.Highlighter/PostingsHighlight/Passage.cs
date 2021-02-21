@@ -64,13 +64,13 @@ namespace Lucene.Net.Search.PostingsHighlight
             numMatches++;
         }
 
-        internal class InPlaceMergeSorterAnonymousHelper : InPlaceMergeSorter
+        private class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
         {
             private readonly int[] starts;
             private readonly int[] ends;
             private readonly BytesRef[] terms;
 
-            public InPlaceMergeSorterAnonymousHelper(int[] starts, int[] ends, BytesRef[] terms)
+            public InPlaceMergeSorterAnonymousClass(int[] starts, int[] ends, BytesRef[] terms)
             {
                 this.starts = starts;
                 this.ends = ends;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             int[] starts = matchStarts;
             int[] ends = matchEnds;
             BytesRef[] terms = matchTerms;
-            new InPlaceMergeSorterAnonymousHelper(starts, ends, terms)
+            new InPlaceMergeSorterAnonymousClass(starts, ends, terms)
                 .Sort(0, numMatches);
         }
 

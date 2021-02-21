@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
 
             public virtual IEnumerator<Document> GetEnumerator()
             {
-                return new IteratorAnonymousInnerClassHelper(this);
+                return new IteratorAnonymousClass(this);
             }
 
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -121,11 +121,11 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousInnerClassHelper : IEnumerator<Document>
+            private class IteratorAnonymousClass : IEnumerator<Document>
             {
                 private readonly DocCopyIterator outerInstance;
 
-                public IteratorAnonymousInnerClassHelper(DocCopyIterator outerInstance)
+                public IteratorAnonymousClass(DocCopyIterator outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }
@@ -318,7 +318,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestRandomExceptions([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestRandomExceptions()
         {
             if (Verbose)
             {
@@ -329,19 +329,9 @@ namespace Lucene.Net.Index
             MockAnalyzer analyzer = new MockAnalyzer(Random);
             analyzer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
 
-
-            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
-                            .SetRAMBufferSizeMB(0.1)
-                            .SetMergeScheduler(newScheduler());
-
-            var scheduler = config.MergeScheduler as IConcurrentMergeScheduler;
-            if (scheduler != null)
-            {
-                scheduler.SetSuppressExceptions();
-            }
-            
-
-            IndexWriter writer = RandomIndexWriter.MockIndexWriter(dir, config , new TestPoint1(this));
+            IndexWriter writer = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                .SetRAMBufferSizeMB(0.1).SetMergeScheduler(new ConcurrentMergeScheduler()) , new TestPoint1(this));
+            ((IConcurrentMergeScheduler)writer.Config.MergeScheduler).SetSuppressExceptions();
             //writer.SetMaxBufferedDocs(10);
             if (Verbose)
             {
@@ -386,24 +376,15 @@ namespace Lucene.Net.Index
 
         [Test]
         [Slow]
-        public virtual void TestRandomExceptionsThreads([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestRandomExceptionsThreads()
         {
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random);
             analyzer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
 
-            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
-                            .SetRAMBufferSizeMB(0.2)
-                            .SetMergeScheduler(newScheduler());
-
-            IndexWriter writer = RandomIndexWriter.MockIndexWriter(dir, config, new TestPoint1(this));
-
-            var scheduler = config.MergeScheduler as IConcurrentMergeScheduler;
-            if (scheduler != null)
-            {
-                scheduler.SetSuppressExceptions();
-            }
-
+            IndexWriter writer = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                .SetRAMBufferSizeMB(0.2).SetMergeScheduler(new ConcurrentMergeScheduler()), new TestPoint1(this));
+            ((IConcurrentMergeScheduler)writer.Config.MergeScheduler).SetSuppressExceptions();
             //writer.SetMaxBufferedDocs(10);
             writer.Commit();
 
@@ -578,15 +559,15 @@ namespace Lucene.Net.Index
 
         // LUCENE-1210
         [Test]
-        public virtual void TestExceptionOnMergeInit([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestExceptionOnMergeInit()
         {
             // LUCENENET specific - disable the test if asserts are not enabled
             AssumeTrue("This test requires asserts to be enabled.", Debugging.AssertsEnabled);
 
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
-
-            var cms = newScheduler();
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
+            var cms = new ConcurrentMergeScheduler();
             cms.SetSuppressExceptions();
             conf.SetMergeScheduler(cms);
             ((LogMergePolicy)conf.MergePolicy).MergeFactor = 2;
@@ -622,7 +603,7 @@ namespace Lucene.Net.Index
             {
                 MockTokenizer tokenizer = new MockTokenizer(reader2, MockTokenizer.SIMPLE, true);
                 tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
-                return new TokenStreamComponents(tokenizer, new TokenFilterAnonymousInnerClassHelper(tokenizer));
+                return new TokenStreamComponents(tokenizer, new TokenFilterAnonymousClass(tokenizer));
             });
 
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
@@ -675,9 +656,9 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TokenFilterAnonymousInnerClassHelper : TokenFilter
+        private class TokenFilterAnonymousClass : TokenFilter
         {
-            public TokenFilterAnonymousInnerClassHelper(MockTokenizer tokenizer)
+            public TokenFilterAnonymousClass(MockTokenizer tokenizer)
                 : base(tokenizer)
             {
                 count = 0;
@@ -907,7 +888,7 @@ namespace Lucene.Net.Index
                     ThreadJob[] threads = new ThreadJob[NUM_THREAD];
                     for (int t = 0; t < NUM_THREAD; t++)
                     {
-                        threads[t] = new ThreadAnonymousInnerClassHelper(NUM_ITER, writer, finalI);
+                        threads[t] = new ThreadAnonymousClass(NUM_ITER, writer, finalI);
                         threads[t].Start();
                     }
 
@@ -968,13 +949,13 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly int NUM_ITER;
             private readonly IndexWriter writer;
             private readonly int finalI;
 
-            public ThreadAnonymousInnerClassHelper(int NUM_ITER, IndexWriter writer, int finalI)
+            public ThreadAnonymousClass(int NUM_ITER, IndexWriter writer, int finalI)
             {
                 this.NUM_ITER = NUM_ITER;
                 this.writer = writer;
@@ -1064,7 +1045,7 @@ namespace Lucene.Net.Index
 
         // LUCENE-1044: test exception during sync
         [Test]
-        public virtual void TestExceptionDuringSync([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestExceptionDuringSync()
         {
             MockDirectoryWrapper dir = NewMockDirectory();
             FailOnlyInSync failure = new FailOnlyInSync();
@@ -1072,7 +1053,7 @@ namespace Lucene.Net.Index
 
             var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                             .SetMaxBufferedDocs(2)
-                            .SetMergeScheduler(newScheduler())
+                            .SetMergeScheduler(new ConcurrentMergeScheduler())
                             .SetMergePolicy(NewLogMergePolicy(5));
 
             IndexWriter writer = new IndexWriter(dir, config);
@@ -1188,7 +1169,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestForceMergeExceptions([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
+        public virtual void TestForceMergeExceptions()
         {
             Directory startDir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
@@ -1208,7 +1189,7 @@ namespace Lucene.Net.Index
                     Console.WriteLine("TEST: iter " + i);
                 }
                 MockDirectoryWrapper dir = new MockDirectoryWrapper(Random, new RAMDirectory(startDir, NewIOContext(Random)));
-                conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(newScheduler());
+                conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(new ConcurrentMergeScheduler());
                 var scheduler = conf.MergeScheduler as IConcurrentMergeScheduler;
                 if (scheduler != null)
                 {
@@ -1240,7 +1221,7 @@ namespace Lucene.Net.Index
         {
             AtomicBoolean thrown = new AtomicBoolean(false);
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetInfoStream(new TOOMInfoStreamAnonymousInnerClassHelper(thrown)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetInfoStream(new TOOMInfoStreamAnonymousClass(thrown)));
 
             try
             {
@@ -1258,11 +1239,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TOOMInfoStreamAnonymousInnerClassHelper : InfoStream
+        private class TOOMInfoStreamAnonymousClass : InfoStream
         {
             private readonly AtomicBoolean thrown;
 
-            public TOOMInfoStreamAnonymousInnerClassHelper(AtomicBoolean thrown)
+            public TOOMInfoStreamAnonymousClass(AtomicBoolean thrown)
             {
                 this.thrown = thrown;
             }
@@ -1347,7 +1328,7 @@ namespace Lucene.Net.Index
             IndexOutput @out = dir.CreateOutput(IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", 1 + gen), NewIOContext(Random));
             @out.CopyBytes(@in, @in.Length - 1);
             byte b = @in.ReadByte();
-            @out.WriteByte((byte)(sbyte)(1 + b));
+            @out.WriteByte((byte)(1 + b));
             @out.Dispose();
             @in.Dispose();
 
@@ -1935,7 +1916,7 @@ namespace Lucene.Net.Index
                 doc = new Document();
                 // try to boost with norms omitted
                 IList<IIndexableField> list = new List<IIndexableField>();
-                list.Add(new IndexableFieldAnonymousInnerClassHelper());
+                list.Add(new IndexableFieldAnonymousClass());
                 iw.AddDocument(list);
                 Assert.Fail("didn't get any exception, boost silently discarded");
             }
@@ -1953,7 +1934,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class IndexableFieldAnonymousInnerClassHelper : IIndexableField
+        private class IndexableFieldAnonymousClass : IIndexableField
         {
             public string Name => "foo";
 
@@ -2051,7 +2032,7 @@ namespace Lucene.Net.Index
         public virtual void TestTooManyFileException()
         {
             // Create failure that throws Too many open files exception randomly
-            Failure failure = new FailureAnonymousInnerClassHelper();
+            Failure failure = new FailureAnonymousClass();
 
             MockDirectoryWrapper dir = NewMockDirectory();
             // The exception is only thrown on open input
@@ -2114,7 +2095,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailureAnonymousInnerClassHelper : Failure
+        private class FailureAnonymousClass : Failure
         {
 
             public override Failure Reset()
@@ -2148,7 +2129,7 @@ namespace Lucene.Net.Index
 
             MockDirectoryWrapper dir = NewMockDirectory();
             AtomicBoolean shouldFail = new AtomicBoolean();
-            dir.FailOn(new FailureAnonymousInnerClassHelper2(shouldFail));
+            dir.FailOn(new FailureAnonymousClass2(shouldFail));
 
             RandomIndexWriter w = null;
 
@@ -2165,7 +2146,7 @@ namespace Lucene.Net.Index
                     IMergeScheduler ms = iwc.MergeScheduler;
                     if (ms is IConcurrentMergeScheduler)
                     {
-                        IConcurrentMergeScheduler suppressFakeIOE = new ConcurrentMergeSchedulerAnonymousInnerClassHelper();
+                        IConcurrentMergeScheduler suppressFakeIOE = new ConcurrentMergeSchedulerAnonymousClass();
 
                         IConcurrentMergeScheduler cms = (IConcurrentMergeScheduler)ms;
                         suppressFakeIOE.SetMaxMergesAndThreads(cms.MaxMergeCount, cms.MaxThreadCount);
@@ -2376,11 +2357,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailureAnonymousInnerClassHelper2 : Failure
+        private class FailureAnonymousClass2 : Failure
         {
             private readonly AtomicBoolean shouldFail;
 
-            public FailureAnonymousInnerClassHelper2(AtomicBoolean shouldFail)
+            public FailureAnonymousClass2(AtomicBoolean shouldFail)
             {
                 this.shouldFail = shouldFail;
             }
@@ -2416,12 +2397,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ConcurrentMergeSchedulerAnonymousInnerClassHelper :
-#if !FEATURE_CONCURRENTMERGESCHEDULER
-            TaskMergeScheduler
-#else
-            ConcurrentMergeScheduler
-#endif
+        private class ConcurrentMergeSchedulerAnonymousClass : ConcurrentMergeScheduler
         {
             protected override void HandleMergeException(Exception exc)
             {
@@ -2443,7 +2419,7 @@ namespace Lucene.Net.Index
             string messageToFailOn = Random.NextBoolean() ? "rollback: done finish merges" : "rollback before checkpoint";
 
             // infostream that throws exception during rollback
-            InfoStream evilInfoStream = new TEDRInfoStreamAnonymousInnerClassHelper(messageToFailOn);
+            InfoStream evilInfoStream = new TEDRInfoStreamAnonymousClass(messageToFailOn);
 
             Directory dir = NewMockDirectory(); // we want to ensure we don't leak any locks or file handles
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, null);
@@ -2491,11 +2467,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TEDRInfoStreamAnonymousInnerClassHelper : InfoStream
+        private class TEDRInfoStreamAnonymousClass : InfoStream
         {
             private readonly string messageToFailOn;
 
-            public TEDRInfoStreamAnonymousInnerClassHelper(string messageToFailOn)
+            public TEDRInfoStreamAnonymousClass(string messageToFailOn)
             {
                 this.messageToFailOn = messageToFailOn;
             }
@@ -2529,7 +2505,7 @@ namespace Lucene.Net.Index
             for (int iter = 0; iter < numIters; iter++)
             {
                 MockDirectoryWrapper dir = NewMockDirectory();
-                dir.FailOn(new FailureAnonymousInnerClassHelper3());
+                dir.FailOn(new FailureAnonymousClass3());
 
                 IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, null);
                 IndexWriter iw = new IndexWriter(dir, iwc);
@@ -2576,7 +2552,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class FailureAnonymousInnerClassHelper3 : Failure
+        private class FailureAnonymousClass3 : Failure
         {
             public override void Eval(MockDirectoryWrapper dir)
             {

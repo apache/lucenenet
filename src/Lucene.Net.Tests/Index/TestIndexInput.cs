@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -34,7 +34,51 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestIndexInput : LuceneTestCase
     {
-        internal static readonly byte[] READ_TEST_BYTES = new byte[] { unchecked((byte)(sbyte)0x80), 0x01, unchecked((byte)(sbyte)0xFF), 0x7F, unchecked((byte)(sbyte)0x80), unchecked((byte)(sbyte)0x80), 0x01, unchecked((byte)(sbyte)0x81), unchecked((byte)(sbyte)0x80), 0x01, unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), 0x07, unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), 0x0F, unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), 0x07, unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), (byte)0x7F, 0x06, (byte)'L', (byte)'u', (byte)'c', (byte)'e', (byte)'n', (byte)'e', 0x02, unchecked((byte)(sbyte)0xC2), unchecked((byte)(sbyte)0xBF), 0x0A, (byte)'L', (byte)'u', unchecked((byte)(sbyte)0xC2), unchecked((byte)(sbyte)0xBF), (byte)(sbyte)'c', (byte)'e', unchecked((byte)(sbyte)0xC2), unchecked((byte)(sbyte)0xBF), (byte)'n', (byte)'e', 0x03, unchecked((byte)(sbyte)0xE2), unchecked((byte)(sbyte)0x98), unchecked((byte)(sbyte)0xA0), 0x0C, (byte)'L', (byte)'u', unchecked((byte)(sbyte)0xE2), unchecked((byte)(sbyte)0x98), unchecked((byte)(sbyte)0xA0), (byte)'c', (byte)'e', unchecked((byte)(sbyte)0xE2), unchecked((byte)(sbyte)0x98), unchecked((byte)(sbyte)0xA0), (byte)'n', (byte)'e', 0x04, unchecked((byte)(sbyte)0xF0), unchecked((byte)(sbyte)0x9D), unchecked((byte)(sbyte)0x84), unchecked((byte)(sbyte)0x9E), 0x08, unchecked((byte)(sbyte)0xF0), unchecked((byte)(sbyte)0x9D), unchecked((byte)(sbyte)0x84), unchecked((byte)(sbyte)0x9E), unchecked((byte)(sbyte)0xF0), unchecked((byte)(sbyte)0x9D), unchecked((byte)(sbyte)0x85), unchecked((byte)(sbyte)0xA0), 0x0E, (byte)'L', (byte)'u', unchecked((byte)(sbyte)0xF0), unchecked((byte)(sbyte)0x9D), unchecked((byte)(sbyte)0x84), unchecked((byte)(sbyte)0x9E), (byte)'c', (byte)'e', unchecked((byte)(sbyte)0xF0), unchecked((byte)(sbyte)0x9D), unchecked((byte)(sbyte)0x85), unchecked((byte)(sbyte)0xA0), (byte)'n', (byte)'e', 0x01, 0x00, 0x08, (byte)'L', (byte)'u', 0x00, (byte)'c', (byte)'e', 0x00, (byte)'n', (byte)'e', unchecked((byte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), (byte)0x17, (byte)0x01, unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), unchecked((byte)(sbyte)0xFF), 0x01 };
+        internal static readonly byte[] READ_TEST_BYTES = new byte[] {
+            (byte) 0x80, 0x01,
+            (byte) 0xFF, 0x7F,
+            (byte) 0x80, (byte) 0x80, 0x01,
+            (byte) 0x81, (byte) 0x80, 0x01,
+            (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0x07,
+            (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0x0F,
+            (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0x07,
+            (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0x7F,
+            0x06, (byte) 'L', (byte) 'u', (byte) 'c', (byte) 'e', (byte) 'n', (byte) 'e',
+
+            // 2-byte UTF-8 (U+00BF "INVERTED QUESTION MARK") 
+            0x02, (byte) 0xC2, (byte) 0xBF,
+            0x0A, (byte) 'L', (byte) 'u', (byte) 0xC2, (byte) 0xBF,
+                  (byte) 'c', (byte) 'e', (byte) 0xC2, (byte) 0xBF,
+                  (byte) 'n', (byte) 'e',
+
+            // 3-byte UTF-8 (U+2620 "SKULL AND CROSSBONES") 
+            0x03, (byte) 0xE2, (byte) 0x98, (byte) 0xA0,
+            0x0C, (byte) 'L', (byte) 'u', (byte) 0xE2, (byte) 0x98, (byte) 0xA0,
+                  (byte) 'c', (byte) 'e', (byte) 0xE2, (byte) 0x98, (byte) 0xA0,
+                  (byte) 'n', (byte) 'e',
+
+            // surrogate pairs
+            // (U+1D11E "MUSICAL SYMBOL G CLEF")
+            // (U+1D160 "MUSICAL SYMBOL EIGHTH NOTE")
+            0x04, (byte) 0xF0, (byte) 0x9D, (byte) 0x84, (byte) 0x9E,
+            0x08, (byte) 0xF0, (byte) 0x9D, (byte) 0x84, (byte) 0x9E,
+                  (byte) 0xF0, (byte) 0x9D, (byte) 0x85, (byte) 0xA0,
+            0x0E, (byte) 'L', (byte) 'u',
+                  (byte) 0xF0, (byte) 0x9D, (byte) 0x84, (byte) 0x9E,
+                  (byte) 'c', (byte) 'e',
+                  (byte) 0xF0, (byte) 0x9D, (byte) 0x85, (byte) 0xA0,
+                  (byte) 'n', (byte) 'e',  
+
+            // null bytes
+            0x01, 0x00,
+            0x08, (byte) 'L', (byte) 'u', 0x00, (byte) 'c', (byte) 'e', 0x00, (byte) 'n', (byte) 'e',
+    
+            // tests for Exceptions on invalid values
+            (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0x17,
+            (byte) 0x01, // guard value
+            (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
+            (byte) 0x01, // guard value
+        };
 
         internal static readonly int COUNT = RandomMultiplier * 65536;
         internal static int[] INTS;

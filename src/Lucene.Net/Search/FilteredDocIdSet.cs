@@ -57,17 +57,17 @@ namespace Lucene.Net.Search
             get
             {
                 IBits bits = innerSet.Bits;
-                return (bits == null) ? null : new BitsAnonymousInnerClassHelper(this, bits);
+                return (bits == null) ? null : new BitsAnonymousClass(this, bits);
             }
         }
 
-        private class BitsAnonymousInnerClassHelper : IBits
+        private class BitsAnonymousClass : IBits
         {
             private readonly FilteredDocIdSet outerInstance;
 
             private readonly IBits bits;
 
-            public BitsAnonymousInnerClassHelper(FilteredDocIdSet outerInstance, IBits bits)
+            public BitsAnonymousClass(FilteredDocIdSet outerInstance, IBits bits)
             {
                 this.outerInstance = outerInstance;
                 this.bits = bits;
@@ -98,14 +98,14 @@ namespace Lucene.Net.Search
             {
                 return null;
             }
-            return new FilteredDocIdSetIteratorAnonymousInnerClassHelper(this, iterator);
+            return new FilteredDocIdSetIteratorAnonymousClass(this, iterator);
         }
 
-        private class FilteredDocIdSetIteratorAnonymousInnerClassHelper : FilteredDocIdSetIterator
+        private class FilteredDocIdSetIteratorAnonymousClass : FilteredDocIdSetIterator
         {
             private readonly FilteredDocIdSet outerInstance;
 
-            public FilteredDocIdSetIteratorAnonymousInnerClassHelper(FilteredDocIdSet outerInstance, Lucene.Net.Search.DocIdSetIterator iterator)
+            public FilteredDocIdSetIteratorAnonymousClass(FilteredDocIdSet outerInstance, Lucene.Net.Search.DocIdSetIterator iterator)
                 : base(iterator)
             {
                 this.outerInstance = outerInstance;

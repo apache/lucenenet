@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using System;
 
 namespace Lucene.Net.Replicator
@@ -69,7 +70,7 @@ namespace Lucene.Net.Replicator
 
         public override int GetHashCode()
         {
-            return FileName.GetHashCode() ^ (int)(Length ^ (long)((ulong)Length >> 32));
+            return FileName.GetHashCode() ^ (int)(Length ^ Length.TripleShift(32));
         }
 
         public override string ToString()

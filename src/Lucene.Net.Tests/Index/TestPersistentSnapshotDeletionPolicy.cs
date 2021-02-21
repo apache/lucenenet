@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
         public virtual void TestExceptionDuringSave()
         {
             MockDirectoryWrapper dir = NewMockDirectory();
-            dir.FailOn(new FailureAnonymousInnerClassHelper(this, dir));
+            dir.FailOn(new FailureAnonymousClass(this, dir));
             IndexWriter writer = new IndexWriter(dir, GetConfig(Random, new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode.CREATE_OR_APPEND)));
             writer.AddDocument(new Document());
             writer.Commit();
@@ -153,13 +153,13 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailureAnonymousInnerClassHelper : Failure
+        private class FailureAnonymousClass : Failure
         {
             private readonly TestPersistentSnapshotDeletionPolicy outerInstance;
 
             private MockDirectoryWrapper dir;
 
-            public FailureAnonymousInnerClassHelper(TestPersistentSnapshotDeletionPolicy outerInstance, MockDirectoryWrapper dir)
+            public FailureAnonymousClass(TestPersistentSnapshotDeletionPolicy outerInstance, MockDirectoryWrapper dir)
             {
                 this.outerInstance = outerInstance;
                 this.dir = dir;

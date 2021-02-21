@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis;
+﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Join;
@@ -31,7 +32,6 @@ namespace Lucene.Net.Tests.Join
 
     public class TestBlockJoinValidation : LuceneTestCase
     {
-
         public const int AMOUNT_OF_SEGMENTS = 5;
         public const int AMOUNT_OF_PARENT_DOCS = 10;
         public const int AMOUNT_OF_CHILD_DOCS = 5;
@@ -58,13 +58,6 @@ namespace Lucene.Net.Tests.Join
             indexWriter.Dispose();
             indexSearcher = new IndexSearcher(indexReader);
             parentsFilter = new FixedBitSetCachingWrapperFilter(new QueryWrapperFilter(new WildcardQuery(new Term("parent", "*"))));
-        }
-
-        [TearDown]
-        public override void TearDown()
-        {
-            indexReader.Dispose();
-            directory.Dispose();
         }
 
         [Test]
@@ -126,6 +119,13 @@ namespace Lucene.Net.Tests.Join
             StringAssert.Contains(ToChildBlockJoinQuery.INVALID_QUERY_MESSAGE, ex.Message);
         }
 
+        [TearDown]
+        public override void TearDown()
+        {
+            indexReader.Dispose();
+            directory.Dispose();
+        }
+
         private IList<Document> CreateDocsForSegment(int segmentNumber)
         {
             IList<IList<Document>> blocks = new List<IList<Document>>(AMOUNT_OF_PARENT_DOCS);
@@ -185,7 +185,7 @@ namespace Lucene.Net.Tests.Join
         private static Query CreateChildrenQueryWithOneParent(int childNumber)
         {
             TermQuery childQuery = new TermQuery(new Term("child", CreateFieldValue(childNumber)));
-            Query randomParentQuery = new TermQuery(new Term("id", CreateFieldValue(RandomParentId)));
+            Query randomParentQuery = new TermQuery(new Term("id", CreateFieldValue(GetRandomParentId())));
             BooleanQuery childrenQueryWithRandomParent = new BooleanQuery();
             childrenQueryWithRandomParent.Add(new BooleanClause(childQuery, Occur.SHOULD));
             childrenQueryWithRandomParent.Add(new BooleanClause(randomParentQuery, Occur.SHOULD));
@@ -195,19 +195,19 @@ namespace Lucene.Net.Tests.Join
         private static Query CreateParentsQueryWithOneChild(int randomChildNumber)
         {
             BooleanQuery childQueryWithRandomParent = new BooleanQuery();
-            Query parentsQuery = new TermQuery(new Term("parent", CreateFieldValue(RandomParentNumber)));
+            Query parentsQuery = new TermQuery(new Term("parent", CreateFieldValue(GetRandomParentNumber())));
             childQueryWithRandomParent.Add(new BooleanClause(parentsQuery, Occur.SHOULD));
             childQueryWithRandomParent.Add(new BooleanClause(RandomChildQuery(randomChildNumber), Occur.SHOULD));
             return childQueryWithRandomParent;
         }
 
-        private static int RandomParentId => Random.Next(AMOUNT_OF_PARENT_DOCS*AMOUNT_OF_SEGMENTS);
+        private static int GetRandomParentId() => Random.Next(AMOUNT_OF_PARENT_DOCS*AMOUNT_OF_SEGMENTS);
 
-        private static int RandomParentNumber => Random.Next(AMOUNT_OF_PARENT_DOCS);
+        private static int GetRandomParentNumber() => Random.Next(AMOUNT_OF_PARENT_DOCS);
 
         private static Query RandomChildQuery(int randomChildNumber)
         {
-            return new TermQuery(new Term("id", CreateFieldValue(RandomParentId, randomChildNumber)));
+            return new TermQuery(new Term("id", CreateFieldValue(GetRandomParentId(), randomChildNumber)));
         }
 
         private static int GetRandomChildNumber(int notLessThan)

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Search;
+﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Join
 {

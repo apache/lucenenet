@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -50,7 +51,7 @@ namespace Lucene.Net.Util.Packed
         public override long Get(int index)
         {
             long majorBitPos = (long)index * m_bitsPerValue;
-            long elementPos = (long)((ulong)majorBitPos >> 3);
+            long elementPos = majorBitPos.TripleShift(3);
             try
             {
                 @in.Seek(startPointer + elementPos);
@@ -62,7 +63,7 @@ namespace Lucene.Net.Util.Packed
                 int shiftRightBits = roundedBits - bitPos - m_bitsPerValue;
 
                 long rawValue;
-                switch ((int)((uint)roundedBits >> 3))
+                switch (roundedBits.TripleShift(3))
                 {
                     case 1:
                         rawValue = @in.ReadByte();
@@ -106,7 +107,7 @@ namespace Lucene.Net.Util.Packed
                     default:
                         throw new InvalidOperationException("bitsPerValue too large: " + m_bitsPerValue);
                 }
-                return ((long)((ulong)rawValue >> shiftRightBits)) & valueMask;
+                return (rawValue.TripleShift(shiftRightBits)) & valueMask;
             }
             catch (IOException ioe)
             {

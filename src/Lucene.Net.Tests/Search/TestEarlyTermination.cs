@@ -71,18 +71,18 @@ namespace Lucene.Net.Search
             for (int i = 0; i < iters; ++i)
             {
                 IndexSearcher searcher = NewSearcher(reader);
-                ICollector collector = new CollectorAnonymousInnerClassHelper(this);
+                ICollector collector = new CollectorAnonymousClass(this);
 
                 searcher.Search(new MatchAllDocsQuery(), collector);
             }
             reader.Dispose();
         }
 
-        private class CollectorAnonymousInnerClassHelper : ICollector
+        private class CollectorAnonymousClass : ICollector
         {
             private readonly TestEarlyTermination outerInstance;
 
-            public CollectorAnonymousInnerClassHelper(TestEarlyTermination outerInstance)
+            public CollectorAnonymousClass(TestEarlyTermination outerInstance)
             {
                 this.outerInstance = outerInstance;
                 outOfOrder = Random.NextBoolean();

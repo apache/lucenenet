@@ -1,10 +1,10 @@
-﻿using Lucene.Net.Support;
+﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Support;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -103,16 +103,16 @@ namespace Lucene.Net.Facet
         [Test]
         public virtual void TestCustomDefault()
         {
-            FacetsConfig config = new FacetsConfigAnonymousInnerClassHelper(this);
+            FacetsConfig config = new FacetsConfigAnonymousClass(this);
 
-            Assert.True(config.GetDimConfig("foobar").IsHierarchical);
+            Assert.IsTrue(config.GetDimConfig("foobar").IsHierarchical);
         }
 
-        private class FacetsConfigAnonymousInnerClassHelper : FacetsConfig
+        private class FacetsConfigAnonymousClass : FacetsConfig
         {
             private readonly TestFacetsConfig outerInstance;
 
-            public FacetsConfigAnonymousInnerClassHelper(TestFacetsConfig outerInstance)
+            public FacetsConfigAnonymousClass(TestFacetsConfig outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -128,5 +128,4 @@ namespace Lucene.Net.Facet
             }
         }
     }
-
 }

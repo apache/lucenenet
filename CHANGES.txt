@@ -1,4 +1,4 @@
-﻿=================== Release 4.8.0-beta00006 =====================
+﻿ =================== Release 4.8.0-beta00006 =====================
 
 Bug
 •	Lucene.Net.Support.Collections::Equals<T>(): Fixed comparison to include a check whether Count
@@ -177,7 +177,7 @@ Bug
 	Van Den Berghe http://apache.markmail.org/message/hafnuhq2ydhfjmi2.
 •	Lucene.Net.Store.LockVerifyServer: Read/write 1 byte instead of 1 int (4 bytes). 
 	Also, we don't need 2 streams in .NET for input/output (solution provided by Vincent Van Den Berghe).
-•	Lucene.Net.TestFramework.Store.MockDirectoryWrapper.IndexInputSlicerAnonymousInnerClassHelper: Fixed Dispose() method.
+•	Lucene.Net.TestFramework.Store.MockDirectoryWrapper.IndexInputSlicerAnonymousClass: Fixed Dispose() method.
 •	Lucene.Net.Index.IndexWriter: Fixed string formatting of numeric values in InfoStream message.
 •	Lucene.Net.Tests.Querys.CommonTermsQueryTest: Added missing TestRandomIndex() test
 •	Lucene.Net.Analysis.Common.Analysis.CharFilter.MappingCharFilterFactory: fixed escaping problem in parsing regex

@@ -124,7 +124,7 @@ namespace Lucene.Net.Store
             for (int i = 0; i < numThreads; i++)
             {
                 int num = i;
-                threads[i] = new ThreadAnonymousInnerClassHelper(this, writer, num);
+                threads[i] = new ThreadAnonymousClass(this, writer, num);
             }
             for (int i = 0; i < numThreads; i++)
             {
@@ -141,14 +141,14 @@ namespace Lucene.Net.Store
             writer.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadJob
+        private class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestRAMDirectory outerInstance;
 
             private readonly IndexWriter writer;
             private readonly int num;
 
-            public ThreadAnonymousInnerClassHelper(TestRAMDirectory outerInstance, IndexWriter writer, int num)
+            public ThreadAnonymousClass(TestRAMDirectory outerInstance, IndexWriter writer, int num)
             {
                 this.outerInstance = outerInstance;
                 this.writer = writer;

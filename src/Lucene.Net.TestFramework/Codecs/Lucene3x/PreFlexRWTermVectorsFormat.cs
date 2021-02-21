@@ -32,12 +32,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override TermVectorsReader VectorsReader(Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, IOContext context)
         {
-            return new Lucene3xTermVectorsReaderAnonymousInnerClassHelper(directory, segmentInfo, fieldInfos, context);
+            return new Lucene3xTermVectorsReaderAnonymousClass(directory, segmentInfo, fieldInfos, context);
         }
 
-        private class Lucene3xTermVectorsReaderAnonymousInnerClassHelper : Lucene3xTermVectorsReader
+        private class Lucene3xTermVectorsReaderAnonymousClass : Lucene3xTermVectorsReader
         {
-            public Lucene3xTermVectorsReaderAnonymousInnerClassHelper(Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, IOContext context)
+            public Lucene3xTermVectorsReaderAnonymousClass(Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, IOContext context)
                 : base(directory, segmentInfo, fieldInfos, context)
             {
             }

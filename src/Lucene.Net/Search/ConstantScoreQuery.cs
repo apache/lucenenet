@@ -249,16 +249,16 @@ namespace Lucene.Net.Search
 
             private ICollector WrapCollector(ICollector collector)
             {
-                return new CollectorAnonymousInnerClassHelper(this, collector);
+                return new CollectorAnonymousClass(this, collector);
             }
 
-            private class CollectorAnonymousInnerClassHelper : ICollector
+            private class CollectorAnonymousClass : ICollector
             {
                 private readonly ConstantBulkScorer outerInstance;
 
                 private readonly ICollector collector;
 
-                public CollectorAnonymousInnerClassHelper(ConstantBulkScorer outerInstance, ICollector collector)
+                public CollectorAnonymousClass(ConstantBulkScorer outerInstance, ICollector collector)
                 {
                     this.outerInstance = outerInstance;
                     this.collector = collector;

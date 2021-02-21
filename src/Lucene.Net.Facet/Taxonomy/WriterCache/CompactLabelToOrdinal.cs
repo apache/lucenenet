@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Lucene version compatibility level 4.8.1
+using J2N.Numerics;
+using System;
 using System.IO;
 using System.Runtime.Serialization;
 
@@ -311,10 +313,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         {
             int hash = label.GetHashCode();
 
-#pragma warning disable IDE0054 // Use compound assignment
-            hash = hash ^ (((int)((uint)hash >> 20)) ^ ((int)((uint)hash >> 12)));
-            hash = hash ^ ((int)((uint)hash >> 7)) ^ ((int)((uint)hash >> 4));
-#pragma warning restore IDE0054 // Use compound assignment
+            hash = hash ^ hash.TripleShift(20) ^ hash.TripleShift(12);
+            hash = hash ^ hash.TripleShift(7) ^ hash.TripleShift(4);
 
             return hash;
 
@@ -323,10 +323,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         internal static int StringHashCode(CharBlockArray labelRepository, int offset)
         {
             int hash = CategoryPathUtils.HashCodeOfSerialized(labelRepository, offset);
-#pragma warning disable IDE0054 // Use compound assignment
-            hash = hash ^ (((int)((uint)hash >> 20)) ^ ((int)((uint)hash >> 12)));
-            hash = hash ^ ((int)((uint)hash >> 7)) ^ ((int)((uint)hash >> 4));
-#pragma warning restore IDE0054 // Use compound assignment
+            hash = hash ^ hash.TripleShift(20) ^ hash.TripleShift(12);
+            hash = hash ^ hash.TripleShift(7) ^ hash.TripleShift(4);
             return hash;
         }
 
@@ -449,8 +447,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                     }
                     // Now that we've hashed the components of the label, do the
                     // final part of the hash algorithm.
-                    hash = hash ^ (((int)((uint)hash >> 20)) ^ ((int)((uint)hash >> 12)));
-                    hash = hash ^ ((int)((uint)hash >> 7)) ^ ((int)((uint)hash >> 4));
+                    hash = hash ^ hash.TripleShift(20) ^ hash.TripleShift(12);
+                    hash = hash ^ hash.TripleShift(7) ^ hash.TripleShift(4);
                     // Add the label, and let's keep going
                     l2o.AddLabelOffset(hash, cid, lastStartOffset);
                     cid++;

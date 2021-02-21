@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
@@ -517,7 +517,7 @@ namespace Lucene.Net.Codecs
                         //if (DEBUG) {
                         //  System.out.println("    write floorLeadByte=" + Integer.toHexString(sub.floorLeadByte&0xff));
                         //}
-                        scratchBytes.WriteByte((byte)(sbyte)sub.FloorLeadByte);
+                        scratchBytes.WriteByte((byte)sub.FloorLeadByte);
                         if (Debugging.AssertsEnabled) Debugging.Assert(sub.Fp > Fp);
                         scratchBytes.WriteVInt64((sub.Fp - Fp) << 1 | (uint)(sub.HasTerms ? 1 : 0));
                     }

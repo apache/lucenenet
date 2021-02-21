@@ -29,6 +29,7 @@ namespace Lucene.Net.Codecs.SimpleText
             return new SimpleTextCodec();
         }
 
+
         [Deadlock][Timeout(600000)]
         public override void TestConcurrentReads()
         {

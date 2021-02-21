@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis
 #endif
                 Random, dir);
             Document doc = new Document();
-            TokenStream stream = new TokenStreamAnonymousInnerClassHelper(this);
+            TokenStream stream = new TokenStreamAnonymousClass(this);
 
             stream = new CachingTokenFilter(stream);
 
@@ -87,11 +87,11 @@ namespace Lucene.Net.Analysis
             dir.Dispose();
         }
 
-        private class TokenStreamAnonymousInnerClassHelper : TokenStream
+        private class TokenStreamAnonymousClass : TokenStream
         {
             private TestCachingTokenFilter outerInstance;
 
-            public TokenStreamAnonymousInnerClassHelper(TestCachingTokenFilter outerInstance)
+            public TokenStreamAnonymousClass(TestCachingTokenFilter outerInstance)
             {
                 InitMembers(outerInstance);
             }

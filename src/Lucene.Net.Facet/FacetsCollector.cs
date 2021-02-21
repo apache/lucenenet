@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -128,12 +129,12 @@ namespace Lucene.Net.Facet
         /// </summary>
         protected virtual Docs CreateDocs(int maxDoc)
         {
-            return new DocsAnonymousInnerClassHelper(maxDoc);
+            return new DocsAnonymousClass(maxDoc);
         }
 
-        private class DocsAnonymousInnerClassHelper : Docs
+        private class DocsAnonymousClass : Docs
         {
-            public DocsAnonymousInnerClassHelper(int maxDoc)
+            public DocsAnonymousClass(int maxDoc)
             {
                 bits = new FixedBitSet(maxDoc);
             }

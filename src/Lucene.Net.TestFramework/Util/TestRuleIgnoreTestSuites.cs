@@ -51,17 +51,17 @@ namespace Lucene.Net.Util
 
       public override Statement Apply(Statement s, Description d)
       {
-        return new StatementAnonymousInnerClassHelper(this, s, d);
+        return new StatementAnonymousClass(this, s, d);
       }
 
-      private class StatementAnonymousInnerClassHelper : Statement
+      private class StatementAnonymousClass : Statement
       {
           private readonly TestRuleIgnoreTestSuites OuterInstance;
 
           private Statement s;
           private Description d;
 
-          public StatementAnonymousInnerClassHelper(TestRuleIgnoreTestSuites outerInstance, Statement s, Description d)
+          public StatementAnonymousClass(TestRuleIgnoreTestSuites outerInstance, Statement s, Description d)
           {
               this.OuterInstance = outerInstance;
               this.s = s;

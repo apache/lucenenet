@@ -100,15 +100,15 @@ namespace Lucene.Net.Search
                 }
 
                 // now replay them
-                cc.Replay(new CollectorAnonymousInnerClassHelper(this));
+                cc.Replay(new CollectorAnonymousClass(this));
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper : ICollector
+        private class CollectorAnonymousClass : ICollector
         {
             private readonly TestCachingCollector outerInstance;
 
-            public CollectorAnonymousInnerClassHelper(TestCachingCollector outerInstance)
+            public CollectorAnonymousClass(TestCachingCollector outerInstance)
             {
                 this.outerInstance = outerInstance;
                 prevDocID = -1;

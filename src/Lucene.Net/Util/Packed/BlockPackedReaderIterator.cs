@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -37,7 +38,7 @@ namespace Lucene.Net.Util.Packed
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static long ZigZagDecode(long n)
         {
-            return (((long)((ulong)n >> 1)) ^ -(n & 1));
+            return ((n.TripleShift(1)) ^ -(n & 1));
         }
 
         // same as DataInput.ReadVInt64 but supports negative values
@@ -48,50 +49,50 @@ namespace Lucene.Net.Util.Packed
         internal static long ReadVInt64(DataInput @in)
         {
             byte b = @in.ReadByte();
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return b;
             }
             long i = b & 0x7FL;
             b = @in.ReadByte();
             i |= (b & 0x7FL) << 7;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
             b = @in.ReadByte();
             i |= (b & 0x7FL) << 14;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
             b = @in.ReadByte();
             i |= (b & 0x7FL) << 21;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
             b = @in.ReadByte();
             i |= (b & 0x7FL) << 28;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
             b = @in.ReadByte();
             i |= (b & 0x7FL) << 35;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
             b = @in.ReadByte();
             i |= (b & 0x7FL) << 42;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
             b = @in.ReadByte();
             i |= (b & 0x7FL) << 49;
-            if ((sbyte)b >= 0)
+            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
                 return i;
             }
@@ -163,7 +164,7 @@ namespace Lucene.Net.Util.Packed
             while (count >= blockSize)
             {
                 int token = @in.ReadByte() & 0xFF;
-                int bitsPerValue = (int)((uint)token >> AbstractBlockPackedWriter.BPV_SHIFT);
+                int bitsPerValue = token.TripleShift(AbstractBlockPackedWriter.BPV_SHIFT);
                 if (bitsPerValue > 64)
                 {
                     throw new IOException("Corrupted");
@@ -257,7 +258,7 @@ namespace Lucene.Net.Util.Packed
         {
             int token = @in.ReadByte() & 0xFF;
             bool minEquals0 = (token & AbstractBlockPackedWriter.MIN_VALUE_EQUALS_0) != 0;
-            int bitsPerValue = (int)((uint)token >> AbstractBlockPackedWriter.BPV_SHIFT);
+            int bitsPerValue = token.TripleShift(AbstractBlockPackedWriter.BPV_SHIFT);
             if (bitsPerValue > 64)
             {
                 throw new IOException("Corrupted");

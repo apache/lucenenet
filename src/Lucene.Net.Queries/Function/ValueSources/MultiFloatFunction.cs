@@ -73,16 +73,16 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 valsArr[i] = m_sources[i].GetValues(context, readerContext);
             }
 
-            return new SingleDocValuesAnonymousInnerClassHelper(this, this, valsArr);
+            return new SingleDocValuesAnonymousClass(this, this, valsArr);
         }
 
-        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
+        private class SingleDocValuesAnonymousClass : SingleDocValues
         {
             private readonly MultiSingleFunction outerInstance;
 
             private readonly FunctionValues[] valsArr;
 
-            public SingleDocValuesAnonymousInnerClassHelper(MultiSingleFunction outerInstance, MultiSingleFunction @this, FunctionValues[] valsArr)
+            public SingleDocValuesAnonymousClass(MultiSingleFunction outerInstance, MultiSingleFunction @this, FunctionValues[] valsArr)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;

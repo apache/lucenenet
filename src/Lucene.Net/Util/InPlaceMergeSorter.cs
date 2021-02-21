@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
@@ -53,7 +54,7 @@ namespace Lucene.Net.Util
             }
             else
             {
-                int mid = (int)((uint)(from + to) >> 1);
+                int mid = (from + to).TripleShift(1);
                 MergeSort(from, mid);
                 MergeSort(mid, to);
                 MergeInPlace(from, mid, to);

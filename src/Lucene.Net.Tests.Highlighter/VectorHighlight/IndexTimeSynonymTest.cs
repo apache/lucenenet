@@ -323,11 +323,11 @@ namespace Lucene.Net.Search.VectorHighlight
             return token;
         }
 
-        internal sealed class TokenizerAnonymousHelper : Tokenizer
+        private sealed class TokenizerAnonymousClass : Tokenizer
         {
             private readonly Token[] tokens;
 
-            public TokenizerAnonymousHelper(AttributeFactory factory, TextReader reader, Token[] tokens)
+            public TokenizerAnonymousClass(AttributeFactory factory, TextReader reader, Token[] tokens)
                 : base(factory, reader)
             {
                 reusableToken = AddAttribute<ICharTermAttribute>();
@@ -362,7 +362,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
             protected internal override TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
             {
-                Tokenizer ts = new TokenizerAnonymousHelper(Token.TOKEN_ATTRIBUTE_FACTORY, reader, tokens);
+                Tokenizer ts = new TokenizerAnonymousClass(Token.TOKEN_ATTRIBUTE_FACTORY, reader, tokens);
                 return new TokenStreamComponents(ts);
             }
         }

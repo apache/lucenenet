@@ -36,11 +36,11 @@ namespace Lucene.Net.Index
         /// <summary>
         /// An empty <see cref="BinaryDocValues"/> which returns <see cref="BytesRef.EMPTY_BYTES"/> for every document
         /// </summary>
-        public static readonly BinaryDocValues EMPTY_BINARY = new BinaryDocValuesAnonymousInnerClassHelper();
+        public static readonly BinaryDocValues EMPTY_BINARY = new BinaryDocValuesAnonymousClass();
 
-        private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
+        private class BinaryDocValuesAnonymousClass : BinaryDocValues
         {
-            public BinaryDocValuesAnonymousInnerClassHelper()
+            public BinaryDocValuesAnonymousClass()
             {
             }
 
@@ -55,11 +55,11 @@ namespace Lucene.Net.Index
         /// <summary>
         /// An empty <see cref="NumericDocValues"/> which returns zero for every document
         /// </summary>
-        public static readonly NumericDocValues EMPTY_NUMERIC = new NumericDocValuesAnonymousInnerClassHelper();
+        public static readonly NumericDocValues EMPTY_NUMERIC = new NumericDocValuesAnonymousClass();
 
-        private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
+        private class NumericDocValuesAnonymousClass : NumericDocValues
         {
-            public NumericDocValuesAnonymousInnerClassHelper()
+            public NumericDocValuesAnonymousClass()
             {
             }
 
@@ -72,11 +72,11 @@ namespace Lucene.Net.Index
         /// <summary>
         /// An empty <see cref="SortedDocValues"/> which returns <see cref="BytesRef.EMPTY_BYTES"/> for every document
         /// </summary>
-        public static readonly SortedDocValues EMPTY_SORTED = new SortedDocValuesAnonymousInnerClassHelper();
+        public static readonly SortedDocValues EMPTY_SORTED = new SortedDocValuesAnonymousClass();
 
-        private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
+        private class SortedDocValuesAnonymousClass : SortedDocValues
         {
-            public SortedDocValuesAnonymousInnerClassHelper()
+            public SortedDocValuesAnonymousClass()
             {
             }
 
@@ -98,11 +98,11 @@ namespace Lucene.Net.Index
         /// <summary>
         /// An empty <see cref="SortedDocValues"/> which returns <see cref="SortedSetDocValues.NO_MORE_ORDS"/> for every document
         /// </summary>
-        public static readonly SortedSetDocValues EMPTY_SORTED_SET = new RandomAccessOrdsAnonymousInnerClassHelper();
+        public static readonly SortedSetDocValues EMPTY_SORTED_SET = new RandomAccessOrdsAnonymousClass();
 
-        private class RandomAccessOrdsAnonymousInnerClassHelper : RandomAccessOrds
+        private class RandomAccessOrdsAnonymousClass : RandomAccessOrds
         {
-            public RandomAccessOrdsAnonymousInnerClassHelper()
+            public RandomAccessOrdsAnonymousClass()
             {
             }
 
@@ -162,15 +162,15 @@ namespace Lucene.Net.Index
         /// </summary>
         public static IBits DocsWithValue(SortedDocValues dv, int maxDoc)
         {
-            return new BitsAnonymousInnerClassHelper(dv, maxDoc);
+            return new BitsAnonymousClass(dv, maxDoc);
         }
 
-        private class BitsAnonymousInnerClassHelper : IBits
+        private class BitsAnonymousClass : IBits
         {
             private readonly SortedDocValues dv;
             private readonly int maxDoc;
 
-            public BitsAnonymousInnerClassHelper(SortedDocValues dv, int maxDoc)
+            public BitsAnonymousClass(SortedDocValues dv, int maxDoc)
             {
                 this.dv = dv;
                 this.maxDoc = maxDoc;
@@ -189,15 +189,15 @@ namespace Lucene.Net.Index
         /// </summary>
         public static IBits DocsWithValue(SortedSetDocValues dv, int maxDoc)
         {
-            return new BitsAnonymousInnerClassHelper2(dv, maxDoc);
+            return new BitsAnonymousClass2(dv, maxDoc);
         }
 
-        private class BitsAnonymousInnerClassHelper2 : IBits
+        private class BitsAnonymousClass2 : IBits
         {
             private readonly SortedSetDocValues dv;
             private readonly int maxDoc;
 
-            public BitsAnonymousInnerClassHelper2(SortedSetDocValues dv, int maxDoc)
+            public BitsAnonymousClass2(SortedSetDocValues dv, int maxDoc)
             {
                 this.dv = dv;
                 this.maxDoc = maxDoc;

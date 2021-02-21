@@ -59,9 +59,9 @@ namespace Lucene.Net.Analysis.Sinks
             }
         }
 
-        internal static readonly TeeSinkTokenFilter.SinkFilter theFilter = new SinkFilterAnonymousInnerClassHelper();
+        internal static readonly TeeSinkTokenFilter.SinkFilter theFilter = new SinkFilterAnonymousClass();
 
-        private sealed class SinkFilterAnonymousInnerClassHelper : TeeSinkTokenFilter.SinkFilter
+        private sealed class SinkFilterAnonymousClass : TeeSinkTokenFilter.SinkFilter
         {
             public override bool Accept(AttributeSource a)
             {
@@ -70,9 +70,9 @@ namespace Lucene.Net.Analysis.Sinks
             }
         }
 
-        internal static readonly TeeSinkTokenFilter.SinkFilter dogFilter = new SinkFilterAnonymousInnerClassHelper2();
+        internal static readonly TeeSinkTokenFilter.SinkFilter dogFilter = new SinkFilterAnonymousClass2();
 
-        private sealed class SinkFilterAnonymousInnerClassHelper2 : TeeSinkTokenFilter.SinkFilter
+        private sealed class SinkFilterAnonymousClass2 : TeeSinkTokenFilter.SinkFilter
         {
             public override bool Accept(AttributeSource a)
             {

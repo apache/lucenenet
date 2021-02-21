@@ -1,3 +1,4 @@
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -142,7 +143,7 @@ namespace Lucene.Net.Codecs.Lucene41
             for (int bpv = 1; bpv <= 32; ++bpv)
             {
                 var code = @in.ReadVInt32();
-                var formatId = (int)((uint)code >> 5);
+                var formatId = code.TripleShift(5);
                 var bitsPerValue = (code & 31) + 1;
 
                 PackedInt32s.Format format = PackedInt32s.Format.ById(formatId);
@@ -165,7 +166,7 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             if (IsAllEqual(data))
             {
-                @out.WriteByte((byte)(sbyte)ALL_VALUES_EQUAL);
+                @out.WriteByte((byte)ALL_VALUES_EQUAL);
                 @out.WriteVInt32(data[0]);
                 return;
             }

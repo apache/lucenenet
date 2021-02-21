@@ -61,11 +61,11 @@ namespace Lucene.Net.Analysis.Core
             CheckAnalysisConsistency(Random, a, false, "wmgddzunizdomqyj");
         }
 
-        internal CharFilter wrappedStream = new CharFilterAnonymousInnerClassHelper(new StringReader("bogus"));
+        internal CharFilter wrappedStream = new CharFilterAnonymousClass(new StringReader("bogus"));
 
-        private sealed class CharFilterAnonymousInnerClassHelper : CharFilter
+        private sealed class CharFilterAnonymousClass : CharFilter
         {
-            public CharFilterAnonymousInnerClassHelper(StringReader java) : base(java)
+            public CharFilterAnonymousClass(StringReader java) : base(java)
             {
             }
 

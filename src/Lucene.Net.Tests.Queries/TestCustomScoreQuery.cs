@@ -101,12 +101,12 @@ namespace Lucene.Net.Tests.Queries
 
             protected override CustomScoreProvider GetCustomScoreProvider(AtomicReaderContext context)
             {
-                return new CustomScoreProviderAnonymousInnerClassHelper(context);
+                return new CustomScoreProviderAnonymousClass(context);
             }
 
-            private class CustomScoreProviderAnonymousInnerClassHelper : CustomScoreProvider
+            private class CustomScoreProviderAnonymousClass : CustomScoreProvider
             {
-                public CustomScoreProviderAnonymousInnerClassHelper(AtomicReaderContext context) : base(context)
+                public CustomScoreProviderAnonymousClass(AtomicReaderContext context) : base(context)
                 {
                 }
 
@@ -141,12 +141,12 @@ namespace Lucene.Net.Tests.Queries
 
             protected override CustomScoreProvider GetCustomScoreProvider(AtomicReaderContext context)
             {
-                return new CustomScoreProviderAnonymousInnerClassHelper(context);
+                return new CustomScoreProviderAnonymousClass(context);
             }
 
-            private class CustomScoreProviderAnonymousInnerClassHelper : CustomScoreProvider
+            private class CustomScoreProviderAnonymousClass : CustomScoreProvider
             {
-                public CustomScoreProviderAnonymousInnerClassHelper(AtomicReaderContext context) : base(context)
+                public CustomScoreProviderAnonymousClass(AtomicReaderContext context) : base(context)
                 {
                 }
 
@@ -192,14 +192,14 @@ namespace Lucene.Net.Tests.Queries
             protected override CustomScoreProvider GetCustomScoreProvider(AtomicReaderContext context)
             {
                 FieldCache.Int32s values = FieldCache.DEFAULT.GetInt32s(context.AtomicReader, INT_FIELD, false);
-                return new CustomScoreProviderAnonymousInnerClassHelper(context, values);
+                return new CustomScoreProviderAnonymousClass(context, values);
             }
             
-            private class CustomScoreProviderAnonymousInnerClassHelper : CustomScoreProvider
+            private class CustomScoreProviderAnonymousClass : CustomScoreProvider
             {
                 private FieldCache.Int32s values;
 
-                public CustomScoreProviderAnonymousInnerClassHelper(AtomicReaderContext context, FieldCache.Int32s values) : base(context)
+                public CustomScoreProviderAnonymousClass(AtomicReaderContext context, FieldCache.Int32s values) : base(context)
                 {
                     this.values = values;
                 }

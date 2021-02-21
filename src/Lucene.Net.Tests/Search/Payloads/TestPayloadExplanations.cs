@@ -41,14 +41,14 @@ namespace Lucene.Net.Search.Payloads
         public override void SetUp()
         {
             base.SetUp();
-            searcher.Similarity = new DefaultSimilarityAnonymousInnerClassHelper(this);
+            searcher.Similarity = new DefaultSimilarityAnonymousClass(this);
         }
 
-        private class DefaultSimilarityAnonymousInnerClassHelper : DefaultSimilarity
+        private class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
             private readonly TestPayloadExplanations outerInstance;
 
-            public DefaultSimilarityAnonymousInnerClassHelper(TestPayloadExplanations outerInstance)
+            public DefaultSimilarityAnonymousClass(TestPayloadExplanations outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Util;
 using System;
 using System.Runtime.InteropServices;
 

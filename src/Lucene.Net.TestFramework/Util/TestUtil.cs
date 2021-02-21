@@ -876,14 +876,14 @@ namespace Lucene.Net.Util
             {
                 Console.WriteLine("forcing postings format to:" + format);
             }
-            return new Lucene46CodecAnonymousInnerClassHelper(format);
+            return new Lucene46CodecAnonymousClass(format);
         }
 
-        private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
+        private class Lucene46CodecAnonymousClass : Lucene46Codec
         {
             private readonly PostingsFormat format;
 
-            public Lucene46CodecAnonymousInnerClassHelper(PostingsFormat format)
+            public Lucene46CodecAnonymousClass(PostingsFormat format)
             {
                 this.format = format;
             }
@@ -908,14 +908,14 @@ namespace Lucene.Net.Util
             {
                 Console.WriteLine("forcing docvalues format to:" + format);
             }
-            return new Lucene46CodecAnonymousInnerClassHelper2(format);
+            return new Lucene46CodecAnonymousClass2(format);
         }
 
-        private class Lucene46CodecAnonymousInnerClassHelper2 : Lucene46Codec
+        private class Lucene46CodecAnonymousClass2 : Lucene46Codec
         {
             private readonly DocValuesFormat format;
 
-            public Lucene46CodecAnonymousInnerClassHelper2(DocValuesFormat format)
+            public Lucene46CodecAnonymousClass2(DocValuesFormat format)
             {
                 this.format = format;
             }
@@ -1024,15 +1024,15 @@ namespace Lucene.Net.Util
         public static void AssertAttributeReflection(Attribute att, IDictionary<string, object> reflectedValues)
         {
             IDictionary<string, object> map = new JCG.Dictionary<string, object>();
-            att.ReflectWith(new AttributeReflectorAnonymousInnerClassHelper(map));
+            att.ReflectWith(new AttributeReflectorAnonymousClass(map));
             Assert.AreEqual(reflectedValues, map, aggressive: false, "Reflection does not produce same map");
         }
 
-        private class AttributeReflectorAnonymousInnerClassHelper : IAttributeReflector
+        private class AttributeReflectorAnonymousClass : IAttributeReflector
         {
             private readonly IDictionary<string, object> map;
 
-            public AttributeReflectorAnonymousInnerClassHelper(IDictionary<string, object> map)
+            public AttributeReflectorAnonymousClass(IDictionary<string, object> map)
             {
                 this.map = map;
             }
@@ -1278,7 +1278,7 @@ namespace Lucene.Net.Util
             {
                 case 5:
                 case 4:
-                    return new RandomAccessFilterStrategyAnonymousInnerClassHelper();
+                    return new RandomAccessFilterStrategyAnonymousClass();
 
                 case 3:
                     return FilteredQuery.RANDOM_ACCESS_FILTER_STRATEGY;
@@ -1297,7 +1297,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class RandomAccessFilterStrategyAnonymousInnerClassHelper : FilteredQuery.RandomAccessFilterStrategy
+        private class RandomAccessFilterStrategyAnonymousClass : FilteredQuery.RandomAccessFilterStrategy
         {
             protected override bool UseRandomAccess(IBits bits, int firstFilterDoc)
             {

@@ -183,14 +183,14 @@ namespace Lucene.Net.Search
         /// </summary>
         public static TopDocs Rescore(IndexSearcher searcher, TopDocs topDocs, Query query, double weight, int topN)
         {
-            return new QueryRescorerAnonymousInnerClassHelper(query, weight).Rescore(searcher, topDocs, topN);
+            return new QueryRescorerAnonymousClass(query, weight).Rescore(searcher, topDocs, topN);
         }
 
-        private class QueryRescorerAnonymousInnerClassHelper : QueryRescorer
+        private class QueryRescorerAnonymousClass : QueryRescorer
         {
             private readonly double weight;
 
-            public QueryRescorerAnonymousInnerClassHelper(Lucene.Net.Search.Query query, double weight)
+            public QueryRescorerAnonymousClass(Lucene.Net.Search.Query query, double weight)
                 : base(query)
             {
                 this.weight = weight;

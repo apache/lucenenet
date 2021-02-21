@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using J2N.Numerics;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
 using System;
@@ -61,15 +62,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             var vals = m_source.GetValues(context, readerContext);
-            return new SingleDocValuesAnonymousInnerClassHelper(this, this, vals);
+            return new SingleDocValuesAnonymousClass(this, this, vals);
         }
 
-        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
+        private class SingleDocValuesAnonymousClass : SingleDocValues
         {
             private readonly ReciprocalSingleFunction outerInstance;
             private readonly FunctionValues vals;
 
-            public SingleDocValuesAnonymousInnerClassHelper(ReciprocalSingleFunction outerInstance, ReciprocalSingleFunction @this, FunctionValues vals)
+            public SingleDocValuesAnonymousClass(ReciprocalSingleFunction outerInstance, ReciprocalSingleFunction @this, FunctionValues vals)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
@@ -110,7 +111,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override int GetHashCode()
         {
             int h = J2N.BitConversion.SingleToInt32Bits(m_a) + J2N.BitConversion.SingleToInt32Bits(m_m);
-            h ^= (h << 13) | ((int)((uint)h >> 20));
+            h ^= (h << 13) | (h.TripleShift(20));
             return h + (J2N.BitConversion.SingleToInt32Bits(m_b)) + m_source.GetHashCode();
         }
 
