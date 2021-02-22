@@ -68,8 +68,8 @@ jobs:
       - name: Checkout Lucene.Net website
         uses: actions/checkout@v2
         with:
-          #repository: shazwazza/lucenenet-site
-          repository: apache/lucenenet-site
+          repository: shazwazza/lucenenet-site
+          #repository: apache/lucenenet-site
           ref: asf-site
           path: website-repo
       - name: Copy website files
