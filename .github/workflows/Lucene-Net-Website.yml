@@ -35,6 +35,11 @@ on:
     paths:
     - 'websites/site/**'
 
+defaults:
+  # default to Windows to make it simpler, we require Windows to build the docs because of the
+  # .NET Framework build requirement.
+  runs-on: windows-latest
+
 env:
   # If a tag is specified, the tag will be in the format: Website_4_8_0_beta00013 which
   # will be parsed to create the version number used in the docs like 4.8.0-beta00013
@@ -80,7 +85,6 @@ jobs:
           echo "RELEASE_VERSION=$Env:RELEASE_VERSION"
         shell: powershell
   build-website:
-    runs-on: windows-latest
     steps:
       - name: Checkout Lucene.Net source
         uses: actions/checkout@v2
