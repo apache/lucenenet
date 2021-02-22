@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Lucene version compatibility level 4.8.1
+using System;
 using System.Globalization;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -81,8 +82,10 @@ namespace Lucene.Net.Tests.Queries
             // just treat dates as strings and select the whole range for now...
             dateFilter = TermRangeFilter.NewStringRange("date", "", "ZZZZ", true, true);
 
-            bobFilter = new QueryWrapperFilter(new TermQuery(new Term("owner", "bob")));
-            sueFilter = new QueryWrapperFilter(new TermQuery(new Term("owner", "sue")));
+            bobFilter = new QueryWrapperFilter(
+                new TermQuery(new Term("owner", "bob")));
+            sueFilter = new QueryWrapperFilter(
+                new TermQuery(new Term("owner", "sue")));
         }
 
         [TearDown]
@@ -136,7 +139,8 @@ namespace Lucene.Net.Tests.Queries
         [Test]
         public virtual void TestOR()
         {
-            ChainedFilter chain = GetChainedFilter(new Filter[] { sueFilter, bobFilter }, null);
+            ChainedFilter chain = GetChainedFilter(
+                new Filter[] { sueFilter, bobFilter }, null);
 
             int numHits = searcher.Search(query, chain, 1000).TotalHits;
             assertEquals("OR matches all", Max, numHits);
@@ -145,7 +149,8 @@ namespace Lucene.Net.Tests.Queries
         [Test]
         public virtual void TestAND()
         {
-            ChainedFilter chain = GetChainedFilter(new Filter[] { dateFilter, bobFilter }, ChainedFilter.AND);
+            ChainedFilter chain = GetChainedFilter(
+                new Filter[] { dateFilter, bobFilter }, ChainedFilter.AND);
 
             TopDocs hits = searcher.Search(query, chain, 1000);
             assertEquals("AND matches just bob", Max / 2, hits.TotalHits);
@@ -155,7 +160,8 @@ namespace Lucene.Net.Tests.Queries
         [Test]
         public virtual void TestXOR()
         {
-            ChainedFilter chain = GetChainedFilter(new Filter[] { dateFilter, bobFilter }, ChainedFilter.XOR);
+            ChainedFilter chain = GetChainedFilter(
+                new Filter[] { dateFilter, bobFilter }, ChainedFilter.XOR);
 
             TopDocs hits = searcher.Search(query, chain, 1000);
             assertEquals("XOR matches sue", Max / 2, hits.TotalHits);
@@ -165,7 +171,8 @@ namespace Lucene.Net.Tests.Queries
         [Test]
         public virtual void TestANDNOT()
         {
-            ChainedFilter chain = GetChainedFilter(new Filter[] { dateFilter, sueFilter }, new int[] { ChainedFilter.AND, ChainedFilter.ANDNOT });
+            ChainedFilter chain = GetChainedFilter(
+                new Filter[] { dateFilter, sueFilter }, new int[] { ChainedFilter.AND, ChainedFilter.ANDNOT });
 
             TopDocs hits = searcher.Search(query, chain, 1000);
             assertEquals("ANDNOT matches just bob", Max / 2, hits.TotalHits);

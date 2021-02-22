@@ -1,4 +1,5 @@
-﻿/*
+﻿// Lucene version compatibility level 4.8.1
+/*
  * Created on 25-Jan-2006
  */
 using Lucene.Net.Analysis;

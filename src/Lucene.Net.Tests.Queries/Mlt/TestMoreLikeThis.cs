@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Lucene version compatibility level 4.8.1
+using System.Collections.Generic;
 using System.IO;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
@@ -99,7 +100,8 @@ namespace Lucene.Net.Tests.Queries.Mlt
                 assertNotNull("Expected term " + tq.Term.Text(), termBoost);
 
                 float totalBoost = (float) (termBoost * boostFactor);
-                assertEquals("Expected boost of " + totalBoost + " for term '" + tq.Term.Text() + "' got " + tq.Boost, totalBoost, tq.Boost, 0.0001);
+                assertEquals("Expected boost of " + totalBoost + " for term '"
+                    + tq.Term.Text() + "' got " + tq.Boost, totalBoost, tq.Boost, 0.0001);
             }
         }
         

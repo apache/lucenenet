@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Lucene version compatibility level 4.8.1
+using System;
+using System.Globalization;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -48,7 +50,7 @@ namespace Lucene.Net.Tests.Queries.Function
             const int NUM_VALS = 5;
             for (int val = NUM_VALS; val > 0; val--)
             {
-                field.SetStringValue(Convert.ToString(val));
+                field.SetStringValue(Convert.ToString(val, CultureInfo.InvariantCulture));
                 writer.AddDocument(doc);
             }
 
@@ -87,7 +89,7 @@ namespace Lucene.Net.Tests.Queries.Function
             int afterValue = (int)((double?)afterHit.Fields[0]);
             foreach (ScoreDoc hit in hits.ScoreDocs)
             {
-                int val = Convert.ToInt32(reader.Document(hit.Doc).Get("value"));
+                int val = Convert.ToInt32(reader.Document(hit.Doc).Get("value"), CultureInfo.InvariantCulture);
                 assertTrue(afterValue <= val);
                 assertFalse(hit.Doc == afterHit.Doc);
             }

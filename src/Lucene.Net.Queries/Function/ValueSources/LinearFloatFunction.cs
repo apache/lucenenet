@@ -1,4 +1,5 @@
-﻿using J2N.Numerics;
+﻿// Lucene version compatibility level 4.8.1
+using J2N.Numerics;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;

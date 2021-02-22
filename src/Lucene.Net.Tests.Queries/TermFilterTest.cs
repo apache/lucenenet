@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Lucene version compatibility level 4.8.1
+using System;
 using System.Collections.Generic;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -58,15 +59,19 @@ namespace Lucene.Net.Tests.Queries
             assertTrue(reader.Context is AtomicReaderContext);
             var context = (AtomicReaderContext)reader.Context;
             w.Dispose();
+
             DocIdSet idSet = TermFilter(fieldName, @"value1").GetDocIdSet(context, context.AtomicReader.LiveDocs);
             assertNotNull(@"must not be null", idSet);
             DocIdSetIterator iter = idSet.GetIterator();
             assertEquals(iter.NextDoc(), 0);
             assertEquals(iter.NextDoc(), DocIdSetIterator.NO_MORE_DOCS);
+
             idSet = TermFilter(fieldName, @"value2").GetDocIdSet(context, context.AtomicReader.LiveDocs);
             assertNull(@"must be null", idSet);
+
             idSet = TermFilter(@"field2", @"value1").GetDocIdSet(context, context.AtomicReader.LiveDocs);
             assertNull(@"must be null", idSet);
+
             reader.Dispose();
             rd.Dispose();
         }
@@ -94,12 +99,15 @@ namespace Lucene.Net.Tests.Queries
 
             IndexReader reader = w.GetReader();
             w.Dispose();
+
             IndexSearcher searcher = NewSearcher(reader);
+
             int numQueries = AtLeast(10);
             for (int i = 0; i < numQueries; i++)
             {
                 Term term = terms[Random.nextInt(num)];
                 TopDocs queryResult = searcher.Search(new TermQuery(term), reader.MaxDoc);
+
                 MatchAllDocsQuery matchAll = new MatchAllDocsQuery();
                 TermFilter filter = TermFilter(term);
                 TopDocs filterResult = searcher.Search(matchAll, filter, reader.MaxDoc);
@@ -124,16 +132,13 @@ namespace Lucene.Net.Tests.Queries
                 string field1 = @"field" + i;
                 string field2 = @"field" + i + num;
                 string value1 = TestUtil.RandomRealisticUnicodeString(Random);
-                string value2 = value1 + @"x";
+                string value2 = value1 + @"x"; // this must be not equal to value1
+
                 TermFilter filter1 = TermFilter(field1, value1);
                 TermFilter filter2 = TermFilter(field1, value2);
                 TermFilter filter3 = TermFilter(field2, value1);
                 TermFilter filter4 = TermFilter(field2, value2);
-                var filters = new TermFilter[]
-                {
-                    filter1, filter2, filter3, filter4
-                };
-
+                var filters = new TermFilter[] { filter1, filter2, filter3, filter4 };
                 for (int j = 0; j < filters.Length; j++)
                 {
                     TermFilter termFilter = filters[j];
