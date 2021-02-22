@@ -44,9 +44,9 @@ jobs:
           $tag = $ref.Substring(10)
           echo "TAG=$tag"
 
-          echo "current_tag=$tag" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "CURRENT_TAG=$tag" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           # set the release_version now to something incase parsing fails
-          echo "release_version=UNKNOWN" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "RELEASE_VERSION=UNKNOWN" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
           $parts = $tag.Split("_")
           $version = "";
@@ -59,7 +59,7 @@ jobs:
                   $version += "."
               }
           }
-          echo "release_version=$version" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "RELEASE_VERSION=$version" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         shell: powershell
       - name: Verify environment variables
         run: |
@@ -67,7 +67,7 @@ jobs:
           echo "RELEASE_VERSION=$Env:RELEASE_VERSION"
         shell: powershell
       - name: Checkout Lucene.Net source
-        if: env.current_tag != ''
+        if: env.CURRENT_TAG != ''
         uses: actions/checkout@v2
         with:
           path: main-repo
@@ -93,12 +93,12 @@ jobs:
           commit-message: New website version built
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          branch: ${{ env.current_tag }}
+          branch: ${{ env.CURRENT_TAG }}
           delete-branch: true
-          title: 'New website version built ${{ env.current_tag }}'
+          title: 'New website version built ${{ env.CURRENT_TAG }}'
           body: |
-            New website version built ${{ env.current_tag }}
-            - For version ${{ env.release_version }}
+            New website version built ${{ env.CURRENT_TAG }}
+            - For version ${{ env.RELEASE_VERSION }}
       - name: Check outputs
         run: |
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
