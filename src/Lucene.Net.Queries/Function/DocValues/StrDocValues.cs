@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util.Mutable;
+﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Util.Mutable;
 
 namespace Lucene.Net.Queries.Function.DocValues
 {

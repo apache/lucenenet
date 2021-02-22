@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis;
+﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -81,7 +82,9 @@ namespace Lucene.Net.Tests.Queries.Function
             {
                 // no norm field (so agnostic to indexed similarity)
                 searcher.Similarity = sim;
-                AssertHits(new FunctionQuery(new NormValueSource("text")), new float[] { 0f, 0f });
+                AssertHits(new FunctionQuery(
+                    new NormValueSource("text")),
+                    new float[] { 0f, 0f });
             }
             finally
             {
@@ -89,7 +92,7 @@ namespace Lucene.Net.Tests.Queries.Function
             }
         }
         
-        protected virtual void AssertHits(Query q, float[] scores)
+        internal void AssertHits(Query q, float[] scores)
         {
             ScoreDoc[] expected = new ScoreDoc[scores.Length];
             int[] expectedDocs = new int[scores.Length];

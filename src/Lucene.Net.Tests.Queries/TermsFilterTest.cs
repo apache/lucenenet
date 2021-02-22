@@ -1,5 +1,7 @@
-﻿using System;
+﻿// Lucene version compatibility level 4.8.1
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Documents;
@@ -88,7 +90,7 @@ namespace Lucene.Net.Tests.Queries
             reader.Dispose();
             rd.Dispose();
         }
-        
+
         [Test]
         public void TestMissingField()
         {
@@ -171,7 +173,7 @@ namespace Lucene.Net.Tests.Queries
 
 
 
-            AtomicReaderContext context = reader.Leaves.First();
+            AtomicReaderContext context = reader.Leaves[0];
             TermsFilter tf = new TermsFilter(terms);
 
             FixedBitSet bits = (FixedBitSet)tf.GetDocIdSet(context, context.AtomicReader.LiveDocs);
@@ -217,7 +219,7 @@ namespace Lucene.Net.Tests.Queries
             IndexReader reader = w.GetReader();
             w.Dispose();
             assertEquals(1, reader.Leaves.size());
-            AtomicReaderContext context = reader.Leaves.First();
+            AtomicReaderContext context = reader.Leaves[0];
             TermsFilter tf = new TermsFilter(terms.ToList());
 
             FixedBitSet bits = (FixedBitSet)tf.GetDocIdSet(context, context.AtomicReader.LiveDocs);
@@ -240,7 +242,7 @@ namespace Lucene.Net.Tests.Queries
             IList<Term> terms = new List<Term>();
             for (int i = 0; i < num; i++)
             {
-                string field = "field" + (singleField ? "1" : Random.Next(100).ToString());
+                string field = "field" + (singleField ? "1" : Random.Next(100).ToString(CultureInfo.InvariantCulture));
                 string @string = TestUtil.RandomRealisticUnicodeString(Random);
                 terms.Add(new Term(field, @string));
                 Document doc = new Document();
@@ -398,7 +400,10 @@ namespace Lucene.Net.Tests.Queries
         [Test]
         public void TestToString()
         {
-            TermsFilter termsFilter = new TermsFilter(new Term("field1", "a"), new Term("field1", "b"), new Term("field1", "c"));
+            TermsFilter termsFilter = new TermsFilter(
+                new Term("field1", "a"),
+                new Term("field1", "b"),
+                new Term("field1", "c"));
             assertEquals("field1:a field1:b field1:c", termsFilter.ToString());
         }
     }
