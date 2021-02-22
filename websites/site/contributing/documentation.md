@@ -54,11 +54,9 @@ The file/folder structure is within `/websites/site`:
 
 ### Deploy the website
 
-- The website is deployed via git
-- Checkout the Git repo that hosts the documentation: https://github.com/apache/lucenenet-site/tree/asf-site _(ensure you have `asf-site` branch checked out, not `master`)_
-- Copy the build output of the website to the root. The build output will be all of the files in the `/websites/site/_site` in your main Lucene.NET checked out Git repository.
-- Commit and push these changes
-- The new version of the website will be live. If the amount of new files committed is large, the new files may take some time to become live.
+- The website is deployed via GitHub and is hosted by static files here: https://github.com/apache/lucenenet-site/tree/asf-site _(ensure you have `asf-site` branch checked out, not `master`)_
+- Any file changes made in the `master` branch of the Lucene.Net repository under the path `/websites/site/*` will trigger a GitHub action to build the site and publish a Pull Request to the https://github.com/apache/lucenenet-site repository where it can be accepted
+- Review and merge the Pull Request. The new version of the website will be live. If the amount of new files committed is large, the new files may take some time to become live.
 
 ## API Docs
 
