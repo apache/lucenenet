@@ -101,28 +101,50 @@ The file/folder structure is within `/websites/apidocs`:
 - `tools/*` - during the build process some tools will be downloaded which are stored here
 - `_site` - this is the exported static site that is generated
 
-### Process overview
+### Java to Markdown converter
 
 The documentation generation is a complex process because it needs to convert the Java Lucene project's documentation into a usable format to produce the output Lucene.NET's documentation.
 
-The process overview is:
+The `JavaDocToMarkdownConverter` dotnet tool to is used to convert the Java Lucene project's docs into a useable format for DocFx. This tool uses a release tag output of the Java Lucene project as it's source to convert against the Lucene.NET's source. This tool must **only** be executed against the current documentation branch, for example in 4.8.0 it is: `docs/markdown-converted/4.8.1`. This conversion process does not need to be executed everytime the docs are built, it is executed rarely when:
+- A new major or minor version of Lucene.Net is created and the conversion needs to be re-executed again the Java Lucene source. In this case a new documentation branch should be created from the previous documentation branch.
+- Updates to the `JavaDocToMarkdownConverter` are made and the conversion needs to be re-executed
 
-- Use the `JavaDocToMarkdownConverter` project within the `DocumentationTools.sln` solution to run the conversion of the Java Lucene projects docs into a useable format for DocFx. This tool takes uses a release tag output of the Java Lucene project as it's source to convert against the Lucene.NET's source.
-- Run the documentation build script to produce the documentation site
-- Publish the output to the [`lucenenet-site`](https://github.com/apache/lucenenet-site) repository into a corresponding named version directory
+#### Manual execution
 
-We don't want to manually change the converted resulting markdown files (`.md`) because they would get overwritten again when the conversion process is re-executed. Therefore to fix any formatting issues or customized output of the project docs, these customizations/fixes/tweaks are built directly into the conversion process itself in the `JavaDocToMarkdownConverter.csproj` project.
+To use the dotnet tool you must download the current tag of the Java Lucene project, for example: ["4.8.1"](https://github.com/apache/lucene-solr/releases/tag/releases%2Flucene-solr%2F4.8.1)
+
+Then install the tool:
+
+```
+dotnet tool install javadoc2markdown --add-source https://pkgs.dev.azure.com/lucene-net/_packaging/lucene-net-tools/nuget/v3/index.json --tool-path ./
+```
+
+Then run the command:
+```
+javadoc2markdown <LUCENE DIRECTORY> <LUCENENET DIRECTORY>
+```
+
+Where `<LUCENE DIRECTORY>` is the `lucene` sub folder location of the Java Lucene tag downloaded above. The `<LUCENENET DIRECTORY>` is the folder of your locally checked out Lucene.Net git repository of the documentation tag (i.e. `docs/markdown-converted/4.8.1`).
+
+#### Automated execution
+
+A powershell script has been created to automate the above. Execute the `./src/docs/convert.ps1` script and enter the current Lucene version to convert from. For example, for Lucene.Net 4.8.0 we are converting from the Java Lucene build release of ["4.8.1"](https://github.com/apache/lucene-solr/releases/tag/releases%2Flucene-solr%2F4.8.1) so in this case enter: 4.8.1 at the prompt or call the whole script like `./src/docs/convert.ps1 -JavaLuceneVersion 4.8.1`
+
+#### Review, commit and merge
+
+Once the conversion is done, review, commit and push those changes. Many times there will just be whitespace changes in the files especially if this process has been executed before for the same source/destination version. If this is a new source/destination version there will be a **lot** of file changes, at least one file per folder. If there are formatting issues or irregularities in the converted output then these will need to be addressed by making changes to the conversion tool itself (generally only needed for new major version releases).
+
+Once pushed, you can merge those changes to the `master` branch. Doing this may trigger merge conflicts because the documentation files may have been manually edited. In these cases you will need to manually review and fix the merge conflicts with your favorite merge tool ensuring that the most recent manual changes done are kept.
+
+#### Tool info
+
+- [Source code is here](https://github.com/NightOwl888/lucenenet-javadoc2markdown)
+- Tool name: `javadoc2markdown`
+- [NuGet feed here](https://dev.azure.com/lucene-net/Lucene.NET/_packaging?_a=feed&feed=lucene-net-tools)
 
 ### Building the docs
 
 - Checkout the Lucene.Net release tag to build the docs against
-- Execute the `./src/docs/convert.ps1` script and enter the current Lucene version to convert from.
-  - For example, for Lucene.Net 4.8.0 we are converting from the Java Lucene build release of ["4.8.1"](https://github.com/apache/lucene-solr/releases/tag/releases%2Flucene-solr%2F4.8.1) so in this case enter: 4.8.1 at the prompt or call the whole script like `./src/docs/convert.ps1 -JavaLuceneVersion 4.8.1`
-  - This script will download and extract the Java Lucene release files, build the `DocumentationTools.sln` solution and execute the `JavaDocToMarkdownConverter.exe`
-- Review and commit the files changed
-  - Many times there will just be whitespace changes in the files especially if this process has been executed before for the same source/destination version.
-  - If this is a new source/destination version there will be a **lot** of file changes, at least one file per folder.
-  - If there are formatting issues or irregularities in the converted output then these will need to be addressed by making changes to the conversion tool itself `JavaDocToMarkdownConverter.csproj` (generally only needed for new major version releases)
 - Execute the `./websites/apidocs/docs.ps1` script to build and serve the api docs website locally for testing.
   - Example: `./websites/apidocs/docs.ps1 -LuceneNetVersion 4.8.0-beta00008`
   - will serve a website on [http://localhost:8080](http://localhost:8080)
