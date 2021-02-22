@@ -107,7 +107,7 @@ The documentation generation is a complex process because it needs to convert th
 
 The `JavaDocToMarkdownConverter` dotnet tool to is used to convert the Java Lucene project's docs into a useable format for DocFx. This tool uses a release tag output of the Java Lucene project as it's source to convert against the Lucene.NET's source. This tool must **only** be executed against the current documentation branch, for example in 4.8.0 it is: `docs/markdown-converted/4.8.1`. This conversion process does not need to be executed everytime the docs are built, it is executed rarely when:
 - A new major or minor version of Lucene.Net is created and the conversion needs to be re-executed again the Java Lucene source. In this case a new documentation branch should be created from the previous documentation branch.
-- Updates to the `JavaDocToMarkdownConverter` are made and the conversion needs to be re-executed
+- Updates to the `JavaDocToMarkdownConverter` are made and the conversion needs to be re-executed.
 
 #### Manual execution
 
