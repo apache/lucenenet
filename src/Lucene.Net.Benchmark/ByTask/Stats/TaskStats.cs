@@ -29,10 +29,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
     /// The same task can run more than once, but, if that task records statistics, 
     /// each run would create its own TaskStats.
     /// </summary>
-    public class TaskStats
-#if FEATURE_CLONEABLE
-        : System.ICloneable
-#endif
+    public class TaskStats // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         /// <summary>Task for which data was collected.</summary>
         private readonly PerfTask task; // LUCENENET: marked readonly

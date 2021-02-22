@@ -1,4 +1,4 @@
-using J2N.Numerics;
+﻿using J2N.Numerics;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -33,10 +33,7 @@ namespace Lucene.Net.Search.Spans
     /// Removes matches which overlap with another <see cref="SpanQuery"/> or
     /// within a x tokens before or y tokens after another <see cref="SpanQuery"/>.
     /// </summary>
-    public class SpanNotQuery : SpanQuery
-#if FEATURE_CLONEABLE
-        , System.ICloneable
-#endif
+    public class SpanNotQuery : SpanQuery // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         private SpanQuery include;
         private SpanQuery exclude;

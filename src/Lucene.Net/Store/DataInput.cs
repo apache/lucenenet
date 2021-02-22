@@ -35,10 +35,7 @@ namespace Lucene.Net.Store
     /// returning a new <see cref="DataInput"/> which operates on the same underlying
     /// resource, but positioned independently.
     /// </summary>
-    public abstract class DataInput
-#if FEATURE_CLONEABLE
-        : System.ICloneable
-#endif
+    public abstract class DataInput // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         private const int SKIP_BUFFER_SIZE = 1024;
 

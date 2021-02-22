@@ -1,4 +1,4 @@
-// Lucene version compatibility level: 4.8.1
+﻿// Lucene version compatibility level: 4.8.1
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
 using System;
@@ -40,10 +40,7 @@ namespace Lucene.Net.Index
     /// new <see cref="DocumentsWriterPerThread"/> instance.
     /// </summary>
 
-    internal sealed class DocumentsWriterPerThreadPool
-#if FEATURE_CLONEABLE
-        : System.ICloneable
-#endif
+    internal sealed class DocumentsWriterPerThreadPool // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         /// <summary>
         /// <see cref="ThreadState"/> references and guards a

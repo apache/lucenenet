@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using System;
@@ -71,10 +71,7 @@ namespace Lucene.Net.Util.Automaton
     /// </para>
     /// @lucene.experimental
     /// </summary>
-    public class Automaton
-#if FEATURE_CLONEABLE
-        : System.ICloneable
-#endif
+    public class Automaton // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         /// <summary>
         /// Minimize using Hopcroft's O(n log n) algorithm. this is regarded as one of

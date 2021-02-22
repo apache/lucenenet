@@ -66,10 +66,7 @@ namespace Lucene.Net.Index
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public sealed class IndexWriterConfig : LiveIndexWriterConfig
-#if FEATURE_CLONEABLE
-        , System.ICloneable
-#endif
+    public sealed class IndexWriterConfig : LiveIndexWriterConfig // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         // LUCENENET specific: De-nested OpenMode enum from this class to prevent naming conflict
 
