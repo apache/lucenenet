@@ -68,6 +68,7 @@ jobs:
       - name: Checkout Lucene.Net website
         uses: actions/checkout@v2
         with:
+          #repository: shazwazza/lucenenet-site
           repository: apache/lucenenet-site
           ref: asf-site
           path: website-repo
@@ -78,6 +79,7 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
+          token: ${{ secrets.LUCENE_NET_WEBSITE_BUILD }}
           path: website-repo
           commit-message: New website version built
           committer: GitHub <noreply@github.com>
