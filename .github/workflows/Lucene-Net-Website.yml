@@ -47,10 +47,10 @@ jobs:
           $tag = $ref.Substring(10)
           echo "TAG=$tag"
 
-          echo "CURRENT_TAG=$tag" >> $GITHUB_ENV
+          echo ("CURRENT_TAG=" + tag) >> $env:GITHUB_ENV
 
           $parts = $tag.Split("_")
-          $version = "";
+          $version = $Env:RELEASE_VERSION;
           For ($i=0; $i -le $parts.Length; $i++) {
               $version += $parts[$i]
               if ($i -eq ($parts.Length - 2)) {
@@ -60,7 +60,8 @@ jobs:
                   $version += "."
               }
           }
-          echo "RELEASE_VERSION=$version" >> $GITHUB_ENV
+
+          echo ("RELEASE_VERSION=" + version) >> $env:GITHUB_ENV
         shell: powershell
       - name: Verify environment variables
         run: |
