@@ -16,6 +16,11 @@ A very detailed how-to guide for working with Lucene.Net.
 
 > "This is one of the best posts I have ever seen about Lucene.NET"
 
+### Great intro posts about Lucene:
+
+* [Analysis of Lucene - Basic Concepts](https://www.alibabacloud.com/blog/analysis-of-lucene---basic-concepts_594672)
+* [Apache Lucene: free search for your website](https://www.ionos.com/digitalguide/server/configuration/apache-lucene/)
+
 ### Introductory Lucene.Net Series
 
 An excellent introductory series from [Simone Chiaretta](http://codeclimber.net.nz/)
