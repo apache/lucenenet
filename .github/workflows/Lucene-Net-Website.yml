@@ -17,59 +17,72 @@
 
 name: 'Lucene.Net.Website'
 
-# The tag will be in the format: Website_4_8_0_beta00013 which will be parsed to create the version number
-# used in the docs like 4.8.0-beta00013
-
 # This will:
 # checkout this repo
 # Build the website
 # Checkout the website repo
 # Create a branch
 # Commit/Push to the branch
-# Create a PR, see https://github.com/peter-evans/create-pull-request ... might work?
+# Create a PR
 
 on:
   create:
     tags:
       - Website_*
+  push:
+    #branches:
+    #- master
+    paths:
+    - 'websites/site/**'
+
+env:
+  # If a tag is specified, the tag will be in the format: Website_4_8_0_beta00013 which
+  # will be parsed to create the version number used in the docs like 4.8.0-beta00013
+  CURRENT_TAG: "NO-VERSION"
+  RELEASE_VERSION: "NO-VERSION"
+  SITE_REPO: shazwazza/lucenenet-site
+  # SITE_REPO: apache/lucenenet-site
 
 jobs:
-  build-website:
-    runs-on: windows-latest
-    env:
-      CURRENT_TAG: "UNKNOWN"
-      RELEASE_VERSION: "UNKNOWN"
+  parse-version:
     steps:
       - name: Set version from tag
         run: |
           $ref = $Env:GITHUB_REF
-          echo "REF=$ref"
-          $tag = $ref.Substring(10)
-          echo "TAG=$tag"
 
-          echo ("CURRENT_TAG=" + $tag) >> $env:GITHUB_ENV
+          # if the ref is a tag
+          if ($ref.StartsWith("refs/tags/")) {
+            $tag = $ref.Substring(10)
 
-          $parts = $tag.Split("_")
-          $version = $Env:RELEASE_VERSION;
-          For ($i=0; $i -le $parts.Length; $i++) {
-              $version += $parts[$i]
-              if ($i -eq ($parts.Length - 2)) {
-                  $version += "-"
-              }
-              elseif ($i -lt ($parts.Length - 1)) {
-                  $version += "."
-              }
+            # write the environment var
+            echo ("CURRENT_TAG=" + $tag) >> $env:GITHUB_ENV
+
+            $parts = $tag.Split("_")
+            $version = '';
+            For ($i=0; $i -le $parts.Length; $i++) {
+                $version += $parts[$i]
+                if ($i -eq ($parts.Length - 2)) {
+                    $version += "-"
+                }
+                elseif ($i -lt ($parts.Length - 1)) {
+                    $version += "."
+                }
+            }
+            if ($version -ne '') {
+              # the tag parsed to the correct version format, write the environment var
+              echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_ENV
+            }
           }
-
-          echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_ENV
         shell: powershell
       - name: Verify environment variables
         run: |
           echo "CURRENT_TAG=$Env:CURRENT_TAG"
           echo "RELEASE_VERSION=$Env:RELEASE_VERSION"
         shell: powershell
+  build-website:
+    runs-on: windows-latest
+    steps:
       - name: Checkout Lucene.Net source
-        if: env.CURRENT_TAG != 'UNKNOWN'
         uses: actions/checkout@v2
         with:
           path: main-repo
@@ -79,8 +92,7 @@ jobs:
       - name: Checkout Lucene.Net website
         uses: actions/checkout@v2
         with:
-          repository: shazwazza/lucenenet-site
-          #repository: apache/lucenenet-site
+          repository: ${{ env.SITE_REPO }}
           ref: asf-site
           path: website-repo
       - name: Copy website files
@@ -97,9 +109,9 @@ jobs:
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           branch: ${{ env.CURRENT_TAG }}
           delete-branch: true
-          title: 'New website version built ${{ env.CURRENT_TAG }}'
+          title: 'New website build ${{ github.sha }} ( ${{ env.CURRENT_TAG }} )'
           body: |
-            New website version built ${{ env.CURRENT_TAG }}
+            New website build ${{ github.sha }} ( ${{ env.CURRENT_TAG }} )
             - For version ${{ env.RELEASE_VERSION }}
       - name: Check outputs
         run: |
