@@ -47,7 +47,7 @@ jobs:
           $tag = $ref.Substring(10)
           echo "TAG=$tag"
 
-          echo ("CURRENT_TAG=" + tag) >> $env:GITHUB_ENV
+          echo ("CURRENT_TAG=" + $tag) >> $env:GITHUB_ENV
 
           $parts = $tag.Split("_")
           $version = $Env:RELEASE_VERSION;
@@ -61,7 +61,7 @@ jobs:
               }
           }
 
-          echo ("RELEASE_VERSION=" + version) >> $env:GITHUB_ENV
+          echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_ENV
         shell: powershell
       - name: Verify environment variables
         run: |
