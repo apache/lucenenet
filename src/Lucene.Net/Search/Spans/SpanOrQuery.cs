@@ -33,10 +33,7 @@ namespace Lucene.Net.Search.Spans
 
     /// <summary>
     /// Matches the union of its clauses. </summary>
-    public class SpanOrQuery : SpanQuery
-#if FEATURE_CLONEABLE
-        , System.ICloneable
-#endif
+    public class SpanOrQuery : SpanQuery // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         private readonly IList<SpanQuery> clauses;
         private string field;

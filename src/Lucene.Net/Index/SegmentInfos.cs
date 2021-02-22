@@ -113,10 +113,7 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
 
-    public sealed class SegmentInfos : IEnumerable<SegmentCommitInfo>
-#if FEATURE_CLONEABLE
-        , System.ICloneable
-#endif
+    public sealed class SegmentInfos : IEnumerable<SegmentCommitInfo> // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         /// <summary>
         /// The file format version for the segments_N codec header, up to 4.5. </summary>

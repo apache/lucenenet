@@ -36,10 +36,7 @@ namespace Lucene.Net.Search.Spans
     /// maximum number of intervening unmatched positions, as well as whether
     /// matches are required to be in-order.
     /// </summary>
-    public class SpanNearQuery : SpanQuery
-#if FEATURE_CLONEABLE
-        , System.ICloneable
-#endif
+    public class SpanNearQuery : SpanQuery // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         protected readonly IList<SpanQuery> m_clauses;
         protected int m_slop;

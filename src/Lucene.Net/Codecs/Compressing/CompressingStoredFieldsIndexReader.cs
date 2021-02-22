@@ -34,10 +34,7 @@ namespace Lucene.Net.Codecs.Compressing
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public sealed class CompressingStoredFieldsIndexReader
-#if FEATURE_CLONEABLE
-        : System.ICloneable
-#endif
+    public sealed class CompressingStoredFieldsIndexReader // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         internal static long MoveLowOrderBitToSign(long n)
         {

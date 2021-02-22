@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -42,10 +42,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// @lucene.internal
     /// </summary>
     /// <seealso cref="Lucene40StoredFieldsFormat"/>
-    public sealed class Lucene40StoredFieldsReader : StoredFieldsReader // LUCENENET specific - removed IDisposable, it is already implemented in base class
-#if FEATURE_CLONEABLE
-        , System.ICloneable
-#endif
+    public sealed class Lucene40StoredFieldsReader : StoredFieldsReader // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         private readonly FieldInfos fieldInfos;
 #pragma warning disable CA2213 // Disposable fields should be disposed

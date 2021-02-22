@@ -44,10 +44,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <summary>
         /// Term text with a beginning and end position
         /// </summary>
-        public class QueryText
-#if FEATURE_CLONEABLE
-            : System.ICloneable
-#endif
+        public class QueryText // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
         {
             private string value = null;
 

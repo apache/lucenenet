@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
 using System.Globalization;
@@ -44,10 +44,7 @@ namespace Lucene.Net.Util.Automaton
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class Transition
-#if FEATURE_CLONEABLE
-        : System.ICloneable
-#endif
+    public class Transition // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         /*
          * CLASS INVARIANT: min<=max

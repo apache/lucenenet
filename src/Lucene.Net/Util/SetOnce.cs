@@ -1,4 +1,4 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using System;
 using System.Runtime.CompilerServices;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
@@ -33,10 +33,7 @@ namespace Lucene.Net.Util
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public sealed class SetOnce<T>
-#if FEATURE_CLONEABLE
-        : System.ICloneable
-#endif
+    public sealed class SetOnce<T> // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
         where T : class // LUCENENET specific - added class constraint so we don't accept value types (which cannot be volatile)
     {
         private volatile T obj = default;
