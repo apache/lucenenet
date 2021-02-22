@@ -40,7 +40,9 @@ jobs:
       - name: Set version from tag
         run: |
           $ref = $Env:GITHUB_REF
+          echo "REF=$ref"
           $tag = $ref.Substring(10)
+          echo "TAG=$tag"
 
           echo "current_tag=$tag" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           # set the release_version now to something incase parsing fails
