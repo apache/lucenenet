@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.CharFilters;
+// Lucene version compatibility level 4.8.1
+using Lucene.Net.Analysis.CharFilters;
 using Lucene.Net.Analysis.CommonGrams;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.NGram;

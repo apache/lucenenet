@@ -1,4 +1,5 @@
-﻿#if FEATURE_SERIALIZABLE_EXCEPTIONS
+// Lucene version compatibility level 4.8.1
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;

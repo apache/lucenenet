@@ -1,3 +1,4 @@
+// Lucene version compatibility level 4.8.1
 #if FEATURE_BREAKITERATOR
 using ICU4N.Text;
 using Lucene.Net.Analysis.TokenAttributes;

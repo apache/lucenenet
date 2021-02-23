@@ -1,4 +1,5 @@
-﻿using J2N.Text;
+// Lucene version compatibility level 4.8.1
+using J2N.Text;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Synonym;
 using Lucene.Net.Analysis.TokenAttributes;
