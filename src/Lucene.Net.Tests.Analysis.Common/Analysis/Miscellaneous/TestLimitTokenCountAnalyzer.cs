@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Documents;
+// Lucene version compatibility level 4.8.1
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using NUnit.Framework;

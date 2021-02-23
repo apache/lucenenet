@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Core;
+// Lucene version compatibility level 4.8.1
+using Lucene.Net.Analysis.Core;
 using NUnit.Framework;
 
 namespace Lucene.Net.Analysis.Id

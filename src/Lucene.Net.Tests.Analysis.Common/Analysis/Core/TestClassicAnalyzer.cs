@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Standard;
+// Lucene version compatibility level 4.8.1
+using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
