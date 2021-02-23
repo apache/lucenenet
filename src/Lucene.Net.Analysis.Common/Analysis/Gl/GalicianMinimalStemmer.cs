@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Pt;
+// Lucene version compatibility level 4.8.1
+using Lucene.Net.Analysis.Pt;
 
 namespace Lucene.Net.Analysis.Gl
 {

@@ -1,4 +1,5 @@
-﻿#if FEATURE_BREAKITERATOR
+// Lucene version compatibility level 4.8.1
+#if FEATURE_BREAKITERATOR
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;

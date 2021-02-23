@@ -1,4 +1,5 @@
-﻿using J2N.Text;
+// Lucene version compatibility level 4.8.1
+using J2N.Text;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
