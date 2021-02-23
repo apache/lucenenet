@@ -1,4 +1,5 @@
-﻿/*
+// Lucene version compatibility level 4.8.1
+/*
 Copyright © 2003,
 Center for Intelligent Information Retrieval,
 University of Massachusetts, Amherst.

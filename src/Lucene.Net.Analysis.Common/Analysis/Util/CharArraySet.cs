@@ -1,4 +1,5 @@
-﻿using J2N.Globalization;
+// Lucene version compatibility level 4.8.1
+using J2N.Globalization;
 using J2N.Text;
 using Lucene.Net.Util;
 using System;

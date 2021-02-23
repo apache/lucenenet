@@ -1,4 +1,5 @@
-﻿#if FEATURE_COLLATION
+// Lucene version compatibility level 4.8.1
+#if FEATURE_COLLATION
 using Icu.Collation;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;

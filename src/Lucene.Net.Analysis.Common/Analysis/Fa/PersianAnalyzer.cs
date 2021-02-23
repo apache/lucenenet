@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Ar;
+// Lucene version compatibility level 4.8.1
+using Lucene.Net.Analysis.Ar;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;

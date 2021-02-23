@@ -1,4 +1,5 @@
-﻿/*
+// Lucene version compatibility level 4.8.1
+/*
 
 Copyright (c) 2001, Dr Martin Porter
 Copyright (c) 2002, Richard Boulton
