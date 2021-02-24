@@ -361,8 +361,8 @@ namespace Lucene.Net.Expressions.JS
             AssertEvaluatesTo("0x1", 1);
             AssertEvaluatesTo("0xF", 15);
             AssertEvaluatesTo("0x1234ABCDEF", 78193085935L);
-            AssertEvaluatesTo("1 << 0x1", 1 << (0x1));
-            AssertEvaluatesTo("1 << 0xA", 1 << (0xA));
+            AssertEvaluatesTo("1 << 0x1", 1 << 0x1);
+            AssertEvaluatesTo("1 << 0xA", 1 << 0xA);
             AssertEvaluatesTo("0x1 << 2", unchecked((int)(0x1)) << 2);
             AssertEvaluatesTo("0xA << 2", unchecked((int)(0xA)) << 2);
         }

@@ -46,6 +46,7 @@ namespace Lucene.Net.Expressions
                 (Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
             var iw = new RandomIndexWriter(Random, dir, iwc);
+
             var doc = new Document
             {
                 NewStringField("id", "1", Field.Store.YES),
@@ -53,14 +54,15 @@ namespace Lucene.Net.Expressions
                 new NumericDocValuesField("popularity", 5)
             };
             iw.AddDocument(doc);
+
             doc = new Document
             {
                 NewStringField("id", "2", Field.Store.YES),
-                NewTextField("body", "another document with different contents", Field.Store
-                    .NO),
+                NewTextField("body", "another document with different contents", Field.Store.NO),
                 new NumericDocValuesField("popularity", 20)
             };
             iw.AddDocument(doc);
+
             doc = new Document
             {
                 NewStringField("id", "3", Field.Store.YES),
@@ -69,6 +71,7 @@ namespace Lucene.Net.Expressions
             };
             iw.AddDocument(doc);
             iw.ForceMerge(1);
+
             reader = iw.GetReader();
             iw.Dispose();
         }
@@ -88,9 +91,11 @@ namespace Lucene.Net.Expressions
             SimpleBindings bindings = new SimpleBindings();
             bindings.Add(new SortField("popularity", SortFieldType.INT64));
             ValueSource vs = expr.GetValueSource(bindings);
+
             Assert.AreEqual(1, reader.Leaves.Count);
             AtomicReaderContext leaf = reader.Leaves[0];
             FunctionValues values = vs.GetValues(new Dictionary<string, object>(), leaf);
+
             Assert.AreEqual(10, values.DoubleVal(0), 0);
             Assert.AreEqual(10, values.SingleVal(0), 0);
             Assert.AreEqual(10, values.Int64Val(0));
@@ -99,6 +104,7 @@ namespace Lucene.Net.Expressions
             Assert.AreEqual((byte)10, values.ByteVal(0));
             Assert.AreEqual("10", values.StrVal(0));
             Assert.AreEqual(System.Convert.ToDouble(10), values.ObjectVal(0));
+
             Assert.AreEqual(40, values.DoubleVal(1), 0);
             Assert.AreEqual(40, values.SingleVal(1), 0);
             Assert.AreEqual(40, values.Int64Val(1));
@@ -107,6 +113,7 @@ namespace Lucene.Net.Expressions
             Assert.AreEqual((byte)40, values.ByteVal(1));
             Assert.AreEqual("40", values.StrVal(1));
             Assert.AreEqual(System.Convert.ToDouble(40), values.ObjectVal(1));
+
             Assert.AreEqual(4, values.DoubleVal(2), 0);
             Assert.AreEqual(4, values.SingleVal(2), 0);
             Assert.AreEqual(4, values.Int64Val(2));
@@ -124,17 +131,19 @@ namespace Lucene.Net.Expressions
             SimpleBindings bindings = new SimpleBindings();
             bindings.Add(new SortField("popularity", SortFieldType.INT64));
             ValueSource vs = expr.GetValueSource(bindings);
+
             Assert.AreEqual(1, reader.Leaves.Count);
             AtomicReaderContext leaf = reader.Leaves[0];
             FunctionValues values = vs.GetValues(new Dictionary<string, object>(), leaf);
+
             // everything
-            ValueSourceScorer scorer = values.GetRangeScorer(leaf.Reader, "4"
-                , "40", true, true);
+            ValueSourceScorer scorer = values.GetRangeScorer(leaf.Reader, "4", "40", true, true);
             Assert.AreEqual(-1, scorer.DocID);
             Assert.AreEqual(0, scorer.NextDoc());
             Assert.AreEqual(1, scorer.NextDoc());
             Assert.AreEqual(2, scorer.NextDoc());
             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, scorer.NextDoc());
+
             // just the first doc
             scorer = values.GetRangeScorer(leaf.Reader, "4", "40", false, false);
             Assert.AreEqual(-1, scorer.DocID);
@@ -146,9 +155,11 @@ namespace Lucene.Net.Expressions
         public virtual void TestEquals()
         {
             Expression expr = JavascriptCompiler.Compile("sqrt(a) + ln(b)");
+
             SimpleBindings bindings = new SimpleBindings();
             bindings.Add(new SortField("a", SortFieldType.INT32));
             bindings.Add(new SortField("b", SortFieldType.INT32));
+
             ValueSource vs1 = expr.GetValueSource(bindings);
             // same instance
             Assert.AreEqual(vs1, vs1);
@@ -156,16 +167,19 @@ namespace Lucene.Net.Expressions
             Assert.IsFalse(vs1.Equals(null));
             // other object
             Assert.IsFalse(vs1.Equals("foobar"));
+
             // same bindings and expression instances
             ValueSource vs2 = expr.GetValueSource(bindings);
             Assert.AreEqual(vs1.GetHashCode(), vs2.GetHashCode());
             Assert.AreEqual(vs1, vs2);
+
             // equiv bindings (different instance)
             SimpleBindings bindings2 = new SimpleBindings();
             bindings2.Add(new SortField("a", SortFieldType.INT32));
             bindings2.Add(new SortField("b", SortFieldType.INT32));
             ValueSource vs3 = expr.GetValueSource(bindings2);
             Assert.AreEqual(vs1, vs3);
+
             // different bindings (same names, different types)
             SimpleBindings bindings3 = new SimpleBindings();
             bindings3.Add(new SortField("a", SortFieldType.INT64));

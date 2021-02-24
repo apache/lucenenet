@@ -32,10 +32,8 @@ namespace Lucene.Net.Expressions
     /// Tests some basic expressions against different queries,
     /// and fieldcache/docvalues fields against an equivalent sort.
     /// </summary>
-    /// <remarks>
-    /// Tests some basic expressions against different queries,
-    /// and fieldcache/docvalues fields against an equivalent sort.
-    /// </remarks>
+
+
     [SuppressCodecs("Lucene3x")]
     public class TestExpressionSorts : LuceneTestCase
     {
