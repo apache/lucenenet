@@ -37,34 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Analysis\Hunspell\alternate-casing.aff" />
-    <None Remove="Analysis\Hunspell\alternate-casing.dic" />
-    <None Remove="Analysis\Hunspell\casesensitive.aff" />
-    <None Remove="Analysis\Hunspell\casesensitive.dic" />
-    <None Remove="Analysis\Hunspell\condition2.aff" />
-    <None Remove="Analysis\Hunspell\condition2.dic" />
-    <None Remove="Analysis\Hunspell\double-escaped.aff" />
-    <None Remove="Analysis\Hunspell\double-escaped.dic" />
-    <None Remove="Analysis\Hunspell\fullstrip.aff" />
-    <None Remove="Analysis\Hunspell\fullstrip.dic" />
-    <None Remove="Analysis\Hunspell\keepcase.aff" />
-    <None Remove="Analysis\Hunspell\keepcase.dic" />
-    <None Remove="Analysis\Hunspell\morphalias.aff" />
-    <None Remove="Analysis\Hunspell\morphalias.dic" />
-    <None Remove="Analysis\Hunspell\morphdata.aff" />
-    <None Remove="Analysis\Hunspell\morphdata.dic" />
-    <None Remove="Analysis\Hunspell\needaffix.aff" />
-    <None Remove="Analysis\Hunspell\needaffix.dic" />
-    <None Remove="Analysis\Hunspell\onlyincompound.aff" />
-    <None Remove="Analysis\Hunspell\onlyincompound.dic" />
-    <None Remove="Analysis\Hunspell\spaces.aff" />
-    <None Remove="Analysis\Hunspell\spaces.dic" />
-    <None Remove="Analysis\Hunspell\strange-overgeneration.aff" />
-    <None Remove="Analysis\Hunspell\strange-overgeneration.dic" />
-    <None Remove="Analysis\Hunspell\zeroaffix.aff" />
-    <None Remove="Analysis\Hunspell\zeroaffix.dic" />
-    <None Remove="Analysis\Hunspell\zeroaffix2.aff" />
-    <None Remove="Analysis\Hunspell\zeroaffix2.dic" />
+    <None Remove="**/*.dic;**/*.aff" />
   </ItemGroup>
 
   <ItemGroup>
