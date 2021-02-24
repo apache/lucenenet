@@ -11,6 +11,8 @@ indent_size = 4
 
 # C# files
 [*.cs]
+indent_style = space
+indent_size = 4
 
 #### Core EditorConfig Options ####
 

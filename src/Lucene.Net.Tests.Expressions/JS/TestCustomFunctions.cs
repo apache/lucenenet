@@ -80,7 +80,7 @@ namespace Lucene.Net.Expressions.JS
             Assert.AreEqual(6, expr.Evaluate(0, null), DELTA);
         }
 
-        public static double ThreeArgMethod(double arg1, double arg2, double arg3) { return arg1 + arg2 + arg3;}
+        public static double ThreeArgMethod(double arg1, double arg2, double arg3) => arg1 + arg2 + arg3;
 
         /// <summary>tests a method with three arguments</summary>
         [Test]
@@ -203,8 +203,8 @@ namespace Lucene.Net.Expressions.JS
         }
 
 
-		//LUCENENET: testClassLoader() was not ported.  (May not apply to Lucene.Net)
-		
+        //LUCENENET: testClassLoader() was not ported.  (May not apply to Lucene.Net)
+        
         
         internal static string MESSAGE = "This should not happen but it happens";
 
