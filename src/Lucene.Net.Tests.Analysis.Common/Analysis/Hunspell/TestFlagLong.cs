@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.10.4
 using NUnit.Framework;
 
 namespace Lucene.Net.Analysis.Hunspell
@@ -34,6 +34,7 @@ namespace Lucene.Net.Analysis.Hunspell
             AssertStemsTo("foo", "foo");
             AssertStemsTo("foos", "foo");
             AssertStemsTo("fooss");
+            AssertStemsTo("foobogus");
         }
     }
 }
