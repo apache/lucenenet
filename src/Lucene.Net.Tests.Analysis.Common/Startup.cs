@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -23,4 +23,10 @@ using Lucene.Net.Util;
 // would not occur if it were not here.
 public class Startup : LuceneTestFrameworkInitializer
 {
+    protected override void TestFrameworkSetUp()
+    {
+#if FEATURE_ENCODINGPROVIDERS
+        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+#endif
+    }
 }

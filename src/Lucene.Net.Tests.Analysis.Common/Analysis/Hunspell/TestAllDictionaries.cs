@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.10.4
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -195,7 +195,7 @@ namespace Lucene.Net.Analysis.Hunspell
         [Test]
         public virtual void TestOneDictionary()
         {
-            string toTest = "hu_HU.zip";
+            string toTest = "zu_ZA.zip";
             for (int i = 0; i < tests.Length; i++)
             {
                 if (tests[i].Equals(toTest, StringComparison.Ordinal))
