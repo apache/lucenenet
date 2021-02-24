@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -363,8 +363,8 @@ namespace Lucene.Net.Expressions.JS
             AssertEvaluatesTo("0x1234ABCDEF", 78193085935L);
             AssertEvaluatesTo("1 << 0x1", 1 << 0x1);
             AssertEvaluatesTo("1 << 0xA", 1 << 0xA);
-            AssertEvaluatesTo("0x1 << 2", unchecked((int)(0x1)) << 2);
-            AssertEvaluatesTo("0xA << 2", unchecked((int)(0xA)) << 2);
+            AssertEvaluatesTo("0x1 << 2", 0x1 << 2);
+            AssertEvaluatesTo("0xA << 2", 0xA << 2);
         }
 
         [Test]
@@ -373,7 +373,7 @@ namespace Lucene.Net.Expressions.JS
             AssertEvaluatesTo("0X0", 0);
             AssertEvaluatesTo("0X1", 1);
             AssertEvaluatesTo("0XF", 15);
-            AssertEvaluatesTo("0X1234ABCDEF", 78193085935L);
+            AssertEvaluatesTo("0X1234ABCDEF", 78193085935L);  
         }
 
         [Test]
@@ -382,7 +382,7 @@ namespace Lucene.Net.Expressions.JS
             AssertEvaluatesTo("00", 0);
             AssertEvaluatesTo("01", 1);
             AssertEvaluatesTo("010", 8);
-            AssertEvaluatesTo("0123456777", 21913087);
+            AssertEvaluatesTo("0123456777", 21913087);  // LUCENENET Comment: Javascript octal value via leading 0, compared with decimal value.
             AssertEvaluatesTo("1 << 01", 1 << 0x1);
             AssertEvaluatesTo("1 << 010", 1 << 0x8);
             AssertEvaluatesTo("01 << 2", 0x1 << 2);
