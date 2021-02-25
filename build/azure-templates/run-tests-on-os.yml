@@ -139,9 +139,9 @@ steps:
             Copy-Item -Path "$sourceDirectory/*" -Destination "$tempTestDirectory" -Recurse -Force
 
             if ($isNightly -ne 'true' -and $isWeekly -ne 'true') {
-                $blameHangTimeout = "--blame-hang-timeout 10minutes"
+                $blameHangTimeout = "--blame-hang-timeout 15minutes"
             } else {
-                $blameHangTimeout = "--blame-hang-timeout 50minutes"
+                $blameHangTimeout = "--blame-hang-timeout 40minutes"
             }
 
             Write-Host "Running with $blameHangTimeout"
