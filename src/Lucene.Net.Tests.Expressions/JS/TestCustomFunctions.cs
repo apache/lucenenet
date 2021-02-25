@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -56,10 +56,7 @@ namespace Lucene.Net.Expressions.JS
             Assert.AreEqual(Math.Sqrt(20), expr.Evaluate(0, null), DELTA);
         }
 
-        public static double ZeroArgMethod()
-        {
-            return 5;
-        }
+        public static double ZeroArgMethod() => 5;
 
         /// <summary>tests a method with no arguments</summary>
         [Test]
@@ -71,10 +68,7 @@ namespace Lucene.Net.Expressions.JS
             Assert.AreEqual(5, expr.Evaluate(0, null), DELTA);
         }
 
-        public static double OneArgMethod(double arg1)
-        {
-            return 3 + arg1;
-        }
+        public static double OneArgMethod(double arg1) => 3 + arg1; 
 
         /// <summary>tests a method with one arguments</summary>
         [Test]
@@ -86,18 +80,14 @@ namespace Lucene.Net.Expressions.JS
             Assert.AreEqual(6, expr.Evaluate(0, null), DELTA);
         }
 
-        public static double ThreeArgMethod(double arg1, double arg2, double arg3)
-        {
-            return arg1 + arg2 + arg3;
-        }
+        public static double ThreeArgMethod(double arg1, double arg2, double arg3) => arg1 + arg2 + arg3;
 
         /// <summary>tests a method with three arguments</summary>
         [Test]
         public virtual void TestThreeArgMethod()
         {
             IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-            functions["foo"] = GetType().GetMethod("ThreeArgMethod", new []{ typeof(double), typeof(
-                double), typeof(double)});
+            functions["foo"] = GetType().GetMethod("ThreeArgMethod", new []{ typeof(double), typeof(double), typeof(double)});
             var expr = JavascriptCompiler.Compile("foo(3, 4, 5)", functions);
             Assert.AreEqual(12, expr.Evaluate(0, null), DELTA);
         }
@@ -113,10 +103,7 @@ namespace Lucene.Net.Expressions.JS
             Assert.AreEqual(11, expr.Evaluate(0, null), DELTA);
         }
 
-        public static string BogusReturnType()
-        {
-            return "bogus!";
-        }
+        public static string BogusReturnType() => "bogus!"; 
 
         /// <summary>wrong return type: must be double</summary>
         [Test]
@@ -135,10 +122,7 @@ namespace Lucene.Net.Expressions.JS
             }
         }
 
-        public static double BogusParameterType(string s)
-        {
-            return 0;
-        }
+        public static double BogusParameterType(string s) => 0; 
 
         /// <summary>wrong param type: must be doubles</summary>
         [Test]
@@ -153,15 +137,11 @@ namespace Lucene.Net.Expressions.JS
             }
             catch (ArgumentException e)
             {
-                Assert.IsTrue(e.Message.Contains("must take only double parameters"
-                    ));
+                Assert.IsTrue(e.Message.Contains("must take only double parameters"));
             }
         }
 
-        public virtual double NonStaticMethod()
-        {
-            return 0;
-        }
+        public virtual double NonStaticMethod() => 0; 
 
         /// <summary>wrong modifiers: must be static</summary>
         [Test]
@@ -180,10 +160,7 @@ namespace Lucene.Net.Expressions.JS
             }
         }
 
-        internal static double NonPublicMethod()
-        {
-            return 0;
-        }
+        internal static double NonPublicMethod() => 0;
 
         /// <summary>wrong modifiers: must be public</summary>
         [Test]
@@ -205,10 +182,7 @@ namespace Lucene.Net.Expressions.JS
 
         internal class NestedNotPublic
         {
-            public static double Method()
-            {
-                return 0;
-            }
+            public static double Method() => 0;
         }
 
         /// <summary>wrong class modifiers: class containing method is not public</summary>
@@ -228,6 +202,9 @@ namespace Lucene.Net.Expressions.JS
             }
         }
 
+
+        //LUCENENET: testClassLoader() was not ported.  (May not apply to Lucene.Net)
+        
         
         internal static string MESSAGE = "This should not happen but it happens";
 
@@ -240,7 +217,7 @@ namespace Lucene.Net.Expressions.JS
         }
 
         /// <summary>the method throws an exception.</summary>
-        /// <remarks>the method throws an exception. We should check the stack trace that it contains the source code of the expression as file name.
+        /// <remarks>We should check the stack trace that it contains the source code of the expression as file name.
         /// 	</remarks>
         [Test]
         public virtual void TestThrowingException()
@@ -265,7 +242,6 @@ namespace Lucene.Net.Expressions.JS
         }
 
         /// <summary>test that namespaces work with custom expressions.</summary>
-        /// <remarks>test that namespaces work with custom expressions.</remarks>
         [Test]
         public virtual void TestNamespaces()
         {
