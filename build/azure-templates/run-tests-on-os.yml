@@ -1,4 +1,4 @@
-# Licensed to the Apache Software Foundation (ASF) under one
+﻿# Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
 # regarding copyright ownership.  The ASF licenses this file
@@ -143,6 +143,8 @@ steps:
             } else {
                 $blameHangTimeout = "--blame-hang-timeout 50minutes"
             }
+
+            Write-Host "Running with $blameHangTimeout"
 
             $testExpression = "dotnet test ""$testTarget"" --framework ""$framework"" --blame --no-build --no-restore" + `
                 " --logger:""console;verbosity=normal"" --logger:""trx;LogFileName=$testResultsFileName""" + `
