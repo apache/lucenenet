@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
         // set this to the location of where you downloaded all the files
         internal static readonly DirectoryInfo DICTIONARY_HOME = new DirectoryInfo(
-            System.IO.Path.Combine(new DirectoryInfo(typeof(TestAllDictionaries2).Assembly.Location).Parent.Parent.Parent.Parent.Parent.FullName,
+            System.IO.Path.Combine(new DirectoryInfo(typeof(TestAllDictionaries2).Assembly.Location).Parent.Parent.Parent.Parent.Parent.Parent.FullName,
                 @"test-files\analysis\data\thunderbirdDicts"));
 
         internal readonly string[] tests = new string[]
@@ -171,7 +171,7 @@ namespace Lucene.Net.Analysis.Hunspell
             "verificador_ortografico_para_portugues_do_brasil-2.3-3.2b1-tb+sm+fn+fx.xpi",     "dictionaries/pt_BR.dic",             "dictionaries/pt_BR.aff",
             "vietnamese_dictionary-2.1.0.159-an+sm+tb+fx+fn.xpi",                             "dictionaries/vi-DauCu.dic",          "dictionaries/vi-DauCu.aff",
             "vietnamese_dictionary-2.1.0.159-an+sm+tb+fx+fn.xpi",                             "dictionaries/vi-DauMoi.dic",         "dictionaries/vi-DauMoi.aff",
-// LUCENENET BUG: System.ArgumentException : expected only one flag, got: Kc            "woordenboek_nederlands-3.1.1-sm+tb+fx+fn.xpi",                                   "dictionaries/nl.dic",                "dictionaries/nl.aff",
+// LUCENENET TODO: BUG: System.ArgumentException : expected only one flag, got: Kc            "woordenboek_nederlands-3.1.1-sm+tb+fx+fn.xpi",                                   "dictionaries/nl.dic",                "dictionaries/nl.aff",
             "xhosa_spell_checker-20110323-tb+fn+fx+sm.xpi",                                   "dictionaries/xh-ZA.dic",             "dictionaries/xh-ZA.aff",
             "xuxen-4.0.1-fx+tb+sm.xpi",                                                       "dictionaries/eu.dic",                "dictionaries/eu.aff",
             "yiddish_spell_checker_yivo-0.0.3-sm+fn+fx+tb.xpi",                               "dictionaries/yi.dic",                "dictionaries/yi.aff",
