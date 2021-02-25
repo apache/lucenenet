@@ -26,6 +26,10 @@ public class Startup : LuceneTestFrameworkInitializer
     protected override void TestFrameworkSetUp()
     {
 #if FEATURE_ENCODINGPROVIDERS
+        // LUCENENET NOTE: Hunspell manual tests require additional encoding types. End users may
+        // require it to be added as well when using Hunspell, but there is no reason to load
+        // the code pages by default in Lucene.Net.Analysis.Common. It should be added by consumers
+        // or Hunspell that require it.
         System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 #endif
     }
