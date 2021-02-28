@@ -1,5 +1,4 @@
-using Lucene.Net.Support;
-using System;
+﻿using System;
 
 namespace Lucene.Net.Store
 {
@@ -27,7 +26,7 @@ namespace Lucene.Net.Store
     public class BufferedChecksumIndexInput : ChecksumIndexInput
     {
         internal readonly IndexInput main;
-        internal readonly IChecksum digest;
+        internal readonly BufferedCrc32Algorithm digest;
 
         /// <summary>
         /// Creates a new <see cref="BufferedChecksumIndexInput"/> </summary>
@@ -35,7 +34,7 @@ namespace Lucene.Net.Store
             : base("BufferedChecksumIndexInput(" + main + ")")
         {
             this.main = main;
-            this.digest = new BufferedChecksum(new CRC32());
+            this.digest = new BufferedCrc32Algorithm();
         }
 
         public override byte ReadByte()

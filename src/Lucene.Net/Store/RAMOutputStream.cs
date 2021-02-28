@@ -1,5 +1,4 @@
-using Lucene.Net.Support;
-using System;
+﻿using System;
 using Lucene.Net.Diagnostics;
 using System.Runtime.CompilerServices;
 
@@ -40,7 +39,7 @@ namespace Lucene.Net.Store
         private long bufferStart;
         private int bufferLength;
 
-        private readonly BufferedChecksum crc = new BufferedChecksum(new CRC32()); // LUCENENET: marked readonly
+        private readonly BufferedCrc32Algorithm crc = new BufferedCrc32Algorithm(); // LUCENENET: marked readonly
 
         /// <summary>
         /// Construct an empty output buffer. </summary>
@@ -115,7 +114,7 @@ namespace Lucene.Net.Store
             bufferStart = 0;
             bufferLength = 0;
             file.Length = 0;
-            crc.Reset();
+            crc.Initialize();
         }
 
         protected override void Dispose(bool disposing)

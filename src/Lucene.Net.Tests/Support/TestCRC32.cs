@@ -1,4 +1,4 @@
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -34,7 +34,7 @@ namespace Lucene.Net.Support
             for (int i = 0; i < b.Length; i++)
                 b[i] = (byte)i;
 
-            IChecksum digest = new CRC32();
+            var digest = new CRC32();
             digest.Update(b, 0, b.Length);
 
             Int64 expected = 688229491;
