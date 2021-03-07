@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
@@ -144,9 +144,7 @@ namespace Lucene.Net.Search
 
         private void AddCacheEntries<TKey, TValue>(IList<FieldCache.CacheEntry> result, Type cacheType, Cache<TKey, TValue> cache) where TKey : CacheKey
         {
-#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
             lock (cache.readerCache)
-#endif
             {
                 foreach (var readerCacheEntry in cache.readerCache)
                 {
@@ -248,9 +246,7 @@ namespace Lucene.Net.Search
             /// Remove this reader from the cache, if present. </summary>
             public virtual void PurgeByCacheKey(object coreCacheKey)
             {
-#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                 lock (readerCache)
-#endif
                     readerCache.Remove(coreCacheKey);
             }
 
@@ -262,19 +258,20 @@ namespace Lucene.Net.Search
             {
                 ConcurrentDictionary<TKey, object> innerCache;
                 object readerKey = reader.CoreCacheKey;
-#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-                innerCache = readerCache.GetValue(readerKey, (readerKey) =>
-                {
-                    // First time this reader is using FieldCache
-                    wrapper.InitReader(reader);
-                    return new ConcurrentDictionary<TKey, object>
-                    {
-                        [key] = value
-                    };
-                });
-#else
                 lock (readerCache)
                 {
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+
+                    innerCache = readerCache.GetValue(readerKey, (readerKey) =>
+                    {
+                        // First time this reader is using FieldCache
+                        wrapper.InitReader(reader);
+                        return new ConcurrentDictionary<TKey, object>
+                        {
+                            [key] = value
+                        };
+                    });
+#else
                     if (!readerCache.TryGetValue(readerKey, out innerCache) || innerCache is null)
                     {
                         // First time this reader is using FieldCache
@@ -285,8 +282,9 @@ namespace Lucene.Net.Search
                         readerCache.Add(readerKey, innerCache);
                         wrapper.InitReader(reader);
                     }
-                }
 #endif
+                }
+
                 // If another thread beat us to it, leave the current value
                 innerCache.TryAdd(key, value);
             }
@@ -295,20 +293,19 @@ namespace Lucene.Net.Search
             {
                 ConcurrentDictionary<TKey, object> innerCache;
                 object readerKey = reader.CoreCacheKey;
-#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-                innerCache = readerCache.GetValue(readerKey, (readerKey) =>
-                {
-                    // First time this reader is using FieldCache
-                    wrapper.InitReader(reader);
-                    return new ConcurrentDictionary<TKey, object>
-                    {
-                        [key] = new FieldCache.CreationPlaceholder<TValue>()
-                    };
-                });
-
-#else
                 lock (readerCache)
                 {
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+                    innerCache = readerCache.GetValue(readerKey, (readerKey) =>
+                    {
+                        // First time this reader is using FieldCache
+                        wrapper.InitReader(reader);
+                        return new ConcurrentDictionary<TKey, object>
+                        {
+                            [key] = new FieldCache.CreationPlaceholder<TValue>()
+                        };
+                    });
+#else
                     if (!readerCache.TryGetValue(readerKey, out innerCache) || innerCache is null)
                     {
                         // First time this reader is using FieldCache
@@ -319,8 +316,8 @@ namespace Lucene.Net.Search
                         readerCache[readerKey] = innerCache;
                         wrapper.InitReader(reader);
                     }
-                }
 #endif
+                }
                 object value = innerCache.GetOrAdd(key, (cacheKey) => new FieldCache.CreationPlaceholder<TValue>());
                 if (value is FieldCache.CreationPlaceholder<TValue> progress)
                 {
@@ -329,18 +326,19 @@ namespace Lucene.Net.Search
                         if (progress.Value is null)
                         {
                             progress.Value = CreateValue(reader, key, setDocsWithField);
-                            if (innerCache.TryUpdate(key, progress.Value, value))
+                            lock (readerCache)
                             {
-                                // Only check if key.custom (the parser) is
-                                // non-null; else, we check twice for a single
-                                // call to FieldCache.getXXX
-                                if (!(key.Custom is null) && !(wrapper is null))
+                                innerCache.TryUpdate(key, progress.Value, value);
+                            }
+                            // Only check if key.custom (the parser) is
+                            // non-null; else, we check twice for a single
+                            // call to FieldCache.getXXX
+                            if (!(key.Custom is null) && !(wrapper is null))
+                            {
+                                TextWriter infoStream = wrapper.InfoStream;
+                                if (infoStream != null)
                                 {
-                                    TextWriter infoStream = wrapper.InfoStream;
-                                    if (infoStream != null)
-                                    {
-                                        PrintNewInsanity(infoStream, progress.Value);
-                                    }
+                                    PrintNewInsanity(infoStream, progress.Value);
                                 }
                             }
                         }
