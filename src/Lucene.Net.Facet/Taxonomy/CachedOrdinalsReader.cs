@@ -66,11 +66,10 @@ namespace Lucene.Net.Facet.Taxonomy
 
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
         private readonly ConditionalWeakTable<object, CachedOrds> ordsCache = new ConditionalWeakTable<object, CachedOrds>();
-        private readonly object ordsCacheLock = new object();
 #else
         private readonly WeakDictionary<object, CachedOrds> ordsCache = new WeakDictionary<object, CachedOrds>();
-        private readonly ReaderWriterLockSlim syncLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 #endif
+        private readonly object syncLock = new object();
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -81,35 +80,23 @@ namespace Lucene.Net.Facet.Taxonomy
 
         private CachedOrds GetCachedOrds(AtomicReaderContext context)
         {
-            object cacheKey = context.Reader.CoreCacheKey;
-#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-            return ordsCache.GetValue(cacheKey, (cacheKey) => new CachedOrds(source.GetReader(context), context.Reader.MaxDoc));
-#else
-            CachedOrds ords;
-            syncLock.EnterReadLock();
-            try
+            // LUCENENET NOTE: Since ConditionalWeakTable doesn't synchronize on enumeration in the RamBytesUsed() method,
+            // the lock is still required here despite it being a threadsafe collection.
+            lock (syncLock)
             {
-                if (ordsCache.TryGetValue(cacheKey, out ords))
-                    return ords;
-            }
-            finally
-            {
-                syncLock.ExitReadLock();
-            }
+                object cacheKey = context.Reader.CoreCacheKey;
+                if (!ordsCache.TryGetValue(cacheKey, out CachedOrds ords))
+                {
+                    ords = new CachedOrds(source.GetReader(context), context.Reader.MaxDoc);
 
-            ords = new CachedOrds(source.GetReader(context), context.Reader.MaxDoc);
-            syncLock.EnterWriteLock();
-            try
-            {
-                ordsCache[cacheKey] = ords;
+                    // LUCENENET specific: Since this is the only thread that can modify ordsCache
+                    // and we just checked that the value doesn't exist above, we can simplify this to Add()
+                    // which also means we don't need conditional compilation because ConditionalWeakTable
+                    // doesn't support this[index].
+                    ordsCache.Add(cacheKey, ords);
+                }
+                return ords;
             }
-            finally
-            {
-                syncLock.ExitWriteLock();
-            }
-
-            return ords;
-#endif
         }
 
         public override string IndexFieldName => source.IndexFieldName;
@@ -211,12 +198,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public virtual long RamBytesUsed()
         {
-#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-            lock (ordsCacheLock)
-#else
-            syncLock.EnterReadLock();
-            try
-#endif
+            lock (syncLock)
             {
                 long bytes = 0;
                 foreach (var pair in ordsCache)
@@ -226,12 +208,6 @@ namespace Lucene.Net.Facet.Taxonomy
 
                 return bytes;
             }
-#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-            finally
-            {
-                syncLock.ExitReadLock();
-            }
-#endif
         }
     }
 }
