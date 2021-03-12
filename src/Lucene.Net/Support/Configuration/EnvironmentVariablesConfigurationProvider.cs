@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Concurrent;
@@ -66,6 +66,8 @@ namespace Lucene.Net.Configuration
         {
             value = Data.GetOrAdd(key, (name) =>
             {
+                // LUCENENET: There is a slight chance that two threads could load the
+                // same environment variable at the same time, but it shouldn't be too expensive. See #417.
                 if (ignoreSecurityExceptionsOnRead)
                 {
                     try
