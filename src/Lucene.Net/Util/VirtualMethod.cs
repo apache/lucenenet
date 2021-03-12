@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -136,7 +136,7 @@ namespace Lucene.Net.Util
             }
             catch (NotSupportedException nsme)
             {
-                throw new ArgumentException(baseClass.Name + " has no such method: " + nsme.Message);
+                throw new ArgumentException(baseClass.Name + " has no such method: " + nsme.Message, nsme);
             }
         }
 

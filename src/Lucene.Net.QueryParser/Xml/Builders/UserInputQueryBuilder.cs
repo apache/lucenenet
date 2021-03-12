@@ -82,7 +82,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             }
             catch (ParseException e1)
             {
-                throw new ParserException(e1.Message);
+                throw new ParserException(e1.Message, e1);
             }
         }
 

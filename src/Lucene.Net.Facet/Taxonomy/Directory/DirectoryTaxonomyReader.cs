@@ -455,9 +455,12 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     }
                     sb.Append(i + ": " + category.ToString() + "\n");
                 }
-                catch (IOException)
+                catch (IOException e)
                 {
-                    throw;
+                    // LUCENENET TODO: Should we use a 3rd party logging library?
+
+                    // LUCENENET specific - using System.Diagnostics.Trace rather than using a logging library as a workaround.
+                    System.Diagnostics.Trace.WriteLine(e.ToString(), "FINEST");
                 }
             }
             return sb.ToString();

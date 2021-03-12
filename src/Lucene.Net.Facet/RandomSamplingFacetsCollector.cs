@@ -258,9 +258,9 @@ namespace Lucene.Net.Facet
 
                 return new MatchingDocs(docs.Context, sampleDocs, docs.TotalHits, null);
             }
-            catch (IOException)
+            catch (IOException e)
             {
-                throw new Exception();
+                throw new Exception(e.ToString(), e);
             }
         }
 

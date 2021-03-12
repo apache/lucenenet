@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -224,7 +224,7 @@ namespace Lucene.Net.Index
                 catch (IOException e)
 #pragma warning restore 168
                 {
-                    throw new Exception();
+                    throw new Exception(e.ToString(), e);
                 }
                 return i;
             }

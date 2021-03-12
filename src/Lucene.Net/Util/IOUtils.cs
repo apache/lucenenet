@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -570,7 +570,7 @@ namespace Lucene.Net.Util
         //                {
         //                    if (retryCount == 5)
         //                    {
-        //                        throw;
+        //                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
         //                    }
         //#if FEATURE_THREAD_INTERRUPT
         //                    try

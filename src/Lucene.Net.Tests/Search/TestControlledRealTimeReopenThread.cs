@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Util;
@@ -542,7 +542,7 @@ namespace Lucene.Net.Search
 //                }
 //                catch (ThreadInterruptedException) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //                {
-//                    throw;
+//                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 //                }
 //#endif
             }

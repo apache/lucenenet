@@ -1,4 +1,4 @@
-using Lucene.Net.Store;
+﻿using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                 }
             }
             Assert.AreEqual(0, psdp.SnapshotCount);
