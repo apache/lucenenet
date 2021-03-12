@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using Lucene.Net.Analysis;
 using Lucene.Net.Diagnostics;
@@ -412,7 +412,7 @@ namespace Lucene.Net.Search
                         }
                         else
                         {
-                            nodeStats = outerInstance.collectionStatsCache[key];
+                            outerInstance.collectionStatsCache.TryGetValue(key, out nodeStats);
                         }
                         if (nodeStats == null)
                         {
