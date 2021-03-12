@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -89,9 +89,9 @@ namespace Lucene.Net.Store
                     c = Type.GetType("Lucene.Net.Store." + lockFactoryClassName);
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw new IOException("unable to find LockClass " + lockFactoryClassName);
+                throw new IOException("unable to find LockClass " + lockFactoryClassName, e);
             }
 
             LockFactory lockFactory;

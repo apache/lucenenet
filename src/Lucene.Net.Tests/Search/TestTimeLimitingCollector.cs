@@ -408,12 +408,12 @@ namespace Lucene.Net.Search
 //#if !FEATURE_THREAD_INTERRUPT
 //                    catch (Exception)
 //                    {
-//                        throw;
+//                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 //                    }
 //#else
 //                    catch (ThreadInterruptedException) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //                    {
-//                        throw;
+//                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 //                    }
 //#endif
                 }

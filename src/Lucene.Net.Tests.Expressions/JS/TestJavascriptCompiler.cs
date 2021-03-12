@@ -94,7 +94,7 @@ namespace Lucene.Net.Expressions.JS
             }
             catch (InvalidOperationException)
             {
-				// expected
+                // expected
             }
             try
             {
