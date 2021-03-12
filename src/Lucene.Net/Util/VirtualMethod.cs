@@ -147,7 +147,7 @@ namespace Lucene.Net.Util
         public int GetImplementationDistance(Type subclazz)
         {
             // LUCENENET: Replaced WeakIdentityMap with ConditionalWeakTable - This operation is simplified over Lucene.
-            return cache.GetValue(subclazz, (key) => Convert.ToInt32(ReflectImplementationDistance(key), CultureInfo.InvariantCulture));
+            return cache.GetValue(subclazz, (key) => ReflectImplementationDistance(key));
         }
 
         /// <summary>
