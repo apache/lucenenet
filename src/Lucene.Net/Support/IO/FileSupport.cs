@@ -1,4 +1,4 @@
-using Lucene.Net.Support.Text;
+﻿using Lucene.Net.Support.Text;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Concurrent;
@@ -360,6 +360,8 @@ namespace Lucene.Net.Support.IO
             newResult[newLength] = 0;
             //newResult = getCanonImpl(newResult);
             newLength = newResult.Length;
+            // LUCENENET: There is a small chance that two threads could load the same string
+            // simultaneously, but it shouldn't be too expensive.
             canonPath = fileCanonPathCache.GetOrAdd(
                 absPath,
                 k => Encoding.UTF8.GetString(newResult, 0, newLength).TrimEnd('\0')); // LUCENENET: Eliminate null terminator char
