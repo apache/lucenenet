@@ -315,6 +315,7 @@ namespace Lucene.Net.Util
         {
             return knownImplClasses.GetValue(clazz, (key) =>
             {
+                // we have the slight chance that another thread may do the same, but who cares?
                 LinkedList<WeakReference<Type>> foundInterfaces = new LinkedList<WeakReference<Type>>();
                 // find all interfaces that this attribute instance implements
                 // and that extend the Attribute interface
