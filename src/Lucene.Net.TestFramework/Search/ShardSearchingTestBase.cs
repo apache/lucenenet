@@ -416,7 +416,7 @@ namespace Lucene.Net.Search
                         }
                         if (nodeStats == null)
                         {
-                            Console.WriteLine("coll stats myNodeID=" + MyNodeID + ": " + outerInstance.collectionStatsCache.Keys);
+                            Console.WriteLine("coll stats myNodeID=" + MyNodeID + ": " + Collections.ToString(outerInstance.collectionStatsCache.Keys));
                         }
                         // Collection stats are pre-shared on reopen, so,
                         // we better not have a cache miss:
