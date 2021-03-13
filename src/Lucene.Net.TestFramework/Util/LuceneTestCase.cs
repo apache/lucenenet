@@ -3461,7 +3461,9 @@ namespace Lucene.Net.Util
         /// A queue of temporary resources to be removed after the
         /// suite completes. </summary>
         /// <seealso cref="RegisterToRemoveAfterSuite(FileSystemInfo)"/>
-        private static readonly ConcurrentQueue<string> cleanupQueue = new ConcurrentQueue<string>();
+        // LUCENENET specific - using a stack, since this is read in reverse order
+        private static readonly Stack<FileSystemInfo> cleanupQueue = new Stack<FileSystemInfo>();
+        private static readonly object cleanupQueueLock = new object();
 
         /// <summary>
         /// Register temporary folder for removal after the suite completes.
@@ -3475,8 +3477,10 @@ namespace Lucene.Net.Util
                 Console.Error.WriteLine("INFO: Will leave temporary file: " + f.FullName);
                 return;
             }
-
-            cleanupQueue.Enqueue(f.FullName);
+            lock (cleanupQueueLock)
+            {
+                cleanupQueue.Push(f);
+            }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -3488,43 +3492,52 @@ namespace Lucene.Net.Util
         private static void CleanupTemporaryFiles()
         {
             // Drain cleanup queue and clear it.
-            var tempDirBasePath = tempDirBase?.FullName;
-            tempDirBase = null;
+            FileSystemInfo[] everything;
+            string tempDirBasePath;
+
+            lock (cleanupQueueLock)
+            {
+                tempDirBasePath = tempDirBase?.FullName;
+                tempDirBase = null;
+
+                // LUCENENET: The stack order is alredy reversed, so no need to do that here as in Lucene
+                everything = cleanupQueue.ToArray();
+                cleanupQueue.Clear();
+            }
+
+            // LUCENENET specific - If the everything array is empty, there is no reason
+            // to continue.
+            if (everything.Length == 0)
+                return;
 
             // Only check and throw an IOException on un-removable files if the test
             // was successful. Otherwise just report the path of temporary files
             // and leave them there.
             if (LuceneTestCase.SuiteFailureMarker /*.WasSuccessful()*/)
             {
-                while (cleanupQueue.TryDequeue(out string f))
+                try
                 {
-                    try
-                    {
-                        if (System.IO.Directory.Exists(f))
-                            System.IO.Directory.Delete(f, true);
-                        else if (System.IO.File.Exists(f))
-                            File.Delete(f);
-                    }
-                    // LUCENENET specific: UnauthorizedAccessException doesn't subclass IOException as
-                    // AccessDeniedException does in Java, so we need a special case for it.
-                    catch (UnauthorizedAccessException e)
-                    {
-                        //                    Type suiteClass = RandomizedContext.Current.GetTargetType;
-                        //                    if (suiteClass.IsAnnotationPresent(typeof(SuppressTempFileChecks)))
-                        //                    {
-                        Console.Error.WriteLine("WARNING: Leftover undeleted temporary files " + e.Message);
-                        return;
-                        //                    }
-                    }
-                    catch (IOException e)
-                    {
-                        //                    Type suiteClass = RandomizedContext.Current.GetTargetType;
-                        //                    if (suiteClass.IsAnnotationPresent(typeof(SuppressTempFileChecks)))
-                        //                    {
-                        Console.Error.WriteLine("WARNING: Leftover undeleted temporary files " + e.Message);
-                        return;
-                        //                    }
-                    }
+                    TestUtil.Rm(everything);
+                }
+                // LUCENENET specific: UnauthorizedAccessException doesn't subclass IOException as
+                // AccessDeniedException does in Java, so we need a special case for it.
+                catch (UnauthorizedAccessException e)
+                {
+                    //                    Type suiteClass = RandomizedContext.Current.GetTargetType;
+                    //                    if (suiteClass.IsAnnotationPresent(typeof(SuppressTempFileChecks)))
+                    //                    {
+                    Console.Error.WriteLine("WARNING: Leftover undeleted temporary files " + e.Message);
+                    return;
+                    //                    }
+                }
+                catch (IOException e)
+                {
+                    //                    Type suiteClass = RandomizedContext.Current.GetTargetType;
+                    //                    if (suiteClass.IsAnnotationPresent(typeof(SuppressTempFileChecks)))
+                    //                    {
+                    Console.Error.WriteLine("WARNING: Leftover undeleted temporary files " + e.Message);
+                    return;
+                    //                    }
                 }
             }
             else

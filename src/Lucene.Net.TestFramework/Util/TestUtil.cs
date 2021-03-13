@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using J2N.IO;
 using J2N.Text;
 using Lucene.Net.Codecs;
@@ -62,7 +62,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <exception cref="IOException">If any of the given files (or their subhierarchy files in case
         /// of directories) cannot be removed.</exception>
-        public static void Rm(params DirectoryInfo[] locations)
+        public static void Rm(params FileSystemInfo[] locations)
         {
             ISet<FileSystemInfo> unremoved = Rm(new JCG.HashSet<FileSystemInfo>(), locations);
             if (unremoved.Count > 0)
@@ -78,16 +78,22 @@ namespace Lucene.Net.Util
             }
         }
 
-        private static ISet<FileSystemInfo> Rm(ISet<FileSystemInfo> unremoved, params DirectoryInfo[] locations)
+        private static ISet<FileSystemInfo> Rm(ISet<FileSystemInfo> unremoved, params FileSystemInfo[] locations)
         {
-            foreach (DirectoryInfo location in locations)
+            foreach (FileSystemInfo location in locations)
             {
+                // LUCENENET: Refresh the state of the FileSystemInfo object so we can be sure
+                // the Exists property is (somewhat) current.
+                location.Refresh();
+
                 if (location.Exists)
                 {
-                    // Try to delete all of the files in the directory
-                    Rm(unremoved, location.GetFiles());
+                    if (location is DirectoryInfo directory)
+                    {
+                        // Try to delete all of the files and folders in the directory
+                        Rm(unremoved, directory.GetFileSystemInfos());
+                    }
 
-                    //Delete will throw if not empty when deleted
                     try
                     {
                         location.Delete();
@@ -98,30 +104,6 @@ namespace Lucene.Net.Util
                     }
                 }
             }
-            return unremoved;
-        }
-
-        /// <summary>
-        /// LUCENENET specific overload, since files and directories are different entities in .NET
-        /// </summary>
-        private static ISet<FileSystemInfo> Rm(ISet<FileSystemInfo> unremoved, params FileInfo[] locations)
-        {
-            foreach (FileInfo file in locations)
-            {
-                if (file.Exists)
-                {
-                    try
-                    {
-                        file.Delete();
-                    }
-                    catch (Exception delFailed)
-                    {
-                        Console.WriteLine(delFailed.Message);
-                        unremoved.Add(file);
-                    }
-                }
-            }
-
             return unremoved;
         }
 
