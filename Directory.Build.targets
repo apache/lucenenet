@@ -20,10 +20,11 @@
 -->
 <Project>
 
-  <!-- Features in .NET Core 3.x and .NET 5 only -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netcoreapp')) Or '$(TargetFramework)' == 'net5.0' ">
+  <!-- Features in .NET Core 3.x and .NET 5.x only -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ARGITERATOR</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_DICTIONARY_REMOVE_CONTINUEENUMERATION</DefineConstants>
 
   </PropertyGroup>
   
