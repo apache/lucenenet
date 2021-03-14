@@ -2,10 +2,8 @@
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
@@ -297,7 +295,6 @@ namespace Lucene.Net.Search.Suggest
             tmpInput.SkipBytes(scratch.Length - 2); //skip to context set size
             ushort ctxSetSize = (ushort)tmpInput.ReadInt16();
             scratch.Length -= 2;
-
             var contextSet = new JCG.HashSet<BytesRef>();
             for (ushort i = 0; i < ctxSetSize; i++)
             {
@@ -311,13 +308,10 @@ namespace Lucene.Net.Search.Suggest
                 contextSet.Add(contextSpare);
                 scratch.Length -= curContextLength;
             }
-
-            // LUCENENET TODO: We are writing the data forward.
-            // Not sure exactly why, but when we read it back it
-            // is reversed. So, we need to fix that before returning the result.
-            // If the underlying problem is found and fixed, then this line can just be
-            // return contextSet;
-            return new JCG.HashSet<BytesRef>(contextSet.Reverse());
+            // LUCENENET NOTE: The result was at one point reversed because of test failures, but since we are
+            // using JCG.HashSet<T> now (whose Equals() implementation respects set equality),
+            // we have reverted back to the original implementation.
+            return contextSet;
         }
 
         /// <summary>
