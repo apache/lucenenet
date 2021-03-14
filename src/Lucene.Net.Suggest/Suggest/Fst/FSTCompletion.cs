@@ -100,9 +100,6 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <seealso cref="FSTCompletion(FST{object}, bool, bool)" />
         private readonly bool higherWeightsFirst;
 
-        // LUCENENET SPECIFIC: We need some thread safety to execute atomic list operations
-        private readonly object syncLock = new object();
-
         /// <summary>
         /// Constructs an FSTCompletion, specifying higherWeightsFirst and exactFirst. </summary>
         /// <param name="automaton">
@@ -146,13 +143,14 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             try
             {
-                List<FST.Arc<object>> rootArcs = new List<FST.Arc<object>>();
+                // LUCENENET specific: Using a stack rather than List, as we want the results in reverse
+                Stack<FST.Arc<object>> rootArcs = new Stack<FST.Arc<object>>();
                 FST.Arc<object> arc = automaton.GetFirstArc(new FST.Arc<object>());
                 FST.BytesReader fstReader = automaton.GetBytesReader();
                 automaton.ReadFirstTargetArc(arc, arc, fstReader);
                 while (true)
                 {
-                    rootArcs.Add((new FST.Arc<object>()).CopyFrom(arc));
+                    rootArcs.Push(new FST.Arc<object>().CopyFrom(arc));
                     if (arc.IsLast)
                     {
                         break;
@@ -161,7 +159,6 @@ namespace Lucene.Net.Search.Suggest.Fst
                 }
 
                 // we want highest weights first.
-                rootArcs.Reverse();
                 return rootArcs.ToArray();
             }
             catch (IOException e)
@@ -353,14 +350,11 @@ namespace Lucene.Net.Search.Suggest.Fst
                     // Key found. Unless already at i==0, remove it and push up front so
                     // that the ordering
                     // remains identical with the exception of the exact match.
-                    lock (syncLock)
+                    if (key.Equals(list[i].Utf8))
                     {
-                        if (key.Equals(list[i].Utf8))
-                        {
-                            var element = list[i];
-                            list.Remove(element);
-                            list.Insert(0, element);
-                        }
+                        var element = list[i];
+                        list.Remove(element);
+                        list.Insert(0, element);
                     }
                     return true;
                 }
