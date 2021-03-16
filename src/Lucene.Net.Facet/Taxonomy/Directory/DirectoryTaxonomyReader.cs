@@ -422,10 +422,24 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         public virtual void SetCacheSize(int size)
         {
             EnsureOpen();
-            // LUCENENET specific - removed locking here because these collections
-            // internally use Interlocked.Exchange
-            categoryCache.Limit = size;
-            ordinalCache.Limit = size;
+            categoryCacheLock.EnterWriteLock();
+            try
+            {
+                categoryCache.Limit = size;
+            }
+            finally
+            {
+                categoryCacheLock.ExitWriteLock();
+            }
+            ordinalCacheLock.EnterWriteLock();
+            try
+            {
+                ordinalCache.Limit = size;
+            }
+            finally
+            {
+                ordinalCacheLock.ExitWriteLock();
+            }
         }
 
         /// <summary>
