@@ -318,18 +318,9 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-//#if FEATURE_THREAD_INTERRUPT
-//                try
-//                {
-//#endif
-                    latch.Wait();
-//#if FEATURE_THREAD_INTERRUPT
-//                }
-//                catch (ThreadInterruptedException e) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-//                {
-//                    throw new ThreadInterruptedException("Thread Interrupted Exception", e);
-//                }
-//#endif
+
+                latch.Wait();
+                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
 
                 int i = 0;
                 while ((i = index.GetAndIncrement()) < ids.Length)

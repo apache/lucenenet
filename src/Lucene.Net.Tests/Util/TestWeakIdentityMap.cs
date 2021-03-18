@@ -1,4 +1,4 @@
-// LUCENENET specific - factored out this WeakIdentityMap<TKey, TValue> and replaced it with ConditionalWeakTable<TKey, TValue>.
+﻿// LUCENENET specific - factored out this WeakIdentityMap<TKey, TValue> and replaced it with ConditionalWeakTable<TKey, TValue>.
 // ConditionalWeakTable<TKey, TValue> is thread-safe and internally uses RuntimeHelpers.GetHashCode()
 // to lookup the key, so it can be used as a direct replacement for WeakIdentityMap<TKey, TValue>
 // in most cases.
@@ -140,10 +140,8 @@
 //            int size = map.Count;
 //            for (int i = 0; size > 0 && i < 10; i++)
 //            {
-//#if FEATURE_THREAD_INTERRUPT
 //                try
 //                {
-//#endif
 //                    GC.Collect();
 //                    int newSize = map.Count;
 //                    Assert.IsTrue(size >= newSize, "previousSize(" + size + ")>=newSize(" + newSize + ")");
@@ -159,14 +157,11 @@
 //                    Assert.IsTrue(size >= c, "previousSize(" + size + ")>=iteratorSize(" + c + ")");
 //                    Assert.IsTrue(c >= newSize, "iteratorSize(" + c + ")>=newSize(" + newSize + ")");
 //                    size = newSize;
-//#if FEATURE_THREAD_INTERRUPT
 //                }
-//#pragma warning disable 168
-//                catch (ThreadInterruptedException ie)
-//#pragma warning restore 168
+//                catch (ThreadInterruptedException)
 //                {
+//                      //LUCENENET NOTE:  If this class is ever uncommented and used, think through weather we really want to be swallowing the exception here.
 //                }
-//#endif
 //            }
 
 //            map.Clear();
@@ -255,10 +250,8 @@
 //            int size = map.Count;
 //            for (int i = 0; size > 0 && i < 10; i++)
 //            {
-//#if FEATURE_THREAD_INTERRUPT
 //                try
 //                {
-//#endif
 //                    GC.Collect();
 //                    int newSize = map.Count;
 //                    Assert.IsTrue(size >= newSize, "previousSize(" + size + ")>=newSize(" + newSize + ")");
@@ -274,14 +267,11 @@
 //                    Assert.IsTrue(size >= c, "previousSize(" + size + ")>=iteratorSize(" + c + ")");
 //                    Assert.IsTrue(c >= newSize, "iteratorSize(" + c + ")>=newSize(" + newSize + ")");
 //                    size = newSize;
-//#if FEATURE_THREAD_INTERRUPT
 //                }
-//#pragma warning disable 168
-//                catch (ThreadInterruptedException ie)
-//#pragma warning restore 168
+//                catch (ThreadInterruptedException)
 //                {
+//                      //LUCENENET NOTE:  If this class is ever uncommented and used, think through weather we really want to be swallowing the exception here.
 //                }
-//#endif
 //            }
 //        }
 

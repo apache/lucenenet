@@ -370,24 +370,15 @@ namespace Lucene.Net.Index
                 return;
             }
 
-//#if FEATURE_THREAD_INTERRUPT
-//            try
-//            {
-//#endif
-                // When an exception is hit during merge, IndexWriter
-                // removes any partial files and then allows another
-                // merge to run.  If whatever caused the error is not
-                // transient then the exception will keep happening,
-                // so, we sleep here to avoid saturating CPU in such
-                // cases:
-                Thread.Sleep(250);
-//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-//            }
-//            catch (ThreadInterruptedException ie)
-//            {
-//                throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-//            }
-//#endif
+            // When an exception is hit during merge, IndexWriter
+            // removes any partial files and then allows another
+            // merge to run.  If whatever caused the error is not
+            // transient then the exception will keep happening,
+            // so, we sleep here to avoid saturating CPU in such
+            // cases:
+            Thread.Sleep(250);
+            // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
+
             throw new MergePolicy.MergeException(exc, _directory);
         }
 

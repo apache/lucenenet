@@ -1335,7 +1335,6 @@ namespace Lucene.Net.Index
                             allowInterrupt = true;
                         }
                     }
-#if FEATURE_THREAD_INTERRUPT
                     catch (ThreadInterruptedException re)
                     {
                         // NOTE: important to leave this verbosity/noise
@@ -1356,7 +1355,6 @@ namespace Lucene.Net.Index
                             break;
                         }
                     }
-#endif
                     catch (Exception t)
                     {
                         Console.WriteLine("FAILED; unexpected exception");
@@ -1380,7 +1378,6 @@ namespace Lucene.Net.Index
                         {
                             w.Rollback();
                         }
-#if FEATURE_THREAD_INTERRUPT
                         // LUCENENET specific - there is a chance that our thread will be
                         // interrupted here, so we need to catch and ignore that exception
                         // when our MockDirectoryWrapper throws it.
@@ -1388,7 +1385,6 @@ namespace Lucene.Net.Index
                         {
                             // ignore
                         }
-#endif
                         catch (IOException ioe)
                         {
                             throw new Exception(ioe.ToString(), ioe);

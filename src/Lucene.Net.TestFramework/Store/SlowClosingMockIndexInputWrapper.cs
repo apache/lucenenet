@@ -1,4 +1,4 @@
-using System.Threading;
+﻿using System.Threading;
 
 namespace Lucene.Net.Store
 {
@@ -40,12 +40,7 @@ namespace Lucene.Net.Store
                 {
                     Thread.Sleep(50);
                 }
-//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-//                catch (ThreadInterruptedException ie)
-//                {
-//                    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-//                }
-//#endif
+                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
                 finally
                 {
                     base.Dispose(disposing);

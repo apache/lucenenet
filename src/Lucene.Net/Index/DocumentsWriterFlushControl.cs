@@ -1,4 +1,4 @@
-using J2N.Runtime.CompilerServices;
+﻿using J2N.Runtime.CompilerServices;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using System;
@@ -313,18 +313,8 @@ namespace Lucene.Net.Index
             {
                 while (flushingWriters.Count != 0)
                 {
-//#if FEATURE_THREAD_INTERRUPT
-//                    try
-//                    {
-//#endif
                     Monitor.Wait(this);
-//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-//                    }
-//                    catch (ThreadInterruptedException e)
-//                    {
-//                        throw new ThreadInterruptedException("Thread Interrupted Exception", e);
-//                    }
-//#endif
+                    // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
                 }
             }
         }

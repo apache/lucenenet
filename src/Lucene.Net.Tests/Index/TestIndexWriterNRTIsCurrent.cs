@@ -199,19 +199,15 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-#if FEATURE_THREAD_INTERRUPT
                 try
                 {
-#endif
                     latch.Wait();
-#if FEATURE_THREAD_INTERRUPT
                 }
                 catch (ThreadInterruptedException e)
                 {
                     failed = e;
                     return;
                 }
-#endif
                 DirectoryReader reader;
                 while ((reader = holder.reader) != null)
                 {

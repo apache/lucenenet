@@ -401,21 +401,8 @@ namespace Lucene.Net.Search
                 int docId = doc + docBase;
                 if (slowdown > 0)
                 {
-                    //try
-                    //{
                     ThreadJob.Sleep(slowdown);
-//                    }
-//#if !FEATURE_THREAD_INTERRUPT
-//                    catch (Exception)
-//                    {
-//                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
-//                    }
-//#else
-//                    catch (ThreadInterruptedException) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-//                    {
-//                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
-//                    }
-//#endif
+                    // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
                 }
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(docId >= 0," base={0} doc={1}", docBase, doc);
