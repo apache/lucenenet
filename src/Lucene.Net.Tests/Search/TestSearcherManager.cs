@@ -340,24 +340,18 @@ namespace Lucene.Net.Search
 
             public override IndexSearcher NewSearcher(IndexReader r)
             {
-#if FEATURE_THREAD_INTERRUPT
                 try
                 {
-#endif
                     if (triedReopen)
                     {
                         awaitEnterWarm.Signal();
                         awaitClose.Wait();
                     }
-#if FEATURE_THREAD_INTERRUPT
                 }
-#pragma warning disable 168
-                catch (ThreadInterruptedException e)
-#pragma warning restore 168
+                catch (ThreadInterruptedException)
                 {
                     //
                 }
-#endif
                 return new IndexSearcher(r, es);
             }
         }

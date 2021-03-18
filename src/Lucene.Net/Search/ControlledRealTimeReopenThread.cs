@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Support;
 using System;
 using System.IO;
@@ -136,18 +136,10 @@ namespace Lucene.Net.Search
             {
                 finish = true;
                 reopenCond.Set();
-                //#if FEATURE_THREAD_INTERRUPT
-                //            try
-                //            {
-                //#endif
+                
                 Join();
-                //#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-                //            }
-                //            catch (ThreadInterruptedException ie)
-                //            {
-                //                throw new ThreadInterruptedException(ie.ToString(), ie);
-                //            }
-                //#endif
+                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
+
                 // LUCENENET specific: dispose reset event
                 reopenCond.Dispose();
                 available.Dispose();
@@ -247,21 +239,15 @@ namespace Lucene.Net.Search
                 long sleepNS = nextReopenStartNS - Time.NanoTime();
 
                 if (sleepNS > 0)
-#if FEATURE_THREAD_INTERRUPT
                     try
                     {
-#endif
                         reopenCond.WaitOne(TimeSpan.FromMilliseconds(sleepNS / Time.MILLISECONDS_PER_NANOSECOND));//Convert NS to Ticks
-#if FEATURE_THREAD_INTERRUPT
                     }
-#pragma warning disable 168
-                    catch (ThreadInterruptedException ie)
-#pragma warning restore 168
+                    catch (ThreadInterruptedException)
                     {
                         Thread.CurrentThread.Interrupt();
                         return;
                     }
-#endif
 
                 if (finish)
                 {

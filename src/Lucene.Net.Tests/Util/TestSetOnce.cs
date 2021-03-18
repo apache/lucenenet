@@ -56,12 +56,10 @@ namespace Lucene.Net.Util
                     set.Set(new Integer(Convert.ToInt32(Name.Substring(2), CultureInfo.InvariantCulture)));
                     success = true;
                 }
-#if FEATURE_THREAD_INTERRUPT
                 catch (ThreadInterruptedException)
                 {
                     // ignore
                 }
-#endif
                 catch (Exception)
                 {
                     // TODO: change exception type

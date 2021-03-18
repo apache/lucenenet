@@ -494,19 +494,15 @@ namespace Lucene.Net.Search
 
             public override void Run()
             {
-#if FEATURE_THREAD_INTERRUPT
                 try
                 {
-#endif
                     thread.WaitForGeneration(lastGen);
-#if FEATURE_THREAD_INTERRUPT
                 }
                 catch (ThreadInterruptedException ie)
                 {
                     Thread.CurrentThread.Interrupt();
                     throw new Exception(ie.Message, ie);
                 }
-#endif
                 finished.Value = true;
             }
         }
@@ -529,22 +525,12 @@ namespace Lucene.Net.Search
             public override void UpdateDocument(Term term, IEnumerable<IIndexableField> doc, Analyzer analyzer)
             {
                 base.UpdateDocument(term, doc, analyzer);
-//#if FEATURE_THREAD_INTERRUPT
-//                try
-//                {
-//#endif
-                    if (waitAfterUpdate)
-                    {
-                        signal.Reset(signal.CurrentCount == 0 ? 0 : signal.CurrentCount - 1);
-                        latch.Wait();
-                    }
-//#if FEATURE_THREAD_INTERRUPT
-//                }
-//                catch (ThreadInterruptedException) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-//                {
-//                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
-//                }
-//#endif
+                if (waitAfterUpdate)
+                {
+                    signal.Reset(signal.CurrentCount == 0 ? 0 : signal.CurrentCount - 1);
+                    latch.Wait();
+                }
+                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
             }
         }
 

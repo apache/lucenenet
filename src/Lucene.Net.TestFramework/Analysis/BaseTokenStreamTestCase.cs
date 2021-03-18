@@ -795,20 +795,14 @@ namespace Lucene.Net.Analysis
                 startingGun.Signal();
                 foreach (var t in threads)
                 {
-#if FEATURE_THREAD_INTERRUPT
                     try
                     {
-#endif
                         t.Join();
-#if FEATURE_THREAD_INTERRUPT
                     }
-#pragma warning disable 168
-                    catch (ThreadInterruptedException e)
-#pragma warning restore 168
+                    catch (ThreadInterruptedException)
                     {
                         fail("Thread interrupted");
                     }
-#endif
                 }
 
                 //if (threads.Any(x => x.Failed))

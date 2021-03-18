@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 
@@ -136,18 +136,9 @@ namespace Lucene.Net.Store
                     throw e;
                 }
 
-//#if FEATURE_THREAD_INTERRUPT
-//                try
-//                {
-//#endif
-                    Thread.Sleep(TimeSpan.FromMilliseconds(LOCK_POLL_INTERVAL));
-//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-//                }
-//                catch (ThreadInterruptedException ie)
-//                {
-//                    throw new ThreadInterruptedException(ie.ToString(), ie);
-//                }
-//#endif
+                Thread.Sleep(TimeSpan.FromMilliseconds(LOCK_POLL_INTERVAL));
+                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
+
                 locked = Obtain();
             }
             return locked;
