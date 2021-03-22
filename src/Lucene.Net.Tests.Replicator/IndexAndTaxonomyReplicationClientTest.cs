@@ -138,8 +138,14 @@ namespace Lucene.Net.Replicator
             // introducing timeouts is not good, can easily lead to false positives.
             while (client.IsUpdateThreadAlive)
             {
-                Thread.Sleep(100);
-                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException.
+                try
+                {
+                    Thread.Sleep(100);
+                }
+                catch (Exception e) when (e.IsInterruptedException())
+                {
+                    throw new Util.ThreadInterruptedException(e);
+                }
 
                 try
                 {

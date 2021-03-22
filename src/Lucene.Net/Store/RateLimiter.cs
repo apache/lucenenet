@@ -120,8 +120,14 @@ namespace Lucene.Net.Store
                     var pauseNS = targetNS - curNS;
                     if (pauseNS > 0)
                     {
-                        Thread.Sleep(TimeSpan.FromMilliseconds(pauseNS / 1000000));
-                        // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
+                        try
+                        {
+                            Thread.Sleep(TimeSpan.FromMilliseconds(pauseNS / 1000000));
+                        }
+                        catch (Exception ie) when (ie.IsInterruptedException())
+                        {
+                            throw new Util.ThreadInterruptedException(ie);
+                        }
 
                         curNS = Time.NanoTime();
                         continue;

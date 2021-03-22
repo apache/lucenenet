@@ -350,8 +350,14 @@ namespace Lucene.Net.Index
                     else
                     {
                         // Wait until a thread state frees up:
-                        Monitor.Wait(this);
-                        // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
+                        try
+                        {
+                            Monitor.Wait(this);
+                        }
+                        catch (Exception ie) when (ie.IsInterruptedException())
+                        {
+                            throw new Util.ThreadInterruptedException(ie);
+                        }
                     }
                 }
             }

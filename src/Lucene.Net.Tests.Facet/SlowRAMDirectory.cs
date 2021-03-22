@@ -77,8 +77,14 @@ namespace Lucene.Net.Facet
                 sTime = random.Next(sTime);
             }
 
-            Thread.Sleep(sTime);
-            // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
+            try
+            {
+                Thread.Sleep(sTime);
+            }
+            catch (Exception ie) when (ie.IsInterruptedException())
+            {
+                throw new Util.ThreadInterruptedException(ie);
+            }
         }
 
         /// <summary>

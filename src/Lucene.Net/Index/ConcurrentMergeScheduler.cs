@@ -434,8 +434,14 @@ namespace Lucene.Net.Index
                         {
                             Message("    too many merges; stalling...");
                         }
-                        Monitor.Wait(this);
-                        // LUCENENET: Just let ThreadInterruptedException propagate. Note that it could be thrown above on lock (this).
+                        try
+                        {
+                            Monitor.Wait(this);
+                        }
+                        catch (Exception ie) when (ie.IsInterruptedException())
+                        {
+                            throw new Util.ThreadInterruptedException(ie);
+                        }
                     }
 
                     if (IsVerbose)
@@ -690,15 +696,21 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual void HandleMergeException(Exception exc)
         {
-            // When an exception is hit during merge, IndexWriter
-            // removes any partial files and then allows another
-            // merge to run.  If whatever caused the error is not
-            // transient then the exception will keep happening,
-            // so, we sleep here to avoid saturating CPU in such
-            // cases:
-            Thread.Sleep(250);
+            try
+            {
+                // When an exception is hit during merge, IndexWriter
+                // removes any partial files and then allows another
+                // merge to run.  If whatever caused the error is not
+                // transient then the exception will keep happening,
+                // so, we sleep here to avoid saturating CPU in such
+                // cases:
+                Thread.Sleep(250);
+            }
+            catch (Exception ie) when (ie.IsInterruptedException())
+            {
+                throw new Util.ThreadInterruptedException(ie);
+            }
             throw new MergePolicy.MergeException(exc, m_dir);
-            // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
         }
 
         private bool suppressExceptions;

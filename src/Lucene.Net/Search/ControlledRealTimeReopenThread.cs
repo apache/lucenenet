@@ -135,13 +135,21 @@ namespace Lucene.Net.Search
             {
                 finish = true;
                 reopenCond.Set();
-                
-                Join();
-                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
 
-                // LUCENENET specific: dispose reset event
-                reopenCond.Dispose();
-                available.Dispose();
+                try
+                {
+                    Join();
+                }
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    throw new Util.ThreadInterruptedException(ie);
+                }
+                finally
+                {
+                    // LUCENENET specific: dispose reset event
+                    reopenCond.Dispose();
+                    available.Dispose();
+                }
             }
         }
 

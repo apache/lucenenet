@@ -1316,7 +1316,7 @@ namespace Lucene.Net.Index
                             w.Dispose();
                             w = null;
                             //DirectoryReader.Open(dir).Dispose();
-                            using (var reader = DirectoryReader.Open(dir)) { }
+                            using var reader = DirectoryReader.Open(dir);
 
                             // Strangely, if we interrupt a thread before
                             // all classes are loaded, the class loader
@@ -1330,7 +1330,7 @@ namespace Lucene.Net.Index
                             allowInterrupt = true;
                         }
                     }
-                    catch (ThreadInterruptedException re) // LUCENENET: This was a custom wrapper type named ThreadInterruptedException in Lucene, so leaving the catch block as is
+                    catch (Util.ThreadInterruptedException re)
                     {
                         // NOTE: important to leave this verbosity/noise
                         // on!!  this test doesn't repro easily so when
@@ -1339,17 +1339,28 @@ namespace Lucene.Net.Index
                         Console.WriteLine("TEST: got interrupt");
                         Console.WriteLine(re.ToString());
 
-                        // LUCENENET NOTE: Since our original exception is ThreadInterruptException instead of InterruptException
-                        // in .NET, our expectation is typically that the InnerException is null (but it doesn't have to be).
-                        // So, this assertion is not needed in .NET. And if we get to this catch block, we already know we have
-                        // the right exception type, so there is nothing to test here.
-                        //Exception e = re.InnerException;
-                        //Assert.IsTrue(e is ThreadInterruptedException);
+                        Exception e = re.InnerException;
+                        Assert.IsTrue(e is System.Threading.ThreadInterruptedException);
                         if (finish)
                         {
                             break;
                         }
                     }
+                    //// LUCENENET specific:
+                    //catch (System.Threading.ThreadInterruptedException re)
+                    //{
+                    //    // NOTE: important to leave this verbosity/noise
+                    //    // on!!  this test doesn't repro easily so when
+                    //    // Jenkins hits a fail we need to study where the
+                    //    // interrupts struck!
+                    //    Console.WriteLine("TEST: got .NET interrupt");
+                    //    Console.WriteLine(re.ToString());
+
+                    //    if (finish)
+                    //    {
+                    //        break;
+                    //    }
+                    //}
                     catch (Exception t) when (t.IsThrowable())
                     {
                         Console.WriteLine("FAILED; unexpected exception");
@@ -1378,7 +1389,7 @@ namespace Lucene.Net.Index
                     {
                         Thread.Sleep(0);
                     }
-                    catch (ThreadInterruptedException)
+                    catch (Exception ie) when (ie.IsInterruptedException())
                     {
                         // ignore
                     }
@@ -1449,7 +1460,7 @@ namespace Lucene.Net.Index
             // up front... else we can see a false failure if 2nd
             // interrupt arrives while class loader is trying to
             // init this class (in servicing a first interrupt):
-            //Assert.IsTrue((new ThreadInterruptedException(new Exception("Thread interrupted"))).InnerException is ThreadInterruptedException);
+            Assert.IsTrue(new Util.ThreadInterruptedException(new System.Threading.ThreadInterruptedException()).InnerException is System.Threading.ThreadInterruptedException);
 
             // issue 300 interrupts to child thread
             int numInterrupts = AtLeast(300);
@@ -1494,8 +1505,7 @@ namespace Lucene.Net.Index
             // up front... else we can see a false failure if 2nd
             // interrupt arrives while class loader is trying to
             // init this class (in servicing a first interrupt):
-            // C# does not have the late load problem.
-            //Assert.IsTrue((new ThreadInterruptedException(new Exception("Thread interrupted"))).InnerException is ThreadInterruptedException);
+            Assert.IsTrue((new Util.ThreadInterruptedException(new System.Threading.ThreadInterruptedException())).InnerException is System.Threading.ThreadInterruptedException);
 
             // issue 300 interrupts to child thread
             int numInterrupts = AtLeast(300);
