@@ -309,12 +309,18 @@ namespace Lucene.Net.Index
 
         public void WaitForFlush()
         {
-             lock (this)
+            lock (this)
             {
                 while (flushingWriters.Count != 0)
                 {
-                    Monitor.Wait(this);
-                    // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
+                    try
+                    {
+                        Monitor.Wait(this);
+                    }
+                    catch (Exception ie) when (ie.IsInterruptedException())
+                    {
+                        throw new Util.ThreadInterruptedException(ie);
+                    }
                 }
             }
         }

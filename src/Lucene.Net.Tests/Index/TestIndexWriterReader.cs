@@ -508,11 +508,19 @@ namespace Lucene.Net.Index
             {
                 for (int i = 0; i < outerInstance.numThreads; i++)
                 {
-
-                    threads[i].Join();
-                    // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
+                    try
+                    {
+                        threads[i].Join();
+                    }
+                    catch (Exception ie) when (ie.IsInterruptedException())
+                    {
+#pragma warning disable IDE0001 // Simplify name
+                        throw new Util.ThreadInterruptedException(ie);
+#pragma warning restore IDE0001 // Simplify name
+                    }
                 }
             }
+
 
             internal virtual void Close(bool doWait)
             {

@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Search;
 using Lucene.Net.Support.Threading;
@@ -318,9 +318,14 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-
-                latch.Wait();
-                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
+                try
+                {
+                    latch.Wait();
+                }
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    throw new Util.ThreadInterruptedException(ie);
+                }
 
                 int i = 0;
                 while ((i = index.GetAndIncrement()) < ids.Length)

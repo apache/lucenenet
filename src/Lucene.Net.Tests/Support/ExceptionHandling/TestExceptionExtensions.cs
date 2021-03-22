@@ -318,7 +318,7 @@ namespace Lucene
                 typeof(Lucene.UnsupportedOperationException),
 
                 // Corresponds to Lucene's ThreadInterruptedException
-                typeof(ThreadInterruptedException),
+                typeof(Lucene.Net.Util.ThreadInterruptedException),
 
                 // Corresponds to SecurityException
                 typeof(SecurityException),

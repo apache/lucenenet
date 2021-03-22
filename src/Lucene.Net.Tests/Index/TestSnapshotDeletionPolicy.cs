@@ -226,9 +226,14 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    Thread.Sleep(1);
-                    // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
-
+                    try
+                    {
+                        Thread.Sleep(1);
+                    }
+                    catch (Exception ie) when (ie.IsInterruptedException())
+                    {
+                        throw new Util.ThreadInterruptedException(ie);
+                    }
                 } while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTime); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
         }

@@ -42,7 +42,7 @@ namespace Lucene.Net.Store
                 catch (Exception ignore) when (ignore.IsThrowable())
                 {
                 }
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                throw new Util.ThreadInterruptedException(ie);
             }
         }
     }

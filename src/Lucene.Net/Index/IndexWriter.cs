@@ -157,8 +157,8 @@ namespace Lucene.Net.Index
     /// <para><b>NOTE</b>: If you call
     /// <see cref="Thread.Interrupt()"/> on a thread that's within
     /// <see cref="IndexWriter"/>, <see cref="IndexWriter"/> will try to catch this (eg, if
-    /// it's in a Wait() or <see cref="Thread.Sleep(int)"/>), and will then throw
-    /// the unchecked exception <see cref="ThreadInterruptedException"/>
+    /// it's in a <see cref="Monitor.Wait(object)"/> or <see cref="Thread.Sleep(int)"/>), and will then throw
+    /// the unchecked exception <see cref="Util.ThreadInterruptedException"/>
     /// and <b>clear</b> the interrupt status on the thread.</para>
     /// </remarks>
 
@@ -1178,7 +1178,7 @@ namespace Lucene.Net.Index
                                 // any pending merges are waiting:
                                 mergeScheduler.Merge(this, MergeTrigger.CLOSING, false);
                             }
-                            catch (ThreadInterruptedException) // LUCENENET: In Lucene, they caught their custom ThreadInterruptedException here, so we are leaving this catch block as is
+                            catch (Util.ThreadInterruptedException)
                             {
                                 // ignore any interruption, does not matter
                                 interrupted = true;
@@ -1198,7 +1198,7 @@ namespace Lucene.Net.Index
                                     FinishMerges(waitForMerges && !interrupted);
                                     break;
                                 }
-                                catch (ThreadInterruptedException) // LUCENENET: In Lucene, they caught their custom ThreadInterruptedException here, so we are leaving this catch block as is
+                                catch (Util.ThreadInterruptedException)
                                 {
                                     // by setting the interrupted status, the
                                     // next call to finishMerges will pass false,
@@ -5329,9 +5329,14 @@ namespace Lucene.Net.Index
                 // fails to be called, we wait for at most 1 second
                 // and then return so caller can check if wait
                 // conditions are satisfied:
-
-                Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
-                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
+                try
+                {
+                    Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
+                }
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    throw new Util.ThreadInterruptedException(ie);
+                }
             }
         }
 

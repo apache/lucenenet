@@ -44,6 +44,8 @@ namespace Lucene.Net.Replicator
     /// </remarks>
     public class ReplicationClient : IDisposable
     {
+        // LUCENENET TODO: Check to ensure ThreadInterruptException is being passed from the background worker to the current thread, as it is required by IndexWriter
+
         //Note: LUCENENET specific, .NET does not work with Threads in the same way as Java does, so we mimic the same behavior using the ThreadPool instead.
         private class ReplicationThread
         {
@@ -430,7 +432,16 @@ namespace Lucene.Net.Replicator
             // otherwise, if it's in the middle of replication, we wait for it to
             // stop.
             if (updateThread != null)
-                updateThread.Stop();
+            {
+                try
+                {
+                    updateThread.Stop();
+                }
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    throw new Util.ThreadInterruptedException(ie);
+                }
+            }
             updateThread = null;
         }
 

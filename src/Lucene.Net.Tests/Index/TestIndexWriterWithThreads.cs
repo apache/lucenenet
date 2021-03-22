@@ -119,8 +119,14 @@ namespace Lucene.Net.Index
                         {
                             diskFull = true;
 
-                            Thread.Sleep(1);
-                            // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
+                            try
+                            {
+                                Thread.Sleep(1);
+                            }
+                            catch (Exception ie) when (ie.IsInterruptedException())
+                            {
+                                throw new Util.ThreadInterruptedException(ie);
+                            }
 
                             if (fullCount++ >= 5)
                             {
