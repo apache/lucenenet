@@ -6,6 +6,7 @@ using Lucene.Net.Spatial.Prefix.Tree;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -70,14 +71,21 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             //A Map view of Config that prefixes keys with "spatial."
             var configMap = new DictionaryAnonymousClass(config);
 
-            SpatialContext ctx = SpatialContextFactory.MakeSpatialContext(configMap /*, null*/); // LUCENENET TODO: What is this extra param?
+            // LUCENENET: The second argument was ClassLoader in Java, which should be made into
+            // Assembly in .NET. However, Spatial4n currently doesn't support it.
+            // In .NET it makes more logical sense to make 2 overloads and throw NullReferenceException
+            // if the second argument is null, anyway. So no need to change this once support has been added.
+            // See: https://github.com/NightOwl888/Spatial4n/issues/1
+            SpatialContext ctx = SpatialContextFactory.MakeSpatialContext(configMap /*, assembly: null*/);
 
             //Some day the strategy might be initialized with a factory but such a factory
             // is non-existent.
             return MakeSpatialStrategy(config, configMap, ctx);
         }
 
-        private class DictionaryAnonymousClass : Dictionary<string, string>
+        // LUCENENET specific: since this[string] is not virtual in .NET, this full implementation
+        // of IDictionary<string, string> is required to override methods to get a value by key
+        private class DictionaryAnonymousClass : IDictionary<string, string>
         {
             private readonly Config config;
             public DictionaryAnonymousClass(Config config)
@@ -85,16 +93,60 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 this.config = config;
             }
 
-            // LUCENENET TODO: EntrySet not supported. Should we throw on GetEnumerator()?
+            public string this[string key]
+            {
+                get => config.Get("spatial." + key, null);
+                set => throw new NotSupportedException();
+            }
 
-            new public string this[string key] => config.Get("spatial." + key, null);
+            public bool TryGetValue(string key, out string value)
+            {
+                value = config.Get("spatial." + key, null);
+                return value != null;
+            }
+
+            public bool ContainsKey(string key)
+            {
+                const string notSupported = "notsupported";
+                var value = config.Get("spatial." + key, notSupported);
+                return !value.Equals(notSupported, StringComparison.Ordinal);
+            }
+
+            #region IDictionary<string, string> members
+
+            ICollection<string> IDictionary<string, string>.Keys => throw new NotSupportedException();
+
+            ICollection<string> IDictionary<string, string>.Values => throw new NotSupportedException();
+
+            int ICollection<KeyValuePair<string, string>>.Count => throw new NotSupportedException();
+
+            public bool IsReadOnly => true;
+
+            void IDictionary<string, string>.Add(string key, string value) => throw new NotSupportedException();
+            void ICollection<KeyValuePair<string, string>>.Add(KeyValuePair<string, string> item) => throw new NotSupportedException();
+            void ICollection<KeyValuePair<string, string>>.Clear() => throw new NotSupportedException();
+            bool ICollection<KeyValuePair<string, string>>.Contains(KeyValuePair<string, string> item) => throw new NotSupportedException();
+            
+            void ICollection<KeyValuePair<string, string>>.CopyTo(KeyValuePair<string, string>[] array, int arrayIndex) => throw new NotSupportedException();
+            IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator() => throw new NotSupportedException();
+            bool IDictionary<string, string>.Remove(string key) => throw new NotSupportedException();
+            bool ICollection<KeyValuePair<string, string>>.Remove(KeyValuePair<string, string> item) => throw new NotSupportedException();
+            
+            IEnumerator IEnumerable.GetEnumerator() => throw new NotSupportedException();
+
+            #endregion IDictionary<string, string> members
         }
 
         protected virtual SpatialStrategy MakeSpatialStrategy(Config config, IDictionary<string, string> configMap,
                                                       SpatialContext ctx)
         {
             //A factory for the prefix tree grid
-            SpatialPrefixTree grid = SpatialPrefixTreeFactory.MakeSPT(configMap, /*null,*/ ctx); // LUCENENET TODO: What is this extra param?
+            // LUCENENET: The second argument was ClassLoader in Java, which should be made into
+            // Assembly in .NET. However, Spatial4n currently doesn't support it.
+            // In .NET it makes more logical sense to make 2 overloads and throw NullReferenceException
+            // if the second argument is null, anyway. So no need to change this once support has been added.
+            // See: https://github.com/NightOwl888/Spatial4n/issues/1
+            SpatialPrefixTree grid = SpatialPrefixTreeFactory.MakeSPT(configMap/*, assembly: null*/, ctx);
 
             RecursivePrefixTreeStrategy strategy = new RecursivePrefixTreeStrategyAnonymousClass(grid, SPATIAL_FIELD, config);
 

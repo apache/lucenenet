@@ -1,4 +1,5 @@
-﻿using System;
+// Lucene version compatibility level 4.8.1
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -65,10 +66,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified. 
     /// </summary>
 
-    public class TernaryTree
-#if FEATURE_CLONEABLE
-        : System.ICloneable
-#endif
+    public class TernaryTree // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         // We use 4 arrays to represent a node.I guess I should have created a proper
         // node class, but somehow Knuth's pascal code made me forget we now have a
@@ -557,10 +555,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             /// </summary>
             private string curkey;
 
-            private class Item
-#if FEATURE_CLONEABLE
-                : System.ICloneable
-#endif
+            private class Item // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
             {
                 internal char parent;
                 internal char child;

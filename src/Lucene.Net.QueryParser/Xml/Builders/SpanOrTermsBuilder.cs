@@ -63,11 +63,9 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                 soq.Boost = DOMUtils.GetAttribute(e, "boost", 1.0f);
                 return soq;
             }
-#pragma warning disable 168
             catch (IOException ioe)
-#pragma warning restore 168
             {
-                throw new ParserException("IOException parsing value:" + value);
+                throw new ParserException("IOException parsing value:" + value, ioe);
             }
             finally
             {

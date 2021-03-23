@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Util;
+﻿// Lucene version compatibility level 4.10.4
+using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using System;
 using System.IO;

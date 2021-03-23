@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -344,7 +344,7 @@ namespace Lucene.Net.Analysis
                 }
                 catch (IOException e)
                 {
-                    throw (Exception)e;
+                    throw new Exception(e.ToString(), e);
                 }
             }
         }

@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
@@ -413,7 +413,7 @@ namespace Lucene.Net.Analysis
                 //ts.Reset();
                 ts.ClearAttributes();
                 ts.End();
-                throw;
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
             finally
             {
@@ -722,7 +722,7 @@ namespace Lucene.Net.Analysis
                 catch (Exception e)
                 {
                     //Console.WriteLine("Exception in Thread: " + e);
-                    //throw;
+                    //throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     // LUCENENET: Throwing an exception on another thread
                     // is pointless, so we set it to a variable so we can read
                     // it from our main thread (for debugging).
@@ -795,20 +795,14 @@ namespace Lucene.Net.Analysis
                 startingGun.Signal();
                 foreach (var t in threads)
                 {
-#if FEATURE_THREAD_INTERRUPT
                     try
                     {
-#endif
                         t.Join();
-#if FEATURE_THREAD_INTERRUPT
                     }
-#pragma warning disable 168
-                    catch (ThreadInterruptedException e)
-#pragma warning restore 168
+                    catch (ThreadInterruptedException)
                     {
                         fail("Thread interrupted");
                     }
-#endif
                 }
 
                 //if (threads.Any(x => x.Failed))
@@ -958,7 +952,7 @@ namespace Lucene.Net.Analysis
                         // TODO: really we should pass a random seed to
                         // checkAnalysisConsistency then print it here too:
                         Console.Error.WriteLine("TEST FAIL: useCharFilter=" + useCharFilter + " text='" + Escape(text) + "'");
-                        throw;
+                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
                 }
             }

@@ -348,12 +348,14 @@ namespace Lucene.Net.Join
             }
             Arrays.Fill(joinScorers, null);
 
-            var queue2 = new ConcurrentQueue<Scorer>();
+            var queue = new Queue<Scorer>();
             //System.out.println("\nqueue: add top scorer=" + value);
-            queue2.Enqueue(scorer);
-
-            while (queue2.TryDequeue(out scorer))
+            queue.Enqueue(scorer);
+            while (queue.Count > 0)
             {
+                // LUCENENET NOTE: This reuses the scorer argument variable, which
+                // differs from this.scorer.
+                scorer = queue.Dequeue();
                 //System.out.println("  poll: " + value + "; " + value.getWeight().getQuery());
                 if (scorer is ToParentBlockJoinQuery.BlockJoinScorer blockJoinScorer)
                 {
@@ -363,7 +365,7 @@ namespace Lucene.Net.Join
                 foreach (Scorer.ChildScorer sub in scorer.GetChildren())
                 {
                     //System.out.println("  add sub: " + sub.child + "; " + sub.child.getWeight().getQuery());
-                    queue2.Enqueue(sub.Child);
+                    queue.Enqueue(sub.Child);
                 }
             }
         }

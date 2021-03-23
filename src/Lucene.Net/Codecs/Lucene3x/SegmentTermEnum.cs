@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -32,10 +32,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// @lucene.experimental
     /// </summary>
     [Obsolete("(4.0) No longer used with flex indexing, except for reading old segments")]
-    internal sealed class SegmentTermEnum : IDisposable
-#if FEATURE_CLONEABLE
-        , System.ICloneable
-#endif
+    internal sealed class SegmentTermEnum : IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         private IndexInput input;
         internal FieldInfos fieldInfos;

@@ -1,25 +1,6 @@
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
-
+﻿// Lucene version compatibility level 4.8.1
 using System;
+using System.Globalization;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -31,6 +12,23 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Tests.Queries.Function
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     /// <summary>
     /// Test that functionquery's getSortField() actually works.
     /// </summary>
@@ -52,7 +50,7 @@ namespace Lucene.Net.Tests.Queries.Function
             const int NUM_VALS = 5;
             for (int val = NUM_VALS; val > 0; val--)
             {
-                field.SetStringValue(Convert.ToString(val));
+                field.SetStringValue(Convert.ToString(val, CultureInfo.InvariantCulture));
                 writer.AddDocument(doc);
             }
 
@@ -91,7 +89,7 @@ namespace Lucene.Net.Tests.Queries.Function
             int afterValue = (int)((double?)afterHit.Fields[0]);
             foreach (ScoreDoc hit in hits.ScoreDocs)
             {
-                int val = Convert.ToInt32(reader.Document(hit.Doc).Get("value"));
+                int val = Convert.ToInt32(reader.Document(hit.Doc).Get("value"), CultureInfo.InvariantCulture);
                 assertTrue(afterValue <= val);
                 assertFalse(hit.Doc == afterHit.Doc);
             }

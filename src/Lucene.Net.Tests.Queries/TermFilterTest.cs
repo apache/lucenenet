@@ -1,24 +1,4 @@
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
-
+﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Documents;
@@ -32,6 +12,23 @@ using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Tests.Queries
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     public class TermFilterTest : LuceneTestCase
     {
         [Test]
@@ -62,15 +59,19 @@ namespace Lucene.Net.Tests.Queries
             assertTrue(reader.Context is AtomicReaderContext);
             var context = (AtomicReaderContext)reader.Context;
             w.Dispose();
+
             DocIdSet idSet = TermFilter(fieldName, @"value1").GetDocIdSet(context, context.AtomicReader.LiveDocs);
             assertNotNull(@"must not be null", idSet);
             DocIdSetIterator iter = idSet.GetIterator();
             assertEquals(iter.NextDoc(), 0);
             assertEquals(iter.NextDoc(), DocIdSetIterator.NO_MORE_DOCS);
+
             idSet = TermFilter(fieldName, @"value2").GetDocIdSet(context, context.AtomicReader.LiveDocs);
             assertNull(@"must be null", idSet);
+
             idSet = TermFilter(@"field2", @"value1").GetDocIdSet(context, context.AtomicReader.LiveDocs);
             assertNull(@"must be null", idSet);
+
             reader.Dispose();
             rd.Dispose();
         }
@@ -98,12 +99,15 @@ namespace Lucene.Net.Tests.Queries
 
             IndexReader reader = w.GetReader();
             w.Dispose();
+
             IndexSearcher searcher = NewSearcher(reader);
+
             int numQueries = AtLeast(10);
             for (int i = 0; i < numQueries; i++)
             {
                 Term term = terms[Random.nextInt(num)];
                 TopDocs queryResult = searcher.Search(new TermQuery(term), reader.MaxDoc);
+
                 MatchAllDocsQuery matchAll = new MatchAllDocsQuery();
                 TermFilter filter = TermFilter(term);
                 TopDocs filterResult = searcher.Search(matchAll, filter, reader.MaxDoc);
@@ -128,16 +132,13 @@ namespace Lucene.Net.Tests.Queries
                 string field1 = @"field" + i;
                 string field2 = @"field" + i + num;
                 string value1 = TestUtil.RandomRealisticUnicodeString(Random);
-                string value2 = value1 + @"x";
+                string value2 = value1 + @"x"; // this must be not equal to value1
+
                 TermFilter filter1 = TermFilter(field1, value1);
                 TermFilter filter2 = TermFilter(field1, value2);
                 TermFilter filter3 = TermFilter(field2, value1);
                 TermFilter filter4 = TermFilter(field2, value2);
-                var filters = new TermFilter[]
-                {
-                    filter1, filter2, filter3, filter4
-                };
-
+                var filters = new TermFilter[] { filter1, filter2, filter3, filter4 };
                 for (int j = 0; j < filters.Length; j++)
                 {
                     TermFilter termFilter = filters[j];

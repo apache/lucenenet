@@ -75,18 +75,9 @@ namespace Lucene.Net.Facet
             {
                 sTime = random.Next(sTime);
             }
-//#if FEATURE_THREAD_INTERRUPT
-//            try
-//            {
-//#endif
-                Thread.Sleep(sTime);
-//#if FEATURE_THREAD_INTERRUPT
-//            }
-//            catch (ThreadInterruptedException e) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-//            {
-//                throw new ThreadInterruptedException("Thread Interrupted Exception", e);
-//            }
-//#endif
+
+            Thread.Sleep(sTime);
+            // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
         }
 
         /// <summary>

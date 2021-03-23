@@ -1,24 +1,4 @@
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
-
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Text;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
@@ -27,6 +7,23 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Tests.Queries.Function
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     /// <summary>
     /// Test FieldScoreQuery search.
     /// <p>
@@ -119,10 +116,8 @@ namespace Lucene.Net.Tests.Queries.Function
 
         /// <summary>
         /// Test that FieldScoreQuery of Type.BYTE returns the expected scores. </summary>
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testExactScoreByte() throws Exception
-        //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-        public virtual void testExactScoreByte()
+        [Test]
+        public virtual void TestExactScoreByte()
         {
             // INT field values are small enough to be parsed as byte
             doTestExactScore(BYTE_VALUESOURCE);
@@ -130,10 +125,8 @@ namespace Lucene.Net.Tests.Queries.Function
 
         /// <summary>
         /// Test that FieldScoreQuery of Type.SHORT returns the expected scores. </summary>
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testExactScoreShort() throws Exception
-        //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-        public virtual void testExactScoreShort()
+        [Test]
+        public virtual void TestExactScoreShort()
         {
             // INT field values are small enough to be parsed as short
             doTestExactScore(SHORT_VALUESOURCE);
@@ -141,20 +134,16 @@ namespace Lucene.Net.Tests.Queries.Function
 
         /// <summary>
         /// Test that FieldScoreQuery of Type.INT returns the expected scores. </summary>
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testExactScoreInt() throws Exception
-        //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-        public virtual void testExactScoreInt()
+        [Test]
+        public virtual void TestExactScoreInt()
         {
             doTestExactScore(INT_VALUESOURCE);
         }
 
         /// <summary>
         /// Test that FieldScoreQuery of Type.FLOAT returns the expected scores. </summary>
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testExactScoreFloat() throws Exception
-        //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-        public virtual void testExactScoreFloat()
+        [Test]
+        public virtual void TestExactScoreFloat()
         {
             // INT field can be parsed as float
             doTestExactScore(INT_AS_FLOAT_VALUESOURCE);
@@ -163,8 +152,6 @@ namespace Lucene.Net.Tests.Queries.Function
         }
 
         // Test that FieldScoreQuery returns docs with expected score.
-        //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-        //ORIGINAL LINE: private void doTestExactScore(ValueSource valueSource) throws Exception
         private void doTestExactScore(ValueSource valueSource)
         {
             FunctionQuery functionQuery = new FunctionQuery(valueSource);
@@ -183,6 +170,5 @@ namespace Lucene.Net.Tests.Queries.Function
             }
             r.Dispose();
         }
-
     }
 }

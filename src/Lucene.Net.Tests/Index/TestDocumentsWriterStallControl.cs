@@ -267,12 +267,9 @@ namespace Lucene.Net.Index
                         ctrl.WaitIfStalled();
                         if (checkPoint)
                         {
-#if FEATURE_THREAD_INTERRUPT
                             try
                             {
-#endif
                                 Assert.IsTrue(sync.await());
-#if FEATURE_THREAD_INTERRUPT
                             }
                             catch (ThreadInterruptedException /*e*/)
                             {
@@ -280,7 +277,6 @@ namespace Lucene.Net.Index
                                 //throw new ThreadInterruptedException("Thread Interrupted Exception", e);
                                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
-#endif
                         }
                     }
                 }
@@ -331,14 +327,12 @@ namespace Lucene.Net.Index
                             {
                                 Assert.IsTrue(sync.await());
                             }
-#if FEATURE_THREAD_INTERRUPT
                             catch (ThreadInterruptedException /*e*/)
                             {
                                 Console.WriteLine("[Updater] got interrupted - wait count: " + sync.waiter.CurrentCount);
                                 //throw new ThreadInterruptedException("Thread Interrupted Exception", e);
                                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
-#endif
                             catch (Exception e)
                             {
                                 Console.Write("signal failed with : " + e);

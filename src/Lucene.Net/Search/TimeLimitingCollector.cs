@@ -303,18 +303,9 @@ namespace Lucene.Net.Search
                 {
                     // TODO: Use System.nanoTime() when Lucene moves to Java SE 5.
                     counter.AddAndGet(resolution);
-//#if FEATURE_THREAD_INTERRUPT
-//                    try
-//                    {
-//#endif
-                        Thread.Sleep(TimeSpan.FromMilliseconds(Interlocked.Read(ref resolution)));
-//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-//                    }
-//                    catch (ThreadInterruptedException ie)
-//                    {
-//                        throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-//                    }
-//#endif
+
+                    Thread.Sleep(TimeSpan.FromMilliseconds(Interlocked.Read(ref resolution)));
+                    // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
                 }
             }
 

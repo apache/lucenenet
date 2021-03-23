@@ -507,7 +507,7 @@ namespace Lucene.Net.Store
         //                }
         //                //catch (IOException e)
         //                //{
-        //                //    throw;
+        //                //    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
         //                //}
         //                finally
         //                {
@@ -567,7 +567,7 @@ namespace Lucene.Net.Store
         //                catch (IOException e)
         //                {
         //                    //throw new UncheckedIOException(e);
-        //                    throw;
+        //                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
         //                }
         //            }
         //        }

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Synonym;
+// Lucene version compatibility level 4.8.1
+using Lucene.Net.Analysis.Synonym;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;

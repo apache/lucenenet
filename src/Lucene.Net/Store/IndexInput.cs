@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Store
 {
@@ -34,10 +34,7 @@ namespace Lucene.Net.Store
     /// <see cref="ObjectDisposedException"/> when the original one is closed.
     /// </summary>
     /// <seealso cref="Directory"/>
-    public abstract class IndexInput : DataInput, IDisposable
-#if FEATURE_CLONEABLE
-        , System.ICloneable
-#endif
+    public abstract class IndexInput : DataInput, IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         private readonly string resourceDescription;
 

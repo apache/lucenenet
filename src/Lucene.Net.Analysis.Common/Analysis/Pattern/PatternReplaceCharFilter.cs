@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.CharFilters;
+// Lucene version compatibility level 4.8.1
+using Lucene.Net.Analysis.CharFilters;
 using System;
 using System.IO;
 using System.Text;

@@ -167,7 +167,7 @@ namespace Lucene.Net.Replicator.Http
                 response.EnsureSuccessStatusCode();
                 //Note: This is unreachable, but the compiler and resharper cant see that EnsureSuccessStatusCode always
                 //      throws an exception in this scenario. So it complains later on in the method.
-                throw;
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
 
             Exception exception;

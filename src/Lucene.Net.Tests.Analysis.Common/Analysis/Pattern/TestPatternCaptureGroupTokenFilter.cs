@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+// Lucene version compatibility level 4.8.1
+using NUnit.Framework;
 using System.IO;
 using System.Text.RegularExpressions;
 

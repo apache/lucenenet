@@ -1,4 +1,5 @@
-﻿using J2N.Text;
+﻿// Lucene version compatibility level 4.10.4
+using J2N.Text;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;

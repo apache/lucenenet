@@ -1,24 +1,4 @@
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
-
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Text;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
@@ -29,6 +9,23 @@ using System;
 
 namespace Lucene.Net.Tests.Queries.Function
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     /// <summary>
     /// Test search based on OrdFieldSource and ReverseOrdFieldSource.
     /// <p/>
@@ -95,7 +92,9 @@ namespace Lucene.Net.Tests.Queries.Function
                 Random, q, s);
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
             assertEquals("All docs should be matched!", N_DOCS, h.Length);
-            string prevID = inOrder ? "IE" : "IC"; // smaller than all ids of docs in this test ("ID0001", etc.) -  greater than all ids of docs in this test ("ID0001", etc.)
+            string prevID = inOrder
+                ? "IE"  // greater than all ids of docs in this test ("ID0001", etc.)
+                : "IC"; // smaller than all ids of docs in this test ("ID0001", etc.)
 
             for (int i = 0; i < h.Length; i++)
             {
@@ -164,7 +163,9 @@ namespace Lucene.Net.Tests.Queries.Function
                 Log(s.Explain(q, sd[i].Doc));
                 float expectedScore = N_DOCS - i - 1;
                 assertEquals("score of result " + i + " shuould be " + expectedScore + " != " + score, expectedScore, score, TEST_SCORE_TOLERANCE_DELTA);
-                string expectedId = inOrder ? Id2String(N_DOCS - i) : Id2String(i + 1); // reverse  ==> smaller values first -  in-order ==> larger  values first
+                string expectedId = inOrder
+                    ? Id2String(N_DOCS - i) // in-order ==> larger  values first
+                    : Id2String(i + 1);     // reverse  ==> smaller values first
                 assertTrue("id of result " + i + " shuould be " + expectedId + " != " + score, expectedId.Equals(id, StringComparison.Ordinal));
             }
             r.Dispose();

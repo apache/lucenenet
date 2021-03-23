@@ -1,7 +1,8 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Spatial.Util
@@ -39,8 +40,10 @@ namespace Lucene.Net.Spatial.Util
     {
         //private Logger log = Logger.GetLogger(GetType().FullName);
 
-        private readonly ConditionalWeakTable<IndexReader, ShapeFieldCache<T>> sidx =
-            new ConditionalWeakTable<IndexReader, ShapeFieldCache<T>>();
+        // LUCENENET specific - use Lazy<T> to ensure only 1 thread can call the createValueCallback at a time,
+        // since the default behavior is not atomic. See https://github.com/apache/lucenenet/issues/417.
+        private readonly ConditionalWeakTable<IndexReader, Lazy<ShapeFieldCache<T>>> sidx =
+            new ConditionalWeakTable<IndexReader, Lazy<ShapeFieldCache<T>>>();
 
         protected internal readonly int m_defaultSize;
         protected internal readonly string m_shapeField;
@@ -56,8 +59,9 @@ namespace Lucene.Net.Spatial.Util
 
         public virtual ShapeFieldCache<T> GetCache(AtomicReader reader)
         {
-            // LUCENENET: ConditionalWeakTable allows us to simplify and remove locks
-            return sidx.GetValue(reader, (key) =>
+            // LUCENENET: ConditionalWeakTable allows us to simplify and remove locks on the
+            // read operation. For the create case, we use Lazy<T> to ensure atomicity.
+            return sidx.GetValue(reader, (key) => new Lazy<ShapeFieldCache<T>>(() =>
             {
                 /*long startTime = Runtime.CurrentTimeMillis();
                 log.Fine("Building Cache [" + reader.MaxDoc() + "]");*/
@@ -88,7 +92,7 @@ namespace Lucene.Net.Spatial.Util
                 /*long elapsed = Runtime.CurrentTimeMillis() - startTime;
                 log.Fine("Cached: [" + count + " in " + elapsed + "ms] " + idx);*/
                 return idx;
-            });
+            })).Value;
         }
     }
 }

@@ -7,7 +7,6 @@ using opennlp.tools.postag;
 using opennlp.tools.sentdetect;
 using opennlp.tools.tokenize;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -37,13 +36,13 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
     /// </summary>
     public static class OpenNLPOpsFactory // LUCENENET: Made static because all members are static
     {
-        private static readonly IDictionary<string, SentenceModel> sentenceModels = new ConcurrentDictionary<string, SentenceModel>();
+        private static readonly ConcurrentDictionary<string, SentenceModel> sentenceModels = new ConcurrentDictionary<string, SentenceModel>();
         private static readonly ConcurrentDictionary<string, TokenizerModel> tokenizerModels = new ConcurrentDictionary<string, TokenizerModel>();
         private static readonly ConcurrentDictionary<string, POSModel> posTaggerModels = new ConcurrentDictionary<string, POSModel>();
         private static readonly ConcurrentDictionary<string, ChunkerModel> chunkerModels = new ConcurrentDictionary<string, ChunkerModel>();
-        private static readonly IDictionary<string, TokenNameFinderModel> nerModels = new ConcurrentDictionary<string, TokenNameFinderModel>();
-        private static readonly IDictionary<string, LemmatizerModel> lemmatizerModels = new ConcurrentDictionary<string, LemmatizerModel>();
-        private static readonly IDictionary<string, string> lemmaDictionaries = new ConcurrentDictionary<string, string>();
+        private static readonly ConcurrentDictionary<string, TokenNameFinderModel> nerModels = new ConcurrentDictionary<string, TokenNameFinderModel>();
+        private static readonly ConcurrentDictionary<string, LemmatizerModel> lemmatizerModels = new ConcurrentDictionary<string, LemmatizerModel>();
+        private static readonly ConcurrentDictionary<string, string> lemmaDictionaries = new ConcurrentDictionary<string, string>();
 
         public static NLPSentenceDetectorOp GetSentenceDetector(string modelName)
         {
@@ -60,15 +59,12 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public static SentenceModel GetSentenceModel(string modelName, IResourceLoader loader)
         {
-            if (!sentenceModels.TryGetValue(modelName, out SentenceModel model) || model == null)
+            // LUCENENET: Two competing threads in the add operation is okay as per the original implementation
+            return sentenceModels.GetOrAdd(modelName, (modelName) =>
             {
-                using (Stream resource = loader.OpenResource(modelName))
-                {
-                    model = new SentenceModel(new ikvm.io.InputStreamWrapper(resource));
-                }
-                sentenceModels[modelName] = model;
-            }
-            return model;
+                using Stream resource = loader.OpenResource(modelName);
+                return new SentenceModel(new ikvm.io.InputStreamWrapper(resource));
+            });
         }
 
         public static NLPTokenizerOp GetTokenizer(string modelName)
@@ -86,15 +82,12 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public static TokenizerModel GetTokenizerModel(string modelName, IResourceLoader loader)
         {
-            if (!tokenizerModels.TryGetValue(modelName, out TokenizerModel model) || model == null)
+            // LUCENENET: Two competing threads in the add operation is okay as per the original implementation
+            return tokenizerModels.GetOrAdd(modelName, (modelName) =>
             {
-                using (Stream resource = loader.OpenResource(modelName))
-                {
-                    model = new TokenizerModel(new ikvm.io.InputStreamWrapper(resource));
-                }
-                tokenizerModels[modelName] = model;
-            }
-            return model;
+                using Stream resource = loader.OpenResource(modelName);
+                return new TokenizerModel(new ikvm.io.InputStreamWrapper(resource));
+            });
         }
 
         public static NLPPOSTaggerOp GetPOSTagger(string modelName)
@@ -105,15 +98,12 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public static POSModel GetPOSTaggerModel(string modelName, IResourceLoader loader)
         {
-            if (!posTaggerModels.TryGetValue(modelName, out POSModel model) || model == null)
+            // LUCENENET: Two competing threads in the add operation is okay as per the original implementation
+            return posTaggerModels.GetOrAdd(modelName, (modelName) =>
             {
-                using (Stream resource = loader.OpenResource(modelName))
-                {
-                    model = new POSModel(new ikvm.io.InputStreamWrapper(resource));
-                }
-                posTaggerModels[modelName] = model;
-            }
-            return model;
+                using Stream resource = loader.OpenResource(modelName);
+                return new POSModel(new ikvm.io.InputStreamWrapper(resource));
+            });
         }
 
         public static NLPChunkerOp GetChunker(string modelName)
@@ -124,15 +114,12 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public static ChunkerModel GetChunkerModel(string modelName, IResourceLoader loader)
         {
-            if (!chunkerModels.TryGetValue(modelName, out ChunkerModel model) || model == null)
+            // LUCENENET: Two competing threads in the add operation is okay as per the original implementation
+            return chunkerModels.GetOrAdd(modelName, (modelName) =>
             {
-                using (Stream resource = loader.OpenResource(modelName))
-                {
-                    model = new ChunkerModel(new ikvm.io.InputStreamWrapper(resource));
-                }
-                chunkerModels[modelName] = model;
-            }
-            return model;
+                using Stream resource = loader.OpenResource(modelName);
+                return new ChunkerModel(new ikvm.io.InputStreamWrapper(resource));
+            });
         }
 
         public static NLPNERTaggerOp GetNERTagger(string modelName)
@@ -143,15 +130,12 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public static TokenNameFinderModel GetNERTaggerModel(string modelName, IResourceLoader loader)
         {
-            if (!nerModels.TryGetValue(modelName, out TokenNameFinderModel model) || model == null)
+            // LUCENENET: Two competing threads in the add operation is okay as per the original implementation
+            return nerModels.GetOrAdd(modelName, (modelName) =>
             {
-                using (Stream resource = loader.OpenResource(modelName))
-                {
-                    model = new TokenNameFinderModel(new ikvm.io.InputStreamWrapper(resource));
-                }
-                nerModels[modelName] = model;
-            }
-            return model;
+                using Stream resource = loader.OpenResource(modelName);
+                return new TokenNameFinderModel(new ikvm.io.InputStreamWrapper(resource));
+            });
         }
 
         public static NLPLemmatizerOp GetLemmatizer(string dictionaryFile, string lemmatizerModelFile)
@@ -169,7 +153,8 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public static string GetLemmatizerDictionary(string dictionaryFile, IResourceLoader loader)
         {
-            if (!lemmaDictionaries.TryGetValue(dictionaryFile, out string dictionary) || dictionary == null)
+            // LUCENENET: Two competing threads in the add operation is okay as per the original implementation
+            return lemmaDictionaries.GetOrAdd(dictionaryFile, (dictionaryFile) =>
             {
                 using TextReader reader = new StreamReader(loader.OpenResource(dictionaryFile), Encoding.UTF8);
                 StringBuilder builder = new StringBuilder();
@@ -183,23 +168,18 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
                         builder.Append(chars, 0, numRead);
                     }
                 } while (numRead > 0);
-                dictionary = builder.ToString();
-                lemmaDictionaries[dictionaryFile] = dictionary;
-            }
-            return dictionary;
+                return builder.ToString();
+            });
         }
 
         public static LemmatizerModel GetLemmatizerModel(string modelName, IResourceLoader loader)
         {
-            if (!lemmatizerModels.TryGetValue(modelName, out LemmatizerModel model) || model == null)
+            // LUCENENET: Two competing threads in the add operation is okay as per the original implementation
+            return lemmatizerModels.GetOrAdd(modelName, (modelName) =>
             {
-                using (Stream resource = loader.OpenResource(modelName))
-                {
-                    model = new LemmatizerModel(new ikvm.io.InputStreamWrapper(resource));
-                }
-                lemmatizerModels[modelName] = model;
-            }
-            return model;
+                using Stream resource = loader.OpenResource(modelName);
+                return new LemmatizerModel(new ikvm.io.InputStreamWrapper(resource));
+            });
         }
 
         // keeps unit test from blowing out memory

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -52,10 +52,7 @@ namespace Lucene.Net.Index
     /// or <see cref="Store.Directory"/> instance.</para>
     /// </summary>
 
-    public abstract class IndexDeletionPolicy
-#if FEATURE_CLONEABLE
-        : System.ICloneable
-#endif
+    public abstract class IndexDeletionPolicy // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         /// <summary>
         /// Sole constructor, typically called by sub-classes constructors. </summary>

@@ -508,18 +508,9 @@ namespace Lucene.Net.Index
             {
                 for (int i = 0; i < outerInstance.numThreads; i++)
                 {
-//#if FEATURE_THREAD_INTERRUPT
-//                    try
-//                    {
-//#endif
+
                     threads[i].Join();
-//#if FEATURE_THREAD_INTERRUPT
-//                    }
-//                    catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-//                    {
-//                        throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-//                    }
-//#endif
+                    // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
                 }
             }
 

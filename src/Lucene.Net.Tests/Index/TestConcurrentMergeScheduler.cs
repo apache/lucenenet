@@ -370,14 +370,12 @@ namespace Lucene.Net.Index
                         runningMergeCount.DecrementAndGet();
                     }
                 }
-                catch (Exception /*t*/)
+                catch (Exception t)
                 {
                     failed.Value = (true);
                     m_writer.MergeFinish(merge);
-
-                    // LUCENENET specific - throwing an exception on a background thread causes the test
-                    // runner to crash on .NET Core 2.0.
-                    //throw new Exception(t.ToString(), t);
+                    // LUCENENET NOTE: ThreadJob takes care of propagating the exception to the calling thread
+                    throw new Exception(t.ToString(), t);
                 }
             }
         }

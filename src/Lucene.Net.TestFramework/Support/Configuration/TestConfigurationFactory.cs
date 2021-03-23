@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Concurrent;
 
 namespace Lucene.Net.Configuration
@@ -22,7 +23,8 @@ namespace Lucene.Net.Configuration
 
     internal sealed class TestConfigurationFactory : IConfigurationFactory
     {
-        private readonly ConcurrentDictionary<string, IConfigurationRoot> configurationCache = new ConcurrentDictionary<string, IConfigurationRoot>();
+        // LUCENENET - use Lazy<T> to make the create operation atomic. See #417.
+        private readonly ConcurrentDictionary<string, Lazy<IConfigurationRoot>> configurationCache = new ConcurrentDictionary<string, Lazy<IConfigurationRoot>>();
 
         /// <summary>
         /// Filename to be used for configuration settings.
@@ -52,8 +54,9 @@ namespace Lucene.Net.Configuration
 #else
                 AppDomain.CurrentDomain.BaseDirectory;
 #endif
-
-            return configurationCache.GetOrAdd(testDirectory, (key) =>
+            // LUCENENET - use Lazy<T> to make the create operation atomic. See #417.
+            return configurationCache.GetOrAdd(testDirectory,
+                (key) => new Lazy<IConfigurationRoot>(() =>
             {
                 return new ConfigurationBuilder()
                     .AddEnvironmentVariables(EnvironmentVariablePrefix) // Use a custom prefix to only load Lucene.NET settings
@@ -62,7 +65,7 @@ namespace Lucene.Net.Configuration
                     .AddNUnitTestRunSettings()
 #endif
                     .Build();
-            });
+            })).Value;
         }
     }
 }

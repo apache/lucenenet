@@ -1,4 +1,5 @@
-﻿#if FEATURE_COLLATION
+// Lucene version compatibility level 4.8.1
+#if FEATURE_COLLATION
 using System;
 using System.Globalization;
 using System.IO;

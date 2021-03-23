@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -356,7 +356,7 @@ namespace Lucene.Net.Search
             {
                 // For easier debugging
                 Console.WriteLine("failed query: " + q1);
-                throw;
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
 
             // System.out.println("Total hits:"+tot);

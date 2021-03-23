@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
@@ -33,10 +33,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// @lucene.experimental 
     /// </summary>
     [Obsolete("(4.0)")]
-    internal sealed class TermBuffer
-#if FEATURE_CLONEABLE
-        : System.ICloneable
-#endif
+    internal sealed class TermBuffer // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         private string field;
         private Term term; // cached

@@ -161,9 +161,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
             else
             {
+#if FEATURE_DICTIONARY_REMOVE_CONTINUEENUMERATION
+                cache = new Dictionary<TName, int>(capacity: 1000);
+#else
                 // LUCENENET specific - we use ConcurrentDictionary here because it supports deleting while
                 // iterating through the collection, but Dictionary does not.
                 cache = new ConcurrentDictionary<TName, int>(concurrencyLevel: 3, capacity: 1000); //no need for LRU
+#endif
             }
         }
 

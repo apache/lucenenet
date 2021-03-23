@@ -1,4 +1,4 @@
-# Licensed to the Apache Software Foundation (ASF) under one
+﻿# Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
 # regarding copyright ownership.  The ASF licenses this file
@@ -138,11 +138,13 @@ steps:
 
             Copy-Item -Path "$sourceDirectory/*" -Destination "$tempTestDirectory" -Recurse -Force
 
-            if ($isNighly -ne 'true' -and $isWeekly -ne 'true') {
-                $blameHangTimeout = "--blame-hang-timeout 10minutes"
+            if ($isNightly -ne 'true' -and $isWeekly -ne 'true') {
+                $blameHangTimeout = "--blame-hang-timeout 15minutes"
             } else {
-                $blameHangTimeout = "--blame-hang-timeout 50minutes"
+                $blameHangTimeout = "--blame-hang-timeout 40minutes"
             }
+
+            Write-Host "Running with $blameHangTimeout"
 
             $testExpression = "dotnet test ""$testTarget"" --framework ""$framework"" --blame --no-build --no-restore" + `
                 " --logger:""console;verbosity=normal"" --logger:""trx;LogFileName=$testResultsFileName""" + `

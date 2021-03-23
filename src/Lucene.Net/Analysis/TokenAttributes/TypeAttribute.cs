@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
@@ -24,10 +24,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="ITypeAttribute"/>. </summary>
-    public partial class TypeAttribute : Attribute, ITypeAttribute
-#if FEATURE_CLONEABLE
-        , System.ICloneable
-#endif
+    public partial class TypeAttribute : Attribute, ITypeAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         private string type;
 

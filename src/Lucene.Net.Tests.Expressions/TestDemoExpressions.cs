@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Expressions.JS;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -173,11 +173,11 @@ namespace Lucene.Net.Expressions
             DoTestLotsOfBindings(byte.MaxValue - 1);
             DoTestLotsOfBindings(byte.MaxValue);
             DoTestLotsOfBindings(byte.MaxValue + 1);
+            // TODO: ideally we'd test > Short.MAX_VALUE too, but compilation is currently recursive.
+            // so if we want to test such huge expressions, we need to instead change parser to use an explicit Stack
         }
 
-        // TODO: ideally we'd test > Short.MAX_VALUE too, but compilation is currently recursive.
-        // so if we want to test such huge expressions, we need to instead change parser to use an explicit Stack
-        /// <exception cref="Exception"></exception>
+        
         private void DoTestLotsOfBindings(int n)
         {
             SimpleBindings bindings = new SimpleBindings();

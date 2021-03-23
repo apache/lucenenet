@@ -1,4 +1,5 @@
-﻿using J2N.Numerics;
+// Lucene version compatibility level 4.8.1
+using J2N.Numerics;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -27,10 +27,7 @@ namespace Lucene.Net.Analysis.Icu.TokenAttributes
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class ScriptAttribute : Attribute, IScriptAttribute
-#if FEATURE_CLONEABLE
-        , System.ICloneable
-#endif
+    public class ScriptAttribute : Attribute, IScriptAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         private int code = UScript.Common;
 

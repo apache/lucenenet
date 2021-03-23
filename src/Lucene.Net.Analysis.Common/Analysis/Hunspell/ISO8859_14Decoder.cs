@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿// Lucene version compatibility level 4.10.4
+using Lucene.Net.Support;
 using System;
 using System.Text;
 

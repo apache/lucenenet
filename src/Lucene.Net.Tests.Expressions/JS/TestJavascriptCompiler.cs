@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -40,7 +40,6 @@ namespace Lucene.Net.Expressions.JS
             Assert.IsNotNull(JavascriptCompiler.Compile("object0.object1.valid1"));
         }
 
-        //TODO: change all exceptions to ParseExceptions
         [Test]
         public virtual void TestInvalidNamespaces()
         {
@@ -49,39 +48,42 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("object.0invalid");
                 Assert.Fail();
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
+                //expected
             }
-            //expected
+
             try
             {
                 JavascriptCompiler.Compile("0.invalid");
                 Assert.Fail();
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
+                //expected
             }
-            //expected
+
             try
             {
                 JavascriptCompiler.Compile("object..invalid");
                 Assert.Fail();
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
+                //expected
             }
-            //expected
+
             try
             {
                 JavascriptCompiler.Compile(".invalid");
                 Assert.Fail();
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
+                //expected
             }
         }
 
-        //expected
         [Test]
         public virtual void TestInvalidCompiles()
         {
@@ -90,44 +92,48 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("100 100");
                 Assert.Fail();
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
+                // expected
             }
-            // expected exception
             try
             {
                 JavascriptCompiler.Compile("7*/-8");
                 Assert.Fail();
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
+                // expected
             }
-            // expected exception
+
             try
             {
                 JavascriptCompiler.Compile("0y1234");
                 Assert.Fail();
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
+                // expected
             }
-            // expected exception
+            
             try
             {
                 JavascriptCompiler.Compile("500EE");
                 Assert.Fail();
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
+                // expected
             }
-            // expected exception
+            
             try
             {
                 JavascriptCompiler.Compile("500.5EE");
                 Assert.Fail();
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
+                // expected
             }
         }
 
@@ -139,30 +145,32 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile(string.Empty);
                 Assert.Fail();
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
+                // expected
             }
-            // expected exception
+            
             try
             {
                 JavascriptCompiler.Compile("()");
                 Assert.Fail();
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
+                // expected
             }
-            // expected exception
+            
             try
             {
                 JavascriptCompiler.Compile("   \r\n   \n \t");
                 Assert.Fail();
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
+                // expected
             }
         }
 
-        // expected exception
         [Test]
         public virtual void TestNull()
         {
@@ -173,10 +181,10 @@ namespace Lucene.Net.Expressions.JS
             }
             catch (ArgumentNullException)
             {
+                // expected
             }
         }
 
-        // expected exception
         [Test]
         public virtual void TestWrongArity()
         {
@@ -187,9 +195,9 @@ namespace Lucene.Net.Expressions.JS
             }
             catch (ArgumentException expected)
             {
-                Assert.IsTrue(expected.Message.Contains("arguments for method call"
-                    ));
+                Assert.IsTrue(expected.Message.Contains("arguments for method call"));
             }
+
             try
             {
                 JavascriptCompiler.Compile("tan(1, 1)");
@@ -197,8 +205,7 @@ namespace Lucene.Net.Expressions.JS
             }
             catch (ArgumentException expected)
             {
-                Assert.IsTrue(expected.Message.Contains("arguments for method call"
-                    ));
+                Assert.IsTrue(expected.Message.Contains("arguments for method call"));
             }
         }
     }

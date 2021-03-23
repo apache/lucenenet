@@ -1,4 +1,5 @@
-﻿using System.Text;
+// Lucene version compatibility level 4.8.1
+using System.Text;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using System;

@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using System;
@@ -878,13 +878,11 @@ namespace Lucene.Net.Search
 
                         return true;
                     }
-#if FEATURE_THREAD_INTERRUPT
                     catch (ThreadInterruptedException /*e*/)
                     {
                         //throw new ThreadInterruptedException(e.ToString(), e);
                         throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
-#endif
                     catch (Exception e)
                     {
                         // LUCENENET NOTE: We need to re-throw this as Exception to 

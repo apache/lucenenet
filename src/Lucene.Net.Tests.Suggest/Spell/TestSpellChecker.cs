@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Spell
     {
         private SpellCheckerMock spellChecker;
         private Directory userindex, spellindex;
-        internal static ConcurrentBag<IndexSearcher> searchers;
+        internal static ConcurrentQueue<IndexSearcher> searchers;
 
 
         public override void SetUp()
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search.Spell
             }
 
             writer.Dispose();
-            searchers = new ConcurrentBag<IndexSearcher>();
+            searchers = new ConcurrentQueue<IndexSearcher>();
             // create the spellChecker
             spellindex = NewDirectory();
             spellChecker = new SpellCheckerMock(spellindex);
@@ -507,13 +507,7 @@ namespace Lucene.Net.Search.Spell
         private void AssertLastSearcherOpen(int numSearchers)
         {
             assertEquals(numSearchers, searchers.Count);
-
-            // LUCENENET NOTE: The ConcurrentBag.Add() method adds each item to the
-            // beginning of the list, so we end up with a reverse order array.
-            // We can correct that here, since this is the only part of the
-            // test that cares about the order.
-            IndexSearcher[] searcherArray = searchers.Reverse().ToArray();
-
+            IndexSearcher[] searcherArray = searchers.ToArray();
             for (int i = 0; i < searcherArray.Length; i++)
             {
                 if (i == searcherArray.Length - 1)
@@ -634,7 +628,7 @@ namespace Lucene.Net.Search.Spell
             internal override IndexSearcher CreateSearcher(Directory dir)
             {
                 IndexSearcher searcher = base.CreateSearcher(dir);
-                TestSpellChecker.searchers.Add(searcher);
+                TestSpellChecker.searchers.Enqueue(searcher);
                 return searcher;
             }
         }

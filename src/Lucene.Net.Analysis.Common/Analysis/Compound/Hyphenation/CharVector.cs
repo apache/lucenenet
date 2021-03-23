@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+// Lucene version compatibility level 4.8.1
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
@@ -27,10 +28,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// 
     /// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified. 
     /// </summary>
-    public class CharVector
-#if FEATURE_CLONEABLE
-        : System.ICloneable
-#endif
+    public class CharVector // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         /// <summary>
         /// Capacity increment size

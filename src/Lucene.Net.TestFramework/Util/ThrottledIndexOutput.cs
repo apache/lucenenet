@@ -144,18 +144,10 @@ namespace Lucene.Net.Util
             {
                 return;
             }
-//#if FEATURE_THREAD_INTERRUPT
-//            try
-//            {
-//#endif 
-                Thread.Sleep(TimeSpan.FromMilliseconds(ms));
-//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-//            }
-//            catch (ThreadInterruptedException e)
-//            {
-//                throw new ThreadInterruptedException("Thread Interrupted Exception", e);
-//            }
-//#endif
+
+            Thread.Sleep(TimeSpan.FromMilliseconds(ms));
+            // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
+
         }
 
         public override long Length

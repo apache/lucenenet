@@ -1,24 +1,4 @@
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
-
+﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Analysis;
@@ -36,6 +16,23 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Tests.Queries.Function
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     // TODO: add separate docvalues test
     /// <summary>
     /// barebones tests for function queries.
@@ -116,44 +113,53 @@ namespace Lucene.Net.Tests.Queries.Function
         public void TestByte()
         {
 #pragma warning disable 612, 618
-            AssertHits(new FunctionQuery(new ByteFieldSource("byte")), new[] { 5f, 12f });
+            AssertHits(new FunctionQuery(new ByteFieldSource("byte")),
+                new[] { 5f, 12f });
 #pragma warning restore 612, 618
         }
 
         [Test]
         public void TestConst()
         {
-            AssertHits(new FunctionQuery(new ConstValueSource(0.3f)), new[] { 0.3f, 0.3f });
+            AssertHits(new FunctionQuery(new ConstValueSource(0.3f)),
+                new[] { 0.3f, 0.3f });
         }
 
         [Test]
         public void TestDiv()
         {
-            AssertHits(new FunctionQuery(new DivSingleFunction(new ConstValueSource(10f), new ConstValueSource(5f))), new[] { 2f, 2f });
+            AssertHits(new FunctionQuery(new DivSingleFunction(
+                new ConstValueSource(10f), new ConstValueSource(5f))),
+                new[] { 2f, 2f });
         }
 
         [Test]
         public void TestDocFreq()
         {
-            AssertHits(new FunctionQuery(new DocFreqValueSource("bogus", "bogus", "text", new BytesRef("test"))), new[] { 2f, 2f });
+            AssertHits(new FunctionQuery(
+                new DocFreqValueSource("bogus", "bogus", "text", new BytesRef("test"))),
+                new[] { 2f, 2f });
         }
 
         [Test]
         public void TestDoubleConst()
         {
-            AssertHits(new FunctionQuery(new DoubleConstValueSource(0.3d)), new[] { 0.3f, 0.3f });
+            AssertHits(new FunctionQuery(new DoubleConstValueSource(0.3d)),
+                new[] { 0.3f, 0.3f });
         }
 
         [Test]
         public void TestDouble()
         {
-            AssertHits(new FunctionQuery(new DoubleFieldSource("double")), new[] { 3.63f, 5.65f });
+            AssertHits(new FunctionQuery(new DoubleFieldSource("double")),
+                new[] { 3.63f, 5.65f });
         }
 
         [Test]
         public void TestFloat()
         {
-            AssertHits(new FunctionQuery(new SingleFieldSource("float")), new[] { 5.2f, 9.3f });
+            AssertHits(new FunctionQuery(new SingleFieldSource("float")),
+                new[] { 5.2f, 9.3f });
         }
 
         [Test]
@@ -163,7 +169,8 @@ namespace Lucene.Net.Tests.Queries.Function
             try
             {
                 searcher.Similarity = new DefaultSimilarity();
-                AssertHits(new FunctionQuery(new IDFValueSource("bogus", "bogus", "text", new BytesRef("test"))), new[] { 0.5945349f, 0.5945349f });
+                AssertHits(new FunctionQuery(new IDFValueSource("bogus", "bogus", "text", new BytesRef("test"))),
+                    new[] { 0.5945349f, 0.5945349f });
             }
             finally
             {
@@ -174,53 +181,70 @@ namespace Lucene.Net.Tests.Queries.Function
         [Test]
         public void TestIf()
         {
-            AssertHits(new FunctionQuery(new IfFunction(new BytesRefFieldSource("id"), new ConstValueSource(1.0f), new ConstValueSource(2.0f)
-               )), new[] { 1f, 1f });
+            AssertHits(new FunctionQuery(new IfFunction(
+                new BytesRefFieldSource("id"),
+                new ConstValueSource(1.0f),
+                new ConstValueSource(2.0f)
+               )),
+               new[] { 1f, 1f });
             // true just if a value exists...
-            AssertHits(new FunctionQuery(new IfFunction(new LiteralValueSource("false"), new ConstValueSource(1.0f), new ConstValueSource(2.0f)
-               )), new[] { 1f, 1f });
+            AssertHits(new FunctionQuery(new IfFunction(
+                new LiteralValueSource("false"),
+                new ConstValueSource(1.0f),
+                new ConstValueSource(2.0f)
+               )),
+               new[] { 1f, 1f });
         }
 
         [Test]
         public void TestInt()
         {
-            AssertHits(new FunctionQuery(new Int32FieldSource("int")), new[] { 35f, 54f });
+            AssertHits(new FunctionQuery(new Int32FieldSource("int")),
+                new[] { 35f, 54f });
         }
 
         [Test]
         public void TestJoinDocFreq()
         {
-            AssertHits(new FunctionQuery(new JoinDocFreqValueSource("string", "text")), new[] { 2f, 0f });
+            AssertHits(new FunctionQuery(new JoinDocFreqValueSource("string", "text")),
+                new[] { 2f, 0f });
         }
 
         [Test]
         public void TestLinearFloat()
         {
-            AssertHits(new FunctionQuery(new LinearSingleFunction(new ConstValueSource(2.0f), 3, 1)), new[] { 7f, 7f });
+            AssertHits(new FunctionQuery(new LinearSingleFunction(new ConstValueSource(2.0f), 3, 1)),
+                new[] { 7f, 7f });
         }
 
         [Test]
         public void TestLong()
         {
-            AssertHits(new FunctionQuery(new Int64FieldSource("long")), new[] { 4343f, 1954f });
+            AssertHits(new FunctionQuery(new Int64FieldSource("long")),
+                new[] { 4343f, 1954f });
         }
 
         [Test]
         public void TestMaxDoc()
         {
-            AssertHits(new FunctionQuery(new MaxDocValueSource()), new[] { 2f, 2f });
+            AssertHits(new FunctionQuery(new MaxDocValueSource()),
+                new[] { 2f, 2f });
         }
 
         [Test]
         public void TestMaxFloat()
         {
-            AssertHits(new FunctionQuery(new MaxSingleFunction(new ValueSource[] { new ConstValueSource(1f), new ConstValueSource(2f) })), new[] { 2f, 2f });
+            AssertHits(new FunctionQuery(new MaxSingleFunction(new ValueSource[] {
+                new ConstValueSource(1f), new ConstValueSource(2f) })),
+                new[] { 2f, 2f });
         }
 
         [Test]
         public void TestMinFloat()
         {
-            AssertHits(new FunctionQuery(new MinSingleFunction(new ValueSource[] { new ConstValueSource(1f), new ConstValueSource(2f) })), new[] { 1f, 1f });
+            AssertHits(new FunctionQuery(new MinSingleFunction(new ValueSource[] {
+                new ConstValueSource(1f), new ConstValueSource(2f) })),
+                new[] { 1f, 1f });
         }
 
         [Test]
@@ -231,7 +255,8 @@ namespace Lucene.Net.Tests.Queries.Function
             {
                 // no norm field (so agnostic to indexed similarity)
                 searcher.Similarity = new DefaultSimilarity();
-                AssertHits(new FunctionQuery(new NormValueSource("byte")), new[] { 0f, 0f });
+                AssertHits(new FunctionQuery(new NormValueSource("byte")),
+                    new[] { 0f, 0f });
             }
             finally
             {
@@ -242,58 +267,77 @@ namespace Lucene.Net.Tests.Queries.Function
         [Test]
         public void TestNumDocs()
         {
-            AssertHits(new FunctionQuery(new NumDocsValueSource()), new[] { 2f, 2f });
+            AssertHits(new FunctionQuery(new NumDocsValueSource()),
+                new[] { 2f, 2f });
         }
 
         [Test]
         public void TestPow()
         {
-            AssertHits(new FunctionQuery(new PowSingleFunction(new ConstValueSource(2f), new ConstValueSource(3f))), new[] { 8f, 8f });
+            AssertHits(new FunctionQuery(new PowSingleFunction(
+                new ConstValueSource(2f), new ConstValueSource(3f))),
+                new[] { 8f, 8f });
         }
 
         [Test]
         public void TestProduct()
         {
-            AssertHits(new FunctionQuery(new ProductSingleFunction(new ValueSource[] { new ConstValueSource(2f), new ConstValueSource(3f) })), new[] { 6f, 6f });
+            AssertHits(new FunctionQuery(new ProductSingleFunction(
+                new ValueSource[] { new ConstValueSource(2f), new ConstValueSource(3f) })),
+                new[] { 6f, 6f });
         }
 
         [Test]
         public void TestQuery()
         {
-            AssertHits(new FunctionQuery(new QueryValueSource(new FunctionQuery(new ConstValueSource(2f)), 0f)), new[] { 2f, 2f });
+            AssertHits(new FunctionQuery(new QueryValueSource(
+                new FunctionQuery(new ConstValueSource(2f)), 0f)),
+                new[] { 2f, 2f });
         }
 
         [Test]
         public void TestRangeMap()
         {
-            AssertHits(new FunctionQuery(new RangeMapSingleFunction(new SingleFieldSource("float"), 5, 6, 1, 0f)), new[] { 1f, 0f });
-            AssertHits(new FunctionQuery(new RangeMapSingleFunction(new SingleFieldSource("float"), 5, 6, new SumSingleFunction(new ValueSource[] { new ConstValueSource(1f), new ConstValueSource(2f) }), new ConstValueSource(11f))), new[] { 3f, 11f });
+            AssertHits(new FunctionQuery(new RangeMapSingleFunction(new SingleFieldSource("float"),
+                5, 6, 1, 0f)),
+                new[] { 1f, 0f });
+            AssertHits(new FunctionQuery(new RangeMapSingleFunction(new SingleFieldSource("float"),
+                5, 6, new SumSingleFunction(new ValueSource[] { new ConstValueSource(1f), new ConstValueSource(2f) }),
+                new ConstValueSource(11f))),
+                new[] { 3f, 11f });
         }
 
         [Test]
         public void TestReciprocal()
         {
-            AssertHits(new FunctionQuery(new ReciprocalSingleFunction(new ConstValueSource(2f), 3, 1, 4)), new[] { 0.1f, 0.1f });
+            AssertHits(new FunctionQuery(new ReciprocalSingleFunction(new ConstValueSource(2f),
+                3, 1, 4)),
+                new[] { 0.1f, 0.1f });
         }
 
         [Test]
         public void TestScale()
         {
-            AssertHits(new FunctionQuery(new ScaleSingleFunction(new Int32FieldSource("int"), 0, 1)), new[] { 0.0f, 1.0f });
+            AssertHits(new FunctionQuery(new ScaleSingleFunction(new Int32FieldSource("int"),
+                0, 1)),
+                new[] { 0.0f, 1.0f });
         }
 
         [Test]
         public void TestShort()
         {
 #pragma warning disable 612, 618
-            AssertHits(new FunctionQuery(new Int16FieldSource("short")), new[] { 945f, 123f });
+            AssertHits(new FunctionQuery(new Int16FieldSource("short")),
+                new[] { 945f, 123f });
 #pragma warning restore 612, 618
         }
 
         [Test]
         public void TestSumFloat()
         {
-            AssertHits(new FunctionQuery(new SumSingleFunction(new ValueSource[] { new ConstValueSource(1f), new ConstValueSource(2f) })), new[] { 3f, 3f });
+            AssertHits(new FunctionQuery(new SumSingleFunction(new ValueSource[] {
+                new ConstValueSource(1f), new ConstValueSource(2f) })),
+                new[] { 3f, 3f });
         }
 
         [Test]
@@ -301,19 +345,25 @@ namespace Lucene.Net.Tests.Queries.Function
         {
             if (Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal))
             {
-                AssertHits(new FunctionQuery(new SumTotalTermFreqValueSource("text")), new[] { -1f, -1f });
+                AssertHits(new FunctionQuery(new SumTotalTermFreqValueSource("text")),
+                    new[] { -1f, -1f });
             }
             else
             {
-                AssertHits(new FunctionQuery(new SumTotalTermFreqValueSource("text")), new[] { 8f, 8f });
+                AssertHits(new FunctionQuery(new SumTotalTermFreqValueSource("text")),
+                    new[] { 8f, 8f });
             }
         }
 
         [Test]
         public void TestTermFreq()
         {
-            AssertHits(new FunctionQuery(new TermFreqValueSource("bogus", "bogus", "text", new BytesRef("test"))), new[] { 3f, 1f });
-            AssertHits(new FunctionQuery(new TermFreqValueSource("bogus", "bogus", "string", new BytesRef("bar"))), new[] { 0f, 1f });
+            AssertHits(new FunctionQuery(
+                new TermFreqValueSource("bogus", "bogus", "text", new BytesRef("test"))),
+                new[] { 3f, 1f });
+            AssertHits(new FunctionQuery(
+                new TermFreqValueSource("bogus", "bogus", "string", new BytesRef("bar"))),
+                new[] { 0f, 1f });
         }
 
         [Test]
@@ -324,8 +374,12 @@ namespace Lucene.Net.Tests.Queries.Function
             {
                 // no norm field (so agnostic to indexed similarity)
                 searcher.Similarity = new DefaultSimilarity();
-                AssertHits(new FunctionQuery(new TFValueSource("bogus", "bogus", "text", new BytesRef("test"))), new[] { (float)Math.Sqrt(3d), (float)Math.Sqrt(1d) });
-                AssertHits(new FunctionQuery(new TFValueSource("bogus", "bogus", "string", new BytesRef("bar"))), new[] { 0f, 1f });
+                AssertHits(new FunctionQuery(
+                    new TFValueSource("bogus", "bogus", "text", new BytesRef("test"))),
+                    new[] { (float)Math.Sqrt(3d), (float)Math.Sqrt(1d) });
+                AssertHits(new FunctionQuery(
+                    new TFValueSource("bogus", "bogus", "string", new BytesRef("bar"))),
+                    new[] { 0f, 1f });
             }
             finally
             {
@@ -338,11 +392,15 @@ namespace Lucene.Net.Tests.Queries.Function
         {
             if (Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal))
             {
-                AssertHits(new FunctionQuery(new TotalTermFreqValueSource("bogus", "bogus", "text", new BytesRef("test"))), new[] { -1f, -1f });
+                AssertHits(new FunctionQuery(
+                    new TotalTermFreqValueSource("bogus", "bogus", "text", new BytesRef("test"))),
+                    new[] { -1f, -1f });
             }
             else
             {
-                AssertHits(new FunctionQuery(new TotalTermFreqValueSource("bogus", "bogus", "text", new BytesRef("test"))), new[] { 4f, 4f });
+                AssertHits(new FunctionQuery(
+                    new TotalTermFreqValueSource("bogus", "bogus", "text", new BytesRef("test"))),
+                    new[] { 4f, 4f });
             }
         }
 
@@ -355,7 +413,8 @@ namespace Lucene.Net.Tests.Queries.Function
                 expectedDocs[i] = i;
                 expected[i] = new ScoreDoc(i, scores[i]);
             }
-            TopDocs docs = searcher.Search(q, null, documents.Count, new Sort(new SortField("id", SortFieldType.STRING)), true, false);
+            TopDocs docs = searcher.Search(q, null, documents.Count,
+                new Sort(new SortField("id", SortFieldType.STRING)), true, false);
             CheckHits.DoCheckHits(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,

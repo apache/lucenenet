@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿// Lucene version compatibility level 4.8.1
+using System.Collections;
 using Lucene.Net.Index;
 
 namespace Lucene.Net.Queries.Function.ValueSources
