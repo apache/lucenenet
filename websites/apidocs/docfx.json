@@ -1,4 +1,4 @@
-{
+﻿{
   "metadata": [
     {
       "src": [
@@ -518,6 +518,7 @@
       {
         "files": [
           "Lucene.Net/overview.md",
+          "Lucene.Net/migration-guide.md",
           "Lucene.Net.Analysis.Common/overview.md",
           "Lucene.Net.Analysis.Morfologik/overview.md",
           "Lucene.Net.Analysis.OpenNLP/overview.md",
