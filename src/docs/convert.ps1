@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------------------
+﻿# -----------------------------------------------------------------------------------
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +22,9 @@ param (
 	[string]
 	$JavaLuceneVersion
 )
+
+# TODO: Convert this script to use the https://github.com/NightOwl888/lucenenet-javadoc2markdown CLI
+# See https://github.com/apache/lucenenet/issues/396#issuecomment-734417702
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
