@@ -103,6 +103,9 @@ The file/folder structure is within `/websites/apidocs`:
 - `tools/*` - during the build process some tools will be downloaded which are stored here
 - `_site` - this is the exported static site that is generated
 
+> [!NOTE]
+> The project is going through a trial run of using mini-sites instead of a single API docs site. Currently, the active DocFx configuration files are the `docfx.<project>.json` files, however both the mini-site and `docfx.json` configuration files need to be updated, since there is a chance we will need to switch back.
+
 ### Process overview
 
 The documentation generation is a complex process because it needs to convert the Java Lucene project's documentation into a usable format to produce the output Lucene.NET's documentation.
