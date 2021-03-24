@@ -41,8 +41,7 @@ if ($BaseUrl -eq 'https://lucenenet.apache.org/docs/') {
 $BaseUrl = $BaseUrl.TrimEnd('/') # Remove any trailing slash
 Write-Host "Base URL for xref map set to $BaseUrl"
 
-# HACK: Our plugin only recognizes the version number through an environment variable,
-# so we set it here.
+# set env vars that will be replaced in Markdown
 $env:LuceneNetVersion = $LuceneNetVersion
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -161,9 +160,6 @@ $DocFxJsonMeta = @(
     "docfx.demo.json"
 )
 $DocFxJsonSite = Join-Path -Path $ApiDocsFolder "docfx.site.json"
-
-# set env vars that will be replaced in Markdown
-$env:LuceneNetVersion = $LuceneNetVersion
 
 if ($? -and $DisableMetaData -eq $false) {
     foreach ($proj in $DocFxJsonMeta) {
