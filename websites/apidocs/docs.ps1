@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------------------
+﻿# -----------------------------------------------------------------------------------
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -51,6 +51,7 @@ $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
 $RepoRoot = (get-item $PSScriptFilePath).Directory.Parent.Parent.FullName;
 $ApiDocsFolder = Join-Path -Path $RepoRoot -ChildPath "websites\apidocs";
 $ToolsFolder = Join-Path -Path $ApiDocsFolder -ChildPath "tools";
+$CliIndexPath = Join-Path -Path $RepoRoot -ChildPath "src\dotnet\tools\lucene-cli\docs\index.md";
 #ensure the /build/tools folder
 New-Item $ToolsFolder -type directory -force
 
@@ -183,6 +184,10 @@ if ($? -and $DisableMetaData -eq $false) {
 }
 
 if ($? -and $DisableBuild -eq $false) {
+    # HACK: DocFx doesn't seem to work with fenced code blocks, so we update the lucene-cli index file manually.
+    # Note it works better this way anyway because we can store a real version number in the file in the repo.
+    (Get-Content -Path $CliIndexPath -Raw) -Replace '(?<=--version\s)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $CliIndexPath
+
     foreach ($proj in $DocFxJsonMeta) {
         $projFile = Join-Path -Path $ApiDocsFolder $proj
 
