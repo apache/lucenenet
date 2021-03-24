@@ -19,7 +19,8 @@
 
 param (
     [Parameter(Mandatory)]
-    [string] $LuceneNetVersion, # TODO: Validate this with regex
+    [ValidatePattern('\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?')]
+    [string] $LuceneNetVersion,
     [switch] $ServeDocs = $false,
     [switch] $Clean = $false,
     [switch] $DisableMetaData = $false,
