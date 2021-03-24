@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Analysis
 summary: *content
 ---
@@ -24,21 +24,21 @@ API and code to convert text into indexable/searchable tokens. Covers <xref:Luce
 
 ## Parsing? Tokenization? Analysis!
 
-Lucene, an indexing and search library, accepts only plain text input.
+Lucene.NET, an indexing and search library, accepts only plain text input.
 
 ## Parsing
 
-Applications that build their search capabilities upon Lucene may support documents in various formats – HTML, XML, PDF, Word – just to name a few.
-Lucene does not care about the _Parsing_ of these and other document formats, and it is the responsibility of the 
-application using Lucene to use an appropriate _Parser_ to convert the original format into plain text before passing that plain text to Lucene.
+Applications that build their search capabilities upon Lucene.NET may support documents in various formats – HTML, XML, PDF, Word – just to name a few.
+Lucene.NET does not care about the _Parsing_ of these and other document formats, and it is the responsibility of the 
+application using Lucene.NET to use an appropriate _Parser_ to convert the original format into plain text before passing that plain text to Lucene.NET.
 
 ## Tokenization
 
-Plain text passed to Lucene for indexing goes through a process generally called tokenization. Tokenization is the process
+Plain text passed to Lucene.NET for indexing goes through a process generally called tokenization. Tokenization is the process
 of breaking input text into small indexing elements – tokens.
 The way input text is broken into tokens heavily influences how people will then be able to search for that text. 
 For instance, sentences beginnings and endings can be identified to provide for more accurate phrase 
-and proximity searches (though sentence identification is not provided by Lucene).
+and proximity searches (though sentence identification is not provided by Lucene.NET).
 
  In some cases simply breaking the input text into tokens is not enough – a deeper _Analysis_ may be needed. Lucene includes both pre- and post-tokenization analysis facilities. 
 
@@ -65,7 +65,7 @@ and proximity searches (though sentence identification is not provided by Lucene
 
 ## Core Analysis
 
- The analysis package provides the mechanism to convert Strings and Readers into tokens that can be indexed by Lucene. There are four main classes in the package from which all analysis processes are derived. These are: 
+ The analysis package provides the mechanism to convert Strings and TextReaders into tokens that can be indexed by Lucene.NET. There are four main classes in the package from which all analysis processes are derived. These are: 
 
 *   <xref:Lucene.Net.Analysis.Analyzer> – An Analyzer is 
     responsible for building a 
@@ -73,14 +73,14 @@ and proximity searches (though sentence identification is not provided by Lucene
     by the indexing and searching processes.  See below for more information
     on implementing your own Analyzer.
 
-*   CharFilter – CharFilter extends
-    {@link java.io.Reader} to perform pre-tokenization substitutions, 
-    deletions, and/or insertions on an input Reader's text, while providing
+*   <xref:Lucene.Net.Analysis.CharFilter> – CharFilter extends
+    [System.Text.TextReader](https://docs.microsoft.com/en-us/dotnet/api/system.io.textreader) to perform pre-tokenization substitutions, 
+    deletions, and/or insertions on an input TextReader's text, while providing
     corrected character offsets to account for these modifications.  This
     capability allows highlighting to function over the original text when 
     indexed tokens are created from CharFilter-modified text with offsets
     that are not the same as those in the original text. Tokenizers'
-    constructors and reset() methods accept a CharFilter.  CharFilters may
+    constructors and Reset() methods accept a CharFilter.  CharFilters may
     be chained to perform multiple pre-tokenization modifications.
 
 *   <xref:Lucene.Net.Analysis.Tokenizer> – A Tokenizer is a 
@@ -113,7 +113,7 @@ and proximity searches (though sentence identification is not provided by Lucene
 *   <xref:Lucene.Net.Analysis.Analyzer> is "field aware", but 
     <xref:Lucene.Net.Analysis.Tokenizer> is not.
 
- Lucene Java provides a number of analysis capabilities, the most commonly used one being the StandardAnalyzer. Many applications will have a long and industrious life with nothing more than the StandardAnalyzer. However, there are a few other classes/packages that are worth mentioning: 
+ Lucene.NET provides a number of analysis capabilities, the most commonly used one being the StandardAnalyzer. Many applications will have a long and industrious life with nothing more than the StandardAnalyzer. However, there are a few other classes/packages that are worth mentioning: 
 
 1.  PerFieldAnalyzerWrapper – Most Analyzers perform the same operation on all
     <xref:Lucene.Net.Documents.Field>s.  The PerFieldAnalyzerWrapper can be used to associate a different Analyzer with different
@@ -128,99 +128,187 @@ and proximity searches (though sentence identification is not provided by Lucene
 
 ## Invoking the Analyzer
 
- Applications usually do not invoke analysis – Lucene does it for them: 
+ Applications usually do not invoke analysis – Lucene.NET does it for them: 
 
 *   At indexing, as a consequence of 
-    [AddDocument](xref:Lucene.Net.Index.IndexWriter#methods),
+    [AddDocument()](xref:Lucene.Net.Index.IndexWriter#Lucene_Net_Index_IndexWriter_AddDocument_System_Collections_Generic_IEnumerable_Lucene_Net_Index_IIndexableField__),
     the Analyzer in effect for indexing is invoked for each indexed field of the added document.
 
 *   At search, a QueryParser may invoke the Analyzer during parsing.  Note that for some queries, analysis does not
     take place, e.g. wildcard queries.
 
- However an application might invoke Analysis of any text for testing or for any other purpose, something like: 
+ However an application might invoke Analysis of any text for testing or for any other purpose, something like:
 
-        Version matchVersion = Version.LUCENE_XY; // Substitute desired Lucene version for XY
-        Analyzer analyzer = new StandardAnalyzer(matchVersion); // or any other analyzer
-        TokenStream ts = analyzer.tokenStream("myfield", new StringReader("some text goes here"));
-        OffsetAttribute offsetAtt = ts.addAttribute(OffsetAttribute.class);
+<a id="analysis-workflow"></a>
 
-        try {
-          ts.reset(); // Resets this stream to the beginning. (Required)
-          while (ts.incrementToken()) {
-            // Use [#reflectAsString(boolean)](xref:Lucene.Net.Util.AttributeSource)
-            // for token stream debugging.
-            System.out.println("token: " + ts.reflectAsString(true));
-    
-        System.out.println("token start offset: " + offsetAtt.startOffset());
-            System.out.println("  token end offset: " + offsetAtt.endOffset());
-          }
-          ts.end();   // Perform end-of-stream operations, e.g. set the final offset.
-        } finally {
-          ts.close(); // Release resources associated with this stream.
-        }
+```cs
+LuceneVersion matchVersion = LuceneVersion.LUCENE_XY; // Substitute desired Lucene version for XY
+Analyzer analyzer = new StandardAnalyzer(matchVersion); // or any other analyzer
+TokenStream ts = analyzer.GetTokenStream("myfield", new StringReader("some text goes here"));
+IOffsetAttribute offsetAtt = ts.AddAttribute<IOffsetAttribute>();
+
+try
+{
+    ts.Reset(); // Resets this stream to the beginning. (Required)
+    while (ts.IncrementToken())
+    {
+        // Use [ReflectAsString(bool)](xref:Lucene.Net.Util.AttributeSource#Lucene_Net_Util_AttributeSource_ReflectAsString_System_Boolean_)
+        // for token stream debugging.
+        Console.WriteLine("token: " + ts.ReflectAsString(true));
+
+        Console.WriteLine("token start offset: " + offsetAtt.StartOffset);
+        Console.WriteLine("  token end offset: " + offsetAtt.EndOffset);
+    }
+    ts.End();   // Perform end-of-stream operations, e.g. set the final offset.
+}
+finally
+{
+    ts.Dispose(); // Release resources associated with this stream.
+}
+```
 
 ## Indexing Analysis vs. Search Analysis
 
- Selecting the "correct" analyzer is crucial for search quality, and can also affect indexing and search performance. The "correct" analyzer differs between applications. Lucene java's wiki page [AnalysisParalysis](http://wiki.apache.org/lucene-java/AnalysisParalysis) provides some data on "analyzing your analyzer". Here are some rules of thumb: 1. Test test test... (did we say test?) 2. Beware of over analysis – might hurt indexing performance. 3. Start with same analyzer for indexing and search, otherwise searches would not find what they are supposed to... 4. In some cases a different analyzer is required for indexing and search, for instance: * Certain searches require more stop words to be filtered. (I.e. more than those that were filtered at indexing.) * Query expansion by synonyms, acronyms, auto spell correction, etc. This might sometimes require a modified analyzer – see the next section on how to do that. 
+ Selecting the "correct" analyzer is crucial for search quality, and can also affect indexing and search performance. The "correct" analyzer differs between applications. Lucene java's wiki page [AnalysisParalysis](http://wiki.apache.org/lucene-java/AnalysisParalysis) provides some data on "analyzing your analyzer". Here are some rules of thumb:
+
+1. Test test test... (did we say test?)
+2. Beware of over analysis – might hurt indexing performance.
+3. Start with same analyzer for indexing and search, otherwise searches would not find what they are supposed to...
+4. In some cases a different analyzer is required for indexing and search, for instance:
+  * Certain searches require more stop words to be filtered. (I.e. more than those that were filtered at indexing.)
+  * Query expansion by synonyms, acronyms, auto spell correction, etc.
+  This might sometimes require a modified analyzer – see the next section on how to do that. 
 
 ## Implementing your own Analyzer
 
- Creating your own Analyzer is straightforward. Your Analyzer can wrap existing analysis components — CharFilter(s) _(optional)_, a Tokenizer, and TokenFilter(s) _(optional)_ — or components you create, or a combination of existing and newly created components. Before pursuing this approach, you may find it worthwhile to explore the [analyzers-common]({@docRoot}/../analyzers-common/overview-summary.html) library and/or ask on the [java-user@lucene.apache.org mailing list](http://lucene.apache.org/core/discussion.html) first to see if what you need already exists. If you are still committed to creating your own Analyzer, have a look at the source code of any one of the many samples located in this package. 
+ Creating your own Analyzer is straightforward. Your Analyzer can wrap existing analysis components — CharFilter(s) _(optional)_, a Tokenizer, and TokenFilter(s) _(optional)_ — or components you create, or a combination of existing and newly created components. Before pursuing this approach, you may find it worthwhile to explore the [Lucene.Net.Analysis.Common](xref:Lucene.Net.Analysis.Common) library and/or ask on the [user@lucenenet.apache.org mailing list](https://lucenenet.apache.org/contributing/mailing-lists.html#users-user) first to see if what you need already exists. If you are still committed to creating your own Analyzer, have a look at the source code of any one of the many samples located in this package. 
 
  The following sections discuss some aspects of implementing your own analyzer. 
 
 ### Field Section Boundaries
 
- When [Document.add](xref:Lucene.Net.Documents.Document#methods) is called multiple times for the same field name, we could say that each such call creates a new section for that field in that document. In fact, a separate call to [TokenStream](xref:Lucene.Net.Analysis.Analyzer#methods) would take place for each of these so called "sections". However, the default Analyzer behavior is to treat all these sections as one large section. This allows phrase search and proximity search to seamlessly cross boundaries between these "sections". In other words, if a certain field "f" is added like this: 
+ When [Document.Add()](xref:Lucene.Net.Documents.Document#Lucene_Net_Documents_Document_Add_Lucene_Net_Index_IIndexableField_) is called multiple times for the same field name, we could say that each such call creates a new section for that field in that document. In fact, a separate call to [GetTokenStream()](xref:Lucene.Net.Analysis.Analyzer#Lucene_Net_Analysis_Analyzer_GetTokenStream_System_String_System_IO_TextReader_) would take place for each of these so called "sections". However, the default Analyzer behavior is to treat all these sections as one large section. This allows phrase search and proximity search to seamlessly cross boundaries between these "sections". In other words, if a certain field "f" is added like this: 
 
-        document.add(new Field("f","first ends",...);
-        document.add(new Field("f","starts two",...);
-        indexWriter.addDocument(document);
+```cs
+document.Add(new Field("f","first ends",...);
+document.Add(new Field("f","starts two",...);
+indexWriter.AddDocument(document);
+```
 
- Then, a phrase search for "ends starts" would find that document. Where desired, this behavior can be modified by introducing a "position gap" between consecutive field "sections", simply by overriding [Analyzer.getPositionIncrementGap](xref:Lucene.Net.Analysis.Analyzer#methods): 
+ Then, a phrase search for "ends starts" would find that document. Where desired, this behavior can be modified by introducing a "position gap" between consecutive field "sections", by overriding [Analyzer.GetPositionIncrementGap(string)](xref:Lucene.Net.Analysis.Analyzer#Lucene_Net_Analysis_Analyzer_GetPositionIncrementGap_System_String_): 
 
-      Version matchVersion = Version.LUCENE_XY; // Substitute desired Lucene version for XY
-      Analyzer myAnalyzer = new StandardAnalyzer(matchVersion) {
-        public int getPositionIncrementGap(String fieldName) {
-          return 10;
+
+```cs
+/// <summary>
+/// Similar to <see cref="StandardAnalyzer"/>, but has a different position increment gap.
+/// </summary>
+public sealed class PositionIncrementGapAnalyzer : StopwordAnalyzerBase
+{
+    public PositionIncrementGapAnalyzer(LuceneVersion matchVersion)
+        : base(matchVersion, StopAnalyzer.ENGLISH_STOP_WORDS_SET)
+    {
+    }
+
+    public int MaxTokenLength { get; set; } = 255;
+
+    /// <summary>
+    /// Returns a fixed position increment gap of 10.
+    /// </summary>
+    public override int GetPositionIncrementGap(string fieldName)
+    {
+        return 10;
+    }
+
+    protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+    {
+        // Same components as StandardAnalyzer
+        var src = new StandardTokenizer(m_matchVersion, reader);
+        src.MaxTokenLength = MaxTokenLength;
+        TokenStream tok = new StandardFilter(m_matchVersion, src);
+        tok = new LowerCaseFilter(m_matchVersion, tok);
+        tok = new StopFilter(m_matchVersion, tok, m_stopwords);
+        return new PositionIncrementGapTokenStreamComponents(this, src, tok);
+    }
+
+    private class PositionIncrementGapTokenStreamComponents : TokenStreamComponents
+    {
+        private readonly PositionIncrementGapAnalyzer analyzer;
+        private readonly StandardTokenizer src;
+
+        public PositionIncrementGapTokenStreamComponents(PositionIncrementGapAnalyzer analyzer,
+            StandardTokenizer src, TokenStream tok)
+            : base(src, tok)
+        {
+            this.analyzer = analyzer;
+            this.src = src;
         }
-      };
+
+        protected override void SetReader(TextReader reader)
+        {
+            src.MaxTokenLength = analyzer.MaxTokenLength;
+            base.SetReader(reader);
+        }
+    }
+}
+
+LuceneVersion matchVersion = LuceneVersion.LUCENE_XY; // Substitute desired Lucene version for XY
+Analyzer myAnalyzer = new PositionIncrementGapAnalyzer(matchVersion);
+```
 
 ### Token Position Increments
 
- By default, all tokens created by Analyzers and Tokenizers have a [Increment](xref:Lucene.Net.Analysis.TokenAttributes.PositionIncrementAttribute#methods) of one. This means that the position stored for that token in the index would be one more than that of the previous token. Recall that phrase and proximity searches rely on position info. 
+ By default, all tokens created by Analyzers and Tokenizers have a [PositionIncrement](xref:Lucene.Net.Analysis.TokenAttributes.IPositionIncrementAttribute#Lucene_Net_Analysis_TokenAttributes_IPositionIncrementAttribute_PositionIncrement) of one. This means that the position stored for that token in the index would be one more than that of the previous token. Recall that phrase and proximity searches rely on position info. 
 
  If the selected analyzer filters the stop words "is" and "the", then for a document containing the string "blue is the sky", only the tokens "blue", "sky" are indexed, with position("sky") = 3 + position("blue"). Now, a phrase query "blue is the sky" would find that document, because the same analyzer filters the same stop words from that query. But the phrase query "blue sky" would not find that document because the position increment between "blue" and "sky" is only 1. 
 
  If this behavior does not fit the application needs, the query parser needs to be configured to not take position increments into account when generating phrase queries. 
 
- Note that a StopFilter MUST increment the position increment in order not to generate corrupt tokenstream graphs. Here is the logic used by StopFilter to increment positions when filtering out tokens: 
+ Note that a StopFilter MUST increment the position increment in order not to generate corrupt TokenStream graphs. Here is the logic used by StopFilter to increment positions when filtering out tokens: 
 
-      public TokenStream tokenStream(final String fieldName, Reader reader) {
-        final TokenStream ts = someAnalyzer.tokenStream(fieldName, reader);
-        TokenStream res = new TokenStream() {
-          CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
-          PositionIncrementAttribute posIncrAtt = addAttribute(PositionIncrementAttribute.class);
+```cs
+public class MyTokenStream : TokenStream
+{
+    private readonly TokenStream ts;
+    private readonly CharArraySet stopWords;
+    private readonly ICharTermAttribute termAtt;
+    private readonly IPositionIncrementAttribute posIncrAtt;
     
-      public boolean incrementToken() throws IOException {
-            int extraIncrement = 0;
-            while (true) {
-              boolean hasNext = ts.incrementToken();
-              if (hasNext) {
-                if (stopWords.contains(termAtt.toString())) {
-                  extraIncrement += posIncrAtt.getPositionIncrement(); // filter this word
-                  continue;
-                } 
-                if (extraIncrement>0) {
-                  posIncrAtt.setPositionIncrement(posIncrAtt.getPositionIncrement()+extraIncrement);
+    public MyTokenStream(TokenStream ts, CharArraySet stopWords)
+    {
+        this.ts = ts;
+        termAtt = AddAttribute<ICharTermAttribute>();
+        posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+    }
+    
+    public override bool IncrementToken()
+    {
+        int extraIncrement = 0;
+        while (true)
+        {
+            bool hasNext = ts.IncrementToken();
+            if (hasNext)
+            {
+                if (stopWords.Contains(termAttr.ToString()))
+                {
+                    extraIncrement += posIncrAtt.PositionIncrement; // filter this word
+                    continue;
                 }
-              }
-              return hasNext;
+                if (extraIncrement > 0)
+                {
+                    posIncrAtt.PositionIncrement += extraIncrement;
+                }
             }
-          }
-        };
-        return res;
-      }
+            return hasNext;
+        }
+    }
+}
+
+public override TokenStream GetTokenStream(string fieldName, Reader reader)
+{
+    TokenStream ts = someAnalyzer.GetTokenStream(fieldName, reader);
+    return new MyTokenStream(ts, stopWords);
+}
+```
 
  A few more use cases for modifying position increments are: 
 
@@ -234,7 +322,7 @@ and proximity searches (though sentence identification is not provided by Lucene
 
 ### Token Position Length
 
- By default, all tokens created by Analyzers and Tokenizers have a [Length](xref:Lucene.Net.Analysis.TokenAttributes.PositionLengthAttribute#methods) of one. This means that the token occupies a single position. This attribute is not indexed and thus not taken into account for positional queries, but is used by eg. suggesters. 
+ By default, all tokens created by Analyzers and Tokenizers have a [Length](xref:Lucene.Net.Analysis.TokenAttributes.IPositionLengthAttribute#Lucene_Net_Analysis_TokenAttributes_IPositionLengthAttribute_PositionLength) of one. This means that the token occupies a single position. This attribute is not indexed and thus not taken into account for positional queries, but is used by eg. suggesters. 
 
  The main use case for positions lengths is multi-word synonyms. With single-word synonyms, setting the position increment to 0 is enough to denote the fact that two words are synonyms, for example: 
 
@@ -273,20 +361,20 @@ and proximity searches (though sentence identification is not provided by Lucene
 *   Tokens that have the same end position (taking into account the
   position length) must have the same end offset.
 
-*   Tokenizers must call [#clearAttributes()](xref:Lucene.Net.Util.AttributeSource) in
-  incrementToken().
+*   Tokenizers must call [ClearAttributes()](xref:Lucene.Net.Util.AttributeSource#Lucene_Net_Util_AttributeSource_ClearAttributes) in
+  IncrementToken().
 
-*   Tokenizers must override [#end()](xref:Lucene.Net.Analysis.TokenStream), and pass the final
+*   Tokenizers must override [End()](xref:Lucene.Net.Analysis.TokenStream#Lucene_Net_Analysis_TokenStream_End), and pass the final
   offset (the total number of input characters processed) to both
-  parameters of [Int)](xref:Lucene.Net.Analysis.TokenAttributes.OffsetAttribute#methods).
+  parameters of [OffsetAttribute.SetOffset(int, int)](xref:Lucene.Net.Analysis.TokenAttributes.IOffsetAttribute#Lucene_Net_Analysis_TokenAttributes_IOffsetAttribute_SetOffset_System_Int32_System_Int32_).
 
  Although these rules might seem easy to follow, problems can quickly happen when chaining badly implemented filters that play with positions and offsets, such as synonym or n-grams filters. Here are good practices for writing correct filters: 
 
-*   Token filters should not modify offsets. If you feel that your filter would need to modify offsets, then it should probably be implemented as a tokenizer.
+*   Token filters should not modify offsets. If you feel that your filter would need to modify offsets, then it should probably be implemented as a Tokenizer.
 
 *   Token filters should not insert positions. If a filter needs to add tokens, then they should all have a position increment of 0.
 
-*   When they add tokens, token filters should call [#clearAttributes()](xref:Lucene.Net.Util.AttributeSource) first.
+*   When they add tokens, token filters should call [ClearAttributes()](xref:Lucene.Net.Util.AttributeSource#Lucene_Net_Util_AttributeSource_ClearAttributes) first.
 
 *   When they remove tokens, token filters should increment the position increment of the following token.
 
@@ -294,53 +382,57 @@ and proximity searches (though sentence identification is not provided by Lucene
 
 ## TokenStream API
 
- "Flexible Indexing" summarizes the effort of making the Lucene indexer pluggable and extensible for custom index formats. A fully customizable indexer means that users will be able to store custom data structures on disk. Therefore an API is necessary that can transport custom types of data from the documents to the indexer. 
+ "Flexible Indexing" summarizes the effort of making the Lucene.NET indexer pluggable and extensible for custom index formats. A fully customizable indexer means that users will be able to store custom data structures on disk. Therefore an API is necessary that can transport custom types of data from the documents to the indexer. 
 
 ### Attribute and AttributeSource
 
- Classes <xref:Lucene.Net.Util.Attribute> and <xref:Lucene.Net.Util.AttributeSource> serve as the basis upon which the analysis elements of "Flexible Indexing" are implemented. An Attribute holds a particular piece of information about a text token. For example, <xref:Lucene.Net.Analysis.TokenAttributes.CharTermAttribute> contains the term text of a token, and <xref:Lucene.Net.Analysis.TokenAttributes.OffsetAttribute> contains the start and end character offsets of a token. An AttributeSource is a collection of Attributes with a restriction: there may be only one instance of each attribute type. TokenStream now extends AttributeSource, which means that one can add Attributes to a TokenStream. Since TokenFilter extends TokenStream, all filters are also AttributeSources. 
+ Classes <xref:Lucene.Net.Util.Attribute> and <xref:Lucene.Net.Util.AttributeSource> serve as the basis upon which the analysis elements of "Flexible Indexing" are implemented. An Attribute holds a particular piece of information about a text token. For example, <xref:Lucene.Net.Analysis.TokenAttributes.ICharTermAttribute> contains the term text of a token, and <xref:Lucene.Net.Analysis.TokenAttributes.IOffsetAttribute> contains the start and end character offsets of a token. An AttributeSource is a collection of Attributes with a restriction: there may be only one instance of each attribute type. TokenStream now extends AttributeSource, which means that one can add Attributes to a TokenStream. Since TokenFilter extends TokenStream, all filters are also AttributeSources. 
 
- Lucene provides seven Attributes out of the box: 
+ Lucene.NET provides seven Attributes out of the box: 
 
 <table rules="all" frame="box" cellpadding="3">
+  <colgroup>
+    <col span="1" style="width:30%">
+    <col span="1" style="width:70%">
+  </colgroup>
   <tr>
-    <td><xref:Lucene.Net.Analysis.TokenAttributes.CharTermAttribute></td>
+    <td><xref:Lucene.Net.Analysis.TokenAttributes.ICharTermAttribute></td>
     <td>
-      The term text of a token.  Implements {@link java.lang.CharSequence} 
-      (providing methods length() and charAt(), and allowing e.g. for direct
-      use with regular expression {@link java.util.regex.Matcher}s) and 
-      {@link java.lang.Appendable} (allowing the term text to be appended to.)
+      The term text of a token.  Implements J2N.Text.ICharSequence 
+      (providing properties Length and this[int], and allowing e.g. for direct
+      use with J2N.Text.IAppendable (allowing the term text to be appended to.)
+      In .NET, we can only use this indirectly with the [Regex](https://docs.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex) class by first calling ToString() and then passing the string to the Regex.
     </td>
   </tr>
   <tr>
-    <td><xref:Lucene.Net.Analysis.TokenAttributes.OffsetAttribute></td>
+    <td><xref:Lucene.Net.Analysis.TokenAttributes.IOffsetAttribute></td>
     <td>The start and end offset of a token in characters.</td>
   </tr>
   <tr>
-    <td><xref:Lucene.Net.Analysis.TokenAttributes.PositionIncrementAttribute></td>
+    <td><xref:Lucene.Net.Analysis.TokenAttributes.IPositionIncrementAttribute></td>
     <td>See above for detailed information about position increment.</td>
   </tr>
   <tr>
-    <td><xref:Lucene.Net.Analysis.TokenAttributes.PositionLengthAttribute></td>
+    <td><xref:Lucene.Net.Analysis.TokenAttributes.IPositionLengthAttribute></td>
     <td>The number of positions occupied by a token.</td>
   </tr>
   <tr>
-    <td><xref:Lucene.Net.Analysis.TokenAttributes.PayloadAttribute></td>
+    <td><xref:Lucene.Net.Analysis.TokenAttributes.IPayloadAttribute></td>
     <td>The payload that a Token can optionally have.</td>
   </tr>
   <tr>
-    <td><xref:Lucene.Net.Analysis.TokenAttributes.TypeAttribute></td>
+    <td><xref:Lucene.Net.Analysis.TokenAttributes.ITypeAttribute></td>
     <td>The type of the token. Default is 'word'.</td>
   </tr>
   <tr>
-    <td><xref:Lucene.Net.Analysis.TokenAttributes.FlagsAttribute></td>
+    <td><xref:Lucene.Net.Analysis.TokenAttributes.IFlagsAttribute></td>
     <td>Optional flags a token can have.</td>
   </tr>
   <tr>
-    <td><xref:Lucene.Net.Analysis.TokenAttributes.KeywordAttribute></td>
+    <td><xref:Lucene.Net.Analysis.TokenAttributes.IKeywordAttribute></td>
     <td>
       Keyword-aware TokenStreams/-Filters skip modification of tokens that
-      return true from this attribute's isKeyword() method. 
+      return true from this attribute's [IsKeyword](xref:Lucene.Net.Analysis.TokenAttributes.IKeywordAttribute#Lucene_Net_Analysis_TokenAttributes_IKeywordAttribute_IsKeyword) property. 
     </td>
   </tr>
 </table>
@@ -359,7 +451,7 @@ left for garbage. However, that does not mean that the components of
 that token stream will, in fact, be discarded. The default is just the
 opposite. <xref:Lucene.Net.Analysis.Analyzer> applies a reuse
 strategy to the tokenizer and the token filters. It will reuse
-them. For each new input, it calls [#setReader(java.io.Reader)](xref:Lucene.Net.Analysis.Tokenizer) 
+them. For each new input, it calls [SetReader(System.IO.TextReader)](xref:Lucene.Net.Analysis.Tokenizer#Lucene_Net_Analysis_Tokenizer_SetReader_System_IO_TextReader_) 
 to set the input. Your components must be prepared for this scenario,
 as described below.
 
@@ -368,52 +460,56 @@ as described below.
 *   You should create your tokenizer class by extending <xref:Lucene.Net.Analysis.Tokenizer>.
 
 *   Your tokenizer must __never__ make direct use of the
-  {@link java.io.Reader} supplied to its constructor(s). (A future
-  release of Apache Lucene may remove the reader parameters from the
+  [System.Text.TextReader](https://docs.microsoft.com/en-us/dotnet/api/system.io.textreader) supplied to its constructor(s). (A future
+  release of Apache Lucene.NET will remove the reader parameters from the
   Tokenizer constructors.)
-  <xref:Lucene.Net.Analysis.Tokenizer> wraps the reader in an
+  <xref:Lucene.Net.Analysis.Tokenizer> wraps the text reader in an
   object that helps enforce that applications comply with the [analysis workflow](#analysis-workflow). Thus, your class
   should only reference the input via the protected 'input' field
   of Tokenizer.
 
-*   Your tokenizer __must__ override [#end()](xref:Lucene.Net.Analysis.TokenStream).
+*   Your tokenizer __must__ override [End()](xref:Lucene.Net.Analysis.TokenStream#Lucene_Net_Analysis_TokenStream_End).
   Your implementation __must__ call
-  `super.end()`. It must set a correct final offset into
+  `base.End()`. It must set a correct final offset into
   the offset attribute, and finish up and other attributes to reflect
   the end of the stream.
 
-*   If your tokenizer overrides [#reset()](xref:Lucene.Net.Analysis.TokenStream)
-  or [#close()](xref:Lucene.Net.Analysis.TokenStream), it
+*   If your tokenizer overrides [Reset()](xref:Lucene.Net.Analysis.TokenStream#Lucene_Net_Analysis_TokenStream_Reset)
+  or [Dispose()](xref:Lucene.Net.Analysis.TokenStream#Lucene_Net_Analysis_TokenStream_Dispose_System_Boolean_), it
   __must__ call the corresponding superclass method.
 
 #### Token Filter
 
   You should create your token filter class by extending <xref:Lucene.Net.Analysis.TokenFilter>.
-  If your token filter overrides [#reset()](xref:Lucene.Net.Analysis.TokenStream),
-  [#end()](xref:Lucene.Net.Analysis.TokenStream)
-  or [#close()](xref:Lucene.Net.Analysis.TokenStream), it
+  If your token filter overrides [Reset()](xref:Lucene.Net.Analysis.TokenStream#Lucene_Net_Analysis_TokenStream_Reset),
+  [End()](xref:Lucene.Net.Analysis.TokenStream#Lucene_Net_Analysis_TokenStream_End)
+  or [Dispose()](xref:Lucene.Net.Analysis.TokenStream#Lucene_Net_Analysis_TokenStream_Dispose_System_Boolean_), it
   __must__ call the corresponding superclass method.
 
 #### Creating delegates
 
   Forwarding classes (those which extend <xref:Lucene.Net.Analysis.Tokenizer> but delegate
   selected logic to another tokenizer) must also set the reader to the delegate in the overridden
-  [#reset()](xref:Lucene.Net.Analysis.Tokenizer) method, e.g.:
+  [Reset()](xref:Lucene.Net.Analysis.Tokenizer#Lucene_Net_Analysis_Tokenizer_Reset) method, e.g.:
 
-        public class ForwardingTokenizer extends Tokenizer {
-           private Tokenizer delegate;
-           ...
-           {@literal @Override}
-           public void reset() {
-              super.reset();
-              delegate.setReader(this.input);
-              delegate.reset();
-           }
-        }
+```cs
+public class ForwardingTokenizer : Tokenizer
+{
+    private Tokenizer @delegate;
+    ...
+   
+    public override void Reset()
+    {
+        base.Reset();
+        @delegate.SetReader(this.m_input);
+        @delegate.Reset();
+    }
+}
+```
 
 ### Testing Your Analysis Component
 
- The lucene-test-framework component defines [BaseTokenStreamTestCase]({@docRoot}/../test-framework/org/apache/lucene/analysis/BaseTokenStreamTestCase.html). By extending this class, you can create JUnit tests that validate that your Analyzer and/or analysis components correctly implement the protocol. The checkRandomData methods of that class are particularly effective in flushing out errors. 
+ The Lucene.Net.TestFramework component defines [BaseTokenStreamTestCase](../test-framework/Lucene.Net.Analysis.BaseTokenStreamTestCase.html). By extending this class, you can create NUnit tests that validate that your Analyzer and/or analysis components correctly implement the protocol. The CheckRandomData()methods of that class are particularly effective in flushing out errors. 
 
 ### Using the TokenStream API
 
@@ -425,345 +521,387 @@ a chain of a TokenStream and multiple TokenFilters is used, then all TokenFilter
 with the TokenStream.
 
 2.  Attribute instances are reused for all tokens of a document. Thus, a TokenStream/-Filter needs to update
-the appropriate Attribute(s) in incrementToken(). The consumer, commonly the Lucene indexer, consumes the data in the
-Attributes and then calls incrementToken() again until it returns false, which indicates that the end of the stream
-was reached. This means that in each call of incrementToken() a TokenStream/-Filter can safely overwrite the data in
+the appropriate Attribute(s) in IncrementToken(). The consumer, commonly the Lucene.NET indexer, consumes the data in the
+Attributes and then calls IncrementToken() again until it returns false, which indicates that the end of the stream
+was reached. This means that in each call of IncrementToken() a TokenStream/-Filter can safely overwrite the data in
 the Attribute instances.
 
 3.  For performance reasons a TokenStream/-Filter should add/get Attributes during instantiation; i.e., create an attribute in the
-constructor and store references to it in an instance variable.  Using an instance variable instead of calling addAttribute()/getAttribute() 
-in incrementToken() will avoid attribute lookups for every token in the document.
+constructor and store references to it in an instance variable.  Using an instance variable instead of calling `AddAttribute<T>()`/`GetAttribute<T>()` 
+in IncrementToken() will avoid attribute lookups for every token in the document.
 
 4.  All methods in AttributeSource are idempotent, which means calling them multiple times always yields the same
-result. This is especially important to know for addAttribute(). The method takes the __type__ (`Class`)
-of an Attribute as an argument and returns an __instance__. If an Attribute of the same type was previously added, then
+result. This is especially important to know for `AddAttribute<T>()`. The method takes the __interface__ 
+of an Attribute as an generic closing type and returns an __instance__. If an Attribute of the same type was previously added, then
 the already existing instance is returned, otherwise a new instance is created and returned. Therefore TokenStreams/-Filters
-can safely call addAttribute() with the same Attribute type multiple times. Even consumers of TokenStreams should
-normally call addAttribute() instead of getAttribute(), because it would not fail if the TokenStream does not have this
-Attribute (getAttribute() would throw an IllegalArgumentException, if the Attribute is missing). More advanced code
-could simply check with hasAttribute(), if a TokenStream has it, and may conditionally leave out processing for
+can safely call `AddAttribute<T>()` with the same Attribute type multiple times. Even consumers of TokenStreams should
+normally call `AddAttribute<T>()` instead of `GetAttribute<T>()`, because it would not fail if the TokenStream does not have this
+Attribute (`GetAttribute<T>()` would throw an ArgumentException, if the Attribute is missing). More advanced code
+could simply check with `HasAttribute<T>()`, if a TokenStream has it, and may conditionally leave out processing for
 extra performance.
 
 ### Example
 
- In this example we will create a WhiteSpaceTokenizer and use a LengthFilter to suppress all words that have only two or fewer characters. The LengthFilter is part of the Lucene core and its implementation will be explained here to illustrate the usage of the TokenStream API. 
+ In this example we will create a WhiteSpaceTokenizer and use a LengthFilter to suppress all words that have only two or fewer characters. The LengthFilter is part of the Lucene.Net assembly and its implementation will be explained here to illustrate the usage of the TokenStream API. 
 
- Then we will develop a custom Attribute, a PartOfSpeechAttribute, and add another filter to the chain which utilizes the new custom attribute, and call it PartOfSpeechTaggingFilter. 
+ Then we will develop a custom Attribute, a IPartOfSpeechAttribute, and add another filter to the chain which utilizes the new custom attribute, and call it PartOfSpeechTaggingFilter. 
 
 #### Whitespace tokenization
 
-    public class MyAnalyzer extends Analyzer {
-    
-  private Version matchVersion;
+```cs
+public class MyAnalyzer : Analyzer
+{
+    private LuceneVersion matchVersion;
 
-      public MyAnalyzer(Version matchVersion) {
+    public MyAnalyzer(LuceneVersion matchVersion)
+    {
         this.matchVersion = matchVersion;
-      }
-    
-  {@literal @Override}
-      protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-        return new TokenStreamComponents(new WhitespaceTokenizer(matchVersion, reader));
-      }
-
-      public static void main(String[] args) throws IOException {
-        // text to tokenize
-        final String text = "This is a demo of the TokenStream API";
-
-        Version matchVersion = Version.LUCENE_XY; // Substitute desired Lucene version for XY
-        MyAnalyzer analyzer = new MyAnalyzer(matchVersion);
-        TokenStream stream = analyzer.tokenStream("field", new StringReader(text));
-
-        // get the CharTermAttribute from the TokenStream
-        CharTermAttribute termAtt = stream.addAttribute(CharTermAttribute.class);
-    
-    try {
-          stream.reset();
-
-          // print all tokens until stream is exhausted
-          while (stream.incrementToken()) {
-            System.out.println(termAtt.toString());
-          }
-
-          stream.end();
-        } finally {
-          stream.close();
-        }
-      }
     }
 
-In this easy example a simple white space tokenization is performed. In main() a loop consumes the stream and
-prints the term text of the tokens by accessing the CharTermAttribute that the WhitespaceTokenizer provides. 
+    protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+    {
+        return new TokenStreamComponents(new WhitespaceTokenizer(matchVersion, reader));
+    }
+}
+    
+public static class Program
+{
+    public static void Main(string[] args)
+    {
+        // text to tokenize
+        string text = "This is a demo of the TokenStream API";
+
+        LuceneVersion matchVersion = Version.LUCENE_XY; // Substitute desired Lucene version for XY
+        MyAnalyzer analyzer = new MyAnalyzer(matchVersion);
+        TokenStream stream = analyzer.GetTokenStream("field", new StringReader(text));
+
+        // get the CharTermAttribute from the TokenStream
+        ICharTermAttribute termAtt = stream.AddAttribute<ICharTermAttribute>();
+
+        try
+        {
+            stream.Reset();
+
+            // print all tokens until stream is exhausted
+            while (stream.IncrementToken())
+            {
+                Console.WriteLine(termAtt.ToString());
+            }
+
+            stream.End();
+    }
+    finally
+    {
+        stream.Dispose();
+    }
+}
+```
+
+In this easy example a simple white space tokenization is performed. In Main() a loop consumes the stream and
+prints the term text of the tokens by accessing the ICharTermAttribute that the WhitespaceTokenizer provides. 
 Here is the output:
 
-    This
-    is
-    a
-    demo
-    of
-    the
-    new
-    TokenStream
-    API
+```
+This
+is
+a
+demo
+of
+the
+new
+TokenStream
+API
+```
 
 #### Adding a LengthFilter
 
 We want to suppress all tokens that have 2 or less characters. We can do that
 easily by adding a LengthFilter to the chain. Only the
-`createComponents()` method in our analyzer needs to be changed:
+`CreateComponents()` method in our analyzer needs to be changed:
 
-      {@literal @Override}
-      protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-        final Tokenizer source = new WhitespaceTokenizer(matchVersion, reader);
-        TokenStream result = new LengthFilter(true, source, 3, Integer.MAX_VALUE);
-        return new TokenStreamComponents(source, result);
-      }
+```cs
+protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+{
+    Tokenizer source = new WhitespaceTokenizer(matchVersion, reader);
+    TokenStream result = new LengthFilter(true, source, 3, int.MaxValue);
+    return new TokenStreamComponents(source, result);
+}
+```
 
 Note how now only words with 3 or more characters are contained in the output:
 
-    This
-    demo
-    the
-    new
-    TokenStream
-    API
+```
+This
+demo
+the
+new
+TokenStream
+API
+```
 
 Now let's take a look how the LengthFilter is implemented:
 
-    public final class LengthFilter extends FilteringTokenFilter {
-    
-  private final int min;
-      private final int max;
+```cs
+public sealed class LengthFilter : FilteringTokenFilter
+{
+    private readonly int min;
+    private readonly int max;
 
-      private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
-    
-  /**
-       * Create a new LengthFilter. This will filter out tokens whose
-       * CharTermAttribute is either too short
-       * (< min) or too long (> max).
-       * @param version the Lucene match version
-       * @param in      the TokenStream to consume
-       * @param min     the minimum length
-       * @param max     the maximum length
-       */
-      public LengthFilter(Version version, TokenStream in, int min, int max) {
-        super(version, in);
+    private readonly ICharTermAttribute termAtt = AddAttribute<ICharTermAttribute>();
+
+    /// <summary>
+    /// Create a new LengthFilter. This will filter out tokens whose
+    /// ICharTermAttribute is either too short
+    /// (< min) or too long (> max).
+    /// </summary>
+    /// <param name="version">the Lucene match version</param>
+    /// <param name="input">the TokenStream to consume</param>
+    /// <param name="min">the minimum length</param>
+    /// <param name="max">the maximum length</param>
+    public LengthFilter(LuceneVersion version, TokenStream input, int min, int max)
+        : base(version, input)
+    {
+
         this.min = min;
         this.max = max;
-      }
-    
-  {@literal @Override}
-      public boolean accept() {
-        final int len = termAtt.length();
-        return (len >= min && len <= max);="" }="" }=""></=>
-
- In LengthFilter, the CharTermAttribute is added and stored in the instance variable `termAtt`. Remember that there can only be a single instance of CharTermAttribute in the chain, so in our example the `addAttribute()` call in LengthFilter returns the CharTermAttribute that the WhitespaceTokenizer already added. 
-
- The tokens are retrieved from the input stream in FilteringTokenFilter's `incrementToken()` method (see below), which calls LengthFilter's `accept()` method. By looking at the term text in the CharTermAttribute, the length of the term can be determined and tokens that are either too short or too long are skipped. Note how `accept()` can efficiently access the instance variable; no attribute lookup is necessary. The same is true for the consumer, which can simply use local references to the Attributes. 
-
- LengthFilter extends FilteringTokenFilter: 
-
-    public abstract class FilteringTokenFilter extends TokenFilter {
-    
-  private final PositionIncrementAttribute posIncrAtt = addAttribute(PositionIncrementAttribute.class);
-    
-  /**
-       * Create a new FilteringTokenFilter.
-       * @param in      the TokenStream to consume
-       */
-      public FilteringTokenFilter(Version version, TokenStream in) {
-        super(in);
-      }
-    
-  /** Override this method and return if the current input token should be returned by incrementToken. */
-      protected abstract boolean accept() throws IOException;
-    
-  {@literal @Override}
-      public final boolean incrementToken() throws IOException {
-        int skippedPositions = 0;
-        while (input.incrementToken()) {
-          if (accept()) {
-            if (skippedPositions != 0) {
-              posIncrAtt.setPositionIncrement(posIncrAtt.getPositionIncrement() + skippedPositions);
-            }
-            return true;
-          }
-          skippedPositions += posIncrAtt.getPositionIncrement();
-        }
-        // reached EOS -- return false
-        return false;
-      }
-    
-  {@literal @Override}
-      public void reset() throws IOException {
-        super.reset();
-      }
-    
-}
-
-#### Adding a custom Attribute
-
-Now we're going to implement our own custom Attribute for part-of-speech tagging and call it consequently 
-`PartOfSpeechAttribute`. First we need to define the interface of the new Attribute:
-
-      public interface PartOfSpeechAttribute extends Attribute {
-        public static enum PartOfSpeech {
-          Noun, Verb, Adjective, Adverb, Pronoun, Preposition, Conjunction, Article, Unknown
-        }
-
-        public void setPartOfSpeech(PartOfSpeech pos);
-
-        public PartOfSpeech getPartOfSpeech();
-      }
-
- Now we also need to write the implementing class. The name of that class is important here: By default, Lucene checks if there is a class with the name of the Attribute with the suffix 'Impl'. In this example, we would consequently call the implementing class `PartOfSpeechAttributeImpl`. 
-
- This should be the usual behavior. However, there is also an expert-API that allows changing these naming conventions: <xref:Lucene.Net.Util.AttributeSource.AttributeFactory>. The factory accepts an Attribute interface as argument and returns an actual instance. You can implement your own factory if you need to change the default behavior. 
-
- Now here is the actual class that implements our new Attribute. Notice that the class has to extend <xref:Lucene.Net.Util.AttributeImpl>: 
-
-    public final class PartOfSpeechAttributeImpl extends AttributeImpl 
-                                      implements PartOfSpeechAttribute {
-
-      private PartOfSpeech pos = PartOfSpeech.Unknown;
-
-      public void setPartOfSpeech(PartOfSpeech pos) {
-        this.pos = pos;
-      }
-
-      public PartOfSpeech getPartOfSpeech() {
-        return pos;
-      }
-    
-  {@literal @Override}
-      public void clear() {
-        pos = PartOfSpeech.Unknown;
-      }
-    
-  {@literal @Override}
-      public void copyTo(AttributeImpl target) {
-        ((PartOfSpeechAttribute) target).setPartOfSpeech(pos);
-      }
     }
 
- This is a simple Attribute implementation has only a single variable that stores the part-of-speech of a token. It extends the `AttributeImpl` class and therefore implements its abstract methods `clear()` and `copyTo()`. Now we need a TokenFilter that can set this new PartOfSpeechAttribute for each token. In this example we show a very naive filter that tags every word with a leading upper-case letter as a 'Noun' and all other words as 'Unknown'. 
+    public override bool Accept()
+    {
+        int len = termAtt.Length;
+        return len >= min && len <= max;
+    }
+}
+```
 
-      public static class PartOfSpeechTaggingFilter extends TokenFilter {
-        PartOfSpeechAttribute posAtt = addAttribute(PartOfSpeechAttribute.class);
-        CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
+ In LengthFilter, the ICharTermAttribute is added and stored in the instance variable `termAtt`. Remember that there can only be a single instance of ICharTermAttribute in the chain, so in our example the `AddAttribute<T>()` call in LengthFilter returns the ICharTermAttribute that the WhitespaceTokenizer already added. 
 
-        protected PartOfSpeechTaggingFilter(TokenStream input) {
-          super(input);
+ The tokens are retrieved from the input stream in FilteringTokenFilter's `IncrementToken()` method (see below), which calls LengthFilter's `Accept()` method. By looking at the term text in the ICharTermAttribute, the length of the term can be determined and tokens that are either too short or too long are skipped. Note how `Accept()` can efficiently access the instance variable; no attribute lookup is necessary. The same is true for the consumer, which can simply use local references to the Attributes. 
+
+```cs
+public abstract class FilteringTokenFilter : TokenFilter
+{
+    private readonly IPositionIncrementAttribute posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+
+    /// <summary>
+    /// Create a new FilteringTokenFilter.
+    /// </summary>
+    /// <param name="version">the Lucene match version</param>
+    /// <param name="input">the TokenStream to consume</param>
+    public FilteringTokenFilter(LuceneVersion version, TokenStream input)
+        : base(input)
+    {
+    }
+
+    /// <summary>
+    /// Override this method and return if the current input token should be returned by IncrementToken.
+    /// </summary>
+    protected abstract bool Accept();
+
+    public sealed override bool IncrementToken()
+    {
+        int skippedPositions = 0;
+        while (m_input.IncrementToken())
+        {
+            if (Accept())
+            {
+                if (skippedPositions != 0)
+                {
+                    posIncrAtt.PositionIncrement += skippedPositions;
+                }
+                return true;
+            }
+            skippedPositions += posIncrAtt.PositionIncrement;
         }
+        // reached end of stream -- return false
+        return false;
+    }
 
-        public boolean incrementToken() throws IOException {
-          if (!input.incrementToken()) {return false;}
-          posAtt.setPartOfSpeech(determinePOS(termAtt.buffer(), 0, termAtt.length()));
-          return true;
-        }
+    public override void Reset()
+    {
+        base.Reset();
+    }
+}
+```
 
-        // determine the part of speech for the given term
-        protected PartOfSpeech determinePOS(char[] term, int offset, int length) {
-          // naive implementation that tags every uppercased word as noun
-          if (length > 0 && Character.isUpperCase(term[0])) {
+#### Adding a custom IAttribute
+
+Now we're going to implement our own custom IAttribute for part-of-speech tagging and call it consequently 
+`IPartOfSpeechAttribute`. First we need to define the interface of the new IAttribute:
+
+```cs
+public enum PartOfSpeech
+{
+	Noun, Verb, Adjective, Adverb, Pronoun, Preposition, Conjunction, Article, Unknown
+}
+
+public interface IPartOfSpeechAttribute : IAttribute
+{
+	PartOfSpeech PartOfSpeech { get; set; }
+}
+```
+
+ Now we also need to write the implementing class. The name of that class is important here: By default, Lucene checks if there is a class with the name of the IAttribute without the prefix 'I'. In this example, we would consequently call the implementing class `PartOfSpeechAttribute`. 
+
+ This should be the usual behavior. However, there is also an expert-API that allows changing these naming conventions: <xref:Lucene.Net.Util.AttributeSource.AttributeFactory>. The factory accepts an IAttribute interface as argument and returns an actual instance. You can implement your own factory if you need to change the default behavior. 
+
+ Now here is the actual class that implements our new Attribute. Notice that the class has to extend <xref:Lucene.Net.Util.Attribute>: 
+
+```cs
+public sealed class PartOfSpeechAttribute : Lucene.Net.Util.Attribute, IPartOfSpeechAttribute
+{
+	public PartOfSpeech PartOfSpeech { get; set; } = PartOfSpeech.Unknown;
+
+	public override void Clear()
+	{
+		PartOfSpeech = PartOfSpeech.Unknown;
+	}
+
+	public override void CopyTo(IAttribute target)
+	{
+		((IPartOfSpeechAttribute)target).PartOfSpeech = PartOfSpeech;
+	}
+}
+```
+
+ This is a simple Attribute implementation has only a single variable that stores the part-of-speech of a token. It extends the `Attribute` class and therefore implements its abstract methods `Clear()` and `CopyTo()`. Now we need a TokenFilter that can set this new PartOfSpeechAttribute for each token. In this example we show a very naive filter that tags every word with a leading upper-case letter as a 'Noun' and all other words as 'Unknown'. 
+
+```cs
+public class PartOfSpeechTaggingFilter : TokenFilter
+{
+    private readonly IPartOfSpeechAttribute posAtt;
+    private readonly ICharTermAttribute termAtt;
+
+    protected PartOfSpeechTaggingFilter(TokenStream input)
+        : base(input)
+    {
+        posAtt = AddAttribute<IPartOfSpeechAttribute>();
+        termAtt = AddAttribute<ICharTermAttribute>();
+    }
+
+    public bool IncrementToken()
+    {
+        if (!m_input.IncrementToken()) { return false; }
+        posAtt.PartOfSpeech = DeterminePartOfSpeech(termAtt.Buffer, 0, termAtt.Length);
+        return true;
+    }
+
+    // determine the part of speech for the given term
+    protected PartOfSpeech DeterminePartOfSpeech(char[] term, int offset, int length)
+    {
+        // naive implementation that tags every uppercased word as noun
+        if (length > 0 && char.IsUpper(term[0]))
+        {
             return PartOfSpeech.Noun;
-          }
-          return PartOfSpeech.Unknown;
         }
-      }
+        return PartOfSpeech.Unknown;
+    }
+}
+```
 
  Just like the LengthFilter, this new filter stores references to the attributes it needs in instance variables. Notice how you only need to pass in the interface of the new Attribute and instantiating the correct class is automatically taken care of. 
 
 Now we need to add the filter to the chain in MyAnalyzer:
 
-      {@literal @Override}
-      protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-        final Tokenizer source = new WhitespaceTokenizer(matchVersion, reader);
-        TokenStream result = new LengthFilter(true, source, 3, Integer.MAX_VALUE);
-        result = new PartOfSpeechTaggingFilter(result);
-        return new TokenStreamComponents(source, result);
-      }
+```cs
+protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+{
+    Tokenizer source = new WhitespaceTokenizer(matchVersion, reader);
+    TokenStream result = new LengthFilter(matchVersion, source, 3, int.MaxValue);
+    result = new PartOfSpeechTaggingFilter(result);
+    return new TokenStreamComponents(source, result);
+}
+```
 
 Now let's look at the output:
 
-    This
-    demo
-    the
-    new
-    TokenStream
-    API
+```
+This
+demo
+the
+new
+TokenStream
+API
+```
 
 Apparently it hasn't changed, which shows that adding a custom attribute to a TokenStream/Filter chain does not
 affect any existing consumers, simply because they don't know the new Attribute. Now let's change the consumer
 to make use of the new PartOfSpeechAttribute and print it out:
 
-      public static void main(String[] args) throws IOException {
-        // text to tokenize
-        final String text = "This is a demo of the TokenStream API";
+```cs
+public static class Program
+{
+	public static void Main(string[] args)
+	{
+		// text to tokenize
+		string text = "This is a demo of the TokenStream API";
 
-        MyAnalyzer analyzer = new MyAnalyzer();
-        TokenStream stream = analyzer.tokenStream("field", new StringReader(text));
+		MyAnalyzer analyzer = new MyAnalyzer();
+		TokenStream stream = analyzer.GetTokenStream("field", new StringReader(text));
 
-        // get the CharTermAttribute from the TokenStream
-        CharTermAttribute termAtt = stream.addAttribute(CharTermAttribute.class);
+		// get the ICharTermAttribute from the TokenStream
+		ICharTermAttribute termAtt = stream.AddAttribute<ICharTermAttribute>();
 
-        // get the PartOfSpeechAttribute from the TokenStream
-        PartOfSpeechAttribute posAtt = stream.addAttribute(PartOfSpeechAttribute.class);
-    
-    try {
-          stream.reset();
-    
-      // print all tokens until stream is exhausted
-          while (stream.incrementToken()) {
-            System.out.println(termAtt.toString() + ": " + posAtt.getPartOfSpeech());
-          }
+		// get the PartOfSpeechAttribute from the TokenStream
+		IPartOfSpeechAttribute posAtt = stream.AddAttribute<IPartOfSpeechAttribute>();
 
-          stream.end();
-        } finally {
-          stream.close();
-        }
-      }
+		try
+		{
+			stream.Reset();
+
+			// print all tokens until stream is exhausted
+			while (stream.IncrementToken())
+			{
+				Console.WriteLine(termAtt.ToString() + ": " + posAtt.PartOfSpeech);
+			}
+
+			stream.End();
+		}
+		finally
+		{
+			stream.Dispose();
+		}
+	}
+}
+```
 
 The change that was made is to get the PartOfSpeechAttribute from the TokenStream and print out its contents in
 the while loop that consumes the stream. Here is the new output:
 
-    This: Noun
-    demo: Unknown
-    the: Unknown
-    new: Unknown
-    TokenStream: Noun
-    API: Noun
+```
+This: Noun
+demo: Unknown
+the: Unknown
+new: Unknown
+TokenStream: Noun
+API: Noun
+```
 
 Each word is now followed by its assigned PartOfSpeech tag. Of course this is a naive 
 part-of-speech tagging. The word 'This' should not even be tagged as noun; it is only spelled capitalized because it
 is the first word of a sentence. Actually this is a good opportunity for an exercise. To practice the usage of the new
-API the reader could now write an Attribute and TokenFilter that can specify for each word if it was the first token
+API the reader could now write an IAttribute and TokenFilter that can specify for each word if it was the first token
 of a sentence or not. Then the PartOfSpeechTaggingFilter can make use of this knowledge and only tag capitalized words
 as nouns if not the first word of a sentence (we know, this is still not a correct behavior, but hey, it's a good exercise). 
-As a small hint, this is how the new Attribute class could begin:
+As a small hint, this is how the new IAttribute class could begin:
 
-      public class FirstTokenOfSentenceAttributeImpl extends AttributeImpl
-                                  implements FirstTokenOfSentenceAttribute {
+```cs
+public class FirstTokenOfSentenceAttribute : Lucene.Net.Util.Attribute, IFirstTokenOfSentenceAttribute
+{
+	public bool FirstToken { get; set; }
 
-        private boolean firstToken;
+	public override void Clear()
+	{
+		FirstToken = false;
+	}
 
-        public void setFirstToken(boolean firstToken) {
-          this.firstToken = firstToken;
-        }
-
-        public boolean getFirstToken() {
-          return firstToken;
-        }
-    
-    {@literal @Override}
-        public void clear() {
-          firstToken = false;
-        }
-    
-  ...
+	// ...
+}
+```
 
 #### Adding a CharFilter chain
 
-Analyzers take Java {@link java.io.Reader}s as input. Of course you can wrap your Readers with {@link java.io.FilterReader}s
+Analyzers take .NET [System.Text.TextReader](https://docs.microsoft.com/en-us/dotnet/api/system.io.textreader)s as input. In Java you can wrap Readers with [java.io.FilterReader](https://docs.oracle.com/javase/7/docs/api/java/io/FilterReader.html)s
 to manipulate content, but this would have the big disadvantage that character offsets might be inconsistent with your original
 text.
 
@@ -773,16 +911,18 @@ CharFilters can be chained.
 
 Example:
 
-    public class MyAnalyzer extends Analyzer {
-    
-  {@literal @Override}
-      protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-        return new TokenStreamComponents(new MyTokenizer(reader));
-      }
+```cs
+public class MyAnalyzer : Analyzer
+{
+	protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+	{
+		return new TokenStreamComponents(new MyTokenizer(reader));
+	}
 
-      {@literal @Override}
-      protected Reader initReader(String fieldName, Reader reader) {
-        // wrap the Reader in a CharFilter chain.
-        return new SecondCharFilter(new FirstCharFilter(reader));
-      }
-    }
+	protected override TextReader InitReader(string fieldName, TextReader reader)
+	{
+		// wrap the Reader in a CharFilter chain.
+		return new SecondCharFilter(new FirstCharFilter(reader));
+	}
+}
+```
