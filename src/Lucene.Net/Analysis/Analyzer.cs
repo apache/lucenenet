@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -46,22 +46,22 @@ namespace Lucene.Net.Analysis
     /// <para/>
     /// For some concrete implementations bundled with Lucene, look in the analysis modules:
     /// <list type="bullet">
-    ///   <item><description>Common:
+    ///   <item><description>[Common](../analysis-common/overview.html):
     ///       Analyzers for indexing content in different languages and domains.</description></item>
-    ///   <item><description>ICU:
+    ///   <item><description>[ICU](../icu/Lucene.Net.Analysis.Icu.html):
     ///       Exposes functionality from ICU to Apache Lucene.</description></item>
-    ///   <item><description>Kuromoji:
+    ///   <item><description>[Kuromoji](../analysis-kuromoji/Lucene.Net.Analysis.Ja.html):
     ///       Morphological analyzer for Japanese text.</description></item>
-    ///   <item><description>Morfologik:
+    ///   <item><description>[Morfologik](../analysis-morfologik/Lucene.Net.Analysis.Morfologik.html):
     ///       Dictionary-driven lemmatization for the Polish language.</description></item>
-    ///   <item><description>Phonetic:
+    ///   <item><description>[OpenNLP](../analysis-opennlp/Lucene.Net.Analysis.OpenNlp.html):
+    ///       Analysis integration with Apache OpenNLP.</description></item>
+    ///   <item><description>[Phonetic](../analysis-phonetic/Lucene.Net.Analysis.Phonetic.html):
     ///       Analysis for indexing phonetic signatures (for sounds-alike search).</description></item>
-    ///   <item><description>Smart Chinese:
+    ///   <item><description>[Smart Chinese](../analysis-smartcn/Lucene.Net.Analysis.Cn.Smart.html):
     ///       Analyzer for Simplified Chinese, which indexes words.</description></item>
-    ///   <item><description>Stempel:
+    ///   <item><description>[Stempel](../analysis-stempel/Lucene.Net.Analysis.Stempel.html):
     ///       Algorithmic Stemmer for the Polish Language.</description></item>
-    ///   <item><description>UIMA:
-    ///       Analysis integration with Apache UIMA.</description></item>
     /// </list>
     /// </summary>
     public abstract class Analyzer : IDisposable
