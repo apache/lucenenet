@@ -45,6 +45,13 @@ env:
   # SITE_REPO: apache/lucenenet-site
 
 jobs:
+  checkout:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Lucene.Net source
+        uses: actions/checkout@v2
+        with:
+          path: main-repo
   parse-version:
     runs-on: windows-latest
     steps:
@@ -55,6 +62,8 @@ jobs:
 
       - name: Determine Version
         uses: gittools/actions/gitversion/execute@v0.9.7
+        with:
+          targetPath: main-repo
       
       - name: Set version from tag
         run: |
@@ -92,10 +101,6 @@ jobs:
   build-website:
     runs-on: windows-latest
     steps:
-      - name: Checkout Lucene.Net source
-        uses: actions/checkout@v2
-        with:
-          path: main-repo
       - name: Build website
         run: ./main-repo/websites/site/site.ps1
         shell: powershell
