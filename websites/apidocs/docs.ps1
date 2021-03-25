@@ -52,6 +52,7 @@ $RepoRoot = (get-item $PSScriptFilePath).Directory.Parent.Parent.FullName;
 $ApiDocsFolder = Join-Path -Path $RepoRoot -ChildPath "websites\apidocs";
 $ToolsFolder = Join-Path -Path $ApiDocsFolder -ChildPath "tools";
 $CliIndexPath = Join-Path -Path $RepoRoot -ChildPath "src\dotnet\tools\lucene-cli\docs\index.md";
+$TocPath = Join-Path -Path $ApiDocsFolder -ChildPath "toc.yml"
 #ensure the /build/tools folder
 New-Item $ToolsFolder -type directory -force
 
@@ -184,6 +185,9 @@ if ($? -and $DisableBuild -eq $false) {
     # HACK: DocFx doesn't seem to work with fenced code blocks, so we update the lucene-cli index file manually.
     # Note it works better this way anyway because we can store a real version number in the file in the repo.
     (Get-Content -Path $CliIndexPath -Raw) -Replace '(?<=--version\s)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $CliIndexPath
+
+    # Update our TOC to the latest LuceneNetVersion
+    (Get-Content -Path $TocPath -Raw) -Replace '(?<=lucenenet\.apache\.org\/docs\/)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $TocPath
 
     foreach ($proj in $DocFxJsonMeta) {
         $projFile = Join-Path -Path $ApiDocsFolder $proj
