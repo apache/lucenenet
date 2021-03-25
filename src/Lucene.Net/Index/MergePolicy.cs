@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
@@ -64,10 +64,7 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-    public abstract class MergePolicy : IDisposable
-#if FEATURE_CLONEABLE
-        , System.ICloneable
-#endif
+    public abstract class MergePolicy : IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         /// <summary>
         /// A map of doc IDs. </summary>
@@ -289,20 +286,17 @@ namespace Lucene.Net.Index
 
                     while (paused)
                     {
-//#if FEATURE_THREAD_INTERRUPT
-//                        try
-//                        {
-//#endif
-                            // In theory we could wait() indefinitely, but we
+                        try
+                        {
+                            //In theory we could wait() indefinitely, but we
                             // do 1000 msec, defensively
                             Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
-//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-//                        }
-//                        catch (ThreadInterruptedException ie)
-//                        {
-//                            throw new Exception(ie.ToString(), ie);
-//                        }
-//#endif
+                        }
+                        catch (ThreadInterruptedException ie)
+                        {
+                            throw new Exception(ie.ToString(), ie);
+                        }
+
                         if (aborted)
                         {
                             throw new MergeAbortedException("merge is aborted: " + SegString(dir));

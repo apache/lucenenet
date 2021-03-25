@@ -234,17 +234,17 @@ namespace Lucene.Net.Store
                 this.curBufIndex = bi;
                 this.curBuf = b;
             }
-            catch (IndexOutOfRangeException)
+            catch (IndexOutOfRangeException aioobe)
             {
-                throw new EndOfStreamException("seek past EOF: " + this);
+                throw new EndOfStreamException("seek past EOF: " + this, aioobe);
             }
-            catch (ArgumentException)
+            catch (ArgumentException iae)
             {
-                throw new EndOfStreamException("seek past EOF: " + this);
+                throw new EndOfStreamException("seek past EOF: " + this, iae);
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException npe)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "Already closed: " + this);
+                throw new ObjectDisposedException("Already closed: " + this, npe);
             }
         }
 

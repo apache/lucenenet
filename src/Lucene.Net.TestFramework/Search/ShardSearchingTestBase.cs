@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using Lucene.Net.Analysis;
 using Lucene.Net.Diagnostics;
@@ -412,11 +412,11 @@ namespace Lucene.Net.Search
                         }
                         else
                         {
-                            nodeStats = outerInstance.collectionStatsCache[key];
+                            outerInstance.collectionStatsCache.TryGetValue(key, out nodeStats);
                         }
                         if (nodeStats == null)
                         {
-                            Console.WriteLine("coll stats myNodeID=" + MyNodeID + ": " + outerInstance.collectionStatsCache.Keys);
+                            Console.WriteLine("coll stats myNodeID=" + MyNodeID + ": " + Collections.ToString(outerInstance.collectionStatsCache.Keys));
                         }
                         // Collection stats are pre-shared on reopen, so,
                         // we better not have a cache miss:

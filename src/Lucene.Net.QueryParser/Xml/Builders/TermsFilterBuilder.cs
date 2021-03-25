@@ -65,7 +65,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             }
             catch (IOException ioe)
             {
-                throw new Exception("Error constructing terms from index:" + ioe);
+                throw new Exception("Error constructing terms from index:" + ioe, ioe);
             }
             finally
             {

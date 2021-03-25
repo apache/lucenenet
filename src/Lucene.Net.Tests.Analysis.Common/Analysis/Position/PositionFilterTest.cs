@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Shingle;
+// Lucene version compatibility level 4.8.1
+using Lucene.Net.Analysis.Shingle;
 using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
 

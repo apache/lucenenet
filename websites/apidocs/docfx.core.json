@@ -1,4 +1,4 @@
-{
+﻿{
   "metadata": [
     {
       "src": [
@@ -23,7 +23,8 @@
     "content": [
       {
         "files": [
-          "overview.md"
+          "overview.md",
+          "migration-guide.md"
         ],
         "src": "../../src/Lucene.Net"
       },

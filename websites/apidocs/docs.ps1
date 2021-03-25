@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------------------
+﻿# -----------------------------------------------------------------------------------
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,8 @@
 
 param (
     [Parameter(Mandatory)]
-    [string] $LuceneNetVersion, # TODO: Validate this with regex
+    [ValidatePattern('\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?')]
+    [string] $LuceneNetVersion,
     [switch] $ServeDocs = $false,
     [switch] $Clean = $false,
     [switch] $DisableMetaData = $false,
@@ -41,8 +42,7 @@ if ($BaseUrl -eq 'https://lucenenet.apache.org/docs/') {
 $BaseUrl = $BaseUrl.TrimEnd('/') # Remove any trailing slash
 Write-Host "Base URL for xref map set to $BaseUrl"
 
-# HACK: Our plugin only recognizes the version number through an environment variable,
-# so we set it here.
+# set env vars that will be replaced in Markdown
 $env:LuceneNetVersion = $LuceneNetVersion
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -51,6 +51,8 @@ $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
 $RepoRoot = (get-item $PSScriptFilePath).Directory.Parent.Parent.FullName;
 $ApiDocsFolder = Join-Path -Path $RepoRoot -ChildPath "websites\apidocs";
 $ToolsFolder = Join-Path -Path $ApiDocsFolder -ChildPath "tools";
+$CliIndexPath = Join-Path -Path $RepoRoot -ChildPath "src\dotnet\tools\lucene-cli\docs\index.md";
+$TocPath = Join-Path -Path $ApiDocsFolder -ChildPath "toc.yml"
 #ensure the /build/tools folder
 New-Item $ToolsFolder -type directory -force
 
@@ -124,7 +126,7 @@ if ($DisablePlugins -eq $false) {
 # update the docjx.global.json file based
 $DocFxGlobalJson = Join-Path -Path $ApiDocsFolder "docfx.global.json"
 $DocFxJsonContent = Get-Content $DocFxGlobalJson | ConvertFrom-Json
-$DocFxJsonContent._appFooter = "Copyright © $((Get-Date).Year) The Apache Software Foundation, Licensed under the <a href='http://www.apache.org/licenses/LICENSE-2.0' target='_blank'>Apache License, Version 2.0</a><br/> <small>Apache Lucene.Net, Lucene.Net, Apache, the Apache feather logo, and the Apache Lucene.Net project logo are trademarks of The Apache Software Foundation. <br/>All other marks mentioned may be trademarks or registered trademarks of their respective owners.</small>"
+$DocFxJsonContent._appFooter = "Copyright &copy; $((Get-Date).Year) The Apache Software Foundation, Licensed under the <a href='http://www.apache.org/licenses/LICENSE-2.0' target='_blank'>Apache License, Version 2.0</a><br/> <small>Apache Lucene.Net, Lucene.Net, Apache, the Apache feather logo, and the Apache Lucene.Net project logo are trademarks of The Apache Software Foundation. <br/>All other marks mentioned may be trademarks or registered trademarks of their respective owners.</small>"
 $DocFxJsonContent._appTitle = "Apache Lucene.NET $LuceneNetVersion Documentation"
 $DocFxJsonContent._gitContribute.branch = "docs/$LuceneNetVersion"
 $DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxGlobalJson
@@ -161,9 +163,6 @@ $DocFxJsonMeta = @(
 )
 $DocFxJsonSite = Join-Path -Path $ApiDocsFolder "docfx.site.json"
 
-# set env vars that will be replaced in Markdown
-$env:LuceneNetVersion = $LuceneNetVersion
-
 if ($? -and $DisableMetaData -eq $false) {
     foreach ($proj in $DocFxJsonMeta) {
         $projFile = Join-Path -Path $ApiDocsFolder $proj
@@ -183,6 +182,13 @@ if ($? -and $DisableMetaData -eq $false) {
 }
 
 if ($? -and $DisableBuild -eq $false) {
+    # HACK: DocFx doesn't seem to work with fenced code blocks, so we update the lucene-cli index file manually.
+    # Note it works better this way anyway because we can store a real version number in the file in the repo.
+    (Get-Content -Path $CliIndexPath -Raw) -Replace '(?<=--version\s)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $CliIndexPath
+
+    # Update our TOC to the latest LuceneNetVersion
+    (Get-Content -Path $TocPath -Raw) -Replace '(?<=lucenenet\.apache\.org\/docs\/)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $TocPath
+
     foreach ($proj in $DocFxJsonMeta) {
         $projFile = Join-Path -Path $ApiDocsFolder $proj
 

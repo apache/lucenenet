@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
@@ -24,11 +24,20 @@ namespace Lucene.Net.Store
     /// Wraps another <see cref="IChecksum"/> with an internal buffer
     /// to speed up checksum calculations.
     /// </summary>
-    // LUCENENET TODO: This class was public in Lucene. Marking internal, since
-    // a better approach would be to map this to the HashAlgorithm abstract class in .NET
-    // instead of using IChecksum from Java. See LUCENENET-637.
-    // After this conversion is done, this can be made public again. However, it is
-    // now internal so the conversion doesn't introduce a breaking public API change.
+    // LUCENENET NOTE: This class was public in Lucene. But it relies on the Java-centric
+    // IChecksum interface.
+    //
+    // But there is no real benefit to changing this to use .NET's HashAlgorithm class:
+    // 1) There are no APIs to update the checksum
+    // 2) There is no way to make a single decorator class that can buffer any HashAlgorthm
+    //    because it requires calls to protected members of HashAlgorithm.
+    // 3) The HashAlgorithm class creates a huge number of allocations compared using this
+    //    implementation.
+    // See https://github.com/apache/lucenenet/pull/436#issuecomment-796797535
+    //
+    // We could potentially move IChecksum to J2N and make this public, but it would only
+    // make sense to do so if there are users who would benefit from having this implementation available.
+    // Given that .NET already has a way to make checksums, it is probably not worth the effort.
     internal class BufferedChecksum : IChecksum
     {
         private readonly IChecksum @in;

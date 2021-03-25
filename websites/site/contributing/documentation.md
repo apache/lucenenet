@@ -93,13 +93,17 @@ The script parameters are:
 
 The file/folder structure is within `/websites/apidocs`:
 
-- `docs.ps1` - the build script
-- `docfx.json` - the DocFx configuration file _(see docfx manual for further info)_
-- `lucenetemplate/*` - the custom template files to style the website
-- `*.md` - the root site content such as the index and download pages
-- `toc.yml` - these files determine the menu structures _(see docfx manual for further info)_
-- `tools/*` - during the build process some tools will be downloaded which are stored here
-- `_site` - this is the exported static site that is generated
+- `docs.ps1` - The build script
+- `docfx.*.json` - The DocFx configuration files _(see docfx manual for further info)_
+  - `docfx.{library}.json` - Where {library} is an individual Lucene.NET project (i.e. `codecs`). Each library is built as it's own individual DocFx site and it's xref maps are exported to file to be shared between DocFx builds.
+  - `docfx.global.json` - Each library DocFx json references this file for global metadata. This is where all global metadata such as Title, Logo, Footer, etc... are declared.
+  - `docfx.global.subsite.json` - Each library DocFx json references this file for global metadata which denotes the [`_rel`](https://dotnet.github.io/docfx/tutorial/intro_template.html#system-generated-properties) (The relative path of the root output folder from current output file. i.e. the base URL). For example: `https://lucenenet.apache.org/docs/4.8.0-beta00009/`.
+  - `docfx.site.json` - Once each library is built and it's xref maps are exported, the main documentation site container is built with this definition.
+- `lucenetemplate/*` - The custom template files to style the website
+- `*.md` - The root site content such as the index and download pages
+- `toc.yml` - These files determine the menu structures _(see docfx manual for further info)_
+- `tools/*` - During the build process some tools will be downloaded which are stored here
+- `_site` - This is the exported static site that is generated
 
 ### Java to Markdown converter
 

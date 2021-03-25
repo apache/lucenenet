@@ -1,0 +1,1 @@
+The migration guide has moved to: [src/Lucene.Net/migration-guide.md](src/Lucene.Net/migration-guide.md)

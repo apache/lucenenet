@@ -161,6 +161,12 @@ namespace Lucene.Net.Search.Suggest
                 assertTrue(inputIterator.Current.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 assertEquals(inputIterator.Weight, (w1 + w2 + w3));
                 assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).GetBinaryValue()));
+
+                // LUCENENET NOTE: This test was once failing because we used SCG.HashSet<T> whose
+                // Equals() implementation does not check for set equality. As a result SortedInputEnumerator
+                // had been modified to reverse the results to get the test to pass. However, using JCG.HashSet<T>
+                // ensures that set equality (that is equality that doesn't care about order of items) is respected.
+                // SortedInputEnumerator has also had the specific sorting removed.
                 ISet<BytesRef> originalCtxs = new JCG.HashSet<BytesRef>();
                 foreach (IIndexableField ctxf in doc.GetFields(CONTEXTS_FIELD_NAME))
                 {

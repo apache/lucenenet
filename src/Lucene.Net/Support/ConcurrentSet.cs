@@ -242,7 +242,7 @@ namespace Lucene.Net.Support
         /// <returns><c>true</c> if <paramref name="other"/> is structurally equal to the current set;
         /// otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException">If <paramref name="comparer"/> is <c>null</c>.</exception>
-        public bool Equals(object other, IEqualityComparer comparer)
+        public bool Equals(object? other, IEqualityComparer comparer)
         {
             lock (SyncRoot)
                 return JCG.SetEqualityComparer<T>.Equals(set, other, comparer);
@@ -270,7 +270,7 @@ namespace Lucene.Net.Support
         /// <returns><c>true</c> if the specified object implements <see cref="ISet{T}"/>
         /// and it contains the same elements; otherwise, <c>false</c>.</returns>
         /// <seealso cref="Equals(object, IEqualityComparer)"/>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => Equals(obj, JCG.SetEqualityComparer<T>.Default);
 
         /// <summary>
@@ -299,14 +299,14 @@ namespace Lucene.Net.Support
         /// <para/>
         /// The index of a format item is not zero.
         /// </exception>
-        public string ToString(string format, IFormatProvider formatProvider)
+        public string ToString(string? format, IFormatProvider? formatProvider)
         {
             lock (SyncRoot)
             {
                 if (set is IFormattable formattable)
-                    return formattable.ToString(format, formatProvider);
+                    return formattable.ToString(format ?? "{0}", formatProvider);
 
-                return string.Format(formatProvider, format, set);
+                return string.Format(formatProvider, format ?? "{0}", set);
             }
         }
 
@@ -327,7 +327,7 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <returns>A string that represents the current set.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="formatProvider"/> is <c>null</c>.</exception>
-        public string ToString(IFormatProvider formatProvider)
+        public string ToString(IFormatProvider? formatProvider)
             => ToString("{0}", formatProvider);
 
         /// <summary>
@@ -346,7 +346,7 @@ namespace Lucene.Net.Support
         /// <para/>
         /// The index of a format item is not zero.
         /// </exception>
-        public string ToString(string format)
+        public string ToString(string? format)
             => ToString(format, StringFormatter.CurrentCulture);
 
         

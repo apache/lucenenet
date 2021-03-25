@@ -1,14 +1,15 @@
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Queries.Function;
+using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Util;
 using Spatial4n.Core.Shapes;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Spatial.Prefix
 {
@@ -74,8 +75,9 @@ namespace Lucene.Net.Spatial.Prefix
     {
         protected readonly SpatialPrefixTree m_grid;
 
-        private readonly ConcurrentDictionary<string, PointPrefixTreeFieldCacheProvider> provider =
-            new ConcurrentDictionary<string, PointPrefixTreeFieldCacheProvider>();
+        // LUCENENET specific - use Lazy<T> to make the create operation atomic. See #417.
+        private readonly ConcurrentDictionary<string, Lazy<PointPrefixTreeFieldCacheProvider>> provider =
+            new ConcurrentDictionary<string, Lazy<PointPrefixTreeFieldCacheProvider>>();
 
         protected readonly bool m_simplifyIndexedCells;
         protected int m_defaultFieldValuesArrayLen = 2;
@@ -222,8 +224,11 @@ namespace Lucene.Net.Spatial.Prefix
 
         public override ValueSource MakeDistanceValueSource(IPoint queryPoint, double multiplier)
         {
-            var p = provider.GetOrAdd(FieldName, f => new PointPrefixTreeFieldCacheProvider(m_grid, FieldName, m_defaultFieldValuesArrayLen));
-            return new ShapeFieldCacheDistanceValueSource(m_ctx, p, queryPoint, multiplier);
+            // LUCENENET specific - use Lazy<T> to make the create operation atomic. See #417.
+            var p = provider.GetOrAdd(FieldName,
+                f => new Lazy<PointPrefixTreeFieldCacheProvider>(
+                    () => new PointPrefixTreeFieldCacheProvider(m_grid, FieldName, m_defaultFieldValuesArrayLen)));
+            return new ShapeFieldCacheDistanceValueSource(m_ctx, p.Value, queryPoint, multiplier);
         }
 
         public virtual SpatialPrefixTree Grid => m_grid;

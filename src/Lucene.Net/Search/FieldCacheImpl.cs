@@ -1,10 +1,9 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -144,9 +143,7 @@ namespace Lucene.Net.Search
 
         private void AddCacheEntries<TKey, TValue>(IList<FieldCache.CacheEntry> result, Type cacheType, Cache<TKey, TValue> cache) where TKey : CacheKey
         {
-#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
             lock (cache.readerCache)
-#endif
             {
                 foreach (var readerCacheEntry in cache.readerCache)
                 {
@@ -237,9 +234,9 @@ namespace Lucene.Net.Search
             internal readonly FieldCacheImpl wrapper;
 
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-            internal ConditionalWeakTable<object, ConcurrentDictionary<TKey, object>> readerCache = new ConditionalWeakTable<object, ConcurrentDictionary<TKey, object>>();
+            internal ConditionalWeakTable<object, IDictionary<TKey, object>> readerCache = new ConditionalWeakTable<object, IDictionary<TKey, object>>();
 #else
-            internal WeakDictionary<object, ConcurrentDictionary<TKey, object>> readerCache = new WeakDictionary<object, ConcurrentDictionary<TKey, object>>();
+            internal WeakDictionary<object, IDictionary<TKey, object>> readerCache = new WeakDictionary<object, IDictionary<TKey, object>>();
 #endif
 
             protected abstract TValue CreateValue(AtomicReader reader, TKey key, bool setDocsWithField);
@@ -248,9 +245,7 @@ namespace Lucene.Net.Search
             /// Remove this reader from the cache, if present. </summary>
             public virtual void PurgeByCacheKey(object coreCacheKey)
             {
-#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                 lock (readerCache)
-#endif
                     readerCache.Remove(coreCacheKey);
             }
 
@@ -260,68 +255,78 @@ namespace Lucene.Net.Search
             /// </summary>
             public virtual void Put(AtomicReader reader, TKey key, TValue value)
             {
-                ConcurrentDictionary<TKey, object> innerCache;
+                IDictionary<TKey, object> innerCache;
                 object readerKey = reader.CoreCacheKey;
-#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-                innerCache = readerCache.GetValue(readerKey, (readerKey) =>
-                {
-                    // First time this reader is using FieldCache
-                    wrapper.InitReader(reader);
-                    return new ConcurrentDictionary<TKey, object>
-                    {
-                        [key] = value
-                    };
-                });
-#else
                 lock (readerCache)
                 {
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+
+                    innerCache = readerCache.GetValue(readerKey, (readerKey) =>
+                    {
+                        // First time this reader is using FieldCache
+                        wrapper.InitReader(reader);
+                        return new Dictionary<TKey, object>
+                        {
+                            [key] = value
+                        };
+                    });
+#else
                     if (!readerCache.TryGetValue(readerKey, out innerCache) || innerCache is null)
                     {
                         // First time this reader is using FieldCache
-                        innerCache = new ConcurrentDictionary<TKey, object>
+                        innerCache = new Dictionary<TKey, object>
                         {
                             [key] = value
                         };
                         readerCache.Add(readerKey, innerCache);
                         wrapper.InitReader(reader);
                     }
-                }
 #endif
-                // If another thread beat us to it, leave the current value
-                innerCache.TryAdd(key, value);
+                    if (innerCache.TryGetValue(key, out object temp) || temp is null)
+                        innerCache[key] = value;
+                    // else if another thread beat us to it, leave the current value
+                }
             }
 
             public virtual TValue Get(AtomicReader reader, TKey key, bool setDocsWithField)
             {
-                ConcurrentDictionary<TKey, object> innerCache;
+                IDictionary<TKey, object> innerCache;
+                object value = null;
                 object readerKey = reader.CoreCacheKey;
-#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-                innerCache = readerCache.GetValue(readerKey, (readerKey) =>
-                {
-                    // First time this reader is using FieldCache
-                    wrapper.InitReader(reader);
-                    return new ConcurrentDictionary<TKey, object>
-                    {
-                        [key] = new FieldCache.CreationPlaceholder<TValue>()
-                    };
-                });
-
-#else
                 lock (readerCache)
                 {
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+                    innerCache = readerCache.GetValue(readerKey, (readerKey) =>
+                    {
+                        // First time this reader is using FieldCache
+                        wrapper.InitReader(reader);
+                        return new Dictionary<TKey, object>
+                        {
+                            [key] = value = new FieldCache.CreationPlaceholder<TValue>()
+                        };
+                    });
+#else
                     if (!readerCache.TryGetValue(readerKey, out innerCache) || innerCache is null)
                     {
                         // First time this reader is using FieldCache
-                        innerCache = new ConcurrentDictionary<TKey, object>
+                        innerCache = new Dictionary<TKey, object>
                         {
-                            [key] = new FieldCache.CreationPlaceholder<TValue>()
+                            [key] = value = new FieldCache.CreationPlaceholder<TValue>()
                         };
                         readerCache[readerKey] = innerCache;
                         wrapper.InitReader(reader);
                     }
-                }
 #endif
-                object value = innerCache.GetOrAdd(key, (cacheKey) => new FieldCache.CreationPlaceholder<TValue>());
+                    // LUCENENET: The creation steps above will ensure the placehoder already exists by
+                    // this point only in the case where the dictionary is being added.
+                    // But we need to cover 1) the case where the cache already has a dictionary but no value and
+                    // 2) the case where the cache already has a dictionary and a value so we diverge a little from Lucene here.
+                    if (value is null)
+                    {
+                        if (!innerCache.TryGetValue(key, out value) || value is null)
+                            innerCache[key] = value = new FieldCache.CreationPlaceholder<TValue>();
+                    }
+                }
                 if (value is FieldCache.CreationPlaceholder<TValue> progress)
                 {
                     lock (value)
@@ -329,18 +334,19 @@ namespace Lucene.Net.Search
                         if (progress.Value is null)
                         {
                             progress.Value = CreateValue(reader, key, setDocsWithField);
-                            if (innerCache.TryUpdate(key, progress.Value, value))
+                            lock (readerCache)
                             {
-                                // Only check if key.custom (the parser) is
-                                // non-null; else, we check twice for a single
-                                // call to FieldCache.getXXX
-                                if (!(key.Custom is null) && !(wrapper is null))
+                                innerCache[key] = progress.Value;
+                            }
+                            // Only check if key.custom (the parser) is
+                            // non-null; else, we check twice for a single
+                            // call to FieldCache.getXXX
+                            if (!(key.Custom is null) && !(wrapper is null))
+                            {
+                                TextWriter infoStream = wrapper.InfoStream;
+                                if (!(infoStream is null))
                                 {
-                                    TextWriter infoStream = wrapper.InfoStream;
-                                    if (infoStream != null)
-                                    {
-                                        PrintNewInsanity(infoStream, progress.Value);
-                                    }
+                                    PrintNewInsanity(infoStream, progress.Value);
                                 }
                             }
                         }

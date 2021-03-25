@@ -1,4 +1,4 @@
-using J2N.Runtime.CompilerServices;
+﻿using J2N.Runtime.CompilerServices;
 using J2N.Threading;
 using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
@@ -81,10 +81,7 @@ namespace Lucene.Net.Index
                     if (stalled) // react on the first wakeup call!
                     {
                         // don't loop here, higher level logic will re-stall!
-//#if FEATURE_THREAD_INTERRUPT
-//                        try
-//                        {
-//#endif
+
                         // LUCENENET: make sure not to run IncWaiters / DecrWaiters in Debugging.Assert as that gets 
                         // disabled in production
                         var result = IncWaiters();
@@ -92,13 +89,7 @@ namespace Lucene.Net.Index
                         Monitor.Wait(this);
                         result = DecrWaiters();
                         if (Debugging.AssertsEnabled) Debugging.Assert(result);
-//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-//                        }
-//                        catch (ThreadInterruptedException e)
-//                        {
-//                            throw new ThreadInterruptedException("Thread Interrupted Exception", e);
-//                        }
-//#endif
+                        // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
                     }
                 }
             }

@@ -1,24 +1,4 @@
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
-
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -30,6 +10,23 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Tests.Queries
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     public class BooleanFilterTest : LuceneTestCase
     {
         private Directory directory;
@@ -46,6 +43,7 @@ namespace Lucene.Net.Tests.Queries
 #endif
                 Random, directory, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false));
 
+            //Add series of docs with filterable fields : acces rights, prices, dates and "in-stock" flags
             AddDoc(writer, @"admin guest", @"010", @"20040101", @"Y");
             AddDoc(writer, @"guest", @"020", @"20040101", @"Y");
             AddDoc(writer, @"guest", @"020", @"20050101", @"Y");
@@ -91,23 +89,23 @@ namespace Lucene.Net.Tests.Queries
 
         private Filter GetEmptyFilter()
         {
-            return new AnonymousFilter();
+            return new FilterAnonymousClass();
         }
 
-        private sealed class AnonymousFilter : Filter
+        private sealed class FilterAnonymousClass : Filter
         {
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                return new FixedBitSet(context.AtomicReader.MaxDoc);
+                return new FixedBitSet(context.Reader.MaxDoc);
             }
         }
 
         private Filter GetNullDISFilter()
         {
-            return new AnonymousFilter1();
+            return new FilterAnonymousClass1();
         }
 
-        private sealed class AnonymousFilter1 : Filter
+        private sealed class FilterAnonymousClass1 : Filter
         {
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
@@ -117,10 +115,10 @@ namespace Lucene.Net.Tests.Queries
 
         private Filter GetNullDISIFilter()
         {
-            return new AnonymousFilter2();
+            return new FilterAnonymousClass2();
         }
 
-        private sealed class AnonymousDocIdSet : DocIdSet
+        private sealed class DocIdSetAnonymousClass : DocIdSet
         {
             public override DocIdSetIterator GetIterator()
             {
@@ -130,11 +128,11 @@ namespace Lucene.Net.Tests.Queries
             public override bool IsCacheable => true;
         }
 
-        private sealed class AnonymousFilter2 : Filter
+        private sealed class FilterAnonymousClass2 : Filter
         {
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                return new AnonymousDocIdSet();
+                return new DocIdSetAnonymousClass();
             }
         }
 
@@ -160,6 +158,8 @@ namespace Lucene.Net.Tests.Queries
             BooleanFilter booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetTermsFilter(@"price", @"030"), Occur.SHOULD);
             TstFilterCard(@"Should retrieves only 1 doc", 1, booleanFilter);
+
+            // same with a real DISI (no OpenBitSetIterator)
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetWrappedTermQuery(@"price", @"030"), Occur.SHOULD);
             TstFilterCard(@"Should retrieves only 1 doc", 1, booleanFilter);
@@ -182,13 +182,17 @@ namespace Lucene.Net.Tests.Queries
             booleanFilter.Add(GetRangeFilter(@"price", @"020", @"030"), Occur.SHOULD);
             booleanFilter.Add(GetTermsFilter(@"inStock", @"N"), Occur.MUST_NOT);
             TstFilterCard(@"Shoulds Ored but AndNot", 4, booleanFilter);
+
             booleanFilter.Add(GetTermsFilter(@"inStock", @"Maybe"), Occur.MUST_NOT);
             TstFilterCard(@"Shoulds Ored but AndNots", 3, booleanFilter);
+
+            // same with a real DISI (no OpenBitSetIterator)
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetRangeFilter(@"price", @"010", @"020"), Occur.SHOULD);
             booleanFilter.Add(GetRangeFilter(@"price", @"020", @"030"), Occur.SHOULD);
             booleanFilter.Add(GetWrappedTermQuery(@"inStock", @"N"), Occur.MUST_NOT);
             TstFilterCard(@"Shoulds Ored but AndNot", 4, booleanFilter);
+
             booleanFilter.Add(GetWrappedTermQuery(@"inStock", @"Maybe"), Occur.MUST_NOT);
             TstFilterCard(@"Shoulds Ored but AndNots", 3, booleanFilter);
         }
@@ -201,6 +205,8 @@ namespace Lucene.Net.Tests.Queries
             booleanFilter.Add(GetRangeFilter(@"price", @"020", @"030"), Occur.SHOULD);
             booleanFilter.Add(GetTermsFilter(@"accessRights", @"admin"), Occur.MUST);
             TstFilterCard(@"Shoulds Ored but MUST", 3, booleanFilter);
+
+            // same with a real DISI (no OpenBitSetIterator)
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetRangeFilter(@"price", @"010", @"020"), Occur.SHOULD);
             booleanFilter.Add(GetRangeFilter(@"price", @"020", @"030"), Occur.SHOULD);
@@ -228,6 +234,8 @@ namespace Lucene.Net.Tests.Queries
             booleanFilter.Add(GetRangeFilter(@"date", @"20050101", @"20051231"), Occur.MUST);
             booleanFilter.Add(GetTermsFilter(@"inStock", @"N"), Occur.MUST_NOT);
             TstFilterCard(@"Shoulds Ored but MUSTs ANDED and MustNot", 0, booleanFilter);
+
+            // same with a real DISI (no OpenBitSetIterator)
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetRangeFilter(@"price", @"030", @"040"), Occur.SHOULD);
             booleanFilter.Add(GetWrappedTermQuery(@"accessRights", @"admin"), Occur.MUST);
@@ -242,6 +250,8 @@ namespace Lucene.Net.Tests.Queries
             BooleanFilter booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetTermsFilter(@"accessRights", @"admin"), Occur.MUST);
             TstFilterCard(@"MUST", 3, booleanFilter);
+
+            // same with a real DISI (no OpenBitSetIterator)
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetWrappedTermQuery(@"accessRights", @"admin"), Occur.MUST);
             TstFilterCard(@"MUST", 3, booleanFilter);
@@ -253,6 +263,8 @@ namespace Lucene.Net.Tests.Queries
             BooleanFilter booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetTermsFilter(@"inStock", @"N"), Occur.MUST_NOT);
             TstFilterCard(@"MUST_NOT", 4, booleanFilter);
+
+            // same with a real DISI (no OpenBitSetIterator)
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetWrappedTermQuery(@"inStock", @"N"), Occur.MUST_NOT);
             TstFilterCard(@"MUST_NOT", 4, booleanFilter);
@@ -265,6 +277,8 @@ namespace Lucene.Net.Tests.Queries
             booleanFilter.Add(GetTermsFilter(@"inStock", @"N"), Occur.MUST);
             booleanFilter.Add(GetTermsFilter(@"price", @"030"), Occur.MUST_NOT);
             TstFilterCard(@"MUST_NOT wins over MUST for same docs", 0, booleanFilter);
+
+            // same with a real DISI (no OpenBitSetIterator)
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetWrappedTermQuery(@"inStock", @"N"), Occur.MUST);
             booleanFilter.Add(GetWrappedTermQuery(@"price", @"030"), Occur.MUST_NOT);
@@ -285,22 +299,27 @@ namespace Lucene.Net.Tests.Queries
             booleanFilter.Add(GetTermsFilter(@"price", @"030"), Occur.MUST);
             booleanFilter.Add(GetNullDISFilter(), Occur.MUST);
             TstFilterCard(@"A MUST filter that returns a null DIS should never return documents", 0, booleanFilter);
+
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetTermsFilter(@"price", @"030"), Occur.MUST);
             booleanFilter.Add(GetNullDISIFilter(), Occur.MUST);
             TstFilterCard(@"A MUST filter that returns a null DISI should never return documents", 0, booleanFilter);
+
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetTermsFilter(@"price", @"030"), Occur.SHOULD);
             booleanFilter.Add(GetNullDISFilter(), Occur.SHOULD);
             TstFilterCard(@"A SHOULD filter that returns a null DIS should be invisible", 1, booleanFilter);
+
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetTermsFilter(@"price", @"030"), Occur.SHOULD);
             booleanFilter.Add(GetNullDISIFilter(), Occur.SHOULD);
             TstFilterCard(@"A SHOULD filter that returns a null DISI should be invisible", 1, booleanFilter);
+
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetTermsFilter(@"price", @"030"), Occur.MUST);
             booleanFilter.Add(GetNullDISFilter(), Occur.MUST_NOT);
             TstFilterCard(@"A MUST_NOT filter that returns a null DIS should be invisible", 1, booleanFilter);
+
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetTermsFilter(@"price", @"030"), Occur.MUST);
             booleanFilter.Add(GetNullDISIFilter(), Occur.MUST_NOT);
@@ -313,18 +332,23 @@ namespace Lucene.Net.Tests.Queries
             BooleanFilter booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetNullDISFilter(), Occur.MUST);
             TstFilterCard(@"A MUST filter that returns a null DIS should never return documents", 0, booleanFilter);
+
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetNullDISIFilter(), Occur.MUST);
             TstFilterCard(@"A MUST filter that returns a null DISI should never return documents", 0, booleanFilter);
+
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetNullDISFilter(), Occur.SHOULD);
             TstFilterCard(@"A single SHOULD filter that returns a null DIS should never return documents", 0, booleanFilter);
+
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetNullDISIFilter(), Occur.SHOULD);
             TstFilterCard(@"A single SHOULD filter that returns a null DISI should never return documents", 0, booleanFilter);
+
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetNullDISFilter(), Occur.MUST_NOT);
             TstFilterCard(@"A single MUST_NOT filter that returns a null DIS should be invisible", 5, booleanFilter);
+
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetNullDISIFilter(), Occur.MUST_NOT);
             TstFilterCard(@"A single MUST_NOT filter that returns a null DIS should be invisible", 5, booleanFilter);
@@ -337,10 +361,12 @@ namespace Lucene.Net.Tests.Queries
             booleanFilter.Add(GetEmptyFilter(), Occur.SHOULD);
             booleanFilter.Add(GetTermsFilter(@"accessRights", @"admin"), Occur.MUST);
             TstFilterCard(@">0 shoulds with no matches should return no docs", 0, booleanFilter);
+
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetNullDISFilter(), Occur.SHOULD);
             booleanFilter.Add(GetTermsFilter(@"accessRights", @"admin"), Occur.MUST);
             TstFilterCard(@">0 shoulds with no matches should return no docs", 0, booleanFilter);
+
             booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetNullDISIFilter(), Occur.SHOULD);
             booleanFilter.Add(GetTermsFilter(@"accessRights", @"admin"), Occur.MUST);
@@ -353,6 +379,7 @@ namespace Lucene.Net.Tests.Queries
             BooleanFilter booleanFilter = new BooleanFilter();
             booleanFilter.Add(GetTermsFilter(@"inStock", @"N"), Occur.MUST);
             booleanFilter.Add(GetTermsFilter(@"isFragile", @"Y"), Occur.MUST);
+
             assertEquals(@"BooleanFilter(+inStock:N +isFragile:Y)", booleanFilter.ToString());
         }
 
@@ -360,14 +387,19 @@ namespace Lucene.Net.Tests.Queries
         public void TestToStringOfWrappedBooleanFilters()
         {
             BooleanFilter orFilter = new BooleanFilter();
+
             BooleanFilter stockFilter = new BooleanFilter();
             stockFilter.Add(new FilterClause(GetTermsFilter(@"inStock", @"Y"), Occur.MUST));
             stockFilter.Add(new FilterClause(GetTermsFilter(@"barCode", @"12345678"), Occur.MUST));
+
             orFilter.Add(new FilterClause(stockFilter, Occur.SHOULD));
+
             BooleanFilter productPropertyFilter = new BooleanFilter();
             productPropertyFilter.Add(new FilterClause(GetTermsFilter(@"isHeavy", @"N"), Occur.MUST));
             productPropertyFilter.Add(new FilterClause(GetTermsFilter(@"isDamaged", @"Y"), Occur.MUST));
+
             orFilter.Add(new FilterClause(productPropertyFilter, Occur.SHOULD));
+
             BooleanFilter composedFilter = new BooleanFilter();
             composedFilter.Add(new FilterClause(orFilter, Occur.MUST));
             assertEquals(@"BooleanFilter(+BooleanFilter(BooleanFilter(+inStock:Y +barCode:12345678) BooleanFilter(+isHeavy:N +isDamaged:Y)))", composedFilter.ToString());

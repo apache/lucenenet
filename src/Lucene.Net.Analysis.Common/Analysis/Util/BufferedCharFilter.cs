@@ -1,4 +1,5 @@
-﻿// This class was sourced from the Apache Harmony project's BufferedReader
+// Lucene version compatibility level 4.8.1
+// This class was sourced from the Apache Harmony project's BufferedReader
 // https://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/
 
 using Lucene.Net.Analysis.CharFilters;

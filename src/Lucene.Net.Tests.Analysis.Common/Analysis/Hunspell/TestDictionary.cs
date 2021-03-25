@@ -1,4 +1,5 @@
-﻿using J2N.Text;
+﻿// Lucene version compatibility level 4.10.4
+using J2N.Text;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using NUnit.Framework;
@@ -8,7 +9,6 @@ using System.Text;
 
 namespace Lucene.Net.Analysis.Hunspell
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with

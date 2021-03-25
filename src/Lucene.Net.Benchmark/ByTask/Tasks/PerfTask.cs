@@ -58,10 +58,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     ///     </description></item>
     /// </list>
     /// </remarks>
-    public abstract class PerfTask : IDisposable
-#if FEATURE_CLONEABLE
-        , System.ICloneable
-#endif
+    public abstract class PerfTask : IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         internal const int DEFAULT_LOG_STEP = 1000;
 

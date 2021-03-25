@@ -571,7 +571,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 }
                 catch (Exception floatExc)
                 {
-                    { if (true) throw new ParseException(boostErrorMessage + weight.Image + " (" + floatExc + ")"); }
+                    { if (true) throw new ParseException(boostErrorMessage + weight.Image + " (" + floatExc + ")", floatExc); }
                 }
                 if (f <= 0.0)
                 {

@@ -1,24 +1,4 @@
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
-
+﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Index;
@@ -30,6 +10,23 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Tests.Queries
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     /// <summary>
     /// Test CustomScoreQuery search.
     /// </summary>
@@ -93,7 +90,8 @@ namespace Lucene.Net.Tests.Queries
         private class CustomAddQuery : CustomScoreQuery
         {
             // constructor
-            internal CustomAddQuery(Query q, FunctionQuery qValSrc) : base(q, qValSrc)
+            internal CustomAddQuery(Query q, FunctionQuery qValSrc)
+                : base(q, qValSrc)
             {
             }
 
@@ -133,7 +131,8 @@ namespace Lucene.Net.Tests.Queries
         private class CustomMulAddQuery : CustomScoreQuery
         {
             // constructor
-            internal CustomMulAddQuery(Query q, FunctionQuery qValSrc1, FunctionQuery qValSrc2) : base(q, qValSrc1, qValSrc2)
+            internal CustomMulAddQuery(Query q, FunctionQuery qValSrc1, FunctionQuery qValSrc2)
+                : base(q, qValSrc1, qValSrc2)
             {
             }
 
@@ -263,7 +262,8 @@ namespace Lucene.Net.Tests.Queries
 
             r.Dispose();
         }
-        
+
+        // Test that FieldScoreQuery returns docs with expected score.
         private void DoTestCustomScore(ValueSource valueSource, double dboost)
         {
             float boost = (float)dboost;
@@ -314,18 +314,22 @@ namespace Lucene.Net.Tests.Queries
             TopDocs td5CustomMulAdd = s.Search(q5CustomMulAdd, null, 1000);
 
             // put results in map so we can verify the scores although they have changed
-            IDictionary<int, float> h1 = TopDocsToMap(td1);
-            IDictionary<int, float> h2CustomNeutral = TopDocsToMap(td2CustomNeutral);
-            IDictionary<int, float> h3CustomMul = TopDocsToMap(td3CustomMul);
-            IDictionary<int, float> h4CustomAdd = TopDocsToMap(td4CustomAdd);
-            IDictionary<int, float> h5CustomMulAdd = TopDocsToMap(td5CustomMulAdd);
+            IDictionary<int, float> h1               = TopDocsToMap(td1);
+            IDictionary<int, float> h2CustomNeutral  = TopDocsToMap(td2CustomNeutral);
+            IDictionary<int, float> h3CustomMul      = TopDocsToMap(td3CustomMul);
+            IDictionary<int, float> h4CustomAdd      = TopDocsToMap(td4CustomAdd);
+            IDictionary<int, float> h5CustomMulAdd   = TopDocsToMap(td5CustomMulAdd);
 
-            VerifyResults(boost, s, h1, h2CustomNeutral, h3CustomMul, h4CustomAdd, h5CustomMulAdd, q1, q2CustomNeutral, q3CustomMul, q4CustomAdd, q5CustomMulAdd);
+            VerifyResults(boost, s,
+                h1, h2CustomNeutral, h3CustomMul, h4CustomAdd, h5CustomMulAdd,
+                q1, q2CustomNeutral, q3CustomMul, q4CustomAdd, q5CustomMulAdd);
             r.Dispose();
         }
 
         // verify results are as expected.
-        private void VerifyResults(float boost, IndexSearcher s, IDictionary<int, float> h1, IDictionary<int, float> h2customNeutral, IDictionary<int, float> h3CustomMul, IDictionary<int, float> h4CustomAdd, IDictionary<int, float> h5CustomMulAdd, Query q1, Query q2, Query q3, Query q4, Query q5)
+        private void VerifyResults(float boost, IndexSearcher s,
+            IDictionary<int, float> h1, IDictionary<int, float> h2customNeutral, IDictionary<int, float> h3CustomMul, IDictionary<int, float> h4CustomAdd, IDictionary<int, float> h5CustomMulAdd,
+            Query q1, Query q2, Query q3, Query q4, Query q5)
         {
 
             // verify numbers of matches

@@ -31,12 +31,14 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// </summary>
     public class Cl2oTaxonomyWriterCache : ITaxonomyWriterCache
     {
-        private const int LOCK_TIMEOUT = 1000;
-        private readonly ReaderWriterLockSlim @lock = new ReaderWriterLockSlim();
         private readonly int initialCapcity, numHashArrays;
         private readonly float loadFactor;
 
         private volatile CompactLabelToOrdinal cache;
+
+        // LUCENENET specific - use ReaderWriterLockSlim for better throughput
+        private readonly ReaderWriterLockSlim syncLock = new ReaderWriterLockSlim();
+        private readonly object disposalLock = new object();
         private bool isDisposed = false;
 
         /// <summary>
@@ -52,20 +54,14 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         public virtual void Clear()
         {
-            if (@lock.TryEnterWriteLock(LOCK_TIMEOUT))
+            syncLock.EnterWriteLock();
+            try
             {
-                try
-                {
-                    cache = new CompactLabelToOrdinal(initialCapcity, loadFactor, numHashArrays);
-                }
-                finally
-                {
-                    @lock.ExitWriteLock();
-                }
+                cache = new CompactLabelToOrdinal(initialCapcity, loadFactor, numHashArrays);
             }
-            else {
-                //Throwing ArguementException to maintain behavoir with ReaderWriterLock.AquireWriteLock.
-                throw new ArgumentException();
+            finally
+            {
+                syncLock.ExitWriteLock();
             }
         }
 
@@ -77,26 +73,28 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         protected virtual void Dispose(bool disposing) // LUCENENET specific - use proper dispose pattern
         {
+            
             if (disposing)
             {
                 if (isDisposed) return;
-                if (@lock.TryEnterWriteLock(LOCK_TIMEOUT))
+
+                // LUCENENET: Use additional lock to ensure our ReaderWriterLockSlim only gets
+                // disposed by the first caller.
+                lock (disposalLock)
                 {
                     if (isDisposed) return;
+                    syncLock.EnterWriteLock();
                     try
                     {
                         cache = null;
                     }
                     finally
                     {
+                        syncLock.ExitWriteLock();
                         isDisposed = true;
-                        @lock.ExitWriteLock();
-                        @lock.Dispose();
+                        syncLock.Dispose();
                     }
                 }
-                else
-                    //Throwing ArguementException to maintain behavoir with ReaderWriterLock.AquireWriteLock.
-                    throw new ArgumentException();
             }
         }
 
@@ -106,44 +104,30 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         public virtual int Get(FacetLabel categoryPath)
         {
-            if (@lock.TryEnterReadLock(LOCK_TIMEOUT))
+            syncLock.EnterReadLock();
+            try
             {
-                try
-                {
-                    return cache.GetOrdinal(categoryPath);
-                }
-                finally
-                {
-                    @lock.ExitReadLock();
-                }
+                return cache.GetOrdinal(categoryPath);
             }
-            else
+            finally
             {
-                //Throwing ArguementException to maintain behavoir with ReaderWriterLock.AquireWriteLock.
-                throw new ArgumentException();
+                syncLock.ExitReadLock();
             }
         }
 
         public virtual bool Put(FacetLabel categoryPath, int ordinal)
         {
-            if (@lock.TryEnterWriteLock(LOCK_TIMEOUT))
+            syncLock.EnterWriteLock();
+            try
             {
-                try
-                {
-                    cache.AddLabel(categoryPath, ordinal);
-                    // Tell the caller we didn't clear part of the cache, so it doesn't
-                    // have to flush its on-disk index now
-                    return false;
-                }
-                finally
-                {
-                    @lock.ExitWriteLock();
-                }
+                cache.AddLabel(categoryPath, ordinal);
+                // Tell the caller we didn't clear part of the cache, so it doesn't
+                // have to flush its on-disk index now
+                return false;
             }
-            else
+            finally
             {
-                //Throwing ArguementException to maintain behavoir with ReaderWriterLock.AquireWriteLock.
-                throw new ArgumentException();
+                syncLock.ExitWriteLock();
             }
         }
 

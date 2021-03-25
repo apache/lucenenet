@@ -1,24 +1,4 @@
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
-
+﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Analysis;
@@ -33,6 +13,23 @@ using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Tests.Queries
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     public class CommonTermsQueryTest : LuceneTestCase
     {
         [Test]
@@ -47,7 +44,8 @@ namespace Lucene.Net.Tests.Queries
                 Random, dir, analyzer);
             var docs = new string[]
             {
-                @"this is the end of the world right", @"is this it or maybe not",
+                @"this is the end of the world right",
+                @"is this it or maybe not",
                 @"this is the end of the universe as we know it",
                 @"there is the famous restaurant at the end of the universe"
             };
@@ -63,7 +61,7 @@ namespace Lucene.Net.Tests.Queries
             IndexReader r = w.GetReader();
             IndexSearcher s = NewSearcher(r);
             {
-                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random.NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random.NextBoolean() ? 2.0f : 0.5f);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
@@ -77,8 +75,8 @@ namespace Lucene.Net.Tests.Queries
                 assertEquals(@"3", r.Document(search.ScoreDocs[2].Doc).Get(@"id"));
             }
 
-            {
-                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random.NextBoolean() ? 2F : 0.5F);
+            { // only high freq
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random.NextBoolean() ? 2.0f : 0.5f);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
@@ -88,21 +86,23 @@ namespace Lucene.Net.Tests.Queries
                 assertEquals(@"2", r.Document(search.ScoreDocs[1].Doc).Get(@"id"));
             }
 
-            {
-                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.MUST, Random.NextBoolean() ? 2F : 0.5F);
+            { // low freq is mandatory
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.MUST, Random.NextBoolean() ? 2.0f : 0.5f);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
                 query.Add(new Term("field", "world"));
+
                 TopDocs search = s.Search(query, 10);
                 assertEquals(search.TotalHits, 1);
                 assertEquals(@"0", r.Document(search.ScoreDocs[0].Doc).Get(@"id"));
             }
 
-            {
-                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.MUST, Random.NextBoolean() ? 2F : 0.5F);
+            { // low freq is mandatory
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.MUST, Random.NextBoolean() ? 2.0f : 0.5f);
                 query.Add(new Term("field", "restaurant"));
                 query.Add(new Term("field", "universe"));
+
                 TopDocs search = s.Search(query, 10);
                 assertEquals(search.TotalHits, 1);
                 assertEquals(@"3", r.Document(search.ScoreDocs[0].Doc).Get(@"id"));
@@ -116,33 +116,40 @@ namespace Lucene.Net.Tests.Queries
         [Test]
         public void TestEqualsHashCode()
         {
-            CommonTermsQuery query = new CommonTermsQuery(RandomOccur(Random), RandomOccur(Random), Random.NextSingle(), Random.NextBoolean());
+            CommonTermsQuery query = new CommonTermsQuery(RandomOccur(Random),
+                RandomOccur(Random), Random.NextSingle(), Random.NextBoolean());
             int terms = AtLeast(2);
             for (int i = 0; i < terms; i++)
             {
-                query.Add(new Term(TestUtil.RandomRealisticUnicodeString(Random), TestUtil.RandomRealisticUnicodeString(Random)));
+                query.Add(new Term(TestUtil.RandomRealisticUnicodeString(Random),
+                    TestUtil.RandomRealisticUnicodeString(Random)));
             }
 
             QueryUtils.CheckHashEquals(query);
-            QueryUtils.CheckUnequal(new CommonTermsQuery(RandomOccur(Random), RandomOccur(Random), Random.NextSingle(), Random.NextBoolean()), query);
+            QueryUtils.CheckUnequal(new CommonTermsQuery(RandomOccur(Random),
+                RandomOccur(Random), Random.NextSingle(), Random.NextBoolean()), query);
             {
                 long seed = Random.NextInt64();
                 Random r = new Random((int)seed);
-                CommonTermsQuery left = new CommonTermsQuery(RandomOccur(r), RandomOccur(r), r.NextSingle(), r.NextBoolean());
+                CommonTermsQuery left = new CommonTermsQuery(RandomOccur(r),
+                    RandomOccur(r), r.NextSingle(), r.NextBoolean());
                 int leftTerms = AtLeast(r, 2);
                 for (int i = 0; i < leftTerms; i++)
                 {
-                    left.Add(new Term(TestUtil.RandomRealisticUnicodeString(r), TestUtil.RandomRealisticUnicodeString(r)));
+                    left.Add(new Term(TestUtil.RandomRealisticUnicodeString(r),
+                        TestUtil.RandomRealisticUnicodeString(r)));
                 }
 
                 left.HighFreqMinimumNumberShouldMatch = r.nextInt(4);
                 left.LowFreqMinimumNumberShouldMatch = r.nextInt(4);
                 r = new Random((int)seed);
-                CommonTermsQuery right = new CommonTermsQuery(RandomOccur(r), RandomOccur(r), r.NextSingle(), r.NextBoolean());
+                CommonTermsQuery right = new CommonTermsQuery(RandomOccur(r),
+                    RandomOccur(r), r.NextSingle(), r.NextBoolean());
                 int rightTerms = AtLeast(r, 2);
                 for (int i = 0; i < rightTerms; i++)
                 {
-                    right.Add(new Term(TestUtil.RandomRealisticUnicodeString(r), TestUtil.RandomRealisticUnicodeString(r)));
+                    right.Add(new Term(TestUtil.RandomRealisticUnicodeString(r),
+                        TestUtil.RandomRealisticUnicodeString(r)));
                 }
 
                 right.HighFreqMinimumNumberShouldMatch = r.nextInt(4);
@@ -160,7 +167,8 @@ namespace Lucene.Net.Tests.Queries
         public void TestNullTerm()
         {
             Random random = Random;
-            CommonTermsQuery query = new CommonTermsQuery(RandomOccur(random), RandomOccur(random), Random.NextSingle());
+            CommonTermsQuery query = new CommonTermsQuery(RandomOccur(random),
+                RandomOccur(random), Random.NextSingle());
             try
             {
                 query.Add(null);
@@ -185,7 +193,8 @@ namespace Lucene.Net.Tests.Queries
                 Random, dir, analyzer);
             string[] docs = new string[]
             {
-                @"this is the end of the world right", @"is this it or maybe not",
+                @"this is the end of the world right",
+                @"is this it or maybe not",
                 @"this is the end of the universe as we know it",
                 @"there is the famous restaurant at the end of the universe"
             };
@@ -201,42 +210,45 @@ namespace Lucene.Net.Tests.Queries
             IndexReader r = w.GetReader();
             IndexSearcher s = NewSearcher(r);
             {
-                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random.NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD,
+                    Random.NextBoolean() ? 2.0f : 0.5f);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
                 query.Add(new Term("field", "world"));
                 query.Add(new Term("field", "universe"));
                 query.Add(new Term("field", "right"));
-                query.LowFreqMinimumNumberShouldMatch = 0.5F;
+                query.LowFreqMinimumNumberShouldMatch = 0.5f;
                 TopDocs search = s.Search(query, 10);
                 assertEquals(search.TotalHits, 1);
                 assertEquals(@"0", r.Document(search.ScoreDocs[0].Doc).Get(@"id"));
             }
 
             {
-                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random.NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD,
+                    Random.NextBoolean() ? 2.0f : 0.5f);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
                 query.Add(new Term("field", "world"));
                 query.Add(new Term("field", "universe"));
                 query.Add(new Term("field", "right"));
-                query.LowFreqMinimumNumberShouldMatch = 2F;
+                query.LowFreqMinimumNumberShouldMatch = 2.0f;
                 TopDocs search = s.Search(query, 10);
                 assertEquals(search.TotalHits, 1);
                 assertEquals(@"0", r.Document(search.ScoreDocs[0].Doc).Get(@"id"));
             }
 
             {
-                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random.NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD,
+                    Random.NextBoolean() ? 2.0f : 0.5f);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
                 query.Add(new Term("field", "world"));
                 query.Add(new Term("field", "universe"));
                 query.Add(new Term("field", "right"));
-                query.LowFreqMinimumNumberShouldMatch = 0.49F;
+                query.LowFreqMinimumNumberShouldMatch = 0.49f;
                 TopDocs search = s.Search(query, 10);
                 assertEquals(search.TotalHits, 3);
                 assertEquals(@"0", r.Document(search.ScoreDocs[0].Doc).Get(@"id"));
@@ -245,14 +257,15 @@ namespace Lucene.Net.Tests.Queries
             }
 
             {
-                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random.NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD,
+                    Random.NextBoolean() ? 2.0f : 0.5f);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
                 query.Add(new Term("field", "world"));
                 query.Add(new Term("field", "universe"));
                 query.Add(new Term("field", "right"));
-                query.LowFreqMinimumNumberShouldMatch = 1F;
+                query.LowFreqMinimumNumberShouldMatch = 1.0f;
                 TopDocs search = s.Search(query, 10);
                 assertEquals(search.TotalHits, 3);
                 assertEquals(@"0", r.Document(search.ScoreDocs[0].Doc).Get(@"id"));
@@ -262,48 +275,58 @@ namespace Lucene.Net.Tests.Queries
             }
 
             {
-                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random.NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD,
+                    Random.NextBoolean() ? 2.0f : 0.5f);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
                 query.Add(new Term("field", "world"));
                 query.Add(new Term("field", "universe"));
                 query.Add(new Term("field", "right"));
-                query.LowFreqMinimumNumberShouldMatch = 1F;
-                query.HighFreqMinimumNumberShouldMatch = 4F;
+                query.LowFreqMinimumNumberShouldMatch = 1.0f;
+                query.HighFreqMinimumNumberShouldMatch = 4.0f;
                 TopDocs search = s.Search(query, 10);
                 assertEquals(search.TotalHits, 3);
-                assertEquals(search.ScoreDocs[1].Score, search.ScoreDocs[2].Score, 0F);
+                assertEquals(search.ScoreDocs[1].Score, search.ScoreDocs[2].Score, 0.0f);
                 assertEquals(@"0", r.Document(search.ScoreDocs[0].Doc).Get(@"id"));
+                // doc 2 and 3 only get a score from low freq terms
                 assertEquals(
                     new JCG.HashSet<string> { @"2", @"3" },
-                    new JCG.HashSet<string> { r.Document(search.ScoreDocs[1].Doc).Get(@"id"), r.Document(search.ScoreDocs[2].Doc).Get(@"id") },
+                    new JCG.HashSet<string> {
+                        r.Document(search.ScoreDocs[1].Doc).Get(@"id"),
+                        r.Document(search.ScoreDocs[2].Doc).Get(@"id") },
                     aggressive: false);
             }
 
             {
-                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random.NextBoolean() ? 2F : 0.5F);
+                // only high freq terms around - check that min should match is applied
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD,
+                    Random.NextBoolean() ? 2.0f : 0.5f);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "the"));
-                query.LowFreqMinimumNumberShouldMatch = 1F;
-                query.HighFreqMinimumNumberShouldMatch = 2F;
+                query.LowFreqMinimumNumberShouldMatch = 1.0f;
+                query.HighFreqMinimumNumberShouldMatch = 2.0f;
                 TopDocs search = s.Search(query, 10);
                 assertEquals(search.TotalHits, 4);
             }
 
             {
-                CommonTermsQuery query = new CommonTermsQuery(Occur.MUST, Occur.SHOULD, Random.NextBoolean() ? 2F : 0.5F);
+                // only high freq terms around - check that min should match is applied
+                CommonTermsQuery query = new CommonTermsQuery(Occur.MUST, Occur.SHOULD,
+                    Random.NextBoolean() ? 2.0f : 0.5f);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "the"));
-                query.LowFreqMinimumNumberShouldMatch = 1F;
-                query.HighFreqMinimumNumberShouldMatch = 2F;
+                query.LowFreqMinimumNumberShouldMatch = 1.0f;
+                query.HighFreqMinimumNumberShouldMatch = 2.0f;
                 TopDocs search = s.Search(query, 10);
                 assertEquals(search.TotalHits, 2);
                 assertEquals(
                     new JCG.HashSet<string> { @"0", @"2" },
-                    new JCG.HashSet<string> { r.Document(search.ScoreDocs[0].Doc).Get(@"id"), r.Document(search.ScoreDocs[1].Doc).Get(@"id") },
+                    new JCG.HashSet<string> {
+                        r.Document(search.ScoreDocs[0].Doc).Get(@"id"),
+                        r.Document(search.ScoreDocs[1].Doc).Get(@"id") },
                     aggressive: false);
             }
 
@@ -351,11 +374,11 @@ namespace Lucene.Net.Tests.Queries
                 Random, dir, analyzer);
             var docs = new string[]
             {
-                @"this is the end of the world right", @"is this it or maybe not",
+                @"this is the end of the world right",
+                @"is this it or maybe not",
                 @"this is the end of the universe as we know it",
                 @"there is the famous restaurant at the end of the universe"
             };
-
             for (int i = 0; i < docs.Length; i++)
             {
                 Document doc = new Document();
@@ -367,7 +390,8 @@ namespace Lucene.Net.Tests.Queries
             IndexReader r = w.GetReader();
             IndexSearcher s = NewSearcher(r);
             {
-                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random.NextBoolean() ? 2F : 0.5F);
+                CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD,
+                    Random.NextBoolean() ? 2.0f : 0.5f);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
@@ -382,7 +406,9 @@ namespace Lucene.Net.Tests.Queries
             }
 
             {
-                CommonTermsQuery query = new ExtendedCommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random.NextBoolean() ? 2F : 0.5F);
+                // this one boosts the termQuery("field" "universe") by 10x
+                CommonTermsQuery query = new ExtendedCommonTermsQuery(Occur.SHOULD, Occur.SHOULD,
+                    Random.NextBoolean() ? 2.0f : 0.5f);
                 query.Add(new Term("field", "is"));
                 query.Add(new Term("field", "this"));
                 query.Add(new Term("field", "end"));
@@ -417,8 +443,8 @@ namespace Lucene.Net.Tests.Queries
             AtomicReader wrapper = SlowCompositeReaderWrapper.Wrap(reader);
             string field = @"body";
             Terms terms = wrapper.GetTerms(field);
-            var lowFreqQueue = new AnonymousPriorityQueue(5);
-            Util.PriorityQueue<TermAndFreq> highFreqQueue = new AnonymousPriorityQueue1(5);
+            var lowFreqQueue = new PriorityQueueAnonymousClass(5);
+            var highFreqQueue = new PriorityQueueAnonymousClass1(5);
             try
             {
                 TermsEnum iterator = terms.GetEnumerator();
@@ -426,8 +452,10 @@ namespace Lucene.Net.Tests.Queries
                 {
                     if (highFreqQueue.Count < 5)
                     {
-                        highFreqQueue.Add(new TermAndFreq(BytesRef.DeepCopyOf(iterator.Term), iterator.DocFreq));
-                        lowFreqQueue.Add(new TermAndFreq(BytesRef.DeepCopyOf(iterator.Term), iterator.DocFreq));
+                        highFreqQueue.Add(new TermAndFreq(
+                            BytesRef.DeepCopyOf(iterator.Term), iterator.DocFreq));
+                        lowFreqQueue.Add(new TermAndFreq(
+                            BytesRef.DeepCopyOf(iterator.Term), iterator.DocFreq));
                     }
                     else
                     {
@@ -452,22 +480,25 @@ namespace Lucene.Net.Tests.Queries
                 AssumeTrue(@"unlucky index", highFreq - 1 > lowFreq);
                 List<TermAndFreq> highTerms = QueueToList(highFreqQueue);
                 List<TermAndFreq> lowTerms = QueueToList(lowFreqQueue);
+
                 IndexSearcher searcher = NewSearcher(reader);
                 Occur lowFreqOccur = RandomOccur(Random);
                 BooleanQuery verifyQuery = new BooleanQuery();
-                CommonTermsQuery cq = new CommonTermsQuery(RandomOccur(Random), lowFreqOccur, highFreq - 1, Random.NextBoolean());
+                CommonTermsQuery cq = new CommonTermsQuery(RandomOccur(Random),
+                    lowFreqOccur, highFreq - 1, Random.NextBoolean());
                 foreach (TermAndFreq termAndFreq in lowTerms)
                 {
                     cq.Add(new Term(field, termAndFreq.term));
-                    verifyQuery.Add(new BooleanClause(new TermQuery(new Term(field, termAndFreq.term)), lowFreqOccur));
+                    verifyQuery.Add(new BooleanClause(new TermQuery(new Term(field,
+                        termAndFreq.term)), lowFreqOccur));
                 }
-
                 foreach (TermAndFreq termAndFreq in highTerms)
                 {
                     cq.Add(new Term(field, termAndFreq.term));
                 }
 
                 TopDocs cqSearch = searcher.Search(cq, reader.MaxDoc);
+
                 TopDocs verifySearch = searcher.Search(verifyQuery, reader.MaxDoc);
                 assertEquals(verifySearch.TotalHits, cqSearch.TotalHits);
                 var hits = new JCG.HashSet<int>();
@@ -482,6 +513,13 @@ namespace Lucene.Net.Tests.Queries
                 }
 
                 assertTrue(hits.Count == 0);
+
+                /*
+                 *  need to force merge here since QueryUtils adds checks based
+                 *  on leave readers which have different statistics than the top
+                 *  level reader if we have more than one segment. This could 
+                 *  result in a different query / results.
+                 */
                 w.ForceMerge(1);
                 DirectoryReader reader2 = w.GetReader();
                 QueryUtils.Check(
@@ -500,9 +538,9 @@ namespace Lucene.Net.Tests.Queries
             }
         }
 
-        private sealed class AnonymousPriorityQueue : Util.PriorityQueue<TermAndFreq>
+        private sealed class PriorityQueueAnonymousClass : Util.PriorityQueue<TermAndFreq>
         {
-            public AnonymousPriorityQueue(int maxSize)
+            public PriorityQueueAnonymousClass(int maxSize)
                 : base(maxSize)
             {
             }
@@ -513,9 +551,9 @@ namespace Lucene.Net.Tests.Queries
             }
         }
 
-        private sealed class AnonymousPriorityQueue1 : Util.PriorityQueue<TermAndFreq>
+        private sealed class PriorityQueueAnonymousClass1 : Util.PriorityQueue<TermAndFreq>
         {
-            public AnonymousPriorityQueue1(int maxSize)
+            public PriorityQueueAnonymousClass1(int maxSize)
                 : base(maxSize)
             {
             }
@@ -554,11 +592,19 @@ namespace Lucene.Net.Tests.Queries
             }
         }
 
+        /// <summary>
+        /// populates a writer with random stuff. this must be fully reproducable with
+        /// the seed!
+        /// </summary>
         public static void CreateRandomIndex(int numdocs, RandomIndexWriter writer, long seed)
         {
             Random random = new Random((int)seed);
             // primary source for our data is from linefiledocs, its realistic.
             LineFileDocs lineFileDocs = new LineFileDocs(random, false); // no docvalues in 4x
+
+            // TODO: we should add other fields that use things like docs&freqs but omit
+            // positions,
+            // because linefiledocs doesn't cover all the possibilities.
             for (int i = 0; i < numdocs; i++)
             {
                 writer.AddDocument(lineFileDocs.NextDoc());
@@ -579,7 +625,7 @@ namespace Lucene.Net.Tests.Queries
                 Query query = base.NewTermQuery(term, context);
                 if (term.Text().Equals(@"universe", StringComparison.Ordinal))
                 {
-                    query.Boost = 100F;
+                    query.Boost = 100f;
                 }
 
                 return query;

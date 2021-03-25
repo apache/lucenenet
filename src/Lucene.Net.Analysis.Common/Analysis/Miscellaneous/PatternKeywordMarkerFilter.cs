@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.TokenAttributes;
+// Lucene version compatibility level 4.8.1
+using Lucene.Net.Analysis.TokenAttributes;
 using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Miscellaneous

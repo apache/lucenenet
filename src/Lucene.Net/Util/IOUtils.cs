@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -564,21 +564,16 @@ namespace Lucene.Net.Util
         //                    file.Flush(true);
         //                    success = true;
         //                }
-        //#pragma warning disable 168
         //                catch (IOException e)
-        //#pragma warning restore 168
         //                {
         //                    if (retryCount == 5)
         //                    {
-        //                        throw;
+        //                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
         //                    }
-        //#if FEATURE_THREAD_INTERRUPT
         //                    try
         //                    {
-        //#endif
         //                        // Pause 5 msec
         //                        Thread.Sleep(5);
-        //#if FEATURE_THREAD_INTERRUPT
         //                    }
         //                    catch (ThreadInterruptedException ie)
         //                    {
@@ -586,7 +581,6 @@ namespace Lucene.Net.Util
         //                        ex.AddSuppressed(e);
         //                        throw ex;
         //                    }
-        //#endif
         //                }
         //                finally
         //                {

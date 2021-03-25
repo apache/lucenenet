@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿// Lucene version compatibility level 4.10.4
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -46,7 +47,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
         // set this to the location of where you downloaded all the files
         internal static readonly DirectoryInfo DICTIONARY_HOME = new DirectoryInfo(
-            System.IO.Path.Combine(new DirectoryInfo(typeof(TestAllDictionaries2).Assembly.Location).Parent.Parent.Parent.Parent.Parent.FullName,
+            System.IO.Path.Combine(new DirectoryInfo(typeof(TestAllDictionaries2).Assembly.Location).Parent.Parent.Parent.Parent.Parent.Parent.FullName,
                 @"test-files\analysis\data\dictionaries"));
 
         internal readonly string[] tests = new string[] 
@@ -194,7 +195,7 @@ namespace Lucene.Net.Analysis.Hunspell
         [Test]
         public virtual void TestOneDictionary()
         {
-            string toTest = "hu_HU.zip";
+            string toTest = "zu_ZA.zip";
             for (int i = 0; i < tests.Length; i++)
             {
                 if (tests[i].Equals(toTest, StringComparison.Ordinal))

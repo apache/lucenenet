@@ -1,4 +1,4 @@
-namespace Lucene.Net.Analysis.TokenAttributes
+﻿namespace Lucene.Net.Analysis.TokenAttributes
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,10 +23,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="IPayloadAttribute"/>. </summary>
-    public class PayloadAttribute : Attribute, IPayloadAttribute
-#if FEATURE_CLONEABLE
-        , System.ICloneable
-#endif
+    public class PayloadAttribute : Attribute, IPayloadAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         private BytesRef payload;
 

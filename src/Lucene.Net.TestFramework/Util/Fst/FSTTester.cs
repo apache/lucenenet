@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using J2N.Collections;
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
@@ -823,9 +823,13 @@ namespace Lucene.Net.Util.Fst
 
             // build all prefixes
 
+#if FEATURE_DICTIONARY_REMOVE_CONTINUEENUMERATION
+            IDictionary<Int32sRef, CountMinOutput<T>> prefixes = new Dictionary<Int32sRef, CountMinOutput<T>>();
+#else
             // LUCENENET: We use ConcurrentDictionary<TKey, TValue> because Dictionary<TKey, TValue> doesn't support
             // deletion while iterating, but ConcurrentDictionary does.
             IDictionary<Int32sRef, CountMinOutput<T>> prefixes = new ConcurrentDictionary<Int32sRef, CountMinOutput<T>>();
+#endif
             Int32sRef scratch = new Int32sRef(10);
             foreach (InputOutput<T> pair in pairs)
             {

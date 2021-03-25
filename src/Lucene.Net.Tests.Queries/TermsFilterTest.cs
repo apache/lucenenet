@@ -1,26 +1,7 @@
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
-
+﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Documents;
@@ -35,6 +16,23 @@ using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Tests.Queries
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     public class TermsFilterTest : LuceneTestCase
     {
         [Test]
@@ -92,7 +90,7 @@ namespace Lucene.Net.Tests.Queries
             reader.Dispose();
             rd.Dispose();
         }
-        
+
         [Test]
         public void TestMissingField()
         {
@@ -175,7 +173,7 @@ namespace Lucene.Net.Tests.Queries
 
 
 
-            AtomicReaderContext context = reader.Leaves.First();
+            AtomicReaderContext context = reader.Leaves[0];
             TermsFilter tf = new TermsFilter(terms);
 
             FixedBitSet bits = (FixedBitSet)tf.GetDocIdSet(context, context.AtomicReader.LiveDocs);
@@ -221,7 +219,7 @@ namespace Lucene.Net.Tests.Queries
             IndexReader reader = w.GetReader();
             w.Dispose();
             assertEquals(1, reader.Leaves.size());
-            AtomicReaderContext context = reader.Leaves.First();
+            AtomicReaderContext context = reader.Leaves[0];
             TermsFilter tf = new TermsFilter(terms.ToList());
 
             FixedBitSet bits = (FixedBitSet)tf.GetDocIdSet(context, context.AtomicReader.LiveDocs);
@@ -244,7 +242,7 @@ namespace Lucene.Net.Tests.Queries
             IList<Term> terms = new List<Term>();
             for (int i = 0; i < num; i++)
             {
-                string field = "field" + (singleField ? "1" : Random.Next(100).ToString());
+                string field = "field" + (singleField ? "1" : Random.Next(100).ToString(CultureInfo.InvariantCulture));
                 string @string = TestUtil.RandomRealisticUnicodeString(Random);
                 terms.Add(new Term(field, @string));
                 Document doc = new Document();
@@ -343,11 +341,48 @@ namespace Lucene.Net.Tests.Queries
         [Test]
         public void TestSingleFieldEquals()
         {
-            // Two terms with the same hash code
+            //// Two terms with the same hash code
             //assertEquals("AaAaBB".GetHashCode(), "BBBBBB".GetHashCode());
-            TermsFilter left = TermsFilter(true, new Term("id", "AaAaAa"), new Term("id", "AaAaBB"));
-            TermsFilter right = TermsFilter(true, new Term("id", "AaAaAa"), new Term("id", "BBBBBB"));
+            //TermsFilter left = TermsFilter(true, new Term("id", "AaAaAa"), new Term("id", "AaAaBB"));
+            //TermsFilter right = TermsFilter(true, new Term("id", "AaAaAa"), new Term("id", "BBBBBB"));
+            //assertFalse(left.Equals(right));
+
+            // LUCENENET specific - since in .NET the hash code is dependent on the underlying
+            // target framework, we need to generate a collision at runtime.
+            GenerateHashCollision(out string theString, out string stringWithCollision);
+            assertEquals(theString.GetHashCode(), stringWithCollision.GetHashCode());
+            TermsFilter left = TermsFilter(true, new Term("id", "AaAaAa"), new Term("id", theString));
+            TermsFilter right = TermsFilter(true, new Term("id", "AaAaAa"), new Term("id", stringWithCollision));
             assertFalse(left.Equals(right));
+        }
+
+        // LUCENENET specific - since in .NET the hash code is dependent on the underlying
+        // target framework, we need to generate a collision at runtime.
+        // Source: https://stackoverflow.com/a/32027473
+        private static void GenerateHashCollision(out string theString, out string stringWithCollision)
+        {
+            var words = new Dictionary<int, string>();
+
+            int i = 0;
+            string teststring;
+            while (true)
+            {
+                i++;
+                teststring = i.ToString();
+                try
+                {
+                    words.Add(teststring.GetHashCode(), teststring);
+                }
+                catch (Exception)
+                {
+                    break;
+                }
+            }
+
+            var collisionHash = teststring.GetHashCode();
+
+            theString = teststring;
+            stringWithCollision = words[collisionHash];
         }
 
         [Test]
@@ -365,7 +400,10 @@ namespace Lucene.Net.Tests.Queries
         [Test]
         public void TestToString()
         {
-            TermsFilter termsFilter = new TermsFilter(new Term("field1", "a"), new Term("field1", "b"), new Term("field1", "c"));
+            TermsFilter termsFilter = new TermsFilter(
+                new Term("field1", "a"),
+                new Term("field1", "b"),
+                new Term("field1", "c"));
             assertEquals("field1:a field1:b field1:c", termsFilter.ToString());
         }
     }

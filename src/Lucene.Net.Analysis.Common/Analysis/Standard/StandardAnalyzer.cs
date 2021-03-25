@@ -1,4 +1,5 @@
-﻿using System.IO;
+// Lucene version compatibility level 4.8.1
+using System.IO;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;

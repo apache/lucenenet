@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 
 namespace Lucene.Net.Store
@@ -29,12 +29,9 @@ namespace Lucene.Net.Store
         public SlowOpeningMockIndexInputWrapper(MockDirectoryWrapper dir, string name, IndexInput @delegate)
             : base(dir, name, @delegate)
         {
-#if FEATURE_THREAD_INTERRUPT
             try
             {
-#endif
                 Thread.Sleep(50);
-#if FEATURE_THREAD_INTERRUPT
             }
             catch (ThreadInterruptedException /*ie*/)
             {
@@ -48,7 +45,6 @@ namespace Lucene.Net.Store
                 //throw new ThreadInterruptedException(ie.ToString(), ie);
                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
-#endif
         }
     }
 }

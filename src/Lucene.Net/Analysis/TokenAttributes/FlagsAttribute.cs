@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
@@ -24,10 +24,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="IFlagsAttribute"/>. </summary>
-    public class FlagsAttribute : Attribute, IFlagsAttribute
-#if FEATURE_CLONEABLE
-        , System.ICloneable
-#endif
+    public class FlagsAttribute : Attribute, IFlagsAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         private int flags = 0;
 

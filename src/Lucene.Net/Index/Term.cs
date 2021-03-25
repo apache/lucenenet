@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using System;
 using System.Text;
 
@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
         /// text of the word.  In the case of dates and other types, this is an
         /// encoding of the object as a string.
         /// </summary>
-        public string Text()
+        public string Text() // LUCENENET TODO: API - Change to a property. While this calls a method internally, its expected usage is that it will return a deterministic value.
         {
             return ToString(Bytes);
         }

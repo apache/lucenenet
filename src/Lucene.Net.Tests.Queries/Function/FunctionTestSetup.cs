@@ -1,24 +1,4 @@
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
-
+﻿// Lucene version compatibility level 4.8.1
 using System;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
@@ -33,6 +13,23 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Tests.Queries.Function
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     /// <summary>
     /// Setup for function tests
     /// </summary>
@@ -43,22 +40,22 @@ namespace Lucene.Net.Tests.Queries.Function
         /// Actual score computation order is slightly different than assumptios
         /// this allows for a small amount of variation
         /// </summary>
-        protected internal static float TEST_SCORE_TOLERANCE_DELTA = 0.001f;
+        protected const float TEST_SCORE_TOLERANCE_DELTA = 0.001f;
 
-        protected internal const int N_DOCS = 17; // select a primary number > 2
+        protected const int N_DOCS = 17; // select a primary number > 2
 
-        protected internal const string ID_FIELD = "id";
-        protected internal const string TEXT_FIELD = "text";
-        protected internal const string INT_FIELD = "iii";
-        protected internal const string FLOAT_FIELD = "fff";
+        protected const string ID_FIELD = "id";
+        protected const string TEXT_FIELD = "text";
+        protected const string INT_FIELD = "iii";
+        protected const string FLOAT_FIELD = "fff";
 
 #pragma warning disable 612, 618
-        protected internal ValueSource BYTE_VALUESOURCE = new ByteFieldSource(INT_FIELD);
-        protected internal ValueSource SHORT_VALUESOURCE = new Int16FieldSource(INT_FIELD);
+        protected ValueSource BYTE_VALUESOURCE = new ByteFieldSource(INT_FIELD);
+        protected ValueSource SHORT_VALUESOURCE = new Int16FieldSource(INT_FIELD);
 #pragma warning restore 612, 618
-        protected internal ValueSource INT_VALUESOURCE = new Int32FieldSource(INT_FIELD);
-        protected internal ValueSource INT_AS_FLOAT_VALUESOURCE = new SingleFieldSource(INT_FIELD);
-        protected internal ValueSource FLOAT_VALUESOURCE = new SingleFieldSource(FLOAT_FIELD);
+        protected ValueSource INT_VALUESOURCE = new Int32FieldSource(INT_FIELD);
+        protected ValueSource INT_AS_FLOAT_VALUESOURCE = new SingleFieldSource(INT_FIELD);
+        protected ValueSource FLOAT_VALUESOURCE = new SingleFieldSource(FLOAT_FIELD);
 
         private static readonly string[] DOC_TEXT_LINES =
         {
@@ -78,8 +75,8 @@ namespace Lucene.Net.Tests.Queries.Function
             "text for the test, but oh much much safer. "
         };
 
-        protected internal static Directory dir;
-        protected internal static Analyzer anlzr;
+        protected static Directory dir;
+        protected static Analyzer anlzr;
 
         [TearDown]
         public override void TearDown()
@@ -139,11 +136,7 @@ namespace Lucene.Net.Tests.Queries.Function
             }
         }
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Non-static because NewField is now non-static
-        /// </summary>
-        private void AddDoc(RandomIndexWriter iw, int i)
+        private static void AddDoc(RandomIndexWriter iw, int i)
         {
             Document d = new Document();
             Field f;
@@ -172,7 +165,7 @@ namespace Lucene.Net.Tests.Queries.Function
         }
 
         // 17 --> ID00017
-        protected internal static string Id2String(int scoreAndID)
+        protected static string Id2String(int scoreAndID)
         {
             string s = "000000000" + scoreAndID;
             int n = ("" + N_DOCS).Length + 3;
@@ -187,13 +180,13 @@ namespace Lucene.Net.Tests.Queries.Function
         }
 
         // extract expected doc score from its ID Field: "ID7" --> 7.0
-        protected internal static float ExpectedFieldScore(string docIDFieldVal)
+        protected static float ExpectedFieldScore(string docIDFieldVal)
         {
             return Convert.ToSingle(docIDFieldVal.Substring(2));
         }
 
         // debug messages (change DBG to true for anything to print)
-        protected internal static void Log(object o)
+        protected static void Log(object o)
         {
             if (Verbose)
             {

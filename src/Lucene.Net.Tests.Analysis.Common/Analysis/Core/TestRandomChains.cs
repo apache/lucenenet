@@ -1,3 +1,4 @@
+// Lucene version compatibility level 4.8.1
 
 using J2N.Runtime.CompilerServices;
 using J2N.Text;

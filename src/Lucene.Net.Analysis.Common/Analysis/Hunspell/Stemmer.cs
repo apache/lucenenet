@@ -1,9 +1,11 @@
-﻿using J2N.Numerics;
+﻿// Lucene version compatibility level 4.10.4
+using J2N.Numerics;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
+using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,6 +45,10 @@ namespace Lucene.Net.Analysis.Hunspell
         private readonly StringBuilder scratchSegment = new StringBuilder();
         private char[] scratchBuffer = new char[32];
 
+        // its '1' if we have no stem exceptions, otherwise every other form
+        // is really an ID pointing to the exception table
+        private readonly int formStep;
+
         /// <summary>
         /// Constructs a new Stemmer which will use the provided <see cref="Dictionary"/> to create its stems.
         /// </summary>
@@ -51,6 +57,20 @@ namespace Lucene.Net.Analysis.Hunspell
         {
             this.dictionary = dictionary;
             this.affixReader = new ByteArrayDataInput(dictionary.affixData);
+            for (int level = 0; level < 3; level++)
+            {
+                if (dictionary.prefixes != null)
+                {
+                    prefixArcs[level] = new FST.Arc<Int32sRef>();
+                    prefixReaders[level] = dictionary.prefixes.GetBytesReader();
+                }
+                if (dictionary.suffixes != null)
+                {
+                    suffixArcs[level] = new FST.Arc<Int32sRef>();
+                    suffixReaders[level] = dictionary.suffixes.GetBytesReader();
+                }
+            }
+            formStep = dictionary.hasStemExceptions ? 2 : 1;
         }
 
         /// <summary>
@@ -83,18 +103,133 @@ namespace Lucene.Net.Analysis.Hunspell
                 word = scratchBuffer;
             }
 
+            int caseType = CaseOf(word, length);
+            if (caseType == UPPER_CASE)
+            {
+                // upper: union exact, title, lower
+                CaseFoldTitle(word, length);
+                CaseFoldLower(titleBuffer, length);
+                IList<CharsRef> list = DoStem(word, length, false);
+                list.AddRange(DoStem(titleBuffer, length, true));
+                list.AddRange(DoStem(lowerBuffer, length, true));
+                return list;
+            }
+            else if (caseType == TITLE_CASE)
+            {
+                // title: union exact, lower
+                CaseFoldLower(word, length);
+                IList<CharsRef> list = DoStem(word, length, false);
+                list.AddRange(DoStem(lowerBuffer, length, true));
+                return list;
+            }
+            else
+            {
+                // exact match only
+                return DoStem(word, length, false);
+            }
+        }
+
+        // temporary buffers for case variants
+        private char[] lowerBuffer = new char[8];
+        private char[] titleBuffer = new char[8];
+
+        private const int EXACT_CASE = 0;
+        private const int TITLE_CASE = 1;
+        private const int UPPER_CASE = 2;
+
+        // returns EXACT_CASE,TITLE_CASE, or UPPER_CASE type for the word
+        private int CaseOf(char[] word, int length)
+        {
+            if (dictionary.ignoreCase || length == 0 || !char.IsUpper(word[0]))
+            {
+                return EXACT_CASE;
+            }
+
+            // determine if we are title or lowercase (or something funky, in which its exact)
+            bool seenUpper = false;
+            bool seenLower = false;
+            for (int i = 1; i < length; i++)
+            {
+                bool v = char.IsUpper(word[i]);
+                seenUpper |= v;
+                seenLower |= !v;
+            }
+
+            if (!seenLower)
+            {
+                return UPPER_CASE;
+            }
+            else if (!seenUpper)
+            {
+                return TITLE_CASE;
+            }
+            else
+            {
+                return EXACT_CASE;
+            }
+        }
+
+        // folds titlecase variant of word to titleBuffer
+        private void CaseFoldTitle(char[] word, int length)
+        {
+            titleBuffer = ArrayUtil.Grow(titleBuffer, length);
+            System.Array.Copy(word, 0, titleBuffer, 0, length);
+            for (int i = 1; i < length; i++)
+            {
+                titleBuffer[i] = dictionary.CaseFold(titleBuffer[i]);
+            }
+        }
+
+        // folds lowercase variant of word (title cased) to lowerBuffer
+        private void CaseFoldLower(char[] word, int length)
+        {
+            lowerBuffer = ArrayUtil.Grow(lowerBuffer, length);
+            System.Array.Copy(word, 0, lowerBuffer, 0, length);
+            lowerBuffer[0] = dictionary.CaseFold(lowerBuffer[0]);
+        }
+
+        private IList<CharsRef> DoStem(char[] word, int length, bool caseVariant)
+        {
             List<CharsRef> stems = new List<CharsRef>();
             Int32sRef forms = dictionary.LookupWord(word, 0, length);
             if (forms != null)
             {
-                // TODO: some forms should not be added, e.g. ONLYINCOMPOUND
-                // just because it exists, does not make it valid...
-                for (int i = 0; i < forms.Length; i++)
+                for (int i = 0; i < forms.Length; i += formStep)
                 {
-                    stems.Add(NewStem(word, length));
+                    bool checkKeepCase = caseVariant && dictionary.keepcase != -1;
+                    bool checkNeedAffix = dictionary.needaffix != -1;
+                    bool checkOnlyInCompound = dictionary.onlyincompound != -1;
+                    if (checkKeepCase || checkNeedAffix || checkOnlyInCompound)
+                    {
+                        dictionary.flagLookup.Get(forms.Int32s[forms.Offset + i], scratch);
+                        char[] wordFlags = Dictionary.DecodeFlags(scratch);
+                        // we are looking for a case variant, but this word does not allow it
+                        if (checkKeepCase && Dictionary.HasFlag(wordFlags, (char)dictionary.keepcase))
+                        {
+                            continue;
+                        }
+                        // we can't add this form, its a pseudostem requiring an affix
+                        if (checkNeedAffix && Dictionary.HasFlag(wordFlags, (char)dictionary.needaffix))
+                        {
+                            continue;
+                        }
+                        // we can't add this form, it only belongs inside a compound word
+                        if (checkOnlyInCompound && Dictionary.HasFlag(wordFlags, (char)dictionary.onlyincompound))
+                        {
+                            continue;
+                        }
+                    }
+                    stems.Add(NewStem(word, length, forms, i));
                 }
             }
-            stems.AddRange(Stem(word, length, -1, -1, -1, 0, true, true, false, false));
+            try
+            {
+                stems.AddRange(Stem(word, length, -1, -1, -1, 0, true, true, false, false, caseVariant));
+            }
+            catch (IOException bogus)
+            {
+                throw new Exception(bogus.ToString(), bogus);
+            }
             return stems;
         }
 
@@ -127,12 +262,37 @@ namespace Lucene.Net.Analysis.Hunspell
             return deduped;
         }
 
-        private CharsRef NewStem(char[] buffer, int length)
+        private CharsRef NewStem(char[] buffer, int length, Int32sRef forms, int formID)
         {
+            string exception;
+            if (dictionary.hasStemExceptions)
+            {
+                int exceptionID = forms.Int32s[forms.Offset + formID + 1];
+                if (exceptionID > 0)
+                {
+                    exception = dictionary.GetStemException(exceptionID);
+                }
+                else
+                {
+                    exception = null;
+                }
+            }
+            else
+            {
+                exception = null;
+            }
+
             if (dictionary.needsOutputCleaning)
             {
                 scratchSegment.Length = 0;
-                scratchSegment.Append(buffer, 0, length);
+                if (exception != null)
+                {
+                    scratchSegment.Append(exception);
+                }
+                else
+                {
+                    scratchSegment.Append(buffer, 0, length);
+                }
                 try
                 {
                     Dictionary.ApplyMappings(dictionary.oconv, scratchSegment);
@@ -147,11 +307,25 @@ namespace Lucene.Net.Analysis.Hunspell
             }
             else
             {
-                return new CharsRef(buffer, 0, length);
+                if (exception != null)
+                {
+                    return new CharsRef(exception);
+                }
+                else
+                {
+                    return new CharsRef(buffer, 0, length);
+                }
             }
         }
 
         // ================================================= Helper Methods ================================================
+
+        // some state for traversing FSTs
+        private readonly FST.BytesReader[] prefixReaders = new FST.BytesReader[3];
+        private readonly FST.Arc<Int32sRef>[] prefixArcs = new FST.Arc<Int32sRef>[3];
+
+        private readonly FST.BytesReader[] suffixReaders = new FST.BytesReader[3];
+        private readonly FST.Arc<Int32sRef>[] suffixArcs = new FST.Arc<Int32sRef>[3];
 
         /// <summary>
         /// Generates a list of stems for the provided word
@@ -169,21 +343,45 @@ namespace Lucene.Net.Analysis.Hunspell
         ///        but two prefixes (COMPLEXPREFIXES) or two suffixes must have continuation requirements to recurse. </param>
         /// <param name="circumfix"> true if the previous prefix removal was signed as a circumfix
         ///        this means inner most suffix must also contain circumfix flag. </param>
+        /// <param name="caseVariant"> true if we are searching for a case variant. if the word has KEEPCASE flag it cannot succeed. </param>
         /// <returns> <see cref="IList{CharsRef}"/> of stems, or empty list if no stems are found </returns>
-        private IList<CharsRef> Stem(char[] word, int length, int previous, int prevFlag, int prefixFlag, int recursionDepth, bool doPrefix, bool doSuffix, bool previousWasPrefix, bool circumfix)
+        private IList<CharsRef> Stem(char[] word, int length, int previous, int prevFlag, int prefixFlag, int recursionDepth, bool doPrefix, bool doSuffix, bool previousWasPrefix, bool circumfix, bool caseVariant)
         {
-
             // TODO: allow this stuff to be reused by tokenfilter
             List<CharsRef> stems = new List<CharsRef>();
 
             if (doPrefix && dictionary.prefixes != null)
             {
-                for (int i = length - 1; i >= 0; i--)
+                FST<Int32sRef> fst = dictionary.prefixes;
+                Outputs<Int32sRef> outputs = fst.Outputs;
+                FST.BytesReader bytesReader = prefixReaders[recursionDepth];
+                FST.Arc<Int32sRef> arc = prefixArcs[recursionDepth];
+                fst.GetFirstArc(arc);
+                Int32sRef NO_OUTPUT = outputs.NoOutput;
+                Int32sRef output = NO_OUTPUT;
+                int limit = dictionary.fullStrip ? length : length - 1;
+                for (int i = 0; i < limit; i++)
                 {
-                    Int32sRef prefixes = dictionary.LookupPrefix(word, 0, i);
-                    if (prefixes == null)
+                    if (i > 0)
+                    {
+                        int ch = word[i - 1];
+                        if (fst.FindTargetArc(ch, arc, arc, bytesReader) == null)
+                        {
+                            break;
+                        }
+                        else if (arc.Output != NO_OUTPUT)
+                        {
+                            output = fst.Outputs.Add(output, arc.Output);
+                        }
+                    }
+                    Int32sRef prefixes; // LUCENENET: IDE0059 - Removed unnecessary value assignment
+                    if (!arc.IsFinal)
                     {
                         continue;
+                    }
+                    else
+                    {
+                        prefixes = fst.Outputs.Add(output, arc.NextFinalOutput);
                     }
 
                     for (int j = 0; j < prefixes.Length; j++)
@@ -204,7 +402,17 @@ namespace Lucene.Net.Analysis.Hunspell
                         bool compatible;
                         if (recursionDepth == 0)
                         {
-                            compatible = true;
+                            if (dictionary.onlyincompound == -1)
+                            {
+                                compatible = true;
+                            }
+                            else
+                            {
+                                // check if affix is allowed in a non-compound word
+                                dictionary.flagLookup.Get(append, scratch);
+                                char[] appendFlags = Dictionary.DecodeFlags(scratch);
+                                compatible = !Dictionary.HasFlag(appendFlags, (char)dictionary.onlyincompound);
+                            }
                         }
                         else if (crossProduct)
                         {
@@ -212,7 +420,9 @@ namespace Lucene.Net.Analysis.Hunspell
                             dictionary.flagLookup.Get(append, scratch);
                             char[] appendFlags = Dictionary.DecodeFlags(scratch);
                             if (Debugging.AssertsEnabled) Debugging.Assert(prevFlag >= 0);
-                            compatible = HasCrossCheckedFlag((char)prevFlag, appendFlags, false);
+                            bool allowed = dictionary.onlyincompound == -1 ||
+                                !Dictionary.HasFlag(appendFlags, (char)dictionary.onlyincompound);
+                            compatible = allowed && HasCrossCheckedFlag((char)prevFlag, appendFlags, false);
                         }
                         else
                         {
@@ -237,7 +447,7 @@ namespace Lucene.Net.Analysis.Hunspell
                             Array.Copy(dictionary.stripData, stripStart, strippedWord, 0, stripLength);
                             Array.Copy(word, deAffixedStart, strippedWord, stripLength, deAffixedLength);
 
-                            IList<CharsRef> stemList = ApplyAffix(strippedWord, strippedWord.Length, prefix, -1, recursionDepth, true, circumfix);
+                            IList<CharsRef> stemList = ApplyAffix(strippedWord, strippedWord.Length, prefix, -1, recursionDepth, true, circumfix, caseVariant);
 
                             stems.AddRange(stemList);
                         }
@@ -247,12 +457,36 @@ namespace Lucene.Net.Analysis.Hunspell
 
             if (doSuffix && dictionary.suffixes != null)
             {
-                for (int i = 0; i < length; i++)
+                FST<Int32sRef> fst = dictionary.suffixes;
+                Outputs<Int32sRef> outputs = fst.Outputs;
+                FST.BytesReader bytesReader = suffixReaders[recursionDepth];
+                FST.Arc<Int32sRef> arc = suffixArcs[recursionDepth];
+                fst.GetFirstArc(arc);
+                Int32sRef NO_OUTPUT = outputs.NoOutput;
+                Int32sRef output = NO_OUTPUT;
+                int limit = dictionary.fullStrip ? 0 : 1;
+                for (int i = length; i >= limit; i--)
                 {
-                    Int32sRef suffixes = dictionary.LookupSuffix(word, i, length - i);
-                    if (suffixes == null)
+                    if (i < length)
+                    {
+                        int ch = word[i];
+                        if (fst.FindTargetArc(ch, arc, arc, bytesReader) == null)
+                        {
+                            break;
+                        }
+                        else if (arc.Output != NO_OUTPUT)
+                        {
+                            output = fst.Outputs.Add(output, arc.Output);
+                        }
+                    }
+                    Int32sRef suffixes; // LUCENENET: IDE0059 - Removed unnecessary value assignment
+                    if (!arc.IsFinal)
                     {
                         continue;
+                    }
+                    else
+                    {
+                        suffixes = fst.Outputs.Add(output, arc.NextFinalOutput);
                     }
 
                     for (int j = 0; j < suffixes.Length; j++)
@@ -273,7 +507,17 @@ namespace Lucene.Net.Analysis.Hunspell
                         bool compatible;
                         if (recursionDepth == 0)
                         {
-                            compatible = true;
+                            if (dictionary.onlyincompound == -1)
+                            {
+                                compatible = true;
+                            }
+                            else
+                            {
+                                // check if affix is allowed in a non-compound word
+                                dictionary.flagLookup.Get(append, scratch);
+                                char[] appendFlags = Dictionary.DecodeFlags(scratch);
+                                compatible = !Dictionary.HasFlag(appendFlags, (char)dictionary.onlyincompound);
+                            }
                         }
                         else if (crossProduct)
                         {
@@ -281,6 +525,8 @@ namespace Lucene.Net.Analysis.Hunspell
                             dictionary.flagLookup.Get(append, scratch);
                             char[] appendFlags = Dictionary.DecodeFlags(scratch);
                             if (Debugging.AssertsEnabled) Debugging.Assert(prevFlag >= 0);
+                            bool allowed = dictionary.onlyincompound == -1 ||
+                                !Dictionary.HasFlag(appendFlags, (char)dictionary.onlyincompound);
                             compatible = HasCrossCheckedFlag((char)prevFlag, appendFlags, previousWasPrefix);
                         }
                         else
@@ -306,7 +552,7 @@ namespace Lucene.Net.Analysis.Hunspell
                             Array.Copy(word, 0, strippedWord, 0, deAffixedLength);
                             Array.Copy(dictionary.stripData, stripStart, strippedWord, deAffixedLength, stripLength);
 
-                            IList<CharsRef> stemList = ApplyAffix(strippedWord, strippedWord.Length, suffix, prefixFlag, recursionDepth, false, circumfix);
+                            IList<CharsRef> stemList = ApplyAffix(strippedWord, strippedWord.Length, suffix, prefixFlag, recursionDepth, false, circumfix, caseVariant);
 
                             stems.AddRange(stemList);
                         }
@@ -360,8 +606,9 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <param name="prefix"> true if we are removing a prefix (false if its a suffix) </param>
         /// <param name="circumfix"> true if the previous prefix removal was signed as a circumfix
         ///        this means inner most suffix must also contain circumfix flag. </param>
+        /// <param name="caseVariant"> true if we are searching for a case variant. if the word has KEEPCASE flag it cannot succeed. </param>
         /// <returns> <see cref="IList{CharsRef}"/> of stems for the word, or an empty list if none are found </returns>
-        internal IList<CharsRef> ApplyAffix(char[] strippedWord, int length, int affix, int prefixFlag, int recursionDepth, bool prefix, bool circumfix)
+        internal IList<CharsRef> ApplyAffix(char[] strippedWord, int length, int affix, int prefixFlag, int recursionDepth, bool prefix, bool circumfix, bool caseVariant)
         {
             // TODO: just pass this in from before, no need to decode it twice
             affixReader.Position = 8 * affix;
@@ -377,7 +624,7 @@ namespace Lucene.Net.Analysis.Hunspell
             Int32sRef forms = dictionary.LookupWord(strippedWord, 0, length);
             if (forms != null)
             {
-                for (int i = 0; i < forms.Length; i++)
+                for (int i = 0; i < forms.Length; i += formStep)
                 {
                     dictionary.flagLookup.Get(forms.Int32s[forms.Offset + i], scratch);
                     char[] wordFlags = Dictionary.DecodeFlags(scratch);
@@ -409,7 +656,18 @@ namespace Lucene.Net.Analysis.Hunspell
                                 continue;
                             }
                         }
-                        stems.Add(NewStem(strippedWord, length));
+
+                        // we are looking for a case variant, but this word does not allow it
+                        if (caseVariant && dictionary.keepcase != -1 && Dictionary.HasFlag(wordFlags, (char)dictionary.keepcase))
+                        {
+                            continue;
+                        }
+                        // we aren't decompounding (yet)
+                        if (dictionary.onlyincompound != -1 && Dictionary.HasFlag(wordFlags, (char)dictionary.onlyincompound))
+                        {
+                            continue;
+                        }
+                        stems.Add(NewStem(strippedWord, length, forms, i));
                     }
                 }
             }
@@ -431,14 +689,14 @@ namespace Lucene.Net.Analysis.Hunspell
                         // we took away the first prefix.
                         // COMPLEXPREFIXES = true:  combine with a second prefix and another suffix 
                         // COMPLEXPREFIXES = false: combine with a suffix
-                        stems.AddRange(Stem(strippedWord, length, affix, flag, flag, ++recursionDepth, dictionary.complexPrefixes && dictionary.twoStageAffix, true, true, circumfix));
+                        stems.AddRange(Stem(strippedWord, length, affix, flag, flag, ++recursionDepth, dictionary.complexPrefixes && dictionary.twoStageAffix, true, true, circumfix, caseVariant));
                     }
                     else if (dictionary.complexPrefixes == false && dictionary.twoStageAffix)
                     {
                         // we took away a suffix.
                         // COMPLEXPREFIXES = true: we don't recurse! only one suffix allowed
                         // COMPLEXPREFIXES = false: combine with another suffix
-                        stems.AddRange(Stem(strippedWord, length, affix, flag, prefixFlag, ++recursionDepth, false, true, false, circumfix));
+                        stems.AddRange(Stem(strippedWord, length, affix, flag, prefixFlag, ++recursionDepth, false, true, false, circumfix, caseVariant));
                     }
                 }
                 else if (recursionDepth == 1)
@@ -446,12 +704,12 @@ namespace Lucene.Net.Analysis.Hunspell
                     if (prefix && dictionary.complexPrefixes)
                     {
                         // we took away the second prefix: go look for another suffix
-                        stems.AddRange(Stem(strippedWord, length, affix, flag, flag, ++recursionDepth, false, true, true, circumfix));
+                        stems.AddRange(Stem(strippedWord, length, affix, flag, flag, ++recursionDepth, false, true, true, circumfix, caseVariant));
                     }
                     else if (prefix == false && dictionary.complexPrefixes == false && dictionary.twoStageAffix)
                     {
                         // we took away a prefix, then a suffix: go look for another suffix
-                        stems.AddRange(Stem(strippedWord, length, affix, flag, prefixFlag, ++recursionDepth, false, true, false, circumfix));
+                        stems.AddRange(Stem(strippedWord, length, affix, flag, prefixFlag, ++recursionDepth, false, true, false, circumfix, caseVariant));
                     }
                 }
             }
