@@ -34,6 +34,7 @@ on:
     #- master
     paths:
     - 'websites/site/**'
+    - '.github/workflows/Lucene-Net-Website.yml'
 
 env:
   # If a tag is specified, the tag will be in the format: Website_4_8_0_beta00013 which
