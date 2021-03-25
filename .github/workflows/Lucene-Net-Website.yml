@@ -63,7 +63,7 @@ jobs:
       - name: Determine Version
         uses: gittools/actions/gitversion/execute@v0.9.7
         with:
-          targetPath: main-repo
+          targetPath: ${{ github.workspace }}/main-repo
       
       - name: Set version from tag
         run: |
