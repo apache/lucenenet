@@ -58,15 +58,21 @@ jobs:
         with:
           versionSpec: '5.x'
 
-      - name: Determine Version
-        uses: gittools/actions/gitversion/execute@v0.9.7
-        with:
-          targetPath: ${{ github.workspace }}\main-repo
+      # TODO: This would be nice to use but for some reason it's throwing exceptions
+      # We'd also need a custom config file to tell it what tags a version is i.e. prefixed with Lucene.Net_
+      #- name: Determine Version
+      #  uses: gittools/actions/gitversion/execute@v0.9.7
+      #  with:
+      #    targetPath: ${{ github.workspace }}\main-repo
       
       - name: Set version from tag
         run: |
+          # initialize to SHA
+          echo ("CURRENT_TAG=" + $Env:GITHUB_SHA) >> $env:GITHUB_ENV
+          echo ("RELEASE_VERSION=" + $Env:GITHUB_SHA) >> $env:GITHUB_ENV
+          
           $ref = $Env:GITHUB_REF
-
+          
           # if the ref is a tag
           if ($ref.StartsWith("refs/tags/")) {
             $tag = $ref.Substring(10)
@@ -119,11 +125,11 @@ jobs:
           commit-message: New website version built
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          branch: ${{ env.CURRENT_TAG }}
+          branch: task/website-build-${{ env.CURRENT_TAG }}
           delete-branch: true
-          title: 'New website build ${{ github.sha }} ( ${{ env.CURRENT_TAG }} )'
+          title: 'New website build ${{ env.CURRENT_TAG }}'
           body: |
-            New website build ${{ github.sha }} ( ${{ env.CURRENT_TAG }} )
+            New website build ${{ env.CURRENT_TAG }}
             - For version ${{ env.RELEASE_VERSION }}
       - name: Check outputs
         run: |
