@@ -41,8 +41,8 @@ env:
   # will be parsed to create the version number used in the docs like 4.8.0-beta00013
   CURRENT_TAG: "NO-VERSION"
   RELEASE_VERSION: "(no tag)"
-  SITE_REPO: shazwazza/lucenenet-site
-  # SITE_REPO: apache/lucenenet-site
+  # SITE_REPO: shazwazza/lucenenet-site
+  SITE_REPO: apache/lucenenet-site
 
 jobs:
   build:
