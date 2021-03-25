@@ -40,7 +40,7 @@ env:
   # If a tag is specified, the tag will be in the format: Website_4_8_0_beta00013 which
   # will be parsed to create the version number used in the docs like 4.8.0-beta00013
   CURRENT_TAG: "NO-VERSION"
-  RELEASE_VERSION: "NO-VERSION"
+  RELEASE_VERSION: "(no tag)"
   SITE_REPO: shazwazza/lucenenet-site
   # SITE_REPO: apache/lucenenet-site
 
@@ -52,25 +52,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: main-repo
-          
-      - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v0.9.7
-        with:
-          versionSpec: '5.x'
-
-      # TODO: This would be nice to use but for some reason it's throwing exceptions
-      # We'd also need a custom config file to tell it what tags a version is i.e. prefixed with Lucene.Net_
-      #- name: Determine Version
-      #  uses: gittools/actions/gitversion/execute@v0.9.7
-      #  with:
-      #    targetPath: ${{ github.workspace }}\main-repo
-      
+       
       - name: Set version from tag
         run: |
           # initialize to SHA
-          echo ("CURRENT_TAG=" + $Env:GITHUB_SHA) >> $env:GITHUB_ENV
-          echo ("RELEASE_VERSION=" + $Env:GITHUB_SHA) >> $env:GITHUB_ENV
-          
+          echo ("CURRENT_TAG=" + $Env:GITHUB_SHA) >> $env:GITHUB_ENV          
           $ref = $Env:GITHUB_REF
           
           # if the ref is a tag
@@ -129,8 +115,8 @@ jobs:
           delete-branch: true
           title: 'New website build ${{ env.CURRENT_TAG }}'
           body: |
-            New website build ${{ env.CURRENT_TAG }}
-            - For version ${{ env.RELEASE_VERSION }}
+            New website build on rev/tag ${{ env.CURRENT_TAG }}
+            For release version ${{ env.RELEASE_VERSION }}
       - name: Check outputs
         run: |
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
