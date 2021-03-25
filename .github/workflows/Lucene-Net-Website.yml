@@ -45,16 +45,14 @@ env:
   # SITE_REPO: apache/lucenenet-site
 
 jobs:
-  checkout:
+  build:
     runs-on: windows-latest
     steps:
       - name: Checkout Lucene.Net source
         uses: actions/checkout@v2
         with:
           path: main-repo
-  parse-version:
-    runs-on: windows-latest
-    steps:
+          
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.9.7
         with:
@@ -63,7 +61,7 @@ jobs:
       - name: Determine Version
         uses: gittools/actions/gitversion/execute@v0.9.7
         with:
-          targetPath: ${{ github.workspace }}/main-repo
+          targetPath: ${{ github.workspace }}\main-repo
       
       - name: Set version from tag
         run: |
@@ -93,14 +91,13 @@ jobs:
             }
           }
         shell: powershell
+        
       - name: Verify environment variables
         run: |
           echo "CURRENT_TAG=$Env:CURRENT_TAG"
           echo "RELEASE_VERSION=$Env:RELEASE_VERSION"
         shell: powershell
-  build-website:
-    runs-on: windows-latest
-    steps:
+
       - name: Build website
         run: ./main-repo/websites/site/site.ps1
         shell: powershell
