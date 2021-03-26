@@ -10,7 +10,7 @@ _Details about this website and the API documentation site and how to help contr
 
 ## Overview
 
-The website and the api documentation source code is found in the same Git repository as the Lucene.Net code in the folder: `/websites/`. The website and documentation site is built with a static site generator called [DocFx](https://dotnet.github.io/docfx/) and all of the content/pages are created using Markdown files.
+The website and the api documentation source code is found in the same Git repository as the Lucene.Net code in the folder: `./websites/`. The website and documentation site is built with a static site generator called [DocFx](https://dotnet.github.io/docfx/) and all of the content/pages are created using Markdown files.
 
 To submit changes for the website, create a Pull Request to the [Lucene Git repositoriy](https://github.com/apache/lucenenet). (See [Contributing](xref:contributing#submit-a-pull-request) for details)
 
@@ -18,10 +18,10 @@ To submit changes for the website, create a Pull Request to the [Lucene Git repo
 
 ### Build script
 
-To build the website and run it on your machine, run the Powershell script: `/websites/site/site.ps1` with the `-ServeDocs` flag. For example:
+To build the website and run it on your machine, run the Powershell script: `./websites/site/site.ps1` with the `-ServeDocs` flag. For example:
 
 ```
-/websites/site/site.ps1 -ServeDocs
+./websites/site/site.ps1 -ServeDocs
 ```
 
 When executed this will build the site and host it at [http://localhost:8081](http://localhost:8081).
@@ -29,7 +29,7 @@ When executed this will build the site and host it at [http://localhost:8081](ht
 To build the website for release, run the script:
 
 ```
-/websites/site/site.ps1
+./websites/site/site.ps1
 ```
 
 This will build the site with all live parameters configured correctly and output the built static site into the `_site` folder.
@@ -41,7 +41,7 @@ The script parameters are:
 
 ### File/folder structure
 
-The file/folder structure is within `/websites/site`:
+The file/folder structure is within `./websites/site`:
 
 - `site.ps1` - the build script
 - `docfx.json` - the DocFx configuration file _(see docfx manual for further info)_
@@ -55,17 +55,17 @@ The file/folder structure is within `/websites/site`:
 ### Deploy the website
 
 - The website is deployed via GitHub and is hosted by static files here: https://github.com/apache/lucenenet-site/tree/asf-site _(ensure you have `asf-site` branch checked out, not `master`)_
-- Any file changes made in the `master` branch of the Lucene.Net repository under the path `/websites/site/*` will trigger a GitHub action to build the site and publish a Pull Request to the https://github.com/apache/lucenenet-site repository where it can be accepted
+- Any file changes made in the `master` branch of the Lucene.Net repository under the path `./websites/site/*` will trigger a GitHub action to build the site and publish a Pull Request to the https://github.com/apache/lucenenet-site repository where it can be accepted
 - Review and merge the Pull Request. The new version of the website will be live. If the amount of new files committed is large, the new files may take some time to become live.
 
 ## API Docs
 
 ### Build script
 
-To build the api docs and run it on your machine, run the Powershell script: `/websites/apidocs/docs.ps1`. For example:
+To build the api docs and run it on your machine, run the Powershell script: `./websites/apidocs/docs.ps1`. For example:
 
 ```
-/websites/apidocs/docs.ps1 -ServeDocs -LuceneNetVersion 4.8.0-beta00008 -BaseUrl http://localhost:8080
+./websites/apidocs/docs.ps1 -ServeDocs -LuceneNetVersion 4.8.0-beta00008 -BaseUrl http://localhost:8080
 ```
 
 When executed this will build the site and host it at [http://localhost:8080](http://localhost:8080). _(Ensure to pass in the current version of Lucene.Net you are building.)_
@@ -73,7 +73,7 @@ When executed this will build the site and host it at [http://localhost:8080](ht
 To build the api docs for release, run the script:
 
 ```
-/websites/apidocs/docs.ps1 -LuceneNetVersion 4.8.0-beta00008
+./websites/apidocs/docs.ps1 -LuceneNetVersion 4.8.0-beta00008
 ```
 
 This will build the site with all live parameters configured correctly and output the built static site into the `_site` folder.
@@ -91,7 +91,7 @@ The script parameters are:
 
 ### File/folder structure
 
-The file/folder structure is within `/websites/apidocs`:
+The file/folder structure is within `./websites/apidocs`:
 
 - `docs.ps1` - The build script
 - `docfx.*.json` - The DocFx configuration files _(see docfx manual for further info)_
@@ -158,15 +158,15 @@ Once pushed, you can merge those changes to the `master` branch. Doing this may 
 
 - Checkout the Git repo that hosts the documentation: https://github.com/apache/lucenenet-site/tree/asf-site _(ensure you have `asf-site` branch checked out, not `master`)_
 - Create a new folder in this repo: `/docs/[Version]`, for example: `/docs/4.8.0-beta00008`
-- Copy the build output of the documentation site to this new folder. The build output will be all of the files in the `/websites/apidocs/_site` in your main Lucene.NET checked out Git repository.
+- Copy the build output of the documentation site to this new folder. The build output will be all of the files in the `./websites/apidocs/_site` in your main Lucene.NET checked out Git repository.
 - Commit and push these changes
 - The new version documentation will be live. Due to the amount of new files committed, the new files may take up to 60 minutes to become live.
 - Next the website needs updating which is a manual process currently:
-  - In the `/websites/site/download` folder there should be a document per release. It's normally fine to copy the document of the latest release for the same major version. For a new major version some modifications may be needed.
+  - In the `./websites/site/download` folder there should be a document per release. It's normally fine to copy the document of the latest release for the same major version. For a new major version some modifications may be needed.
   - Ensure the correct version number is listed in the header and the NuGet download snippet.
   - Update the `Status` and `Released` heading information.
   - Ensure the download links are correct.
-  - Update the `/websites/site/download/toc.yml` and `/websites/site/download/download.md` files to include a reference to the new page which should maintain descending version order.
-  - Update the `/websites/site/docs.md` file and add a link to the new documentation for the current version which should maintain descending version order.
+  - Update the `./websites/site/download/toc.yml` and `./websites/site/download/download.md` files to include a reference to the new page which should maintain descending version order.
+  - Update the `./websites/site/docs.md` file and add a link to the new documentation for the current version which should maintain descending version order.
   - [Build the website](#website) and test locally, then deploy the changes
 - Once the website is committed/pushed, the last step is to create a named branch on the main [`lucenenet`](https://github.com/apache/lucenenet) repository with the name: `docs/[Version]`, for example `docs/4.8.0-beta00008` based on commit of the latest (if any) changes made to the docs in the `lucenenet` repository on the main branch. This branch is used for linking to on the API docs "Improve this Doc" button.
