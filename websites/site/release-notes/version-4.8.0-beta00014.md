@@ -9,6 +9,115 @@ version: 4.8.0-beta00014
 
 > This release contains bug fixes and minor performance improvements
 
+## Known Issues
+
+* The `lucene-cli` tool requires an `appsettings.json` file, but none was shipped. Upon running `lucene` on the command line, the following error will be presented:
+
+    ```
+    F:\Projects\lucenenet>lucene
+    Unhandled exception. System.IO.FileNotFoundException: The configuration file 'appsettings.json' was not found and is not optional. The         physical path is 'C:\Users\shad\.dotnet\tools\.store\lucene-cli\4.8.0-beta00010\lucene-cli\4.8.0-beta00010\tools\netcoreapp3.1\any\appsettings.json'.
+   at Microsoft.Extensions.Configuration.FileConfigurationProvider.HandleException(ExceptionDispatchInfo info)
+   at Microsoft.Extensions.Configuration.FileConfigurationProvider.Load(Boolean reload)
+   at Microsoft.Extensions.Configuration.FileConfigurationProvider.Load()
+   at Microsoft.Extensions.Configuration.ConfigurationRoot..ctor(IList`1 providers)
+   at Microsoft.Extensions.Configuration.ConfigurationBuilder.Build()
+   at Lucene.Net.Cli.Program.Main(String[] args) in D:\a\1\s\src\dotnet\tools\lucene-cli\Program.cs:line 27
+    ```
+
+    Adding a text file named `appsettings.json` to the location specified in the error message with opening and closing brackets will prevent the exception.
+
+    #### appsettings.json
+
+    ```
+    {
+    }
+    ```
+
+    >    IMPORTANT: There must be at least opening and closing curly brackets in the file, or it won't be parsed as valid JSON.
+
+## Benchmarks (from [#310](https://github.com/apache/lucenenet/pull/310))
+
+#### Index Files
+
+<details>
+  <summary>Click to expand</summary>
+
+``` ini
+
+BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.867 (2004/?/20H1)
+Intel Core i7-8850H CPU 2.60GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical cores
+.NET Core SDK=5.0.104
+  [Host]          : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00005 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00006 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00007 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00008 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00009 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00010 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00011 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00012 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00013 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00014 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+
+InvocationCount=1  IterationCount=15  LaunchCount=2  
+UnrollFactor=1  WarmupCount=10  
+
+```
+|     Method |             Job |     Mean |     Error |    StdDev |      Gen 0 |     Gen 1 |     Gen 2 | Allocated |
+|----------- |---------------- |---------:|----------:|----------:|-----------:|----------:|----------:|----------:|
+| IndexFiles | 4.8.0-beta00005 | 905.6 ms | 131.82 ms | 197.30 ms | 43000.0000 | 8000.0000 | 7000.0000 | 220.99 MB |
+| IndexFiles | 4.8.0-beta00006 | 707.1 ms |  18.57 ms |  26.04 ms | 44000.0000 | 8000.0000 | 7000.0000 | 220.99 MB |
+| IndexFiles | 4.8.0-beta00007 | 712.2 ms |  16.45 ms |  23.06 ms | 44000.0000 | 8000.0000 | 7000.0000 | 221.04 MB |
+| IndexFiles | 4.8.0-beta00008 | 785.7 ms |  17.37 ms |  25.46 ms | 44000.0000 | 8000.0000 | 7000.0000 | 221.54 MB |
+| IndexFiles | 4.8.0-beta00009 | 824.9 ms |  32.86 ms |  48.17 ms | 44000.0000 | 8000.0000 | 7000.0000 | 221.34 MB |
+| IndexFiles | 4.8.0-beta00010 | 789.6 ms |  16.40 ms |  24.04 ms | 44000.0000 | 8000.0000 | 7000.0000 | 221.35 MB |
+| IndexFiles | 4.8.0-beta00011 | 805.4 ms |  21.26 ms |  31.82 ms | 44000.0000 | 8000.0000 | 7000.0000 | 221.37 MB |
+| IndexFiles | 4.8.0-beta00012 | 827.8 ms |  13.95 ms |  20.89 ms | 56000.0000 | 7000.0000 | 6000.0000 | 287.03 MB |
+| IndexFiles | 4.8.0-beta00013 | 793.6 ms |  13.63 ms |  19.55 ms | 44000.0000 | 8000.0000 | 7000.0000 | 220.22 MB |
+| IndexFiles | 4.8.0-beta00014 | 812.0 ms |  21.97 ms |  30.79 ms | 44000.0000 | 8000.0000 | 7000.0000 | 220.29 MB |
+
+</details>
+
+#### Search Files
+
+<details>
+  <summary>Click to expand</summary>
+
+``` ini
+
+BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.867 (2004/?/20H1)
+Intel Core i7-8850H CPU 2.60GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical cores
+.NET Core SDK=5.0.104
+  [Host]          : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00005 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00006 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00007 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00008 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00009 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00010 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00011 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00012 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00013 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+  4.8.0-beta00014 : .NET Core 3.1.13 (CoreCLR 4.700.21.11102, CoreFX 4.700.21.11602), X64 RyuJIT
+
+IterationCount=15  LaunchCount=2  WarmupCount=10  
+
+```
+|      Method |             Job |     Mean |     Error |    StdDev |   Median |      Gen 0 |     Gen 1 | Gen 2 | Allocated |
+|------------ |---------------- |---------:|----------:|----------:|---------:|-----------:|----------:|------:|----------:|
+| SearchFiles | 4.8.0-beta00005 | 421.1 ms | 111.47 ms | 163.38 ms | 326.3 ms | 18000.0000 | 1000.0000 |     - |  82.11 MB |
+| SearchFiles | 4.8.0-beta00006 | 349.8 ms |  24.03 ms |  35.97 ms | 338.9 ms | 18000.0000 | 1000.0000 |     - |  82.11 MB |
+| SearchFiles | 4.8.0-beta00007 | 333.6 ms |  17.36 ms |  25.98 ms | 336.8 ms | 18000.0000 | 1000.0000 |     - |   81.9 MB |
+| SearchFiles | 4.8.0-beta00008 | 191.7 ms |   7.17 ms |  10.51 ms | 187.9 ms | 17000.0000 | 1000.0000 |     - |  80.13 MB |
+| SearchFiles | 4.8.0-beta00009 | 186.6 ms |   8.56 ms |  12.55 ms | 184.0 ms | 17000.0000 | 1000.0000 |     - |  80.13 MB |
+| SearchFiles | 4.8.0-beta00010 | 182.2 ms |   6.69 ms |   9.16 ms | 181.6 ms | 17000.0000 | 1000.0000 |     - |  79.85 MB |
+| SearchFiles | 4.8.0-beta00011 | 208.9 ms |  17.73 ms |  26.54 ms | 207.9 ms | 17000.0000 | 1000.0000 |     - |  79.85 MB |
+| SearchFiles | 4.8.0-beta00012 | 192.3 ms |  10.99 ms |  16.46 ms | 187.8 ms | 18000.0000 | 1000.0000 |     - |  81.11 MB |
+| SearchFiles | 4.8.0-beta00013 | 177.4 ms |   7.74 ms |  11.59 ms | 175.1 ms | 14000.0000 | 1000.0000 |     - |  65.78 MB |
+| SearchFiles | 4.8.0-beta00014 | 172.7 ms |   5.93 ms |   8.88 ms | 168.9 ms | 14000.0000 | 1000.0000 |     - |  65.78 MB |
+
+</details>
+
 ## Change Log
 
 ### Breaking Changes
