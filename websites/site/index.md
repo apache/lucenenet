@@ -11,13 +11,13 @@ Lucene.Net
 
 Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users
 
-### Latest Version - Lucene 4.8 Beta
+### Latest Version - Lucene.NET 4.8.0 Beta
 
 * The beta version is extremely stable
-* Has more than 7000+ passing unit tests
-* Integrates well with .Net 5.0 
-* Supports NetStandard 2.0, and  NetStandard 2.1 
-* Supports with .Net Framework 4.5.1+
+* Has more than 7800+ passing unit tests
+* Integrates well with .NET 5.0 
+* Supports .NET Standard 2.0, and .NET Standard 2.1 
+* Supports with .NET Framework 4.5.1+
 * Some developers already use it in production environments
 
 ### Our Goals
