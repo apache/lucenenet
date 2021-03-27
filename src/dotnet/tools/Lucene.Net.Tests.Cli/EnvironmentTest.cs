@@ -1,6 +1,8 @@
 ﻿using Lucene.Net.Attributes;
 using Lucene.Net.Cli.Commands;
+using Lucene.Net.Util;
 using NUnit.Framework;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Cli
 {
@@ -21,7 +23,7 @@ namespace Lucene.Net.Cli
      * limitations under the License.
      */
 
-    public class EnvironmentTest
+    public class EnvironmentTest : LuceneTestCase
     {
         [Test]
         [LuceneNetSpecific]
