@@ -26,7 +26,7 @@ namespace Lucene.Net.Cli.Configuration
      * limitations under the License.
      */
 
-    internal class TestConfigurationSettings : ConfigurationSettingsTestCase
+    internal class ConfigurationSettingsTest : ConfigurationSettingsTestCase
     {
         private const string TestJsonFileName = "appsettings.json";
         private readonly static string TempFileDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
