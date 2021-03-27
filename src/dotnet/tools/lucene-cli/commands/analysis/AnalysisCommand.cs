@@ -39,7 +39,7 @@
         public int Run(ConfigurationBase cmd)
         {
             cmd.ShowHelp();
-            return 1;
+            return ExitCode.NoCommandProvided;
         }
     }
 }

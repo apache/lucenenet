@@ -55,7 +55,7 @@ namespace Lucene.Net.Cli
                 if (this.GetOptionByUniqueId(HELP_VALUE_NAME).HasValue())
                 {
                     this.ShowHelp();
-                    return 1;
+                    return ExitCode.Success;
                 }
                 try
                 {
@@ -68,7 +68,7 @@ namespace Lucene.Net.Cli
                     // if the args cannot be parsed.
                     this.ShowHint();
                     this.ShowHelp();
-                    return 1;
+                    return ExitCode.GeneralError;
                 }
             });
         }
