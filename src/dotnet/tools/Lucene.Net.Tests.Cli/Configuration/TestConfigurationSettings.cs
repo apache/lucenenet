@@ -1,4 +1,5 @@
 ﻿using J2N;
+using Lucene.Net.Attributes;
 using Lucene.Net.Configuration;
 using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
@@ -82,6 +83,7 @@ namespace Lucene.Net.Cli.Configuration
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void SetRuntimeEnvironmentTest()
         {
             string testKey = "tests:setting";
@@ -92,6 +94,7 @@ namespace Lucene.Net.Cli.Configuration
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestSetandUnset()
         {
             string testKey = "tests:locale";
