@@ -346,6 +346,8 @@ stages:
         osName: $(osName)
         framework: 'net5.0'
         vsTestPlatform: 'x64'
+        testBinariesArtifactName: '$(TestBinariesArtifactName)'
+        nugetArtifactName: '$(NuGetArtifactName)'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
@@ -378,6 +380,8 @@ stages:
         osName: $(osName)
         framework: 'net5.0'
         vsTestPlatform: 'x86'
+        testBinariesArtifactName: '$(TestBinariesArtifactName)'
+        nugetArtifactName: '$(NuGetArtifactName)'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
@@ -410,6 +414,8 @@ stages:
         osName: $(osName)
         framework: 'netcoreapp3.1'
         vsTestPlatform: 'x64'
+        testBinariesArtifactName: '$(TestBinariesArtifactName)'
+        nugetArtifactName: '$(NuGetArtifactName)'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
@@ -442,6 +448,8 @@ stages:
         osName: $(osName)
         framework: 'netcoreapp3.1'
         vsTestPlatform: 'x86'
+        testBinariesArtifactName: '$(TestBinariesArtifactName)'
+        nugetArtifactName: '$(NuGetArtifactName)'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
@@ -474,6 +482,8 @@ stages:
         osName: $(osName)
         framework: 'netcoreapp2.1'
         vsTestPlatform: 'x64'
+        testBinariesArtifactName: '$(TestBinariesArtifactName)'
+        nugetArtifactName: '$(NuGetArtifactName)'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
@@ -506,6 +516,8 @@ stages:
         osName: $(osName)
         framework: 'netcoreapp2.1'
         vsTestPlatform: 'x86'
+        testBinariesArtifactName: '$(TestBinariesArtifactName)'
+        nugetArtifactName: '$(NuGetArtifactName)'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
@@ -521,6 +533,8 @@ stages:
         osName: 'Windows'
         framework: 'net48'
         vsTestPlatform: 'x64'
+        testBinariesArtifactName: '$(TestBinariesArtifactName)'
+        nugetArtifactName: '$(NuGetArtifactName)'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: 8
         maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
@@ -536,6 +550,8 @@ stages:
         osName: 'Windows'
         framework: 'net48'
         vsTestPlatform: 'x86'
+        testBinariesArtifactName: '$(TestBinariesArtifactName)'
+        nugetArtifactName: '$(NuGetArtifactName)'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: 8
         maximumAllowedFailures: 5 # Maximum allowed failures for a successful build

@@ -25,6 +25,7 @@ parameters:
   osName: 'Windows' # The name of the operating system for display purposes.
   framework: '' # The target framework indicating which framework tests will be run on. See: https://docs.microsoft.com/en-us/dotnet/standard/frameworks.
   binaryArtifactName: 'testbinaries' # The name of the Azure DevOps build artifact where the test assemblies will be downloaded from. Default 'testbinaries'.
+  nugetArtifactName: 'nuget' # The name of the Azure DevOps build artifact where the NuGet packages will be downloaded from. Default 'nuget'.
   testResultsArtifactName: 'testresults' # The name of the Azure DevOps build artifact where the test results will be published. Default 'testresults'.
   vsTestPlatform: 'x64' # Target platform architecture used for test execution. Valid values are x86, x64, and ARM.
   testBinaryFilesPattern: '\.*\.Tests\.?[^\\/]*?\.?[^\\/]*?.dll$' # The regex pattern (within $(System.DefaultWorkingDirectory)/**/<TargetFramework>/) where to look for test .dll files, so they can be distinguished from other .dll file types.
@@ -46,6 +47,7 @@ steps:
     EnsureNotNullOrEmpty('${{ parameters.osName }}', 'osName')
     EnsureNotNullOrEmpty('${{ parameters.framework }}', 'framework')
     EnsureNotNullOrEmpty('${{ parameters.binaryArtifactName }}', 'binaryArtifactName')
+    EnsureNotNullOrEmpty('${{ parameters.nugetArtifactName }}', 'nugetArtifactName')
     EnsureNotNullOrEmpty('${{ parameters.testResultsArtifactName }}', 'testResultsArtifactName')
     EnsureNotNullOrEmpty('${{ parameters.vsTestPlatform }}', 'vsTestPlatform')
     EnsureNotNullOrEmpty('${{ parameters.testBinaryFilesPattern }}', 'testBinaryFilesPattern')
@@ -60,6 +62,14 @@ steps:
   inputs:
     artifactName: '${{ parameters.binaryArtifactName }}_${{ parameters.framework }}'
     targetPath: '$(System.DefaultWorkingDirectory)/${{ parameters.framework }}'
+
+# Tests for lucene-cli depend on the NuGet package for testing, so we do an extra download for that file
+- task:  DownloadPipelineArtifact@2
+  displayName: 'Download Build Artifacts: ${{ parameters.nugetArtifactName }} to $(System.DefaultWorkingDirectory)'
+  inputs:
+    artifactName: '${{ parameters.nugetArtifactName }}'
+    targetPath: '$(System.DefaultWorkingDirectory)'
+    patterns: 'lucene-cli.*'
 
 #- pwsh: Get-ChildItem -Path $(System.DefaultWorkingDirectory) # Uncomment for debugging
 
