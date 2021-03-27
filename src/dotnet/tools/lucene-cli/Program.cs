@@ -26,7 +26,7 @@ namespace Lucene.Net.Cli
         {
             var configuration = new ConfigurationBuilder()
                 .AddEnvironmentVariables(prefix: "lucene:") // Use a custom prefix to only load Lucene.NET settings 
-                .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.json", optional: true)
                 .Build();
             ConfigurationSettings.SetConfigurationFactory(new ConfigurationFactory(configuration));
 
