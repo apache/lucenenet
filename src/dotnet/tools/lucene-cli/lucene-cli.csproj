@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
 
  Licensed to the Apache Software Foundation (ASF) under one
@@ -43,9 +43,13 @@
     <NoWarn Label="Remove unused parameter">$(NoWarn);IDE0060</NoWarn>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
-    <!--<EmbeddedResource Include="..\..\..\Lucene.Net.Benchmark\ByTask\Programmatic\Sample.cs;..\..\..\Lucene.Net.Demo\*.cs;..\..\..\Lucene.Net.Demo\Facet\*.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />-->
     <EmbeddedResource Include="..\..\..\Lucene.Net.Benchmark\ByTask\Programmatic\Sample.cs" Link="Resources\Sample.cs" />
     <EmbeddedResource Include="..\..\..\Lucene.Net.Demo\*.cs" Exclude="bin\**;obj\**;packages\**;@(EmbeddedResource)" />
     <EmbeddedResource Include="..\..\..\Lucene.Net.Demo\Facet\*.cs" Exclude="bin\**;obj\**;packages\**;@(EmbeddedResource)" />
@@ -75,4 +79,5 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Lucene.Net.Tests.Cli" />
   </ItemGroup>
+
 </Project>

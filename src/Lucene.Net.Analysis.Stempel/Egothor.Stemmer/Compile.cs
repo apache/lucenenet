@@ -108,8 +108,8 @@ namespace Egothor.Stemmer
             {
                 qq++;
             }
-            // LUCENENET specific - reformatted with :
-            string charset = SystemProperties.GetProperty("egothor:stemmer:charset", "UTF-8");
+            // LUCENENET specific - reformatted with : and changed "charset" to "encoding"
+            string charset = SystemProperties.GetProperty("egothor:stemmer:encoding", "UTF-8");
             var stemmerTables = new List<string>();
 
             // LUCENENET specific
@@ -170,7 +170,7 @@ namespace Egothor.Stemmer
                                 }
                             }
                         }
-                        catch (InvalidOperationException /*x*/)
+                        catch (InvalidOperationException)
                         {
                             // no base token (stem) on a line
                         }
