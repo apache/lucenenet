@@ -1,4 +1,4 @@
-# Apache Lucene.NET
+﻿# Apache Lucene.NET
 
 [![Nuget](https://img.shields.io/nuget/dt/Lucene.Net)](https://www.nuget.org/packages/Lucene.Net)
 [![Azure DevOps builds (master)](https://img.shields.io/azure-devops/build/lucene-net/6ba240c9-9598-47e7-a793-0ed8a4ba2f8b/3/master)](https://dev.azure.com/lucene-net/Lucene.NET/_build?definitionId=3&_a=summary)
@@ -51,6 +51,15 @@ PM> Install-Package Lucene.Net
 - [Lucene.Net.Contrib.Spatial.NTS](https://www.nuget.org/packages/Lucene.Net.Contrib.Spatial.NTS/3.0.3) - Geospatial search with support for NetTopologySuite.
 
 ### Lucene.NET 4.8.0
+
+##### Latest Version - Lucene.NET 4.8.0 Beta
+
+* The beta version is extremely stable
+* Has more than 7800+ passing unit tests
+* Integrates well with .NET 5.0 
+* Supports .NET Standard 2.0, and .NET Standard 2.1 
+* Supports with .NET Framework 4.5.1+
+* Some developers already use it in production environments
 
 ##### Core Library
 

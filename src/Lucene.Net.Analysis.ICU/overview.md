@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Analysis.Icu
 summary: *content
 ---
@@ -22,16 +22,26 @@ summary: *content
 <!-- :Post-Release-Update-Version.LUCENE_XY: - several mentions in this file -->
 
 This module exposes functionality from 
-[ICU](http://site.icu-project.org/) to Apache Lucene. ICU4J is a Java
-library that enhances Java's internationalization support by improving 
+[ICU](http://site.icu-project.org/) to Apache Lucene. ICU4N is a .NET
+library that enhances .NET's internationalization support by improving 
 performance, keeping current with the Unicode Standard, and providing richer
-APIs. 
+APIs.
+
+> [!NOTE]
+> The <xref:Lucene.Net.Analysis.Icu> namespace was ported from Lucene 7.1.0 to get a more up-to-date version of Unicode than what shipped with Lucene 4.8.0.
+
+> [!NOTE]
+> Since the .NET platform doesn't provide a BreakIterator class (or similar), the functionality that utilizes it was consolidated from Java Lucene's analyzers-icu package, <xref:Lucene.Net.Analysis.Common> and <xref:Lucene.Net.Highlighter> into this unified package.
+> [!WARNING]
+> While ICU4N's BreakIterator has customizable rules, its default behavior is not the same as the one in the JDK. When using any features of this package outside of the <xref:Lucene.Net.Analysis.Icu> namespace, they will behave differently than they do in Java Lucene and the rules may need some tweaking to fit your needs. See the [Break Rules](http://userguide.icu-project.org/boundaryanalysis/break-rules) ICU documentation for details on how to customize `ICU4N.Text.RuleBaseBreakIterator`.
+
+
 
 For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis> package documentation.
 
  This module exposes the following functionality: 
 
-*   [Text Segmentation](#segmentation): Tokenizes text based on 
+*   [Text Segmentation](#text-segmentation): Tokenizes text based on 
   properties and rules defined in Unicode.
 
 *   [Collation](#collation): Compare strings according to the 
@@ -40,18 +50,18 @@ For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis>
 *   [Normalization](#normalization): Converts text to a unique,
   equivalent form.
 
-*   [Case Folding](#casefolding): Removes case distinctions with
+*   [Case Folding](#case-folding): Removes case distinctions with
   Unicode's Default Caseless Matching algorithm.
 
-*   [Search Term Folding](#searchfolding): Removes distinctions
+*   [Search Term Folding](#search-term-folding): Removes distinctions
   (such as accent marks) between similar characters for a loose or fuzzy search.
 
-*   [Text Transformation](#transform): Transforms Unicode text in
+*   [Text Transformation](#text-transform): Transforms Unicode text in
   a context-sensitive fashion: e.g. mapping Traditional to Simplified Chinese
 
 * * *
 
-# [Text Segmentation]()
+# Text Segmentation
 
  Text Segmentation (Tokenization) divides document and query text into index terms (typically words). Unicode provides special properties and rules so that this can be done in a manner that works well with most languages. 
 
@@ -66,26 +76,26 @@ For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis>
 
 ### Tokenizing multilanguage text
 
-      /**
-       * This tokenizer will work well in general for most languages.
-       */
-      Tokenizer tokenizer = new ICUTokenizer(reader);
+```cs
+// This tokenizer will work well in general for most languages.
+Tokenizer tokenizer = new ICUTokenizer(reader);
+```
 
 * * *
 
-# [Collation]()
+# Collation
 
- `ICUCollationKeyAnalyzer` converts each token into its binary `CollationKey` using the provided `Collator`, allowing it to be stored as an index term. 
+ <xref:Lucene.Net.Collation.ICUCollationKeyAnalyzer> converts each token into its binary `CollationKey` using the provided `Collator`, allowing it to be stored as an index term. 
 
- `ICUCollationKeyAnalyzer` depends on ICU4J to produce the `CollationKey`s. 
+ <xref:Lucene.Net.Collation.ICUCollationKeyAnalyzer> depends on ICU4N to produce the `CollationKey`s. 
 
 ## Use Cases
 
 *   Efficient sorting of terms in languages that use non-Unicode character 
-    orderings.  (Lucene Sort using a Locale can be very slow.) 
+    orderings.  (Lucene Sort using a CultureInfo can be very slow.) 
 
 *   Efficient range queries over fields that contain terms in languages that 
-    use non-Unicode character orderings.  (Range queries using a Locale can be
+    use non-Unicode character orderings.  (Range queries using a CultureInfo can be
     very slow.)
 
 *   Effective Locale-specific normalization (case differences, diacritics, etc.).
@@ -97,80 +107,99 @@ For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis>
 
 ### Farsi Range Queries
 
-      Collator collator = Collator.getInstance(new ULocale("ar"));
-      ICUCollationKeyAnalyzer analyzer = new ICUCollationKeyAnalyzer(Version.LUCENE_48, collator);
-      RAMDirectory ramDir = new RAMDirectory();
-      IndexWriter writer = new IndexWriter(ramDir, new IndexWriterConfig(Version.LUCENE_48, analyzer));
-      Document doc = new Document();
-      doc.add(new Field("content", "\u0633\u0627\u0628", 
-                        Field.Store.YES, Field.Index.ANALYZED));
-      writer.addDocument(doc);
-      writer.close();
-      IndexSearcher is = new IndexSearcher(ramDir, true);
-    
-  QueryParser aqp = new QueryParser(Version.LUCENE_48, "content", analyzer);
-      aqp.setAnalyzeRangeTerms(true);
+```cs
+const LuceneVersion matchVersion = LuceneVersion.LUCENE_48;
+Collator collator = Collator.GetInstance(new UCultureInfo("ar"));
+ICUCollationKeyAnalyzer analyzer = new ICUCollationKeyAnalyzer(matchVersion, collator);
+RAMDirectory ramDir = new RAMDirectory();
+using IndexWriter writer = new IndexWriter(ramDir, new IndexWriterConfig(matchVersion, analyzer));
+writer.AddDocument(new Document {
+    new TextField("content", "\u0633\u0627\u0628", Field.Store.YES)
+});
+using IndexReader reader = writer.GetReader(applyAllDeletes: true);
+writer.Dispose();
+IndexSearcher searcher = new IndexSearcher(reader);
 
-      // Unicode order would include U+0633 in [ U+062F - U+0698 ], but Farsi
-      // orders the U+0698 character before the U+0633 character, so the single
-      // indexed Term above should NOT be returned by a ConstantScoreRangeQuery
-      // with a Farsi Collator (or an Arabic one for the case when Farsi is not
-      // supported).
-      ScoreDoc[] result
-        = is.search(aqp.parse("[ \u062F TO \u0698 ]"), null, 1000).scoreDocs;
-      assertEquals("The index Term should not be included.", 0, result.length);
+QueryParser queryParser = new QueryParser(matchVersion, "content", analyzer)
+{
+    AnalyzeRangeTerms = true
+};
+
+// Unicode order would include U+0633 in [ U+062F - U+0698 ], but Farsi
+// orders the U+0698 character before the U+0633 character, so the single
+// indexed Term above should NOT be returned by a ConstantScoreRangeQuery
+// with a Farsi Collator (or an Arabic one for the case when Farsi is not
+// supported).
+ScoreDoc[] result = searcher.Search(queryParser.Parse("[ \u062F TO \u0698 ]"), null, 1000).ScoreDocs;
+Assert.AreEqual(0, result.Length, "The index Term should not be included.");
+```
 
 ### Danish Sorting
 
-      Analyzer analyzer 
-        = new ICUCollationKeyAnalyzer(Version.LUCENE_48, Collator.getInstance(new ULocale("da", "dk")));
-      RAMDirectory indexStore = new RAMDirectory();
-      IndexWriter writer = new IndexWriter(indexStore, new IndexWriterConfig(Version.LUCENE_48, analyzer));
-      String[] tracer = new String[] { "A", "B", "C", "D", "E" };
-      String[] data = new String[] { "HAT", "HUT", "H\u00C5T", "H\u00D8T", "HOT" };
-      String[] sortedTracerOrder = new String[] { "A", "E", "B", "D", "C" };
-      for (int i = 0 ; i < data.length="" ;="" ++i)="" {="" document="" doc="new" document();="" doc.add(new="" field("tracer",="" tracer[i],="" field.store.yes,="" field.index.no));="" doc.add(new="" field("contents",="" data[i],="" field.store.no,="" field.index.analyzed));="" writer.adddocument(doc);="" }="" writer.close();="" indexsearcher="" searcher="new" indexsearcher(indexstore,="" true);="" sort="" sort="new" sort();="" sort.setsort(new="" sortfield("contents",="" sortfield.string));="" query="" query="new" matchalldocsquery();="" scoredoc[]="" result="searcher.search(query," null,="" 1000,="" sort).scoredocs;="" for="" (int="" i="0" ;="" i="">< result.length="" ;="" ++i)="" {="" document="" doc="searcher.doc(result[i].doc);" assertequals(sortedtracerorder[i],="" doc.getvalues("tracer")[0]);="" }="">
+```cs
+const LuceneVersion matchVersion = LuceneVersion.LUCENE_48;
+Analyzer analyzer = new ICUCollationKeyAnalyzer(matchVersion, Collator.GetInstance(new UCultureInfo("da-dk")));
+string indexPath = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetTempFileName()));
+Directory dir = FSDirectory.Open(indexPath);
+using IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(matchVersion, analyzer));
+string[] tracer = new string[] { "A", "B", "C", "D", "E" };
+string[] data = new string[] { "HAT", "HUT", "H\u00C5T", "H\u00D8T", "HOT" };
+string[] sortedTracerOrder = new string[] { "A", "E", "B", "D", "C" };
+for (int i = 0; i < data.Length; ++i)
+{
+    writer.AddDocument(new Document
+    {
+        new StringField("tracer", tracer[i], Field.Store.YES),
+        new TextField("contents", data[i], Field.Store.NO)
+    });
+}
+using IndexReader reader = writer.GetReader(applyAllDeletes: true);
+writer.Dispose();
+IndexSearcher searcher = new IndexSearcher(reader);
+Sort sort = new Sort();
+sort.SetSort(new SortField("contents",  SortFieldType.STRING));
+Query query = new MatchAllDocsQuery();
+ScoreDoc[] result = searcher.Search(query, null, 1000, sort).ScoreDocs;
+for (int i = 0; i < result.Length; ++i)
+{
+    Document doc = searcher.Doc(result[i].Doc);
+    Assert.AreEqual(sortedTracerOrder[i], doc.GetValues("tracer")[0]);
+}
+```
 
 ### Turkish Case Normalization
 
-      Collator collator = Collator.getInstance(new ULocale("tr", "TR"));
-      collator.setStrength(Collator.PRIMARY);
-      Analyzer analyzer = new ICUCollationKeyAnalyzer(Version.LUCENE_48, collator);
-      RAMDirectory ramDir = new RAMDirectory();
-      IndexWriter writer = new IndexWriter(ramDir, new IndexWriterConfig(Version.LUCENE_48, analyzer));
-      Document doc = new Document();
-      doc.add(new Field("contents", "DIGY", Field.Store.NO, Field.Index.ANALYZED));
-      writer.addDocument(doc);
-      writer.close();
-      IndexSearcher is = new IndexSearcher(ramDir, true);
-      QueryParser parser = new QueryParser(Version.LUCENE_48, "contents", analyzer);
-      Query query = parser.parse("d\u0131gy");   // U+0131: dotless i
-      ScoreDoc[] result = is.search(query, null, 1000).scoreDocs;
-      assertEquals("The index Term should be included.", 1, result.length);
+```cs
+const LuceneVersion matchVersion = LuceneVersion.LUCENE_48;
+Collator collator = Collator.GetInstance(new UCultureInfo("tr-TR"));
+collator.Strength = CollationStrength.Primary;
+Analyzer analyzer = new ICUCollationKeyAnalyzer(matchVersion, collator);
+string indexPath = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetTempFileName()));
+Directory dir = FSDirectory.Open(indexPath);
+using IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(matchVersion, analyzer));
+writer.AddDocument(new Document {
+    new TextField("contents", "DIGY", Field.Store.NO)
+});
+using IndexReader reader = writer.GetReader(applyAllDeletes: true);
+writer.Dispose();
+IndexSearcher searcher = new IndexSearcher(reader);
+QueryParser parser = new QueryParser(matchVersion, "contents", analyzer);
+Query query = parser.Parse("d\u0131gy");   // U+0131: dotless i
+ScoreDoc[] result = searcher.Search(query, null, 1000).ScoreDocs;
+Assert.AreEqual(1, result.Length, "The index Term should be included.");
+```
 
 ## Caveats and Comparisons
 
- __WARNING:__ Make sure you use exactly the same `Collator` at index and query time -- `CollationKey`s are only comparable when produced by the same `Collator`. Since {@link java.text.RuleBasedCollator}s are not independently versioned, it is unsafe to search against stored `CollationKey`s unless the following are exactly the same (best practice is to store this information with the index and check that they remain the same at query time): 
+ `ICUCollationKeyAnalyzer` uses ICU4N's `Collator`, which makes its version available, thus allowing collation to be versioned independently from the .NET target framework. `ICUCollationKeyAnalyzer` is also fast. 
 
-1.  JVM vendor
-
-2.  JVM version, including patch version
-
-3.  The language (and country and variant, if specified) of the Locale
-    used when constructing the collator via
-    {@link java.text.Collator#getInstance(java.util.Locale)}.
-
-4.  The collation strength used - see {@link java.text.Collator#setStrength(int)}
-
- `ICUCollationKeyAnalyzer` uses ICU4J's `Collator`, which makes its version available, thus allowing collation to be versioned independently from the JVM. `ICUCollationKeyAnalyzer` is also significantly faster and generates significantly shorter keys than `CollationKeyAnalyzer`. See [http://site.icu-project.org/charts/collation-icu4j-sun](http://site.icu-project.org/charts/collation-icu4j-sun) for key generation timing and key length comparisons between ICU4J and `java.text.Collator` over several languages. 
-
- `CollationKey`s generated by `java.text.Collator`s are not compatible with those those generated by ICU Collators. Specifically, if you use `CollationKeyAnalyzer` to generate index terms, do not use `ICUCollationKeyAnalyzer` on the query side, or vice versa. 
+ `SortKey`s generated by `CompareInfo`s are not compatible with those those generated by ICU Collators. Specifically, if you use `CollationKeyAnalyzer` to generate index terms, do not use `ICUCollationKeyAnalyzer` on the query side, or vice versa. 
 
 * * *
 
-# [Normalization]()
+# Normalization
 
- `ICUNormalizer2Filter` normalizes term text to a [Unicode Normalization Form](http://unicode.org/reports/tr15/), so that [equivalent](http://en.wikipedia.org/wiki/Unicode_equivalence) forms are standardized to a unique form. 
+ <xref:Lucene.Net.Analysis.Icu.ICUNormalizer2Filter> normalizes term text to a [Unicode Normalization Form](http://unicode.org/reports/tr15/), so that [equivalent](http://en.wikipedia.org/wiki/Unicode_equivalence) forms are standardized to a unique form. 
 
 ## Use Cases
 
@@ -183,18 +212,16 @@ For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis>
 
 ### Normalizing text to NFC
 
-      /**
-       * Normalizer2 objects are unmodifiable and immutable.
-       */
-      Normalizer2 normalizer = Normalizer2.getInstance(null, "nfc", Normalizer2.Mode.COMPOSE);
-      /**
-       * This filter will normalize to NFC.
-       */
-      TokenStream tokenstream = new ICUNormalizer2Filter(tokenizer, normalizer);
+```cs
+// Normalizer2 objects are unmodifiable and immutable.
+Normalizer2 normalizer = Normalizer2.GetInstance(null, "nfc", Normalizer2Mode.Compose);
+// This filter will normalize to NFC.
+TokenStream tokenstream = new ICUNormalizer2Filter(tokenizer, normalizer);
+```
 
 * * *
 
-# [Case Folding]()
+# Case Folding
 
  Default caseless matching, or case-folding is more than just conversion to lowercase. For example, it handles cases such as the Greek sigma, so that "Μάϊος" and "ΜΆΪΟΣ" will match correctly. 
 
@@ -211,14 +238,14 @@ For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis>
 
 ### Lowercasing text
 
-      /**
-       * This filter will case-fold and normalize to NFKC.
-       */
-      TokenStream tokenstream = new ICUNormalizer2Filter(tokenizer);
+```cs
+// This filter will case-fold and normalize to NFKC.
+TokenStream tokenstream = new ICUNormalizer2Filter(tokenizer);
+```
 
 * * *
 
-# [Search Term Folding]()
+# Search Term Folding
 
  Search term folding removes distinctions (such as accent marks) between similar characters. It is useful for a fuzzy or loose search. 
 
@@ -233,15 +260,15 @@ For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis>
 
 ### Removing accents
 
-      /**
-       * This filter will case-fold, remove accents and other distinctions, and
-       * normalize to NFKC.
-       */
-      TokenStream tokenstream = new ICUFoldingFilter(tokenizer);
+```cs
+// This filter will case-fold, remove accents and other distinctions, and
+// normalize to NFKC.
+TokenStream tokenstream = new ICUFoldingFilter(tokenizer);
+```
 
 * * *
 
-# [Text Transformation]()
+# Text Transformation
 
  ICU provides text-transformation functionality via its Transliteration API. This allows you to transform text in a variety of ways, taking context into account. 
 
@@ -257,36 +284,36 @@ For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis>
 
 ### Convert Traditional to Simplified
 
-      /**
-       * This filter will map Traditional Chinese to Simplified Chinese
-       */
-      TokenStream tokenstream = new ICUTransformFilter(tokenizer, Transliterator.getInstance("Traditional-Simplified"));
+```cs
+// This filter will map Traditional Chinese to Simplified Chinese
+TokenStream tokenstream = new ICUTransformFilter(tokenizer, Transliterator.GetInstance("Traditional-Simplified"));
+```
 
 ### Transliterate Serbian Cyrillic to Serbian Latin
 
-      /**
-       * This filter will map Serbian Cyrillic to Serbian Latin according to BGN rules
-       */
-      TokenStream tokenstream = new ICUTransformFilter(tokenizer, Transliterator.getInstance("Serbian-Latin/BGN"));
+```cs
+// This filter will map Serbian Cyrillic to Serbian Latin according to BGN rules
+TokenStream tokenstream = new ICUTransformFilter(tokenizer, Transliterator.GetInstance("Serbian-Latin/BGN"));
+```
 
 * * *
 
-# [Backwards Compatibility]()
+# Backwards Compatibility
 
- This module exists to provide up-to-date Unicode functionality that supports the most recent version of Unicode (currently 6.3). However, some users who wish for stronger backwards compatibility can restrict <xref:Lucene.Net.Analysis.Icu.ICUNormalizer2Filter> to operate on only a specific Unicode Version by using a {@link com.ibm.icu.text.FilteredNormalizer2}. 
+ This module exists to provide up-to-date Unicode functionality that supports the most recent version of Unicode (currently 8.0). However, some users who wish for stronger backwards compatibility can restrict <xref:Lucene.Net.Analysis.Icu.ICUNormalizer2Filter> to operate on only a specific Unicode Version by using a FilteredNormalizer2. 
 
 ## Example Usages
 
 ### Restricting normalization to Unicode 5.0
 
-      /**
-       * This filter will do NFC normalization, but will ignore any characters that
-       * did not exist as of Unicode 5.0. Because of the normalization stability policy
-       * of Unicode, this is an easy way to force normalization to a specific version.
-       */
-        Normalizer2 normalizer = Normalizer2.getInstance(null, "nfc", Normalizer2.Mode.COMPOSE);
-        UnicodeSet set = new UnicodeSet("[:age=5.0:]");
-        // see FilteredNormalizer2 docs, the set should be frozen or performance will suffer
-        set.freeze(); 
-        FilteredNormalizer2 unicode50 = new FilteredNormalizer2(normalizer, set);
-        TokenStream tokenstream = new ICUNormalizer2Filter(tokenizer, unicode50);
+```cs
+// This filter will do NFC normalization, but will ignore any characters that
+// did not exist as of Unicode 5.0. Because of the normalization stability policy
+// of Unicode, this is an easy way to force normalization to a specific version.
+Normalizer2 normalizer = Normalizer2.GetInstance(null, "nfc", Normalizer2Mode.Compose);
+UnicodeSet set = new UnicodeSet("[:age=5.0:]");
+// see FilteredNormalizer2 docs, the set should be frozen or performance will suffer
+set.Freeze();
+FilteredNormalizer2 unicode50 = new FilteredNormalizer2(normalizer, set);
+TokenStream tokenstream = new ICUNormalizer2Filter(tokenizer, unicode50);
+```

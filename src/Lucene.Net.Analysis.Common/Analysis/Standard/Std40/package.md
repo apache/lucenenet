@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Analysis.Standard.Std40
 summary: *content
 ---
@@ -20,4 +20,4 @@ summary: *content
  limitations under the License.
 -->
 
-Backwards-compatible implementation to match [#LUCENE_40](xref:Lucene.Net.Util.Version)
+Backwards-compatible implementation to match [LuceneVersion.LUCENE_40](xref:Lucene.Net.Util.LuceneVersion#Lucene_Net_Util_LuceneVersion_LUCENE_40)

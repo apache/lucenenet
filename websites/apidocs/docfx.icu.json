@@ -1,4 +1,4 @@
-{
+﻿{
   "metadata": [
     {
       "src": [
@@ -20,7 +20,13 @@
     }
   ],
   "build": {
-    "content": [       
+    "content": [
+      {
+        "files": [
+          "overview.md"
+        ],
+        "src": "../../src/dotnet/Lucene.Net.ICU"
+      },
       {
         "files": [
           "**.yml",
@@ -36,7 +42,7 @@
         "src": "toc"
       }
     ],    
-    "overwrite": [   
+    "overwrite": [
       {
         "files": [
           "**/package.md",
