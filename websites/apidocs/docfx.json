@@ -523,6 +523,7 @@
           "Lucene.Net.Analysis.Morfologik/overview.md",
           "Lucene.Net.Analysis.OpenNLP/overview.md",
           "Lucene.Net.Highlighter/overview.md",
+          "Lucene.Net.ICU/overview.md",
           "Lucene.Net.Grouping/package.md",
           "Lucene.Net.QueryParser/overview.md",
           "Lucene.Net.Sandbox/overview.md",

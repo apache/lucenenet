@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Collation.TokenAttributes
 summary: *content
 ---
@@ -20,4 +20,4 @@ summary: *content
  limitations under the License.
 -->
 
-Custom <xref:Lucene.Net.Util.AttributeImpl> for indexing collation keys as index terms.
+Custom <xref:Lucene.Net.Util.Attribute> for indexing collation keys as index terms.
