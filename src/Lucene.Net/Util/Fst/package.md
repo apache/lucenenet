@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Util.Fst
 summary: *content
 ---
@@ -30,65 +30,87 @@ Finite State Transducers](http://en.wikipedia.org/wiki/Finite_state_transducer) 
 
 *   Low object overhead and quick deserialization (byte[] representation)
 
-*   Optional two-pass compression: [FST.pack](xref:Lucene.Net.Util.Fst.FST#methods)
+<!-- LUCENENET NOTE: This method is marked internal in Lucene and their link doesn't work -->
+*   Optional two-pass compression: [FST.Pack()](xref:Lucene.Net.Util.Fst.FST#methods)
 
-*   [Lookup-by-output](xref:Lucene.Net.Util.Fst.Util#methods) when the 
+*   [Lookup-by-output](xref:Lucene.Net.Util.Fst.Util#Lucene_Net_Util_Fst_Util_GetByOutput_Lucene_Net_Util_Fst_FST_System_Nullable_System_Int64___System_Int64_) when the 
        outputs are in sorted order (e.g., ordinals or file pointers)
 
 *   Pluggable [Outputs](xref:Lucene.Net.Util.Fst.Outputs) representation
 
-*   [N-shortest-paths](xref:Lucene.Net.Util.Fst.Util#methods) search by
+*   [N-shortest-paths](xref:Lucene.Net.Util.Fst.Util#Lucene_Net_Util_Fst_Util_ShortestPaths__1_Lucene_Net_Util_Fst_FST___0__Lucene_Net_Util_Fst_FST_Arc___0____0_System_Collections_Generic_IComparer___0__System_Int32_System_Boolean_) search by
        weight
 
-*   Enumerators ([IntsRef](xref:Lucene.Net.Util.Fst.IntsRefFSTEnum) and [BytesRef](xref:Lucene.Net.Util.Fst.BytesRefFSTEnum)) that behave like {@link java.util.SortedMap SortedMap} iterators
+*   Enumerators ([Int32sRef](xref:Lucene.Net.Util.Fst.Int32sRefFSTEnum) and [BytesRef](xref:Lucene.Net.Util.Fst.BytesRefFSTEnum)) that behave like [SortedDictionary<TKey, TValue>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.sorteddictionary-2) enumerators
 
 FST Construction example:
 
-        // Input values (keys). These must be provided to Builder in Unicode sorted order!
-        String inputValues[] = {"cat", "dog", "dogs"};
-        long outputValues[] = {5, 7, 12};
+```cs
+// Input values (keys). These must be provided to Builder in Unicode sorted order!
+string[] inputValues = new string[] { "cat", "dog", "dogs" };
+long[] outputValues = new long[] { 5, 7, 12 };
 
-        PositiveIntOutputs outputs = PositiveIntOutputs.getSingleton();
-        Builder<Long> builder = new Builder<Long>(INPUT_TYPE.BYTE1, outputs);
-        BytesRef scratchBytes = new BytesRef();
-        IntsRef scratchInts = new IntsRef();
-        for (int i = 0; i < inputValues.length; i++) {
-          scratchBytes.copyChars(inputValues[i]);
-          builder.add(Util.toIntsRef(scratchBytes, scratchInts), outputValues[i]);
-        }
-        FST<Long> fst = builder.finish();
+PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
+Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
+BytesRef scratchBytes = new BytesRef();
+Int32sRef scratchInts = new Int32sRef();
+for (int i = 0; i < inputValues.Length; i++)
+{
+	scratchBytes.CopyChars(inputValues[i]);
+	builder.Add(Util.ToInt32sRef(scratchBytes, scratchInts), outputValues[i]);
+}
+FST<long?> fst = builder.Finish();
+```
 
 Retrieval by key:
 
-        Long value = Util.get(fst, new BytesRef("dog"));
-        System.out.println(value); // 7
+```cs
+long? value = Util.Get(fst, new BytesRef("dog"));
+Console.WriteLine(value); // 7
+```
 
 Retrieval by value:
 
-        // Only works because outputs are also in sorted order
-        IntsRef key = Util.getByOutput(fst, 12);
-        System.out.println(Util.toBytesRef(key, scratchBytes).utf8ToString()); // dogs
+```cs
+// Only works because outputs are also in sorted order
+Int32sRef key = Util.GetByOutput(fst, 12);
+Console.WriteLine(Util.ToBytesRef(key, scratchBytes).Utf8ToString()); // dogs
+```
 
-Iterate over key-value pairs in sorted order:
+Iterate over key - value pairs in sorted order:
 
-        // Like TermsEnum, this also supports seeking (advance)
-        BytesRefFSTEnum<Long> iterator = new BytesRefFSTEnum<Long>(fst);
-        while (iterator.next() != null) {
-          InputOutput<Long> mapEntry = iterator.current();
-          System.out.println(mapEntry.input.utf8ToString());
-          System.out.println(mapEntry.output);
-        }
+```cs
+// Like TermsEnum, this also supports seeking (advance)
+BytesRefFSTEnum<long?> enumerator = new BytesRefFSTEnum<long?>(fst);
+while (enumerator.MoveNext())
+{
+	BytesRefFSTEnum.InputOutput<long?> mapEntry = enumerator.Current;
+	Console.WriteLine(mapEntry.Input.Utf8ToString());
+	Console.WriteLine(mapEntry.Output);
+}
+```
 
 N-shortest paths by weight:
 
-        Comparator<Long> comparator = new Comparator<Long>() {
-          public int compare(Long left, Long right) {
-            return left.compareTo(right);
-          }
-        };
-        Arc<Long> firstArc = fst.getFirstArc(new Arc<Long>());
-        MinResult<Long> paths[] = Util.shortestPaths(fst, firstArc, comparator, 2);
-        System.out.println(Util.toBytesRef(paths[0].input, scratchBytes).utf8ToString()); // cat
-        System.out.println(paths[0].output); // 5
-        System.out.println(Util.toBytesRef(paths[1].input, scratchBytes).utf8ToString()); // dog
-        System.out.println(paths[1].output); // 7
+```cs
+var comparer = Comparer<long?>.Create((left, right) =>
+{
+	return left.GetValueOrDefault().CompareTo(right);
+});
+FST.Arc<long?> firstArc = fst.GetFirstArc(new FST.Arc<long?>());
+Util.TopResults<long?> paths = Util.ShortestPaths(
+    fst, firstArc, startOutput: 0, comparer, topN: 2, allowEmptyString: false);
+
+foreach (Util.Result<long?> path in paths)
+{
+	Console.WriteLine(Util.ToBytesRef(path.Input, scratchBytes).Utf8ToString());
+	Console.WriteLine(path.Output);
+}
+
+// Results:
+//
+// cat
+// 5
+// dog
+// 7
+```

@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Analysis.Cn
 summary: *content
 ---
@@ -22,4 +22,15 @@ summary: *content
 
 Analyzer for Chinese, which indexes unigrams (individual chinese characters).
 
- Three analyzers are provided for Chinese, each of which treats Chinese text in a different way. * StandardAnalyzer: Index unigrams (individual Chinese characters) as a token. * CJKAnalyzer (in the analyzers/cjk package): Index bigrams (overlapping groups of two adjacent Chinese characters) as tokens. * SmartChineseAnalyzer (in the analyzers/smartcn package): Index words (attempt to segment Chinese text into words) as tokens. Example phrase： "我是中国人" 1. StandardAnalyzer: 我－是－中－国－人 2. CJKAnalyzer: 我是－是中－中国－国人 3. SmartChineseAnalyzer: 我－是－中国－人 
+ Three analyzers are provided for Chinese, each of which treats Chinese text in a different way.
+
+* StandardAnalyzer: Index unigrams (individual Chinese characters) as a token.
+* CJKAnalyzer (in the Lucene.Net.Analysis.Cjk namespace): Index bigrams (overlapping groups of two adjacent Chinese characters) as tokens.
+* SmartChineseAnalyzer (in the Lucene.Net.Analysis.SmartCn package): Index words (attempt to segment Chinese text into words) as tokens.
+
+
+Example phrase： "我是中国人"
+
+1. StandardAnalyzer: 我－是－中－国－人
+2. CJKAnalyzer: 我是－是中－中国－国人
+3. SmartChineseAnalyzer: 我－是－中国－人 

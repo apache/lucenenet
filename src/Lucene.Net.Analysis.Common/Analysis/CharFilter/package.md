@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Analysis.CharFilters
 summary: *content
 ---
@@ -24,10 +24,10 @@ summary: *content
 
  CharFilters are chainable filters that normalize text before tokenization and provide mappings between normalized text offsets and the corresponding offset in the original text. 
 
-<h2>CharFilter offset mappings</h2>
+## CharFilter offset mappings
 
  CharFilters modify an input stream via a series of substring replacements (including deletions and insertions) to produce an output stream. There are three possible replacement cases: the replacement string has the same length as the original substring; the replacement is shorter; and the replacement is longer. In the latter two cases (when the replacement has a different length than the original), one or more offset correction mappings are required. 
 
- When the replacement is shorter than the original (e.g. when the replacement is the empty string), a single offset correction mapping should be added at the replacement's end offset in the output stream. The `cumulativeDiff` parameter to the `addOffCorrectMapping()` method will be the sum of all previous replacement offset adjustments, with the addition of the difference between the lengths of the original substring and the replacement string (a positive value). 
+ When the replacement is shorter than the original (e.g. when the replacement is the empty string), a single offset correction mapping should be added at the replacement's end offset in the output stream. The `cumulativeDiff` parameter to the `AddOffCorrectMap()` method will be the sum of all previous replacement offset adjustments, with the addition of the difference between the lengths of the original substring and the replacement string (a positive value). 
 
- When the replacement is longer than the original (e.g. when the original is the empty string), you should add as many offset correction mappings as the difference between the lengths of the replacement string and the original substring, starting at the end offset the original substring would have had in the output stream. The `cumulativeDiff` parameter to the `addOffCorrectMapping()` method will be the sum of all previous replacement offset adjustments, with the addition of the difference between the lengths of the original substring and the replacement string so far (a negative value). 
+ When the replacement is longer than the original (e.g. when the original is the empty string), you should add as many offset correction mappings as the difference between the lengths of the replacement string and the original substring, starting at the end offset the original substring would have had in the output stream. The `cumulativeDiff` parameter to the `AddOffCorrectMap()` method will be the sum of all previous replacement offset adjustments, with the addition of the difference between the lengths of the original substring and the replacement string so far (a negative value). 
