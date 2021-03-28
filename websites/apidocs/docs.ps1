@@ -52,7 +52,9 @@ $RepoRoot = (get-item $PSScriptFilePath).Directory.Parent.Parent.FullName;
 $ApiDocsFolder = Join-Path -Path $RepoRoot -ChildPath "websites\apidocs";
 $ToolsFolder = Join-Path -Path $ApiDocsFolder -ChildPath "tools";
 $CliIndexPath = Join-Path -Path $RepoRoot -ChildPath "src\dotnet\tools\lucene-cli\docs\index.md";
-$TocPath = Join-Path -Path $ApiDocsFolder -ChildPath "toc.yml"
+$TocPath1 = Join-Path -Path $ApiDocsFolder -ChildPath "toc.yml"
+$TocPath2 = Join-Path -Path $ApiDocsFolder -ChildPath "toc\toc.yml"
+
 #ensure the /build/tools folder
 New-Item $ToolsFolder -type directory -force
 
@@ -187,7 +189,8 @@ if ($? -and $DisableBuild -eq $false) {
     (Get-Content -Path $CliIndexPath -Raw) -Replace '(?<=--version\s)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $CliIndexPath
 
     # Update our TOC to the latest LuceneNetVersion
-    (Get-Content -Path $TocPath -Raw) -Replace '(?<=lucenenet\.apache\.org\/docs\/)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $TocPath
+    (Get-Content -Path $TocPath1 -Raw) -Replace '(?<=lucenenet\.apache\.org\/docs\/)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $TocPath1
+    (Get-Content -Path $TocPath2 -Raw) -Replace '(?<=lucenenet\.apache\.org\/docs\/)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $TocPath2
 
     foreach ($proj in $DocFxJsonMeta) {
         $projFile = Join-Path -Path $ApiDocsFolder $proj
