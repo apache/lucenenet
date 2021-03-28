@@ -49,12 +49,12 @@ on some of the conceptual or inner details of Lucene:
 - <xref:Lucene.Net.Analysis.Stempel> - Analyzer for indexing Polish
 - [Lucene.Net.Benchmark](xref:Lucene.Net.Benchmarks) - System for benchmarking Lucene
 - <xref:Lucene.Net.Classification> - Classification module for Lucene
-- <xref:Lucene.Net.Codecs> - Lucene codecs and postings formats
+- [Lucene.Net.Codecs](api/codecs/overview.html) - Lucene codecs and postings formats
 - [Lucene.Net.Expressions](xref:Lucene.Net.Expressions) - Dynamically computed values to sort/facet/search on based on a pluggable grammar
 - [Lucene.Net.Facet](xref:Lucene.Net.Facet) - Faceted indexing and search capabilities
 - <xref:Lucene.Net.Grouping> - Collectors for grouping search results
 - <xref:Lucene.Net.Search.Highlight> - Highlights search keywords in results
-- <xref:Lucene.Net.Analysis.Icu> - Specialized ICU (International Components for Unicode) Analyzers and Highlighters
+- <xref:Lucene.Net.ICU> - Specialized ICU (International Components for Unicode) Analyzers and Highlighters
 - <xref:Lucene.Net.Join> - Index-time and Query-time joins for normalized content
 - [Lucene.Net.Memory](xref:Lucene.Net.Index.Memory) - Single-document in-memory index implementation
 - <xref:Lucene.Net.Misc> - Index tools and other miscellaneous code
