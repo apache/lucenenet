@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Search.Payloads
 summary: *content
 ---
@@ -22,4 +22,7 @@ summary: *content
 
 The payloads package provides Query mechanisms for finding and using payloads.
 
- The following Query implementations are provided: 1. [PayloadTermQuery](xref:Lucene.Net.Search.Payloads.PayloadTermQuery) -- Boost a term's score based on the value of the payload located at that term. 2. [PayloadNearQuery](xref:Lucene.Net.Search.Payloads.PayloadNearQuery) -- A [SpanNearQuery](xref:Lucene.Net.Search.Spans.SpanNearQuery) that factors in the value of the payloads located at each of the positions where the spans occur. 
+The following Query implementations are provided:
+
+1. [PayloadTermQuery](xref:Lucene.Net.Search.Payloads.PayloadTermQuery) -- Boost a term's score based on the value of the payload located at that term.
+2. [PayloadNearQuery](xref:Lucene.Net.Search.Payloads.PayloadNearQuery) -- A [SpanNearQuery](xref:Lucene.Net.Search.Spans.SpanNearQuery) that factors in the value of the payloads located at each of the positions where the spans occur. 

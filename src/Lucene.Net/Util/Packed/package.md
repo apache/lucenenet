@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Util.Packed
 summary: *content
 ---
@@ -22,13 +22,18 @@ summary: *content
 
 ## Packed integer arrays and streams.
 
- The packed package provides * sequential and random access capable arrays of positive longs, * routines for efficient serialization and deserialization of streams of packed integers. The implementations provide different trade-offs between memory usage and access speed. The standard usage scenario is replacing large int or long arrays in order to reduce the memory footprint. 
+ The packed package provides
+ 
+ * sequential and random access capable arrays of positive longs,
+ * routines for efficient serialization and deserialization of streams of packed integers.
+ 
+ The implementations provide different trade-offs between memory usage and access speed. The standard usage scenario is replacing large int or long arrays in order to reduce the memory footprint. 
 
- The main access point is the <xref:Lucene.Net.Util.Packed.PackedInts> factory. 
+ The main access point is the <xref:Lucene.Net.Util.Packed.PackedInt32s> factory. 
 
 ### In-memory structures
 
-*   __<xref:Lucene.Net.Util.Packed.PackedInts.Mutable>__
+*   __<xref:Lucene.Net.Util.Packed.PackedInt32s.Mutable>__
 
     *   Only supports positive longs.
 
@@ -50,7 +55,7 @@ summary: *content
 
     *   You should use Appending(Delta)PackedLongBuffer instead if you don't need random write access.
 
-*   __<xref:Lucene.Net.Util.Packed.AppendingDeltaPackedLongBuffer>__
+*   __<xref:Lucene.Net.Util.Packed.AppendingDeltaPackedInt64Buffer>__
 
     *   Can store any sequence of longs.
 
@@ -60,17 +65,17 @@ summary: *content
 
     *   Can address up to 2^42 values.
 
-*   __<xref:Lucene.Net.Util.Packed.AppendingPackedLongBuffer>__
+*   __<xref:Lucene.Net.Util.Packed.AppendingPackedInt64Buffer>__
 
-    *   Same as AppendingDeltaPackedLongBuffer but assumes values are 0-based.
+    *   Same as AppendingDeltaPackedInt64Buffer but assumes values are 0-based.
 
-*   __<xref:Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer>__
+*   __<xref:Lucene.Net.Util.Packed.MonotonicAppendingInt64Buffer>__
 
-    *   Same as AppendingDeltaPackedLongBuffer except that compression is good when the stream is a succession of affine functions.
+    *   Same as AppendingDeltaPackedInt64Buffer except that compression is good when the stream is a succession of affine functions.
 
 ### Disk-based structures
 
-*   __<xref:Lucene.Net.Util.Packed.PackedInts.Writer>, <xref:Lucene.Net.Util.Packed.PackedInts.Reader>, <xref:Lucene.Net.Util.Packed.PackedInts.ReaderIterator>__
+*   __<xref:Lucene.Net.Util.Packed.PackedInt32s.Writer>, <xref:Lucene.Net.Util.Packed.PackedInt32s.Reader>, <xref:Lucene.Net.Util.Packed.PackedInt32s.IReaderIterator>__
 
     *   Only supports positive longs.
 
