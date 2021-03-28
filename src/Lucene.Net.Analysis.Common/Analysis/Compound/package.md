@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Analysis.Compound
 summary: *content
 ---
@@ -147,56 +147,77 @@ This decision matrix should help you:
 
 ### Examples
 
-      public void testHyphenationCompoundWordsDE() throws Exception {
-        String[] dict = { "Rind", "Fleisch", "Draht", "Schere", "Gesetz",
-            "Aufgabe", "Überwachung" };
-    
-    Reader reader = new FileReader("de_DR.xml");
-    
-    HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter
-            .getHyphenationTree(reader);
-    
+```cs
+const LuceneVersion matchVersion = LuceneVersion.LUCENE_48;
+
+[Test]
+public void TestHyphenationCompoundWordsDE()
+{
+    string[] dictionary = {
+        "Rind", "Fleisch", "Draht", "Schere", "Gesetz",
+        "Aufgabe", "Überwachung" };
+
+    using Stream stream = new FileStream("de_DR.xml", FileMode.Open);
+
+    HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(stream);
+
     HyphenationCompoundWordTokenFilter tf = new HyphenationCompoundWordTokenFilter(
-            new WhitespaceTokenizer(new StringReader(
-                "Rindfleischüberwachungsgesetz Drahtschere abba")), hyphenator,
-            dict, CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE,
+        matchVersion
+    
+        new WhitespaceTokenizer(
+            matchVersion,
+            new StringReader("Rindfleischüberwachungsgesetz Drahtschere abba")),
+            hyphenator,
+            dictionary,
+            CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE,
             CompoundWordTokenFilterBase.DEFAULT_MIN_SUBWORD_SIZE,
-            CompoundWordTokenFilterBase.DEFAULT_MAX_SUBWORD_SIZE, false);
+            CompoundWordTokenFilterBase.DEFAULT_MAX_SUBWORD_SIZE,
+            onlyLongestMatch: false);
 
-        CharTermAttribute t = tf.addAttribute(CharTermAttribute.class);
-        while (tf.incrementToken()) {
-           System.out.println(t);
-        }
-      }
-    
-  public void testHyphenationCompoundWordsWithoutDictionaryDE() throws Exception {
-        Reader reader = new FileReader("de_DR.xml");
-    
-    HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter
-            .getHyphenationTree(reader);
-    
+    ICharTermAttribute t = tf.AddAttribute<ICharTermAttribute>();
+    while (tf.IncrementToken())
+    {
+        Console.WriteLine(t);
+    }
+}
+
+[Test]
+public void TestHyphenationCompoundWordsWithoutDictionaryDE()
+{
+    using Stream stream = new FileStream("de_DR.xml", FileMode.Open);
+
+    HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(stream);
+
     HyphenationCompoundWordTokenFilter tf = new HyphenationCompoundWordTokenFilter(
-            new WhitespaceTokenizer(new StringReader(
-                "Rindfleischüberwachungsgesetz Drahtschere abba")), hyphenator);
+        new WhitespaceTokenizer(matchVersion,
+            new StringReader("Rindfleischüberwachungsgesetz Drahtschere abba")),
+        hyphenator);
 
-        CharTermAttribute t = tf.addAttribute(CharTermAttribute.class);
-        while (tf.incrementToken()) {
-           System.out.println(t);
-        }
-      }
+    ICharTermAttribute t = tf.AddAttribute<ICharTermAttribute>();
+    while (tf.IncrementToken())
+    {
+        Console.WriteLine(t);
+    }
+}
 
-      public void testDumbCompoundWordsSE() throws Exception {
-        String[] dict = { "Bil", "Dörr", "Motor", "Tak", "Borr", "Slag", "Hammar",
-            "Pelar", "Glas", "Ögon", "Fodral", "Bas", "Fiol", "Makare", "Gesäll",
-            "Sko", "Vind", "Rute", "Torkare", "Blad" };
-    
+[Test]
+public void TestDumbCompoundWordsSE()
+{
+    string[] dictionary = {
+        "Bil", "Dörr", "Motor", "Tak", "Borr", "Slag", "Hammar",
+        "Pelar", "Glas", "Ögon", "Fodral", "Bas", "Fiol", "Makare", "Gesäll",
+        "Sko", "Vind", "Rute", "Torkare", "Blad" };
+
     DictionaryCompoundWordTokenFilter tf = new DictionaryCompoundWordTokenFilter(
-            new WhitespaceTokenizer(
-                new StringReader(
-                    "Bildörr Bilmotor Biltak Slagborr Hammarborr Pelarborr Glasögonfodral Basfiolsfodral Basfiolsfodralmakaregesäll Skomakare Vindrutetorkare Vindrutetorkarblad abba")),
-            dict);
-        CharTermAttribute t = tf.addAttribute(CharTermAttribute.class);
-        while (tf.incrementToken()) {
-           System.out.println(t);
-        }
-      }
+        new WhitespaceTokenizer(
+            matchVersion,
+            new StringReader(
+                "Bildörr Bilmotor Biltak Slagborr Hammarborr Pelarborr Glasögonfodral Basfiolsfodral Basfiolsfodralmakaregesäll Skomakare Vindrutetorkare Vindrutetorkarblad abba")),
+        dictionary);
+    ICharTermAttribute t = tf.AddAttribute<ICharTermAttribute>();
+    while (tf.IncrementToken())
+    {
+        Console.WriteLine(t);
+    }
+}
+```
