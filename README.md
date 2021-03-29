@@ -31,6 +31,13 @@ Latest Stable Version: Lucene.NET 3.0.3
 
 Working toward Lucene.NET 4.8.0 (currently in BETA)
 
+* The beta version is extremely stable
+* Has more than 7800+ passing unit tests
+* Integrates well with .NET 5.0 and .NET Core 2+
+* Supports .NET Standard 2.1 and .NET Standard 2.0 
+* Supports .NET Framework 4.5+
+* Some developers already use it in production environments
+
 ## Download
 
 ### Lucene.NET 3.0.3
@@ -51,15 +58,6 @@ PM> Install-Package Lucene.Net
 - [Lucene.Net.Contrib.Spatial.NTS](https://www.nuget.org/packages/Lucene.Net.Contrib.Spatial.NTS/3.0.3) - Geospatial search with support for NetTopologySuite.
 
 ### Lucene.NET 4.8.0
-
-##### Latest Version - Lucene.NET 4.8.0 Beta
-
-* The beta version is extremely stable
-* Has more than 7800+ passing unit tests
-* Integrates well with .NET 5.0 
-* Supports .NET Standard 2.0, and .NET Standard 2.1 
-* Supports with .NET Framework 4.5.1+
-* Some developers already use it in production environments
 
 ##### Core Library
 
@@ -126,7 +124,7 @@ There is also a dotnet command line tool available on NuGet. It contains all of 
 - [Prerequisite: .NET Core 3.1.0 Runtime](https://www.microsoft.com/net/download/core#/runtime)
 
 ```
-dotnet tool install lucene-cli -g --version 4.8.0-beta00012
+dotnet tool install lucene-cli -g --version 4.8.0-beta00014
 ```
 
 > NOTE: The version of the CLI you install should match the version of Lucene.NET you use.
