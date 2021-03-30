@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene analysis stempel-patch-stems \<STEMMER_TABLE_FILE> [-e|--encoding] [?|-h|--help]</code>
+```console
+lucene analysis stempel-patch-stems <STEMMER_TABLE_FILE> [-e|--encoding] [?|-h|--help]
+```
 
 ### Description
 
@@ -30,5 +32,7 @@ The file encoding used by the stemmer files. If not supplied, the default value 
 
 ### Example
 
-<code>lucene analysis stempel-patch-stems X:\stemmer-data\table1.txt X:\stemmer-data\table2.txt --encoding UTF-16</code>
+```console
+lucene analysis stempel-patch-stems X:\stemmer-data\table1.txt X:\stemmer-data\table2.txt --encoding UTF-16
+```
 

@@ -6,13 +6,16 @@
 
 ### Synopsis
 
-<code>lucene index fix [\<INDEX_DIRECTORY>] [-v|--verbose] [-c|--cross-check-term-vectors] [-dir|--directory-type] [--dry-run] [?|-h|--help]</code>
+```console
+lucene index fix [<INDEX_DIRECTORY>] [-v|--verbose] [-c|--cross-check-term-vectors] [-dir|--directory-type] [--dry-run] [?|-h|--help]
+```
 
 ### Description
 
 Basic tool to write a new segments file that removes reference to problematic segments. As this tool checks every byte in the index, on a large index it can take quite a long time to run.
 
-> **WARNING:** This command should only be used on an emergency basis as it will cause documents (perhaps many) to be permanently removed from the index. Always make a backup copy of your index before running this! Do not run this tool on an index that is actively being written to. You have been warned!
+> [!WARNING] 
+> This command should only be used on an emergency basis as it will cause documents (perhaps many) to be permanently removed from the index. Always make a backup copy of your index before running this! Do not run this tool on an index that is actively being written to. You have been warned!
 
 ### Arguments
 
@@ -51,4 +54,6 @@ Check what a fix operation would do if run on the index located at `X:\product-i
 
 Fix the index located at `X:\product-index` and cross check term vectors:
 
-<code>lucene index fix X:\product-index -c</code>
+```console
+lucene index fix X:\product-index -c
+```

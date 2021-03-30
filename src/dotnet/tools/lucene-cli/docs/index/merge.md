@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene index merge \<OUTPUT_DIRECTORY> \<INPUT_DIRECTORY> \<INPUT_DIRECTORY_2>[ \<INPUT_DIRECTORY_N>...] [?|-h|--help]</code>
+```console
+lucene index merge <OUTPUT_DIRECTORY> <INPUT_DIRECTORY> <INPUT_DIRECTORY_2>[ <INPUT_DIRECTORY_N>...] [?|-h|--help]
+```
 
 ### Description
 
@@ -32,5 +34,7 @@ Prints out a short help for the command.
 
 Merge the indexes `C:\product-index1` and `C:\product-index2` into an index located at `X:\merged-index`:
 
-<code>lucene index merge X:\merged-index C:\product-index1 C:\product-index2</code>
+```console
+lucene index merge X:\merged-index C:\product-index1 C:\product-index2
+```
 

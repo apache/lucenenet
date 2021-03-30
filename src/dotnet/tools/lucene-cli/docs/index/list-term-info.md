@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene index list-term-info \<INDEX_DIRECTORY> \<FIELD> \<TERM> [?|-h|--help]</code>
+```console
+lucene index list-term-info <INDEX_DIRECTORY> <FIELD> <TERM> [?|-h|--help]
+```
 
 ### Description
 
@@ -36,5 +38,7 @@ Prints out a short help for the command.
 
 List the term information from the index located at `C:\project-index\`:
 
-<code>lucene index list-term-info C:\project-index</code>
+```console
+lucene index list-term-info C:\project-index
+```
 

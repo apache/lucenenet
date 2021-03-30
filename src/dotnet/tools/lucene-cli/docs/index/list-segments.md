@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene index list-segments [\<INDEX_DIRECTORY>] [?|-h|--help]</code>
+```console
+lucene index list-segments [\<INDEX_DIRECTORY>] [?|-h|--help]
+```
 
 ### Description
 
@@ -28,5 +30,7 @@ Prints out a short help for the command.
 
 List the segments in the index located at `X:\lucene-index\`:
 
-<code>lucene index list-segments X:\lucene-index</code>
+```console
+lucene index list-segments X:\lucene-index
+```
 

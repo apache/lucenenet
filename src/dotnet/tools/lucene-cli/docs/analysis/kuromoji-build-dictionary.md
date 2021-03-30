@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene analysis kuromoji-build-dictionary \<FORMAT> \<INPUT_DIRECTORY> \<OUTPUT_DIRECTORY> [-e|--encoding] [-n|--normalize] [?|-h|--help]</code>
+```console
+lucene analysis kuromoji-build-dictionary <FORMAT> <INPUT_DIRECTORY> <OUTPUT_DIRECTORY> [-e|--encoding] [-n|--normalize] [?|-h|--help]
+```
 
 ### Description
 
@@ -56,5 +58,7 @@ Normalize the entries using normalization form KC.
 
 ### Example
 
-<code>lucene analysis kuromoji-build-dictionary IPADIC X:\kuromoji-data X:\kuromoji-dictionary --normalize</code>
+```console
+lucene analysis kuromoji-build-dictionary IPADIC X:\kuromoji-data X:\kuromoji-dictionary --normalize
+```
 

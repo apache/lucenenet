@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene benchmark run \<ALGORITHM_FILE> \<OUTPUT_DIRECTORY> [?|-h|--help]</code>
+```console
+lucene benchmark run <ALGORITHM_FILE> <OUTPUT_DIRECTORY> [?|-h|--help]
+```
 
 ### Arguments
 
@@ -28,4 +30,6 @@ Prints out a short help for the command.
 
 Runs a benchmark on the `c:\check.alg` algorithm file.
 
-<code>lucene benchmark run c:\check.alg</code>
+```console
+lucene benchmark run c:\check.alg
+```

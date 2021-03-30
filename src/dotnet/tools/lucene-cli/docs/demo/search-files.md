@@ -6,8 +6,8 @@
 
 ### Synopsis
 
-```
-lucene demo search-files \<INDEX_DIRECTORY> [-f|--field] [-r|--repeat] [-qf|--queries-file] [-q|--query] [--raw] [-p|--page-size] [?|-h|--help]
+```console
+lucene demo search-files <INDEX_DIRECTORY> [-f|--field] [-r|--repeat] [-qf|--queries-file] [-q|--query] [--raw] [-p|--page-size] [?|-h|--help]
 lucene demo search-files [-src|--view-source-code] [-out|--output-source-code]
 ```
 
@@ -65,8 +65,12 @@ Outputs the source code to the specified directory.
 
 Search the index located in the `X:\test-index` directory interactively, showing 15 results per page in raw format:
 
-<code>lucene demo search-files X:\test-index -p 15 --raw</code>
+```console
+lucene demo search-files X:\test-index -p 15 --raw
+```
 
 Run the query "foobar" against the "path" field in the index located in the `X:\test-index` directory:
 
-<code>lucene demo search-files X:\test-index --field path --query foobar</code>
+```console
+lucene demo search-files X:\test-index --field path --query foobar
+```

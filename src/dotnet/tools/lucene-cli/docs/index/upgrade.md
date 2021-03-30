@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene index upgrade [\<INDEX_DIRECTORY>] [-d|--delete-prior-commits] [-v|--verbose] [-dir|--directory-type] [?|-h|--help]</code>
+```console
+lucene index upgrade [<INDEX_DIRECTORY>] [-d|--delete-prior-commits] [-v|--verbose] [-dir|--directory-type] [?|-h|--help]
+```
 
 ### Description
 
@@ -14,7 +16,8 @@ This tool keeps only the last commit in an index; for this reason, if the incomi
 
 Specify an FSDirectory implementation through the --directory-type option to force its use. If not qualified by an AssemblyName, the Lucene.Net.dll assembly will be used. 
 
-> **WARNING:** This tool may reorder document IDs! Be sure to make a backup of your index before you use this. Also, ensure you are using the correct version of this utility to match your application's version of Lucene.Net. This operation cannot be reversed.
+> [!WARNING]
+> This tool may reorder document IDs! Be sure to make a backup of your index before you use this. Also, ensure you are using the correct version of this utility to match your application's version of Lucene.NET. This operation cannot be reversed.
 
 ### Arguments
 
@@ -44,9 +47,13 @@ The `FSDirectory` implementation to use. Defaults to the optional `FSDirectory` 
 
 Upgrade the index format of the index located at `X:\lucene-index\` to the same version as this tool, using the `SimpleFSDirectory` implementation:
 
-<code>lucene index upgrade X:\lucene-index -dir SimpleFSDirectory</code>
+```console
+lucene index upgrade X:\lucene-index -dir SimpleFSDirectory
+```
 
 
 Upgrade the index located at `C:\indexes\category-index\` verbosely, deleting all but the last commit:
 
-<code>lucene index upgrade C:\indexes\category-index --verbose --delete-prior-commits</code>
+```console
+lucene index upgrade C:\indexes\category-index --verbose --delete-prior-commits
+```

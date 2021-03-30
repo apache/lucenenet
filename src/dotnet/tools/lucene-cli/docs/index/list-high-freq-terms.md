@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene index list-high-freq-terms [\<INDEX_DIRECTORY>] [-t|--total-term-frequency] [-n|--number-of-terms] [-f|--field] [?|-h|--help]</code>
+```console
+lucene index list-high-freq-terms [<INDEX_DIRECTORY>] [-t|--total-term-frequency] [-n|--number-of-terms] [-f|--field] [?|-h|--help]
+```
 
 ### Description
 
@@ -41,9 +43,12 @@ The field to consider. If omitted, considers all fields.
 
 List the high frequency terms in the index located at `F:\product-index\` on the `description` field, reporting both document frequency and term frequency:
 
-<code>lucene index list-high-freq-terms F:\product-index --total-term-frequency --field description</code>
-
+```console
+lucene index list-high-freq-terms F:\product-index --total-term-frequency --field description
+```
 
 List the high frequency terms in the index located at `C:\lucene-index\` on the `name` field, tracking 30 terms:
 
-<code>lucene index list-high-freq-terms C:\lucene-index --f name -n 30</code>
+```console
+lucene index list-high-freq-terms C:\lucene-index --f name -n 30
+```

@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene index check [\<INDEX_DIRECTORY>] [-v|--verbose] [-c|--cross-check-term-vectors] [-dir|--directory-type] [-s|--segment] [?|-h|--help]</code>
+```console
+lucene index check [<INDEX_DIRECTORY>] [-v|--verbose] [-c|--cross-check-term-vectors] [-dir|--directory-type] [-s|--segment] [?|-h|--help]
+```
 
 ### Description
 
@@ -46,10 +48,14 @@ Only check the specified segment(s). This can be specified multiple times, to ch
 
 Check the index located at `X:\lucenenet-index\` verbosely, scanning only the segments named `_1j_Lucene41_0` and `_2u_Lucene41_0` for problems:
 
-<code>lucene index check X:\lucenenet-index -v -s _1j_Lucene41_0 -s _2u_Lucene41_0</code>
+```console
+lucene index check X:\lucenenet-index -v -s _1j_Lucene41_0 -s _2u_Lucene41_0
+```
 
 
 Check the index located at `C:\taxonomy\` using the `MMapDirectory` memory-mapped directory implementation:
 
-<code>lucene index check C:\taxonomy --directory-type MMapDirectory</code>
+```console
+lucene index check C:\taxonomy --directory-type MMapDirectory
+```
 

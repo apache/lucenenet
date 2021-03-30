@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene demo expression-aggregation-facets [-src|--view-source-code] [-out|--output-source-code] [?|-h|--help]</code>
+```console
+lucene demo expression-aggregation-facets [-src|--view-source-code] [-out|--output-source-code] [?|-h|--help]
+```
 
 ### Options
 
@@ -24,4 +26,6 @@ Outputs the source code to the specified directory.
 
 ### Example
 
-<code>lucene demo expression-aggregation-facets</code>
+```console
+lucene demo expression-aggregation-facets
+```
