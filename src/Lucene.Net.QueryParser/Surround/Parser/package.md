@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.QueryParsers.Surround.Parser
 summary: *content
 ---
@@ -20,7 +20,6 @@ summary: *content
  limitations under the License.
 -->
 
-    This package contains the QueryParser.jj source file for the Surround parser.
+This package contains the `QueryParser.jj` source file for the Surround parser.
 
-    Parsing the text of a query results in a SrndQuery in the
-    org.apache.lucene.queryparser.surround.query package.
+Parsing the text of a query results in a SrndQuery in the <xref:Lucene.Net.QueryParsers.Surround.Query> namespace.
