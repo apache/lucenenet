@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Analysis.Morfologik
 title: Lucene.Net.Analysis.Morfologik
 summary: *content
@@ -21,8 +21,8 @@ summary: *content
  limitations under the License.
 -->
 
- This package provides dictionary-driven lemmatization ("accurate stemming") filter and analyzer for the Polish Language, driven by the [Morfologik library](http://morfologik.blogspot.com/) developed by Dawid Weiss and Marcin Miłkowski. 
+This package provides dictionary-driven lemmatization ("accurate stemming") filter and analyzer for the Polish Language, driven by the [Morfologik library](http://morfologik.blogspot.com/) developed by Dawid Weiss and Marcin Miłkowski. 
 
- For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis> package documentation. 
+For an introduction to Lucene's analysis API, see the [Lucene.Net.Analysis](../core/Lucene.Net.Analysis.html) namespace documentation. 
 
- The MorfologikFilter yields one or more terms for each token. Each of those terms is given the same position in the index. 
+The MorfologikFilter yields one or more terms for each token. Each of those terms is given the same position in the index. 

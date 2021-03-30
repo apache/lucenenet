@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Analysis.Cn.Smart
 summary: *content
 ---
@@ -20,6 +20,6 @@ summary: *content
  limitations under the License.
 -->
 
-  Analyzer for Simplified Chinese, which indexes words.
+Analyzer for Simplified Chinese, which indexes words.
 
- For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis> package documentation. 
+For an introduction to Lucene's analysis API, see the [Lucene.Net.Analysis](../core/Lucene.Net.Analysis.html) namespace documentation. 

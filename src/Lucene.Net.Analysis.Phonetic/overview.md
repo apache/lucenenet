@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Analysis.Phonetic
 summary: *content
 ---
@@ -20,8 +20,8 @@ summary: *content
  limitations under the License.
 -->
 
-  Analysis for indexing phonetic signatures (for sounds-alike search)
+Analysis for indexing phonetic signatures (for sounds-alike search)
 
- For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis> package documentation. 
+For an introduction to Lucene's analysis API, see the [Lucene.Net.Analysis](../core/Lucene.Net.Analysis.html) namespace documentation. 
 
- This module provides analysis components (using encoders from [Apache Commons Codec](http://commons.apache.org/codec/)) that index and search phonetic signatures. 
+This module provides analysis components (using encoders ported to .NET from [Apache Commons Codec](http://commons.apache.org/codec/)) that index and search phonetic signatures. 
