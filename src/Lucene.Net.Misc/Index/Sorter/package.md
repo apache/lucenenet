@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Index.Sorter
 summary: *content
 ---
@@ -20,9 +20,9 @@ summary: *content
  limitations under the License.
 -->
 
-Provides index sorting capablities. The application can use any
+Provides index sorting capabilities. The application can use any
 Sort specification, e.g. to sort by fields using DocValues or FieldCache, or to
-reverse the order of the documents (by using SortField.Type.DOC in reverse).
+reverse the order of the documents (by using [SortFieldType.DOC](xref:Lucene.Net.Search.SortFieldType#Lucene_Net_Search_SortFieldType_DOC) in reverse).
 Multi-level sorts can be specified the same way you would when searching, by
 building Sort from multiple SortFields.
 
