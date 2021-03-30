@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Facet.SortedSet
 summary: *content
 ---
@@ -20,4 +20,4 @@ summary: *content
  limitations under the License.
 -->
 
-Provides faceting capabilities over facets that were indexed with <xref:Lucene.Net.Facet.Sortedset.SortedSetDocValuesFacetField>.
+Provides faceting capabilities over facets that were indexed with <xref:Lucene.Net.Facet.SortedSet.SortedSetDocValuesFacetField>.
