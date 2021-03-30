@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Spatial
 summary: *content
 ---
@@ -20,12 +20,17 @@ summary: *content
  limitations under the License.
 -->
 
-# The Spatial Module for Apache Lucene
+# The Spatial Module for Apache Lucene.NET
 
- The spatial module is new to Lucene 4, replacing the old "contrib" module that came before it. The principle interface to the module is a <xref:Lucene.Net.Spatial.SpatialStrategy> which encapsulates an approach to indexing and searching based on shapes. Different Strategies have different features and performance profiles, which are documented at each Strategy implementation class level. 
+The spatial module is new to Lucene.NET 4, replacing the old "Lucene.Net.Contrib" module that came before it. The principle interface to the module is a <xref:Lucene.Net.Spatial.SpatialStrategy> which encapsulates an approach to indexing and searching based on shapes. Different Strategies have different features and performance profiles, which are documented at each Strategy implementation class level. 
 
- For some sample code showing how to use the API, see SpatialExample.java in the tests. 
+For some sample code showing how to use the API, see SpatialExample.cs in the tests. 
 
- The spatial module uses [Spatial4j](https://github.com/spatial4j/spatial4j) heavily. Spatial4j is an ASL licensed library with these capabilities: * Provides shape implementations, namely point, rectangle, and circle. Both geospatial contexts and plain 2D Euclidean/Cartesian contexts are supported. With an additional dependency, it adds polygon and other geometry shape support via integration with [JTS Topology Suite](http://sourceforge.net/projects/jts-topo-suite/). This includes dateline wrap support. * Shape parsing and serialization, including [Well-Known Text (WKT)](http://en.wikipedia.org/wiki/Well-known_text) (via JTS). * Distance and other spatial related math calculations. 
+The spatial module uses [Spatial4n](https://github.com/NightOwl888/Spatial4n), a .NET port of the ASL licensed [Spatial4j](https://github.com/spatial4j/spatial4j) heavily. Spatial4n is a library with these capabilities:
 
- Historical note: The new spatial module was once known as Lucene Spatial Playground (LSP) as an external project. In ~March 2012, LSP split into this new module as part of Lucene and Spatial4j externally. A large chunk of the LSP implementation originated as SOLR-2155 which uses trie/prefix-tree algorithms with a geohash encoding. That approach is implemented in <xref:Lucene.Net.Spatial.Prefix.RecursivePrefixTreeStrategy> today. 
+* Provides shape implementations, namely point, rectangle, and circle. Both geospatial contexts and plain 2D Euclidean/Cartesian contexts are supported. With an additional dependency, it adds polygon and other geometry shape support via integration with [NetTopologySuite](https://github.com/NetTopologySuite/NetTopologySuite) (often referred to as NTS). This includes dateline wrap support.
+* Shape parsing and serialization, including [Well-Known Text (WKT)](http://en.wikipedia.org/wiki/Well-known_text) (via NTS).
+* Distance and other spatial related math calculations. 
+
+> [!NOTE]
+> Historical Fact: The new spatial module was once known as Lucene Spatial Playground (LSP) as an external project. In ~March 2012, LSP split into this new module as part of Lucene and Spatial4j externally. A large chunk of the LSP implementation originated as SOLR-2155 which uses trie/prefix-tree algorithms with a geohash encoding. That approach is implemented in <xref:Lucene.Net.Spatial.Prefix.RecursivePrefixTreeStrategy> today. 
