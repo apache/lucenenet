@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Highlighter
 title: Lucene.Net.Highlighter
 summary: *content
@@ -21,5 +21,10 @@ summary: *content
  limitations under the License.
 -->
 
-  The highlight package contains classes to provide "keyword in context" features
-  typically used to highlight search terms in the text of results pages.
+The highlight package contains classes to provide "keyword in context" features typically used to highlight search terms in the text of results pages. There are 3 main highlighters:
+
+* <xref:Lucene.Net.Search.Highlight> - A lightweight highlighter for basic usage.
+
+* <xref:Lucene.Net.Search.PostingsHighlight> (In the <xref:Lucene.Net.ICU> package) - Highlighter implementation that uses offsets from postings lists. This highlighter supports Unicode.
+
+* <xref:Lucene.Net.Search.VectorHighlight> - This highlighter is fast for large docs, supports N-gram fields, multi-term highlighting, colored highlight tags, and more. There is a <xref:Lucene.Net.Search.VectorHighlight.BreakIteratorBoundaryScanner> in the <xref:Lucene.Net.ICU> package that can be added on for Unicode support.
