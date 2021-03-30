@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Search.Grouping.Function
 summary: *content
 ---
