@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.QueryParsers.Surround.Query
 summary: *content
 ---
@@ -20,11 +20,8 @@ summary: *content
  limitations under the License.
 -->
 
-    This package contains SrndQuery and its subclasses.
+This package contains <xref:Lucene.Net.QueryParsers.Surround.Query.SrndQuery> and its subclasses.
 
-    The parser in the org.apache.lucene.queryparser.surround.parser package
-    normally generates a SrndQuery.
+The parser in the <xref:Lucene.Net.QueryParsers.Surround.Parser> namespace normally generates a SrndQuery.
 
-    For searching an org.apache.lucene.search.Query is provided by
-    the SrndQuery.makeLuceneQueryField method.
-    For this, TermQuery, BooleanQuery and SpanQuery are used from Lucene.
+For searching an <xref:Lucene.Net.Search.Query> is provided by the [SrndQuery.MakeLuceneQueryField()](xref:Lucene.Net.QueryParsers.Surround.Query.SrndQuery#Lucene_Net_QueryParsers_Surround_Query_SrndQuery_MakeLuceneQueryField_System_String_Lucene_Net_QueryParsers_Surround_Query_BasicQueryFactory_) method. For this, TermQuery, BooleanQuery and SpanQuery are used from Lucene.
