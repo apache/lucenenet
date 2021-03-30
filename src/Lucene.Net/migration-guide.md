@@ -66,69 +66,59 @@ enumeration APIs.  Here are the major changes:
 
 * Fields are separately enumerated (`Fields.GetEnumerator()`) from the terms
   within each field (`TermEnum`).  So instead of this:
-
-```cs
-        TermEnum termsEnum = ...;
-        while (termsEnum.Next())
+    ```cs
+    TermEnum termsEnum = ...;
+    while (termsEnum.Next())
+    {
+        Term t = termsEnum.Term;
+        Console.WriteLine("field=" + t.Field + "; text=" + t.Text);
+    }
+    ```
+    Do this:
+    ```cs
+    foreach (string field in fields)
+    {
+        Terms terms = fields.GetTerms(field);
+        TermsEnum termsEnum = terms.GetEnumerator();
+        BytesRef text;
+        while(termsEnum.MoveNext())
         {
-            Term t = termsEnum.Term;
-            Console.WriteLine("field=" + t.Field + "; text=" + t.Text);
+            Console.WriteLine("field=" + field + "; text=" + termsEnum.Current.Utf8ToString());
         }
-```
-
-  Do this:
-
-```cs
-        foreach (string field in fields)
-        {
-            Terms terms = fields.GetTerms(field);
-            TermsEnum termsEnum = terms.GetEnumerator();
-            BytesRef text;
-            while(termsEnum.MoveNext())
-            {
-                Console.WriteLine("field=" + field + "; text=" + termsEnum.Current.Utf8ToString());
-            }
-        }
-```
+    }
+    ```
 
 * `TermDocs` is renamed to `DocsEnum`.  Instead of this:
-
-```cs
-        while (td.Next())
-        {
-            int doc = td.Doc;
-            ...
-        }
-```
-
-  do this:
-
-```cs
-        int doc;
-        while ((doc = td.Next()) != DocsEnum.NO_MORE_DOCS)
-        {
-            ...
-        }
-```
-
-  Instead of this:
-
-```cs
-        if (td.SkipTo(target))
-        {
-            int doc = td.Doc;
-            ...
-        }
-```
-
-  do this:
-    
-```cs
-        if ((doc = td.Advance(target)) != DocsEnum.NO_MORE_DOCS)
-        {
-            ...
-        }
-```
+    ```cs
+    while (td.Next())
+    {
+        int doc = td.Doc;
+        ...
+    }
+    ```
+    do this:
+    ```cs
+    int doc;
+    while ((doc = td.Next()) != DocsEnum.NO_MORE_DOCS)
+    {
+        ...
+    }
+    ```
+    Instead of this:
+    ```cs
+    if (td.SkipTo(target))
+    {
+        int doc = td.Doc;
+        ...
+    }
+    ```
+    do this:
+    ```cs
+    if ((doc = td.Advance(target)) != DocsEnum.NO_MORE_DOCS)
+    {
+        ...
+    }
+    ```
 
 * `TermPositions` is renamed to `DocsAndPositionsEnum`, and no longer
   extends the docs only enumerator (`DocsEnum`).
@@ -142,32 +132,25 @@ enumeration APIs.  Here are the major changes:
   `TermsEnum` is able to seek, and then you request the
   docs/positions enum from that `TermsEnum`.
 
-* `TermsEnum`'s seek method returns more information.  So instead of
-  this:
-
-```cs
-        Term t;
-        TermEnum termEnum = reader.Terms(t);
-        if (t.Equals(termEnum.Term))
-        {
-            ...
-        }
-```
-
-  do this:
-
-```cs
-        TermsEnum termsEnum = ...;
-        BytesRef text;
-        if (termsEnum.Seek(text) == TermsEnum.SeekStatus.FOUND)
-        {
-            ...
-        }
-```
-
-  `SeekStatus` also contains `END` (enumerator is done) and `NOT_FOUND`
-  (term was not found but enumerator is now positioned to the next
-  term).
+* `TermsEnum`'s seek method returns more information.  So instead of this:
+    ```cs
+    Term t;
+    TermEnum termEnum = reader.Terms(t);
+    if (t.Equals(termEnum.Term))
+    {
+        ...
+    }
+    ```
+    do this:
+    ```cs
+    TermsEnum termsEnum = ...;
+    BytesRef text;
+    if (termsEnum.Seek(text) == TermsEnum.SeekStatus.FOUND)
+    {
+        ...
+    }
+    ```
+    `SeekStatus` also contains `END` (enumerator is done) and `NOT_FOUND` (term was not found but enumerator is now positioned to the next term).
 
 * `TermsEnum` has an `Ord` property, returning the long numeric
   ordinal (ie, first term is 0, next is 1, and so on) for the term
@@ -175,92 +158,62 @@ enumeration APIs.  Here are the major changes:
   ord) method.  Note that these members are optional; in
   particular the `MultiFields` `TermsEnum` does not implement them.
 
-
 * How you obtain the enums has changed.  The primary entry point is
   the `Fields` class.  If you know your reader is a single segment
   reader, do this:
+    ```cs
+    Fields fields = reader.Fields();
+    if (fields != null)
+    {
+        ...
+    }
+    ```
+    If the reader might be multi-segment, you must do this:
+    ```cs
+    Fields fields = MultiFields.GetFields(reader);
+    if (fields != null)
+    {
+        ...
+    }
+    ```
+    The fields may be `null` (eg if the reader has no fields).<br/>
+    Note that the `MultiFields` approach entails a performance hit on `MultiReaders`, as it must merge terms/docs/positions on the fly. It's generally better to instead get the sequential readers (use `Lucene.Net.Util.ReaderUtil`) and then step through those readers yourself, if you can (this is how Lucene drives searches).<br/>
+    If you pass a `SegmentReader` to `MultiFields.GetFields()` it will simply return `reader.GetFields()`, so there is no performance hit in that case.<br/>
+    Once you have a non-null `Fields` you can do this:
+    ```cs
+    Terms terms = fields.GetTerms("field");
+    if (terms != null)
+    {
+        ...
+    }
+    ```
+    The terms may be `null` (eg if the field does not exist).<br/>
+    Once you have a non-null terms you can get an enum like this:
+    ```cs
+    TermsEnum termsEnum = terms.GetIterator();
+    ```
+    The returned `TermsEnum` will not be `null`.<br/>
+    You can then .Next() through the TermsEnum, or Seek.  If you want a `DocsEnum`, do this:
+    ```cs
+    IBits liveDocs = reader.GetLiveDocs();
+    DocsEnum docsEnum = null;
 
-```cs
-        Fields fields = reader.Fields();
-        if (fields != null)
-        {
-            ...
-        }
-```
-
-  If the reader might be multi-segment, you must do this:
-
-```cs
-        Fields fields = MultiFields.GetFields(reader);
-        if (fields != null)
-        {
-            ...
-        }
-```
-  
-  The fields may be `null` (eg if the reader has no fields).
-
-  Note that the `MultiFields` approach entails a performance hit on
-  `MultiReaders`, as it must merge terms/docs/positions on the fly. It's
-  generally better to instead get the sequential readers (use
-  `Lucene.Net.Util.ReaderUtil`) and then step through those readers yourself,
-  if you can (this is how Lucene drives searches).
-
-  If you pass a `SegmentReader` to `MultiFields.GetFields()` it will simply
-  return `reader.GetFields(), so there is no performance hit in that
-  case.
-
-  Once you have a non-null `Fields` you can do this:
-
-```cs
-        Terms terms = fields.GetTerms("field");
-        if (terms != null)
-        {
-            ...
-        }
-```
-
-  The terms may be `null` (eg if the field does not exist).
-
-  Once you have a non-null terms you can get an enum like this:
-
-```cs
-        TermsEnum termsEnum = terms.GetIterator();
-```
-
-  The returned `TermsEnum` will not be `null`.
-
-  You can then .Next() through the TermsEnum, or Seek.  If you want a
-  `DocsEnum`, do this:
-
-```cs
-        IBits liveDocs = reader.GetLiveDocs();
-        DocsEnum docsEnum = null;
-
-        docsEnum = termsEnum.Docs(liveDocs, docsEnum, needsFreqs);
-```
-
-  You can pass in a prior `DocsEnum` and it will be reused if possible.
-
-  Likewise for `DocsAndPositionsEnum`.
-
-  `IndexReader` has several sugar methods (which just go through the
-  above steps, under the hood).  Instead of:
-
-```cs
-        Term t;
-        TermDocs termDocs = reader.TermDocs;
-        termDocs.Seek(t);
-```
-
-  do this:
-
-```cs
-        Term t;
-        DocsEnum docsEnum = reader.GetTermDocsEnum(t);
-```
-
-  Likewise for `DocsAndPositionsEnum`.
+    docsEnum = termsEnum.Docs(liveDocs, docsEnum, needsFreqs);
+    ```
+    You can pass in a prior `DocsEnum` and it will be reused if possible.<br/>
+    Likewise for `DocsAndPositionsEnum`.<br/>
+    `IndexReader` has several sugar methods (which just go through the above steps, under the hood).  Instead of:
+    ```cs
+    Term t;
+    TermDocs termDocs = reader.TermDocs;
+    termDocs.Seek(t);
+    ```
+    do this:
+    ```cs
+    Term t;
+    DocsEnum docsEnum = reader.GetTermDocsEnum(t);
+    ```
+    Likewise for `DocsAndPositionsEnum`.
 
 ## [LUCENE-2380](https://issues.apache.org/jira/browse/LUCENE-2380): FieldCache.GetStrings/Index --> FieldCache.GetDocTerms/Index
 
@@ -272,28 +225,22 @@ enumeration APIs.  Here are the major changes:
   with `GetTerms` (returning a `BinaryDocValues` instance).
   `BinaryDocValues` provides a `Get` method, taking a `docID` and a `BytesRef`
   to fill (which must not be `null`), and it fills it in with the
-  reference to the bytes for that term.
-
-  If you had code like this before:
-
-```cs
-        string[] values = FieldCache.DEFAULT.GetStrings(reader, field);
-        ...
-        string aValue = values[docID];
-```
-
-  you can do this instead:
-
-```cs
-        BinaryDocValues values = FieldCache.DEFAULT.GetTerms(reader, field);
-        ...
-        BytesRef term = new BytesRef();
-        values.Get(docID, term);
-        string aValue = term.Utf8ToString();
-```
-
-  Note however that it can be costly to convert to `String`, so it's
-  better to work directly with the `BytesRef`.
+  reference to the bytes for that term.<br/>
+    If you had code like this before:
+    ```cs
+    string[] values = FieldCache.DEFAULT.GetStrings(reader, field);
+    ...
+    string aValue = values[docID];
+    ```
+    you can do this instead:
+    ```cs
+    BinaryDocValues values = FieldCache.DEFAULT.GetTerms(reader, field);
+    ...
+    BytesRef term = new BytesRef();
+    values.Get(docID, term);
+    string aValue = term.Utf8ToString();
+    ```
+    Note however that it can be costly to convert to `String`, so it's better to work directly with the `BytesRef`.
 
 * Similarly, in `FieldCache`, GetStringIndex (returning a `StringIndex`
   instance, with direct arrays `int[]` order and `String[]` lookup) has
@@ -302,34 +249,25 @@ enumeration APIs.  Here are the major changes:
   `GetOrd(int docID)` method to lookup the int order for a document,
   `LookupOrd(int ord, BytesRef result)` to lookup the term from a given
   order, and the sugar method `Get(int docID, BytesRef result)`
-  which internally calls `GetOrd` and then `LookupOrd`.
-
-  If you had code like this before:
-
-```cs
-        StringIndex idx = FieldCache.DEFAULT.GetStringIndex(reader, field);
-        ...
-        int ord = idx.order[docID];
-        String aValue = idx.lookup[ord];
-```
-
-  you can do this instead:
-
-```cs
-        DocTermsIndex idx = FieldCache.DEFAULT.GetTermsIndex(reader, field);
-        ...
-        int ord = idx.GetOrd(docID);
-        BytesRef term = new BytesRef();
-        idx.LookupOrd(ord, term);
-        String aValue = term.Utf8ToString();
-```
-
-  Note however that it can be costly to convert to `String`, so it's
-  better to work directly with the `BytesRef`.
-
-  `DocTermsIndex` also has a `GetTermsEnum()` method, which returns an
-  iterator (`TermsEnum`) over the term values in the index (ie,
-  iterates ord = 0..NumOrd-1).
+  which internally calls `GetOrd` and then `LookupOrd`.<br/>
+    If you had code like this before:
+    ```cs
+    StringIndex idx = FieldCache.DEFAULT.GetStringIndex(reader, field);
+    ...
+    int ord = idx.order[docID];
+    String aValue = idx.lookup[ord];
+    ```
+    you can do this instead:
+    ```cs
+    DocTermsIndex idx = FieldCache.DEFAULT.GetTermsIndex(reader, field);
+    ...
+    int ord = idx.GetOrd(docID);
+    BytesRef term = new BytesRef();
+    idx.LookupOrd(ord, term);
+    string aValue = term.Utf8ToString();
+    ```
+    Note however that it can be costly to convert to `String`, so it's better to work directly with the `BytesRef`.<br/>
+    `DocTermsIndex` also has a `GetTermsEnum()` method, which returns an iterator (`TermsEnum`) over the term values in the index (ie, iterates ord = 0..NumOrd-1).
 
 * `FieldComparator.StringComparatorLocale` has been removed.
   (it was very CPU costly since it does not compare using
@@ -347,17 +285,17 @@ enumeration APIs.  Here are the major changes:
 
 ## [LUCENE-2600](https://issues.apache.org/jira/browse/LUCENE-2600): `IndexReader`s are now read-only
 
-  Instead of `IndexReader.IsDeleted(int n)`, do this:
+Instead of `IndexReader.IsDeleted(int n)`, do this:
 
 ```cs
-      using Lucene.Net.Util;
-      using Lucene.Net.Index;
+using Lucene.Net.Util;
+using Lucene.Net.Index;
 
-      IBits liveDocs = MultiFields.GetLiveDocs(indexReader);
-      if (liveDocs != null && !liveDocs.Get(docID))
-      {
-          // document is deleted...
-      }
+IBits liveDocs = MultiFields.GetLiveDocs(indexReader);
+if (liveDocs != null && !liveDocs.Get(docID))
+{
+    // document is deleted...
+}
 ```
     
 ## [LUCENE-2858](https://issues.apache.org/jira/browse/LUCENE-2858), [LUCENE-3733](https://issues.apache.org/jira/browse/LUCENE-3733): `IndexReader` --> `AtomicReader`/`CompositeReader`/`DirectoryReader` refactoring
@@ -561,28 +499,30 @@ add a separate `StoredField` to the document, or you can use
 `TYPE_STORED` for the field:
 
 ```cs
-    Field f = new Field("field", "value", StringField.TYPE_STORED);
+Field f = new Field("field", "value", StringField.TYPE_STORED);
 ```
 
 Alternatively, if an existing type is close to what you want but you
 need to make a few changes, you can copy that type and make changes:
 
 ```cs
-    FieldType bodyType = new FieldType(TextField.TYPE_STORED);
-    bodyType.setStoreTermVectors(true);
+FieldType bodyType = new FieldType(TextField.TYPE_STORED)
+{
+    StoreTermVectors = true
+};
 ```
 
 You can of course also create your own `FieldType` from scratch:
 
 ```cs
-    FieldType t = new FieldType
-    {
-        Indexed = true,
-        Stored = true,
-        OmitNorms = true,
-        IndexOptions = IndexOptions.DOCS_AND_FREQS
-    };
-    t.Freeze();
+FieldType t = new FieldType
+{
+    Indexed = true,
+    Stored = true,
+    OmitNorms = true,
+    IndexOptions = IndexOptions.DOCS_AND_FREQS
+};
+t.Freeze();
 ```
 
 `FieldType` has a `Freeze()` method to prevent further changes.
@@ -594,13 +534,13 @@ enums.
 When migrating from the 3.x API, if you did this before:
 
 ```cs
-    new Field("field", "value", Field.Store.NO, Field.Indexed.NOT_ANALYZED_NO_NORMS)
+new Field("field", "value", Field.Store.NO, Field.Indexed.NOT_ANALYZED_NO_NORMS)
 ```
 
 you can now do this:
 
 ```cs
-    new StringField("field", "value")
+new StringField("field", "value")
 ```
 
 (though note that `StringField` indexes `DOCS_ONLY`).
@@ -608,81 +548,81 @@ you can now do this:
 If instead the value was stored:
 
 ```cs
-    new Field("field", "value", Field.Store.YES, Field.Indexed.NOT_ANALYZED_NO_NORMS)
+new Field("field", "value", Field.Store.YES, Field.Indexed.NOT_ANALYZED_NO_NORMS)
 ```
 
 you can now do this:
 
 ```cs
-    new Field("field", "value", TextField.TYPE_STORED)
+new Field("field", "value", TextField.TYPE_STORED)
 ```
 
 If you didn't omit norms:
 
 ```cs
-    new Field("field", "value", Field.Store.YES, Field.Indexed.NOT_ANALYZED)
+new Field("field", "value", Field.Store.YES, Field.Indexed.NOT_ANALYZED)
 ```
 
 you can now do this:
 
 ```cs
-    FieldType ft = new FieldType(TextField.TYPE_STORED)
-    {
-        OmitNorms = false
-    };
-    new Field("field", "value", ft)
+FieldType ft = new FieldType(TextField.TYPE_STORED)
+{
+    OmitNorms = false
+};
+new Field("field", "value", ft)
 ```
 
 If you did this before (value can be `String` or `TextReader`):
 
 ```cs
-    new Field("field", value, Field.Store.NO, Field.Indexed.ANALYZED)
+new Field("field", value, Field.Store.NO, Field.Indexed.ANALYZED)
 ```
 
 you can now do this:
 
 ```cs
-    new TextField("field", value, Field.Store.NO)
+new TextField("field", value, Field.Store.NO)
 ```
 
 If instead the value was stored:
 
 ```cs
-    new Field("field", value, Field.Store.YES, Field.Indexed.ANALYZED)
+new Field("field", value, Field.Store.YES, Field.Indexed.ANALYZED)
 ```
 
 you can now do this:
 
 ```cs
-    new TextField("field", value, Field.Store.YES)
+new TextField("field", value, Field.Store.YES)
 ```
 
 If in addition you omit norms:
 
 ```cs
-    new Field("field", value, Field.Store.YES, Field.Indexed.ANALYZED_NO_NORMS)
+new Field("field", value, Field.Store.YES, Field.Indexed.ANALYZED_NO_NORMS)
 ```
 
 you can now do this:
 
 ```cs
-    FieldType ft = new FieldType(TextField.TYPE_STORED)
-    {
-        OmitNorms = true
-    };
-    new Field("field", value, ft)
+FieldType ft = new FieldType(TextField.TYPE_STORED)
+{
+    OmitNorms = true
+};
+new Field("field", value, ft)
 ```
 
 If you did this before (bytes is a `byte[]`):
 
 ```cs
-    new Field("field", bytes)
+new Field("field", bytes)
 ```
 
 you can now do this:
 
 ```cs
-    new StoredField("field", bytes)
+new StoredField("field", bytes)
 ```
 
 If you previously used the setter of `Document.Boost`, you must now pre-multiply
