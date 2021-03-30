@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Codecs.Lucene41Ords
 summary: *content
 ---
@@ -20,4 +20,4 @@ summary: *content
  limitations under the License.
 -->
 
-Codec for testing that supports [#ord()](xref:Lucene.Net.Index.TermsEnum)
+Codec for testing that supports [TermsEnum.Ord](xref:Lucene.Net.Index.TermsEnum#Lucene_Net_Index_TermsEnum_Ord)

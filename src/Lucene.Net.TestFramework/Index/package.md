@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Index
 summary: *content
 ---
@@ -22,4 +22,7 @@ summary: *content
 
 Support for testing of indexes. 
 
- The primary classes are: * <xref:Lucene.Net.Index.RandomIndexWriter>: Randomizes the indexing experience. * <xref:Lucene.Net.Index.MockRandomMergePolicy>: MergePolicy that makes random decisions. 
+The primary classes are:
+
+* <xref:Lucene.Net.Index.RandomIndexWriter>: Randomizes the indexing experience.
+* <xref:Lucene.Net.Index.MockRandomMergePolicy>: MergePolicy that makes random decisions. 
