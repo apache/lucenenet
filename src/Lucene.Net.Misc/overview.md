@@ -26,6 +26,12 @@ summary: *content
 The misc package has various tools for splitting/merging indices,
 changing norms, finding high freq terms, and others.
 
+
+<!--
+
+LUCENENET specific - we didn't port the NativeUnixDirectory, and it is not clear whether there is any advantage to doing so in .NET.
+See: https://github.com/apache/lucenenet/issues/276
+
 ## NativeUnixDirectory
 
 __NOTE__: This uses C++ sources (accessible via JNI), which you'll
@@ -56,3 +62,4 @@ NativePosixUtil.cpp/java also expose access to the posix_madvise,
 madvise, posix_fadvise functions, which are somewhat more cross
 platform than O_DIRECT, however, in testing (see above link), these
 APIs did not seem to help prevent buffer cache eviction.
+-->
