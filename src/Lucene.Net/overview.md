@@ -134,7 +134,7 @@ queries and searches an index.
 
 To demonstrate this, try something like:
 
-```
+```console
 > dotnet demo index-files index rec.food.recipies/soups
 adding rec.food.recipes/soups/abalone-chowder
 [...]
