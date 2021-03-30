@@ -6,11 +6,16 @@
 
 ### Synopsis
 
-<code>lucene index delete-segments \<INDEX_DIRECTORY> \<SEGMENT>[ \<SEGMENT_2>...] [?|-h|--help]</code>
+```console
+lucene index delete-segments <INDEX_DIRECTORY> <SEGMENT>[ <SEGMENT_2>...] [?|-h|--help]
+```
 
 ### Description
 
-You can easily accidentally remove segments from your index, so be careful! Always make a backup of your index first.
+Deletes segments from an index.
+
+> [!WARNING]
+> You can easily accidentally remove segments from your index, so be careful! Always make a backup of your index first.
 
 ### Arguments
 
@@ -32,4 +37,6 @@ Prints out a short help for the command.
 
 Delete the segments named `_8c` and `_83` from the index located at `X:\category-data\`:
 
-<code>lucene index delete-segments X:\category-data _8c _83</code>
+```console
+lucene index delete-segments X:\category-data _8c _83
+```

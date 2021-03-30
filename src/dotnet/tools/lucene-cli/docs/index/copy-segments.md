@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene index copy-segments \<INPUT_DIRECTORY> \<OUTPUT_DIRECTORY> \<SEGMENT>[ \<SEGMENT_2>...] [?|-h|--help]</code>
+```console
+lucene index copy-segments <INPUT_DIRECTORY> <OUTPUT_DIRECTORY> <SEGMENT>[ <SEGMENT_2>...] [?|-h|--help]
+```
 
 ### Description
 
@@ -36,5 +38,7 @@ Prints out a short help for the command.
 
 Copy the `_71_Lucene41_0` segment from the index located at `X:\lucene-index` to the index located at `X:\output`:
 
-<code>lucene index copy-segments X:\lucene-index X:\output _71_Lucene41_0</code>
+```console
+lucene index copy-segments X:\lucene-index X:\output _71_Lucene41_0
+```
 

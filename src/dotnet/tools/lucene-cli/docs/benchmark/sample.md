@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene benchmark sample [-src|--view-source-code] [-out|--output-source-code]  [?|-h|--help]</code>
+```console
+lucene benchmark sample [-src|--view-source-code] [-out|--output-source-code]  [?|-h|--help]
+```
 
 ### Options
 
@@ -26,4 +28,6 @@ Outputs the source code to the specified directory.
 
 Runs the sample.
 
-<code>lucene benchmark sample</code>
+```console
+lucene benchmark sample
+```

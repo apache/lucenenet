@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene demo distance-facets [-src|--view-source-code] [-out|--output-source-code] [?|-h|--help]</code>
+```console
+lucene demo distance-facets [-src|--view-source-code] [-out|--output-source-code] [?|-h|--help]
+```
 
 ### Options
 
@@ -24,4 +26,6 @@ Outputs the source code to the specified directory.
 
 ### Example
 
-<code>lucene demo distance-facets</code>
+```console
+lucene demo distance-facets
+```

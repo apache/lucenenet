@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene benchmark extract-wikipedia \<INPUT_WIKIPEDIA_FILE> \<OUTPUT_DIRECTORY> [-d|--discard-image-only-docs] [?|-h|--help]</code>
+```console
+lucene benchmark extract-wikipedia <INPUT_WIKIPEDIA_FILE> <OUTPUT_DIRECTORY> [-d|--discard-image-only-docs] [?|-h|--help]
+```
 
 ### Arguments
 
@@ -32,4 +34,6 @@ Tells the extractor to skip WIKI docs that contain only images.
 
 Extracts the `c:\wiki.xml` file into the `c:\out` directory, skipping any docs that only contain images.
 
-<code>lucene benchmark extract-wikipedia c:\wiki.xml c:\out -d</code>
+```console
+lucene benchmark extract-wikipedia c:\wiki.xml c:\out -d
+```

@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene demo multi-category-lists-facets [-src|--view-source-code] [-out|--output-source-code] [?|-h|--help]</code>
+```console
+lucene demo multi-category-lists-facets [-src|--view-source-code] [-out|--output-source-code] [?|-h|--help]
+```
 
 ### Options
 
@@ -25,4 +27,6 @@ Outputs the source code to the specified directory.
 
 ### Example
 
-<code>lucene demo multi-category-lists-facets</code>
+```console
+lucene demo multi-category-lists-facets
+```

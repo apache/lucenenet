@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene demo range-facets [-src|--view-source-code] [-out|--output-source-code] [?|-h|--help]</code>
+```console
+lucene demo range-facets [-src|--view-source-code] [-out|--output-source-code] [?|-h|--help]
+```
 
 ### Options
 
@@ -24,4 +26,6 @@ Outputs the source code to the specified directory.
 
 ### Example
 
-<code>lucene demo range-facets</code>
+```console
+lucene demo range-facets
+```

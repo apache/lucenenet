@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene index split \<OUTPUT_DIRECTORY> \<INPUT_DIRECTORY>[ \<INPUT_DIRECTORY_2>...] [-n|--number-of-parts] [-s|--sequential] [?|-h|--help]</code>
+```console
+lucene index split <OUTPUT_DIRECTORY> <INPUT_DIRECTORY>[ <INPUT_DIRECTORY_2>...] [-n|--number-of-parts] [-s|--sequential] [?|-h|--help]
+```
 
 ### Description
 
@@ -16,7 +18,8 @@ Deletes are only applied to a buffered list of deleted documents and don't affec
 
 The disadvantage of this tool is that source index needs to be read as many times as there are parts to be created. The multiple passes may be slow.
 
-> **NOTE:** This tool is unaware of documents added automatically via `IndexWriter.AddDocuments(IEnumerable&lt;IEnumerable&lt;IIndexableField&gt;&gt;, Analyzer)` or `IndexWriter.UpdateDocuments(Term, IEnumerable&lt;IEnumerable&lt;IIndexableField&gt;&gt;, Analyzer)`, which means it can easily break up such document groups.
+> [!NOTE]
+> This tool is unaware of documents added automatically via `IndexWriter.AddDocuments(IEnumerable<IEnumerable<IIndexableField>>, Analyzer)` or `IndexWriter.UpdateDocuments(Term, IEnumerable<IEnumerable<IIndexableField>>, Analyzer)`, which means it can easily break up such document groups.
 
 ### Arguments
 
@@ -46,9 +49,13 @@ Sequential doc-id range split (default is round-robin).
 
 Split the index located at `X:\old-index\` sequentially, placing the resulting 2 indices into the `X:\new-index\` directory:
 
-<code>lucene index split X:\new-index X:\old-index --sequential</code>
+```console
+lucene index split X:\new-index X:\old-index --sequential
+```
 
 
 Split the index located at `T:\in\` into 4 parts and place them into the `T:\out\` directory:
 
-<code>lucene index split T:\out T:\in -n 4</code>
+```console
+lucene index split T:\out T:\in -n 4
+```

@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene index extract-cfs \<CFS_FILE_NAME> [-dir|--directory-type] [?|-h|--help]</code>
+```console
+lucene index extract-cfs <CFS_FILE_NAME> [-dir|--directory-type] [?|-h|--help]
+```
 
 ### Description
 
@@ -34,9 +36,13 @@ The FSDirectory implementation to use. If ommitted, it defaults to the optimal F
 
 Extract the files from the compound file at `X:\lucene-index\_81.cfs` to the current working directory:
 
-<code>lucene index extract-cfs X:\lucene-index\_81.cfs</code>
+```console
+lucene index extract-cfs X:\lucene-index\_81.cfs
+```
 
 
 Extract the files from the compound file at `X:\lucene-index\_64.cfs` to the current working directory using the `SimpleFSDirectory` implementation:
 
-<code>lucene index extract-cfs X:\lucene-index\_64.cfs --directory-type SimpleFSDirectory</code>
+```console
+lucene index extract-cfs X:\lucene-index\_64.cfs --directory-type SimpleFSDirectory
+```

@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene index list-taxonomy-stats [\<INDEX_DIRECTORY>] [-tree|--show-tree] [?|-h|--help]</code>
+```console
+lucene index list-taxonomy-stats [<INDEX_DIRECTORY>] [-tree|--show-tree] [?|-h|--help]
+```
 
 ### Description
 
@@ -18,7 +20,8 @@ Prints how many ords are under each dimension.
 
 The directory of the index. If omitted, it defaults to the current working directory.
 
-> **NOTE:** This directory must be a facet taxonomy directory for the command to succeed.
+> [!NOTE] 
+> This directory must be a facet taxonomy directory for the command to succeed.
 
 ### Options
 
@@ -34,5 +37,7 @@ Recursively lists all descendant nodes.
 
 List the taxonomy statistics from the index located at `X:\category-taxonomy-index\`, viewing all descendant nodes:
 
-<code>lucene index list-taxonomy-stats X:\category-taxonomy-index -tree</code>
+```console
+lucene index list-taxonomy-stats X:\category-taxonomy-index -tree
+```
 

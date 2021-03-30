@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene lock verify-server \<IP_HOSTNAME> \<MAX_CLIENTS> [?|-h|--help]</code>
+```console
+lucene lock verify-server <IP_HOSTNAME> <MAX_CLIENTS> [?|-h|--help]
+```
 
 ### Description
 
@@ -32,4 +34,6 @@ Prints out a short help for the command.
 
 Run the server on IP `127.0.0.4` with a 10 connected clients:
 
-<code>lucene lock verify-server 127.0.0.4 10</code>
+```console
+lucene lock verify-server 127.0.0.4 10
+```

@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene lock stress-test \<ID> \<VERIFIER_HOST> \<VERIFIER_PORT> \<LOCK_FACTORY_TYPE> \<LOCK_DIRECTORY> \<SLEEP_TIME_MS> \<TRIES> [?|-h|--help]</code>
+```console
+lucene lock stress-test <ID> <VERIFIER_HOST> <VERIFIER_PORT> <LOCK_FACTORY_TYPE> <LOCK_DIRECTORY> <SLEEP_TIME_MS> <TRIES> [?|-h|--help]
+```
 
 ### Description
 
@@ -52,4 +54,6 @@ Prints out a short help for the command.
 
 Run the client (stress test), connecting to the server on IP address `127.0.0.4` and port `54464` using the ID 3, the `NativeFSLockFactory`, specifying the lock directory as `F:\temp`, sleep for 50 milliseconds, and try to obtain a lock up to 10 times:
 
-<code>lucene lock stress-test 3 127.0.0.4 54464 NativeFSLockFactory F:\temp 50 10</code>
+```console
+lucene lock stress-test 3 127.0.0.4 54464 NativeFSLockFactory F:\temp 50 10
+```

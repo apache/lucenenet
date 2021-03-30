@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene benchmark extract-reuters \<INPUT_DIRECTORY> \<OUTPUT_DIRECTORY> [?|-h|--help]</code>
+```console
+lucene benchmark extract-reuters <INPUT_DIRECTORY> <OUTPUT_DIRECTORY> [?|-h|--help]
+```
 
 ### Arguments
 
@@ -28,4 +30,6 @@ Prints out a short help for the command.
 
 Extracts the reuters SGML files in the `z:\input` directory and places the content in the `z:\output` directory.
 
-<code>lucene benchmark extract-reuters z:\input z:\output</code>
+```console
+lucene benchmark extract-reuters z:\input z:\output
+```

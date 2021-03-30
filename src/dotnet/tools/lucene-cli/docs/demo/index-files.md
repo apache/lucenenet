@@ -6,8 +6,8 @@
 
 ### Synopsis
 
-```
-lucene demo index-files \<INDEX_DIRECTORY> \<SOURCE_DIRECTORY> [-u|--update] [?|-h|--help]
+```console
+lucene demo index-files <INDEX_DIRECTORY> <SOURCE_DIRECTORY> [-u|--update] [?|-h|--help]
 lucene demo index-files [-src|--view-source-code] [-out|--output-source-code]
 ```
 
@@ -47,5 +47,7 @@ Outputs the source code to the specified directory.
 
 Indexes the contents of `C:\Users\BGates\Documents\` and places the Lucene.Net index in `X:\test-index\`.
 
-<code>lucene demo index-files X:\test-index C:\Users\BGates\Documents</code>
+```console
+lucene demo index-files X:\test-index C:\Users\BGates\Documents
+```
 

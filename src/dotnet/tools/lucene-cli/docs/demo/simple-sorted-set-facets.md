@@ -6,7 +6,9 @@
 
 ### Synopsis
 
-<code>lucene demo simple-sorted-set-facets [-src|--view-source-code] [-out|--output-source-code] [?|-h|--help]</code>
+```console
+lucene demo simple-sorted-set-facets [-src|--view-source-code] [-out|--output-source-code] [?|-h|--help]
+```
 
 ### Options
 
@@ -24,6 +26,8 @@ Outputs the source code to the specified directory.
 
 ### Example
 
-<code>lucene demo simple-sorted-set-facets</code>
+```console
+lucene demo simple-sorted-set-facets
+```
 
 
