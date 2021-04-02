@@ -107,6 +107,7 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
         /// <returns>the grouped result as a <see cref="ITopGroups{Object}"/> instance</returns>
         /// <exception cref="IOException">If any I/O related errors occur</exception>
+        // LUCENENET additional method signature. Makes discovering the return type easier. 
         public virtual ITopGroups<object> Search(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
         {
             return Search<object>(searcher, null, query, groupOffset, groupLimit);
@@ -138,6 +139,7 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
         /// <returns>the grouped result as a <see cref="ITopGroups{Object}"/> instance</returns>
         /// <exception cref="IOException">If any I/O related errors occur</exception>
+        // LUCENENET additional method signature. Makes discovering the return type easier. 
         public virtual ITopGroups<object> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             if (groupFunction != null)
