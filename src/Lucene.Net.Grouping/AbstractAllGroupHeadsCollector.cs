@@ -153,7 +153,7 @@ namespace Lucene.Net.Search.Grouping
 
     /// <summary>
     /// Represents a group head. A group head is the most relevant document for a particular group.
-    /// The relevancy is based is usually based on the sort.
+    /// The relevancy is usually based on the sort.
     /// <para>
     /// The group head contains a group value with its associated most relevant document id.
     /// </para>
