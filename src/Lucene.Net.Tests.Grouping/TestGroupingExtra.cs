@@ -229,6 +229,7 @@ namespace Lucene.Net.Search.Grouping
         /// LUCENENET: Additional Unit Test.  Tests grouping by an Int32 via the
         /// 2 pass by field name approach. Uses FieldCache, not DocValues.
         /// </summary>
+        [Test]
         public virtual void GroupingSearch_ViaName_Int32Sorted_UsingFieldCache_Top10Groups_Top10DocsEach()
         {
             int[,] numericData = GetNumbers();
