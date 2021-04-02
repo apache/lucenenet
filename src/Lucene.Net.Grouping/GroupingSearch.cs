@@ -274,7 +274,7 @@ namespace Lucene.Net.Search.Grouping
 
             if (allGroups)
             {
-                matchingGroups = (IList)allGroupsCollector.Groups;
+                matchingGroups = (ICollection)allGroupsCollector.Groups;
             }
             else
             {
