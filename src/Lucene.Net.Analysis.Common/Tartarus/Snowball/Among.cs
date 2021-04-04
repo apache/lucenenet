@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 /*
 
 Copyright (c) 2001, Dr Martin Porter
@@ -30,81 +30,107 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-using Lucene.Net.Support;
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 
 namespace Lucene.Net.Tartarus.Snowball
 {
+    ///// <summary>
+    ///// This is the rev 502 of the Snowball SVN trunk,
+    ///// but modified:
+    ///// made abstract and introduced abstract method stem to avoid expensive reflection in filter class.
+    ///// refactored StringBuffers to StringBuilder
+    ///// uses char[] as buffer instead of StringBuffer/StringBuilder
+    ///// eq_s,eq_s_b,insert,replace_s take CharSequence like eq_v and eq_v_b
+    ///// reflection calls (Lovins, etc) use EMPTY_ARGS/EMPTY_PARAMS
+    ///// </summary>
+
+    // LUCENENET specific: Changed the implementation to be more like the original implementation at
+    // https://github.com/snowballstem/snowball/commit/a823d24f1b6efd693dcce3119bdcea54855663a0
+    // to avoid expensive Reflection calls.
+
     /// <summary>
-    /// This is the rev 502 of the Snowball SVN trunk,
-    /// but modified:
-    /// made abstract and introduced abstract method stem to avoid expensive reflection in filter class.
-    /// refactored StringBuffers to StringBuilder
-    /// uses char[] as buffer instead of StringBuffer/StringBuilder
-    /// eq_s,eq_s_b,insert,replace_s take CharSequence like eq_v and eq_v_b
-    /// reflection calls (Lovins, etc) use EMPTY_ARGS/EMPTY_PARAMS
+    ///   Snowball's among construction.
     /// </summary>
+    /// 
     public class Among
     {
-        private readonly Type[] EMPTY_PARAMS = Arrays.Empty<Type>();
-
-        public Among(string s, int substring_i, int result,
-            string methodname, SnowballProgram methodobject)
+        /// <summary>
+        ///   Search string.
+        /// </summary>
+        /// 
+        public string SearchString
         {
-            this.s_size = s.Length;
-            this.s = s.ToCharArray();
-            this.substring_i = substring_i;
-            this.result = result;
-            this.methodobject = methodobject;
-            if (methodname.Length == 0)
-            {
-                this.method = null;
-            }
-            else
-            {
-                try
-                {
-                    this.method = methodobject.GetType().GetMethod(methodname, EMPTY_PARAMS);
-                }
-                catch (MissingMethodException e)
-                {
-                    throw new Exception(e.ToString(), e);
-                }
-            }
+            get; private set;
         }
 
-        /// <summary>search string</summary>
-        public int Length => s_size;
+        /// <summary>
+        ///   Index to longest matching substring.
+        /// </summary>
+        /// 
+        public int MatchIndex
+        {
+            get; private set;
+        }
 
-        private readonly int s_size;
+        /// <summary>
+        ///   Result of the lookup.
+        /// </summary>
+        /// 
+        public int Result
+        {
+            get; private set;
+        }
 
-        /// <summary>search string</summary>
-        [WritableArray]
-        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public char[] S => s;
+        /// <summary>
+        ///   Action to be invoked.
+        /// </summary>
+        /// 
+        public Func<bool> Action
+        {
+            get; private set;
+        }
 
-        private readonly char[] s;
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="Among"/> class.
+        /// </summary>
+        /// 
+        /// <param name="str">The search string.</param>
+        /// <param name="index">The index to the longest matching substring.</param>
+        /// <param name="result">The result of the lookup.</param>
+        /// 
+        public Among(string str, int index, int result)
+            : this(str, index, result, null)
+        {
+        }
 
-        /// <summary>index to longest matching substring</summary>
-        public int SubstringIndex => substring_i;
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="Among"/> class.
+        /// </summary>
+        /// 
+        /// <param name="str">The search string.</param>
+        /// <param name="index">The index to the longest matching substring.</param>
+        /// <param name="result">The result of the lookup.</param>
+        /// <param name="action">The action to be performed, if any.</param>
+        /// 
+        public Among(string str, int index, int result, Func<bool> action)
+        {
+            this.SearchString = str;
+            this.MatchIndex = index;
+            this.Result = result;
+            this.Action = action;
+        }
 
-        private readonly int substring_i;
-
-        /// <summary>result of the lookup</summary>
-        public int Result => result;
-
-        private readonly int result;
-
-        /// <summary>method to use if substring matches</summary>
-        public MethodInfo Method => method;
-
-        private readonly MethodInfo method;
-
-        /// <summary>object to invoke method on</summary>
-        public SnowballProgram MethodObject => methodobject;
-
-        private readonly SnowballProgram methodobject;
+        /// <summary>
+        ///   Returns a <see cref="string" /> that represents this instance.
+        /// </summary>
+        /// 
+        /// <returns>
+        ///   A <see cref="string" /> that represents this instance.
+        /// </returns>
+        /// 
+        public override string ToString()
+        {
+            return SearchString;
+        }
     }
 }

@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 /*
 
 Copyright (c) 2001, Dr Martin Porter
@@ -38,48 +38,48 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
     /// </summary>
     public class GermanStemmer : SnowballProgram
     {
-        private readonly static GermanStemmer methodObject = new GermanStemmer();
+        // LUCENENET specific: Factored out methodObject by using Func<bool> instead of Reflection
 
         private readonly static Among[] a_0 = {
-                    new Among ( "", -1, 6, "", methodObject ),
-                    new Among ( "U", 0, 2, "", methodObject ),
-                    new Among ( "Y", 0, 1, "", methodObject ),
-                    new Among ( "\u00E4", 0, 3, "", methodObject ),
-                    new Among ( "\u00F6", 0, 4, "", methodObject ),
-                    new Among ( "\u00FC", 0, 5, "", methodObject )
+                    new Among ( "", -1, 6 ),
+                    new Among ( "U", 0, 2 ),
+                    new Among ( "Y", 0, 1 ),
+                    new Among ( "\u00E4", 0, 3 ),
+                    new Among ( "\u00F6", 0, 4 ),
+                    new Among ( "\u00FC", 0, 5 )
                 };
 
         private readonly static Among[] a_1 = {
-                    new Among ( "e", -1, 1, "", methodObject ),
-                    new Among ( "em", -1, 1, "", methodObject ),
-                    new Among ( "en", -1, 1, "", methodObject ),
-                    new Among ( "ern", -1, 1, "", methodObject ),
-                    new Among ( "er", -1, 1, "", methodObject ),
-                    new Among ( "s", -1, 2, "", methodObject ),
-                    new Among ( "es", 5, 1, "", methodObject )
+                    new Among ( "e", -1, 1 ),
+                    new Among ( "em", -1, 1 ),
+                    new Among ( "en", -1, 1 ),
+                    new Among ( "ern", -1, 1 ),
+                    new Among ( "er", -1, 1 ),
+                    new Among ( "s", -1, 2 ),
+                    new Among ( "es", 5, 1 )
                 };
 
         private readonly static Among[] a_2 = {
-                    new Among ( "en", -1, 1, "", methodObject ),
-                    new Among ( "er", -1, 1, "", methodObject ),
-                    new Among ( "st", -1, 2, "", methodObject ),
-                    new Among ( "est", 2, 1, "", methodObject )
+                    new Among ( "en", -1, 1 ),
+                    new Among ( "er", -1, 1 ),
+                    new Among ( "st", -1, 2 ),
+                    new Among ( "est", 2, 1 )
                 };
 
         private readonly static Among[] a_3 = {
-                    new Among ( "ig", -1, 1, "", methodObject ),
-                    new Among ( "lich", -1, 1, "", methodObject )
+                    new Among ( "ig", -1, 1 ),
+                    new Among ( "lich", -1, 1 )
                 };
 
         private readonly static Among[] a_4 = {
-                    new Among ( "end", -1, 1, "", methodObject ),
-                    new Among ( "ig", -1, 2, "", methodObject ),
-                    new Among ( "ung", -1, 1, "", methodObject ),
-                    new Among ( "lich", -1, 3, "", methodObject ),
-                    new Among ( "isch", -1, 2, "", methodObject ),
-                    new Among ( "ik", -1, 2, "", methodObject ),
-                    new Among ( "heit", -1, 3, "", methodObject ),
-                    new Among ( "keit", -1, 4, "", methodObject )
+                    new Among ( "end", -1, 1 ),
+                    new Among ( "ig", -1, 2 ),
+                    new Among ( "ung", -1, 1 ),
+                    new Among ( "lich", -1, 3 ),
+                    new Among ( "isch", -1, 2 ),
+                    new Among ( "ik", -1, 2 ),
+                    new Among ( "heit", -1, 3 ),
+                    new Among ( "keit", -1, 4 )
                 };
 
         private static readonly char[] g_v = { (char)17, (char)65, (char)16, (char)1, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)8, (char)0, (char)32, (char)8 };

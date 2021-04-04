@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 /*
 
 Copyright (c) 2001, Dr Martin Porter
@@ -50,7 +50,7 @@ namespace Lucene.Net.Tartarus.Snowball
     /// </summary>
     public abstract class SnowballProgram
     {
-        private static readonly object[] EMPTY_ARGS = Arrays.Empty<object>();
+        // LUCENENET specific: Factored out EMPTY_ARGS by using Func<bool> instead of Reflection
 
         protected SnowballProgram()
         {
@@ -281,14 +281,14 @@ namespace Lucene.Net.Tartarus.Snowball
                 int common = common_i < common_j ? common_i : common_j; // smaller
                 Among w = v[k];
                 int i2;
-                for (i2 = common; i2 < w.Length; i2++)
+                for (i2 = common; i2 < w.SearchString.Length; i2++)
                 {
                     if (c + common == l)
                     {
                         diff = -1;
                         break;
                     }
-                    diff = m_current[c + common] - w.S[i2];
+                    diff = m_current[c + common] - w.SearchString[i2];
                     if (diff != 0) break;
                     common++;
                 }
@@ -318,31 +318,19 @@ namespace Lucene.Net.Tartarus.Snowball
             while (true)
             {
                 Among w = v[i];
-                if (common_i >= w.Length)
+                // LUCENENET specific: Refactored Among to remove expensive
+                // reflection calls and replaced with Func<bool> as was done in
+                // the original code at:
+                // https://github.com/snowballstem/snowball
+                if (common_i >= w.SearchString.Length)
                 {
-                    m_cursor = c + w.Length;
-                    if (w.Method == null) return w.Result;
-                    bool res;
-                    try
-                    {
-                        object resobj = w.Method.Invoke(w.MethodObject, EMPTY_ARGS);
-                        // LUCENENET-542: Fixed case-sensitivity problem
-                        res = resobj.ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
-                    }
-                    catch (TargetInvocationException /*e*/)
-                    {
-                        res = false;
-                        // FIXME - debug message
-                    }
-                    catch (Exception /*e*/)
-                    {
-                        res = false;
-                        // FIXME - debug message
-                    }
-                    m_cursor = c + w.Length;
+                    m_cursor = c + w.SearchString.Length;
+                    if (w.Action == null) return w.Result;
+                    bool res = w.Action.Invoke();
+                    m_cursor = c + w.SearchString.Length;
                     if (res) return w.Result;
                 }
-                i = w.SubstringIndex;
+                i = w.MatchIndex;
                 if (i < 0) return 0;
             }
         }
@@ -368,14 +356,14 @@ namespace Lucene.Net.Tartarus.Snowball
                 int common = common_i < common_j ? common_i : common_j;
                 Among w = v[k];
                 int i2;
-                for (i2 = w.Length - 1 - common; i2 >= 0; i2--)
+                for (i2 = w.SearchString.Length - 1 - common; i2 >= 0; i2--)
                 {
                     if (c - common == lb)
                     {
                         diff = -1;
                         break;
                     }
-                    diff = m_current[c - 1 - common] - w.S[i2];
+                    diff = m_current[c - 1 - common] - w.SearchString[i2];
                     if (diff != 0) break;
                     common++;
                 }
@@ -400,32 +388,20 @@ namespace Lucene.Net.Tartarus.Snowball
             while (true)
             {
                 Among w = v[i];
-                if (common_i >= w.Length)
+                // LUCENENET specific: Refactored Among to remove expensive
+                // reflection calls and replaced with Func<bool> as was done in
+                // the original code at:
+                // https://github.com/snowballstem/snowball
+                if (common_i >= w.SearchString.Length)
                 {
-                    m_cursor = c - w.Length;
-                    if (w.Method == null) return w.Result;
+                    m_cursor = c - w.SearchString.Length;
+                    if (w.Action == null) return w.Result;
 
-                    bool res;
-                    try
-                    {
-                        object resobj = w.Method.Invoke(w.MethodObject, EMPTY_ARGS);
-                        // LUCENENET-542: Fixed case-sensitivity problem
-                        res = resobj.ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
-                    }
-                    catch (TargetInvocationException /*e*/)
-                    {
-                        res = false;
-                        // FIXME - debug message
-                    }
-                    catch (Exception /*e*/)
-                    {
-                        res = false;
-                        // FIXME - debug message
-                    }
-                    m_cursor = c - w.Length;
+                    bool res = w.Action.Invoke();
+                    m_cursor = c - w.SearchString.Length;
                     if (res) return w.Result;
                 }
-                i = w.SubstringIndex;
+                i = w.MatchIndex;
                 if (i < 0) return 0;
             }
         }
