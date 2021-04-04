@@ -38,12 +38,12 @@ namespace Lucene.Net.QueryParsers.Xml
         {
         }
 
-        public ParserException(String message)
+        public ParserException(string message)
             : base(message)
         {
         }
 
-        public ParserException(String message, Exception cause)
+        public ParserException(string message, Exception cause)
             : base(message, cause)
         {
         }

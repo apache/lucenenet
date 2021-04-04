@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
                 this.lastDocCollected = lastDocCollected;
             }
 
-            // For testing purposes
+            // LUCENENET: For testing purposes
             internal TimeExceededException(string message)
                 : base(message)
             {
