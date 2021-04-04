@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 /*
 
 Copyright (c) 2001, Dr Martin Porter
@@ -40,108 +40,108 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
     /// </summary>
     public class KpStemmer : SnowballProgram
     {
-        private readonly static KpStemmer methodObject = new KpStemmer();
+        // LUCENENET specific: Factored out methodObject by using Func<bool> instead of Reflection
 
         private readonly static Among[] a_0 = {
-                    new Among ( "nde", -1, 7, "", methodObject ),
-                    new Among ( "en", -1, 6, "", methodObject ),
-                    new Among ( "s", -1, 2, "", methodObject ),
-                    new Among ( "'s", 2, 1, "", methodObject ),
-                    new Among ( "es", 2, 4, "", methodObject ),
-                    new Among ( "ies", 4, 3, "", methodObject ),
-                    new Among ( "aus", 2, 5, "", methodObject )
+                    new Among ( "nde", -1, 7 ),
+                    new Among ( "en", -1, 6 ),
+                    new Among ( "s", -1, 2 ),
+                    new Among ( "'s", 2, 1 ),
+                    new Among ( "es", 2, 4 ),
+                    new Among ( "ies", 4, 3 ),
+                    new Among ( "aus", 2, 5 )
                 };
 
         private readonly static Among[] a_1 = {
-                    new Among ( "de", -1, 5, "", methodObject ),
-                    new Among ( "ge", -1, 2, "", methodObject ),
-                    new Among ( "ische", -1, 4, "", methodObject ),
-                    new Among ( "je", -1, 1, "", methodObject ),
-                    new Among ( "lijke", -1, 3, "", methodObject ),
-                    new Among ( "le", -1, 9, "", methodObject ),
-                    new Among ( "ene", -1, 10, "", methodObject ),
-                    new Among ( "re", -1, 8, "", methodObject ),
-                    new Among ( "se", -1, 7, "", methodObject ),
-                    new Among ( "te", -1, 6, "", methodObject ),
-                    new Among ( "ieve", -1, 11, "", methodObject )
+                    new Among ( "de", -1, 5 ),
+                    new Among ( "ge", -1, 2 ),
+                    new Among ( "ische", -1, 4 ),
+                    new Among ( "je", -1, 1 ),
+                    new Among ( "lijke", -1, 3 ),
+                    new Among ( "le", -1, 9 ),
+                    new Among ( "ene", -1, 10 ),
+                    new Among ( "re", -1, 8 ),
+                    new Among ( "se", -1, 7 ),
+                    new Among ( "te", -1, 6 ),
+                    new Among ( "ieve", -1, 11 )
                 };
 
         private readonly static Among[] a_2 = {
-                    new Among ( "heid", -1, 3, "", methodObject ),
-                    new Among ( "fie", -1, 7, "", methodObject ),
-                    new Among ( "gie", -1, 8, "", methodObject ),
-                    new Among ( "atie", -1, 1, "", methodObject ),
-                    new Among ( "isme", -1, 5, "", methodObject ),
-                    new Among ( "ing", -1, 5, "", methodObject ),
-                    new Among ( "arij", -1, 6, "", methodObject ),
-                    new Among ( "erij", -1, 5, "", methodObject ),
-                    new Among ( "sel", -1, 3, "", methodObject ),
-                    new Among ( "rder", -1, 4, "", methodObject ),
-                    new Among ( "ster", -1, 3, "", methodObject ),
-                    new Among ( "iteit", -1, 2, "", methodObject ),
-                    new Among ( "dst", -1, 10, "", methodObject ),
-                    new Among ( "tst", -1, 9, "", methodObject )
+                    new Among ( "heid", -1, 3 ),
+                    new Among ( "fie", -1, 7 ),
+                    new Among ( "gie", -1, 8 ),
+                    new Among ( "atie", -1, 1 ),
+                    new Among ( "isme", -1, 5 ),
+                    new Among ( "ing", -1, 5 ),
+                    new Among ( "arij", -1, 6 ),
+                    new Among ( "erij", -1, 5 ),
+                    new Among ( "sel", -1, 3 ),
+                    new Among ( "rder", -1, 4 ),
+                    new Among ( "ster", -1, 3 ),
+                    new Among ( "iteit", -1, 2 ),
+                    new Among ( "dst", -1, 10 ),
+                    new Among ( "tst", -1, 9 )
                 };
 
         private readonly static Among[] a_3 = {
-                    new Among ( "end", -1, 10, "", methodObject ),
-                    new Among ( "atief", -1, 2, "", methodObject ),
-                    new Among ( "erig", -1, 10, "", methodObject ),
-                    new Among ( "achtig", -1, 9, "", methodObject ),
-                    new Among ( "ioneel", -1, 1, "", methodObject ),
-                    new Among ( "baar", -1, 3, "", methodObject ),
-                    new Among ( "laar", -1, 5, "", methodObject ),
-                    new Among ( "naar", -1, 4, "", methodObject ),
-                    new Among ( "raar", -1, 6, "", methodObject ),
-                    new Among ( "eriger", -1, 10, "", methodObject ),
-                    new Among ( "achtiger", -1, 9, "", methodObject ),
-                    new Among ( "lijker", -1, 8, "", methodObject ),
-                    new Among ( "tant", -1, 7, "", methodObject ),
-                    new Among ( "erigst", -1, 10, "", methodObject ),
-                    new Among ( "achtigst", -1, 9, "", methodObject ),
-                    new Among ( "lijkst", -1, 8, "", methodObject )
+                    new Among ( "end", -1, 10 ),
+                    new Among ( "atief", -1, 2 ),
+                    new Among ( "erig", -1, 10 ),
+                    new Among ( "achtig", -1, 9 ),
+                    new Among ( "ioneel", -1, 1 ),
+                    new Among ( "baar", -1, 3 ),
+                    new Among ( "laar", -1, 5 ),
+                    new Among ( "naar", -1, 4 ),
+                    new Among ( "raar", -1, 6 ),
+                    new Among ( "eriger", -1, 10 ),
+                    new Among ( "achtiger", -1, 9 ),
+                    new Among ( "lijker", -1, 8 ),
+                    new Among ( "tant", -1, 7 ),
+                    new Among ( "erigst", -1, 10 ),
+                    new Among ( "achtigst", -1, 9 ),
+                    new Among ( "lijkst", -1, 8 )
                 };
 
         private readonly static Among[] a_4 = {
-                    new Among ( "ig", -1, 1, "", methodObject ),
-                    new Among ( "iger", -1, 1, "", methodObject ),
-                    new Among ( "igst", -1, 1, "", methodObject )
+                    new Among ( "ig", -1, 1 ),
+                    new Among ( "iger", -1, 1 ),
+                    new Among ( "igst", -1, 1 )
                 };
 
         private readonly static Among[] a_5 = {
-                    new Among ( "ft", -1, 2, "", methodObject ),
-                    new Among ( "kt", -1, 1, "", methodObject ),
-                    new Among ( "pt", -1, 3, "", methodObject )
+                    new Among ( "ft", -1, 2 ),
+                    new Among ( "kt", -1, 1 ),
+                    new Among ( "pt", -1, 3 )
                 };
 
         private readonly static Among[] a_6 = {
-                    new Among ( "bb", -1, 1, "", methodObject ),
-                    new Among ( "cc", -1, 2, "", methodObject ),
-                    new Among ( "dd", -1, 3, "", methodObject ),
-                    new Among ( "ff", -1, 4, "", methodObject ),
-                    new Among ( "gg", -1, 5, "", methodObject ),
-                    new Among ( "hh", -1, 6, "", methodObject ),
-                    new Among ( "jj", -1, 7, "", methodObject ),
-                    new Among ( "kk", -1, 8, "", methodObject ),
-                    new Among ( "ll", -1, 9, "", methodObject ),
-                    new Among ( "mm", -1, 10, "", methodObject ),
-                    new Among ( "nn", -1, 11, "", methodObject ),
-                    new Among ( "pp", -1, 12, "", methodObject ),
-                    new Among ( "qq", -1, 13, "", methodObject ),
-                    new Among ( "rr", -1, 14, "", methodObject ),
-                    new Among ( "ss", -1, 15, "", methodObject ),
-                    new Among ( "tt", -1, 16, "", methodObject ),
-                    new Among ( "v", -1, 21, "", methodObject ),
-                    new Among ( "vv", 16, 17, "", methodObject ),
-                    new Among ( "ww", -1, 18, "", methodObject ),
-                    new Among ( "xx", -1, 19, "", methodObject ),
-                    new Among ( "z", -1, 22, "", methodObject ),
-                    new Among ( "zz", 20, 20, "", methodObject )
+                    new Among ( "bb", -1, 1 ),
+                    new Among ( "cc", -1, 2 ),
+                    new Among ( "dd", -1, 3 ),
+                    new Among ( "ff", -1, 4 ),
+                    new Among ( "gg", -1, 5 ),
+                    new Among ( "hh", -1, 6 ),
+                    new Among ( "jj", -1, 7 ),
+                    new Among ( "kk", -1, 8 ),
+                    new Among ( "ll", -1, 9 ),
+                    new Among ( "mm", -1, 10 ),
+                    new Among ( "nn", -1, 11 ),
+                    new Among ( "pp", -1, 12 ),
+                    new Among ( "qq", -1, 13 ),
+                    new Among ( "rr", -1, 14 ),
+                    new Among ( "ss", -1, 15 ),
+                    new Among ( "tt", -1, 16 ),
+                    new Among ( "v", -1, 21 ),
+                    new Among ( "vv", 16, 17 ),
+                    new Among ( "ww", -1, 18 ),
+                    new Among ( "xx", -1, 19 ),
+                    new Among ( "z", -1, 22 ),
+                    new Among ( "zz", 20, 20 )
                 };
 
         private readonly static Among[] a_7 = {
-                    new Among ( "d", -1, 1, "", methodObject ),
-                    new Among ( "t", -1, 2, "", methodObject )
+                    new Among ( "d", -1, 1 ),
+                    new Among ( "t", -1, 2 )
                 };
 
         private static readonly char[] g_v = { (char)17, (char)65, (char)16, (char)1 };

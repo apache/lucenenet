@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 /*
 
 Copyright (c) 2001, Dr Martin Porter
@@ -38,64 +38,64 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
     /// </summary>
     public class SwedishStemmer : SnowballProgram
     {
-        private readonly static SwedishStemmer methodObject = new SwedishStemmer();
+        // LUCENENET specific: Factored out methodObject by using Func<bool> instead of Reflection
 
         private readonly static Among[] a_0 = {
-                    new Among ( "a", -1, 1, "", methodObject ),
-                    new Among ( "arna", 0, 1, "", methodObject ),
-                    new Among ( "erna", 0, 1, "", methodObject ),
-                    new Among ( "heterna", 2, 1, "", methodObject ),
-                    new Among ( "orna", 0, 1, "", methodObject ),
-                    new Among ( "ad", -1, 1, "", methodObject ),
-                    new Among ( "e", -1, 1, "", methodObject ),
-                    new Among ( "ade", 6, 1, "", methodObject ),
-                    new Among ( "ande", 6, 1, "", methodObject ),
-                    new Among ( "arne", 6, 1, "", methodObject ),
-                    new Among ( "are", 6, 1, "", methodObject ),
-                    new Among ( "aste", 6, 1, "", methodObject ),
-                    new Among ( "en", -1, 1, "", methodObject ),
-                    new Among ( "anden", 12, 1, "", methodObject ),
-                    new Among ( "aren", 12, 1, "", methodObject ),
-                    new Among ( "heten", 12, 1, "", methodObject ),
-                    new Among ( "ern", -1, 1, "", methodObject ),
-                    new Among ( "ar", -1, 1, "", methodObject ),
-                    new Among ( "er", -1, 1, "", methodObject ),
-                    new Among ( "heter", 18, 1, "", methodObject ),
-                    new Among ( "or", -1, 1, "", methodObject ),
-                    new Among ( "s", -1, 2, "", methodObject ),
-                    new Among ( "as", 21, 1, "", methodObject ),
-                    new Among ( "arnas", 22, 1, "", methodObject ),
-                    new Among ( "ernas", 22, 1, "", methodObject ),
-                    new Among ( "ornas", 22, 1, "", methodObject ),
-                    new Among ( "es", 21, 1, "", methodObject ),
-                    new Among ( "ades", 26, 1, "", methodObject ),
-                    new Among ( "andes", 26, 1, "", methodObject ),
-                    new Among ( "ens", 21, 1, "", methodObject ),
-                    new Among ( "arens", 29, 1, "", methodObject ),
-                    new Among ( "hetens", 29, 1, "", methodObject ),
-                    new Among ( "erns", 21, 1, "", methodObject ),
-                    new Among ( "at", -1, 1, "", methodObject ),
-                    new Among ( "andet", -1, 1, "", methodObject ),
-                    new Among ( "het", -1, 1, "", methodObject ),
-                    new Among ( "ast", -1, 1, "", methodObject )
+                    new Among ( "a", -1, 1 ),
+                    new Among ( "arna", 0, 1 ),
+                    new Among ( "erna", 0, 1 ),
+                    new Among ( "heterna", 2, 1 ),
+                    new Among ( "orna", 0, 1 ),
+                    new Among ( "ad", -1, 1 ),
+                    new Among ( "e", -1, 1 ),
+                    new Among ( "ade", 6, 1 ),
+                    new Among ( "ande", 6, 1 ),
+                    new Among ( "arne", 6, 1 ),
+                    new Among ( "are", 6, 1 ),
+                    new Among ( "aste", 6, 1 ),
+                    new Among ( "en", -1, 1 ),
+                    new Among ( "anden", 12, 1 ),
+                    new Among ( "aren", 12, 1 ),
+                    new Among ( "heten", 12, 1 ),
+                    new Among ( "ern", -1, 1 ),
+                    new Among ( "ar", -1, 1 ),
+                    new Among ( "er", -1, 1 ),
+                    new Among ( "heter", 18, 1 ),
+                    new Among ( "or", -1, 1 ),
+                    new Among ( "s", -1, 2 ),
+                    new Among ( "as", 21, 1 ),
+                    new Among ( "arnas", 22, 1 ),
+                    new Among ( "ernas", 22, 1 ),
+                    new Among ( "ornas", 22, 1 ),
+                    new Among ( "es", 21, 1 ),
+                    new Among ( "ades", 26, 1 ),
+                    new Among ( "andes", 26, 1 ),
+                    new Among ( "ens", 21, 1 ),
+                    new Among ( "arens", 29, 1 ),
+                    new Among ( "hetens", 29, 1 ),
+                    new Among ( "erns", 21, 1 ),
+                    new Among ( "at", -1, 1 ),
+                    new Among ( "andet", -1, 1 ),
+                    new Among ( "het", -1, 1 ),
+                    new Among ( "ast", -1, 1 )
                 };
 
         private readonly static Among[] a_1 = {
-                    new Among ( "dd", -1, -1, "", methodObject ),
-                    new Among ( "gd", -1, -1, "", methodObject ),
-                    new Among ( "nn", -1, -1, "", methodObject ),
-                    new Among ( "dt", -1, -1, "", methodObject ),
-                    new Among ( "gt", -1, -1, "", methodObject ),
-                    new Among ( "kt", -1, -1, "", methodObject ),
-                    new Among ( "tt", -1, -1, "", methodObject )
+                    new Among ( "dd", -1, -1 ),
+                    new Among ( "gd", -1, -1 ),
+                    new Among ( "nn", -1, -1 ),
+                    new Among ( "dt", -1, -1 ),
+                    new Among ( "gt", -1, -1 ),
+                    new Among ( "kt", -1, -1 ),
+                    new Among ( "tt", -1, -1 )
                 };
 
         private readonly static Among[] a_2 = {
-                    new Among ( "ig", -1, 1, "", methodObject ),
-                    new Among ( "lig", 0, 1, "", methodObject ),
-                    new Among ( "els", -1, 1, "", methodObject ),
-                    new Among ( "fullt", -1, 3, "", methodObject ),
-                    new Among ( "l\u00F6st", -1, 2, "", methodObject )
+                    new Among ( "ig", -1, 1 ),
+                    new Among ( "lig", 0, 1 ),
+                    new Among ( "els", -1, 1 ),
+                    new Among ( "fullt", -1, 3 ),
+                    new Among ( "l\u00F6st", -1, 2 )
                 };
 
         private static readonly char[] g_v = { (char)17, (char)65, (char)16, (char)1, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)24, (char)0, (char)32 };
