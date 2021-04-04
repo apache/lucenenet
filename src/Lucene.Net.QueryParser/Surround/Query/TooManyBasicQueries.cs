@@ -38,12 +38,13 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             : base("Exceeded maximum of " + maxBasicQueries + " basic queries.")
         { }
 
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
-        // For testing
-        public TooManyBasicQueries(string message)
+        // LUCENENET: For testing purposes
+        internal TooManyBasicQueries(string message)
             : base(message)
-        { }
+        {
+        }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

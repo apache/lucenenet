@@ -62,12 +62,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         {
         }
 
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
-        // For testing
-        public QueryNodeParseException(string message)
+        // LUCENENET: For testing purposes
+        internal QueryNodeParseException(string message)
             : base(message)
         { }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

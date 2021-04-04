@@ -476,13 +476,13 @@ namespace Lucene.Net.Index
                 this.dir = dir;
             }
 
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
-            // For testing purposes
-            public MergeException(string message)
+            // LUCENENET: For testing purposes
+            internal MergeException(string message)
                 : base(message)
             {
             }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>

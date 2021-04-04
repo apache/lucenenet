@@ -171,15 +171,15 @@ namespace Lucene.Net.Queries.Function.DocValues
             public DocTermsIndexException(string fieldName, Exception cause)
                 : base("Can't initialize DocTermsIndex to generate (function) FunctionValues for field: " + fieldName, cause)
             {
-            }  
+            }
 
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
-            // For testing
-            public DocTermsIndexException(string message)
+            // LUCENENET: For testing purposes
+            internal DocTermsIndexException(string message)
                 : base(message)
             {
             }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>

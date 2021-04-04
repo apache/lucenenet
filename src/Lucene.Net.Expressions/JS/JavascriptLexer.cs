@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -2191,13 +2191,13 @@ loop2_break: ;
         {
         }
 
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
-        // For testing
-        public ParseException(string message)
+        // LUCENENET: For testing purposes
+        internal ParseException(string message)
             : base(message)
         {
         }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

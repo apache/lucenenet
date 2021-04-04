@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
@@ -65,13 +65,13 @@ namespace Lucene.Net.Index
         {
         }
 
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
-        // For testing purposes
-        public IndexFormatTooNewException(string message)
+        // LUCENENET: For testing purposes
+        internal IndexFormatTooNewException(string message)
             : base(message)
         {
         }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
