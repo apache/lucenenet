@@ -674,6 +674,24 @@ namespace Lucene.Net.TestFramework
             _NUnit.Assert.Fail(message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Pass(string message, params object[] args)
+        {
+            _NUnit.Assert.Pass(message, args);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Pass(string message)
+        {
+            _NUnit.Assert.Pass(message);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Pass()
+        {
+            _NUnit.Assert.Pass();
+        }
+
         //
         // Summary:
         //     Asserts that a condition is false. If the condition is true the method throws
