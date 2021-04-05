@@ -70,7 +70,7 @@
     <NewtonsoftJsonPackageVersion>10.0.1</NewtonsoftJsonPackageVersion>
     <NUnit3TestAdapterPackageVersion>3.17.0</NUnit3TestAdapterPackageVersion>
     <NUnitPackageVersion>3.13.1</NUnitPackageVersion>
-    <OpenNLPNETPackageVersion>1.9.1</OpenNLPNETPackageVersion>
+    <OpenNLPNETPackageVersion>1.9.1.1</OpenNLPNETPackageVersion>
     <SharpZipLibPackageVersion>1.1.0</SharpZipLibPackageVersion>
     <Spatial4nCorePackageVersion>0.4.1</Spatial4nCorePackageVersion>
     <Spatial4nCoreNTSPackageVersion>$(Spatial4nCorePackageVersion)</Spatial4nCoreNTSPackageVersion>

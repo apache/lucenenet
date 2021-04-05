@@ -132,10 +132,5 @@ namespace Lucene.Net.Analysis.OpenNlp
             ts.SetReader(new StringReader(SENTENCES));
             AssertTokenStreamContents(ts, SENTENCES_punc);
         }
-
-        internal static void assertTrue(bool condition)
-        {
-            Assert.IsTrue(condition);
-        }
     }
 }
