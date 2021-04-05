@@ -1,4 +1,4 @@
-# Licensed to the Apache Software Foundation (ASF) under one
+﻿# Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
 # regarding copyright ownership.  The ASF licenses this file
@@ -157,6 +157,16 @@ steps:
 - template: publish-test-results.yml
   parameters:
     testProjectName: 'Lucene.Net.Tests._T-Z'
+    osName: '${{ parameters.osName }}'
+    framework: '${{ parameters.framework }}'
+    vsTestPlatform: '${{ parameters.vsTestPlatform }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.AllProjects'
     osName: '${{ parameters.osName }}'
     framework: '${{ parameters.framework }}'
     vsTestPlatform: '${{ parameters.vsTestPlatform }}'
