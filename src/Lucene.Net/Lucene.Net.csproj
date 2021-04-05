@@ -101,6 +101,8 @@
     <InternalsVisibleTo Include="Lucene.Net.Tests._J-S" />
     <InternalsVisibleTo Include="Lucene.Net.Tests._T-Z" />
 
+    <InternalsVisibleTo Include="Lucene.Net.Tests.AllProjects" />
+
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Common" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Kuromoji" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Phonetic" />

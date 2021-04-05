@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(SolutionDir)TestTargetFramework.props" />
+
+  <PropertyGroup>
+    <!-- Technically, this is all Java-ported non-test projects and dotnet add-ons
+         but that is a really long project name! -->
+    <AssemblyTitle>Lucene.Net.Tests.AllProjects</AssemblyTitle>
+    <RootNamespace>Lucene.Net</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Lucene.Net.Tests\Support\ExceptionHandling\**\*.cs" LinkBase="Support\ExceptionHandling" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
+
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Analysis.*\Lucene.Net.Analysis.*.csproj" Exclude="..\Lucene.Net.Analysis.OpenNLP\Lucene.Net.Analysis.OpenNLP.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Benchmark\Lucene.Net.Benchmark.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Classification\Lucene.Net.Classification.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj" />
+    <!--<ProjectReference Include="..\Lucene.Net.Demo\Lucene.Net.Demo.csproj" />-->
+    <ProjectReference Include="..\Lucene.Net.Expressions\Lucene.Net.Expressions.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Grouping\Lucene.Net.Grouping.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Join\Lucene.Net.Join.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Memory\Lucene.Net.Memory.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Misc\Lucene.Net.Misc.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />
+    <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Replicator\Lucene.Net.Replicator.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Sandbox\Lucene.Net.Sandbox.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Spatial\Lucene.Net.Spatial.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Suggest\Lucene.Net.Suggest.csproj" />
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+    
+    
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+    <ProjectReference Include="..\Lucene.Net.Analysis.OpenNLP\Lucene.Net.Analysis.OpenNLP.csproj" />
+  </ItemGroup>
+
+  <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
+
+</Project>

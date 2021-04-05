@@ -31,6 +31,7 @@ namespace Lucene
      * limitations under the License.
      */
 
+#pragma warning disable IDE0001 // Name can be simplified
     [LuceneNetSpecific]
     public class TestExceptionExtensions : LuceneTestCase
     {
@@ -53,15 +54,37 @@ namespace Lucene
             Type.GetType("System.CrossAppDomainMarshaledException, System.Private.CoreLib");
 
 
-        // LUCENENET TODO: Load exception types from all assemblies (requires referencing all of them)
+        // Load exception types from all assemblies
         private static readonly Assembly[] LuceneAssemblies = new Assembly[]
         {
-            typeof(Lucene.Net.Analysis.Analyzer).Assembly,
-            typeof(Lucene.Net.Codecs.BlockTerms.BlockTermsReader).Assembly,
-            typeof(Lucene.Net.Facet.Facets).Assembly,
-            typeof(Lucene.Net.Queries.BooleanFilter).Assembly,
-            typeof(Lucene.Net.QueryParsers.Classic.QueryParser).Assembly
+            typeof(Lucene.Net.Analysis.Analyzer).Assembly,                         // Lucene.Net
+            typeof(Lucene.Net.Analysis.Standard.ClassicAnalyzer).Assembly,         // Lucene.Net.Analysis.Common
+            typeof(Lucene.Net.Analysis.Ja.GraphvizFormatter).Assembly,             // Lucene.Net.Analysis.Kuromoji
+            typeof(Lucene.Net.Analysis.Morfologik.MorfologikAnalyzer).Assembly,    // Lucene.Net.Analysis.Morfologik
+#if FEATURE_OPENNLP
+            typeof(Lucene.Net.Analysis.OpenNlp.OpenNLPTokenizer).Assembly,         // Lucene.Net.Analysis.OpenNlp
+#endif
+            typeof(Lucene.Net.Analysis.Phonetic.BeiderMorseFilter).Assembly,       // Lucene.Net.Analysis.Phonetic
+            typeof(Lucene.Net.Analysis.Cn.Smart.AnalyzerProfile).Assembly,         // Lucene.Net.Analysis.SmartCn
+            typeof(Lucene.Net.Analysis.Stempel.StempelFilter).Assembly,            // Lucene.Net.Analysis.Stempel
+            typeof(Lucene.Net.Benchmarks.Constants).Assembly,                      // Lucene.Net.Benchmark
+            typeof(Lucene.Net.Classification.KNearestNeighborClassifier).Assembly, // Lucene.Net.Classification
+            typeof(Lucene.Net.Codecs.BlockTerms.BlockTermsReader).Assembly,        // Lucene.Net.Codecs
+            typeof(Lucene.Net.Expressions.Bindings).Assembly,                      // Lucene.Net.Expressions
+            typeof(Lucene.Net.Facet.Facets).Assembly,                              // Lucene.Net.Facet
+            typeof(Lucene.Net.Search.Grouping.ICollectedSearchGroup).Assembly,     // Lucene.Net.Grouping
+            typeof(Lucene.Net.Search.Highlight.DefaultEncoder).Assembly,           // Lucene.Net.Highlighter
+            typeof(Lucene.Net.Join.JoinUtil).Assembly,                             // Lucene.Net.Join
+            typeof(Lucene.Net.Index.Memory.MemoryIndex).Assembly,                  // Lucene.Net.Memory
+            typeof(Lucene.Net.Misc.SweetSpotSimilarity).Assembly,                  // Lucene.Net.Misc
+            typeof(Lucene.Net.Queries.BooleanFilter).Assembly,                     // Lucene.Net.Queries
+            typeof(Lucene.Net.QueryParsers.Classic.QueryParser).Assembly,          // Lucene.Net.QueryParser
+            typeof(Lucene.Net.Replicator.IReplicator).Assembly,                    // Lucene.Net.Replicator
+            typeof(Lucene.Net.Sandbox.Queries.DuplicateFilter).Assembly,           // Lucene.Net.Sandbox
+            typeof(Lucene.Net.Spatial.DisjointSpatialFilter).Assembly,             // Lucene.Net.Spatial
+            typeof(Lucene.Net.Util.LuceneTestCase).Assembly,                       // Lucene.Net.TestFramework
         };
+
 
         private static readonly Assembly[] DotNetAssemblies = new Assembly[]
         {
