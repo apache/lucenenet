@@ -1,9 +1,7 @@
 ﻿using System;
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
-#endif
 
-namespace Lucene.Net.Search
+namespace Lucene
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,24 +21,45 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Throw this exception in <see cref="ICollector.Collect(int)"/> to prematurely
-    /// terminate collection of the current leaf.
-    /// <para/>Note: <see cref="IndexSearcher"/> swallows this exception and never re-throws it.
-    /// As a consequence, you should not catch it when calling any overload of
-    /// <see cref="IndexSearcher.Search(Weight, FieldDoc, int, Sort, bool, bool, bool)"/> as it is unnecessary and might hide misuse
-    /// of this exception.
+    /// RuntimeException is the superclass of those exceptions that can be thrown during the normal
+    /// operation of the Java Virtual Machine.
+    /// <para/>
+    /// RuntimeException and its subclasses are unchecked exceptions.Unchecked exceptions do not
+    /// need to be declared in a method or constructor's throws clause if they can be thrown by the
+    /// execution of the method or constructor and propagate outside the method or constructor boundary.
+    /// <para/>
+    /// This is a Java compatibility exception, and should be thrown in
+    /// Lucene.NET everywhere Lucene throws it, however catch blocks should
+    /// always use the <see cref="ExceptionExtensions.IsRuntimeException(Exception)"/> method.
+    /// <code>
+    /// catch (Exception ex) when (ex.IsRuntimeException())
+    /// </code>
+    /// <para/>
+    /// RuntimeException can be thrown, but cannot be subclassed in C# because it is internal.
+    /// For all Lucene exceptions that subclass RuntimeException, implement the <see cref="IRuntimeException"/>
+    /// interface, then choose the most logical exception type in .NET to subclass.
     /// </summary>
     // LUCENENET: It is no longer good practice to use binary serialization. 
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    public sealed class CollectionTerminatedException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
+    internal class RuntimeException : Exception, IRuntimeException
     {
-        /// <summary>
-        /// Sole constructor. </summary>
-        public CollectionTerminatedException()
-            : base()
+        public RuntimeException()
+        {
+        }
+
+        public RuntimeException(string message) : base(message)
+        {
+        }
+
+        public RuntimeException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        public RuntimeException(Exception cause)
+            : base(cause?.ToString(), cause)
         {
         }
 
@@ -50,7 +69,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        private CollectionTerminatedException(SerializationInfo info, StreamingContext context)
+        protected RuntimeException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

@@ -34,7 +34,7 @@ namespace Lucene.Net.Search
     /// exceeded, the search thread is stopped by throwing a
     /// <see cref="TimeExceededException"/>.
     /// </summary>
-    public class TimeLimitingCollector : ICollector
+    public class TimeLimitingCollector : ICollector // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
     {
         /// <summary>
         /// Thrown when elapsed search time exceeds allowed search time. </summary>
@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
 #endif
-        public class TimeExceededException : Exception
+        public class TimeExceededException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
         {
             private readonly long timeAllowed; // LUCENENET: marked readonly
             private readonly long timeElapsed; // LUCENENET: marked readonly

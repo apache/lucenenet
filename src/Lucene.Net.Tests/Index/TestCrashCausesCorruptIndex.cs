@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
         /// The marker RuntimeException that we use in lieu of an
         /// actual machine crash.
         /// </summary>
-        private class CrashingException : Exception
+        private class CrashingException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
         {
             public CrashingException(string msg)
                 : base(msg)

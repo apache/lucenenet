@@ -34,7 +34,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    public class QueryNodeError : Exception, INLSException
+    public class QueryNodeError : Exception, INLSException, IError // LUCENENET specific: Added IError for identification of the Java superclass in .NET
     {
         private readonly IMessage message; // LUCENENET: marked readonly
 

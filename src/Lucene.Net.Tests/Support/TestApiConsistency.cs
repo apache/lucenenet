@@ -1,4 +1,4 @@
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -38,7 +38,7 @@ namespace Lucene.Net
         [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
         public override void TestPrivateFieldNames(Type typeFromTargetAssembly)
         {
-            base.TestPrivateFieldNames(typeFromTargetAssembly, @"^Lucene\.Net\.Support\.(?:ConcurrentHashSet|PlatformHelper)");
+            base.TestPrivateFieldNames(typeFromTargetAssembly, @"^Lucene\.Net\.Support\.(?:ConcurrentHashSet|PlatformHelper)|^Lucene\.ExceptionExtensions");
         }
 
         [Test, LuceneNetSpecific]

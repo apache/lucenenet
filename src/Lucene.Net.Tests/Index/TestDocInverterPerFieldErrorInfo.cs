@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Support.IO;
 using NUnit.Framework;
@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
     {
         private static readonly FieldType storedTextType = new FieldType(TextField.TYPE_NOT_STORED);
 
-        private class BadNews : Exception
+        private class BadNews : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
         {
             internal BadNews(string message)
                 : base(message)

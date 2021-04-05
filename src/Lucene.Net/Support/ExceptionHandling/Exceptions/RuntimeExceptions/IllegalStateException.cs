@@ -1,9 +1,7 @@
 ﻿using System;
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
-#endif
 
-namespace Lucene.Net.Search
+namespace Lucene
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,24 +21,38 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Throw this exception in <see cref="ICollector.Collect(int)"/> to prematurely
-    /// terminate collection of the current leaf.
-    /// <para/>Note: <see cref="IndexSearcher"/> swallows this exception and never re-throws it.
-    /// As a consequence, you should not catch it when calling any overload of
-    /// <see cref="IndexSearcher.Search(Weight, FieldDoc, int, Sort, bool, bool, bool)"/> as it is unnecessary and might hide misuse
-    /// of this exception.
+    /// Signals that a method has been invoked at an illegal or inappropriate time.
+    /// In other words, the Java environment or Java application is not in an appropriate
+    /// state for the requested operation.
+    /// <para/>
+    /// This is a Java compatibility exception, and should be thrown in
+    /// Lucene.NET everywhere Lucene throws it, however catch blocks should
+    /// always use the <see cref="ExceptionExtensions.IsIllegalStateException(Exception)"/> method.
+    /// <code>
+    /// catch (Exception ex) when (ex.IsIllegalStateException())
+    /// </code>
     /// </summary>
     // LUCENENET: It is no longer good practice to use binary serialization. 
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    public sealed class CollectionTerminatedException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
+    internal class IllegalStateException : InvalidOperationException
     {
-        /// <summary>
-        /// Sole constructor. </summary>
-        public CollectionTerminatedException()
-            : base()
+        public IllegalStateException()
+        {
+        }
+
+        public IllegalStateException(string message) : base(message)
+        {
+        }
+
+        public IllegalStateException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        public IllegalStateException(Exception cause)
+            : base(cause?.ToString(), cause)
         {
         }
 
@@ -50,7 +62,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        private CollectionTerminatedException(SerializationInfo info, StreamingContext context)
+        protected IllegalStateException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

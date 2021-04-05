@@ -1,9 +1,7 @@
 ﻿using System;
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
-#endif
 
-namespace Lucene.Net.Search
+namespace Lucene
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,24 +21,44 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Throw this exception in <see cref="ICollector.Collect(int)"/> to prematurely
-    /// terminate collection of the current leaf.
-    /// <para/>Note: <see cref="IndexSearcher"/> swallows this exception and never re-throws it.
-    /// As a consequence, you should not catch it when calling any overload of
-    /// <see cref="IndexSearcher.Search(Weight, FieldDoc, int, Sort, bool, bool, bool)"/> as it is unnecessary and might hide misuse
-    /// of this exception.
+    /// Signals that an error has been reached unexpectedly while parsing.
+    /// <para/>
+    /// This is a Java compatibility exception, and should be thrown in
+    /// Lucene.NET everywhere Lucene throws it, however catch blocks should
+    /// always use the <see cref="ExceptionExtensions.IsParseException(Exception)"/> method.
+    /// <code>
+    /// catch (Exception ex) when (ex.IsParseException())
+    /// </code>
     /// </summary>
     // LUCENENET: It is no longer good practice to use binary serialization. 
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    public sealed class CollectionTerminatedException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
+    internal class ParseException : FormatException
     {
-        /// <summary>
-        /// Sole constructor. </summary>
-        public CollectionTerminatedException()
-            : base()
+        public ParseException(string message, int errorOffset) : base(string.Concat(message, ", ErrorOffset = ", errorOffset.ToString()))
+        {
+            ErrorOffset = errorOffset;
+        }
+
+        public ParseException(string message, int errorOffset, Exception innerException) : base(string.Concat(message, ", ErrorOffset = ", errorOffset.ToString()), innerException)
+        {
+            ErrorOffset = errorOffset;
+        }
+
+        // LUCENENET: For testing purposes
+        internal ParseException()
+        {
+        }
+
+        // LUCENENET: For testing purposes
+        internal ParseException(string message) : base(message)
+        {
+        }
+
+        // LUCENENET: For testing purposes
+        internal ParseException(string message, Exception innerException) : base(message, innerException)
         {
         }
 
@@ -50,10 +68,15 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        private CollectionTerminatedException(SerializationInfo info, StreamingContext context)
+        protected ParseException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
 #endif
+
+        /// <summary>
+        /// Returns the position where the error was found.
+        /// </summary>
+        public int ErrorOffset { get; private set; }
     }
 }

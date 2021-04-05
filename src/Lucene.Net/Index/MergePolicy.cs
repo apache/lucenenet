@@ -456,7 +456,7 @@ namespace Lucene.Net.Index
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
 #endif
-        public class MergeException : Exception
+        public class MergeException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
         {
             private readonly Directory dir; // LUCENENET: marked readonly
 
