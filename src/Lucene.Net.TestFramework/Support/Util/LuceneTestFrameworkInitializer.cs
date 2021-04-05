@@ -1,4 +1,4 @@
-using Lucene.Net.Codecs;
+﻿using Lucene.Net.Codecs;
 using Lucene.Net.Configuration;
 using NUnit.Framework;
 using System;
@@ -226,6 +226,22 @@ namespace Lucene.Net.Util
                 // toggled on and off, even in release mode. Note this must be done after
                 // the ConfigurationFactory is set.
                 Lucene.Net.Diagnostics.Debugging.AssertsEnabled = SystemProperties.GetPropertyAsBoolean("assert", true);
+
+                // Identify NUnit exceptions down in Lucene.Net so they can be ignored in catch blocks that
+                // catch Java "Exception" types that do subclass Error (for the ExceptionExtensions.IsException() method).
+                Lucene.ExceptionExtensions.NUnitResultStateExceptionType = typeof(NUnit.Framework.ResultStateException);
+                Lucene.ExceptionExtensions.NUnitAssertionExceptionType = typeof(NUnit.Framework.AssertionException);
+                Lucene.ExceptionExtensions.NUnitMultipleAssertExceptionType = typeof(NUnit.Framework.MultipleAssertException);
+                Lucene.ExceptionExtensions.NUnitInconclusiveExceptionType = typeof(NUnit.Framework.InconclusiveException);
+
+                // Identify the Debug.Assert() exception so it can be excluded from being swallowed by catch blocks.
+                // These types are internal, so we can identify them using Reflection.
+                Lucene.ExceptionExtensions.DebugAssertExceptionType =
+                    // .NET 5/.NET Core 3.x
+                    Type.GetType("System.Diagnostics.DebugProvider+DebugAssertException, System.Private.CoreLib")
+                    // .NET Core 2.x
+                    ?? Type.GetType("System.Diagnostics.Debug+DebugAssertException, System.Private.CoreLib");
+                    // .NET Framework doesn't throw in this case
 
                 AfterInitialization();
 

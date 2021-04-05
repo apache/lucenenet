@@ -30,7 +30,7 @@ namespace Lucene.Net.Diagnostics
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    public class AssertionException : Exception
+    public class AssertionException : Exception, IError
     {
         /// <summary>
         /// Constructs an <see cref="AssertionException"/> with no detail message.

@@ -1,9 +1,7 @@
 ﻿using System;
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
-#endif
 
-namespace Lucene.Net.Search
+namespace Lucene
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,26 +21,42 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Throw this exception in <see cref="ICollector.Collect(int)"/> to prematurely
-    /// terminate collection of the current leaf.
-    /// <para/>Note: <see cref="IndexSearcher"/> swallows this exception and never re-throws it.
-    /// As a consequence, you should not catch it when calling any overload of
-    /// <see cref="IndexSearcher.Search(Weight, FieldDoc, int, Sort, bool, bool, bool)"/> as it is unnecessary and might hide misuse
-    /// of this exception.
+    /// Thrown when the Java Virtual Machine cannot allocate an object because
+    /// it is out of memory, and no more memory could be made available by the
+    /// garbage collector. OutOfMemoryError objects may be constructed by the virtual
+    /// machine as if <a href="https://docs.oracle.com/javase/7/docs/api/java/lang/Throwable.html#Throwable(java.lang.String,%20java.lang.Throwable,%20boolean,%20boolean)">
+    /// suppression were disabled and/or the stack trace was not writable.</a>
+    /// <para/>
+    /// This is a Java compatibility exception, and should be thrown in
+    /// Lucene.NET everywhere Lucene throws it, however catch blocks should
+    /// always use the <see cref="ExceptionExtensions.IsOutOfMemoryError(Exception)"/> method.
+    /// <code>
+    /// catch (Exception ex) when (ex.IsOutOfMemoryError())
+    /// </code>
     /// </summary>
     // LUCENENET: It is no longer good practice to use binary serialization. 
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    public sealed class CollectionTerminatedException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
+    internal class OutOfMemoryError : OutOfMemoryException
     {
-        /// <summary>
-        /// Sole constructor. </summary>
-        public CollectionTerminatedException()
-            : base()
+        public OutOfMemoryError()
         {
         }
+
+        public OutOfMemoryError(string message) : base(message)
+        {
+        }
+
+        public OutOfMemoryError(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        public OutOfMemoryError(Exception cause) : base(cause?.ToString(), cause)
+        {
+        }
+
 
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
@@ -50,7 +64,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        private CollectionTerminatedException(SerializationInfo info, StreamingContext context)
+        protected OutOfMemoryError(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

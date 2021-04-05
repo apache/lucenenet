@@ -166,7 +166,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-        public sealed class DocTermsIndexException : Exception
+        public sealed class DocTermsIndexException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
         {
             public DocTermsIndexException(string fieldName, Exception cause)
                 : base("Can't initialize DocTermsIndex to generate (function) FunctionValues for field: " + fieldName, cause)
