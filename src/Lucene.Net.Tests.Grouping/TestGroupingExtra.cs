@@ -30,6 +30,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Mutable;
 using NUnit.Framework;
+using System;
 using System.Collections;
 using System.Text;
 
@@ -91,24 +92,25 @@ namespace Lucene.Net.Search.Grouping
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<BytesRef> groupDocs in topGroups.Groups)
             {
+                sb.AppendLine();
                 if (groupDocs.GroupValue != null)
                 {
-                    sb.Append($"\r\nGroup: {groupDocs.GroupValue.Utf8ToString()}\r\n");
+                    sb.AppendLine($"Group: {groupDocs.GroupValue.Utf8ToString()}");
                 }
                 else
                 {
-                    sb.Append($"\r\nUngrouped\r\n");    //Happens when matching documents don't contain the group field
+                    sb.AppendLine($"Ungrouped");    //Happens when matching documents don't contain the group field
                 }
 
                 foreach (ScoreDoc scoreDoc in groupDocs.ScoreDocs)
                 {
                     doc = searcher.Doc(scoreDoc.Doc);
-                    sb.Append($"{doc.GetField("carMake").GetStringValue()} {doc.GetField("carModel").GetStringValue()} {doc.GetField("carColor").GetStringValue()}\r\n");
+                    sb.AppendLine($"{doc.GetField("carMake").GetStringValue()} {doc.GetField("carModel").GetStringValue()} {doc.GetField("carColor").GetStringValue()}");
                 }
             }
 
             string output = sb.ToString();
-            string expectdValue = "\r\nGroup: Audi\r\nAudi A3 Orange\r\nAudi A3 Green\r\nAudi A3 Blue\r\nAudi S4 Yellow\r\n\r\nGroup: Bently\r\nBently Arnage Grey\r\nBently Arnage Blue\r\nBently Azure Green\r\nBently Azure Blue\r\n\r\nGroup: Ford\r\nFord Aspire Yellow\r\nFord Aspire Blue\r\nFord Bronco Green\r\nFord Bronco Orange\r\n";
+            string expectdValue = "\r\nGroup: Audi\r\nAudi A3 Orange\r\nAudi A3 Green\r\nAudi A3 Blue\r\nAudi S4 Yellow\r\n\r\nGroup: Bently\r\nBently Arnage Grey\r\nBently Arnage Blue\r\nBently Azure Green\r\nBently Azure Blue\r\n\r\nGroup: Ford\r\nFord Aspire Yellow\r\nFord Aspire Blue\r\nFord Bronco Green\r\nFord Bronco Orange\r\n".Replace("\r\n", Environment.NewLine);
             assertEquals(expectdValue, output);
 
             /*  Output:
@@ -185,24 +187,25 @@ namespace Lucene.Net.Search.Grouping
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<BytesRef> groupDocs in topGroups.Groups)
             {
+                sb.AppendLine();
                 if (groupDocs.GroupValue != null)
                 {
-                    sb.Append($"\r\nGroup: {groupDocs.GroupValue.Utf8ToString()}\r\n");
+                    sb.AppendLine($"Group: {groupDocs.GroupValue.Utf8ToString()}");
                 }
                 else
                 {
-                    sb.Append($"\r\nUngrouped\r\n");    //Happens when matching documents don't contain the group field
+                    sb.AppendLine($"Ungrouped");    //Happens when matching documents don't contain the group field
                 }
 
                 foreach (ScoreDoc scoreDoc in groupDocs.ScoreDocs)
                 {
                     doc = searcher.Doc(scoreDoc.Doc);
-                    sb.Append($"{doc.GetField("carMake").GetStringValue()} {doc.GetField("carModel").GetStringValue()} {doc.GetField("carColor").GetStringValue()}\r\n");
+                    sb.AppendLine($"{doc.GetField("carMake").GetStringValue()} {doc.GetField("carModel").GetStringValue()} {doc.GetField("carColor").GetStringValue()}");
                 }
             }
 
             string output = sb.ToString();
-            string expectdValue = "\r\nGroup: Audi\r\nAudi A3 Orange\r\nAudi A3 Green\r\nAudi A3 Blue\r\nAudi S4 Yellow\r\n\r\nGroup: Bently\r\nBently Arnage Grey\r\nBently Arnage Blue\r\nBently Azure Green\r\nBently Azure Blue\r\n\r\nGroup: Ford\r\nFord Aspire Yellow\r\nFord Aspire Blue\r\nFord Bronco Green\r\nFord Bronco Orange\r\n";
+            string expectdValue = "\r\nGroup: Audi\r\nAudi A3 Orange\r\nAudi A3 Green\r\nAudi A3 Blue\r\nAudi S4 Yellow\r\n\r\nGroup: Bently\r\nBently Arnage Grey\r\nBently Arnage Blue\r\nBently Azure Green\r\nBently Azure Blue\r\n\r\nGroup: Ford\r\nFord Aspire Yellow\r\nFord Aspire Blue\r\nFord Bronco Green\r\nFord Bronco Orange\r\n".Replace("\r\n", Environment.NewLine);
             assertEquals(expectdValue, output);
 
             /*  Output:
@@ -289,25 +292,26 @@ namespace Lucene.Net.Search.Grouping
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<BytesRef> groupDocs in topGroups.Groups)
             {
+                sb.AppendLine();
                 if (groupDocs.GroupValue != null)
                 {
                     int val2 = NumericUtils.PrefixCodedToInt32(groupDocs.GroupValue);
-                    sb.Append($"\r\nGroup: {val2}\r\n");
+                    sb.AppendLine($"Group: {val2}");
                 }
                 else
                 {
-                    sb.Append($"\r\nUngrouped\r\n");    //Happens when matching documents don't contain the group field
+                    sb.AppendLine($"Ungrouped");    //Happens when matching documents don't contain the group field
                 }
 
                 foreach (ScoreDoc scoreDoc in groupDocs.ScoreDocs)
                 {
                     doc = searcher.Doc(scoreDoc.Doc);
-                    sb.Append($"{doc.GetField("major").GetInt32Value()} {doc.GetField("minor").GetInt32Value()} {doc.GetField("rev").GetInt32Value()}\r\n");
+                    sb.AppendLine($"{doc.GetField("major").GetInt32Value()} {doc.GetField("minor").GetInt32Value()} {doc.GetField("rev").GetInt32Value()}");
                 }
             }
 
             string output = sb.ToString();
-            string expectdValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n3000 3993 9\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n\r\nGroup: 8000\r\n8000 8123 28\r\n8000 8888 8\r\n8000 8998 92\r\n";
+            string expectdValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n3000 3993 9\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n\r\nGroup: 8000\r\n8000 8123 28\r\n8000 8888 8\r\n8000 8998 92\r\n".Replace("\r\n", Environment.NewLine);
             assertEquals(expectdValue, output);
 
             /*  Output:
@@ -400,27 +404,27 @@ namespace Lucene.Net.Search.Grouping
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValue> groupDocs in topGroups.Groups)
             {
-
-                if(groupDocs.GroupValue != null)
+                sb.AppendLine();
+                if (groupDocs.GroupValue != null)
                 {
                     BytesRef bytesRef = ((MutableValueStr)groupDocs.GroupValue).Value;
                     int major = NumericUtils.PrefixCodedToInt32(bytesRef);
-                    sb.Append($"\r\nGroup: {major}\r\n");
+                    sb.AppendLine($"Group: {major}");
                 }
                 else
                 {
-                    sb.Append($"\r\nUngrouped\r\n");    //Happens when matching documents don't contain the group field
+                    sb.AppendLine($"Ungrouped");    //Happens when matching documents don't contain the group field
                 }
 
                 foreach (ScoreDoc scoreDoc in groupDocs.ScoreDocs)
                 {
                     doc = searcher.Doc(scoreDoc.Doc);
-                    sb.Append($"{doc.GetField("major").GetInt32Value()} {doc.GetField("minor").GetInt32Value()} {doc.GetField("rev").GetInt32Value()}\r\n");
+                    sb.AppendLine($"{doc.GetField("major").GetInt32Value()} {doc.GetField("minor").GetInt32Value()} {doc.GetField("rev").GetInt32Value()}");
                 }
             }
 
             string output = sb.ToString();
-            string expectdValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n3000 3993 9\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n\r\nGroup: 8000\r\n8000 8123 28\r\n8000 8888 8\r\n8000 8998 92\r\n";
+            string expectdValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n3000 3993 9\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n\r\nGroup: 8000\r\n8000 8123 28\r\n8000 8888 8\r\n8000 8998 92\r\n".Replace("\r\n", Environment.NewLine);
             assertEquals(expectdValue, output);
 
             /*  Output:
