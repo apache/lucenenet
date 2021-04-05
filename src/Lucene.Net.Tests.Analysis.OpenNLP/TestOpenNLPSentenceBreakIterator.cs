@@ -6,7 +6,7 @@ using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-//using Assert = Lucene.Net.TestFramework.Assert;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Analysis.OpenNlp
 {
@@ -239,16 +239,5 @@ namespace Lucene.Net.Analysis.OpenNlp
             assertEquals(BreakIterator.Done, bi.Next(13));
             assertEquals(BreakIterator.Done, bi.Next(-8));
         }
-
-        internal static void assertEquals(object expected, object actual)
-        {
-            Assert.AreEqual(expected, actual);
-        }
-
-        internal static void assertEquals(long expected, long actual)
-        {
-            Assert.AreEqual(expected, actual);
-        }
-
     }
 }

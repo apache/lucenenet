@@ -35,11 +35,6 @@
     <RootNamespace>Lucene.Net.Analysis.OpenNlp</RootNamespace>
   </PropertyGroup>
 
-  <!-- OpenNLP is not strong-named -->
-  <PropertyGroup Label="Assembly Signing">
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
     <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />
