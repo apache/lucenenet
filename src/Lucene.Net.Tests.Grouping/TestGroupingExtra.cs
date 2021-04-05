@@ -21,6 +21,7 @@
 
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
@@ -47,6 +48,7 @@ namespace Lucene.Net.Search.Grouping
         /// 2 pass by field name approach. Uses FieldCache, not DocValues.
         /// </summary>
         [Test]
+        [LuceneNetSpecific]
         public void GroupingSearch_ViaName_StringSorted_UsingFieldCache_Top3Groups_Top4DocsEach()
         {
             string[,] carData = GetCarData();
@@ -91,17 +93,17 @@ namespace Lucene.Net.Search.Grouping
             {
                 if (groupDocs.GroupValue != null)
                 {
-                    sb.AppendLine($"\r\nGroup: {groupDocs.GroupValue.Utf8ToString()}");
+                    sb.Append($"\r\nGroup: {groupDocs.GroupValue.Utf8ToString()}\r\n");
                 }
                 else
                 {
-                    sb.AppendLine($"\r\nUngrouped");    //Happens when matching documents don't contain the group field
+                    sb.Append($"\r\nUngrouped\r\n");    //Happens when matching documents don't contain the group field
                 }
 
                 foreach (ScoreDoc scoreDoc in groupDocs.ScoreDocs)
                 {
                     doc = searcher.Doc(scoreDoc.Doc);
-                    sb.AppendLine($"{doc.GetField("carMake").GetStringValue()} {doc.GetField("carModel").GetStringValue()} {doc.GetField("carColor").GetStringValue()}");
+                    sb.Append($"{doc.GetField("carMake").GetStringValue()} {doc.GetField("carModel").GetStringValue()} {doc.GetField("carColor").GetStringValue()}\r\n");
                 }
             }
 
@@ -138,6 +140,7 @@ namespace Lucene.Net.Search.Grouping
         /// 2 pass by field name approach. Uses FieldCache, not DocValues.
         /// </summary>
         [Test]
+        [LuceneNetSpecific]
         public void GroupingSearch_ViaName_StringSorted_UsingDocValues_Top3Groups_Top4DocsEach()
         {
             string[,] carData = GetCarData();
@@ -184,17 +187,17 @@ namespace Lucene.Net.Search.Grouping
             {
                 if (groupDocs.GroupValue != null)
                 {
-                    sb.AppendLine($"\r\nGroup: {groupDocs.GroupValue.Utf8ToString()}");
+                    sb.Append($"\r\nGroup: {groupDocs.GroupValue.Utf8ToString()}\r\n");
                 }
                 else
                 {
-                    sb.AppendLine($"\r\nUngrouped");    //Happens when matching documents don't contain the group field
+                    sb.Append($"\r\nUngrouped\r\n");    //Happens when matching documents don't contain the group field
                 }
 
                 foreach (ScoreDoc scoreDoc in groupDocs.ScoreDocs)
                 {
                     doc = searcher.Doc(scoreDoc.Doc);
-                    sb.AppendLine($"{doc.GetField("carMake").GetStringValue()} {doc.GetField("carModel").GetStringValue()} {doc.GetField("carColor").GetStringValue()}");
+                    sb.Append($"{doc.GetField("carMake").GetStringValue()} {doc.GetField("carModel").GetStringValue()} {doc.GetField("carColor").GetStringValue()}\r\n");
                 }
             }
 
@@ -230,6 +233,7 @@ namespace Lucene.Net.Search.Grouping
         /// 2 pass by field name approach. Uses FieldCache, not DocValues.
         /// </summary>
         [Test]
+        [LuceneNetSpecific]
         public virtual void GroupingSearch_ViaName_Int32Sorted_UsingFieldCache_Top10Groups_Top10DocsEach()
         {
             int[,] numericData = GetNumbers();
@@ -288,17 +292,17 @@ namespace Lucene.Net.Search.Grouping
                 if (groupDocs.GroupValue != null)
                 {
                     int val2 = NumericUtils.PrefixCodedToInt32(groupDocs.GroupValue);
-                    sb.AppendLine($"\r\nGroup: {val2}");
+                    sb.Append($"\r\nGroup: {val2}\r\n");
                 }
                 else
                 {
-                    sb.AppendLine($"\r\nUngrouped");    //Happens when matching documents don't contain the group field
+                    sb.Append($"\r\nUngrouped\r\n");    //Happens when matching documents don't contain the group field
                 }
 
                 foreach (ScoreDoc scoreDoc in groupDocs.ScoreDocs)
                 {
                     doc = searcher.Doc(scoreDoc.Doc);
-                    sb.AppendLine($"{doc.GetField("major").GetInt32Value()} {doc.GetField("minor").GetInt32Value()} {doc.GetField("rev").GetInt32Value()}");
+                    sb.Append($"{doc.GetField("major").GetInt32Value()} {doc.GetField("minor").GetInt32Value()} {doc.GetField("rev").GetInt32Value()}\r\n");
                 }
             }
 
@@ -338,6 +342,7 @@ namespace Lucene.Net.Search.Grouping
         /// 2 pass by function/ValueSource/MutableValue approach. Uses FieldCache, not DocValues.
         /// </summary>
         [Test]
+        [LuceneNetSpecific]
         public virtual void GroupingSearch_ViaFunction_Int32Sorted_UsingFieldCache_Top10Groups_Top10DocsEach()
         {
             int[,] numericData = GetNumbers();
@@ -400,17 +405,17 @@ namespace Lucene.Net.Search.Grouping
                 {
                     BytesRef bytesRef = ((MutableValueStr)groupDocs.GroupValue).Value;
                     int major = NumericUtils.PrefixCodedToInt32(bytesRef);
-                    sb.AppendLine($"\r\nGroup: {major}");
+                    sb.Append($"\r\nGroup: {major}\r\n");
                 }
                 else
                 {
-                    sb.AppendLine($"\r\nUngrouped");    //Happens when matching documents don't contain the group field
+                    sb.Append($"\r\nUngrouped\r\n");    //Happens when matching documents don't contain the group field
                 }
 
                 foreach (ScoreDoc scoreDoc in groupDocs.ScoreDocs)
                 {
                     doc = searcher.Doc(scoreDoc.Doc);
-                    sb.AppendLine($"{doc.GetField("major").GetInt32Value()} {doc.GetField("minor").GetInt32Value()} {doc.GetField("rev").GetInt32Value()}");
+                    sb.Append($"{doc.GetField("major").GetInt32Value()} {doc.GetField("minor").GetInt32Value()} {doc.GetField("rev").GetInt32Value()}\r\n");
                 }
             }
 
