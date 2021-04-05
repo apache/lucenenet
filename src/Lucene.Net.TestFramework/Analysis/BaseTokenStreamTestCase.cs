@@ -13,7 +13,6 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
-using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Attribute = Lucene.Net.Util.Attribute;
 using AttributeFactory = Lucene.Net.Util.AttributeSource.AttributeFactory;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -37,6 +36,8 @@ namespace Lucene.Net.Analysis
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using AssertionError = Lucene.Net.Diagnostics.AssertionException; // LUCENENET TODO: Factor out after moving to e.IsAssertionError()
 
     /// <summary>
     /// Attribute that records if it was cleared or not.  this is used
