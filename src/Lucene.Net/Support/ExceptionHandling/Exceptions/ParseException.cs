@@ -25,9 +25,18 @@ namespace Lucene
     /// <para/>
     /// This is a Java compatibility exception, and should be thrown in
     /// Lucene.NET everywhere Lucene throws it, however catch blocks should
-    /// always use the <see cref="ExceptionExtensions.IsParseException(Exception)"/> method.
+    /// use the <see cref="ExceptionExtensions.IsParseException(Exception)"/> method
+    /// everywhere except for in QueryParser.
     /// <code>
     /// catch (Exception ex) when (ex.IsParseException())
+    /// </code>
+    /// <para/>
+    /// IMPORTANT: QueryParser has its own ParseException types (there are multiple),
+    /// so be sure not to use this exception instead of the ones in QueryParser.
+    /// For QueryParser exceptions, there are no extension methods to use for identification
+    /// in catch blocks, you should instead use the fully-qualified name of the exception.
+    /// <code>
+    /// catch (Lucene.Net.QueryParsers.Surround.Parser.ParseException e)
     /// </code>
     /// </summary>
     // LUCENENET: It is no longer good practice to use binary serialization. 

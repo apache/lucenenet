@@ -27,6 +27,12 @@ namespace Lucene.Net.QueryParsers.Analyzing
      * limitations under the License.
      */
 
+    // LUCENENET: Special case exception - QueryParser has its own ParseException types that are generated.
+    // We won't know until we start generating QueryParser how to handle this scenario, but for now we are
+    // mapping this explicitly INSIDE of the namespace declaration to prevent our Lucene.ParseException from being
+    // used instead.
+    using ParseException = Lucene.Net.QueryParsers.Classic.ParseException;
+
     /// <summary>
     /// Overrides Lucene's default <see cref="QueryParser"/> so that Fuzzy-, Prefix-, Range-, and WildcardQuerys
     /// are also passed through the given analyzer, but wildcard characters <c>*</c> and
