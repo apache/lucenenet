@@ -820,7 +820,7 @@ namespace Lucene.Net.Index
                             documentsWriter.SubtractFlushedNumDocs(dwpt.NumDocsInRAM);
                             dwpt.Abort(newFiles);
                         }
-                        catch (Exception)
+                        catch (Exception ex) when (ex.IsThrowable())
                         {
                             // ignore - keep on aborting the flush queue
                         }
@@ -837,7 +837,7 @@ namespace Lucene.Net.Index
                             documentsWriter.SubtractFlushedNumDocs(blockedFlush.Dwpt.NumDocsInRAM);
                             blockedFlush.Dwpt.Abort(newFiles);
                         }
-                        catch (Exception)
+                        catch (Exception ex) when (ex.IsThrowable())
                         {
                             // ignore - keep on aborting the blocked queue
                         }

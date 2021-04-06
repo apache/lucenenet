@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
                         writerFinal.ForceMerge(1);
                     }
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     outerInstance.SetFailed();
                     Console.WriteLine(Thread.CurrentThread.Name + ": hit exception");

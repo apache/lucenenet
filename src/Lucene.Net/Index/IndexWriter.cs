@@ -584,7 +584,7 @@ namespace Lucene.Net.Index
                                 outerInstance.CheckpointNoSIS(); // Throws IOException
                             }
                         }
-                        catch (Exception t)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                             if (doSave)
                             {
@@ -611,7 +611,7 @@ namespace Lucene.Net.Index
                         {
                             rld.DropReaders(); // Throws IOException
                         }
-                        catch (Exception t)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                             if (doSave)
                             {
@@ -670,7 +670,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Dir == outerInstance.directory,"info.dir={0} vs {1}", info.Info.Dir, outerInstance.directory);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Dir == outerInstance.directory, "info.dir={0} vs {1}", info.Info.Dir, outerInstance.directory);
 
                     if (!readerMap.TryGetValue(info, out ReadersAndUpdates rld) || rld == null)
                     {
@@ -685,7 +685,7 @@ namespace Lucene.Net.Index
                     else
                     {
                         if (Debugging.AssertsEnabled && !(rld.Info == info))
-                            throw new AssertionException(string.Format("rld.info={0} info={1} isLive?={2} vs {3}", rld.Info, info, InfoIsLive(rld.Info),InfoIsLive(info)));
+                            throw new AssertionException(string.Format("rld.info={0} info={1} isLive?={2} vs {3}", rld.Info, info, InfoIsLive(rld.Info), InfoIsLive(info)));
                     }
 
                     if (create)
@@ -2592,7 +2592,7 @@ namespace Lucene.Net.Index
                                 pendingCommit.RollbackCommit(directory);
                                 deleter.DecRef(pendingCommit);
                             }
-                            catch (Exception)
+                            catch (Exception t) when (t.IsThrowable())
                             {
                             }
                         }
@@ -3066,7 +3066,7 @@ namespace Lucene.Net.Index
                                 {
                                     directory.DeleteFile(file);
                                 }
-                                catch (Exception)
+                                catch (Exception t) when (t.IsThrowable())
                                 {
                                 }
                             }
@@ -3094,7 +3094,7 @@ namespace Lucene.Net.Index
                                     {
                                         directory.DeleteFile(file);
                                     }
-                                    catch (Exception)
+                                    catch (Exception t) when (t.IsThrowable())
                                     {
                                     }
                                 }
@@ -3441,7 +3441,7 @@ namespace Lucene.Net.Index
                         {
                             directory.DeleteFile(file);
                         }
-                        catch (Exception)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                         }
                     }
@@ -4431,7 +4431,7 @@ namespace Lucene.Net.Index
                         {
                             Checkpoint();
                         }
-                        catch (Exception)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                             // Ignore so we keep throwing original exception.
                         }
@@ -4523,7 +4523,7 @@ namespace Lucene.Net.Index
                         MergeSuccess(merge);
                         success = true;
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         HandleMergeException(t, merge);
                     }
@@ -4892,7 +4892,7 @@ namespace Lucene.Net.Index
                                 readerPool.Drop(rld.Info);
                             }
                         }
-                        catch (Exception t)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                             if (th == null)
                             {
@@ -5106,7 +5106,7 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         HandleMergeException(t, merge);
                     }
@@ -5714,14 +5714,14 @@ namespace Lucene.Net.Index
                         {
                             directory.DeleteFile(fileName);
                         }
-                        catch (Exception)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                         }
                         try
                         {
                             directory.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
                         }
-                        catch (Exception)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                         }
                     }

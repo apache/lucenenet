@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
                         {
                             writer.AddDocument(doc);
                         }
-                        catch (Exception t)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                             Console.WriteLine(t.StackTrace);
                             Assert.Fail("addDocument failed");

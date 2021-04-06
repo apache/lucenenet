@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
                         {
                             r.DecRef();
                         }
-                        catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                        catch (Exception th) when (th.IsThrowable())
                         {
                             // ignore any exception that is thrown here to not mask any original
                             // exception.
@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
                     }
                     success = true;
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex.IsThrowable())
                 {
                     prior = ex;
                 }
@@ -277,7 +277,7 @@ namespace Lucene.Net.Index
                                         newReaders[i].DecRef();
                                     }
                                 }
-                                catch (Exception t)
+                                catch (Exception t) when (t.IsThrowable())
                                 {
                                     if (prior == null)
                                     {
@@ -468,7 +468,7 @@ namespace Lucene.Net.Index
                 {
                     r.DecRef();
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     if (firstExc == null)
                     {

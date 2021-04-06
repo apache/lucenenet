@@ -192,7 +192,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 Dispose();
             }
-            catch // ignored
+            catch (Exception ignored) when (ignored.IsThrowable())
             {
             }
             IOUtils.DeleteFilesIgnoringExceptions(_directory,

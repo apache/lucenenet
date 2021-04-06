@@ -344,7 +344,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsRuntimeException())
             {
                 if (e.Message.StartsWith("Line #", StringComparison.Ordinal))
                 {
@@ -354,6 +354,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     throw new Exception("Line #" + GetLineNumber(stok) + ": ", e);
                 }
+            }
+            catch (Exception t) when (t.IsThrowable())
+            {
+                throw new Exception("Line #" + GetLineNumber(stok) + ": ", t);
             }
 
             AnalyzerFactory analyzerFactory = new AnalyzerFactory(charFilterFactories, tokenizerFactory, tokenFilterFactories)
@@ -464,7 +468,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                             }
                     }
                 }
-                WHILE_LOOP_BREAK: { }
+            WHILE_LOOP_BREAK: { }
 
                 if (!argMap.ContainsKey("luceneMatchVersion"))
                 {
@@ -499,7 +503,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     tokenFilterFactories.Add((TokenFilterFactory)instance);
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsRuntimeException())
             {
                 if (e.Message.StartsWith("Line #", StringComparison.Ordinal))
                 {
@@ -509,6 +513,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     throw new Exception("Line #" + GetLineNumber(stok) + ": ", e);
                 }
+            }
+            catch (Exception t) when (t.IsThrowable())
+            {
+                throw new Exception("Line #" + GetLineNumber(stok) + ": ", t);
             }
         }
 

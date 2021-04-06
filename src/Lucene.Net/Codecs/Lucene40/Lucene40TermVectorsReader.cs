@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     {
                         Dispose();
                     } // ensure we throw our original exception
-                    catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         // ignored
                     }

@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
                         count++;
                     } while (Environment.TickCount < stopTime);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine(Thread.CurrentThread + ": exc");
                     Console.WriteLine(e.StackTrace);

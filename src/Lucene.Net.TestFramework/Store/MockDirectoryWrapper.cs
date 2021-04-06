@@ -964,7 +964,7 @@ namespace Lucene.Net.Store
                                                 }
                                             }
                                         }
-                                        catch (Exception t)
+                                        catch (Exception t) when (t.IsThrowable())
                                         {
                                             Console.Error.WriteLine("ERROR processing leftover segments file " + file + ":");
                                             Console.WriteLine(t.ToString());

@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 Dispose();
             }
-            catch (Exception)
+            catch (Exception ignored) when (ignored.IsThrowable())
             {
             }
             IOUtils.DeleteFilesIgnoringExceptions(directory, IndexFileNames.SegmentFileName(segment, "", FIELDS_EXTENSION), IndexFileNames.SegmentFileName(segment, "", FIELDS_INDEX_EXTENSION));

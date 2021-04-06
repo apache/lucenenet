@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     {
                         Dispose();
                     } 
-                    catch (Exception)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         // ensure we throw our original exception
                     }

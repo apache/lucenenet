@@ -909,7 +909,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         Thread.Sleep(10);// don't starve refresh()'s CPU, which sleeps every 50 bytes for 1 ms
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     error[0] = e;
                     stop.Value = true;

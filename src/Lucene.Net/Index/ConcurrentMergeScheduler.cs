@@ -662,7 +662,7 @@ namespace Lucene.Net.Index
                         outerInstance.Message("  merge thread: done");
                     }
                 }
-                catch (Exception exc)
+                catch (Exception exc) when (exc.IsThrowable())
                 {
                     // Ignore the exception if it was due to abort:
                     if (!(exc is MergePolicy.MergeAbortedException))
@@ -695,8 +695,6 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual void HandleMergeException(Exception exc)
         {
-            //try
-            //{
             // When an exception is hit during merge, IndexWriter
             // removes any partial files and then allows another
             // merge to run.  If whatever caused the error is not
@@ -704,11 +702,7 @@ namespace Lucene.Net.Index
             // so, we sleep here to avoid saturating CPU in such
             // cases:
             Thread.Sleep(250);
-            //}
-            //catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-            //{
-            //    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-            //}
+            // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
             throw new MergePolicy.MergeException(exc, m_dir);
         }
 

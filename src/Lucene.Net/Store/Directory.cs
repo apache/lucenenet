@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -222,7 +222,7 @@ namespace Lucene.Net.Store
                         {
                             to.DeleteFile(dest);
                         }
-                        catch (Exception)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                         }
                     }

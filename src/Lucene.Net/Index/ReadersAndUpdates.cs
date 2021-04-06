@@ -1,4 +1,4 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using System;
@@ -440,7 +440,7 @@ namespace Lucene.Net.Index
                             {
                                 dir.DeleteFile(fileName);
                             }
-                            catch (Exception)
+                            catch (Exception t) when (t.IsThrowable())
                             {
                                 // Ignore so we throw only the first exc
                             }
@@ -593,7 +593,7 @@ namespace Lucene.Net.Index
                             {
                                 dir.DeleteFile(fileName);
                             }
-                            catch (Exception)
+                            catch (Exception t) when (t.IsThrowable())
                             {
                                 // Ignore so we throw only the first exc
                             }

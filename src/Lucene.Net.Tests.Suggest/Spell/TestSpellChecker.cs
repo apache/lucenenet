@@ -578,7 +578,7 @@ namespace Lucene.Net.Search.Spell
                         {
                             return;
                         }
-                        catch (Exception e)
+                        catch (Exception e) when (e.IsThrowable())
                         {
                             e.printStackTrace();
                             error = e;

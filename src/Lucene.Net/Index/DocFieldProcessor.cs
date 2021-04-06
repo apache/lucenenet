@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
                     {
                         fieldNext.Abort();
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         if (th == null)
                         {
@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
             {
                 storedConsumer.Abort();
             }
-            catch (Exception t)
+            catch (Exception t) when (t.IsThrowable())
             {
                 if (th == null)
                 {
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
             {
                 consumer.Abort();
             }
-            catch (Exception t)
+            catch (Exception t) when (t.IsThrowable())
             {
                 if (th == null)
                 {
@@ -145,10 +145,8 @@ namespace Lucene.Net.Index
             // If any errors occured, throw it.
             if (th != null)
             {
-                if (th is Exception e)
-                {
-                    throw e;
-                }
+                if (th.IsRuntimeException()) throw th;
+                if (th.IsError()) throw th;
                 // defensive code - we should not hit unchecked exceptions
                 throw new Exception(th.Message, th);
             }

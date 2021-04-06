@@ -119,7 +119,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     {
                         dir.DeleteFile(segFileName);
                     }
-                    catch (Exception)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         //Esnure we throw original exeception
                     }

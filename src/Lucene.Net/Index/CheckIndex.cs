@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -518,7 +518,7 @@ namespace Lucene.Net.Index
             {
                 sis.Read(dir);
             }
-            catch (Exception t)
+            catch (Exception t) when (t.IsThrowable())
             {
                 Msg(infoStream, "ERROR: could not read any segments file in directory");
                 result.MissingSegments = true;
@@ -568,7 +568,7 @@ namespace Lucene.Net.Index
             {
                 input = dir.OpenInput(segmentsFileName, IOContext.READ_ONCE);
             }
-            catch (Exception t)
+            catch (Exception t) when (t.IsThrowable())
             {
                 Msg(infoStream, "ERROR: could not open segments file in directory");
                 if (infoStream != null)
@@ -587,7 +587,7 @@ namespace Lucene.Net.Index
             {
                 format = input.ReadInt32();
             }
-            catch (Exception t)
+            catch (Exception t) when (t.IsThrowable())
             {
                 Msg(infoStream, "ERROR: could not read segment file version in directory");
                 if (infoStream != null)
@@ -873,7 +873,7 @@ namespace Lucene.Net.Index
 
                     Msg(infoStream, "");
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     Msg(infoStream, "FAILED");
                     string comment;
@@ -968,7 +968,7 @@ namespace Lucene.Net.Index
 
                 Msg(infoStream, "OK [" + status.TotFields + " fields]");
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsThrowable())
             {
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
@@ -1683,7 +1683,7 @@ namespace Lucene.Net.Index
                     CheckFields(fields, null, maxDoc, fieldInfos, true, false, infoStream, verbose);
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsThrowable())
             {
                 Msg(infoStream, "ERROR: " + e);
                 status = new Status.TermIndexStatus();
@@ -1739,7 +1739,7 @@ namespace Lucene.Net.Index
 
                 Msg(infoStream, "OK [" + status.TotFields + " total field count; avg " + ((((float)status.TotFields) / status.DocCount)).ToString(CultureInfo.InvariantCulture.NumberFormat) + " fields per doc]");
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsThrowable())
             {
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
@@ -1788,7 +1788,7 @@ namespace Lucene.Net.Index
 
                 Msg(infoStream, "OK [" + status.TotalValueFields + " docvalues fields; " + status.TotalBinaryFields + " BINARY; " + status.TotalNumericFields + " NUMERIC; " + status.TotalSortedFields + " SORTED; " + status.TotalSortedSetFields + " SORTED_SET]");
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsThrowable())
             {
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
@@ -2316,7 +2316,7 @@ namespace Lucene.Net.Index
                 float vectorAvg = status.DocCount == 0 ? 0 : status.TotVectors / (float)status.DocCount;
                 Msg(infoStream, "OK [" + status.TotVectors + " total vector count; avg " + vectorAvg.ToString(CultureInfo.InvariantCulture.NumberFormat) + " term/freq vector fields per doc]");
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsThrowable())
             {
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
@@ -2509,7 +2509,7 @@ namespace Lucene.Net.Index
                     dir = CommandLineUtil.NewFSDirectory(dirImpl, new DirectoryInfo(indexPath));
                 }
             }
-            catch (Exception t)
+            catch (Exception t) when (t.IsThrowable())
             {
                 // LUCENENET specific - we only output from our CLI wrapper
                 throw new ArgumentException("ERROR: could not open directory \"" + indexPath + "\"; exiting\n" + t.ToString());

@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -125,7 +125,7 @@ namespace Lucene.Net.Util
 
                     outerInstance.AddResults(miss, hit);
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     failed = true;
                     throw new Exception(t.Message, t);

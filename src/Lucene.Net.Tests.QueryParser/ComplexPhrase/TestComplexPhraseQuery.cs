@@ -92,7 +92,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
             {
                 qp.Parse(qString);
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsThrowable())
             {
                 expected = e;
             }

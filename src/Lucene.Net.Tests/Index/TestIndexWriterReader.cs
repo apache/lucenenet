@@ -591,7 +591,7 @@ namespace Lucene.Net.Index
                         //doBody(5, dirs);
                         //}
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         outerInstance.Handle(t);
                     }
@@ -965,7 +965,7 @@ namespace Lucene.Net.Index
                         writer.AddIndexes(dirs);
                         writer.MaybeMerge();
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         excs.Enqueue(t);
                         throw new Exception(t.Message, t);
@@ -1082,7 +1082,7 @@ namespace Lucene.Net.Index
                             writer.DeleteDocuments(new Term("field3", "b" + x));
                         }
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         excs.Enqueue(t);
                         throw new Exception(t.Message, t);

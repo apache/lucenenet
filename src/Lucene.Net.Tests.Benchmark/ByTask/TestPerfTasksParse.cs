@@ -163,7 +163,7 @@ namespace Lucene.Net.Benchmarks.ByTask
                     PerfRunData data = new PerfRunData(config);
                     new Algorithm(data);
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     throw new Exception("Could not parse sample file: " + algFile, t);
                 }
