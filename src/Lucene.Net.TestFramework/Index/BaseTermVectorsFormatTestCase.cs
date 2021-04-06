@@ -965,7 +965,7 @@ namespace Lucene.Net.Index
                         outerInstance.AssertEquals(docs[idx], reader.GetTermVectors(docID));
                     }
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     this.exception.Value = t;
                 }

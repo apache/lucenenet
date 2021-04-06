@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
@@ -1244,7 +1244,7 @@ namespace Lucene.Net.Index
                     }
                     Assert.IsFalse(toInc.TryIncRef());
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     failed = e;
                 }

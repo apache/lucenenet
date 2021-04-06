@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
                         w.GetReader().Dispose();
                     }
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     throw new Exception(t.Message, t);
                 }

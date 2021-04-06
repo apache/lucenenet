@@ -1,4 +1,4 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -182,7 +182,7 @@ namespace Lucene.Net.Index
                 {
                     IOUtils.Dispose(termVectorsLocal, fieldsReaderLocal, normsLocal, fields, termVectorsReaderOrig, fieldsReaderOrig, cfsReader, normsProducer);
                 }
-                catch (Exception throwable)
+                catch (Exception throwable) when (throwable.IsThrowable())
                 {
                     th = throwable;
                 }
@@ -205,9 +205,8 @@ namespace Lucene.Net.Index
                     {
                         listener.OnDispose(this);
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
-                        
                         if (th == null)
                         {
                             th = t;

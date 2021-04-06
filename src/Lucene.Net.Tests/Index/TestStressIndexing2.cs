@@ -433,7 +433,7 @@ namespace Lucene.Net.Index
                 {
                     VerifyEquals(r1.Document(id1), r2.Document(id2));
                 }
-                catch (Exception /*t*/)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     Console.WriteLine("FAILED id=" + term + " id1=" + id1 + " id2=" + id2 + " term=" + term);
                     Console.WriteLine("  d1=" + r1.Document(id1));
@@ -446,7 +446,7 @@ namespace Lucene.Net.Index
                     // verify term vectors are equivalent
                     VerifyEquals(r1.GetTermVectors(id1), r2.GetTermVectors(id2));
                 }
-                catch (Exception /*e*/)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine("FAILED id=" + term + " id1=" + id1 + " id2=" + id2);
                     Fields tv1 = r1.GetTermVectors(id1);
@@ -1036,7 +1036,7 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine(e.ToString());
                     Console.Write(e.StackTrace);

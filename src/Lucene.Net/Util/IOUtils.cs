@@ -179,7 +179,7 @@ namespace Lucene.Net.Util
                         @object.Dispose();
                     }
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     AddSuppressed(priorException ?? th, t);
                     if (th == null)
@@ -216,7 +216,7 @@ namespace Lucene.Net.Util
                         @object.Dispose();
                     }
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     AddSuppressed(priorException ?? th, t);
                     if (th == null)
@@ -259,7 +259,7 @@ namespace Lucene.Net.Util
                         @object.Dispose();
                     }
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     AddSuppressed(th, t);
                     if (th == null)
@@ -289,7 +289,7 @@ namespace Lucene.Net.Util
                         @object.Dispose();
                     }
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     AddSuppressed(th, t);
                     if (th == null)
@@ -320,7 +320,7 @@ namespace Lucene.Net.Util
                         o.Dispose();
                     }
                 }
-                catch (Exception)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     //eat it
                 }
@@ -342,7 +342,7 @@ namespace Lucene.Net.Util
                         @object.Dispose();
                     }
                 }
-                catch (Exception)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     //eat it
                 }
@@ -462,7 +462,7 @@ namespace Lucene.Net.Util
                 {
                     dir.DeleteFile(name);
                 }
-                catch (Exception)
+                catch (Exception ignored) when (ignored.IsThrowable())
                 {
                     // ignore
                 }

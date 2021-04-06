@@ -1,4 +1,4 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
                     {
                         listener.OnClose(this);
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         if (th == null)
                         {
@@ -278,7 +278,7 @@ namespace Lucene.Net.Index
                 {
                     DoClose();
                 }
-                catch (Exception th)
+                catch (Exception th) when (th.IsThrowable())
                 {
                     throwable = th;
                 }

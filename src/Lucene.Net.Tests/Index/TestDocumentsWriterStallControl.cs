@@ -281,7 +281,7 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine(e.ToString());
                     Console.Write(e.StackTrace);
@@ -334,11 +334,13 @@ namespace Lucene.Net.Index
                                 //throw new ThreadInterruptedException("Thread Interrupted Exception", e);
                                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
-                            catch (Exception e)
-                            {
-                                Console.Write("signal failed with : " + e);
-                                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
-                            }
+                            // LUCENENET: Not sure why this catch block was added, but I suspect it was for debugging purposes. Commented it rather than removing it because
+                            // there may be some value to debugging this way.
+                            //catch (Exception e)
+                            //{
+                            //    Console.Write("signal failed with : " + e);
+                            //    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                            //}
 
                             sync.leftCheckpoint.Signal();
                         }
@@ -348,7 +350,7 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine(e.ToString());
                     Console.Write(e.StackTrace);

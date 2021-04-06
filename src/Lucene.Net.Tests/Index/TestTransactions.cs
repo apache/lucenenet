@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
                         DoWork();
                     } while (Environment.TickCount < stopTime);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine(Thread.CurrentThread + ": exc");
                     Console.Error.WriteLine(e.StackTrace);
@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
                         {
                             writer1.PrepareCommit();
                         }
-                        catch (Exception)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                             writer1.Rollback();
                             writer2.Rollback();
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
                         {
                             writer2.PrepareCommit();
                         }
-                        catch (Exception)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                             writer1.Rollback();
                             writer2.Rollback();

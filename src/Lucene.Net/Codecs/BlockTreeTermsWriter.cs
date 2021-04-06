@@ -941,7 +941,7 @@ namespace Lucene.Net.Codecs
                 {
                     return b.Utf8ToString() + " " + b;
                 }
-                catch (Exception)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     // If BytesRef isn't actually UTF8, or it's eg a
                     // prefix of UTF8 that ends mid-unicode-char, we

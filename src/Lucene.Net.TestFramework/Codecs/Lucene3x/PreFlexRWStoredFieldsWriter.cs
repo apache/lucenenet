@@ -93,9 +93,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 Dispose();
             }
-            catch (Exception)
+            catch (Exception ignored) when (ignored.IsThrowable())
             {
-                // ignored
             }
             IOUtils.DeleteFilesIgnoringExceptions(directory, 
                 IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION), 

@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 
 using J2N.Runtime.CompilerServices;
 using J2N.Text;
@@ -1135,7 +1135,7 @@ namespace Lucene.Net.Analysis.Core
                     CheckRandomData(random, a, 500 * RandomMultiplier, 20, false,
                                     false /* We already validate our own offsets... */);
                 }
-                catch (Exception /*e*/)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine("Exception from random analyzer: " + a);
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
@@ -1163,7 +1163,7 @@ namespace Lucene.Net.Analysis.Core
                     CheckRandomData(random, a, 50 * RandomMultiplier, 128, false,
                                     false /* We already validate our own offsets... */);
                 }
-                catch (Exception /*e*/)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine("Exception from random analyzer: " + a);
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)

@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using System;
 using System.Collections;
@@ -184,7 +184,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         Dispose();
                     } // keep our original exception
-                    catch (Exception)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                     }
                 }

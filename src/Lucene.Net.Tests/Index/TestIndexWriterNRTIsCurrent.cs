@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     failed = e;
                 }
@@ -224,7 +224,7 @@ namespace Lucene.Net.Index
 
                             Assert.IsFalse(current);
                         }
-                        catch (Exception e)
+                        catch (Exception e) when (e.IsThrowable())
                         {
                             if (Verbose)
                             {

@@ -1136,7 +1136,7 @@ namespace Lucene.Net.Index
                     {
                         testCase.TestTermsOneThread(fieldsSource, options, maxTestOptions, maxIndexOptions, alwaysTestMax);
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         throw new Exception(t.Message, t);
                     }

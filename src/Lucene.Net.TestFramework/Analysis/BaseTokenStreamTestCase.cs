@@ -947,9 +947,7 @@ namespace Lucene.Net.Analysis
                             }
                         }
                     }
-#pragma warning disable 168
-                    catch (Exception t)
-#pragma warning restore 168
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         // TODO: really we should pass a random seed to
                         // checkAnalysisConsistency then print it here too:

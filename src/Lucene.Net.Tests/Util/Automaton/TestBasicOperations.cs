@@ -162,7 +162,7 @@ namespace Lucene.Net.Util.Automaton
                         string s = UnicodeUtil.NewString(acc, 0, acc.Length);
                         Assert.IsTrue(BasicOperations.Run(a, s));
                     }
-                    catch (Exception /*t*/)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         Console.WriteLine("regexp: " + re);
                         if (acc != null)

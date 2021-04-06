@@ -166,7 +166,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsRuntimeException())
             {
                 if (e.Message.StartsWith("Line #", StringComparison.Ordinal))
                 {
@@ -176,6 +176,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     throw new Exception("Line #" + (stok.LineNumber + AlgLineNum) + ": ", e);
                 }
+            }
+            catch (Exception t) when (t.IsThrowable())
+            {
+                throw new Exception("Line #" + (stok.LineNumber + AlgLineNum) + ": ", t);
             }
         }
 

@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
                     {
                         tpc.Rollback();
                     }
-                    catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         // ignore
                     }
@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            catch (Exception t)
+            catch (Exception t) when (t.IsThrowable())
             {
                 // first object that fails results in rollback all of them and
                 // throwing an exception.
@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            catch (Exception t)
+            catch (Exception t) when (t.IsThrowable())
             {
                 // first object that fails results in rollback all of them and
                 // throwing an exception.

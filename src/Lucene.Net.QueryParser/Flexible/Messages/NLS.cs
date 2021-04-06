@@ -124,7 +124,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
                 if (!bundles.ContainsKey(bundleName))
                     bundles[bundleName] = clazz;
             }
-            catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
+            catch (Exception e) when (e.IsThrowable())
             {
                 // ignore all errors and exceptions
                 // because this function is supposed to be called at class load time.
@@ -214,7 +214,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
                 //System.err.println("WARN: Message with key:" + key + " and locale: "
                 //    + Locale.getDefault() + " not found.");
             }
-            catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
+            catch (Exception e) when (e.IsThrowable())
             {
                 // ignore all other errors and exceptions
                 // since this code is just a test to see if the message is present on the

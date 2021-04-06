@@ -335,9 +335,8 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 Dispose();
             }
-            catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
+            catch (Exception ignored) when (ignored.IsThrowable())
             {
-                // ignored
             }
             IOUtils.DeleteFilesIgnoringExceptions(directory, 
                 IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_INDEX_EXTENSION), 

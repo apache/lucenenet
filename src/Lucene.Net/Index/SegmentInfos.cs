@@ -301,7 +301,7 @@ namespace Lucene.Net.Index
                     dir.Sync(new JCG.HashSet<string> { IndexFileNames.SEGMENTS_GEN });
                 }
             }
-            catch (Exception)
+            catch (Exception t) when (t.IsThrowable())
             {
                 // It's OK if we fail to write this file since it's
                 // used only as one of the retry fallbacks.
@@ -309,7 +309,7 @@ namespace Lucene.Net.Index
                 {
                     dir.DeleteFile(IndexFileNames.SEGMENTS_GEN);
                 }
-                catch (Exception)
+                catch (Exception t2) when (t2.IsThrowable())
                 {
                     // Ignore; this file is only used in a retry
                     // fallback on init.
@@ -595,7 +595,7 @@ namespace Lucene.Net.Index
                         {
                             directory.DeleteFile(fileName);
                         }
-                        catch (Exception)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                             // Suppress so we keep throwing the original exception
                         }
@@ -607,7 +607,7 @@ namespace Lucene.Net.Index
                         // the index:
                         directory.DeleteFile(segmentsFileName);
                     }
-                    catch (Exception)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         // Suppress so we keep throwing the original exception
                     }
@@ -686,7 +686,7 @@ namespace Lucene.Net.Index
                     {
                         si.Dir.DeleteFile(fileName);
                     }
-                    catch (Exception)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         // Suppress so we keep throwing the original exception
                     }
