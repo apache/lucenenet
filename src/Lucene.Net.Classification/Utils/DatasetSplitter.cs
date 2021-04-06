@@ -142,7 +142,7 @@ namespace Lucene.Net.Classification.Utils
                     b++;
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 throw new IOException("Exceptio in DatasetSplitter", e);
             }

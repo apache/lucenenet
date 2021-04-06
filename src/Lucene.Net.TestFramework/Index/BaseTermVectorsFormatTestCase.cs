@@ -648,7 +648,7 @@ namespace Lucene.Net.Index
 //                            Assert.Fail();
 //                        }
 //#pragma warning disable 168
-//                        catch (Exception e)
+//                        catch (Exception e) when (e.IsException())
 //#pragma warning restore 168
 //                        {
 //                            // ok

@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Tartarus.Snowball;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Snowball
             {
                 program = (SnowballProgram)Activator.CreateInstance(stemClass);
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 throw new Exception("Error instantiating stemmer for language " + language + "from class " + stemClass, e);
             }

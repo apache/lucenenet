@@ -55,9 +55,10 @@ namespace Lucene.Net.Benchmarks.ByTask
             {
                 runData = new PerfRunData(new Config(algReader));
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 //e.printStackTrace();
+                Console.Error.WriteLine(e.ToString());
                 throw new Exception("Error: cannot init PerfRunData!", e);
             }
 
@@ -66,7 +67,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             {
                 algorithm = new Algorithm(runData);
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 throw new Exception("Error: cannot understand algorithm!", e);
             }
@@ -128,9 +129,9 @@ namespace Lucene.Net.Benchmarks.ByTask
             {
                 benchmark = new Benchmark(IOUtils.GetDecodingReader(algFile, Encoding.UTF8));
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
-                Console.WriteLine(e.ToString());
+                Console.Error.WriteLine(e.ToString());
                 Environment.Exit(1);
             }
 
@@ -142,10 +143,10 @@ namespace Lucene.Net.Benchmarks.ByTask
             {
                 benchmark.Execute();
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
-                Console.WriteLine("Error: cannot execute the algorithm! " + e.Message);
-                Console.WriteLine(e.StackTrace);
+                Console.Error.WriteLine("Error: cannot execute the algorithm! " + e.Message);
+                Console.Error.WriteLine(e.ToString());
             }
 
             Console.WriteLine("####################");

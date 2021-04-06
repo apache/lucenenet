@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Tartarus.Snowball;
 using System;
@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Snowball
 
                 stemmer = (SnowballProgram)Activator.CreateInstance(stemClass);
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 throw new ArgumentException("Invalid stemmer class specified: " + name, e);
             }

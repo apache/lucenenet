@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
@@ -142,7 +142,7 @@ namespace Lucene.Net.Analysis.Core
             {
                 ctor = factoryClazz.GetConstructor(new Type[] { typeof(IDictionary<string, string>) });
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 throw new Exception("factory '" + factoryClazz + "' does not have a proper ctor!", e);
             }

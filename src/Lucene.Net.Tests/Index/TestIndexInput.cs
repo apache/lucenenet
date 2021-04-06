@@ -155,7 +155,7 @@ namespace Lucene.Net.Index
                 @is.ReadVInt32();
                 Assert.Fail("Should throw " + expectedEx.Name);
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 Assert.IsTrue(e.Message.StartsWith("Invalid VInt32", StringComparison.Ordinal));
                 Assert.IsTrue(expectedEx.IsInstanceOfType(e));
@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
                 @is.ReadVInt64();
                 Assert.Fail("Should throw " + expectedEx.Name);
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 Assert.IsTrue(e.Message.StartsWith("Invalid VInt64", StringComparison.Ordinal));
                 Assert.IsTrue(expectedEx.IsInstanceOfType(e));

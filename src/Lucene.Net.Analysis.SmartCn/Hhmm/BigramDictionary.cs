@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     LoadFromInputStream(input);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 throw new Exception(e.ToString(), e);
             }
@@ -200,7 +200,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                 // log.info("serialize bigram dict.");
             }
 #pragma warning disable 168, IDE0059
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
 #pragma warning restore 168, IDE0059
             {
                 // log.warn(e.getMessage());

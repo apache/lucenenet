@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 return (S)Activator.CreateInstance(service, new object[] { args });
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 throw new ArgumentException("SPI class of type " + clazz.Name + " with name '" + name + "' cannot be instantiated. " +
                     "This is likely due to a missing reference of the .NET Assembly containing the class '" + service.Name + "' in your project or AppDomain: ", e);

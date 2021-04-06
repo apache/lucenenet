@@ -82,7 +82,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     return (IndexDeletionPolicy)Activator.CreateInstance(deletionPolicyType);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     throw new Exception("unable to instantiate class '" + deletionPolicyName + "' as IndexDeletionPolicy", e);
                 }
@@ -127,7 +127,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     iwConf.MergeScheduler = (IMergeScheduler)Activator.CreateInstance(mergeSchedulerType);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     throw new Exception("unable to instantiate class '" + mergeScheduler + "' as merge scheduler", e);
                 }
@@ -149,7 +149,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     Type clazz = Type.GetType(defaultCodec);
                     iwConf.Codec = (Codec)Activator.CreateInstance(clazz);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     throw new Exception("Couldn't instantiate Codec: " + defaultCodec, e);
                 }
@@ -173,7 +173,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     iwConf.MergePolicy = (MergePolicy)Activator.CreateInstance(mergePolicyType);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     throw new Exception("unable to instantiate class '" + mergePolicy + "' as merge policy", e);
                 }

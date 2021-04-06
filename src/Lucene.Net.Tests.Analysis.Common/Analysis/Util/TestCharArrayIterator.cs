@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 #if FEATURE_BREAKITERATOR
 using System;
 using Lucene.Net.Util;
@@ -159,7 +159,7 @@ namespace Lucene.Net.Analysis.Util
                 ci.SetIndex(5);
                 fail();
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 assertTrue(e is ArgumentException);
             }

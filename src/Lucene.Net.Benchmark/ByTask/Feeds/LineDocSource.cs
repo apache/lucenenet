@@ -141,7 +141,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     Type clazz = Type.GetType(docDataLineReaderClassName);
                     return (LineParser)Activator.CreateInstance(clazz, (object)header);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     throw new Exception("Failed to instantiate " + docDataLineReaderClassName, e);
                 }

@@ -109,7 +109,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 Console.WriteLine("Changed Analyzer to: "
                     + analyzer.GetType().Name + "(" + locale + ")");
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 throw new Exception("Error creating Analyzer: impl=" + impl, e);
             }

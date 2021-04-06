@@ -1396,7 +1396,7 @@ namespace Lucene.Net.Index
                     {
                         TestUtil.CheckIndex(dir);
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsException())
                     {
                         failed = true;
                         Console.WriteLine("CheckIndex FAILED: unexpected exception");
@@ -1407,7 +1407,7 @@ namespace Lucene.Net.Index
                         using IndexReader r = DirectoryReader.Open(dir);
                         //System.out.println("doc count=" + r.NumDocs);
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsException())
                     {
                         failed = true;
                         Console.WriteLine("DirectoryReader.open FAILED: unexpected exception");

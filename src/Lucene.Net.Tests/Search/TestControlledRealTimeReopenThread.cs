@@ -465,10 +465,9 @@ namespace Lucene.Net.Search
                     writer.DeleteDocuments(new TermQuery(new Term("foo", "barista")));
                     manager.MaybeRefresh(); // kick off another reopen so we inc. the internal gen
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    Console.WriteLine(e.ToString());
-                    Console.Write(e.StackTrace);
+                    e.printStackTrace();
                 }
                 finally
                 {
@@ -731,7 +730,7 @@ namespace Lucene.Net.Search
                         assertTrue(SlowFileExists(dir, name));
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     throw new Exception(e.toString(), e);
                 }

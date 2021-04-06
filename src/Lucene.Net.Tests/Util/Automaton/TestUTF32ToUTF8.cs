@@ -271,7 +271,7 @@ namespace Lucene.Net.Util.Automaton
                     {
                         s = UnicodeUtil.NewString(codepoints, 0, codepoints.Length);
                     }
-                    catch (Exception /*e*/)
+                    catch (Exception e) when (e.IsException())
                     {
                         Console.WriteLine(codepoints.Length + " codepoints:");
                         for (int j = 0; j < codepoints.Length; j++)

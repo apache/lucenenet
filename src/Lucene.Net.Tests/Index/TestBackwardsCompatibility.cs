@@ -990,7 +990,7 @@ namespace Lucene.Net.Index
                 {
                     upgrader = IndexUpgrader.ParseArgs(args.ToArray());
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     throw new Exception("unable to parse args: " + args, e);
                 }

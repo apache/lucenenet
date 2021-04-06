@@ -240,9 +240,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     doIndexAndSearchTest(file, null, null);
                     fail("Some exception should have been thrown for: [" + testCases[i] + "]");
                 }
-#pragma warning disable 168
-                catch (Exception e)
-#pragma warning restore 168
+                catch (Exception e) when (e.IsException())
                 {
                     // expected.
                 }

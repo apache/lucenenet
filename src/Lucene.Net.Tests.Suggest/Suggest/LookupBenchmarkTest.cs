@@ -302,10 +302,9 @@ namespace Lucene.Net.Search.Suggest
                 }
                 return new BenchmarkResult(times, warmup, rounds);
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
-                Console.WriteLine(e.StackTrace);
-                //e.printStackTrace();
+                e.printStackTrace();
                 throw new Exception(e.Message, e);
 
             }

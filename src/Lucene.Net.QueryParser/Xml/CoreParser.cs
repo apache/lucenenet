@@ -158,7 +158,7 @@ namespace Lucene.Net.QueryParsers.Xml
             {
                 doc.Load(pXmlFile);
             }
-            catch (Exception se)
+            catch (Exception se) // LUCENENET: No need to call the IsException() extension method here because we are dealing only with a .NET platform method
             {
                 throw new ParserException("Error parsing XML stream:" + se, se);
             }
@@ -173,7 +173,7 @@ namespace Lucene.Net.QueryParsers.Xml
             {
                 doc.Load(pXmlFile);
             }
-            catch (Exception se)
+            catch (Exception se) // LUCENENET: No need to call the IsException() extension method here because we are dealing only with a .NET platform method
             {
                 throw new ParserException("Error parsing XML stream:" + se, se);
             }
@@ -188,7 +188,7 @@ namespace Lucene.Net.QueryParsers.Xml
             {
                 doc.Load(pXmlFile);
             }
-            catch (Exception se)
+            catch (Exception se) // LUCENENET: No need to call the IsException() extension method here because we are dealing only with a .NET platform method
             {
                 throw new ParserException("Error parsing XML stream:" + se, se);
             }

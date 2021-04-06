@@ -106,7 +106,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
                 RunData.Analyzer = analyzer;
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 throw new Exception("Error creating Analyzer: " + analyzerName, e);
             }

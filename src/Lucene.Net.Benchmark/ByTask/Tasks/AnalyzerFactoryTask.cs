@@ -481,7 +481,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     instance = (AbstractAnalysisFactory)Activator.CreateInstance(clazz, argMap);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     throw new Exception("Line #" + GetLineNumber(stok) + ": ", e);
                 }

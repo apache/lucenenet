@@ -504,7 +504,7 @@ namespace Lucene.Net.Index.Memory
                     sortedFields = null; // invalidate sorted view, if any
                 }
             } // can never happen
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 throw new Exception(e.ToString(), e);
             }

@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using J2N.Threading;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -548,10 +548,9 @@ namespace Lucene.Net.Index
                         writer.AddDocument(d);
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    Console.WriteLine(e.ToString());
-                    Console.Write(e.StackTrace);
+                    e.printStackTrace();
                     Assert.Fail(e.ToString());
                 }
             }

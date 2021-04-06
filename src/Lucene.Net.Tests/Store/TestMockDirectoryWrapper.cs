@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -39,7 +39,7 @@ namespace Lucene.Net.Store
                 dir.Dispose();
                 Assert.Fail();
             }
-            catch (Exception expected)
+            catch (Exception expected) when (expected.IsException())
             {
                 Assert.IsTrue(expected.Message.Contains("there are still open locks"));
             }
@@ -58,7 +58,7 @@ namespace Lucene.Net.Store
                 dir.Dispose();
                 Assert.Fail();
             }
-            catch (Exception expected)
+            catch (Exception expected) when (expected.IsException())
             {
                 Assert.IsTrue(expected.Message.Contains("there are still open locks"));
             }

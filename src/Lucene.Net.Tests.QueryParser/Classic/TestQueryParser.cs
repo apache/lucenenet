@@ -181,7 +181,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     {
                         fms = float.Parse(fuzzySlop.Image.Substring(1, fuzzySlop.Image.Length - 2), CultureInfo.InvariantCulture);
                     }
-                    catch (Exception /*ignored*/) { }
+                    catch (Exception /*ignored*/) { } // LUCENENET: No need to call the IsException() extension method here because we are dealing only with a .NET platform method
                     float value = float.Parse(termImage, CultureInfo.InvariantCulture);
                     return GetRangeQuery(qfield, (value - fms / 2.0f).ToString(CultureInfo.InvariantCulture), (value + fms / 2.0f).ToString(CultureInfo.InvariantCulture), true, true);
                 }

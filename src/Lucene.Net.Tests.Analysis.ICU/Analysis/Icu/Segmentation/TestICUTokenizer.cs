@@ -386,7 +386,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     throw new Exception(e.Message, e);
                 }

@@ -569,7 +569,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                     // LUCENENET TODO: Test parsing float in various cultures (.NET)
                     f = float.Parse(weight.Image);
                 }
-                catch (Exception floatExc)
+                catch (Exception floatExc) // LUCENENET: No need to call the IsException() extension method here because we are dealing only with a .NET platform method
                 {
                     { if (true) throw new ParseException(boostErrorMessage + weight.Image + " (" + floatExc + ")", floatExc); }
                 }

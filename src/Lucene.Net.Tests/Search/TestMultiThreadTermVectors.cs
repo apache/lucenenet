@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -188,10 +188,9 @@ namespace Lucene.Net.Search
                     TestTermVectors();
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
-                Console.WriteLine(e.ToString());
-                Console.Write(e.StackTrace);
+                e.printStackTrace();
             }
             return;
         }
