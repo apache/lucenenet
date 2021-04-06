@@ -72,7 +72,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 tme.SetQuery(query);
                 throw tme;
             }
-            catch (Exception tme)
+            catch (Exception tme) when (tme.IsError())
             {
                 IMessage message = new Message(QueryParserMessages.INVALID_SYNTAX_CANNOT_PARSE, query, tme.Message);
                 QueryNodeParseException e = new QueryNodeParseException(tme);
