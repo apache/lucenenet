@@ -169,7 +169,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     count = task.RunAndMaybeStats(letChildReport);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -383,7 +383,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     outerInstance.exhausted = true;
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     throw new Exception(e.ToString(), e);
                 }

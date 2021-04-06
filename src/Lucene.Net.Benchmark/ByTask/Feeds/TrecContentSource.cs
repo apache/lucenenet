@@ -184,7 +184,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     currPathType = TrecDocParser.PathType(f);
                     return;
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     if (m_verbose)
                     {
@@ -333,7 +333,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 string trecDocParserClassName = config.Get("trec.doc.parser", "Lucene.Net.Benchmarks.ByTask.Feeds.TrecGov2Parser, Lucene.Net.Benchmark");
                 trecDocParser = (TrecDocParser)Activator.CreateInstance(Type.GetType(trecDocParserClassName));
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 // Should not get here. Throw runtime exception.
                 throw new Exception(e.ToString(), e);

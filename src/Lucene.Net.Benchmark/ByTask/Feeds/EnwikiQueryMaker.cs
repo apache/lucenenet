@@ -120,9 +120,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     }
 
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    Console.WriteLine(e.ToString());
+                    Console.Error.WriteLine(e.ToString());
                 }
             }
 

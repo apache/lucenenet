@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using NUnit.Framework;
 using System;
@@ -153,7 +153,7 @@ namespace Lucene.Net.Search
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     throw new Exception(e.Message, e);
                 }

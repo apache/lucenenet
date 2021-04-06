@@ -382,9 +382,9 @@ namespace Lucene.Net.Util.Packed
                 {
                     Fill(packedInt, PackedInt32s.MaxValue(bitsPerValue), randomSeed);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    Console.Error.WriteLine(e.StackTrace);
+                    e.printStackTrace(Console.Error);
                     Assert.Fail(string.Format(CultureInfo.InvariantCulture, "Exception while filling {0}: valueCount={1}, bitsPerValue={2}", packedInt.GetType().Name, valueCount, bitsPerValue));
                 }
             }

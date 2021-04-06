@@ -544,19 +544,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
             if (boost != null)
             {
-                float f = (float)1.0;
+                // LUCENENET specific - parse without throwing exceptions
+                float f = float.TryParse(boost.Image, NumberStyles.Float, CultureInfo.InvariantCulture, out float temp) ? temp : 1.0f;
                 try
                 {
-                    f = Convert.ToSingle(boost.Image, CultureInfo.InvariantCulture);
                     // avoid boosting null queries, such as those caused by stop words
                     if (q != null)
                     {
                         q = new BoostQueryNode(q, f);
                     }
                 }
-                catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                catch (Exception ignored) when (ignored.IsException())
                 {
-                    //ignored
                     /* Should this be handled somehow? (defaults to "no boost", if
                          * boost number is invalid)
                          */
@@ -634,14 +633,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     }
                     if (fuzzy)
                     {
-                        float fms = defaultMinSimilarity;
-                        try
-                        {
-                            fms = Convert.ToSingle(fuzzySlop.Image.Substring(1), CultureInfo.InvariantCulture);
-                        }
-#pragma warning disable 168
-                        catch (Exception ignored) { }
-#pragma warning restore 168
+                        // LUCENENET specific: parse without throwing exceptions
+                        float fms = float.TryParse(fuzzySlop.Image.Substring(1), NumberStyles.Float, CultureInfo.InvariantCulture, out float temp) ? temp : defaultMinSimilarity;
                         if (fms < 0.0f)
                         {
                             { if (true) throw new ParseException(new Message(QueryParserMessages.INVALID_SYNTAX_FUZZY_LIMITS)); }
@@ -774,17 +767,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
                     if (fuzzySlop != null)
                     {
-                        try
+                        // LUCENENET: don't let parsing throw exceptions
+                        if (float.TryParse(fuzzySlop.Image.Substring(1), NumberStyles.Float, CultureInfo.InvariantCulture, out float temp))
                         {
-                            phraseSlop = (int)Convert.ToSingle(fuzzySlop.Image.Substring(1), CultureInfo.InvariantCulture);
-                            q = new SlopQueryNode(q, phraseSlop);
-                        }
-                        catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
-                        {
-                            // ignored
-                            /* Should this be handled somehow? (defaults to "no PhraseSlop", if
-                           * slop number is invalid)
-                           */
+                            try
+                            {
+                                phraseSlop = (int)temp;
+                                q = new SlopQueryNode(q, phraseSlop);
+                            }
+                            catch (Exception ignored) when (ignored.IsException())
+                            {
+                                /* Should this be handled somehow? (defaults to "no PhraseSlop", if
+                               * slop number is invalid)
+                               */
+                            }
                         }
                     }
                     break;
@@ -795,19 +791,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
             if (boost != null)
             {
-                float f = (float)1.0;
+                // LUCENENET specific: parse without throwing exceptions
+                float f = float.TryParse(boost.Image, NumberStyles.Float, CultureInfo.InvariantCulture, out float temp) ? temp : 1.0f;
                 try
                 {
-                    f = Convert.ToSingle(boost.Image, CultureInfo.InvariantCulture);
                     // avoid boosting null queries, such as those caused by stop words
                     if (q != null)
                     {
                         q = new BoostQueryNode(q, f);
                     }
                 }
-                catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                catch (Exception ignored) when (ignored.IsException())
                 {
-                    // ignored
                     /* Should this be handled somehow? (defaults to "no boost", if
                        * boost number is invalid)
                        */

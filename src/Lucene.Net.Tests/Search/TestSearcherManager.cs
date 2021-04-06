@@ -634,7 +634,7 @@ namespace Lucene.Net.Search
                     // this used to not release the lock, preventing other threads from obtaining it.
                     sm.MaybeRefreshBlocking();
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     throw new Exception(e.ToString(), e);
                 }

@@ -107,6 +107,7 @@
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Kuromoji" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Phonetic" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Benchmark" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Classification" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Expressions" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Facet" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Grouping" />

@@ -117,7 +117,7 @@ namespace Lucene.Net.Analysis.Core
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 throw new Exception(e.Message, e);
             }
@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Core
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 throw new Exception(e.Message, e);
             }
@@ -509,7 +509,7 @@ namespace Lucene.Net.Analysis.Core
                 {
                     return new Dictionary(affixStream, dictStream);
                 }
-                catch (Exception /*ex*/)
+                catch (Exception ex) when (ex.IsException())
                 {
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162
@@ -554,7 +554,7 @@ namespace Lucene.Net.Analysis.Core
                     HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
                     return hyphenator;
                 }
-                catch (Exception /*ex*/)
+                catch (Exception ex) when (ex.IsException())
                 {
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162
@@ -574,7 +574,7 @@ namespace Lucene.Net.Analysis.Core
                     Type clazz = Type.GetType("Lucene.Net.Tartarus.Snowball.Ext." + lang + "Stemmer, Lucene.Net.Analysis.Common");
                     return clazz.GetConstructor(new Type[0]).Invoke(new object[0]);
                 }
-                catch (Exception /*ex*/)
+                catch (Exception ex) when (ex.IsException())
                 {
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162
@@ -680,7 +680,7 @@ namespace Lucene.Net.Analysis.Core
                 {
                     return builder.Build();
                 }
-                catch (Exception /*ex*/)
+                catch (Exception ex) when (ex.IsException())
                 {
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162
@@ -704,7 +704,7 @@ namespace Lucene.Net.Analysis.Core
                 {
                     return b.Build();
                 }
-                catch (Exception /*ex*/)
+                catch (Exception ex) when (ex.IsException())
                 {
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162

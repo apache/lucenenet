@@ -128,7 +128,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 new Dictionary(affixStream, dictStream);
                 fail("didn't get expected exception");
             }
-            catch (Exception expected)
+            catch (Exception expected) when (expected.IsException())
             {
                 assertTrue(expected.Message.StartsWith("expected only one flag", StringComparison.Ordinal));
             }

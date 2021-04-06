@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                 ci.SetIndex(5);
                 fail();
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 assertTrue(e is ArgumentException);
             }

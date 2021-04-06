@@ -1,4 +1,4 @@
-using Spatial4n.Core.Context;
+﻿using Spatial4n.Core.Context;
 using Spatial4n.Core.Distance;
 using System;
 using System.Collections.Generic;
@@ -67,7 +67,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                     Type c = Type.GetType(cname);
                     instance = (SpatialPrefixTreeFactory)Activator.CreateInstance(c);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     throw new Exception(e.ToString(), e);
                 }

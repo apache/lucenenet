@@ -885,7 +885,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 // Perhaps just make it a non-default option?
                 fms = float.Parse(fuzzySlop.Image.Substring(1), CultureInfo.InvariantCulture);
             }
-            catch (Exception /*ignored*/) { }
+            catch (Exception ignored) when (ignored.IsException()) { }
             if (fms < 0.0f)
             {
                 throw new ParseException("Minimum similarity for a FuzzyQuery has to be between 0.0f and 1.0f !");
@@ -916,7 +916,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     // Perhaps just make it a non-default option?
                     s = (int)float.Parse(fuzzySlop.Image.Substring(1), CultureInfo.InvariantCulture);
                 }
-                catch (Exception /*ignored*/) { }
+                catch (Exception ignored) when (ignored.IsException()) { }
             }
             return GetFieldQuery(qfield, DiscardEscapeChar(term.Image.Substring(1, term.Image.Length - 2)), s);
         }
@@ -939,7 +939,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     // Perhaps just make it a non-default option?
                     f = float.Parse(boost.Image, CultureInfo.InvariantCulture);
                 }
-                catch (Exception /*ignored*/)
+                catch (Exception ignored) when (ignored.IsException())
                 {
                     /* Should this be handled somehow? (defaults to "no boost", if
                      * boost number is invalid)

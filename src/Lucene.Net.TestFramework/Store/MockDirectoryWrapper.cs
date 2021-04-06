@@ -305,9 +305,7 @@ namespace Lucene.Net.Store
                     {
                         f.Dispose();
                     }
-#pragma warning disable 168
-                    catch (Exception ignored)
-#pragma warning restore 168
+                    catch (Exception ignored) when (ignored.IsException())
                     {
                         //Debug.WriteLine("Crash(): f.Dispose() FAILED for {0}:\n{1}", f.ToString(), ignored.ToString());
                     }

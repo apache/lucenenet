@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -98,9 +98,9 @@ namespace Lucene.Net.Store
             {
                 writer2 = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
-                Console.Out.Write(e.StackTrace);
+                e.printStackTrace();
                 Assert.Fail("Should not have hit an IOException with no locking");
             }
 
@@ -331,11 +331,11 @@ namespace Lucene.Net.Store
                             // FIFO).
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsException())
                     {
                         HitException = true;
                         Console.WriteLine("Stress Test Index Writer: creation hit unexpected exception: " + e.ToString());
-                        Console.Out.Write(e.StackTrace);
+                        e.printStackTrace(Console.Out);
                         break;
                     }
                     if (writer != null)
@@ -399,11 +399,11 @@ namespace Lucene.Net.Store
 #endif
                             reader);
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsException())
                     {
                         HitException = true;
                         Console.WriteLine("Stress Test Index Searcher: create hit unexpected exception: " + e.ToString());
-                        Console.Out.Write(e.StackTrace);
+                        e.printStackTrace(Console.Out);
                         break;
                     }
                     try

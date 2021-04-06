@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Ja
                 //return Class.forName(cname).asSubclass(expectedType);
                 return Type.GetType(cname);
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 throw new Exception("Cannot load class: " + cname, e);
             }

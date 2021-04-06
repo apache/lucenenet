@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Globalization;
@@ -173,15 +173,13 @@ namespace Lucene.Net.Store
                         }
                     }
                 }
-                catch (IOException ioe)
+                catch (Exception e) when (e.IsRuntimeException() || e.IsError())
+                {
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                }
+                catch (Exception ioe) when (ioe.IsException())
                 {
                     throw new Exception(ioe.ToString(), ioe);
-                }
-                catch (Exception e)
-                {
-                    // LUCENENET NOTE: We need to throw a new exception
-                    // to ensure this is Exception and not some other type.
-                    throw new Exception(e.ToString(), e);
                 }
                 finally
                 {

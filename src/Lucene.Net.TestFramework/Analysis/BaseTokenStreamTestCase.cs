@@ -567,10 +567,9 @@ namespace Lucene.Net.Analysis
                 // ok: MockTokenizer
                 Assert.IsTrue(expected.Message != null && expected.Message.Contains("wrong state"), expected.Message);
             }
-            catch (Exception unexpected)
+            catch (Exception unexpected) when (unexpected.IsException())
             {
-                //unexpected.printStackTrace(System.err);
-                Console.Error.WriteLine(unexpected.StackTrace);
+                unexpected.printStackTrace(Console.Error);
                 Assert.Fail("Got wrong exception when Reset() not called: " + unexpected);
             }
             finally
@@ -721,7 +720,7 @@ namespace Lucene.Net.Analysis
                     CheckRandomData(new Random((int)seed), a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw);
                     success = true;
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException()) // LUCENENET TODO: This catch block can be removed because Rethrow.rethrow() simply does what its name says, but need to get rid of the FirstException functionality and fix ThreadJob so it re-throws ThreadInterruptedExcepetion first.
                 {
                     //Console.WriteLine("Exception in Thread: " + e);
                     //throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)

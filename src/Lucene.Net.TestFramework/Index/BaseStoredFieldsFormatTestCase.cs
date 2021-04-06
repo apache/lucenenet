@@ -566,9 +566,9 @@ namespace Lucene.Net.Index
                             throw new InvalidOperationException("Expected " + q + ", but got " + sdoc.Get("fld"));
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsException())
                     {
-                        ex.Value = e;
+                        ex.CompareAndSet(null, e);
                     }
                 }
             }

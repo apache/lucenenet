@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Pattern;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
@@ -161,7 +161,7 @@ namespace Lucene.Net.Analysis.Synonym
                 factory = TokenFilterFactory("Synonym", ver, "synonyms", "synonyms.txt", "tokenizerFactory", clazz);
                 fail("tokenizerFactory should have complained about missing pattern arg");
             }
-            catch (Exception)
+            catch (Exception expected) when (expected.IsException())
             {
                 // :NOOP:
             }
@@ -172,7 +172,7 @@ namespace Lucene.Net.Analysis.Synonym
                 factory = TokenFilterFactory("Synonym", ver, "synonyms", "synonyms.txt", "tokenizerFactory", clazz, "tokenizerFactory.pattern", "(.*)", "tokenizerFactory.bogusbogusbogus", "bogus", "tokenizerFactory.group", "0");
                 fail("tokenizerFactory should have complained about missing pattern arg");
             }
-            catch (Exception)
+            catch (Exception expected) when (expected.IsException())
             {
                 // :NOOP:
             }

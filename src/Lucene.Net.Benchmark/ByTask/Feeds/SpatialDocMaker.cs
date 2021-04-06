@@ -268,7 +268,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 {
                     return strategy.SpatialContext.ReadShapeFromWkt(shapeStr);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {//InvalidShapeException TODO
                     Console.Error.WriteLine("Shape " + name + " wasn't parseable: " + e + "  (skipping it)");
                     return null;

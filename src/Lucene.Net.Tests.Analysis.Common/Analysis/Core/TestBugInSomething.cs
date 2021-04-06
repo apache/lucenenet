@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Core
                 cs.Mark(1);
                 fail();
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 assertEquals("Mark(int)", e.Message);
             }
@@ -141,7 +141,7 @@ namespace Lucene.Net.Analysis.Core
                 var supported = cs.IsMarkSupported;
                 fail();
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 assertEquals("IsMarkSupported", e.Message);
             }
@@ -151,7 +151,7 @@ namespace Lucene.Net.Analysis.Core
                 cs.Read();
                 fail();
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 assertEquals("Read()", e.Message);
             }
@@ -161,7 +161,7 @@ namespace Lucene.Net.Analysis.Core
                 cs.read(new char[0]);
                 fail();
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 // LUCENENET NOTE: TextReader doesn't support an overload that doesn't supply
                 // index and count. We have an extension method that does in test environment,
@@ -177,7 +177,7 @@ namespace Lucene.Net.Analysis.Core
             //    cs.read(CharBuffer.wrap(new char[0]));
             //    fail();
             //}
-            //catch (Exception e)
+            //catch (Exception e) when (e.IsException())
             //{
             //    assertEquals("Read(CharBuffer)", e.Message);
             //}
@@ -187,7 +187,7 @@ namespace Lucene.Net.Analysis.Core
                 cs.Reset();
                 fail();
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 assertEquals("Reset()", e.Message);
             }
@@ -197,7 +197,7 @@ namespace Lucene.Net.Analysis.Core
                 cs.Skip(1);
                 fail();
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 assertEquals("Skip(long)", e.Message);
             }
@@ -207,7 +207,7 @@ namespace Lucene.Net.Analysis.Core
                 cs.CorrectOffset(1);
                 fail();
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 assertEquals("Correct(int)", e.Message);
             }
@@ -217,7 +217,7 @@ namespace Lucene.Net.Analysis.Core
                 cs.Dispose();
                 fail();
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 assertEquals("Close()", e.Message);
             }
@@ -227,7 +227,7 @@ namespace Lucene.Net.Analysis.Core
                 cs.Read(new char[0], 0, 0);
                 fail();
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 assertEquals("Read(char[], int, int)", e.Message);
             }

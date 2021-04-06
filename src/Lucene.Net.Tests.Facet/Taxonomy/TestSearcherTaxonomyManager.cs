@@ -247,7 +247,7 @@ namespace Lucene.Net.Facet.Taxonomy
                             Console.WriteLine("TEST: reopen done");
                         }
                     }
-                    catch (Exception ioe)
+                    catch (Exception ioe) when (ioe.IsException())
                     {
                         throw new Exception(ioe.Message, ioe);
                     }

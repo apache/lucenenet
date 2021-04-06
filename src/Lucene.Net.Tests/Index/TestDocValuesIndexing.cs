@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -627,7 +627,7 @@ namespace Lucene.Net.Index
                     // expected
                     hitExc.Value = (true);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     throw new Exception(e.Message, e);
                 }

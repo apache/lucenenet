@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -360,7 +360,7 @@ namespace Lucene.Net.Index
                 searcher.Search(pq, 10);
                 Assert.Fail("did not hit expected exception");
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 Exception cause = e;
                 // If the searcher uses an executor service, the IAE is wrapped into other exceptions
