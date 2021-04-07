@@ -175,8 +175,7 @@ namespace Lucene.Net.Analysis.Core
                 {
                     aware.Inform(new StringMockResourceLoader(""));
                 }
-#pragma warning disable CA1031 // Do not catch general exception types
-                catch (IOException)
+                catch (Exception ignored) when (ignored.IsIOException())
                 {
                     // its ok if the right files arent available or whatever to throw this
                 }
@@ -184,7 +183,6 @@ namespace Lucene.Net.Analysis.Core
                 {
                     // is this ok? I guess so
                 }
-#pragma warning restore CA1031 // Do not catch general exception types
             }
             return factory;
         }

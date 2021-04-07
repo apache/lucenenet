@@ -190,7 +190,7 @@
 //                            }
 //                        }
 //                    }
-//                    catch (IOException e)
+//                    catch (Exception e) when (e.IsIOException())
 //                    {
 //                        Console.Error.WriteLine("Couldn't pipe from the forked process: " + e.ToString());
 //                    }

@@ -209,7 +209,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                                 // To work around a bug in XERCES (XERCESJ-1257), we assume the XML is always UTF8, so we simply provide reader.
                                 reader.Parse(new InputSource(IOUtils.GetDecodingReader(localFileIS, Encoding.UTF8)));
                             }
-                            catch (IOException /*ioe*/)
+                            catch (Exception ioe) when (ioe.IsIOException())
                             {
                                 lock (outerInstance)
                                 {
@@ -243,7 +243,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 {
                     throw new Exception(sae.ToString(), sae);
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     throw new Exception(ioe.ToString(), ioe);
                 }

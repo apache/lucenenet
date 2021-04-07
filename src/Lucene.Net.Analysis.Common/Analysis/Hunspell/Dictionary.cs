@@ -281,7 +281,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     return output;
                 }
             }
-            catch (IOException bogus)
+            catch (Exception bogus) when (bogus.IsIOException())
             {
                 throw new Exception(bogus.Message, bogus);
             }
@@ -1392,7 +1392,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 {
                     ApplyMappings(iconv, reuse);
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
                     throw new Exception(bogus.Message, bogus);
                 }

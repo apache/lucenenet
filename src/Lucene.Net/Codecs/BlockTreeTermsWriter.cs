@@ -1283,7 +1283,7 @@ namespace Lucene.Net.Codecs
         {
             if (disposing)
             {
-                IOException ioe = null;
+                Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
                 try
                 {
                     long dirStart = @out.GetFilePointer();
@@ -1312,7 +1312,7 @@ namespace Lucene.Net.Codecs
                     WriteIndexTrailer(indexOut, indexDirStart);
                     CodecUtil.WriteFooter(indexOut);
                 }
-                catch (IOException ioe2)
+                catch (Exception ioe2) when (ioe2.IsIOException())
                 {
                     ioe = ioe2;
                 }

@@ -83,7 +83,7 @@ namespace Lucene.Net.Search.VectorHighlight
             {
                 return new FieldQuery(query, null, phraseHighlight, fieldMatch);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 // should never be thrown when reader is null
                 throw new Exception(e.ToString(), e);

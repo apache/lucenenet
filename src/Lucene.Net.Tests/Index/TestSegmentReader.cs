@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -177,7 +177,7 @@ namespace Lucene.Net.Index
                   byte [] norms = reader.norms(DocHelper.TEXT_FIELD_1_KEY);
                   System.out.println("Norms: " + norms);
                   Assert.IsTrue(norms != null);
-                } catch (IOException e) {
+                } catch (Exception e) when (e.IsIOException()) {
                   e.printStackTrace();
                   Assert.IsTrue(false);
                 }

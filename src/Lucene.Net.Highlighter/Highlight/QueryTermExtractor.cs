@@ -65,7 +65,7 @@ namespace Lucene.Net.Search.Highlight
                     var idf = (float)(Math.Log((float)totalNumDocs / (double)(docFreq + 1)) + 1.0);
                     t.Weight *= idf;
                 }
-                catch (IOException)
+                catch (Exception e) when (e.IsIOException())
                 {
                     //ignore 
                 }

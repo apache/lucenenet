@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Ja
                     @is.Dispose();
                 }
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 throw new Exception(ioe.ToString(), ioe);
             }

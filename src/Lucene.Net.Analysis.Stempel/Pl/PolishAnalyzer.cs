@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Pl
                         LuceneVersion.LUCENE_CURRENT);
 #pragma warning restore 612, 618
                 }
-                catch (IOException ex)
+                catch (Exception ex) when (ex.IsIOException())
                 {
                     // default set should always be present as it is part of the
                     // distribution (embedded resource)
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Pl
                 {
                     return StempelStemmer.Load(typeof(PolishAnalyzer).FindAndGetManifestResourceStream(DEFAULT_STEMMER_FILE));
                 }
-                catch (IOException ex)
+                catch (Exception ex) when (ex.IsIOException())
                 {
                     // default set should always be present as it is part of the
                     // distribution (embedded resource)

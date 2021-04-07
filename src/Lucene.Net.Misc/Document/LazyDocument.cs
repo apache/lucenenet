@@ -101,7 +101,7 @@ namespace Lucene.Net.Documents
                     {
                         doc = reader.Document(docID, fieldNames);
                     }
-                    catch (IOException ioe)
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
                         throw new InvalidOperationException("unable to load document", ioe);
                     }

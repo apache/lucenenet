@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
@@ -57,7 +57,7 @@ namespace Lucene.Net.Expressions
                 context["scorer"] = scorer;
                 scores = source.GetValues(context, readerContext);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new Exception(e.ToString(), e);
             }

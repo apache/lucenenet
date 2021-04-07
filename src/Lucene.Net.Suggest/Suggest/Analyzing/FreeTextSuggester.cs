@@ -490,7 +490,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 return DoLookup(key, contexts, num);
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 // bogus:
                 throw new Exception(ioe.ToString(), ioe);
@@ -646,7 +646,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         prefixOutput = LookupPrefix(fst, bytesReader, token, arc);
                     }
-                    catch (IOException bogus)
+                    catch (Exception bogus) when (bogus.IsIOException())
                     {
                         throw new Exception(bogus.ToString(), bogus);
                     }
@@ -721,7 +721,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         completions = searcher.Search();
                         if (Debugging.AssertsEnabled) Debugging.Assert(completions.IsComplete);
                     }
-                    catch (IOException bogus)
+                    catch (Exception bogus) when (bogus.IsIOException())
                     {
                         throw new Exception(bogus.ToString(), bogus);
                     }

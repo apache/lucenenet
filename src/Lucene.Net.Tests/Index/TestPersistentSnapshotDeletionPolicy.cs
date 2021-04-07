@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
             {
                 psdp.Snapshot();
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 if (ioe.Message.Equals("now fail on purpose", StringComparison.Ordinal))
                 {

@@ -194,7 +194,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     SimpleTextUtil.ReadLine(_input, _scratch); // read the line telling us if its real or not
                     return (long)((decimal)_field.MinValue + bd); // LUCENENET specific - use decimal rather than BigInteger
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     throw new Exception(ioe.ToString(), ioe);
                 }
@@ -235,7 +235,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     SimpleTextUtil.ReadLine(_input, _scratch); // 'T' or 'F'
                     return _scratch.Bytes[_scratch.Offset] == (byte)'T';
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -299,7 +299,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     result.Length = len;
                     _input.ReadBytes(result.Bytes, 0, len);
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     throw new Exception(ioe.ToString(), ioe);
                 }
@@ -357,7 +357,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     SimpleTextUtil.ReadLine(_input, _scratch); // 'T' or 'F'
                     return _scratch.Bytes[_scratch.Offset] == (byte)'T';
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     throw new Exception(ioe.ToString(), ioe);
                 }
@@ -419,7 +419,7 @@ namespace Lucene.Net.Codecs.SimpleText
                         throw e;
                     }
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     throw new Exception(ioe.ToString(), ioe);
                 }
@@ -456,7 +456,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     result.Length = len;
                     _input.ReadBytes(result.Bytes, 0, len);
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     throw new Exception(ioe.ToString(), ioe);
                 }
@@ -521,7 +521,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     _currentOrds = ordList.Length == 0 ? Arrays.Empty<string>() : ordList.Split(',').TrimEnd();
                     _currentIndex = 0;
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     throw new Exception(ioe.ToString(), ioe);
                 }
@@ -558,7 +558,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     result.Length = len;
                     _input.ReadBytes(result.Bytes, 0, len);
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     throw new Exception(ioe.ToString(), ioe);
                 }

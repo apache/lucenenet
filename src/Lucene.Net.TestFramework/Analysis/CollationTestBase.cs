@@ -261,7 +261,7 @@ namespace Lucene.Net.Analysis
             for (int i = 0; i < numTestPoints; i++)
             {
                 string term = TestUtil.RandomSimpleString(Random);
-                IOException priorException = null;
+                Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
                 TokenStream ts = analyzer.GetTokenStream("fake", new StringReader(term));
                 try
                 {
@@ -275,7 +275,7 @@ namespace Lucene.Net.Analysis
                     Assert.IsFalse(ts.IncrementToken());
                     ts.End();
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     priorException = e;
                 }
@@ -319,7 +319,7 @@ namespace Lucene.Net.Analysis
                     {
                         string term = mapping.Key;
                         BytesRef expected = mapping.Value;
-                        IOException priorException = null;
+                        Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
                         TokenStream ts = this.analyzer.GetTokenStream("fake", new StringReader(term));
                         try
                         {
@@ -332,7 +332,7 @@ namespace Lucene.Net.Analysis
                             Assert.IsFalse(ts.IncrementToken());
                             ts.End();
                         }
-                        catch (IOException e)
+                        catch (Exception e) when (e.IsIOException())
                         {
                             priorException = e;
                         }
@@ -342,7 +342,7 @@ namespace Lucene.Net.Analysis
                         }
                     }
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }

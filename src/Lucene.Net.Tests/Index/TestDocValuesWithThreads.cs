@@ -294,7 +294,7 @@ namespace Lucene.Net.Index
                     docIDToID = sr.GetNumericDocValues("id");
                     Assert.IsNotNull(stringDVDirect);
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     throw new Exception(ioe.ToString(), ioe);
                 }

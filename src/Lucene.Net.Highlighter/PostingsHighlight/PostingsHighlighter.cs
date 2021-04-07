@@ -812,7 +812,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                         return off.CompareTo(otherOff);
                     }
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }

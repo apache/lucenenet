@@ -1121,7 +1121,7 @@ namespace Lucene.Net.Util.Packed
                     {
                         @in.Seek(endPointer);
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         throw new InvalidOperationException("failed", e);
                     }

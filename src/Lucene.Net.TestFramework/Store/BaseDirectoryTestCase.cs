@@ -505,7 +505,7 @@ namespace Lucene.Net.Store
         //                        assertTrue(SlowFileExists(this.dir, fileName));
         //                    }
         //                }
-        //                //catch (IOException e)
+        //                //catch (Exception e) when (e.IsIOException())
         //                //{
         //                //    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
         //                //}
@@ -556,7 +556,7 @@ namespace Lucene.Net.Store
         //                                    // Access denied is allowed for files for which the output is still open (MockDirectoryWriter enforces
         //                                    // this, for example). Since we don't synchronize with the writer thread, just ignore it.
         //                                }
-        //                                catch (IOException e)
+        //                                catch (Exception e) when (e.IsIOException())
         //                                {
         //                                    throw new IOException("Something went wrong when opening: " + file, e);
         //                                }
@@ -564,7 +564,7 @@ namespace Lucene.Net.Store
         //                        }
         //                    }
         //                }
-        //                catch (IOException e)
+        //                catch (Exception e) when (e.IsIOException())
         //                {
         //                    //throw new UncheckedIOException(e);
         //                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)

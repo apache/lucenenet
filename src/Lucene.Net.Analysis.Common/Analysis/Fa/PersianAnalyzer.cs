@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Ar;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Fa
                 {
                     return LoadStopwordSet(false, typeof(PersianAnalyzer), DEFAULT_STOPWORD_FILE, STOPWORDS_COMMENT);
                 }
-                catch (IOException ex)
+                catch (Exception ex) when (ex.IsIOException())
                 {
                     // default set should always be present as it is part of the
                     // distribution (JAR)

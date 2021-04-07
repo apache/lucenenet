@@ -1,4 +1,4 @@
-#if TESTFRAMEWORK
+﻿#if TESTFRAMEWORK
 // LUCENENET NOTE: This is incomplete
 
 using System;
@@ -61,7 +61,7 @@ namespace Lucene.Net.Util
             {
               TestUtil.Rm(file);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
               throw new IOException("Could not remove temporary location '" + file.FullName + "', created at stack trace:\n" + CreationStack, e);
             }

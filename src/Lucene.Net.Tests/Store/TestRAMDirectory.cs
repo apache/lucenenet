@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -165,7 +165,7 @@ namespace Lucene.Net.Store
                     {
                         writer.AddDocument(doc);
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         throw new Exception(e.ToString(), e);
                     }

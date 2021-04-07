@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Support.IO;
 using System.Diagnostics.CodeAnalysis;
+using System;
 using System.IO;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -88,9 +89,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         private int JjMoveStringLiteralDfa1_2(long active0)
         {
             try { m_curChar = m_input_stream.ReadChar(); }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 JjStopStringLiteralDfa_2(0, active0);
                 return 1;
@@ -429,9 +428,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 if ((i = jjnewStateCnt) == (startsAt = 33 - (jjnewStateCnt = startsAt)))
                     return curPos;
                 try { m_curChar = m_input_stream.ReadChar(); }
-#pragma warning disable 168
-                catch (IOException e) { return curPos; }
-#pragma warning restore 168
+                catch (Exception e) when (e.IsIOException()) { return curPos; }
             }
         }
         private int JjMoveStringLiteralDfa0_0()
@@ -517,9 +514,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 if ((i = jjnewStateCnt) == (startsAt = 3 - (jjnewStateCnt = startsAt)))
                     return curPos;
                 try { m_curChar = m_input_stream.ReadChar(); }
-#pragma warning disable 168
-                catch (IOException e) { return curPos; }
-#pragma warning restore 168
+                catch (Exception e) when (e.IsIOException()) { return curPos; }
             }
         }
         private int JjStopStringLiteralDfa_1(int pos, long active0)
@@ -558,9 +553,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         private int JjMoveStringLiteralDfa1_1(long active0)
         {
             try { m_curChar = m_input_stream.ReadChar(); }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 JjStopStringLiteralDfa_1(0, active0);
                 return 1;
@@ -581,9 +574,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             jjmatchedKind = kind;
             jjmatchedPos = pos;
             try { m_curChar = m_input_stream.ReadChar(); }
-#pragma warning disable 168
-            catch (IOException e) { return pos + 1; }
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException()) { return pos + 1; }
             return JjMoveNfa_1(state, pos + 1);
         }
         private int JjMoveNfa_1(int startState, int curPos)
@@ -724,9 +715,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 if ((i = jjnewStateCnt) == (startsAt = 7 - (jjnewStateCnt = startsAt)))
                     return curPos;
                 try { m_curChar = m_input_stream.ReadChar(); }
-#pragma warning disable 168
-                catch (IOException e) { return curPos; }
-#pragma warning restore 168
+                catch (Exception e) when (e.IsIOException()) { return curPos; }
             }
         }
         internal static readonly int[] jjnextStates = {
@@ -887,9 +876,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 {
                     m_curChar = m_input_stream.BeginToken();
                 }
-#pragma warning disable 168
-                catch (IOException e)
-#pragma warning restore 168
+                catch (Exception e) when (e.IsIOException())
                 {
                     jjmatchedKind = 0;
                     matchedToken = JjFillToken();
@@ -937,9 +924,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 string error_after = null;
                 bool EOFSeen = false;
                 try { m_input_stream.ReadChar(); m_input_stream.BackUp(1); }
-#pragma warning disable 168
-                catch (IOException e1)
-#pragma warning restore 168
+                catch (Exception e1) when (e1.IsIOException())
                 {
                     EOFSeen = true;
                     error_after = curPos <= 1 ? "" : m_input_stream.GetImage();

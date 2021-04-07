@@ -148,7 +148,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     // a match!
                     return docs.Freq;
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception("caught exception in function " + outerInstance.GetDescription() + " : doc=" + doc, e);
                 }

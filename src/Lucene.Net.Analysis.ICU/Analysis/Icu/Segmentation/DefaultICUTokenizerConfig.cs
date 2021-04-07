@@ -138,7 +138,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                     RuleBasedBreakIterator.GetInstanceFromCompiledRules(@is);
                 return bi;
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new Exception(e.ToString(), e);
             }

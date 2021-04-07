@@ -64,7 +64,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     reader.ReadLine(); // skip one line - the header line - already handled that info
                 }
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new Exception(e.ToString(), e);
             }

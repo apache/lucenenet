@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -183,7 +183,7 @@ namespace Lucene.Net.Util
           string fullName = META_INF_SERVICES + clazz.Name;
           this.ProfilesEnum = (loader == null) ? ClassLoader.getSystemResources(fullName) : loader.getResources(fullName);
         }
-        catch (IOException ioe)
+        catch (Exception ioe) when (ioe.IsIOException())
         {
           throw new ServiceConfigurationError("Error loading SPI profiles for type " + clazz.Name + " from classpath", ioe);
         }
@@ -227,7 +227,7 @@ namespace Lucene.Net.Util
                 }
               }
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
               priorE = ioe;
             }
@@ -236,7 +236,7 @@ namespace Lucene.Net.Util
               IOUtils.CloseWhileHandlingException(priorE, @in);
             }
           }
-          catch (IOException ioe)
+          catch (Exception ioe) when (ioe.IsIOException())
           {
             throw new ServiceConfigurationError("Error loading SPI class list from URL: " + url, ioe);
           }

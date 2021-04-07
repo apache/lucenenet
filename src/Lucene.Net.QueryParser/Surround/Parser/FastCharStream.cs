@@ -120,7 +120,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             {
                 input.Dispose();
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 Console.Error.WriteLine("Caught: " + e + "; ignoring.");
             }

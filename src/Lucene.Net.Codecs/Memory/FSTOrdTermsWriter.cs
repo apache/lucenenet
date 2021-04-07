@@ -195,7 +195,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (blockOut == null) return;
 
-                IOException ioe = null;
+                Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
                 try
                 {
                     var blockDirStart = blockOut.GetFilePointer();
@@ -227,7 +227,7 @@ namespace Lucene.Net.Codecs.Memory
                     CodecUtil.WriteFooter(indexOut);
                     CodecUtil.WriteFooter(blockOut);
                 }
-                catch (IOException ioe2)
+                catch (Exception ioe2) when (ioe2.IsIOException())
                 {
                     ioe = ioe2;
                 }

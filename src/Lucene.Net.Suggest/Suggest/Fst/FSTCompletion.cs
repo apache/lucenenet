@@ -161,7 +161,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 // we want highest weights first.
                 return rootArcs.ToArray();
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new Exception(e.ToString(), e);
             }
@@ -204,7 +204,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                     }
                 }
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 // Should never happen, but anyway.
                 throw new Exception(e.ToString(), e);
@@ -247,7 +247,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                     return LookupSortedByWeight(keyUtf8, num, false);
                 }
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 // Should never happen, but anyway.
                 throw new Exception(e.ToString(), e);

@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -178,9 +178,7 @@ namespace Lucene.Net.Store
                 CheckReadBytes(input, 11, pos);
                 Assert.Fail("Block read past end of file");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 /* success */
             }
@@ -190,9 +188,7 @@ namespace Lucene.Net.Store
                 CheckReadBytes(input, 50, pos);
                 Assert.Fail("Block read past end of file");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 /* success */
             }
@@ -202,9 +198,7 @@ namespace Lucene.Net.Store
                 CheckReadBytes(input, 100000, pos);
                 Assert.Fail("Block read past end of file");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 /* success */
             }

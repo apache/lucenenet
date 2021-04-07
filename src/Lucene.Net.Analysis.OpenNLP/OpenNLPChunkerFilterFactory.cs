@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.OpenNlp
                 }
                 return new OpenNLPChunkerFilter(input, chunkerOp);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new ArgumentException(e.ToString(), e);
             }
@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.OpenNlp
                     OpenNLPOpsFactory.GetChunkerModel(chunkerModelFile, loader);
                 }
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new ArgumentException(e.ToString(), e);
             }

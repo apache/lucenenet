@@ -468,7 +468,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     EncodeValues(count);
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
                     throw new Exception(bogus.ToString(), bogus);
                 }

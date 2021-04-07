@@ -469,7 +469,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     }
                     sb.Append(i + ": " + category.ToString() + "\n");
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     // LUCENENET TODO: Should we use a 3rd party logging library?
 

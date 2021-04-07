@@ -1,4 +1,4 @@
-using Lucene.Net.Support.IO;
+﻿using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using System;
 using System.IO;
@@ -289,12 +289,7 @@ namespace Lucene.Net.Store
 
                     success = true;
                 }
-                catch (IOException e)
-                {
-                    FailureReason = e;
-                }
-                // LUCENENET: UnauthorizedAccessException does not derive from IOException like in java
-                catch (UnauthorizedAccessException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     // At least on OS X, we will sometimes get an
                     // intermittent "Permission Denied" Exception,
@@ -396,7 +391,7 @@ namespace Lucene.Net.Store
                     }
                     return !obtained;
                 }
-                catch (IOException)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     return false;
                 }
@@ -483,12 +478,7 @@ namespace Lucene.Net.Store
                 {
                     // no failure reason to be recorded, since this is the expected error if a lock exists
                 }
-                catch (IOException e)
-                {
-                    FailureReason = e;
-                }
-                // LUCENENET: UnauthorizedAccessException does not derive from IOException like in java
-                catch (UnauthorizedAccessException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     // At least on OS X, we will sometimes get an
                     // intermittent "Permission Denied" Exception,
@@ -635,12 +625,7 @@ namespace Lucene.Net.Store
                 {
                     stream = GetLockFileStream(FileMode.OpenOrCreate);
                 }
-                catch (IOException e)
-                {
-                    FailureReason = e;
-                }
-                // LUCENENET: UnauthorizedAccessException does not derive from IOException like in java
-                catch (UnauthorizedAccessException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     // At least on OS X, we will sometimes get an
                     // intermittent "Permission Denied" Exception,

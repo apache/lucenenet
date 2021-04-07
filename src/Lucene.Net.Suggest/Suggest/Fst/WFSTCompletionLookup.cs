@@ -163,7 +163,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 prefixOutput = LookupPrefix(scratch, arc);
             }
-            catch (IOException bogus)
+            catch (Exception bogus) when (bogus.IsIOException())
             {
                 throw new Exception(bogus.ToString(), bogus);
             }
@@ -193,7 +193,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 completions = Lucene.Net.Util.Fst.Util.ShortestPaths(fst, arc, prefixOutput, weightComparer, num, !exactFirst);
                 if (Debugging.AssertsEnabled) Debugging.Assert(completions.IsComplete);
             }
-            catch (IOException bogus)
+            catch (Exception bogus) when (bogus.IsIOException())
             {
                 throw new Exception(bogus.ToString(), bogus);
             }
@@ -254,7 +254,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 result = LookupPrefix(new BytesRef(key), arc);
             }
-            catch (IOException bogus)
+            catch (Exception bogus) when (bogus.IsIOException())
             {
                 throw new Exception(bogus.ToString(), bogus);
             }

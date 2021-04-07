@@ -869,7 +869,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 return results;
             }
-            catch (IOException bogus)
+            catch (Exception bogus) when (bogus.IsIOException())
             {
                 throw new Exception(bogus.ToString(), bogus);
             }

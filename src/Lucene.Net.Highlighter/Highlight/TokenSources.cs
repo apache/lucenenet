@@ -341,7 +341,7 @@ namespace Lucene.Net.Search.Highlight
             {
                 return analyzer.GetTokenStream(field, contents);
             }
-            catch (IOException ex)
+            catch (Exception ex) when (ex.IsIOException())
             {
                 throw new Exception(ex.ToString(), ex);
             }

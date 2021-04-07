@@ -109,7 +109,7 @@ namespace Lucene.Net.Util.Packed
                 }
                 return (rawValue.TripleShift(shiftRightBits)) & valueMask;
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 throw new InvalidOperationException("failed", ioe);
             }

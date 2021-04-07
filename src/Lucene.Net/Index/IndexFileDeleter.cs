@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -232,7 +232,7 @@ namespace Lucene.Net.Index
                                 }
                                 sis = null;
                             }
-                            catch (IOException /*e*/)
+                            catch (Exception e) when (e.IsIOException())
                             {
                                 if (SegmentInfos.GenerationFromSegmentsFileName(fileName) <= currentGen && directory.FileLength(fileName) > 0)
                                 {
@@ -280,7 +280,7 @@ namespace Lucene.Net.Index
                 {
                     sis.Read(directory, currentSegmentsFile);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new CorruptIndexException("failed to locate current segments_N file \"" + currentSegmentsFile + "\"" + e.ToString(), e);
                 }
@@ -715,7 +715,7 @@ namespace Lucene.Net.Index
                 }
                 directory.DeleteFile(fileName);
             } // if delete fails
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 // Some operating systems (e.g. Windows) don't
                 // permit a file to be deleted while it is opened

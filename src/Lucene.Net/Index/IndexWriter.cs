@@ -848,7 +848,7 @@ namespace Lucene.Net.Index
                         segmentInfos.Read(directory);
                         segmentInfos.Clear();
                     }
-                    catch (IOException)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         // Likely this means it's a fresh directory
                         initialIndexExists = false;
@@ -5090,7 +5090,7 @@ namespace Lucene.Net.Index
                         filesToRemove = CreateCompoundFile(infoStream, directory, checkAbort, merge.info.Info, context);
                         success = true;
                     }
-                    catch (IOException ioe)
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
                         lock (this)
                         {
@@ -5685,7 +5685,8 @@ namespace Lucene.Net.Index
             // Now merge all added files
             ICollection<string> files = info.GetFiles();
             CompoundFileDirectory cfsDir = new CompoundFileDirectory(directory, fileName, context, true);
-            IOException prior = null;
+            // LUCENENET: Ported changes to this method from 4.8.1
+            bool success = false;
             try
             {
                 foreach (string file in files)
@@ -5693,37 +5694,30 @@ namespace Lucene.Net.Index
                     directory.Copy(cfsDir, file, file, context);
                     checkAbort.Work(directory.FileLength(file));
                 }
-            }
-            catch (IOException ex)
-            {
-                prior = ex;
+                success = true;
             }
             finally
             {
-                bool success = false;
-                try
+                if (success)
                 {
-                    IOUtils.DisposeWhileHandlingException(prior, cfsDir);
-                    success = true;
+                    IOUtils.Dispose(cfsDir);
                 }
-                finally
+                else
                 {
-                    if (!success)
+                    IOUtils.DisposeWhileHandlingException(cfsDir);
+                    try
                     {
-                        try
-                        {
-                            directory.DeleteFile(fileName);
-                        }
-                        catch (Exception t) when (t.IsThrowable())
-                        {
-                        }
-                        try
-                        {
-                            directory.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
-                        }
-                        catch (Exception t) when (t.IsThrowable())
-                        {
-                        }
+                        directory.DeleteFile(fileName);
+                    }
+                    catch (Exception t) when (t.IsThrowable())
+                    {
+                    }
+                    try
+                    {
+                        directory.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
+                    }
+                    catch (Exception t) when (t.IsThrowable())
+                    {
                     }
                 }
             }

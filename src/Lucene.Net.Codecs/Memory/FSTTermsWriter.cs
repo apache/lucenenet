@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Util.Fst;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -173,7 +174,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (_output == null) return;
 
-                IOException ioe = null;
+                Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
                 try
                 {
                     // write field summary
@@ -196,7 +197,7 @@ namespace Lucene.Net.Codecs.Memory
                     WriteTrailer(_output, dirStart);
                     CodecUtil.WriteFooter(_output);
                 }
-                catch (IOException ioe2)
+                catch (Exception ioe2) when (ioe2.IsIOException())
                 {
                     ioe = ioe2;
                 }

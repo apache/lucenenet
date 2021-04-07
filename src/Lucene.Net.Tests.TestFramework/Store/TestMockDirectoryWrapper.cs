@@ -102,7 +102,7 @@ namespace Lucene.Net.Store
                         fail("should have failed on disk full");
                     }
 #pragma warning disable 168
-                    catch (IOException e)
+                    catch (Exception e)
 #pragma warning restore 168
                     {
                         // expected
@@ -128,7 +128,7 @@ namespace Lucene.Net.Store
                         fail("should have failed on disk full");
                     }
 #pragma warning disable 168
-                    catch (IOException e)
+                    catch (Exception e)
 #pragma warning restore 168
                     {
                         // expected

@@ -564,7 +564,7 @@ namespace Lucene.Net.Util
         //                    file.Flush(true);
         //                    success = true;
         //                }
-        //                catch (IOException e)
+        //                catch (Exception e) when (e.IsIOException())
         //                {
         //                    if (retryCount == 5)
         //                    {

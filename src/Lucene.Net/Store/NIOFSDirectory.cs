@@ -1,4 +1,4 @@
-using J2N.IO;
+﻿using J2N.IO;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.IO;
 using System;
@@ -150,7 +150,7 @@ namespace Lucene.Net.Store
                 {
                     return OpenSlice("full-slice", 0, descriptor.Length);
                 }
-                catch (IOException ex)
+                catch (Exception ex) when (ex.IsIOException())
                 {
                     throw new Exception(ex.ToString(), ex);
                 }
@@ -271,7 +271,7 @@ namespace Lucene.Net.Store
                     }
                     if (Debugging.AssertsEnabled) Debugging.Assert(readLength == 0);
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     throw new IOException(ioe.ToString() + ": " + this, ioe);
                 }

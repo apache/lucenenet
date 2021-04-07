@@ -628,7 +628,7 @@ namespace Lucene.Net.Index
                     return true;
                 }
             }
-            catch (IOException)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 // Ignore: if something is wrong w/ the marker file,
                 // we will just upgrade again
@@ -827,7 +827,7 @@ namespace Lucene.Net.Index
                 long lastGen = -1;
                 long gen = 0;
                 int genLookaheadCount = 0;
-                IOException exc = null;
+                Exception exc = null; // LUCENENET: No need to cast to IOExcpetion
                 int retryCount = 0;
 
                 bool useFirstMethod = true;
@@ -882,7 +882,7 @@ namespace Lucene.Net.Index
                         {
                             genInput = directory.OpenChecksumInput(IndexFileNames.SEGMENTS_GEN, IOContext.READ_ONCE);
                         }
-                        catch (IOException e)
+                        catch (Exception e) when (e.IsIOException())
                         {
                             if (infoStream != null)
                             {
@@ -924,7 +924,7 @@ namespace Lucene.Net.Index
                                     throw new IndexFormatTooNewException(genInput, version, FORMAT_SEGMENTS_GEN_START, FORMAT_SEGMENTS_GEN_CURRENT);
                                 }
                             }
-                            catch (IOException err2)
+                            catch (Exception err2) when (err2.IsIOException())
                             {
                                 // rethrow any format exception
                                 if (err2 is CorruptIndexException)
@@ -1007,7 +1007,7 @@ namespace Lucene.Net.Index
                         }
                         return v;
                     }
-                    catch (IOException err)
+                    catch (Exception err) when (err.IsIOException())
                     {
                         // Save the original root cause:
                         if (exc == null)
@@ -1036,7 +1036,7 @@ namespace Lucene.Net.Index
                                 directory.OpenInput(prevSegmentFileName, IOContext.DEFAULT).Dispose();
                                 prevExists = true;
                             }
-                            catch (IOException) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                            catch (Exception ioe) when (ioe.IsIOException())
                             {
                                 prevExists = false;
                             }
@@ -1056,7 +1056,7 @@ namespace Lucene.Net.Index
                                     }
                                     return v;
                                 }
-                                catch (IOException err2)
+                                catch (Exception err2) when (err2.IsIOException())
                                 {
                                     if (infoStream != null)
                                     {

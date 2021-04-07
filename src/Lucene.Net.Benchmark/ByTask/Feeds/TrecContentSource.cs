@@ -227,7 +227,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             {
                 reader?.Dispose();
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 if (m_verbose)
                 {

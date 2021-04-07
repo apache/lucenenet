@@ -69,7 +69,7 @@ namespace Lucene.Net.Spatial.Serialized
                 //this is a hack to avoid redundant byte array copying by byteStream.toByteArray()
                 byteStream.WriteTo(new OutputStreamAnonymousClass(bytesRef));
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new Exception(e.ToString(), e);
             }
@@ -298,7 +298,7 @@ namespace Lucene.Net.Spatial.Serialized
                     {
                         return outerInstance.binaryCodec.ReadShape(dataInput);
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         throw new Exception(e.ToString(), e);
                     }

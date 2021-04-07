@@ -68,24 +68,21 @@ namespace Lucene.Net.Index
                 var sis = new SegmentInfos();
                 sis.Read(directory, segmentFileName);
                 var readers = new SegmentReader[sis.Count];
+                // LUCENENET: Ported over changes from 4.8.1 to this method
                 for (int i = sis.Count - 1; i >= 0; i--)
                 {
-                    IOException prior = null;
+                    //IOException prior = null; // LUCENENET: Not used
                     bool success = false;
                     try
                     {
                         readers[i] = new SegmentReader(sis.Info(i), termInfosIndexDivisor, IOContext.READ);
                         success = true;
                     }
-                    catch (IOException ex)
-                    {
-                        prior = ex;
-                    }
                     finally
                     {
                         if (!success)
                         {
-                            IOUtils.DisposeWhileHandlingException(prior, readers);
+                            IOUtils.DisposeWhileHandlingException(readers);
                         }
                     }
                 }

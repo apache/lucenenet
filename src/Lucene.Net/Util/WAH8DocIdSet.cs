@@ -353,7 +353,7 @@ namespace Lucene.Net.Util
                 {
                     WriteHeader(reverse, clean, dirtyWords.Length);
                 }
-                catch (IOException cannotHappen)
+                catch (Exception cannotHappen) when (cannotHappen.IsIOException())
                 {
                     throw new InvalidOperationException(cannotHappen.ToString(), cannotHappen); // LUCENENET NOTE: This was AssertionError in Lucene
                 }
