@@ -192,11 +192,11 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 Dispose();
             }
-            finally
+            catch // ignored
             {
-                IOUtils.DeleteFilesIgnoringExceptions(_directory,
-                    IndexFileNames.SegmentFileName(_segment, "", FIELDS_EXTENSION));
             }
+            IOUtils.DeleteFilesIgnoringExceptions(_directory,
+                    IndexFileNames.SegmentFileName(_segment, "", FIELDS_EXTENSION));
         }
 
         public override void Finish(FieldInfos fis, int numDocs)
