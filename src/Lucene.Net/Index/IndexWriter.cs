@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using J2N.Text;
 using J2N.Threading;
 using J2N.Threading.Atomic;
@@ -455,7 +455,13 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
             }
 
+#if FEATURE_DICTIONARY_REMOVE_CONTINUEENUMERATION
             private readonly IDictionary<SegmentCommitInfo, ReadersAndUpdates> readerMap = new Dictionary<SegmentCommitInfo, ReadersAndUpdates>();
+#else
+            // LUCENENET: We use ConcurrentDictionary<TKey, TValue> because Dictionary<TKey, TValue> doesn't support
+            // deletion while iterating, but ConcurrentDictionary does.
+            private readonly IDictionary<SegmentCommitInfo, ReadersAndUpdates> readerMap = new ConcurrentDictionary<SegmentCommitInfo, ReadersAndUpdates>();
+#endif
 
             // used only by asserts
             public virtual bool InfoIsLive(SegmentCommitInfo info)
@@ -558,13 +564,6 @@ namespace Lucene.Net.Index
                 lock (this)
                 {
                     Exception priorE = null;
-
-                    // LUCENENET specific - Since an enumerator doesn't allow you to delete 
-                    // immediately, keep track of which elements we have iterated over so
-                    // we can delete them immediately before throwing exceptions or at the
-                    // end of the block.
-                    IList<KeyValuePair<SegmentCommitInfo, ReadersAndUpdates>> toDelete = new List<KeyValuePair<SegmentCommitInfo, ReadersAndUpdates>>();
-
                     foreach (var pair in readerMap)
                     {
                         ReadersAndUpdates rld = pair.Value;
@@ -589,10 +588,6 @@ namespace Lucene.Net.Index
                         {
                             if (doSave)
                             {
-                                // LUCENENET specific: remove all of the
-                                // elements we have iterated over so far
-                                // before throwing an exception.
-                                readerMap.RemoveAll(toDelete);
                                 //IOUtils.ReThrow(t);
                                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
@@ -606,12 +601,7 @@ namespace Lucene.Net.Index
                         // in the end, in case we hit an exception;
                         // otherwise we could over-decref if close() is
                         // called again:
-
-                        // LUCENENET specific - we cannot delete immediately,
-                        // so we store the elements that are iterated over and
-                        // delete as soon as we are done iterating (whether
-                        // that is because of an exception or not).
-                        toDelete.Add(pair);
+                        readerMap.Remove(pair.Key);
 
                         // NOTE: it is allowed that these decRefs do not
                         // actually close the SRs; this happens when a
@@ -625,10 +615,6 @@ namespace Lucene.Net.Index
                         {
                             if (doSave)
                             {
-                                // LUCENENET specific: remove all of the
-                                // elements we have iterated over so far
-                                // before throwing an exception.
-                                readerMap.RemoveAll(toDelete);
                                 //IOUtils.ReThrow(t);
                                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
@@ -638,11 +624,6 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
-                    // LUCENENET specific: remove all of the
-                    // elements we have iterated over so far
-                    // before possibly throwing an exception.
-                    readerMap.RemoveAll(toDelete);
-
                     if (Debugging.AssertsEnabled) Debugging.Assert(readerMap.Count == 0);
                     IOUtils.ReThrow(priorE);
                 }
