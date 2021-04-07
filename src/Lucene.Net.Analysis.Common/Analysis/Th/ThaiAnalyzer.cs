@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 #if FEATURE_BREAKITERATOR
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Th
                 {
                     return LoadStopwordSet(false, typeof(ThaiAnalyzer), DEFAULT_STOPWORD_FILE, STOPWORDS_COMMENT);
                 }
-                catch (IOException ex)
+                catch (Exception ex) when (ex.IsIOException())
                 {
                     // default set should always be present as it is part of the
                     // distribution (JAR)

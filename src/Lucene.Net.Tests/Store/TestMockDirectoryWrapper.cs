@@ -83,9 +83,7 @@ namespace Lucene.Net.Store
                 @out.WriteBytes(bytes, bytes.Length);
                 Assert.Fail("should have failed on disk full");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 // expected
             }
@@ -105,9 +103,7 @@ namespace Lucene.Net.Store
                 @out.CopyBytes(new ByteArrayDataInput(bytes), bytes.Length);
                 Assert.Fail("should have failed on disk full");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 // expected
             }

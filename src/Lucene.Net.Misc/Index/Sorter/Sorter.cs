@@ -299,7 +299,7 @@ namespace Lucene.Net.Index.Sorter
                     }
                     return docID1.CompareTo(docID2); // docid order tiebreak
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }

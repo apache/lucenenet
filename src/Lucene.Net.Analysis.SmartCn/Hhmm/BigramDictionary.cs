@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     string dictRoot = AnalyzerProfile.ANALYSIS_DATA_DIR;
                     if (string.IsNullOrEmpty(dictRoot))
                     {
-                        singleInstance.Load();
+                        singleInstance.Load(); // LUCENENET: No IOException can happen here
                     }
                     else
                     {
@@ -237,7 +237,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     }
                     LoadFromFile(bigramDictPath);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }

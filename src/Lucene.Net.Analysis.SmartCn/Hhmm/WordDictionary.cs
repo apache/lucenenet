@@ -134,7 +134,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     SortEachItems();
                     // log.info("load dictionary: " + dctFilePath + " total:" + total);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }

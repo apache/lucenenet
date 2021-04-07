@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Support.IO;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
@@ -432,7 +433,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 if ((i = jjnewStateCnt) == (startsAt = 38 - (jjnewStateCnt = startsAt)))
                     return curPos;
                 try { m_curChar = m_input_stream.ReadChar(); }
-                catch (IOException /*e*/) { return curPos; }
+                catch (Exception e) when (e.IsIOException()) { return curPos; }
             }
         }
 
@@ -519,7 +520,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 if ((i = jjnewStateCnt) == (startsAt = 3 - (jjnewStateCnt = startsAt)))
                     return curPos;
                 try { m_curChar = m_input_stream.ReadChar(); }
-                catch (IOException /*e*/) { return curPos; }
+                catch (Exception e) when (e.IsIOException()) { return curPos; }
             }
         }
         internal static readonly int[] jjnextStates = {
@@ -661,7 +662,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 {
                     m_curChar = m_input_stream.BeginToken();
                 }
-                catch (IOException /*e*/)
+                catch (Exception e) when (e.IsIOException())
                 {
                     jjmatchedKind = 0;
                     matchedToken = JjFillToken();
@@ -704,7 +705,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 string error_after = null;
                 bool EOFSeen = false;
                 try { m_input_stream.ReadChar(); m_input_stream.BackUp(1); }
-                catch (IOException /*e1*/)
+                catch (Exception e1) when (e1.IsIOException())
                 {
                     EOFSeen = true;
                     error_after = curPos <= 1 ? "" : m_input_stream.Image;

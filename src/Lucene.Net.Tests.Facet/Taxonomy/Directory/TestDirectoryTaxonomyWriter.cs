@@ -383,7 +383,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         values[l3] = l3;
                         values[l4] = l4;
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         throw new Exception(e.ToString(), e);
                     }

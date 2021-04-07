@@ -212,7 +212,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         }
                         iw.AddDocument(config.Build(tw, doc));
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         throw new Exception(e.ToString(), e);
                     }

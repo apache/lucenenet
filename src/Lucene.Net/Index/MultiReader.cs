@@ -1,3 +1,4 @@
+﻿using System;
 using System.IO;
 
 namespace Lucene.Net.Index
@@ -73,7 +74,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                IOException ioe = null;
+                Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
                 foreach (IndexReader r in GetSequentialSubReaders())
                 {
                     try
@@ -87,7 +88,7 @@ namespace Lucene.Net.Index
                             r.DecRef();
                         }
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         if (ioe == null)
                         {

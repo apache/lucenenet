@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using System;
@@ -142,7 +142,7 @@ namespace Lucene.Net.Store
             {
                 return;
             }
-            IOException priorException = null;
+            Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
             IndexOutput entryTableOut = null;
             // TODO this code should clean up after itself
             // (remove partial .cfs/.cfe)
@@ -158,7 +158,7 @@ namespace Lucene.Net.Store
                 if (Debugging.AssertsEnabled) Debugging.Assert(dataOut != null);
                 CodecUtil.WriteFooter(dataOut);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 priorException = e;
             }
@@ -171,7 +171,7 @@ namespace Lucene.Net.Store
                 entryTableOut = directory.CreateOutput(entryTableName, IOContext.DEFAULT);
                 WriteEntryTable(entries.Values, entryTableOut);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 priorException = e;
             }

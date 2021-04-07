@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
@@ -6,7 +6,6 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using JCG = J2N.Collections.Generic;
 
@@ -357,9 +356,7 @@ namespace Lucene.Net.Analysis.Synonym
             /// </summary>
             public virtual CharsRef Analyze(string text, CharsRef reuse)
             {
-                IOException priorException = null;
-                TokenStream ts = analyzer.GetTokenStream("", text);
-                try
+                using (TokenStream ts = analyzer.GetTokenStream("", text))
                 {
                     var termAtt = ts.AddAttribute<ICharTermAttribute>();
                     var posIncAtt = ts.AddAttribute<IPositionIncrementAttribute>();
@@ -387,14 +384,6 @@ namespace Lucene.Net.Analysis.Synonym
                         reuse.Length += length;
                     }
                     ts.End();
-                }
-                catch (IOException e)
-                {
-                    priorException = e;
-                }
-                finally
-                {
-                    IOUtils.DisposeWhileHandlingException(priorException, ts);
                 }
                 if (reuse.Length == 0)
                 {

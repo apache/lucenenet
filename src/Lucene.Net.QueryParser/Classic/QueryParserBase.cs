@@ -614,7 +614,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 source.End();
                 return BytesRef.DeepCopyOf(bytes);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new Exception("Error analyzing multiTerm term: " + part, e);
             }

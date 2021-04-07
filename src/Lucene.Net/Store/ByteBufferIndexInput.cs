@@ -257,7 +257,7 @@ namespace Lucene.Net.Store
             {
                 clone.Seek(GetFilePointer());
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 throw new Exception("Should never happen: " + this, ioe);
             }
@@ -280,7 +280,7 @@ namespace Lucene.Net.Store
             {
                 clone.Seek(0L);
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 throw new Exception("Should never happen: " + this, ioe);
             }

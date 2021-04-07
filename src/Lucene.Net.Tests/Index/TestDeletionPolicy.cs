@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -333,9 +333,7 @@ namespace Lucene.Net.Index
 
                     Assert.IsTrue(lastDeleteTime - modTime <= leeway, "commit point was older than " + SECONDS + " seconds (" + (lastDeleteTime - modTime) + " msec) but did not get deleted ");
                 }
-#pragma warning disable 168
-                catch (IOException e)
-#pragma warning restore 168
+                catch (Exception e) when (e.IsIOException())
                 {
                     // OK
                     break;
@@ -645,7 +643,7 @@ namespace Lucene.Net.Index
                             Assert.Fail("should have failed on commits prior to last " + N);
                         }
                     }
-                    catch (IOException /*e*/)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         if (i != N)
                         {
@@ -765,7 +763,7 @@ namespace Lucene.Net.Index
                             Assert.Fail("should have failed on commits before last " + N);
                         }
                     }
-                    catch (IOException /*e*/)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         if (i != N)
                         {

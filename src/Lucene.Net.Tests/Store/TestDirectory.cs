@@ -110,7 +110,7 @@ namespace Lucene.Net.Store
                         using (IndexOutput output = outerBDWrapper.CreateOutput(fileName, NewIOContext(Random))) { }
                         Assert.IsTrue(SlowFileExists(outerBDWrapper, fileName));
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         throw new Exception(e.ToString(), e);
                     }
@@ -152,7 +152,7 @@ namespace Lucene.Net.Store
                             catch (DirectoryNotFoundException)
                             {
                             }
-                            catch (IOException e)
+                            catch (Exception e) when (e.IsIOException())
                             {
                                 if (!e.Message.Contains("still open for writing"))
                                 {
@@ -165,7 +165,7 @@ namespace Lucene.Net.Store
                             }
                         }
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         throw new Exception(e.ToString(), e);
                     }

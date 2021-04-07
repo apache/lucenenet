@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
                 {
                     return LoadDefaultStopWordSet();
                 }
-                catch (IOException ex)
+                catch (Exception ex) when (ex.IsIOException())
                 {
                     // default set should always be present as it is part of the
                     // distribution (JAR)

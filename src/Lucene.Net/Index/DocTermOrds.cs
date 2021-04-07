@@ -1068,7 +1068,7 @@ namespace Lucene.Net.Index
                 {
                     @ref = outerInstance.LookupTerm(te, (int)ord);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -1092,7 +1092,7 @@ namespace Lucene.Net.Index
                         return -te.Ord - 1;
                     }
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -1104,9 +1104,7 @@ namespace Lucene.Net.Index
                 {
                     return outerInstance.GetOrdTermsEnum(reader);
                 }
-#pragma warning disable 168
-                catch (IOException e)
-#pragma warning restore 168
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }

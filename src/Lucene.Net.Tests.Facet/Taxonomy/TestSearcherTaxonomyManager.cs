@@ -110,7 +110,7 @@ namespace Lucene.Net.Facet.Taxonomy
                                 mgr.MaybeRefresh();
                             }
                         }
-                        catch (IOException ioe)
+                        catch (Exception ioe) when (ioe.IsIOException())
                         {
                             throw new Exception(ioe.ToString(), ioe);
                         }

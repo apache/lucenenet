@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using J2N.Text;
 using System;
 using System.Collections.Generic;
@@ -616,7 +616,7 @@ namespace Lucene.Net.Util.Automaton
                         {
                             aa = automaton_provider.GetAutomaton(s);
                         }
-                        catch (IOException e)
+                        catch (Exception e) when (e.IsIOException())
                         {
                             throw new ArgumentException(e.ToString(), e);
                         }

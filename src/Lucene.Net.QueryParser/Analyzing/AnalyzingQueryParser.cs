@@ -212,7 +212,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
                     throw new ParseException(string.Format(@"Analyzer returned nothing for ""{0}""", chunk));
                 }
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new ParseException(
                     string.Format(@"IO error while trying to analyze single term: ""{0}""", termStr), e);

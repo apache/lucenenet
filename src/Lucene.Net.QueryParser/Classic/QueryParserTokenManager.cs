@@ -1,4 +1,4 @@
-using Lucene.Net.Support.IO;
+﻿using Lucene.Net.Support.IO;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -111,7 +111,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 m_curChar = m_input_stream.ReadChar();
             }
-            catch (IOException)
+            catch (Exception e) when (e.IsIOException())
             {
                 return pos + 1;
             }
@@ -728,7 +728,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 {
                     m_curChar = m_input_stream.ReadChar();
                 }
-                catch (IOException)
+                catch (Exception e) when (e.IsIOException())
                 {
                     return curPos;
                 }
@@ -829,7 +829,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 {
                     m_curChar = m_input_stream.ReadChar();
                 }
-                catch (IOException)
+                catch (Exception e) when (e.IsIOException())
                 {
                     return curPos;
                 }
@@ -882,7 +882,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 m_curChar = m_input_stream.ReadChar();
             }
-            catch (IOException)
+            catch (Exception e) when (e.IsIOException())
             {
                 JjStopStringLiteralDfa_1(0, active0);
                 return 1;
@@ -909,7 +909,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 m_curChar = m_input_stream.ReadChar();
             }
-            catch (IOException)
+            catch (Exception e) when (e.IsIOException())
             {
                 return pos + 1;
             }
@@ -1074,7 +1074,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 {
                     m_curChar = m_input_stream.ReadChar();
                 }
-                catch (IOException)
+                catch (Exception e) when (e.IsIOException())
                 {
                     return curPos;
                 }
@@ -1252,7 +1252,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 {
                     m_curChar = m_input_stream.BeginToken();
                 }
-                catch (IOException)
+                catch (Exception e) when (e.IsIOException())
                 {
                     jjmatchedKind = 0;
                     matchedToken = JjFillToken();
@@ -1306,7 +1306,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 {
                     m_input_stream.ReadChar(); m_input_stream.BackUp(1);
                 }
-                catch (IOException)
+                catch (Exception e) when (e.IsIOException())
                 {
                     EOFSeen = true;
                     error_after = curPos <= 1?"":m_input_stream.Image;

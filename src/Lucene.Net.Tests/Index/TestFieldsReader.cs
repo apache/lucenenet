@@ -220,9 +220,7 @@ namespace Lucene.Net.Index
                 {
                     i.Seek(GetFilePointer());
                 }
-#pragma warning disable 168
-                catch (IOException e)
-#pragma warning restore 168
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -260,9 +258,7 @@ namespace Lucene.Net.Index
                     {
                         reader.Document(i);
                     }
-#pragma warning disable 168
-                    catch (IOException ioe)
-#pragma warning restore 168
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
                         // expected
                         exc = true;
@@ -271,9 +267,7 @@ namespace Lucene.Net.Index
                     {
                         reader.Document(i);
                     }
-#pragma warning disable 168
-                    catch (IOException ioe)
-#pragma warning restore 168
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
                         // expected
                         exc = true;

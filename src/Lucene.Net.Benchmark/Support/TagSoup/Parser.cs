@@ -15,6 +15,7 @@
 // The TagSoup parser
 
 using J2N.Text;
+using Lucene;
 using Lucene.Net.Support;
 using Sax;
 using Sax.Ext;
@@ -922,7 +923,7 @@ namespace TagSoup
                 {
                     theEntityResolver.ResolveEntity(theDoctypePublicId, theDoctypeSystemId);
                 }
-                catch (IOException)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                 } // Can't be thrown for root I believe.
             }

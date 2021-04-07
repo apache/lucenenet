@@ -126,7 +126,7 @@ namespace Lucene.Net.Benchmarks.Utils
                     }
                 }
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new Exception(e.ToString(), e);
             }

@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
                 {
                     return new TokenInfoDictionary();
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     throw new Exception("Cannot load TokenInfoDictionary.", ioe);
                 }

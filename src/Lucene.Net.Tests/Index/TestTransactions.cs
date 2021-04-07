@@ -246,7 +246,7 @@ namespace Lucene.Net.Index
                         r1 = DirectoryReader.Open(dir1);
                         r2 = DirectoryReader.Open(dir2);
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         if (!e.Message.Contains("on purpose"))
                         {

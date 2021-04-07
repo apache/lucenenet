@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -580,7 +580,7 @@ namespace Lucene.Net.Search
             {
                 exp = s.Explain(q, doc);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new Exception("exception in hitcollector of [[" + d + "]] for #" + doc, e);
             }

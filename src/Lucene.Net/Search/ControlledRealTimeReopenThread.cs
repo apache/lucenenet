@@ -263,7 +263,7 @@ namespace Lucene.Net.Search
                 {
                     manager.MaybeRefreshBlocking();
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     throw new Exception(ioe.ToString(), ioe);
                 }

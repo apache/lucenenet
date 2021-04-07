@@ -91,7 +91,7 @@ namespace Lucene.Net.Benchmarks.Utils
                 using TextWriter writer = new StreamWriter(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), Encoding.UTF8);
                 writer.Write(contents.ToString());
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 throw new Exception(ioe.ToString(), ioe);
             }

@@ -152,7 +152,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     doc = lfd.NextDoc();
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     throw new Exception(ioe.ToString(), ioe);
                 }

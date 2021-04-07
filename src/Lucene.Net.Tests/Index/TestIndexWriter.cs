@@ -1386,7 +1386,7 @@ namespace Lucene.Net.Index
                         {
                             // ignore
                         }
-                        catch (IOException ioe)
+                        catch (Exception ioe) when (ioe.IsIOException())
                         {
                             throw new Exception(ioe.ToString(), ioe);
                         }
@@ -1418,7 +1418,7 @@ namespace Lucene.Net.Index
                 {
                     IOUtils.Dispose(dir);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -1426,7 +1426,7 @@ namespace Lucene.Net.Index
                 {
                     IOUtils.Dispose(adder);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -1949,7 +1949,7 @@ namespace Lucene.Net.Index
                 {
                     SetReader(r);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.Message, e);
                 }
@@ -2727,7 +2727,7 @@ namespace Lucene.Net.Index
                         Assert.Fail("expected exception");
                     }
                 }
-                catch (IOException /*ioe*/)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     // OpenMode_e.APPEND should throw an exception since no
                     // index exists:

@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using System;
 using System.Collections.Generic;
@@ -408,7 +408,7 @@ namespace Lucene.Net.Store
             {
                 dirName = m_directory.GetCanonicalPath();
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new Exception(e.ToString(), e);
             }
@@ -545,12 +545,12 @@ namespace Lucene.Net.Store
                     // only close the file if it has not been closed yet
                     if (isOpen)
                     {
-                        IOException priorE = null;
+                        Exception priorE = null; // LUCENENET: No need to cast to IOExcpetion
                         try
                         {
                             file.Flush(flushToDisk: true);
                         }
-                        catch (IOException ioe)
+                        catch (Exception ioe) when (ioe.IsIOException())
                         {
                             priorE = ioe;
                         }

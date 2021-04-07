@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 // This class was sourced from the Apache Harmony project
 // https://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/
 
@@ -105,9 +105,7 @@ namespace Lucene.Net.Analysis.Util
                 br.Read();
                 fail("Read on closed stream");
             }
-#pragma warning disable 168
-            catch (IOException x)
-#pragma warning restore 168
+            catch (Exception x) when (x.IsIOException())
             {
                 return;
             }
@@ -142,9 +140,7 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("Failed to invalidate mark properly");
             }
-#pragma warning disable 168
-            catch (IOException x)
-#pragma warning restore 168
+            catch (Exception x) when (x.IsIOException())
             {
                 // Expected
             }
@@ -227,9 +223,7 @@ namespace Lucene.Net.Analysis.Util
                         new char[] { '\u8765' })));
                 assertTrue("Wrong double byte character", br.Read() == '\u8765');
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 fail("Exception during read test");
             }
@@ -252,9 +246,8 @@ namespace Lucene.Net.Analysis.Util
 
                 assertEquals("Wrong chars", 15, @in.Read()); // Check next byte
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
-
                 fail("Exception during read test 2:" + e);
             }
 
@@ -341,7 +334,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 toRet.Dispose();
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
 
                 fail("unexpected 1: " + e);
@@ -353,9 +346,7 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("null buffer reading zero bytes on closed stream should throw IOException");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 //expected
             }
@@ -367,9 +358,7 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("Reading zero bytes on a closed reader should not work");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 // expected
             }
@@ -386,9 +375,7 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("IOException should have been thrown");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 // expected
             }
@@ -412,7 +399,7 @@ namespace Lucene.Net.Analysis.Util
                 assertEquals("Reading zero bytes at EOF should work", 0, toRet
                         .Read(ca, 0, 0));
             }
-            catch (IOException ex)
+            catch (Exception ex) when (ex.IsIOException())
             {
 
                 fail("Unexpected IOException : " + ex.ToString());
@@ -428,9 +415,7 @@ namespace Lucene.Net.Analysis.Util
                 assertTrue("Chars read improperly", new string(buf, 50, 500)
                         .Equals(testString.Substring(0, 500 - 0), StringComparison.Ordinal));
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
 
                 fail("Exception during read test");
@@ -478,7 +463,7 @@ namespace Lucene.Net.Analysis.Util
 
                 assertTrue("Incorrect result: " + result, result == 1);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
 
                 fail("Unexpected: " + e);
@@ -520,9 +505,7 @@ namespace Lucene.Net.Analysis.Util
                 reader.Read(null, 1, 0);
                 fail("Assert 1: IOException expected");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 // Expected
             }
@@ -534,9 +517,7 @@ namespace Lucene.Net.Analysis.Util
                 reader.Read(ch, 0, 42);
                 fail("Assert 2: IOException expected");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 // expected
             }
@@ -681,9 +662,7 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("should throw IOException");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 // expected
             }
@@ -694,9 +673,7 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("should throw IOException");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 // expected
             }
@@ -707,9 +684,7 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("should throw IOException");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 // expected
             }
@@ -728,9 +703,7 @@ namespace Lucene.Net.Analysis.Util
                 assertEquals("readLine returned incorrect string", "Test_All_Tests", r
                         );
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 fail("Exception during readLine test");
             }
@@ -747,7 +720,7 @@ namespace Lucene.Net.Analysis.Util
                 br = new BufferedCharFilter(new StringReader(testString));
                 assertTrue("IsReady returned false", br.IsReady);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 fail("Exception during ready test" + e.toString());
             }
@@ -771,9 +744,7 @@ namespace Lucene.Net.Analysis.Util
                 assertTrue("Failed to reset properly", testString.Substring(500,
                         1000 - 500).Equals(new string(buf, 0, 500), StringComparison.Ordinal));
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 fail("Exception during reset test");
             }
@@ -784,9 +755,7 @@ namespace Lucene.Net.Analysis.Util
                 br.Reset();
                 fail("Reset succeeded on unmarked stream");
             }
-#pragma warning disable 168
-            catch (IOException x)
-#pragma warning restore 168
+            catch (Exception x) when (x.IsIOException())
             {
                 return;
 
@@ -810,9 +779,7 @@ namespace Lucene.Net.Analysis.Util
                 br.Reset();
                 fail("should throw IOException");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 // Expected
             }
@@ -850,9 +817,7 @@ namespace Lucene.Net.Analysis.Util
                 assertTrue("Failed to set skip properly", testString.Substring(500,
                         1000 - 500).Equals(new string(buf, 0, 500), StringComparison.Ordinal));
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 fail("Exception during skip test");
             }

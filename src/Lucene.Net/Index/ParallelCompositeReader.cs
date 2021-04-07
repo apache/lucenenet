@@ -1,4 +1,4 @@
-using J2N.Runtime.CompilerServices;
+﻿using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -223,7 +223,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                IOException ioe = null;
+                Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
                 foreach (IndexReader reader in completeReaderSet)
                 {
                     try
@@ -237,7 +237,7 @@ namespace Lucene.Net.Index
                             reader.DecRef();
                         }
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         if (ioe == null)
                         {

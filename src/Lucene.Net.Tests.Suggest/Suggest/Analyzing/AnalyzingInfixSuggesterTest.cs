@@ -553,7 +553,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                                          topN, allTermsRequired, doHilite);
                         Thread.Sleep(10);// don't starve refresh()'s CPU, which sleeps every 50 bytes for 1 ms
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         error[0] = e;
                         stop.Value = true;
@@ -1038,9 +1038,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 suggester.Add(new BytesRef(key), null, 10, null);
             }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (IOException e)
-#pragma warning restore CS0168 // Variable is declared but never used
+            catch (Exception e) when (e.IsIOException())
             {
                 fail("Could not build suggest dictionary correctly");
             }

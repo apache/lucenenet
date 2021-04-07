@@ -2406,6 +2406,7 @@ namespace Lucene.Net.Util
             {
                 if (maybeWrap)
                 {
+                    // LUCENENET: Rethrow.rethrow() call not needed here because it simply rethrows an exception as itself
                     r = MaybeWrapReader(r);
                 }
                 // TODO: this whole check is a coverage hack, we should move it to tests for various filterreaders.
@@ -2414,6 +2415,8 @@ namespace Lucene.Net.Util
                 {
                     // TODO: not useful to check DirectoryReader (redundant with checkindex)
                     // but maybe sometimes run this on the other crazy readers maybeWrapReader creates?
+
+                    // LUCENENET: Rethrow.rethrow() call not needed here because it simply rethrows an exception as itself
                     TestUtil.CheckReader(r);
                 }
                 IndexSearcher ret;
@@ -3394,7 +3397,7 @@ namespace Lucene.Net.Util
         ////                {
         ////                    f.Create();
         ////                }
-        ////                catch (IOException)
+        ////                catch (Exception ioe) when (ioe.IsIOException())
         ////                {
         ////                    iterate = false;
         ////                }
@@ -3450,9 +3453,7 @@ namespace Lucene.Net.Util
                         iterate = false;
                     }
                 }
-#pragma warning disable 168, IDE0059
-                catch (IOException exc)
-#pragma warning restore 168, IDE0059
+                catch (Exception exc) when (exc.IsIOException())
                 {
                     iterate = true;
                 }
@@ -3561,18 +3562,7 @@ namespace Lucene.Net.Util
                 {
                     TestUtil.Rm(everything);
                 }
-                // LUCENENET specific: UnauthorizedAccessException doesn't subclass IOException as
-                // AccessDeniedException does in Java, so we need a special case for it.
-                catch (UnauthorizedAccessException e)
-                {
-                    //                    Type suiteClass = RandomizedContext.Current.GetTargetType;
-                    //                    if (suiteClass.IsAnnotationPresent(typeof(SuppressTempFileChecks)))
-                    //                    {
-                    Console.Error.WriteLine("WARNING: Leftover undeleted temporary files " + e.Message);
-                    return;
-                    //                    }
-                }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     //                    Type suiteClass = RandomizedContext.Current.GetTargetType;
                     //                    if (suiteClass.IsAnnotationPresent(typeof(SuppressTempFileChecks)))

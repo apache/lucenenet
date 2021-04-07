@@ -245,9 +245,7 @@ namespace Lucene.Net.Index
                     {
                         dir.DeleteFile(lastSaveFile);
                     }
-#pragma warning disable 168
-                    catch (IOException ioe)
-#pragma warning restore 168
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
                         // OK: likely it didn't exist
                     }
@@ -301,7 +299,7 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 long genLoaded = -1;
-                IOException ioe = null;
+                Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
                 IList<string> snapshotFiles = new List<string>();
                 foreach (string file in dir.ListAll())
                 {
@@ -324,7 +322,7 @@ namespace Lucene.Net.Index
                                     m[commitGen] = refCount;
                                 }
                             }
-                            catch (IOException ioe2)
+                            catch (Exception ioe2) when (ioe2.IsIOException())
                             {
                                 // Save first exception & throw in the end
                                 if (ioe == null)

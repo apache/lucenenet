@@ -252,7 +252,7 @@ namespace Lucene.Net.Index.Memory
             {
                 stream = analyzer.GetTokenStream(fieldName, text);
             }
-            catch (IOException ex)
+            catch (Exception ex) when (ex.IsIOException())
             {
                 throw new Exception(ex.ToString(), ex);
             }
@@ -517,7 +517,7 @@ namespace Lucene.Net.Index.Memory
                         stream.Dispose();
                     }
                 }
-                catch (IOException e2)
+                catch (Exception e2) when (e2.IsIOException())
                 {
                     throw new Exception(e2.ToString(), e2);
                 }
@@ -561,7 +561,7 @@ namespace Lucene.Net.Index.Memory
                 float score = scores[0];
                 return score;
             } // can never happen (RAMDirectory)
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new Exception(e.ToString(), e);
             }

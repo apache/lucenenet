@@ -475,7 +475,7 @@ namespace Lucene.Net.Codecs.Memory
                     result.Length = 0;
                     Util.ToBytesRef(output, result);
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
                     throw new Exception(bogus.ToString(), bogus);
                 }
@@ -499,7 +499,7 @@ namespace Lucene.Net.Codecs.Memory
                         return (int) -o.Output - 1;
                     }
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
                     throw new Exception(bogus.ToString(), bogus);
                 }
@@ -609,7 +609,7 @@ namespace Lucene.Net.Codecs.Memory
                     result.Length = 0;
                     Util.ToBytesRef(output, result);
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
                     throw new Exception(bogus.ToString(), bogus);
                 }
@@ -633,7 +633,7 @@ namespace Lucene.Net.Codecs.Memory
                         return -o.Output.Value - 1;
                     }
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
                     throw new Exception(bogus.ToString(), bogus);
                 }

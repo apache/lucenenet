@@ -1,4 +1,4 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using Lucene.Net.Index;
 using Lucene.Net.Util.Fst;
 using System;
@@ -486,7 +486,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     result.Length = 0;
                     Util.ToBytesRef(output, result);
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
                     throw new Exception(bogus.ToString(), bogus);
                 }
@@ -510,7 +510,7 @@ namespace Lucene.Net.Codecs.Lucene42
                         return (int)-o.Output.GetValueOrDefault() - 1;
                     }
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
                     throw new Exception(bogus.ToString(), bogus);
                 }
@@ -620,7 +620,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     result.Length = 0;
                     Lucene.Net.Util.Fst.Util.ToBytesRef(output, result);
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
                     throw new Exception(bogus.ToString(), bogus);
                 }
@@ -644,7 +644,7 @@ namespace Lucene.Net.Codecs.Lucene42
                         return -o.Output.GetValueOrDefault() - 1;
                     }
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
                     throw new Exception(bogus.ToString(), bogus);
                 }

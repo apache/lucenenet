@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.OpenNlp
                 NLPTokenizerOp tokenizerOp = OpenNLPOpsFactory.GetTokenizer(tokenizerModelFile);
                 return new OpenNLPTokenizer(factory, reader, sentenceOp, tokenizerOp);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new Exception(e.ToString(), e);
             }

@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
                     TestTermPositionVectors(reader, i);
                 }
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 Assert.Fail(ioe.Message);
             }
@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
                         /// close the opened reader </summary>
                         reader.Dispose();
                     }
-                    catch (IOException ioe)
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
                         Console.WriteLine(ioe.ToString());
                         Console.Write(ioe.StackTrace);

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -96,7 +96,7 @@ namespace Lucene.Net.Index
             {
                 bytesOut.WriteBytes(value.Bytes, value.Offset, value.Length);
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 // Should never happen!
                 throw new Exception(ioe.ToString(), ioe);
@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
                     {
                         bytesIterator.ReadBytes(value.Bytes, value.Offset, value.Length);
                     }
-                    catch (IOException ioe)
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
                         // Should never happen!
                         throw new Exception(ioe.ToString(), ioe);

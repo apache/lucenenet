@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using System;
@@ -237,13 +237,13 @@ namespace Lucene.Net.Util
                             hasMoreTokens = buffer.IncrementToken();
                         }
                     }
-                    catch (IOException)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         // ignore
                     }
                 }
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new Exception("Error analyzing query text", e);
             }
@@ -269,7 +269,7 @@ namespace Lucene.Net.Util
                     if (Debugging.AssertsEnabled) Debugging.Assert(hasNext == true);
                     termAtt.FillBytesRef();
                 }
-                catch (IOException)
+                catch (Exception e) when (e.IsIOException())
                 {
                     // safe to ignore, because we know the number of tokens
                 }
@@ -295,7 +295,7 @@ namespace Lucene.Net.Util
                                     if (Debugging.AssertsEnabled) Debugging.Assert(hasNext == true);
                                     termAtt.FillBytesRef();
                                 }
-                                catch (IOException)
+                                catch (Exception e) when (e.IsIOException())
                                 {
                                     // safe to ignore, because we know the number of tokens
                                 }
@@ -317,7 +317,7 @@ namespace Lucene.Net.Util
                                     if (Debugging.AssertsEnabled) Debugging.Assert(hasNext == true);
                                     termAtt.FillBytesRef();
                                 }
-                                catch (IOException)
+                                catch (Exception e) when (e.IsIOException())
                                 {
                                     // safe to ignore, because we know the number of tokens
                                 }
@@ -364,7 +364,7 @@ namespace Lucene.Net.Util
                                     positionIncrement = posIncrAtt.PositionIncrement;
                                 }
                             }
-                            catch (IOException)
+                            catch (Exception e) when (e.IsIOException())
                             {
                                 // safe to ignore, because we know the number of tokens
                             }
@@ -415,7 +415,7 @@ namespace Lucene.Net.Util
                                 positionIncrement = posIncrAtt.PositionIncrement;
                             }
                         }
-                        catch (IOException)
+                        catch (Exception e) when (e.IsIOException())
                         {
                             // safe to ignore, because we know the number of tokens
                         }

@@ -133,7 +133,7 @@ namespace Lucene.Net.Index.Sorter
                 {
                     return Compare(childSlots[slot1], parentSlots[slot1], childSlots[slot2], parentSlots[slot2]);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }

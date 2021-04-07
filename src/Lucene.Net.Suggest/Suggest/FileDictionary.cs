@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Suggest
             {
                 return new FileEnumerator(this);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new Exception(e.ToString(), e);
             }

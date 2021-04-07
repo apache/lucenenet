@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.CharFilters
                     }
                     //System.out.println("cached " + cachedRootArcs.size() + " root arcs");
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     // Bogus FST IOExceptions!!  (will never happen)
                     throw new Exception("Should never happen", ioe);
@@ -130,7 +130,7 @@ namespace Lucene.Net.Analysis.CharFilters
                     map = builder.Finish();
                     pendingPairs.Clear();
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     // Bogus FST IOExceptions!!  (will never happen)
                     throw new Exception("Should never happen", ioe);

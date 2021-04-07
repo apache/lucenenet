@@ -491,7 +491,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     result.Offset = 0;
                     result.Length = buffer.Length;
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -559,7 +559,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     result.Offset = 0;
                     result.Length = length;
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -843,7 +843,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     @in.Seek(offset + (index >> 3));
                     return (@in.ReadByte() & (1 << (index & 7))) != 0;
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -1023,7 +1023,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     result.Offset = term.Offset;
                     result.Length = term.Length;
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -1047,7 +1047,7 @@ namespace Lucene.Net.Codecs.Lucene45
                         return -termsEnum.Ord - 1;
                     }
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
                     throw new Exception(bogus.ToString(), bogus);
                 }
@@ -1060,7 +1060,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 {
                     return GetTermsEnum((IndexInput)data.Clone());
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }

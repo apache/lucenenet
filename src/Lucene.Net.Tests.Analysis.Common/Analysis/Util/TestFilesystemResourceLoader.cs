@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Util
                 IOUtils.DisposeWhileHandlingException(rl.OpenResource("/this-directory-really-really-really-should-not-exist/foo/bar.txt"));
                 fail("The resource does not exist, should fail!");
             }
-            catch (IOException)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 // pass
             }

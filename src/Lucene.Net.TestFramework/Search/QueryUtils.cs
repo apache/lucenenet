@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -157,7 +157,7 @@ namespace Lucene.Net.Search
                     CheckEqual(s.Rewrite(q1), s.Rewrite(q2));
                 }
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new Exception(e.ToString(), e);
             }
@@ -207,7 +207,7 @@ namespace Lucene.Net.Search
                     CheckEqual(s.Rewrite(q1), s.Rewrite(q2));
                 }
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new Exception(e.ToString(), e);
             }
@@ -285,7 +285,7 @@ namespace Lucene.Net.Search
                 emptyReaders[5] = MakeEmptyIndex(new Random(0), 5);
                 emptyReaders[7] = MakeEmptyIndex(new Random(0), 7);
             }
-            catch (IOException ex)
+            catch (Exception ex) when (ex.IsIOException())
             {
                 throw new Exception(ex.ToString(), ex);
             }
@@ -457,7 +457,7 @@ namespace Lucene.Net.Search
                         throw new Exception("ERROR matching docs:" + "\n\t" + (doc != scorerDoc ? "--> " : "") + "doc=" + doc + ", scorerDoc=" + scorerDoc + "\n\t" + (!more ? "--> " : "") + "tscorer.more=" + more + "\n\t" + (scoreDiff > maxDiff ? "--> " : "") + "scorerScore=" + scorerScore + " scoreDiff=" + scoreDiff + " maxDiff=" + maxDiff + "\n\t" + (scorerDiff > maxDiff ? "--> " : "") + "scorerScore2=" + scorerScore2 + " scorerDiff=" + scorerDiff + "\n\thitCollector.Doc=" + doc + " score=" + score + "\n\t Scorer=" + scorer + "\n\t Query=" + q + "  " + q.GetType().Name + "\n\t Searcher=" + s + "\n\t Order=" + sbord + "\n\t Op=" + (op == skip_op ? " skip()" : " next()"));
                     }
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -605,7 +605,7 @@ namespace Lucene.Net.Search
                     }
                     lastDoc[0] = doc;
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     throw new Exception(e.ToString(), e);
                 }
