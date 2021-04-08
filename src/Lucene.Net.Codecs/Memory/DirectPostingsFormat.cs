@@ -1789,6 +1789,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override int NextDoc()
             {
+                // LUCENENET: Refactored to avoid throwing IndexOutOfRangeExcpetion in the normal flow
                 upto++;
                 if (liveDocs == null)
                 {
