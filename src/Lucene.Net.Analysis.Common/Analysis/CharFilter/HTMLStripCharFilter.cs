@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
@@ -31136,16 +31136,17 @@ namespace Lucene.Net.Analysis.CharFilters
         private void ZzScanError(int errorCode)
         {
             string message;
-            try
+            // LUCENENET specific: Defensive check so we don't have to catch IndexOutOfRangeException
+            if (errorCode >= 0 && errorCode < ZZ_ERROR_MSG.Length)
             {
                 message = ZZ_ERROR_MSG[errorCode];
             }
-            catch (IndexOutOfRangeException /*e*/)
+            else
             {
                 message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
             }
 
-            throw new Exception(message);
+            throw new Error(message);
         }
 
         /// <summary>
