@@ -85,7 +85,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// If the given ordinal is a top-level category, the 
         /// <see cref="TaxonomyReader.ROOT_ORDINAL"/> is returned.
         /// If an invalid ordinal is given (negative or beyond the last available
-        /// ordinal), an <see cref="IndexOutOfRangeException"/> is thrown. However, it is
+        /// ordinal), an <see cref="ArgumentOutOfRangeException"/> is thrown. However, it is
         /// expected that <see cref="GetParent"/> will only be called for ordinals which are
         /// already known to be in the taxonomy.
         /// </para>

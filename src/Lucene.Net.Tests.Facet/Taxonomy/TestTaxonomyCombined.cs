@@ -546,7 +546,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 tw.GetParent(-1);
                 fail("getParent for -1 should throw exception");
             }
-            catch (IndexOutOfRangeException)
+            catch (ArgumentOutOfRangeException) // LUCENENET specific: Changed exception type thrown to be consistent with guard clauses in .NET
             {
                 // ok
             }
@@ -555,7 +555,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 tw.GetParent(TaxonomyReader.INVALID_ORDINAL);
                 fail("getParent for INVALID_ORDINAL should throw exception");
             }
-            catch (IndexOutOfRangeException)
+            catch (ArgumentOutOfRangeException) // LUCENENET specific: Changed exception type thrown to be consistent with guard clauses in .NET
             {
                 // ok
             }
@@ -564,7 +564,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 int parent = tw.GetParent(tr.Count);
                 fail("getParent for getSize() should throw exception, but returned " + parent);
             }
-            catch (IndexOutOfRangeException)
+            catch (ArgumentOutOfRangeException) // LUCENENET specific: Changed exception type thrown to be consistent with guard clauses in .NET
             {
                 // ok
             }

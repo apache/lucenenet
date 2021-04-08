@@ -897,9 +897,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // for the parent of a nonexistant category - even if the parent array
             // was allocated bigger than it really needs to be.
             if (ordinal >= nextID)
-            {
-                throw new IndexOutOfRangeException("requested ordinal is bigger than the largest ordinal in the taxonomy");
-            }
+                // LUCENENET specific: Changed exception type thrown to be consistent with guard clauses in .NET
+                throw new ArgumentOutOfRangeException(nameof(ordinal), "requested ordinal is bigger than the largest ordinal in the taxonomy");
+            // LUCENENET specific: Added additional check to defend against throwing IndexOutOfRangeException
+            if (ordinal < 0)
+                throw new ArgumentOutOfRangeException(nameof(ordinal), "ordinal may not be negative.");
 
             int[] parents = GetTaxoArrays().Parents;
             if (Debugging.AssertsEnabled) Debugging.Assert(ordinal < parents.Length, "requested ordinal ({0}); parents.length ({1}) !", ordinal, parents.Length);
