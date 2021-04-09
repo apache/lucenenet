@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -772,9 +772,12 @@ namespace Lucene.Net.Util
             return false;
         }
 
+        // LUCENENET: The toIntArray() method was only here to convert Integer[] to int[] in Java, but is not necessary when dealing with 
+
         /// <summary>
         /// NOTE: This was toIntArray() in Lucene
         /// </summary>
+        [Obsolete("This API was only to address a compatibility problem with the port and is no longer necessary. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public static int[] ToInt32Array(ICollection<int?> ints)
         {
             int[] result = new int[ints.Count];

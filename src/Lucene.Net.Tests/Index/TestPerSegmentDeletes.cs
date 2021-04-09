@@ -1,4 +1,4 @@
-using Lucene.Net.Index.Extensions;
+﻿using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -259,13 +259,13 @@ namespace Lucene.Net.Index
 
         public static int[] ToArray(DocsEnum docsEnum)
         {
-            IList<int?> docs = new List<int?>();
+            List<int> docs = new List<int>();
             while (docsEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
             {
                 int docID = docsEnum.DocID;
                 docs.Add(docID);
             }
-            return ArrayUtil.ToInt32Array(docs);
+            return docs.ToArray(); // LUCENENET: ArrayUtil.ToIntArray() call unnecessary because we aren't dealing with reference types
         }
 
         public class RangeMergePolicy : MergePolicy
