@@ -324,7 +324,7 @@ namespace Lucene.Net.Analysis.Util
                 fail("null buffer reading zero bytes should throw NPE");
             }
 #pragma warning disable 168
-            catch (NullReferenceException e)
+            catch (ArgumentNullException e) // LUCENENET specific - changed from NullPointerException to ArgumentNullException
 #pragma warning restore 168
             {
                 //expected
@@ -491,7 +491,7 @@ namespace Lucene.Net.Analysis.Util
                 fail("Assert 0: NullPointerException expected");
             }
 #pragma warning disable 168
-            catch (NullReferenceException e)
+            catch (ArgumentNullException e) // LUCENENET specific - changed from NullPointerException to ArgumentNullException
 #pragma warning restore 168
             {
                 // Expected
@@ -566,7 +566,7 @@ namespace Lucene.Net.Analysis.Util
                 fail("should throw NullPointerException");
             }
 #pragma warning disable 168
-            catch (NullReferenceException e)
+            catch (ArgumentNullException e) // LUCENENET specific - changed from NullPointerException to ArgumentNullException
 #pragma warning restore 168
             {
                 // expected
@@ -579,7 +579,7 @@ namespace Lucene.Net.Analysis.Util
                 fail("should throw NullPointerException");
             }
 #pragma warning disable 168
-            catch (NullReferenceException e)
+            catch (ArgumentNullException e) // LUCENENET specific - changed from NullPointerException to ArgumentNullException
 #pragma warning restore 168
             {
                 // expected
@@ -592,7 +592,7 @@ namespace Lucene.Net.Analysis.Util
                 fail("should throw NullPointerException");
             }
 #pragma warning disable 168
-            catch (NullReferenceException e)
+            catch (ArgumentNullException e) // LUCENENET specific - changed from NullPointerException to ArgumentNullException
 #pragma warning restore 168
             {
                 // expected
