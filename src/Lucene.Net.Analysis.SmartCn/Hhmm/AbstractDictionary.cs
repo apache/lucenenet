@@ -101,7 +101,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                 string cchar = Encoding.GetEncoding("GB2312").GetString(buffer);
                 return cchar;
             }
-            catch (ArgumentException) // Encoding is not supported by the platform
+            catch (Exception e) when (e.IsUnsupportedEncodingException()) // Encoding is not supported by the platform
             {
                 return "";
             }
@@ -129,7 +129,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                                                     // Therefore, each code page only has 16*6-2=94 characters.
                 return (short)(b0 * 94 + b1);
             }
-            catch (ArgumentException e) // Encoding is not supported by the platform
+            catch (Exception e) when (e.IsUnsupportedEncodingException()) // Encoding is not supported by the platform
             {
                 throw new Exception(e.ToString(), e);
             }

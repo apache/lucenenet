@@ -521,7 +521,7 @@ namespace TagSoup
                     //TODO: Safe?
                     r = new StreamReader(i, encoding);
                     //  }
-                    //catch (UnsupportedEncodingException e) {
+                    //catch (Exception e) when (e.IsUnsupportedEncodingException()) {
                     //  r = new StreamReader(i);
                     //  }
                 }
