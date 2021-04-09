@@ -595,22 +595,25 @@ namespace Lucene.Net.Index
             /// Set the priority of this thread. </summary>
             public virtual void SetThreadPriority(ThreadPriority priority)
             {
-                try
-                {
+                // LUCENENET: We don't have to worry about JRE bugs here, and
+                // SecurityException is not thrown from Thread.Priority. The exceptions
+                // it throws (ArgumentException and ThreadStateException) are both valid
+                // cases and are extremely unlikely (we never abort, and users would have to cast
+                // an invalid int to a ThreadPriority).
+                //try
+                //{
                     Priority = priority;
-                }
-#pragma warning disable 168
-                catch (NullReferenceException npe)
-                {
-                    // Strangely, Sun's JDK 1.5 on Linux sometimes
-                    // throws NPE out of here...
-                }
-                catch (SecurityException /*se*/) // LUCENENET: IDE0059: Remove unnecessary value assignment
-#pragma warning restore 168
-                {
-                    // Ignore this because we will still run fine with
-                    // normal thread priority
-                }
+                //}
+                //catch (NullReferenceException npe)
+                //{
+                //    // Strangely, Sun's JDK 1.5 on Linux sometimes
+                //    // throws NPE out of here...
+                //}
+                //catch (SecurityException se)
+                //{
+                //    // Ignore this because we will still run fine with
+                //    // normal thread priority
+                //}
             }
 
             public override void Run()
