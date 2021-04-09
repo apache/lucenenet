@@ -1069,6 +1069,10 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         public static string Escape(string s)
         {
+            // LUCENENET specific: Added guard clause for null
+            if (s is null)
+                throw new ArgumentNullException(nameof(s));
+
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < s.Length; i++)
             {

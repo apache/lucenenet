@@ -87,7 +87,7 @@ namespace Lucene.Net.QueryParsers.Ext
                 ext.EscapeExtensionField(null);
                 fail("should throw NPE - escape string is null");
             }
-            catch (NullReferenceException /*e*/)
+            catch (ArgumentNullException /*e*/) // LUCENENET specific - Added guard clause to throw ArgumentNullException instead of letting NullReferenceException happen.
             {
                 // 
             }
