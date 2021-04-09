@@ -418,7 +418,7 @@ namespace Lucene.Net.Search
                 new FilteredQuery(null, null);
                 Assert.Fail("Should throw IllegalArgumentException");
             }
-            catch (Exception iae) when (iae.IsIllegalArgumentException())
+            catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
                 // pass
             }
@@ -427,7 +427,7 @@ namespace Lucene.Net.Search
                 new FilteredQuery(new TermQuery(new Term("field", "one")), null);
                 Assert.Fail("Should throw IllegalArgumentException");
             }
-            catch (Exception iae) when (iae.IsIllegalArgumentException())
+            catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
                 // pass
             }
@@ -436,7 +436,7 @@ namespace Lucene.Net.Search
                 new FilteredQuery(null, new PrefixFilter(new Term("field", "o")));
                 Assert.Fail("Should throw IllegalArgumentException");
             }
-            catch (Exception iae) when (iae.IsIllegalArgumentException())
+            catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
                 // pass
             }
