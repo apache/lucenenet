@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -125,7 +125,7 @@ namespace Lucene.Net.Analysis
                 stream.AddAttribute<ICharTermAttribute>();
                 Assert.Fail("Succeeded to add CharTermAttribute.");
             }
-            catch (ArgumentException iae)
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 Assert.IsTrue(iae.Message.StartsWith("NumericTokenStream does not support", StringComparison.Ordinal));
             }
@@ -134,7 +134,7 @@ namespace Lucene.Net.Analysis
                 stream.AddAttribute<ITestAttribute>();
                 Assert.Fail("Succeeded to add TestAttribute.");
             }
-            catch (ArgumentException iae)
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 Assert.IsTrue(iae.Message.StartsWith("NumericTokenStream does not support", StringComparison.Ordinal));
             }

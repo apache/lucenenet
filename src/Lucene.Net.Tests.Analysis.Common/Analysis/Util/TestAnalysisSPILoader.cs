@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.CharFilters;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Util
                 TokenizerFactory.ForName("sdfsdfsdfdsfsdfsdf", new Dictionary<string, string>());
                 fail();
             }
-            catch (ArgumentException)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 //
             }
@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.Util
                 TokenizerFactory.ForName("!(**#$U*#$*", new Dictionary<string, string>());
                 fail();
             }
-            catch (ArgumentException)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 //
             }
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Util
                 TokenizerFactory.LookupClass("sdfsdfsdfdsfsdfsdf");
                 fail();
             }
-            catch (ArgumentException)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 //
             }
@@ -101,7 +101,7 @@ namespace Lucene.Net.Analysis.Util
                 TokenizerFactory.LookupClass("!(**#$U*#$*");
                 fail();
             }
-            catch (ArgumentException)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 //
             }
@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis.Util
                 TokenFilterFactory.ForName("sdfsdfsdfdsfsdfsdf", new Dictionary<string, string>());
                 fail();
             }
-            catch (ArgumentException)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 //
             }
@@ -143,7 +143,7 @@ namespace Lucene.Net.Analysis.Util
                 TokenFilterFactory.ForName("!(**#$U*#$*", new Dictionary<string, string>());
                 fail();
             }
-            catch (ArgumentException)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 //
             }
@@ -169,7 +169,7 @@ namespace Lucene.Net.Analysis.Util
                 TokenFilterFactory.LookupClass("sdfsdfsdfdsfsdfsdf");
                 fail();
             }
-            catch (ArgumentException)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 //
             }
@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis.Util
                 TokenFilterFactory.LookupClass("!(**#$U*#$*");
                 fail();
             }
-            catch (ArgumentException)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 //
             }
@@ -208,7 +208,7 @@ namespace Lucene.Net.Analysis.Util
                 CharFilterFactory.ForName("sdfsdfsdfdsfsdfsdf", new Dictionary<string, string>());
                 fail();
             }
-            catch (ArgumentException)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 //
             }
@@ -218,7 +218,7 @@ namespace Lucene.Net.Analysis.Util
                 CharFilterFactory.ForName("!(**#$U*#$*", new Dictionary<string, string>());
                 fail();
             }
-            catch (ArgumentException)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 //
             }
@@ -240,7 +240,7 @@ namespace Lucene.Net.Analysis.Util
                 CharFilterFactory.LookupClass("sdfsdfsdfdsfsdfsdf");
                 fail();
             }
-            catch (ArgumentException)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 //
             }
@@ -250,7 +250,7 @@ namespace Lucene.Net.Analysis.Util
                 CharFilterFactory.LookupClass("!(**#$U*#$*");
                 fail();
             }
-            catch (ArgumentException)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 //
             }

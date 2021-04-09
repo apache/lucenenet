@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
@@ -308,9 +308,7 @@ namespace Lucene.Net.Sandbox.Queries
                 query = new SlowFuzzyQuery(new Term("field", "student"), 1.1f);
                 fail("Expected IllegalArgumentException");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expecting exception
             }
@@ -319,9 +317,7 @@ namespace Lucene.Net.Sandbox.Queries
                 query = new SlowFuzzyQuery(new Term("field", "student"), -0.1f);
                 fail("Expected IllegalArgumentException");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expecting exception
             }

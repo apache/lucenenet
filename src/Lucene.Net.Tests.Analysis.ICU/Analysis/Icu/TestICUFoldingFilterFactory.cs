@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Icu
                 });
                 fail();
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

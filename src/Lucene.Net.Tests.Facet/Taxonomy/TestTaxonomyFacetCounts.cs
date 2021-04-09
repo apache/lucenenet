@@ -275,7 +275,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 facets.GetSpecificValue("a");
                 fail("should have hit exc");
             }
-            catch (ArgumentException)
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -285,7 +285,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 facets.GetTopChildren(10, "a");
                 fail("should have hit exc");
             }
-            catch (ArgumentException)
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -372,7 +372,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 facets.GetSpecificValue("a");
                 fail("didn't hit expected exception");
             }
-            catch (ArgumentException)
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -472,7 +472,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 Assert.AreEqual(1, facets.GetSpecificValue("dim"));
                 fail("didn't hit expected exception");
             }
-            catch (ArgumentException)
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -558,7 +558,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 config.Build(taxoWriter, doc);
                 fail("did not hit expected exception");
             }
-            catch (ArgumentException)
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -589,7 +589,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 config.Build(taxoWriter, doc);
                 fail("did not hit expected exception");
             }
-            catch (ArgumentException)
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }

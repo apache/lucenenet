@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -146,9 +146,7 @@ namespace Lucene.Net.Util
             {
                 UnicodeUtil.CodePointCount(new BytesRef(bytes));
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 threwAssertion = true;
             }
@@ -225,9 +223,7 @@ namespace Lucene.Net.Util
                 {
                     // Ignored.
                 }
-#pragma warning disable 168
-                catch (ArgumentException e2)
-#pragma warning restore 168
+                catch (Exception e2) when (e2.IsIllegalArgumentException())
                 {
                     // Ignored.
                 }

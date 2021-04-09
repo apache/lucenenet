@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -151,9 +151,7 @@ namespace Lucene.Net.Documents
                 new Field("name", "value", new FieldType());
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected exception
             }
@@ -166,9 +164,7 @@ namespace Lucene.Net.Documents
                 new Field("name", "value", ft2);
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected exception
             }
@@ -366,7 +362,15 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestInvalidFields()
         {
-            Assert.Throws<ArgumentException>(() => { new Field("foo", new MockTokenizer(new StreamReader(File.Open("", FileMode.Open))), StringField.TYPE_STORED); });
+            try
+            {
+                new Field("foo", new MockTokenizer(new StreamReader(File.Open("", FileMode.Open))), StringField.TYPE_STORED);
+                fail("did not hit expected exc");
+            }
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
+            {
+                // expected
+            }
         }
 
         // LUCENE-3682

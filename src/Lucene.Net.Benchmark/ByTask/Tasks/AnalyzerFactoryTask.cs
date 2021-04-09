@@ -304,7 +304,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                         clazz = LookupAnalysisClass(argName, typeof(CharFilterFactory));
                                         CreateAnalysisPipelineComponent(stok, clazz);
                                     }
-                                    catch (ArgumentException /*e*/)
+                                    catch (Exception e) when (e.IsIllegalArgumentException())
                                     {
                                         try
                                         {
@@ -313,7 +313,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                             CreateAnalysisPipelineComponent(stok, clazz);
                                             expectedArgType = ArgType.TOKENFILTER;
                                         }
-                                        catch (ArgumentException e2)
+                                        catch (Exception e2) when (e2.IsIllegalArgumentException())
                                         {
                                             throw new Exception("Line #" + GetLineNumber(stok) + ": Can't find class '"
                                                                        + argName + "' as CharFilterFactory or TokenizerFactory", e2);
@@ -328,7 +328,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                     {
                                         clazz = LookupAnalysisClass(className, typeof(TokenFilterFactory));
                                     }
-                                    catch (ArgumentException e)
+                                    catch (Exception e) when (e.IsIllegalArgumentException())
                                     {
                                         throw new Exception
                                             ("Line #" + GetLineNumber(stok) + ": Can't find class '" + className + "' as TokenFilterFactory", e);

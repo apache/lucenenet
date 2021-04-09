@@ -1,4 +1,4 @@
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -228,7 +228,7 @@ namespace Lucene.Net.Util
                 // Should had thrown an exception
                 Assert.Fail();
             }
-            catch (ArgumentException)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
             }
 
@@ -237,7 +237,7 @@ namespace Lucene.Net.Util
             {
                 pq = new IntegerQueue(maxSize);
             }
-            catch (ArgumentException)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
             }
         }

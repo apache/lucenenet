@@ -363,7 +363,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                                 }
                                 rules.Add(r);
                             }
-                            catch (ArgumentException e)
+                            catch (Exception e) when (e.IsIllegalArgumentException())
                             {
                                 throw new InvalidOperationException(
                                         "Problem parsing line '" + currentLine + "' in " + location, e);

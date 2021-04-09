@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis.Core
                 {
                     // its ok if the right files arent available or whatever to throw this
                 }
-                catch (ArgumentException)
+                catch (Exception ignored) when (ignored.IsIllegalArgumentException())
                 {
                     // is this ok? I guess so
                 }

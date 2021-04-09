@@ -1163,9 +1163,7 @@ namespace Lucene.Net.Index
                 r.Document(1);
                 Assert.Fail("did not hit exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }

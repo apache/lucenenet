@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -41,7 +41,7 @@ namespace Lucene.Net.Replicator
                 assertNotNull(new IndexRevision(writer));
                 fail("should have failed when IndexDeletionPolicy is not Snapshot");
             }
-            catch (ArgumentException)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected
             }

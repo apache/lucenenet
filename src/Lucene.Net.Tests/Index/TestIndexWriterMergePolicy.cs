@@ -300,9 +300,7 @@ namespace Lucene.Net.Index
                 lmp.MaxCFSSegmentSizeMB = -2.0;
                 Assert.Fail("Didn't throw IllegalArgumentException");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // pass
             }

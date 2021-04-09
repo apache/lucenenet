@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -150,7 +150,7 @@ namespace Lucene.Net.Replicator
                 replicator.Publish(old);
                 fail("should have failed to publish an older revision");
             }
-            catch (ArgumentException)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected
             }

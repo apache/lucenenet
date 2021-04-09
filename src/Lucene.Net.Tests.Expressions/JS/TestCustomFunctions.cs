@@ -41,7 +41,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("sqrt(20)", functions);
                 Assert.Fail();
             }
-            catch (ArgumentException e)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 Assert.IsTrue(e.Message.Contains("Unrecognized method"));
             }
@@ -116,7 +116,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("foo()", functions);
                 Assert.Fail();
             }
-            catch (ArgumentException e)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 Assert.IsTrue(e.Message.Contains("does not return a double"));
             }
@@ -135,7 +135,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("foo(2)", functions);
                 Assert.Fail();
             }
-            catch (ArgumentException e)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 Assert.IsTrue(e.Message.Contains("must take only double parameters"));
             }
@@ -154,7 +154,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("foo()", functions);
                 Assert.Fail();
             }
-            catch (ArgumentException e)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 Assert.IsTrue(e.Message.Contains("is not static"));
             }
@@ -174,7 +174,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("foo()", functions);
                 Assert.Fail();
             }
-            catch (ArgumentException e)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 Assert.IsTrue(e.Message.Contains("is not public"));
             }
@@ -196,7 +196,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("foo()", functions);
                 Assert.Fail();
             }
-            catch (ArgumentException e)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 Assert.IsTrue(e.Message.Contains("is not public"));
             }

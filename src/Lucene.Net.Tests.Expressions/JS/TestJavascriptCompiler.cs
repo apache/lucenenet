@@ -193,7 +193,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("tan()");
                 Assert.Fail();
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 Assert.IsTrue(expected.Message.Contains("arguments for method call"));
             }
@@ -203,7 +203,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("tan(1, 1)");
                 Assert.Fail();
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 Assert.IsTrue(expected.Message.Contains("arguments for method call"));
             }

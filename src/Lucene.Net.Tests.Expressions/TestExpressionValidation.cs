@@ -1,4 +1,4 @@
-using Lucene.Net.Expressions.JS;
+﻿using Lucene.Net.Expressions.JS;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -55,7 +55,7 @@ namespace Lucene.Net.Expressions
                 bindings.Validate();
                 Assert.Fail("didn't get expected exception");
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 Assert.IsTrue(expected.Message.Contains("Invalid reference"));
             }
@@ -72,7 +72,7 @@ namespace Lucene.Net.Expressions
                 bindings.Validate();
                 Assert.Fail("didn't get expected exception");
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 Assert.IsTrue(expected.Message.Contains("Invalid reference"));
             }
@@ -88,7 +88,7 @@ namespace Lucene.Net.Expressions
                 bindings.Validate();
                 Assert.Fail("didn't get expected exception");
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 Assert.IsTrue(expected.Message.Contains("Cycle detected"));
             }
@@ -105,7 +105,7 @@ namespace Lucene.Net.Expressions
                 bindings.Validate();
                 Assert.Fail("didn't get expected exception");
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 Assert.IsTrue(expected.Message.Contains("Cycle detected"));
             }
@@ -123,7 +123,7 @@ namespace Lucene.Net.Expressions
                 bindings.Validate();
                 Assert.Fail("didn't get expected exception");
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 Assert.IsTrue(expected.Message.Contains("Cycle detected"));
             }
@@ -141,7 +141,7 @@ namespace Lucene.Net.Expressions
                 bindings.Validate();
                 Assert.Fail("didn't get expected exception");
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 Assert.IsTrue(expected.Message.Contains("Cycle detected"));
             }
@@ -160,7 +160,7 @@ namespace Lucene.Net.Expressions
                 bindings.Validate();
                 Assert.Fail("didn't get expected exception");
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 Assert.IsTrue(expected.Message.Contains("Cycle detected"));
             }

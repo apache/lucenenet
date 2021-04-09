@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -80,9 +80,7 @@ namespace Lucene.Net.Util
                 src3.RestoreState(state);
                 Assert.Fail("The third instance is missing the TypeAttribute, so restoreState() should throw IllegalArgumentException");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // pass
             }
@@ -147,9 +145,7 @@ namespace Lucene.Net.Util
                 src.AddAttribute<Token>();
                 Assert.Fail("Should throw IllegalArgumentException");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
             }
 
@@ -159,9 +155,7 @@ namespace Lucene.Net.Util
                 src.AddAttribute<Token>();
                 Assert.Fail("Should throw IllegalArgumentException");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
             }
 
@@ -176,7 +170,7 @@ namespace Lucene.Net.Util
               src.AddAttribute<typeof((Type)IEnumerator)>();
               Assert.Fail("Should throw IllegalArgumentException");
             }
-            catch (ArgumentException iae)
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
             }*/
         }
