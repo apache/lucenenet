@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 // This class was sourced from the Apache Harmony project's BufferedReader
 // https://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/
 
@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (size <= 0)
             {
-                throw new ArgumentOutOfRangeException("Buffer size <= 0");
+                throw new ArgumentOutOfRangeException(nameof(size), "Buffer size <= 0");
             }
             this.@in = @in;
             buf = new char[size];
@@ -223,7 +223,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (markLimit < 0)
             {
-                throw new ArgumentOutOfRangeException("Read-ahead limit < 0");
+                throw new ArgumentOutOfRangeException(nameof(markLimit), "Read-ahead limit < 0");
             }
             lock (m_lock)
             {
@@ -289,10 +289,18 @@ namespace Lucene.Net.Analysis.Util
             lock(m_lock)
             {
                 EnsureOpen();
-                if (offset < 0 || offset > buffer.Length - length || length < 0)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
+                // LUCENENT specific - refactored guard clauses to throw individual messages.
+                // Note that this is the order the Apache Harmony tests expect it to be checked in.
+                if (offset < 0)
+                    throw new ArgumentOutOfRangeException(nameof(offset), offset, $"{nameof(offset)} must not be negative.");
+                // LUCENENET specific - Added guard clause for null
+                if (buffer is null)
+                    throw new ArgumentNullException(nameof(buffer));
+                if (offset > buffer.Length - length)
+                    throw new ArgumentOutOfRangeException(nameof(offset) + " + " + nameof(length), $"offset + length may not be greater than the size of {nameof(buffer)}");
+                if (length < 0)
+                    throw new ArgumentOutOfRangeException(nameof(length), length, $"{nameof(length)} must not be negative.");
+
                 int outstanding = length;
                 while (outstanding > 0)
                 {
@@ -500,6 +508,7 @@ namespace Lucene.Net.Analysis.Util
                 EnsureOpen();
                 if (mark < 0)
                 {
+                    // LUCENENET NOTE: Seems odd, but in .NET StreamReader, this is also the exception that is thrown when closed.
                     throw new IOException("Reader not marked");
                 }
                 pos = mark;
@@ -523,7 +532,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (amount < 0L)
             {
-                throw new ArgumentOutOfRangeException("skip value is negative");
+                throw new ArgumentOutOfRangeException(nameof(amount), "skip value is negative");
             }
             lock (m_lock)
             {
