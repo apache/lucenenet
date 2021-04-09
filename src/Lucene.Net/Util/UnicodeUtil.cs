@@ -347,7 +347,7 @@ namespace Lucene.Net.Util
               return false;
             }
             return s1.equals(s2, StringComparison.Ordinal);
-          } catch (UnsupportedEncodingException uee) {
+          } catch (Exception uee) when (uee.IsUnsupportedEncodingException()) {
             return false;
           }
         }
@@ -375,7 +375,7 @@ namespace Lucene.Net.Util
               return false;
             }
             return s1.equals(s2, StringComparison.Ordinal);
-          } catch (UnsupportedEncodingException uee) {
+          } catch (Exception uee) when (uee.IsUnsupportedEncodingException()) {
             return false;
           }
         }
