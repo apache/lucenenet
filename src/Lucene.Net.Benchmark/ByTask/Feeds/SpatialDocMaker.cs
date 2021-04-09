@@ -73,7 +73,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             // LUCENENET: The second argument was ClassLoader in Java, which should be made into
             // Assembly in .NET. However, Spatial4n currently doesn't support it.
-            // In .NET it makes more logical sense to make 2 overloads and throw NullReferenceException
+            // In .NET it makes more logical sense to make 2 overloads and throw ArgumentNullException
             // if the second argument is null, anyway. So no need to change this once support has been added.
             // See: https://github.com/NightOwl888/Spatial4n/issues/1
             SpatialContext ctx = SpatialContextFactory.MakeSpatialContext(configMap /*, assembly: null*/);
@@ -143,7 +143,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             //A factory for the prefix tree grid
             // LUCENENET: The second argument was ClassLoader in Java, which should be made into
             // Assembly in .NET. However, Spatial4n currently doesn't support it.
-            // In .NET it makes more logical sense to make 2 overloads and throw NullReferenceException
+            // In .NET it makes more logical sense to make 2 overloads and throw ArgumentNullException
             // if the second argument is null, anyway. So no need to change this once support has been added.
             // See: https://github.com/NightOwl888/Spatial4n/issues/1
             SpatialPrefixTree grid = SpatialPrefixTreeFactory.MakeSPT(configMap/*, assembly: null*/, ctx);
