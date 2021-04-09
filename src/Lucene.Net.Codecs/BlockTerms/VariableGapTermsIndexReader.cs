@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -152,7 +152,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 }
                 else
                 {
-                    throw new NullReferenceException("_current.Output is null"); // LUCENENET NOTE: NullReferenceException would be thrown in Java, so doing it here
+                    throw new NullReferenceException("current.Output is null"); // LUCENENET NOTE: NullReferenceException would be thrown in Java, so doing it here
                 }
             }
 
@@ -174,7 +174,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
                     else
                     {
-                        throw new NullReferenceException("_current.Output is null"); // LUCENENET NOTE: NullReferenceException would be thrown in Java, so doing it here
+                        throw new NullReferenceException("current.Output is null"); // LUCENENET NOTE: NullReferenceException would be thrown in Java, so doing it here
                     }
                 }
             }
