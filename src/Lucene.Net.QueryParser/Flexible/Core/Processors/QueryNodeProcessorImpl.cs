@@ -119,8 +119,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
 
                         if (child2 == null)
                         {
-                            throw new NullReferenceException(); // LUCENENET TODO: Change to ArgumentException ?
-
+                            // LUCENENET: Changed from NullPointerException to InvalidOperationException (which isn't caught anywhere outside of tests)
+                            throw new InvalidOperationException($"{this.GetType().Name}.PostProcessNode() must not return 'null'.");
                         }
 
                         newChildren.Add(child2);
