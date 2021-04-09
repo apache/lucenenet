@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Diagnostics;
@@ -43,10 +43,12 @@ namespace Lucene.Net.Search
         /// Strips off scores from the passed in <see cref="Search.Query"/>. The hits will get a constant score
         /// dependent on the boost factor of this query.
         /// </summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="query"/> is <c>null</c>.</exception>
         public ConstantScoreQuery(Query query)
         {
+            // LUCENENET specific: Changed guard clause to throw ArgumentNullException instead of NullPointerException
             this.m_filter = null;
-            this.m_query = query ?? throw new NullReferenceException("Query may not be null");
+            this.m_query = query ?? throw new ArgumentNullException(nameof(query), "Query may not be null");
         }
 
         /// <summary>
@@ -56,9 +58,11 @@ namespace Lucene.Net.Search
         /// <c>new ConstantScoreQuery(new QueryWrapperFilter(query))</c>, instead
         /// use <see cref="ConstantScoreQuery(Query)"/>!
         /// </summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="filter"/> is <c>null</c>.</exception>
         public ConstantScoreQuery(Filter filter)
         {
-            this.m_filter = filter ?? throw new NullReferenceException("Filter may not be null");
+            // LUCENENET specific: Changed guard clause to throw ArgumentNullException instead of NullPointerException
+            this.m_filter = filter ?? throw new ArgumentNullException(nameof(filter), "Filter may not be null");
             this.m_query = null;
         }
 
