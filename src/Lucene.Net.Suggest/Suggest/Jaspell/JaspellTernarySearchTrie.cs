@@ -606,15 +606,15 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          A <see cref="string"/> that indexes the node that is returned. </param>
         /// <returns> The node object indexed by key. This object is an instance of an
         ///         inner class named <see cref="TSTNode"/>. </returns>
-        /// <exception cref="NullReferenceException">
+        /// <exception cref="ArgumentNullException">
         ///              If the key is <c>null</c>. </exception>
         /// <exception cref="ArgumentException">
         ///              If the key is an empty <see cref="string"/>. </exception>
         protected internal virtual TSTNode GetOrCreateNode(string key)
         {
-            if (key == null)
+            if (key is null)
             {
-                throw new NullReferenceException("attempt to get or create node with null key");
+                throw new ArgumentNullException(nameof(key), "attempt to get or create node with null key");
             }
             if (key.Length == 0)
             {
