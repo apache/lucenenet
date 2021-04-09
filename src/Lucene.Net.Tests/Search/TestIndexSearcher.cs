@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
@@ -138,9 +138,7 @@ namespace Lucene.Net.Search
                 s.SearchAfter(new ScoreDoc(r.MaxDoc, 0.54f), new MatchAllDocsQuery(), 10);
                 Assert.Fail("should have hit IllegalArgumentException when searchAfter exceeds maxDoc");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // ok
             }

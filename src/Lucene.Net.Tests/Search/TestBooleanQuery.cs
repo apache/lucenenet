@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -79,9 +79,7 @@ namespace Lucene.Net.Search
                 BooleanQuery.MaxClauseCount = 0;
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // okay
             }

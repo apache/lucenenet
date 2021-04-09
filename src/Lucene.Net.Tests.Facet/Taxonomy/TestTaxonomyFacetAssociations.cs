@@ -178,7 +178,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 facets.GetSpecificValue("float");
                 fail("should have hit exc");
             }
-            catch (ArgumentException)
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -188,7 +188,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 facets.GetTopChildren(10, "float");
                 fail("should have hit exc");
             }
-            catch (ArgumentException)
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -216,7 +216,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 writer.AddDocument(config.Build(taxoWriter, doc));
                 fail("did not hit expected exception");
             }
-            catch (ArgumentException)
+            catch (Exception exc) when (exc.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -245,7 +245,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 writer.AddDocument(config.Build(taxoWriter, doc));
                 fail("did not hit expected exception");
             }
-            catch (ArgumentException)
+            catch (Exception exc) when (exc.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -274,7 +274,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 writer.AddDocument(config.Build(taxoWriter, doc));
                 fail("did not hit expected exception");
             }
-            catch (ArgumentException)
+            catch (Exception exc) when (exc.IsIllegalArgumentException())
             {
                 // expected
             }

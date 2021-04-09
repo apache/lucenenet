@@ -880,9 +880,7 @@ namespace Lucene.Net.Search
                 query.Slop = -2;
                 Assert.Fail("didn't get expected exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 // expected exception
             }

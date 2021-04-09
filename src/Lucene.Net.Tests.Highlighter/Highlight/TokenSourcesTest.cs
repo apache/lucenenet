@@ -315,9 +315,7 @@ namespace Lucene.Net.Search.Highlight
                         false);
                 fail("TokenSources.getTokenStream should throw IllegalArgumentException if term vector has no offsets");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected
             }

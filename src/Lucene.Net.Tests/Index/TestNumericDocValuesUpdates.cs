@@ -595,9 +595,7 @@ namespace Lucene.Net.Index
                 writer.UpdateNumericDocValue(new Term("key", "doc"), "ndv", 17L);
                 Assert.Fail("should not have allowed creating new fields through update");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // ok
             }
@@ -607,9 +605,7 @@ namespace Lucene.Net.Index
                 writer.UpdateNumericDocValue(new Term("key", "doc"), "foo", 17L);
                 Assert.Fail("should not have allowed updating an existing field to numeric-dv");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // ok
             }

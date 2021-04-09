@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Phonetic
                 new PhoneticFilterFactory(new Dictionary<String, String>());
                 fail();
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 assertTrue(expected.Message.Contains("Configuration Error: missing parameter 'encoder'"));
             }
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Phonetic
                 factory.Inform(new ClasspathResourceLoader(factory.GetType()));
                 fail();
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 assertTrue(expected.Message.Contains("Error loading encoder"));
             }
@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis.Phonetic
                 factory.Inform(new ClasspathResourceLoader(factory.GetType()));
                 fail();
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 assertTrue(expected.Message.Contains("Error loading encoder"));
             }
@@ -206,7 +206,7 @@ namespace Lucene.Net.Analysis.Phonetic
                 });
                 fail();
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -109,9 +109,7 @@ namespace Lucene.Net.Util
                 publicTestMethod.GetImplementationDistance(typeof(LuceneTestCase));
                 Assert.Fail("LuceneTestCase is not a subclass and can never override publicTest(String)");
             }
-#pragma warning disable 168
-            catch (ArgumentException arg)
-#pragma warning restore 168
+            catch (Exception arg) when (arg.IsIllegalArgumentException())
             {
                 // pass
             }
@@ -121,9 +119,7 @@ namespace Lucene.Net.Util
                 new VirtualMethod(typeof(BaseTestVirtualMethod), "bogus");
                 Assert.Fail("Method bogus() does not exist, so IAE should be thrown");
             }
-#pragma warning disable 168
-            catch (ArgumentException arg)
-#pragma warning restore 168
+            catch (Exception arg) when (arg.IsIllegalArgumentException())
             {
                 // pass
             }
@@ -132,9 +128,7 @@ namespace Lucene.Net.Util
             {
                 new VirtualMethod(typeof(TestClass2), "PublicTest", typeof(string));
             }
-#pragma warning disable 168
-            catch (ArgumentException arg)
-#pragma warning restore 168
+            catch (Exception arg) when (arg.IsIllegalArgumentException())
             {
                 Assert.Fail("Method publicTest(String) is declared in TestClass2, so IAE should not be thrown");
             }
@@ -145,9 +139,7 @@ namespace Lucene.Net.Util
                 new VirtualMethod(typeof(BaseTestVirtualMethod), "PublicTest", typeof(string));
                 Assert.Fail("Violating singleton status succeeded");
             }
-#pragma warning disable 168
-            catch (ArgumentException arg)
-#pragma warning restore 168
+            catch (Exception arg) when (arg.IsIllegalArgumentException())
             {
                 // pass
             }

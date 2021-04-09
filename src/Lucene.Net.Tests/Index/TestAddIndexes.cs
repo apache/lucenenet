@@ -310,9 +310,7 @@ namespace Lucene.Net.Index
                 writer.AddIndexes(aux, dir);
                 Assert.IsTrue(false);
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 Assert.AreEqual(100, writer.MaxDoc);
             }
@@ -1230,9 +1228,7 @@ namespace Lucene.Net.Index
                     w.AddIndexes(toAdd);
                     Assert.Fail("no such codec");
                 }
-#pragma warning disable 168
-                catch (ArgumentException ex)
-#pragma warning restore 168
+                catch (Exception ex) when (ex.IsIllegalArgumentException())
                 {
                     // expected
                 }
@@ -1249,9 +1245,7 @@ namespace Lucene.Net.Index
                 DirectoryReader.Open(toAdd);
                 Assert.Fail("no such codec");
             }
-#pragma warning disable 168
-            catch (ArgumentException ex)
-#pragma warning restore 168
+            catch (Exception ex) when (ex.IsIllegalArgumentException())
             {
                 // expected
             }

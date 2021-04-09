@@ -128,9 +128,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("didn't hit expected exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -166,9 +164,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("didn't hit expected exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -204,9 +200,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("didn't hit expected exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -301,9 +295,7 @@ namespace Lucene.Net.Index
             {
                 w.AddDocument(doc);
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -327,9 +319,7 @@ namespace Lucene.Net.Index
             {
                 w.AddDocument(doc);
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -355,9 +345,7 @@ namespace Lucene.Net.Index
                 iwriter.AddDocument(doc);
                 Assert.Fail("didn't hit expected exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -384,9 +372,7 @@ namespace Lucene.Net.Index
                 iwriter.AddDocument(doc);
                 Assert.Fail("didn't hit expected exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -413,9 +399,7 @@ namespace Lucene.Net.Index
                 iwriter.AddDocument(doc);
                 Assert.Fail("didn't hit expected exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -444,9 +428,7 @@ namespace Lucene.Net.Index
                 iwriter.AddDocument(doc);
                 Assert.Fail("did not get expected exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -475,9 +457,7 @@ namespace Lucene.Net.Index
                 iwriter.AddDocument(doc);
                 Assert.Fail("did not get expected exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -502,9 +482,7 @@ namespace Lucene.Net.Index
             {
                 w.AddDocument(doc);
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -620,9 +598,7 @@ namespace Lucene.Net.Index
                     startingGun.Wait();
                     w.AddDocument(doc);
                 }
-#pragma warning disable 168
-                catch (ArgumentException iae)
-#pragma warning restore 168
+                catch (Exception iae) when (iae.IsIllegalArgumentException())
                 {
                     // expected
                     hitExc.Value = (true);
@@ -656,9 +632,7 @@ namespace Lucene.Net.Index
             {
                 w.AddIndexes(dir2);
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -668,9 +642,7 @@ namespace Lucene.Net.Index
             {
                 w.AddIndexes(new IndexReader[] { r });
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -697,9 +669,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 Assert.Fail("did not hit exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -726,9 +696,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 Assert.Fail("did not hit exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -831,9 +799,7 @@ namespace Lucene.Net.Index
                 writer.AddIndexes(dir);
                 Assert.Fail("did not hit exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -865,9 +831,7 @@ namespace Lucene.Net.Index
                 writer.AddIndexes(readers);
                 Assert.Fail("did not hit exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -899,9 +863,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 Assert.Fail("did not hit exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -933,9 +895,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 Assert.Fail("did not hit exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -995,9 +955,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 Assert.Fail("should not have succeeded to add a field with different DV type than what already exists");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 writer.Rollback();
             }

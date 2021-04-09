@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 TokenFilterFactory("HunspellStem", "dictionary", "simple.dic", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

@@ -106,6 +106,8 @@
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Common" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Kuromoji" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Phonetic" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.SmartCn" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Stempel" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Benchmark" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Classification" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Expressions" />
@@ -119,6 +121,7 @@
     <InternalsVisibleTo Include="Lucene.Net.Tests.QueryParser" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Cli" /> <!-- For lucene-cli -->
     <InternalsVisibleTo Include="Lucene.Net.Tests.Replicator" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Sandbox" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Spatial" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Suggest" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.TestFramework" />

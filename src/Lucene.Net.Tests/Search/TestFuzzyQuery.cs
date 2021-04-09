@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -398,9 +398,7 @@ namespace Lucene.Net.Search
                 q = new FuzzyQuery(new Term("field", "t"), 3);
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (ArgumentException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 // expected
             }

@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using System;
@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 TokenFilterFactory("LimitTokenPosition");
                 fail();
             }
-            catch (ArgumentException e)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 assertTrue("exception doesn't mention param: " + e.Message, 0 < e.Message.IndexOf(LimitTokenPositionFilterFactory.MAX_TOKEN_POSITION_KEY, StringComparison.Ordinal));
             }
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 TokenFilterFactory("LimitTokenPosition", "maxTokenPosition", "3", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

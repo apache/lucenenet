@@ -175,9 +175,7 @@ namespace Lucene.Net.Tests.Queries
                 new TermFilter(null);
                 Assert.Fail(@"must fail - no term!");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
             }
 
@@ -186,9 +184,7 @@ namespace Lucene.Net.Tests.Queries
                 new TermFilter(new Term(null));
                 Assert.Fail(@"must fail - no field!");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
             }
         }

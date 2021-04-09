@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using System;
@@ -258,7 +258,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 TokenFilterFactory("Capitalization", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }
@@ -280,7 +280,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", arg, "-3", "okPrefix", "McK", "forceFirstLetter", "true").Create(stream);
                     fail();
                 }
-                catch (ArgumentException expected)
+                catch (Exception expected) when (expected.IsIllegalArgumentException())
                 {
                     assertTrue(expected.Message.Contains(arg + " must be greater than or equal to zero") || expected.Message.Contains(arg + " must be greater than zero"));
                 }

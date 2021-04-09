@@ -182,7 +182,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries5, fields, new MockAnalyzer(Random));
                 fail();
             }
-            catch (ArgumentException /*e*/)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected exception, array length differs
             }
@@ -216,7 +216,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "blah", fields, flags2, new MockAnalyzer(Random));
                 fail();
             }
-            catch (ArgumentException /*e*/)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected exception, array length differs
             }
@@ -241,7 +241,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "blah", fields, flags2, new MockAnalyzer(Random));
                 fail();
             }
-            catch (ArgumentException /*e*/)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected exception, array length differs
             }
@@ -263,7 +263,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, flags2, new MockAnalyzer(Random));
                 fail();
             }
-            catch (ArgumentException /*e*/)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected exception, array length differs
             }
@@ -284,7 +284,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, flags2, new MockAnalyzer(Random));
                 fail();
             }
-            catch (ArgumentException /*e*/)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected exception, array length differs
             }

@@ -1031,9 +1031,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("did not hit expected exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException iea)
-#pragma warning restore 168
+            catch (Exception iea) when (iea.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -2013,9 +2011,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("should have hit exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }

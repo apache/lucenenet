@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -184,7 +184,7 @@ namespace Lucene.Net.Analysis.Util
                 CharacterUtils.NewCharacterBuffer(1);
                 fail("length must be >= 2");
             }
-            catch (ArgumentException)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
             }
         }
