@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 TokenFilterFactory("Length", LengthFilterFactory.MIN_KEY, "5", LengthFilterFactory.MAX_KEY, "4").Create(stream);
                 fail();
             }
-            catch (Exception expected) when (expected.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException expected) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 assertTrue(expected.Message.Contains("maximum length must not be greater than minimum length"));
             }

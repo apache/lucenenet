@@ -280,7 +280,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", arg, "-3", "okPrefix", "McK", "forceFirstLetter", "true").Create(stream);
                     fail();
                 }
-                catch (Exception expected) when (expected.IsIllegalArgumentException())
+                catch (ArgumentOutOfRangeException expected) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 {
                     assertTrue(expected.Message.Contains(arg + " must be greater than or equal to zero") || expected.Message.Contains(arg + " must be greater than zero"));
                 }

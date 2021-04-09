@@ -309,7 +309,7 @@ namespace Lucene.Net.Index
                 conf.SetIndexDeletionPolicy(null);
                 Assert.Fail();
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
                 // ok
             }
@@ -323,7 +323,7 @@ namespace Lucene.Net.Index
                 conf.SetMergeScheduler(null);
                 Assert.Fail();
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
                 // ok
             }
@@ -338,7 +338,7 @@ namespace Lucene.Net.Index
                 conf.SetSimilarity(null);
                 Assert.Fail();
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
                 // ok
             }
@@ -352,7 +352,7 @@ namespace Lucene.Net.Index
                 conf.SetIndexingChain(null);
                 Assert.Fail();
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
                 // ok
             }
@@ -454,7 +454,7 @@ namespace Lucene.Net.Index
                 conf.SetMergePolicy(null);
                 Assert.Fail();
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
                 // ok
             }
