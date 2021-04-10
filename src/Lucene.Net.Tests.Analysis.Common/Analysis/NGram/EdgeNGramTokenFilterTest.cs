@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.NGram
                 new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, input, EdgeNGramTokenFilter.Side.FRONT, 0, 0);
 #pragma warning restore 612, 618
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 gotException = true;
             }
@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.NGram
                 new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, input, EdgeNGramTokenFilter.Side.FRONT, -1, 2);
 #pragma warning restore 612, 618
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 gotException = true;
             }

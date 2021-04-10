@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
@@ -50,16 +50,16 @@ namespace Lucene.Net.Analysis.Shingle
             maxShingleSize = GetInt32(args, "maxShingleSize", ShingleFilter.DEFAULT_MAX_SHINGLE_SIZE);
             if (maxShingleSize < 2)
             {
-                throw new ArgumentOutOfRangeException("Invalid maxShingleSize (" + maxShingleSize + ") - must be at least 2");
+                throw new ArgumentOutOfRangeException(nameof(maxShingleSize), "Invalid maxShingleSize (" + maxShingleSize + ") - must be at least 2"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             minShingleSize = GetInt32(args, "minShingleSize", ShingleFilter.DEFAULT_MIN_SHINGLE_SIZE);
             if (minShingleSize < 2)
             {
-                throw new ArgumentOutOfRangeException("Invalid minShingleSize (" + minShingleSize + ") - must be at least 2");
+                throw new ArgumentOutOfRangeException(nameof(minShingleSize), "Invalid minShingleSize (" + minShingleSize + ") - must be at least 2"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (minShingleSize > maxShingleSize)
             {
-                throw new ArgumentOutOfRangeException("Invalid minShingleSize (" + minShingleSize + ") - must be no greater than maxShingleSize (" + maxShingleSize + ")");
+                throw new ArgumentException("Invalid minShingleSize (" + minShingleSize + ") - must be no greater than maxShingleSize (" + maxShingleSize + ")");
             }
             outputUnigrams = GetBoolean(args, "outputUnigrams", true);
             outputUnigramsIfNoShingles = GetBoolean(args, "outputUnigramsIfNoShingles", false);

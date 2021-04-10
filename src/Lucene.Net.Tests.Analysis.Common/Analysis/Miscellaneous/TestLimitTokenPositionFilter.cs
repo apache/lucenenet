@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Synonym;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -82,7 +82,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestIllegalArguments()
         {
-            Assert.Throws<ArgumentException>(() => new LimitTokenPositionFilter(new MockTokenizer(new StringReader("one two three four five")), 0));
+            // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+            Assert.Throws<ArgumentOutOfRangeException>(() => new LimitTokenPositionFilter(new MockTokenizer(new StringReader("one two three four five")), 0));
         }
     }
 }

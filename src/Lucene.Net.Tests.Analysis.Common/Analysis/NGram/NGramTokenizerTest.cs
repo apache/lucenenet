@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.NGram
             {
                 new NGramTokenizer(TEST_VERSION_CURRENT, input, 0, 1);
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 gotException = true;
             }

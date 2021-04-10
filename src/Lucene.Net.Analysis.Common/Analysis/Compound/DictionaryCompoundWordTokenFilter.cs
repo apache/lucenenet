@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
@@ -56,9 +56,9 @@ namespace Lucene.Net.Analysis.Compound
         public DictionaryCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, CharArraySet dictionary)
             : base(matchVersion, input, dictionary)
         {
-            if (dictionary == null)
+            if (dictionary is null)
             {
-                throw new ArgumentException("dictionary cannot be null");
+                throw new ArgumentNullException(nameof(dictionary), "dictionary cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
         }
 
@@ -85,9 +85,9 @@ namespace Lucene.Net.Analysis.Compound
         public DictionaryCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, CharArraySet dictionary, int minWordSize, int minSubwordSize, int maxSubwordSize, bool onlyLongestMatch)
             : base(matchVersion, input, dictionary, minWordSize, minSubwordSize, maxSubwordSize, onlyLongestMatch)
         {
-            if (dictionary == null)
+            if (dictionary is null)
             {
-                throw new ArgumentException("dictionary cannot be null");
+                throw new ArgumentNullException(nameof(dictionary), "dictionary cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
         }
 

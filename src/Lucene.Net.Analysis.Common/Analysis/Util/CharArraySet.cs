@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Globalization;
 using J2N.Text;
 using Lucene.Net.Util;
@@ -227,11 +227,11 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> an new unmodifiable <see cref="CharArraySet"/>. </returns>
         /// <exception cref="ArgumentNullException">
         ///           if the given set is <c>null</c>. </exception>
-        public static CharArraySet UnmodifiableSet(CharArraySet set)
+        public static CharArraySet UnmodifiableSet(CharArraySet set) // LUCENENET TODO: API - Rename AsReadOnly() to match .NET convention
         {
-            if (set == null)
+            if (set is null)
             {
-                throw new ArgumentNullException("Given set is null");
+                throw new ArgumentNullException(nameof(set), "Given set is null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             if (set == EMPTY_SET)
             {

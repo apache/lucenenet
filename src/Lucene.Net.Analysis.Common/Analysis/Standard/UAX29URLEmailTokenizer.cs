@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Standard.Std31;
 using Lucene.Net.Analysis.Standard.Std34;
 using Lucene.Net.Analysis.Standard.Std36;
@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis.Standard
             {
                 if (value < 1)
                 {
-                    throw new ArgumentException("maxTokenLength must be greater than zero");
+                    throw new ArgumentOutOfRangeException(nameof(value), "maxTokenLength must be greater than zero"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 this.maxTokenLength = value;
             }

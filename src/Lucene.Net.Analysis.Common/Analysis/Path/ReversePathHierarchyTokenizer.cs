@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Collections.Generic;
@@ -96,11 +96,11 @@ namespace Lucene.Net.Analysis.Path
         {
             if (bufferSize < 0)
             {
-                throw new ArgumentException("bufferSize cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(bufferSize), "bufferSize cannot be negative"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (skip < 0)
             {
-                throw new ArgumentException("skip cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(skip), "skip cannot be negative"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();

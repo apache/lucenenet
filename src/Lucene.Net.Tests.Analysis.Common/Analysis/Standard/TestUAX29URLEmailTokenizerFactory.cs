@@ -148,7 +148,7 @@ namespace Lucene.Net.Analysis.Standard
                 TokenizerFactory("UAX29URLEmail", "maxTokenLength", "-1").Create(new StringReader("hello"));
                 fail();
             }
-            catch (Exception expected) when (expected.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException expected) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 assertTrue(expected.Message.Contains("maxTokenLength must be greater than zero"));
             }

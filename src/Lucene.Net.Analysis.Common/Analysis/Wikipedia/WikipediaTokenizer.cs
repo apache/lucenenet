@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -165,7 +165,7 @@ namespace Lucene.Net.Analysis.Wikipedia
             // TODO: cutover to enum
             if (tokenOutput != TOKENS_ONLY && tokenOutput != UNTOKENIZED_ONLY && tokenOutput != BOTH)
             {
-                throw new ArgumentException("tokenOutput must be TOKENS_ONLY, UNTOKENIZED_ONLY or BOTH");
+                throw new ArgumentOutOfRangeException(nameof(tokenOutput), "tokenOutput must be TOKENS_ONLY, UNTOKENIZED_ONLY or BOTH"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.tokenOutput = tokenOutput;
             this.untokenizedTypes = untokenizedTypes;

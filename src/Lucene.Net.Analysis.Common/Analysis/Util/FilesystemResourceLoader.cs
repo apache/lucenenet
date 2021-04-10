@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.IO;
 
@@ -72,13 +72,13 @@ namespace Lucene.Net.Analysis.Util
         {
             // LUCENENET NOTE: If you call DirectoryInfo.Create() it doesn't set the DirectoryInfo.Exists
             // flag to true, so we use the Directory object to check the path explicitly.
-            if (baseDirectory != null && !Directory.Exists(baseDirectory.FullName))
+            if (!(baseDirectory is null) && !Directory.Exists(baseDirectory.FullName))
             {
-                throw new ArgumentException("baseDirectory is not a directory or null");
+                throw new ArgumentException("baseDirectory is not a directory or is null");
             }
-            if (@delegate == null)
+            if (@delegate is null)
             {
-                throw new ArgumentException("delegate ResourceLoader may not be null");
+                throw new ArgumentNullException(nameof(@delegate), "delegate IResourceLoader may not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             this.baseDirectory = baseDirectory;

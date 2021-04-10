@@ -961,10 +961,10 @@ namespace Lucene.Net.Analysis.Synonym
                 new SynonymFilter(tokenizer, (new SynonymMap.Builder(true)).Build(), true);
                 fail("did not hit expected exception");
             }
-            catch (Exception iae) when (iae.IsIllegalArgumentException())
+            catch (ArgumentNullException iae) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
                 // expected
-                assertEquals("fst must be non-null", iae.Message);
+                assertTrue(iae.Message.Contains("fst must be non-null")); // LUCENENET: .NET Adds the parameter name to the message
             }
         }
     }
