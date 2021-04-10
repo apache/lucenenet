@@ -175,7 +175,7 @@ namespace Lucene.Net.Tests.Queries
                 query.Add(null);
                 Assert.Fail(@"null values are not supported");
             }
-            catch (Exception ex) when (ex.IsIllegalArgumentException())
+            catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
             }
         }

@@ -362,7 +362,7 @@ namespace Lucene.Net.Index
                 conf.SetMaxBufferedDeleteTerms(0);
                 Assert.Fail("should not have succeeded to set maxBufferedDeleteTerms to 0");
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 // this is expected
             }
@@ -372,7 +372,7 @@ namespace Lucene.Net.Index
                 conf.SetMaxBufferedDocs(1);
                 Assert.Fail("should not have succeeded to set maxBufferedDocs to 1");
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 // this is expected
             }
@@ -408,7 +408,7 @@ namespace Lucene.Net.Index
                 conf.SetReaderTermsIndexDivisor(0);
                 Assert.Fail("should not have succeeded to set termsIndexDivisor to 0");
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 // this is expected
             }
@@ -420,7 +420,7 @@ namespace Lucene.Net.Index
                 conf.SetReaderTermsIndexDivisor(-2);
                 Assert.Fail("should not have succeeded to set termsIndexDivisor to < -1");
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 // this is expected
             }
@@ -430,7 +430,7 @@ namespace Lucene.Net.Index
                 conf.SetRAMPerThreadHardLimitMB(2048);
                 Assert.Fail("should not have succeeded to set RAMPerThreadHardLimitMB to >= 2048");
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 // this is expected
             }
@@ -440,7 +440,7 @@ namespace Lucene.Net.Index
                 conf.SetRAMPerThreadHardLimitMB(0);
                 Assert.Fail("should not have succeeded to set RAMPerThreadHardLimitMB to 0");
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 // this is expected
             }

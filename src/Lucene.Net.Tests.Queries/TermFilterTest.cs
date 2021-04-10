@@ -175,7 +175,7 @@ namespace Lucene.Net.Tests.Queries
                 new TermFilter(null);
                 Assert.Fail(@"must fail - no term!");
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
             }
 
@@ -184,7 +184,7 @@ namespace Lucene.Net.Tests.Queries
                 new TermFilter(new Term(null));
                 Assert.Fail(@"must fail - no field!");
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
             }
         }

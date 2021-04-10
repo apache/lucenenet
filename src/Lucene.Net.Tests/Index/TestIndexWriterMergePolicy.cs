@@ -300,7 +300,7 @@ namespace Lucene.Net.Index
                 lmp.MaxCFSSegmentSizeMB = -2.0;
                 Assert.Fail("Didn't throw IllegalArgumentException");
             }
-            catch (Exception iae) when (iae.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 // pass
             }

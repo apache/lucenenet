@@ -218,7 +218,7 @@ namespace Lucene.Net.Util
                     continue;
                 }
 #pragma warning disable 168
-                catch (IndexOutOfRangeException e1)
+                catch (ArgumentOutOfRangeException e1) // LUCENENET specific - changed from IndexOutOfBoundsException to ArgumentOutOfRangeException (.NET convention)
 #pragma warning restore 168
                 {
                     // Ignored.

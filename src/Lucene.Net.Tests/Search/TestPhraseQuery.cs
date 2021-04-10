@@ -880,7 +880,7 @@ namespace Lucene.Net.Search
                 query.Slop = -2;
                 Assert.Fail("didn't get expected exception");
             }
-            catch (Exception expected) when (expected.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 // expected exception
             }

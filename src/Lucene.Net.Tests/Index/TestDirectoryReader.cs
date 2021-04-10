@@ -1163,7 +1163,7 @@ namespace Lucene.Net.Index
                 r.Document(1);
                 Assert.Fail("did not hit exception");
             }
-            catch (Exception iae) when (iae.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 // expected
             }

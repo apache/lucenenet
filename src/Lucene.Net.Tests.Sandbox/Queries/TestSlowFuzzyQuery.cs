@@ -317,7 +317,7 @@ namespace Lucene.Net.Sandbox.Queries
                 query = new SlowFuzzyQuery(new Term("field", "student"), -0.1f);
                 fail("Expected IllegalArgumentException");
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 // expecting exception
             }
