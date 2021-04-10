@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -262,7 +262,7 @@ namespace Lucene.Net.Analysis.Shingle
         {
             if (maxShingleSize < 2)
             {
-                throw new ArgumentException("Max shingle size must be >= 2");
+                throw new ArgumentOutOfRangeException(nameof(maxShingleSize), "Max shingle size must be >= 2"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.maxShingleSize = maxShingleSize;
         }
@@ -283,7 +283,7 @@ namespace Lucene.Net.Analysis.Shingle
         {
             if (minShingleSize < 2)
             {
-                throw new ArgumentException("Min shingle size must be >= 2");
+                throw new ArgumentOutOfRangeException(nameof(minShingleSize), "Min shingle size must be >= 2"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (minShingleSize > maxShingleSize)
             {

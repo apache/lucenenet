@@ -158,19 +158,19 @@ namespace Lucene.Net.Analysis.Synonym
                 // first convert to UTF-8
                 if (numInputWords <= 0)
                 {
-                    throw new ArgumentException("numInputWords must be > 0 (got " + numInputWords + ")");
+                    throw new ArgumentOutOfRangeException(nameof(numInputWords), "numInputWords must be > 0 (got " + numInputWords + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 if (input.Length <= 0)
                 {
-                    throw new ArgumentException("input.length must be > 0 (got " + input.Length + ")");
+                    throw new ArgumentOutOfRangeException(nameof(input.Length), "input.Length must be > 0 (got " + input.Length + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 if (numOutputWords <= 0)
                 {
-                    throw new ArgumentException("numOutputWords must be > 0 (got " + numOutputWords + ")");
+                    throw new ArgumentOutOfRangeException(nameof(numOutputWords), "numOutputWords must be > 0 (got " + numOutputWords + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 if (output.Length <= 0)
                 {
-                    throw new ArgumentException("output.length must be > 0 (got " + output.Length + ")");
+                    throw new ArgumentOutOfRangeException(nameof(output.Length), "output.Length must be > 0 (got " + output.Length + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
 
                 if (Debugging.AssertsEnabled)

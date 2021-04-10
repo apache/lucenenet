@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
@@ -48,16 +48,13 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public CodepointCountFilter(LuceneVersion version, TokenStream @in, int min, int max)
             : base(version, @in)
         {
-            // LUCENENET: The guard clauses were copied here from a later version of Lucene.
-            // Apparently, the tests were not ported from 4.8.0 because they expected this and the
-            // original tests did not. Adding them anyway because there is no downside to this.
             if (min < 0)
             {
-                throw new ArgumentOutOfRangeException("minimum length must be greater than or equal to zero");
+                throw new ArgumentOutOfRangeException(nameof(min), "minimum length must be greater than or equal to zero"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (min > max)
             {
-                throw new ArgumentOutOfRangeException("maximum length must not be greater than minimum length");
+                throw new ArgumentOutOfRangeException(nameof(min), "maximum length must not be greater than minimum length"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             this.min = min;

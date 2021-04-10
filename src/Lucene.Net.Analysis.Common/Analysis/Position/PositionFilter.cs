@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using System;
 using Lucene.Net.Analysis.TokenAttributes;
 
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Position
         {
             if (positionIncrement < 0)
             {
-                throw new ArgumentException("positionIncrement may not be negative");
+                throw new ArgumentOutOfRangeException(nameof(positionIncrement), "positionIncrement may not be negative"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.positionIncrement = positionIncrement;
             posIncrAtt = AddAttribute<IPositionIncrementAttribute>();

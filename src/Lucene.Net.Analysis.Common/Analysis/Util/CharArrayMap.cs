@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using J2N.Globalization;
 using J2N.Text;
@@ -281,9 +281,9 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public virtual bool ContainsKey(object o)
         {
-            if (o == null)
+            if (o is null)
             {
-                throw new ArgumentException("o can't be null", nameof(o));
+                throw new ArgumentNullException(nameof(o), "o can't be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             var c = o as char[];
@@ -797,9 +797,9 @@ namespace Lucene.Net.Analysis.Util
 
         private int GetHashCode(char[] text, int offset, int length)
         {
-            if (text == null)
+            if (text is null)
             {
-                throw new ArgumentException("text can't be null", nameof(text));
+                throw new ArgumentNullException(nameof(text), "text can't be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             int code = 0;
             int stop = offset + length;
@@ -824,9 +824,9 @@ namespace Lucene.Net.Analysis.Util
 
         private int GetHashCode(ICharSequence text)
         {
-            if (text == null)
+            if (text is null)
             {
-                throw new ArgumentException("text can't be null", nameof(text));
+                throw new ArgumentNullException(nameof(text), "text can't be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             int code = 0;
@@ -852,9 +852,9 @@ namespace Lucene.Net.Analysis.Util
 
         private int GetHashCode(string text)
         {
-            if (text == null)
+            if (text is null)
             {
-                throw new ArgumentException("text can't be null", nameof(text));
+                throw new ArgumentNullException(nameof(text), "text can't be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             int code = 0;
@@ -1792,9 +1792,9 @@ namespace Lucene.Net.Analysis.Util
         ///           if the given map is <c>null</c>. </exception>
         public static CharArrayMap<TValue> UnmodifiableMap<TValue>(CharArrayMap<TValue> map) // LUCENENET TODO: API - Rename AsReadOnly() to match .NET convention
         {
-            if (map == null)
+            if (map is null)
             {
-                throw new ArgumentException("Given map is null", nameof(map));
+                throw new ArgumentNullException(nameof(map), "Given map is null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             if (map == CharArrayMap<TValue>.EmptyMap() || map.Count == 0)
             {
@@ -1813,9 +1813,9 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         internal static ICharArrayMap UnmodifiableMap<TValue>(ICharArrayMap map)
         {
-            if (map == null)
+            if (map is null)
             {
-                throw new ArgumentException("Given map is null", nameof(map));
+                throw new ArgumentNullException(nameof(map), "Given map is null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             if (map == CharArrayMap<TValue>.EmptyMap() || map.Count == 0)
             {

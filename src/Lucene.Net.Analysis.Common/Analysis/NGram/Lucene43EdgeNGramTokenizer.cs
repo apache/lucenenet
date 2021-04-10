@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System;
@@ -159,19 +159,16 @@ namespace Lucene.Net.Analysis.NGram
 
         private void Init(LuceneVersion version, Side side, int minGram, int maxGram)
         {
-            //if (version == null)
-            //{
-            //    throw new ArgumentException("version must not be null");
-            //}
+            // LUCENENET specific - version cannot be null because it is a value type.
 
-            if (!Enum.IsDefined(typeof(Side), side))
+            if (!side.IsDefined())
             {
-                throw new ArgumentException("sideLabel must be either front or back");
+                throw new ArgumentOutOfRangeException(nameof(side), "sideLabel must be either front or back"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             if (minGram < 1)
             {
-                throw new ArgumentException("minGram must be greater than zero");
+                throw new ArgumentOutOfRangeException(nameof(minGram), "minGram must be greater than zero"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             if (minGram > maxGram)
@@ -294,5 +291,18 @@ namespace Lucene.Net.Analysis.NGram
             base.Reset();
             started = false;
         }
+    }
+
+    // LUCENENET: added this to avoid the Enum.IsDefined() method, which requires boxing
+    internal static partial class SideExtensions
+    {
+#pragma warning disable CS0612 // Type or member is obsolete
+        internal static bool IsDefined(this Lucene43EdgeNGramTokenizer.Side side)
+        {
+            return side >= Lucene43EdgeNGramTokenizer.Side.FRONT &&
+                side <= Lucene43EdgeNGramTokenizer.Side.BACK;
+        }
+#pragma warning restore CS0612 // Type or member is obsolete
+
     }
 }
