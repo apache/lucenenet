@@ -1,4 +1,4 @@
-using Lucene.Net.Search;
+﻿using Lucene.Net.Search;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -377,7 +377,8 @@ namespace Lucene.Net.Util
 
             public Insanity(InsanityType type, string msg, params FieldCache.CacheEntry[] entries)
             {
-                // LUCENENET specific - rearranged order to take advantage of throw expressions
+                // LUCENENET specific - rearranged order to take advantage of throw expressions and
+                // changed from IllegalArgumentException to ArgumentNullException (.NET convention)
                 this.type = type ?? throw new ArgumentNullException(nameof(type), "Insanity requires non-null InsanityType");
                 this.entries = entries ?? throw new ArgumentNullException(nameof(entries), "Insanity requires non-null CacheEntry[]");
                 if (0 == entries.Length)

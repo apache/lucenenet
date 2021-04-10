@@ -395,6 +395,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         public override void Build(IInputEnumerator enumerator)
         {
+            // LUCENENET: Added guard clause for null
+            if (enumerator is null)
+                throw new ArgumentNullException(nameof(enumerator));
+
             if (enumerator.HasContexts)
             {
                 throw new ArgumentException("this suggester doesn't support contexts");
@@ -712,6 +716,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(num > 0);
+
+            // LUCENENET: Added guard clause for null
+            if (key is null)
+                throw new ArgumentNullException(nameof(key));
 
             if (onlyMorePopular)
             {

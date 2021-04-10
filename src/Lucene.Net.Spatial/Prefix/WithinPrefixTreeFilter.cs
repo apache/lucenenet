@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
@@ -81,7 +81,7 @@ namespace Lucene.Net.Spatial.Prefix
             //TODO move this generic code elsewhere?  Spatial4j?
             if (distErr <= 0)
             {
-                throw new ArgumentException("distErr must be > 0");
+                throw new ArgumentOutOfRangeException(nameof(distErr), "distErr must be > 0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             SpatialContext ctx = m_grid.SpatialContext;
             if (shape is IPoint point)

@@ -33,13 +33,13 @@ namespace Lucene.Net.Queries
         /// <param name="term"> The term documents need to have in order to be a match for this filter. </param>
         public TermFilter(Term term)
         {
-            if (term == null)
+            if (term is null)
             {
-                throw new ArgumentException("Term must not be null");
+                throw new ArgumentNullException(nameof(term), "Term must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            else if (term.Field == null)
+            else if (term.Field is null)
             {
-                throw new ArgumentException("Field must not be null");
+                throw new ArgumentNullException(nameof(term.Field), "term.Field must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             this.term = term;
         }

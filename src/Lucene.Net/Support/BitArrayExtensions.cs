@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -149,7 +149,7 @@ namespace Lucene.Net.Support
         /// <returns>The number of bits set to true in this <see cref="BitArray"/>.</returns>
         public static int Cardinality(this BitArray bits)
         {
-            if (bits == null)
+            if (bits is null)
                 throw new ArgumentNullException(nameof(bits));
             int count = 0;
 

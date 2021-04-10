@@ -237,7 +237,7 @@ namespace Lucene.Net.Index
         new public IndexDeletionPolicy IndexDeletionPolicy
         {
             get => delPolicy;
-            set => delPolicy = value ?? throw new ArgumentNullException(nameof(value), "IndexDeletionPolicy must not be null");
+            set => delPolicy = value ?? throw new ArgumentNullException(nameof(IndexDeletionPolicy), "IndexDeletionPolicy must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>
@@ -266,7 +266,7 @@ namespace Lucene.Net.Index
         new public Similarity Similarity
         {
             get => similarity;
-            set => similarity = value ?? throw new ArgumentNullException(nameof(value), "Similarity must not be null");
+            set => similarity = value ?? throw new ArgumentNullException(nameof(Similarity), "Similarity must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>
@@ -282,7 +282,7 @@ namespace Lucene.Net.Index
         new public IMergeScheduler MergeScheduler
         {
             get => mergeScheduler;
-            set => mergeScheduler = value ?? throw new ArgumentNullException(nameof(value), "MergeScheduler must not be null");
+            set => mergeScheduler = value ?? throw new ArgumentNullException(nameof(MergeScheduler), "MergeScheduler must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>
@@ -310,7 +310,7 @@ namespace Lucene.Net.Index
         new public Codec Codec
         {
             get => codec;
-            set => codec = value ?? throw new ArgumentException(nameof(value), "Codec must not be null");
+            set => codec = value ?? throw new ArgumentNullException(nameof(Codec), "Codec must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>
@@ -326,7 +326,7 @@ namespace Lucene.Net.Index
         new public MergePolicy MergePolicy
         {
             get => mergePolicy;
-            set => mergePolicy = value ?? throw new ArgumentNullException(nameof(value), "MergePolicy must not be null");
+            set => mergePolicy = value ?? throw new ArgumentNullException(nameof(MergePolicy), "MergePolicy must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>
@@ -349,7 +349,7 @@ namespace Lucene.Net.Index
         new internal DocumentsWriterPerThreadPool IndexerThreadPool
         {
             get => indexerThreadPool;
-            set => indexerThreadPool = value ?? throw new ArgumentNullException(nameof(value), "IndexerThreadPool must not be null");
+            set => indexerThreadPool = value ?? throw new ArgumentNullException(nameof(IndexerThreadPool), "IndexerThreadPool must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>
@@ -408,7 +408,7 @@ namespace Lucene.Net.Index
         new internal IndexingChain IndexingChain
         {
             get => indexingChain;
-            set => indexingChain = value ?? throw new ArgumentNullException(nameof(value), "IndexingChain must not be null");
+            set => indexingChain = value ?? throw new ArgumentNullException(nameof(IndexingChain), "IndexingChain must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>
@@ -430,7 +430,7 @@ namespace Lucene.Net.Index
             {
                 if (value <= 0 || value >= 2048)
                 {
-                    throw new ArgumentException("PerThreadHardLimit must be greater than 0 and less than 2048MB");
+                    throw new ArgumentOutOfRangeException(nameof(RAMPerThreadHardLimitMB), "PerThreadHardLimit must be greater than 0 and less than 2048MB"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 this.perThreadHardLimitMB = value;
             }
@@ -449,7 +449,7 @@ namespace Lucene.Net.Index
         new internal FlushPolicy FlushPolicy
         {
             get => flushPolicy;
-            set => flushPolicy = value ?? throw new ArgumentNullException(nameof(value), "FlushPolicy must not be null");
+            set => flushPolicy = value ?? throw new ArgumentNullException(nameof(FlushPolicy), "FlushPolicy must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         // LUCENENT NOTE: The following properties would be pointless,
@@ -538,9 +538,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public IndexWriterConfig SetInfoStream(TextWriter printStream)
         {
-            if (printStream == null)
+            if (printStream is null)
             {
-                throw new ArgumentException("printStream must not be null");
+                throw new ArgumentNullException("printStream must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             return SetInfoStream(new TextWriterInfoStream(printStream));
         }

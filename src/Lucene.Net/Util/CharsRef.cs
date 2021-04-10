@@ -53,7 +53,7 @@ namespace Lucene.Net.Util
         public char[] Chars
         {
             get => chars;
-            set => chars = value ?? throw new ArgumentNullException(nameof(value), "Chars cannot be null");
+            set => chars = value ?? throw new ArgumentNullException(nameof(Chars), "Chars cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
         private char[] chars;
 
@@ -287,7 +287,7 @@ namespace Lucene.Net.Util
                 // NOTE: must do a real check here to meet the specs of CharSequence
                 if (index < 0 || index >= Length)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(index)); // LUCENENET: Changed exception type to ArgumentOutOfRangeException
+                    throw new ArgumentOutOfRangeException(nameof(index)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 return chars[Offset + index];
             }

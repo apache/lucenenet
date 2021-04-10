@@ -101,7 +101,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             maxFacetDepth = config.Get("max.facet.depth", 3);
             if (maxFacetDepth < 2)
             {
-                throw new ArgumentException("max.facet.depth must be at least 2; got: " + maxFacetDepth);
+                throw new ArgumentOutOfRangeException("max.facet.depth", "max.facet.depth must be at least 2; got: " + maxFacetDepth);
             }
             maxValue = maxDocFacets * maxFacetDepth;
         }

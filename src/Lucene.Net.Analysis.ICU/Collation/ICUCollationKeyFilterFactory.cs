@@ -98,7 +98,7 @@ namespace Lucene.Net.Collation
 
             if (custom != null && localeID != null)
                 throw new ArgumentException("Cannot specify both locale and custom. "
-                    + "To tailor rules for a built-in language, see the javadocs for RuleBasedCollator. "
+                    + "To tailor rules for a built-in language, see the docs for RuleBasedCollator. "
                     + "Then save the entire customized ruleset to a file, and use with the custom parameter");
 
             if (args.Count > 0)

@@ -68,7 +68,7 @@ namespace Lucene.Net.Facet
         {
             if (maxDoc != int.MaxValue)
             {
-                throw new ArgumentException("maxDoc must be System.Int32.MaxValue");
+                throw new ArgumentOutOfRangeException(nameof(maxDoc), "maxDoc must be System.Int32.MaxValue"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             //if (DEBUG) {
             //  System.out.println("\nscore: reader=" + context.reader());

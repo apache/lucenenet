@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Antlr.Runtime;
 using Antlr.Runtime.Tree;
@@ -164,7 +164,7 @@ namespace Lucene.Net.Expressions.JS
         /// <param name="functions">The set of functions to compile with</param>
         private JavascriptCompiler(string sourceText, IDictionary<string, MethodInfo> functions)
         {
-            this.sourceText = sourceText ?? throw new ArgumentNullException(nameof(sourceText));
+            this.sourceText = sourceText ?? throw new ArgumentNullException(nameof(sourceText)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             this.functions = functions;
         }
 

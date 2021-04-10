@@ -114,7 +114,7 @@ namespace Lucene.Net.Util
             {
                 if (indexInterval < 1)
                 {
-                    throw new ArgumentException("indexInterval must be >= 1");
+                    throw new ArgumentOutOfRangeException(nameof(indexInterval), "indexInterval must be >= 1"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 this.indexInterval = indexInterval;
                 return this;

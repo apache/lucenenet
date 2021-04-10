@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.IO;
 
@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis
         /// Construct a token stream processing the given input. </summary>
         protected internal Tokenizer(TextReader input)
         {
-            this.inputPending = input ?? throw new ArgumentNullException(nameof(input), "input must not be null");
+            this.inputPending = input ?? throw new ArgumentNullException(nameof(input), "input must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis
         protected internal Tokenizer(AttributeFactory factory, TextReader input)
             : base(factory)
         {
-            this.inputPending = input ?? throw new ArgumentNullException(nameof(input), "input must not be null");
+            this.inputPending = input ?? throw new ArgumentNullException(nameof(input), "input must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>
@@ -99,9 +99,9 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public void SetReader(TextReader input)
         {
-            if (input == null)
+            if (input is null)
             {
-                throw new ArgumentNullException("value", "input must not be null");
+                throw new ArgumentNullException(nameof(input), "input must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             else if (this.m_input != ILLEGAL_STATE_READER)
             {

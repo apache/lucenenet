@@ -279,7 +279,7 @@ namespace Lucene.Net.Search.Grouping
 
             if (topNGroups < 1)
             {
-                throw new ArgumentException("topNGroups must be >= 1 (got " + topNGroups + ")");
+                throw new ArgumentOutOfRangeException(nameof(topNGroups), "topNGroups must be >= 1 (got " + topNGroups + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             groupQueue = new GroupQueue(this, topNGroups);

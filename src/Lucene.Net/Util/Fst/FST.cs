@@ -242,7 +242,7 @@ namespace Lucene.Net.Util.Fst
 
             if (maxBlockBits < 1 || maxBlockBits > 30)
             {
-                throw new ArgumentException("maxBlockBits should be 1 .. 30; got " + maxBlockBits);
+                throw new ArgumentOutOfRangeException(nameof(maxBlockBits), "maxBlockBits should be 1 .. 30; got " + maxBlockBits); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             // NOTE: only reads most recent format; we don't have
@@ -1089,7 +1089,7 @@ namespace Lucene.Net.Util.Fst
                 // this was a fake inserted "final" arc
                 if (arc.NextArc <= 0)
                 {
-                    throw new ArgumentException("cannot readNextArc when arc.isLast()=true");
+                    throw new ArgumentException("cannot readNextArc when arc.IsLast=true");
                 }
                 return ReadFirstRealTargetArc(arc.NextArc, arc, @in);
             }
@@ -1668,7 +1668,7 @@ namespace Lucene.Net.Util.Fst
             //   - use spare bits in flags.... for top few labels /
             //     outputs / targets
 
-            if (nodeAddress == null)
+            if (nodeAddress is null)
             {
                 throw new ArgumentException("this FST was not built with willPackFST=true");
             }

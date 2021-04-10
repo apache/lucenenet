@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Search
 {
@@ -269,7 +269,7 @@ namespace Lucene.Net.Search
         /// </summary>
         protected MultiTermQuery(string field) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
-            this.m_field = field ?? throw new ArgumentNullException(nameof(field), "field must not be null");
+            this.m_field = field ?? throw new ArgumentNullException(nameof(field), "field must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>

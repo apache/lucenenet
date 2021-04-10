@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 2)
                 {
-                    throw new ArgumentException("maxMergeAtOnce must be > 1 (got " + value + ")");
+                    throw new ArgumentOutOfRangeException(nameof(MaxMergeAtOnce), "maxMergeAtOnce must be > 1 (got " + value + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 maxMergeAtOnce = value;
             }
@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 2)
                 {
-                    throw new ArgumentException("maxMergeAtOnceExplicit must be > 1 (got " + value + ")");
+                    throw new ArgumentOutOfRangeException(nameof(MaxMergeAtOnceExplicit), "maxMergeAtOnceExplicit must be > 1 (got " + value + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 maxMergeAtOnceExplicit = value;
             }
@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 0.0)
                 {
-                    throw new ArgumentException("maxMergedSegmentMB must be >=0 (got " + value.ToString("0.0") + ")");
+                    throw new ArgumentOutOfRangeException(nameof(MaxMergedSegmentMB), "maxMergedSegmentMB must be >=0 (got " + value.ToString("0.0") + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 value *= 1024 * 1024;
                 maxMergedSegmentBytes = (value > long.MaxValue) ? long.MaxValue : (long)value;
@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 0.0)
                 {
-                    throw new ArgumentException("reclaimDeletesWeight must be >= 0.0 (got " + value.ToString("0.0") + ")");
+                    throw new ArgumentOutOfRangeException(nameof(ReclaimDeletesWeight), "reclaimDeletesWeight must be >= 0.0 (got " + value.ToString("0.0") + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 reclaimDeletesWeight = value;
             }
@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
             {
                 if (value <= 0.0)
                 {
-                    throw new ArgumentException("floorSegmentMB must be >= 0.0 (got " + value.ToString("0.0") + ")");
+                    throw new ArgumentOutOfRangeException(nameof(FloorSegmentMB), "floorSegmentMB must be >= 0.0 (got " + value.ToString("0.0") + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 value *= 1024 * 1024;
                 floorSegmentBytes = (value > long.MaxValue) ? long.MaxValue : (long)value;
@@ -214,7 +214,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 0.0 || value > 100.0)
                 {
-                    throw new ArgumentException("forceMergeDeletesPctAllowed must be between 0.0 and 100.0 inclusive (got " + value.ToString("0.0") + ")");
+                    throw new ArgumentOutOfRangeException(nameof(ForceMergeDeletesPctAllowed), "forceMergeDeletesPctAllowed must be between 0.0 and 100.0 inclusive (got " + value.ToString("0.0") + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 forceMergeDeletesPctAllowed = value;
             }
@@ -237,7 +237,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 2.0)
                 {
-                    throw new ArgumentException("segmentsPerTier must be >= 2.0 (got " + value.ToString("0.0") + ")");
+                    throw new ArgumentOutOfRangeException(nameof(SegmentsPerTier), "segmentsPerTier must be >= 2.0 (got " + value.ToString("0.0") + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 segsPerTier = value;
             }

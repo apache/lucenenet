@@ -71,7 +71,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 {
                     string[] fields = GetQueryConfigHandler().Get(ConfigurationKeys.MULTI_FIELDS);
 
-                    if (fields == null)
+                    if (fields is null)
                     {
                         throw new ArgumentException(
                             "StandardQueryConfigHandler.ConfigurationKeys.MULTI_FIELDS should be set on the QueryConfigHandler");

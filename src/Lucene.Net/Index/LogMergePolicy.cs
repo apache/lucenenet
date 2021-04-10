@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 2)
                 {
-                    throw new ArgumentException("mergeFactor cannot be less than 2");
+                    throw new ArgumentOutOfRangeException(nameof(MergeFactor), "mergeFactor cannot be less than 2"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 this.m_mergeFactor = value;
             }

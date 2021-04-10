@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Ja
             minimumLength = GetInt32(args, MINIMUM_LENGTH_PARAM, JapaneseKatakanaStemFilter.DEFAULT_MINIMUM_LENGTH);
             if (minimumLength < 2)
             {
-                throw new ArgumentException("Illegal " + MINIMUM_LENGTH_PARAM + " " + minimumLength + " (must be 2 or greater)");
+                throw new ArgumentOutOfRangeException(nameof(minimumLength), "Illegal " + MINIMUM_LENGTH_PARAM + " " + minimumLength + " (must be 2 or greater)"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (args.Count > 0)
             {

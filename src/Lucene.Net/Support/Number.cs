@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -78,9 +78,9 @@ namespace Lucene.Net.Support
         /// <returns>The parsed number in the specified radix.</returns>
         public static long Parse(System.String s, int radix)
         {
-            if (s == null)
+            if (s is null)
             {
-                throw new ArgumentException("null");
+                throw new ArgumentNullException(nameof(s));
             }
 
             if (radix < MIN_RADIX)
@@ -97,7 +97,7 @@ namespace Lucene.Net.Support
             long result = 0;
             long mult = 1;
 
-            s = s.ToLowerInvariant(); // LUCENENET TODO: Do we need to deal with Turkish? If so, this won't work right...
+            s = s.ToLowerInvariant();
 
             for (int i = s.Length - 1; i >= 0; i--)
             {

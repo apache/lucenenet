@@ -72,7 +72,7 @@ namespace Lucene.Net.Util
                     // one will actually insert this many objects into
                     // the PQ:
                     // Throw exception to prevent confusing OOME:
-                    throw new ArgumentException("maxSize must be <= " + ArrayUtil.MAX_ARRAY_LENGTH + "; got: " + maxSize);
+                    throw new ArgumentOutOfRangeException(nameof(maxSize), "maxSize must be <= " + ArrayUtil.MAX_ARRAY_LENGTH + "; got: " + maxSize); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 else
                 {

@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 
@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
         {
             if (!initCalled)
             {
-                throw new InvalidOperationException("this instance is not being used by IndexWriter; be sure to use the instance returned from writer.getConfig().getIndexDeletionPolicy()");
+                throw new InvalidOperationException("this instance is not being used by IndexWriter; be sure to use the instance returned from writer.Config.IndexDeletionPolicy");
             }
             int? refCount = m_refCounts[gen];
             if (refCount == null)

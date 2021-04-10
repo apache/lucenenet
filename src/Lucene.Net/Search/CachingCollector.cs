@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 
@@ -515,7 +515,9 @@ namespace Lucene.Net.Search
 
             if (!other.AcceptsDocsOutOfOrder && this.m_other.AcceptsDocsOutOfOrder)
             {
-                throw new ArgumentException("cannot replay: given collector does not support " + "out-of-order collection, while the wrapped collector does. " + "Therefore cached documents may be out-of-order.");
+                throw new ArgumentException("cannot replay: given collector does not support " +
+                    "out-of-order collection, while the wrapped collector does. " +
+                    "Therefore cached documents may be out-of-order.");
             }
 
             //System.out.println("CC: replay totHits=" + (upto + base));

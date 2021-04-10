@@ -379,7 +379,7 @@ namespace Lucene.Net.Codecs.Memory
                 int numTerms = (int) termsIn.Count;
                 if (numTerms == -1)
                 {
-                    throw new ArgumentException("codec does not provide Terms.size()");
+                    throw new ArgumentException("codec does not provide Terms.Count");
                 }
                 terms = new TermAndSkip[numTerms];
                 termOffsets = new int[1 + numTerms];

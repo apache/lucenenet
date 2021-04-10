@@ -119,7 +119,7 @@ namespace Lucene.Net.Util
         {
             if (numWords > bits.Length)
             {
-                throw new ArgumentException("numWords cannot exceed bits.length");
+                throw new ArgumentOutOfRangeException(nameof(numWords), "numWords cannot exceed bits.Length"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.m_bits = bits;
             this.m_wlen = numWords;

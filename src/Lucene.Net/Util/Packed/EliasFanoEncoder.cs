@@ -151,12 +151,12 @@ namespace Lucene.Net.Util.Packed
         {
             if (numValues < 0L)
             {
-                throw new ArgumentException("numValues should not be negative: " + numValues);
+                throw new ArgumentOutOfRangeException(nameof(numValues), "numValues should not be negative: " + numValues); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.numValues = numValues;
             if ((numValues > 0L) && (upperBound < 0L))
             {
-                throw new ArgumentException("upperBound should not be negative: " + upperBound + " when numValues > 0");
+                throw new ArgumentOutOfRangeException(nameof(upperBound), "upperBound should not be negative: " + upperBound + " when numValues > 0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.upperBound = numValues > 0 ? upperBound : -1L; // if there is no value, -1 is the best upper bound
             int nLowBits = 0;
@@ -190,7 +190,7 @@ namespace Lucene.Net.Util.Packed
             this.upperLongs = new long[(int)numLongsForHighBits];
             if (indexInterval < 2)
             {
-                throw new ArgumentException("indexInterval should at least 2: " + indexInterval);
+                throw new ArgumentOutOfRangeException(nameof(indexInterval), "indexInterval should at least 2: " + indexInterval); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             // For the index:
             long maxHighValue = upperBound.TripleShift(this.numLowBits);
@@ -230,7 +230,7 @@ namespace Lucene.Net.Util.Packed
         /// Call at most <see cref="numValues"/> times to encode a non decreasing sequence of non negative numbers. </summary>
         /// <param name="x"> The next number to be encoded. </param>
         /// <exception cref="InvalidOperationException"> when called more than <see cref="numValues"/> times. </exception>
-        /// <exception cref="ArgumentException"> when:
+        /// <exception cref="ArgumentOutOfRangeException"> when:
         ///         <list type="bullet">
         ///         <item><description><paramref name="x"/> is smaller than an earlier encoded value, or</description></item>
         ///         <item><description><paramref name="x"/> is larger than <see cref="upperBound"/>.</description></item>
@@ -243,11 +243,11 @@ namespace Lucene.Net.Util.Packed
             }
             if (lastEncoded > x)
             {
-                throw new ArgumentException(x + " smaller than previous " + lastEncoded);
+                throw new ArgumentOutOfRangeException(nameof(x), x + " smaller than previous " + lastEncoded); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (x > upperBound)
             {
-                throw new ArgumentException(x + " larger than upperBound " + upperBound);
+                throw new ArgumentOutOfRangeException(nameof(x), x + " larger than upperBound " + upperBound); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             long highValue = x.TripleShift(numLowBits);
             EncodeUpperBits(highValue);

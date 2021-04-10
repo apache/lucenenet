@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
         public long[] Int64s
         {
             get => longs;
-            set => longs = value ?? throw new ArgumentNullException(nameof(value));
+            set => longs = value ?? throw new ArgumentNullException(nameof(Int64s)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
         private long[] longs;
 

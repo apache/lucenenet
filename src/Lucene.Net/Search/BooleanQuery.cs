@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
             {
                 if (value < 1)
                 {
-                    throw new ArgumentException("maxClauseCount must be >= 1");
+                    throw new ArgumentOutOfRangeException(nameof(MaxClauseCount), "maxClauseCount must be >= 1"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 BooleanQuery.maxClauseCount = value;
             }

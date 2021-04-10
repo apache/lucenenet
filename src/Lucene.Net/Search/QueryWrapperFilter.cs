@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Search
 {
@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public QueryWrapperFilter(Query query)
         {
-            this.query = query ?? throw new ArgumentNullException(nameof(query), "Query may not be null");
+            this.query = query ?? throw new ArgumentNullException(nameof(query), "Query may not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>

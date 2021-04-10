@@ -746,7 +746,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 0.0 || value > 1.0)
                 {
-                    throw new ArgumentException("noCFSRatio must be 0.0 to 1.0 inclusive; got " + value);
+                    throw new ArgumentOutOfRangeException(nameof(NoCFSRatio), "noCFSRatio must be 0.0 to 1.0 inclusive; got " + value); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 this.m_noCFSRatio = value;
             }
@@ -768,7 +768,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 0.0)
                 {
-                    throw new ArgumentException("maxCFSSegmentSizeMB must be >=0 (got " + value + ")");
+                    throw new ArgumentOutOfRangeException(nameof(MaxCFSSegmentSizeMB), "maxCFSSegmentSizeMB must be >=0 (got " + value + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 value *= 1024 * 1024;
                 this.m_maxCFSSegmentSize = (value > long.MaxValue) ? long.MaxValue : (long)value;

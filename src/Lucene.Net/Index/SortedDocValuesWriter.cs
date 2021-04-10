@@ -1,4 +1,4 @@
-using Lucene.Net.Codecs;
+﻿using Lucene.Net.Codecs;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
@@ -55,9 +55,9 @@ namespace Lucene.Net.Index
             {
                 throw new ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
             }
-            if (value == null)
+            if (value is null)
             {
-                throw new ArgumentException("field \"" + fieldInfo.Name + "\": null value not allowed");
+                throw new ArgumentNullException("field \"" + fieldInfo.Name + "\": null value not allowed"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             if (value.Length > (ByteBlockPool.BYTE_BLOCK_SIZE - 2))
             {

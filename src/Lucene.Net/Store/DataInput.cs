@@ -315,7 +315,7 @@ namespace Lucene.Net.Store
         {
             if (numBytes < 0)
             {
-                throw new ArgumentException("numBytes must be >= 0, got " + numBytes);
+                throw new ArgumentOutOfRangeException("numBytes must be >= 0, got " + numBytes); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (skipBuffer == null)
             {

@@ -43,10 +43,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// if the length of the queries array differs from the length of the
         /// fields array
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="queries"/> or <paramref name="fields"/> is <c>null</c>
+        /// </exception>
         public static Query Parse(string[] queries, string[] fields, Analyzer analyzer)
         {
+            // LUCENENET: Added null guard clauses
+            if (queries is null)
+                throw new ArgumentNullException(nameof(queries));
+            if (fields is null)
+                throw new ArgumentNullException(nameof(fields));
+
             if (queries.Length != fields.Length)
-                throw new ArgumentException("queries.length != fields.length");
+                throw new ArgumentException("queries.Length != fields.Length");
             BooleanQuery bQuery = new BooleanQuery();
 
             StandardQueryParser qp = new StandardQueryParser();
@@ -91,11 +100,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// if the length of the fields array differs from the length of the
         /// flags array
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="fields"/> or <paramref name="flags"/> is <c>null</c>
+        /// </exception>
         public static Query Parse(string query, string[] fields,
             Occur[] flags, Analyzer analyzer)
         {
+            // LUCENENET: Added null guard clauses
+            if (query is null)
+                throw new ArgumentNullException(nameof(query));
+            if (fields is null)
+                throw new ArgumentNullException(nameof(fields));
+            if (flags is null)
+                throw new ArgumentNullException(nameof(flags));
+
             if (fields.Length != flags.Length)
-                throw new ArgumentException("fields.length != flags.length");
+                throw new ArgumentException("fields.Length != flags.Length");
             BooleanQuery bQuery = new BooleanQuery();
 
             StandardQueryParser qp = new StandardQueryParser();
@@ -140,9 +160,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// <exception cref="ArgumentException">
         /// if the length of the queries, fields, and flags array differ
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="queries"/>, <paramref name="fields"/> or <paramref name="flags"/> is <c>null</c>
+        /// </exception>
         public static Query Parse(string[] queries, string[] fields,
             Occur[] flags, Analyzer analyzer)
         {
+            // LUCENENET: Added null guard clauses
+            if (queries is null)
+                throw new ArgumentNullException(nameof(queries));
+            if (fields is null)
+                throw new ArgumentNullException(nameof(fields));
+            if (flags is null)
+                throw new ArgumentNullException(nameof(flags));
+
             if (!(queries.Length == fields.Length && queries.Length == flags.Length))
                 throw new ArgumentException(
                     "queries, fields, and flags array have have different length");
@@ -168,8 +199,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// Returns a string where those characters that TextParser expects to be
         /// escaped are escaped by a preceding <c>\</c>.
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="s"/> is <c>null</c>
+        /// </exception>
         public static string Escape(string s)
         {
+            // LUCENENET: Added null guard clause
+            if (s is null)
+                throw new ArgumentNullException(nameof(s));
+
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < s.Length; i++)
             {

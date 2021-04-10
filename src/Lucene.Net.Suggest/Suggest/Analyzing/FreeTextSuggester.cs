@@ -182,11 +182,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             this.queryAnalyzer = AddShingles(queryAnalyzer);
             if (grams < 1)
             {
-                throw new ArgumentException("grams must be >= 1");
+                throw new ArgumentOutOfRangeException(nameof(grams), "grams must be >= 1"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if ((separator & 0x80) != 0)
             {
-                throw new ArgumentException("separator must be simple ascii character");
+                throw new ArgumentOutOfRangeException(nameof(separator), "separator must be simple ascii character"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.separator = separator;
         }
@@ -299,6 +299,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public virtual void Build(IInputEnumerator enumerator, double ramBufferSizeMB)
         {
+            // LUCENENET: Added guard clause for null
+            if (enumerator is null)
+                throw new ArgumentNullException(nameof(enumerator));
+
             if (enumerator.HasPayloads)
             {
                 throw new ArgumentException("this suggester doesn't support payloads");
@@ -361,7 +365,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     reader = DirectoryReader.Open(writer, false);
 
                     Terms terms = MultiFields.GetTerms(reader, "body");
-                    if (terms == null)
+                    if (terms is null)
                     {
                         throw new ArgumentException("need at least one suggestion");
                     }
@@ -390,7 +394,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
 
                     fst = builder.Finish();
-                    if (fst == null)
+                    if (fst is null)
                     {
                         throw new ArgumentException("need at least one suggestion");
                     }
@@ -518,12 +522,16 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public virtual IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, int num)
         {
+            // LUCENENET: Added guard clause for null
+            if (key is null)
+                throw new ArgumentNullException(nameof(key));
+
             if (contexts != null)
             {
                 throw new ArgumentException("this suggester doesn't support contexts");
             }
 
-            TokenStream ts = queryAnalyzer.GetTokenStream("", key.ToString());
+            TokenStream ts = queryAnalyzer.GetTokenStream("", key);
             try
             {
                 ITermToBytesRefAttribute termBytesAtt = ts.AddAttribute<ITermToBytesRefAttribute>();

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 using Directory = Lucene.Net.Store.Directory;
 
@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.Compressing
             this.compressionMode = compressionMode;
             if (chunkSize < 1)
             {
-                throw new ArgumentException("chunkSize must be >= 1");
+                throw new ArgumentOutOfRangeException(nameof(chunkSize), "chunkSize must be >= 1"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.chunkSize = chunkSize;
         }

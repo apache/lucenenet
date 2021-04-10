@@ -165,7 +165,7 @@ namespace Lucene.Net.Index
         {
             if (maxNumThreadStates < 1)
             {
-                throw new ArgumentException("maxNumThreadStates must be >= 1 but was: " + maxNumThreadStates);
+                throw new ArgumentOutOfRangeException(nameof(maxNumThreadStates), "maxNumThreadStates must be >= 1 but was: " + maxNumThreadStates); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             threadStates = new ThreadState[maxNumThreadStates];
             numThreadStatesActive = 0;

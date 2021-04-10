@@ -64,7 +64,7 @@ namespace Lucene.Net.Store
 
             if (myID < 0 || myID > 255)
             {
-                throw new ArgumentException("ID must be a unique int 0..255");
+                throw new ArgumentOutOfRangeException("ID", "ID must be a unique int 0..255"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 //Console.WriteLine("myID must be a unique int 0..255");
                 //Environment.Exit(1);
             }

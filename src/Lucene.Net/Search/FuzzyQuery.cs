@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -86,15 +86,15 @@ namespace Lucene.Net.Search
         {
             if (maxEdits < 0 || maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE)
             {
-                throw new ArgumentException("maxEdits must be between 0 and " + LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
+                throw new ArgumentOutOfRangeException(nameof(maxEdits), "maxEdits must be between 0 and " + LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (prefixLength < 0)
             {
-                throw new ArgumentException("prefixLength cannot be negative.");
+                throw new ArgumentOutOfRangeException(nameof(prefixLength), "prefixLength cannot be negative."); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (maxExpansions < 0)
             {
-                throw new ArgumentException("maxExpansions cannot be negative.");
+                throw new ArgumentOutOfRangeException(nameof(maxExpansions), "maxExpansions cannot be negative."); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             this.term = term;

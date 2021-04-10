@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.VectorHighlight
         protected BaseFragListBuilder(int margin) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             if (margin < 0)
-                throw new ArgumentException("margin(" + margin + ") is too small. It must be 0 or higher.");
+                throw new ArgumentOutOfRangeException(nameof(margin), "margin(" + margin + ") is too small. It must be 0 or higher."); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
 
             this.margin = margin;
             this.minFragCharSize = Math.Max(1, margin * MIN_FRAG_CHAR_SIZE_FACTOR);
@@ -54,8 +54,13 @@ namespace Lucene.Net.Search.VectorHighlight
 
         protected virtual FieldFragList CreateFieldFragList(FieldPhraseList fieldPhraseList, FieldFragList fieldFragList, int fragCharSize)
         {
+            // LUCENENET specific - added guard clauses to check for nulls
+            if (fieldPhraseList is null)
+                throw new ArgumentNullException(nameof(fieldPhraseList));
+            if (fieldFragList is null)
+                throw new ArgumentNullException(nameof(fieldFragList));
             if (fragCharSize < minFragCharSize)
-                throw new ArgumentException("fragCharSize(" + fragCharSize + ") is too small. It must be " + minFragCharSize + " or higher.");
+                throw new ArgumentOutOfRangeException(nameof(fragCharSize), "fragCharSize(" + fragCharSize + ") is too small. It must be " + minFragCharSize + " or higher."); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
 
             List<WeightedPhraseInfo> wpil = new List<WeightedPhraseInfo>();
             using (IteratorQueue<WeightedPhraseInfo> queue = new IteratorQueue<WeightedPhraseInfo>(fieldPhraseList.PhraseList.GetEnumerator()))
@@ -130,6 +135,10 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <returns><c>true</c> if this phrase info should be accepted as a highligh phrase</returns>
         protected virtual bool AcceptPhrase(WeightedPhraseInfo info, int matchLength, int fragCharSize)
         {
+            // LUCENENET specific - added guard clause to check for null
+            if (info is null)
+                throw new ArgumentNullException(nameof(WeightedPhraseInfo));
+
             return info.TermsOffsets.Count <= 1 || matchLength <= fragCharSize;
         }
 

@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
         {
             if (docID < 0 || docID >= maxDoc)
             {
-                throw new ArgumentException("docID must be >= 0 and < maxDoc=" + maxDoc + " (got docID=" + docID + ")");
+                throw new ArgumentOutOfRangeException(nameof(docID), "docID must be >= 0 and < maxDoc=" + maxDoc + " (got docID=" + docID + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             return ReaderUtil.SubIndex(docID, this.starts);
         }
@@ -212,7 +212,7 @@ namespace Lucene.Net.Index
         {
             if (readerIndex < 0 || readerIndex >= subReaders.Length)
             {
-                throw new ArgumentException("readerIndex must be >= 0 and < getSequentialSubReaders().size()");
+                throw new ArgumentOutOfRangeException(nameof(readerIndex), "readerIndex must be >= 0 and < GetSequentialSubReaders().Count"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             return this.starts[readerIndex];
         }

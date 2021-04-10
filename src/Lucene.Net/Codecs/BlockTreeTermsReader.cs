@@ -637,7 +637,7 @@ namespace Lucene.Net.Codecs
             {
                 if (compiled.Type != CompiledAutomaton.AUTOMATON_TYPE.NORMAL)
                 {
-                    throw new ArgumentException("please use CompiledAutomaton.getTermsEnum instead");
+                    throw new ArgumentException("please use CompiledAutomaton.GetTermsEnum() instead");
                 }
                 return new IntersectEnum(this, compiled, startTerm);
             }

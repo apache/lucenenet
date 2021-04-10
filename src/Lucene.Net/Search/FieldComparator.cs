@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.IO;
@@ -1482,9 +1482,9 @@ namespace Lucene.Net.Search
 
             public override void SetTopValue(object value)
             {
-                if (value == null)
+                if (value is null)
                 {
-                    throw new ArgumentException("value cannot be null");
+                    throw new ArgumentNullException(nameof(value), "value cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
                 }
                 topValue = (BytesRef)value;
             }

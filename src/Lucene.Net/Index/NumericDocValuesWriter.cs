@@ -1,4 +1,4 @@
-using Lucene.Net.Util.Packed;
+﻿using Lucene.Net.Util.Packed;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;

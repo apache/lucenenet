@@ -1,4 +1,4 @@
-using J2N.Numerics;
+﻿using J2N.Numerics;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -151,7 +151,7 @@ namespace Lucene.Net.Util
         {
             if ((shift & ~0x3f) != 0) // ensure shift is 0..63
             {
-                throw new ArgumentException("Illegal shift value, must be 0..63");
+                throw new ArgumentOutOfRangeException(nameof(shift), "Illegal shift value, must be 0..63"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             int nChars = (((63 - shift) * 37) >> 8) + 1; // i/7 is the same as (i*37)>>8 for i in 0..63
             bytes.Offset = 0;
@@ -186,7 +186,7 @@ namespace Lucene.Net.Util
         {
             if ((shift & ~0x1f) != 0) // ensure shift is 0..31
             {
-                throw new ArgumentException("Illegal shift value, must be 0..31");
+                throw new ArgumentOutOfRangeException(nameof(shift), "Illegal shift value, must be 0..31"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             int nChars = (((31 - shift) * 37) >> 8) + 1; // i/7 is the same as (i*37)>>8 for i in 0..63
             bytes.Offset = 0;
@@ -411,7 +411,7 @@ namespace Lucene.Net.Util
         {
             if (precisionStep < 1)
             {
-                throw new ArgumentException("precisionStep must be >=1");
+                throw new ArgumentOutOfRangeException(nameof(precisionStep), "precisionStep must be >=1"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (minBound > maxBound)
             {

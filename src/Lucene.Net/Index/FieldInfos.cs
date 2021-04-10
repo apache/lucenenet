@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections;
@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
         {
             if (fieldNumber < 0)
             {
-                throw new ArgumentException("Illegal field number: " + fieldNumber);
+                throw new ArgumentOutOfRangeException(nameof(fieldNumber), "Illegal field number: " + fieldNumber); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             byNumber.TryGetValue(fieldNumber, out FieldInfo ret);
             return ret;

@@ -287,11 +287,11 @@ namespace Lucene.Net.Codecs
         {
             if (minItemsInBlock <= 1)
             {
-                throw new ArgumentException("minItemsInBlock must be >= 2; got " + minItemsInBlock);
+                throw new ArgumentOutOfRangeException(nameof(minItemsInBlock), "minItemsInBlock must be >= 2; got " + minItemsInBlock); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (maxItemsInBlock <= 0)
             {
-                throw new ArgumentException("maxItemsInBlock must be >= 1; got " + maxItemsInBlock);
+                throw new ArgumentOutOfRangeException(nameof(maxItemsInBlock), "maxItemsInBlock must be >= 1; got " + maxItemsInBlock); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (minItemsInBlock > maxItemsInBlock)
             {

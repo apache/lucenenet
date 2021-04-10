@@ -77,11 +77,11 @@ namespace Lucene.Net.Facet.SortedSet
         {
             if (topN <= 0)
             {
-                throw new ArgumentException("topN must be > 0 (got: " + topN + ")");
+                throw new ArgumentOutOfRangeException(nameof(topN), "topN must be > 0 (got: " + topN + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (path.Length > 0)
             {
-                throw new ArgumentException("path should be 0 length");
+                throw new ArgumentOutOfRangeException(nameof(path), "path should be 0 length"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             OrdRange ordRange = state.GetOrdRange(dim);
             if (ordRange == null)
@@ -276,7 +276,7 @@ namespace Lucene.Net.Facet.SortedSet
         {
             if (path.Length != 1)
             {
-                throw new ArgumentException("path must be length=1");
+                throw new ArgumentException("path must be Length=1");
             }
             int ord = (int)dv.LookupTerm(new BytesRef(FacetsConfig.PathToString(dim, path)));
             if (ord < 0)

@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -129,7 +129,7 @@ namespace Lucene.Net.Store
         {
             if (bufferSize <= 0)
             {
-                throw new ArgumentException("bufferSize must be greater than 0 (got " + bufferSize + ")");
+                throw new ArgumentOutOfRangeException("bufferSize must be greater than 0 (got " + bufferSize + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
         }
 

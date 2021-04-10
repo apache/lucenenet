@@ -331,7 +331,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (string.IsNullOrEmpty(fieldName))
             {
-                throw new ArgumentNullException("fieldName cannot be null or empty string.");
+                throw new ArgumentNullException(nameof(fieldName), "fieldName cannot be null or empty string."); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             if (fieldToDateResolution == null)
@@ -352,7 +352,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (string.IsNullOrEmpty(fieldName))
             {
-                throw new ArgumentNullException("fieldName cannot be null or empty string.");
+                throw new ArgumentNullException(nameof(fieldName), "fieldName cannot be null or empty string."); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             if (fieldToDateResolution == null)

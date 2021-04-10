@@ -195,7 +195,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// </summary>
         public JaspellTernarySearchTrie(CultureInfo culture)
         {
-            this.culture = culture ?? throw new ArgumentNullException(nameof(culture));
+            this.culture = culture ?? throw new ArgumentNullException(nameof(culture)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         // for loading
@@ -614,7 +614,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         {
             if (key is null)
             {
-                throw new ArgumentNullException(nameof(key), "attempt to get or create node with null key");
+                throw new ArgumentNullException(nameof(key), "attempt to get or create node with null key"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             if (key.Length == 0)
             {
