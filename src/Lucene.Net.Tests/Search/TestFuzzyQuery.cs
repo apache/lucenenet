@@ -398,7 +398,7 @@ namespace Lucene.Net.Search
                 q = new FuzzyQuery(new Term("field", "t"), 3);
                 Assert.Fail();
             }
-            catch (Exception expected) when (expected.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 // expected
             }

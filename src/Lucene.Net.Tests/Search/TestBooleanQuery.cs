@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
                 BooleanQuery.MaxClauseCount = 0;
                 Assert.Fail();
             }
-            catch (Exception e) when (e.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 // okay
             }

@@ -372,7 +372,7 @@ namespace Lucene.Net.Index
                 iwriter.AddDocument(doc);
                 Assert.Fail("didn't hit expected exception");
             }
-            catch (Exception expected) when (expected.IsIllegalArgumentException())
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 // expected
             }
