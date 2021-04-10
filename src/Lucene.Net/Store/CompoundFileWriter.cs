@@ -91,7 +91,8 @@ namespace Lucene.Net.Store
         ///           if <paramref name="dir"/> or <paramref name="name"/> is <c>null</c> </exception>
         internal CompoundFileWriter(Directory dir, string name)
         {
-            // LUCENENET specific - changed order to take advantage of throw expression
+            // LUCENENET specific - changed order to take advantage of throw expression and
+            // changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             directory = dir ?? throw new ArgumentNullException(nameof(directory), $"{nameof(directory)} cannot be null");
             dataFileName = name ?? throw new ArgumentNullException(nameof(name), $"{nameof(name)} cannot be null");
             entryTableName = IndexFileNames.SegmentFileName(IndexFileNames.StripExtension(name), "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);

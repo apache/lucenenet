@@ -289,7 +289,7 @@ namespace Lucene.Net.Index
             {
                 if (value != IndexWriterConfig.DISABLE_AUTO_FLUSH && value < 1)
                 {
-                    throw new ArgumentException("maxBufferedDeleteTerms must at least be 1 when enabled");
+                    throw new ArgumentOutOfRangeException(nameof(MaxBufferedDeleteTerms), "maxBufferedDeleteTerms must at least be 1 when enabled"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 this.maxBufferedDeleteTerms = value;
             }
@@ -348,7 +348,7 @@ namespace Lucene.Net.Index
             {
                 if (value != IndexWriterConfig.DISABLE_AUTO_FLUSH && value <= 0.0)
                 {
-                    throw new ArgumentException("ramBufferSizeMB should be > 0.0 MB when enabled");
+                    throw new ArgumentOutOfRangeException(nameof(RAMBufferSizeMB), "ramBufferSizeMB should be > 0.0 MB when enabled"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 if (value == IndexWriterConfig.DISABLE_AUTO_FLUSH && maxBufferedDocs == IndexWriterConfig.DISABLE_AUTO_FLUSH)
                 {
@@ -388,7 +388,7 @@ namespace Lucene.Net.Index
             {
                 if (value != IndexWriterConfig.DISABLE_AUTO_FLUSH && value < 2)
                 {
-                    throw new ArgumentException("maxBufferedDocs must at least be 2 when enabled");
+                    throw new ArgumentOutOfRangeException(nameof(MaxBufferedDocs), "maxBufferedDocs must at least be 2 when enabled"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 if (value == IndexWriterConfig.DISABLE_AUTO_FLUSH && ramBufferSizeMB == IndexWriterConfig.DISABLE_AUTO_FLUSH)
                 {
@@ -432,7 +432,7 @@ namespace Lucene.Net.Index
             {
                 if (value <= 0 && value != -1)
                 {
-                    throw new ArgumentException("divisor must be >= 1, or -1 (got " + value + ")");
+                    throw new ArgumentOutOfRangeException(nameof(ReaderTermsIndexDivisor), "divisor must be >= 1, or -1 (got " + value + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 readerTermsIndexDivisor = value;
             }

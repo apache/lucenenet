@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support.IO;
 using System;
@@ -74,12 +74,12 @@ namespace Lucene.Net.Util
             {
                 if (bytes > int.MaxValue)
                 {
-                    throw new ArgumentException("Buffer too large for Java (" + (int.MaxValue / MB) + "mb max): " + bytes);
+                    throw new ArgumentOutOfRangeException(nameof(bytes), "Buffer too large for .NET (" + (int.MaxValue / MB) + "mb max): " + bytes); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
 
                 if (bytes < ABSOLUTE_MIN_SORT_BUFFER_SIZE)
                 {
-                    throw new ArgumentException(MIN_BUFFER_SIZE_MSG + ": " + bytes);
+                    throw new ArgumentOutOfRangeException(nameof(bytes), MIN_BUFFER_SIZE_MSG + ": " + bytes); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
 
                 this.bytes = (int)bytes;
@@ -228,7 +228,7 @@ namespace Lucene.Net.Util
 
             if (maxTempfiles < 2)
             {
-                throw new ArgumentException("maxTempFiles must be >= 2");
+                throw new ArgumentOutOfRangeException(nameof(maxTempfiles), "maxTempFiles must be >= 2"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             this.ramBufferSize = ramBufferSize;

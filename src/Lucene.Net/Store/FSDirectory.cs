@@ -458,7 +458,7 @@ namespace Lucene.Net.Store
             set
             {
                 if (value <= 0)
-                    throw new ArgumentException("chunkSize must be positive");
+                    throw new ArgumentOutOfRangeException(nameof(ReadChunkSize), "chunkSize must be positive"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
 
                 this.chunkSize = value;
             }

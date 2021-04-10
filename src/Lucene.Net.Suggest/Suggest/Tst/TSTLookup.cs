@@ -46,6 +46,10 @@ namespace Lucene.Net.Search.Suggest.Tst
 
         public override void Build(IInputEnumerator enumerator)
         {
+            // LUCENENT: Added guard clause for null
+            if (enumerator is null)
+                throw new ArgumentNullException(nameof(enumerator));
+
             if (enumerator.HasPayloads)
             {
                 throw new ArgumentException("this suggester doesn't support payloads");

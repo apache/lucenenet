@@ -115,9 +115,21 @@ namespace Lucene.Net.Search.VectorHighlight
             string fieldName, FieldFragList fieldFragList, int maxNumFragments,
             string[] preTags, string[] postTags, IEncoder encoder)
         {
+            // LUCENENET specific - added guard clauses to check for null
+            if (reader is null)
+                throw new ArgumentNullException(nameof(reader));
+            if (fieldFragList is null)
+                throw new ArgumentNullException(nameof(fieldFragList));
+            if (preTags is null)
+                throw new ArgumentNullException(nameof(preTags));
+            if (postTags is null)
+                throw new ArgumentNullException(nameof(postTags));
+            if (encoder is null)
+                throw new ArgumentNullException(nameof(encoder));
+
             if (maxNumFragments < 0)
             {
-                throw new ArgumentException("maxNumFragments(" + maxNumFragments + ") must be positive number.");
+                throw new ArgumentOutOfRangeException(nameof(maxNumFragments), "maxNumFragments(" + maxNumFragments + ") must be positive number."); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             IList<WeightedFragInfo> fragInfos = fieldFragList.FragInfos;

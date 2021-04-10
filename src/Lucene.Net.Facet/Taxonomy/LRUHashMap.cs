@@ -110,7 +110,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 if (value < 1)
                 {
-                    throw new ArgumentOutOfRangeException("Limit must be at least 1");
+                    throw new ArgumentOutOfRangeException("Limit must be at least 1"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 cache.Limit = value;
             }

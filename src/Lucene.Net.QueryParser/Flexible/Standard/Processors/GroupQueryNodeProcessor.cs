@@ -59,7 +59,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         {
             Operator? defaultOperator = GetQueryConfigHandler().Get(ConfigurationKeys.DEFAULT_OPERATOR);
 
-            if (defaultOperator == null)
+            if (defaultOperator is null)
             {
                 throw new ArgumentException(
                     "DEFAULT_OPERATOR should be set on the QueryConfigHandler");

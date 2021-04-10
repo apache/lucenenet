@@ -73,11 +73,11 @@ namespace Lucene.Net.Index
         {
             if (docID < addedValues)
             {
-                throw new ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
+                throw new ArgumentOutOfRangeException(nameof(docID), "DocValuesField \"" + fieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
-            if (value == null)
+            if (value is null)
             {
-                throw new ArgumentException("field=\"" + fieldInfo.Name + "\": null value not allowed");
+                throw new ArgumentNullException("field=\"" + fieldInfo.Name + "\": null value not allowed"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             if (value.Length > MAX_LENGTH)
             {

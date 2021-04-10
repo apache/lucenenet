@@ -90,10 +90,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         public virtual void SetBounds(NumericQueryNode lower, NumericQueryNode upper,
             bool lowerInclusive, bool upperInclusive, NumericConfig numericConfig)
         {
-
-            if (numericConfig == null)
+            if (numericConfig is null)
             {
-                throw new ArgumentException("numericConfig cannot be null!");
+                throw new ArgumentNullException(nameof(numericConfig), "numericConfig cannot be null!"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             NumericType lowerNumberType, upperNumberType;

@@ -163,10 +163,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer,
             Analyzer queryAnalyzer, int minPrefixChars, bool commitOnBuild)
         {
-
             if (minPrefixChars < 0)
             {
-                throw new ArgumentException("minPrefixChars must be >= 0; got: " + minPrefixChars);
+                throw new ArgumentOutOfRangeException("minPrefixChars must be >= 0; got: " + minPrefixChars);// LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             this.m_queryAnalyzer = queryAnalyzer;

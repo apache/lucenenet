@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
@@ -265,7 +265,7 @@ namespace Lucene.Net.Analysis
             InitializeInstanceFields();
             if (precisionStep < 1)
             {
-                throw new ArgumentException("precisionStep must be >=1");
+                throw new ArgumentOutOfRangeException(nameof(precisionStep), "precisionStep must be >=1"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.precisionStep = precisionStep;
             numericAtt.Shift = -precisionStep;

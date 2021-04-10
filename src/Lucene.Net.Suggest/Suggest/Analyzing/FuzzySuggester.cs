@@ -153,15 +153,15 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             if (maxEdits < 0 || maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE)
             {
-                throw new ArgumentException("maxEdits must be between 0 and " + LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
+                throw new ArgumentOutOfRangeException(nameof(maxEdits), "maxEdits must be between 0 and " + LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (nonFuzzyPrefix < 0)
             {
-                throw new ArgumentException("nonFuzzyPrefix must not be >= 0 (got " + nonFuzzyPrefix + ")");
+                throw new ArgumentOutOfRangeException(nameof(nonFuzzyPrefix), "nonFuzzyPrefix must not be >= 0 (got " + nonFuzzyPrefix + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (minFuzzyLength < 0)
             {
-                throw new ArgumentException("minFuzzyLength must not be >= 0 (got " + minFuzzyLength + ")");
+                throw new ArgumentOutOfRangeException(nameof(minFuzzyLength), "minFuzzyLength must not be >= 0 (got " + minFuzzyLength + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             this.maxEdits = maxEdits;

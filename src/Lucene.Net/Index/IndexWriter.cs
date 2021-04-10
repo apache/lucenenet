@@ -2081,7 +2081,7 @@ namespace Lucene.Net.Index
 
             if (maxNumSegments < 1)
             {
-                throw new ArgumentException("maxNumSegments must be >= 1; got " + maxNumSegments);
+                throw new ArgumentOutOfRangeException(nameof(maxNumSegments), "maxNumSegments must be >= 1; got " + maxNumSegments); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             if (infoStream.IsEnabled("IW"))

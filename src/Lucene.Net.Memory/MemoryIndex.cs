@@ -234,17 +234,17 @@ namespace Lucene.Net.Index.Memory
         /// <param name="analyzer"> the analyzer to use for tokenization </param>
         public virtual void AddField(string fieldName, string text, Analyzer analyzer)
         {
-            if (fieldName == null)
+            if (fieldName is null)
             {
-                throw new ArgumentException("fieldName must not be null");
+                throw new ArgumentNullException(nameof(fieldName), "fieldName must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            if (text == null)
+            if (text is null)
             {
-                throw new ArgumentException("text must not be null");
+                throw new ArgumentNullException(nameof(text), "text must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            if (analyzer == null)
+            if (analyzer is null)
             {
-                throw new ArgumentException("analyzer must not be null");
+                throw new ArgumentNullException(nameof(analyzer), "analyzer must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             TokenStream stream;
@@ -272,9 +272,9 @@ namespace Lucene.Net.Index.Memory
         public virtual TokenStream KeywordTokenStream<T>(ICollection<T> keywords)
         {
             // TODO: deprecate & move this method into AnalyzerUtil?
-            if (keywords == null)
+            if (keywords is null)
             {
-                throw new ArgumentException("keywords must not be null");
+                throw new ArgumentNullException(nameof(keywords), "keywords must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             return new TokenStreamAnonymousClass<T>(keywords);
@@ -303,7 +303,7 @@ namespace Lucene.Net.Index.Memory
                 }
 
                 T obj = iter.Current;
-                if (obj == null)
+                if (obj is null)
                 {
                     throw new ArgumentException("keyword must not be null");
                 }
@@ -405,17 +405,17 @@ namespace Lucene.Net.Index.Memory
         {
             try
             {
-                if (fieldName == null)
+                if (fieldName is null)
                 {
-                    throw new ArgumentException("fieldName must not be null");
+                    throw new ArgumentNullException(nameof(fieldName), "fieldName must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
                 }
-                if (stream == null)
+                if (stream is null)
                 {
-                    throw new ArgumentException("token stream must not be null");
+                    throw new ArgumentNullException(nameof(stream), "token stream must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
                 }
                 if (boost <= 0.0f)
                 {
-                    throw new ArgumentException("boost factor must be greater than 0.0");
+                    throw new ArgumentOutOfRangeException(nameof(boost), "boost factor must be greater than 0.0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 int numTokens = 0;
                 int numOverlapTokens = 0;
@@ -548,9 +548,9 @@ namespace Lucene.Net.Index.Memory
         ///  </returns>
         public virtual float Search(Query query)
         {
-            if (query == null)
+            if (query is null)
             {
-                throw new ArgumentException("query must not be null");
+                throw new ArgumentNullException(nameof(query), "query must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             IndexSearcher searcher = CreateSearcher();

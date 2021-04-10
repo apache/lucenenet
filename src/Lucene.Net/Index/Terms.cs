@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
             // at the start
             if (compiled.Type != CompiledAutomaton.AUTOMATON_TYPE.NORMAL)
             {
-                throw new ArgumentException("please use CompiledAutomaton.getTermsEnum instead");
+                throw new ArgumentException("please use CompiledAutomaton.TermsEnum instead");
             }
             if (startTerm == null)
             {

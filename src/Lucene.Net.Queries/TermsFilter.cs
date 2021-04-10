@@ -64,6 +64,10 @@ namespace Lucene.Net.Queries
         {            
             public FieldAndTermEnumAnonymousClass(IList<Term> terms)
             {
+                // LUCENENET specific - added guard clause for null
+                if (terms is null)
+                    throw new ArgumentNullException(nameof(terms));
+
                 if (terms.Count == 0)
                 {
                     throw new ArgumentException("no terms provided");
@@ -103,6 +107,10 @@ namespace Lucene.Net.Queries
             public FieldAndTermEnumAnonymousClass2(string field, IList<BytesRef> terms)
                 : base(field)
             {
+                // LUCENENET specific - added guard clause for null
+                if (terms is null)
+                    throw new ArgumentNullException(nameof(terms));
+
                 if (terms.Count == 0)
                 {
                     throw new ArgumentException("no terms provided");

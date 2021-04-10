@@ -222,7 +222,7 @@ namespace Lucene.Net.Store
             // necessary in case offset != 0 and pos < 0, but pos >= -offset
             if (pos < 0L)
             {
-                throw new ArgumentException("Seeking to negative position: " + this);
+                throw new ArgumentOutOfRangeException("Seeking to negative position: " + this); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             pos += offset;
             // we use >> here to preserve negative, so we will catch AIOOBE,

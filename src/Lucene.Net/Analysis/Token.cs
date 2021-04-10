@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Reflection;
@@ -257,7 +257,7 @@ namespace Lucene.Net.Analysis
             {
                 if (value < 0)
                 {
-                    throw new ArgumentException("Increment must be zero or greater: " + value);
+                    throw new ArgumentOutOfRangeException(nameof(PositionIncrement), "Increment must be zero or greater: " + value); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 this.positionIncrement = value;
             }

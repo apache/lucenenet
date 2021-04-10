@@ -2350,6 +2350,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual void FixIndex(Status result)
         {
+            if (result is null)
+                throw new ArgumentNullException(nameof(result)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+
             if (result.Partial)
             {
                 throw new ArgumentException("can only fix an index that was fully checked (this status checked a subset of segments)");

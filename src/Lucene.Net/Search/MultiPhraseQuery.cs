@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
             set
             {
                 if (value < 0)
-                    throw new ArgumentException("slop value cannot be negative");
+                    throw new ArgumentOutOfRangeException(nameof(Slop), "slop value cannot be negative"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
 
                 slop = value;
             }

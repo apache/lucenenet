@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -294,6 +294,10 @@ namespace Lucene.Net.Util
         // TODO: this really needs to be refactored into fieldcacheimpl
         public long CopyUsingLengthPrefix(BytesRef bytes)
         {
+            // LUCENENET: Added guard clause for null
+            if (bytes is null)
+                throw new ArgumentNullException(nameof(bytes));
+
             if (bytes.Length >= 32768)
             {
                 throw new ArgumentException("max length is 32767 (got " + bytes.Length + ")");

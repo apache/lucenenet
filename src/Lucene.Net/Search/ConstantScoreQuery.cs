@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
         {
             // LUCENENET specific: Changed guard clause to throw ArgumentNullException instead of NullPointerException
             this.m_filter = null;
-            this.m_query = query ?? throw new ArgumentNullException(nameof(query), "Query may not be null");
+            this.m_query = query ?? throw new ArgumentNullException(nameof(query), "Query may not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>

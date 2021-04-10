@@ -67,9 +67,9 @@ namespace Lucene.Net.Support.IO
         /// </remarks>
         public static int Read(this Stream stream, ByteBuffer destination, long position)
         {
-            if (stream == null)
+            if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
-            if (destination == null)
+            if (destination is null)
                 throw new ArgumentNullException(nameof(destination));
             if (position < 0)
                 throw new ArgumentOutOfRangeException(nameof(position));
@@ -117,9 +117,9 @@ namespace Lucene.Net.Support.IO
 
         public static void Write(this Stream stream, char[] chars)
         {
-            if (stream == null)
+            if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
-            if (chars == null)
+            if (chars is null)
                 throw new ArgumentNullException(nameof(chars));
 
             byte[] newBytes = new byte[chars.Length * 2];
@@ -134,7 +134,7 @@ namespace Lucene.Net.Support.IO
 
         public static char[] ReadChars(this Stream stream, int count)
         {
-            if (stream == null)
+            if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
             if (count < 0)
                 throw new ArgumentOutOfRangeException(nameof(count));
@@ -151,7 +151,7 @@ namespace Lucene.Net.Support.IO
 
         public static void Write(this Stream stream, int value)
         {
-            if (stream == null)
+            if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
             byte[] buff = new byte[4];
@@ -164,7 +164,7 @@ namespace Lucene.Net.Support.IO
 
         public static int ReadInt32(this Stream stream)
         {
-            if (stream == null)
+            if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
             byte[] buff = new byte[4];
@@ -175,7 +175,7 @@ namespace Lucene.Net.Support.IO
 
         public static void Write(this Stream stream, long value)
         {
-            if (stream == null)
+            if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
             byte[] buff = new byte[8];
@@ -192,7 +192,7 @@ namespace Lucene.Net.Support.IO
 
         public static long ReadInt64(this Stream stream)
         {
-            if (stream == null)
+            if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
             byte[] buff = new byte[8];

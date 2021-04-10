@@ -225,7 +225,11 @@ namespace Lucene.Net.Search.Suggest.Fst
         ///         (decreasing) and then alphabetically (UTF-8 codepoint order). </returns>
         public virtual IList<Completion> DoLookup(string key, int num)
         {
-            if (key.Length == 0 || automaton == null)
+            // LUCENENET: Added guard clause for null
+            if (key is null)
+                throw new ArgumentNullException(nameof(key));
+
+            if (key.Length == 0 || automaton is null)
             {
                 return EMPTY_RESULT;
             }

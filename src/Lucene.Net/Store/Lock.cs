@@ -107,7 +107,7 @@ namespace Lucene.Net.Store
         ///        <see cref="LOCK_OBTAIN_WAIT_FOREVER"/> to retry forever </param>
         /// <returns> <c>true</c> if lock was obtained </returns>
         /// <exception cref="LockObtainFailedException"> if lock wait times out </exception>
-        /// <exception cref="ArgumentException"> if <paramref name="lockWaitTimeout"/> is
+        /// <exception cref="ArgumentOutOfRangeException"> if <paramref name="lockWaitTimeout"/> is
         ///         out of bounds </exception>
         /// <exception cref="IOException"> if <see cref="Obtain()"/> throws <see cref="IOException"/> </exception>
         public bool Obtain(long lockWaitTimeout)
@@ -116,7 +116,7 @@ namespace Lucene.Net.Store
             bool locked = Obtain();
             if (lockWaitTimeout < 0 && lockWaitTimeout != LOCK_OBTAIN_WAIT_FOREVER)
             {
-                throw new ArgumentException("lockWaitTimeout should be LOCK_OBTAIN_WAIT_FOREVER or a non-negative number (got " + lockWaitTimeout + ")");
+                throw new ArgumentOutOfRangeException("lockWaitTimeout should be LOCK_OBTAIN_WAIT_FOREVER or a non-negative number (got " + lockWaitTimeout + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             long maxSleepCount = lockWaitTimeout / LOCK_POLL_INTERVAL;

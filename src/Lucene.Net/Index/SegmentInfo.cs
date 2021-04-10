@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Diagnostics;
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
             set
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(this.codec is null);
-                this.codec = value ?? throw new ArgumentNullException(nameof(value), "Codec must be non-null");
+                this.codec = value ?? throw new ArgumentNullException(nameof(Codec), "Codec must be non-null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
         }
 

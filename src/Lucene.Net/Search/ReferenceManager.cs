@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using System;
@@ -341,9 +341,9 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual void AddListener(ReferenceManager.IRefreshListener listener)
         {
-            if (listener == null)
+            if (listener is null)
             {
-                throw new ArgumentNullException("Listener cannot be null");
+                throw new ArgumentNullException(nameof(listener), "Listener cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             refreshListeners.Add(listener);
         }
@@ -353,9 +353,9 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual void RemoveListener(ReferenceManager.IRefreshListener listener)
         {
-            if (listener == null)
+            if (listener is null)
             {
-                throw new ArgumentNullException("Listener cannot be null");
+                throw new ArgumentNullException(nameof(listener), "Listener cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             refreshListeners.Remove(listener);
         }

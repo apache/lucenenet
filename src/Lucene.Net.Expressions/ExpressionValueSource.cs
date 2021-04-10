@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
@@ -37,12 +37,12 @@ namespace Lucene.Net.Expressions
 
         internal ExpressionValueSource(Bindings bindings, Expression expression)
         {
-            if (bindings == null)
+            if (bindings is null)
             {
-                throw new ArgumentNullException(nameof(bindings));
+                throw new ArgumentNullException(nameof(bindings)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
-            this.expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            this.expression = expression ?? throw new ArgumentNullException(nameof(expression)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             variables = new ValueSource[expression.Variables.Length];
             bool needsScores = false;
             for (int i = 0; i < variables.Length; i++)

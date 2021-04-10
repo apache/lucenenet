@@ -34,7 +34,7 @@ namespace Lucene.Net.Util
         {
             if (@base <= 1)
             {
-                throw new ArgumentException("base must be > 1");
+                throw new ArgumentOutOfRangeException(nameof(@base), "base must be > 1"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             int ret = 0;
             while (x >= @base)

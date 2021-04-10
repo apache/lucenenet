@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.OpenNlp
         {
             if (pos < text.BeginIndex || pos > text.EndIndex)
             {
-                throw new ArgumentException("offset out of bounds");
+                throw new ArgumentOutOfRangeException(nameof(pos), "offset out of bounds: must be >= text.BeginIndex and <= text.EndIndex"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             else if (0 == sentenceStarts.Length)
             {
@@ -168,7 +168,7 @@ namespace Lucene.Net.Analysis.OpenNlp
         {
             if (pos < text.BeginIndex || pos > text.EndIndex)
             {
-                throw new ArgumentException("offset out of bounds");
+                throw new ArgumentOutOfRangeException(nameof(pos), "offset out of bounds: must be >= text.BeginIndex and <= text.EndIndex"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             else if (0 == sentenceStarts.Length)
             {

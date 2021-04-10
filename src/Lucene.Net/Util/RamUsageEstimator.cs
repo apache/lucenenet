@@ -439,6 +439,10 @@ namespace Lucene.Net.Util
         /// <exception cref="ArgumentException"> if <paramref name="clazz"/> is an array class. </exception>
         public static long ShallowSizeOfInstance(Type clazz)
         {
+            // LUCENENET: Added guard clause for null
+            if (clazz is null)
+                throw new ArgumentNullException(nameof(clazz));
+
             if (clazz.IsArray)
             {
                 throw new ArgumentException("this method does not work with array classes.");

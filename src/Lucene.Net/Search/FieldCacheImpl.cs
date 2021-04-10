@@ -1740,7 +1740,7 @@ namespace Lucene.Net.Search
             {
                 if (ord < 0)
                 {
-                    throw new ArgumentException("ord must be >=0 (got ord=" + ord + ")");
+                    throw new ArgumentOutOfRangeException(nameof(ord), "ord must be >=0 (got ord=" + ord + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 bytes.Fill(ret, termOrdToBytesOffset.Get(ord));
             }

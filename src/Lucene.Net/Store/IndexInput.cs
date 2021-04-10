@@ -45,6 +45,7 @@ namespace Lucene.Net.Store
         /// </summary>
         protected IndexInput(string resourceDescription)
         {
+            // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             this.resourceDescription = resourceDescription ?? throw new ArgumentNullException(nameof(resourceDescription), $"{nameof(resourceDescription)} must not be null");
         }
 

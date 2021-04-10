@@ -88,7 +88,7 @@ namespace Lucene.Net.Benchmarks.Quality
         {
             if (Math.Abs(numPoints + 1 - n) > 1E-6)
             {
-                throw new ArgumentException("point " + n + " illegal after " + numPoints + " points!");
+                throw new ArgumentOutOfRangeException(nameof(n), "point " + n + " illegal after " + numPoints + " points!");// LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (isRelevant)
             {

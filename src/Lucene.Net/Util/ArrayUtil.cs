@@ -177,7 +177,7 @@ namespace Lucene.Net.Util
             if (minTargetSize < 0)
             {
                 // catch usage that accidentally overflows int
-                throw new ArgumentException("invalid array size " + minTargetSize);
+                throw new ArgumentOutOfRangeException(nameof(minTargetSize), "invalid array size " + minTargetSize + ", may not be < 0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             if (minTargetSize == 0)

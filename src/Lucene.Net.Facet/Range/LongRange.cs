@@ -164,7 +164,7 @@ namespace Lucene.Net.Facet.Range
                     fastMatchBits = dis.Bits;
                     if (fastMatchBits == null)
                     {
-                        throw new ArgumentException("fastMatchFilter does not implement DocIdSet.bits");
+                        throw new ArgumentException("fastMatchFilter does not implement DocIdSet.Bits");
                     }
                 }
                 else

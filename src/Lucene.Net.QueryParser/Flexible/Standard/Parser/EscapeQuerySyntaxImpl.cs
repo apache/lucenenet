@@ -120,13 +120,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         private static ICharSequence ReplaceIgnoreCase(ICharSequence @string,
             string sequence1, string escapeChar, CultureInfo locale)
         {
-            // LUCENENT: Changed from NullPointerException to ArgumentNullException
+            // LUCENENET specific - changed from NullPointerException to ArgumentNullException (.NET convention)
             if (escapeChar is null)
                 throw new ArgumentNullException(nameof(escapeChar));
             if (sequence1 is null)
                 throw new ArgumentNullException(nameof(sequence1));
             if (@string is null)
                 throw new ArgumentNullException(nameof(@string));
+            if (locale is null)
+                throw new ArgumentNullException(nameof(locale));
 
             // empty string case
             int count = @string.Length;

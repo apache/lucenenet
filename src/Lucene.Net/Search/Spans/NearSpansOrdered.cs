@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -111,6 +111,10 @@ namespace Lucene.Net.Search.Spans
 
         public NearSpansOrdered(SpanNearQuery spanNearQuery, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts, bool collectPayloads)
         {
+            // LUCENENET: Added guard clauses for null
+            if (spanNearQuery is null)
+                throw new ArgumentNullException(nameof(spanNearQuery));
+
             sorter = new InPlaceMergeSorterAnonymousClass(this);
             if (spanNearQuery.GetClauses().Length < 2)
             {
