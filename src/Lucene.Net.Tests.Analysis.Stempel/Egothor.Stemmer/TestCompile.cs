@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -173,11 +173,10 @@ namespace Egothor.Stemmer
             using TextReader @in = new StreamReader(new FileStream(file, FileMode.Open), Encoding.UTF8);
             for (string line = @in.ReadLine(); line != null; line = @in.ReadLine())
             {
-                try
+                line = line.ToLowerInvariant();
+                using StringTokenizer st = new StringTokenizer(line);
+                if (st.MoveNext())
                 {
-                    line = line.ToLowerInvariant();
-                    StringTokenizer st = new StringTokenizer(line);
-                    st.MoveNext();
                     string stem = st.Current;
                     if (storeorig)
                     {
@@ -201,7 +200,7 @@ namespace Egothor.Stemmer
                         assertEquals(stem.ToLowerInvariant(), stm.ToString().ToLowerInvariant());
                     }
                 }
-                catch (InvalidOperationException /*x*/)
+                else // LUCENENET: st.MoveNext() will return false rather than throwing a NoSuchElementException
                 {
                     // no base token (stem) on a line
                 }

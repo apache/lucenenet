@@ -556,9 +556,7 @@ namespace Lucene.Net.Analysis
                     Assert.Fail("didn't get expected exception when reset() not called");
                 }
             }
-#pragma warning disable 168
-            catch (InvalidOperationException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalStateException())
             {
                 //ok
             }
@@ -595,7 +593,7 @@ namespace Lucene.Net.Analysis
                 ts = a.GetTokenStream("bogus", new StringReader(input));
                 Assert.Fail("Didn't get expected exception when Dispose() not called");
             }
-            catch (Exception)
+            catch (Exception expected) when (expected.IsIllegalStateException())
             {
                 // ok
             }

@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
             {
                 if (!initCalled)
                 {
-                    throw new InvalidOperationException("this instance is not being used by IndexWriter; be sure to use the instance returned from writer.getConfig().getIndexDeletionPolicy()");
+                    throw new InvalidOperationException("this instance is not being used by IndexWriter; be sure to use the instance returned from writer.Config.IndexDeletionPolicy");
                 }
                 if (m_lastCommit == null)
                 {

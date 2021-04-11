@@ -48,7 +48,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("object.0invalid");
                 Assert.Fail();
             }
-            catch (InvalidOperationException)
+            catch (Exception expected) when (expected.IsParseException())
             {
                 //expected
             }
@@ -58,7 +58,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("0.invalid");
                 Assert.Fail();
             }
-            catch (InvalidOperationException)
+            catch (Exception expected) when (expected.IsParseException())
             {
                 //expected
             }
@@ -68,7 +68,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("object..invalid");
                 Assert.Fail();
             }
-            catch (InvalidOperationException)
+            catch (Exception expected) when (expected.IsParseException())
             {
                 //expected
             }
@@ -78,7 +78,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile(".invalid");
                 Assert.Fail();
             }
-            catch (InvalidOperationException)
+            catch (Exception expected) when (expected.IsParseException())
             {
                 //expected
             }
@@ -92,7 +92,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("100 100");
                 Assert.Fail();
             }
-            catch (InvalidOperationException)
+            catch (Exception expected) when (expected.IsParseException())
             {
                 // expected
             }
@@ -101,7 +101,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("7*/-8");
                 Assert.Fail();
             }
-            catch (InvalidOperationException)
+            catch (Exception expected) when (expected.IsParseException())
             {
                 // expected
             }
@@ -111,7 +111,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("0y1234");
                 Assert.Fail();
             }
-            catch (InvalidOperationException)
+            catch (Exception expected) when (expected.IsParseException())
             {
                 // expected
             }
@@ -121,7 +121,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("500EE");
                 Assert.Fail();
             }
-            catch (InvalidOperationException)
+            catch (Exception expected) when (expected.IsParseException())
             {
                 // expected
             }
@@ -131,7 +131,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("500.5EE");
                 Assert.Fail();
             }
-            catch (InvalidOperationException)
+            catch (Exception expected) when (expected.IsParseException())
             {
                 // expected
             }
@@ -145,7 +145,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile(string.Empty);
                 Assert.Fail();
             }
-            catch (InvalidOperationException)
+            catch (Exception expected) when (expected.IsParseException())
             {
                 // expected
             }
@@ -155,7 +155,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("()");
                 Assert.Fail();
             }
-            catch (InvalidOperationException)
+            catch (Exception expected) when (expected.IsParseException())
             {
                 // expected
             }
@@ -165,7 +165,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile("   \r\n   \n \t");
                 Assert.Fail();
             }
-            catch (InvalidOperationException)
+            catch (Exception expected) when (expected.IsParseException())
             {
                 // expected
             }
@@ -179,7 +179,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile(null);
                 Assert.Fail();
             }
-            catch (ArgumentNullException)
+            catch (Exception expected)when (expected.IsNullPointerException())
             {
                 // expected
             }

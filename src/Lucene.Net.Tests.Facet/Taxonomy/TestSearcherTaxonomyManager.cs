@@ -346,7 +346,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 mgr.MaybeRefresh();
                 fail("should have hit exception");
             }
-            catch (InvalidOperationException)
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }

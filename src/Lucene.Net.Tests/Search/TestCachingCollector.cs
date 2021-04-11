@@ -152,9 +152,7 @@ namespace Lucene.Net.Search
                 cc.Replay(new NoOpCollector(false));
                 Assert.Fail("replay should fail if CachingCollector is not cached");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalStateException())
             {
                 // expected
             }

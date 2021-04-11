@@ -328,7 +328,7 @@ namespace Lucene.Net.Analysis
         {
             if (valSize == 0)
             {
-                throw new Exception("call Set???Value() before usage");
+                throw new InvalidOperationException("call Set???Value() before usage");
             }
             numericAtt.Shift = -precisionStep;
         }
@@ -337,7 +337,7 @@ namespace Lucene.Net.Analysis
         {
             if (valSize == 0)
             {
-                throw new Exception("call Set???Value() before usage");
+                throw new InvalidOperationException("call Set???Value() before usage");
             }
 
             // this will only clear all other attributes in this TokenStream

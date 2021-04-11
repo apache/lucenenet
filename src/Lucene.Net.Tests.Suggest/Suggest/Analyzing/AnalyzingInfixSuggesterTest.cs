@@ -992,7 +992,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 suggester.Refresh();
                 fail("Cannot call refresh on an suggester when no docs are added to the index");
             }
-            catch (InvalidOperationException)
+            catch (Exception e) when (e.IsIllegalStateException())
             {
                 //Expected
             }

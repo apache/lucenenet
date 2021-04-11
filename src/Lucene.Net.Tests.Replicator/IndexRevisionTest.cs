@@ -63,7 +63,7 @@ namespace Lucene.Net.Replicator
                 assertNotNull(new IndexRevision(writer));
                 fail("should have failed when there are no commits to snapshot");
             }
-            catch (InvalidOperationException)
+            catch (Exception e) when (e.IsIllegalStateException())
             {
                 // expected
             }
