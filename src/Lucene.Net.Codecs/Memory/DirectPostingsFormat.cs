@@ -2245,13 +2245,9 @@ namespace Lucene.Net.Codecs.Memory
                 upto++;
                 if (liveDocs == null)
                 {
-                    try
-                    {
+                    // LUCENENET: Proactively check bounds so we don't have to catch and ingore an exception
+                    if (upto >= 0 && upto < docIDs.Length)
                         return docID = docIDs[upto];
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                    }
                 }
                 else
                 {
