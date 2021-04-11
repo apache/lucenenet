@@ -622,12 +622,10 @@ namespace Lucene.Net.Util
                 {
                     length = (ushort)inputStream.ReadInt16();
                 }
-#pragma warning disable CA1031 // Do not catch general exception types
-                catch (EndOfStreamException)
+                catch (Exception e) when (e.IsEOFException())
                 {
                     return false;
                 }
-#pragma warning restore CA1031 // Do not catch general exception types
 
                 @ref.Grow(length);
                 @ref.Offset = 0;
@@ -650,12 +648,10 @@ namespace Lucene.Net.Util
                 {
                     length = (ushort)inputStream.ReadInt16();
                 }
-#pragma warning disable CA1031 // Do not catch general exception types
-                catch (EndOfStreamException)
+                catch (Exception e) when (e.IsEOFException())
                 {
                     return null;
                 }
-#pragma warning restore CA1031 // Do not catch general exception types
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0, "Sanity: sequence length < 0: {0}", length);
                 byte[] result = new byte[length];

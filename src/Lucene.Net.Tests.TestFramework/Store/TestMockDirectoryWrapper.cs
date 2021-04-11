@@ -248,7 +248,7 @@ namespace Lucene.Net.Store
         //                    {
         //                        x = @in.ReadInt32();
         //                    }
-        //                    catch (EndOfStreamException)
+        //                    catch (Exception e) when (e.IsEOFException())
         //                    {
         //                        changed = true;
         //                        break;
