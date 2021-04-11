@@ -67,10 +67,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 IQueryNode querynode = TopLevelQuery(field);
                 return querynode;
             }
-            catch (ParseException tme)
+            catch (Lucene.Net.QueryParsers.Flexible.Standard.Parser.ParseException tme) // LUCENENET: Flexible QueryParser has its own ParseException that is different than the one in Support
             {
                 tme.SetQuery(query);
-                throw tme;
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
             catch (Exception tme) when (tme.IsError())
             {

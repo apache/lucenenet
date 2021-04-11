@@ -4,9 +4,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Text;
 
 namespace Lucene.Net.Codecs.SimpleText
@@ -289,9 +287,9 @@ namespace Lucene.Net.Codecs.SimpleText
                         len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
                             _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Integer, CultureInfo.InvariantCulture);
                     }
-                    catch (FormatException ex)
+                    catch (Exception pe) when (pe.IsParseException())
                     {
-                        throw new CorruptIndexException("failed to parse int value (resource=" + _input + ")", ex);
+                        throw new CorruptIndexException("failed to parse int value (resource=" + _input + ")", pe);
                     }
 
                     result.Bytes = new byte[len];
@@ -345,9 +343,9 @@ namespace Lucene.Net.Codecs.SimpleText
                         len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
                             _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Number, CultureInfo.InvariantCulture);
                     }
-                    catch (FormatException ex)
+                    catch (Exception pe) when (pe.IsParseException())
                     {
-                        throw new CorruptIndexException("failed to parse int value (resource=" + _input + ")", ex);
+                        throw new CorruptIndexException("failed to parse int value (resource=" + _input + ")", pe);
                     }
 
                     // skip past bytes
@@ -413,7 +411,7 @@ namespace Lucene.Net.Codecs.SimpleText
                         // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
                         return int.Parse(_scratch.Utf8ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture) - 1;
                     }
-                    catch (Exception pe)
+                    catch (Exception pe) when (pe.IsParseException())
                     {
                         var e = new CorruptIndexException($"failed to parse ord (resource={_input})", pe);
                         throw e;
@@ -443,9 +441,8 @@ namespace Lucene.Net.Codecs.SimpleText
                         // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
                         len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
                             _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Integer, CultureInfo.InvariantCulture);
-
                     }
-                    catch (Exception pe)
+                    catch (Exception pe) when (pe.IsParseException())
                     {
                         var e = new CorruptIndexException($"failed to parse int length (resource={_input})", pe);
                         throw e;
@@ -547,7 +544,7 @@ namespace Lucene.Net.Codecs.SimpleText
                         len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
                             _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Integer, CultureInfo.InvariantCulture);
                     }
-                    catch (Exception pe)
+                    catch (Exception pe) when (pe.IsParseException())
                     {
                         var e = new CorruptIndexException("failed to parse int length (resource=" + _input + ")", pe);
                         throw e;

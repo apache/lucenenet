@@ -87,7 +87,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 {
                                     lowerNumber = numberFormat.Parse(lowerText);
                                 }
-                                catch (FormatException e)
+                                catch (Exception e) when (e.IsParseException())
                                 {
                                     throw new QueryNodeParseException(new Message(
                                         QueryParserMessages.COULD_NOT_PARSE_NUMBER, lower
@@ -101,7 +101,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 {
                                     upperNumber = numberFormat.Parse(upperText);
                                 }
-                                catch (FormatException e)
+                                catch (Exception e) when (e.IsParseException())
                                 {
                                     throw new QueryNodeParseException(new Message(
                                         QueryParserMessages.COULD_NOT_PARSE_NUMBER, upper

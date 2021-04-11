@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -205,9 +205,7 @@ namespace Lucene.Net.Expressions.JS
                     }
                 }
             }
-            //ParseException parseException = new ParseException(message, re.CharPositionInLine);
-
-            throw new InvalidOperationException(message);
+            throw new ParseException(message, re.CharPositionInLine, re);
         }
 
         public static string GetReadableTokenString(IToken token)

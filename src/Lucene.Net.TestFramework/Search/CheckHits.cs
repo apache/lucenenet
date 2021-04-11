@@ -400,20 +400,15 @@ namespace Lucene.Net.Search
                         {
                             k1 += "max plus ".Length;
                             int k2 = descr.IndexOf(" ", k1, StringComparison.Ordinal);
-                            try
+
+                            // LUCENENET NOTE: Using current culture here is intentional because
+                            // we are parsing from text that was made using the current culture.
+                            if (float.TryParse(descr.Substring(k1, k2 - k1).Trim(), out x))
                             {
-                                // LUCENENET NOTE: Using current culture here is intentional because
-                                // we are parsing from text that was made using the current culture.
-                                x = Convert.ToSingle(descr.Substring(k1, k2 - k1).Trim());
                                 if (descr.Substring(k2).Trim().Equals("times others of:", StringComparison.Ordinal))
                                 {
                                     maxTimesOthers = true;
                                 }
-                            }
-#pragma warning disable 168, IDE0059
-                            catch (FormatException e)
-#pragma warning restore 168, IDE0059
-                            {
                             }
                         }
                     }

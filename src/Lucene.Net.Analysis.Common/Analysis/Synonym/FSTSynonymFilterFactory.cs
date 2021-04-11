@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.Synonym
                 // TODO: expose dedup as a parameter?
                 map = LoadSynonyms(loader, formatClass, true, analyzer);
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsParseException())
             {
                 throw new IOException("Error parsing synonyms file:", e);
             }
