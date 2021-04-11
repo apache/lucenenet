@@ -2025,7 +2025,7 @@ namespace Lucene.Net.Index
                     break;
 
                 default:
-                    throw new InvalidOperationException();
+                    throw new AssertionException();
             }
         }
 
@@ -2034,11 +2034,11 @@ namespace Lucene.Net.Index
             switch (fi.NormType)
             {
                 case DocValuesType.NUMERIC:
-                    CheckNumericDocValues(fi.Name, reader, reader.GetNormValues(fi.Name), new Lucene.Net.Util.Bits.MatchAllBits(reader.MaxDoc));
+                    CheckNumericDocValues(fi.Name, reader, reader.GetNormValues(fi.Name), new Bits.MatchAllBits(reader.MaxDoc));
                     break;
 
                 default:
-                    throw new InvalidOperationException("wtf: " + fi.NormType);
+                    throw new AssertionException("wtf: " + fi.NormType);
             }
         }
 

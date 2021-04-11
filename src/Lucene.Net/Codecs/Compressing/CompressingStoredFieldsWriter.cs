@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using Lucene.Net.Codecs.Lucene40;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
@@ -358,7 +358,7 @@ namespace Lucene.Net.Codecs.Compressing
                         bufferedDocs.WriteInt64(BitConversion.DoubleToInt64Bits(field.GetDoubleValue().Value));
                         break;
                     default:
-                        throw new Exception("Cannot get here");
+                        throw new AssertionException("Cannot get here");
                 }
             }
         }

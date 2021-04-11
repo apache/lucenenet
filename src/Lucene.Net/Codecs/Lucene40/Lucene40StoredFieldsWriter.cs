@@ -247,7 +247,7 @@ namespace Lucene.Net.Codecs.Lucene40
                         fieldsStream.WriteInt64(BitConversion.DoubleToInt64Bits(field.GetDoubleValue().Value));
                         break;
                     default:
-                        throw new InvalidOperationException("Cannot get here");
+                        throw new AssertionException("Cannot get here");
                 }
             }
         }

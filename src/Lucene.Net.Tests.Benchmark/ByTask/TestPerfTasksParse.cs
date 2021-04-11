@@ -165,7 +165,7 @@ namespace Lucene.Net.Benchmarks.ByTask
                 }
                 catch (Exception t) when (t.IsThrowable())
                 {
-                    throw new Exception("Could not parse sample file: " + algFile, t);
+                    throw new AssertionException("Could not parse sample file: " + algFile, t);
                 }
                 foundFiles = true;
             }

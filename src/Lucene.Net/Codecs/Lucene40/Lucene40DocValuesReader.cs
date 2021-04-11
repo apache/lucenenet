@@ -1,4 +1,5 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -116,7 +117,7 @@ namespace Lucene.Net.Codecs.Lucene40
                         }
                         else
                         {
-                            throw new InvalidOperationException();
+                            throw new AssertionException();
                         }
 
                         CodecUtil.CheckEOF(input);
@@ -454,7 +455,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     else
                     {
-                        throw new InvalidOperationException();
+                        throw new AssertionException();
                     }
                     binaryInstances[field.Number] = instance;
                 }
@@ -724,7 +725,7 @@ namespace Lucene.Net.Codecs.Lucene40
                         }
                         else
                         {
-                            throw new InvalidOperationException();
+                            throw new AssertionException();
                         }
 
                         CodecUtil.CheckEOF(data);

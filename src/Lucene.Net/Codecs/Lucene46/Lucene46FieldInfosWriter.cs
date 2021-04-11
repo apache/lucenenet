@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using System;
 using System.Diagnostics;
@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene46
             }
             else
             {
-                throw new InvalidOperationException();
+                throw new AssertionException();
             }
         }
     }

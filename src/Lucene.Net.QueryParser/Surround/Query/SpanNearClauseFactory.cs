@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Search.Spans;
 using System;
 using System.Collections.Generic;
@@ -105,7 +106,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             if (q == SrndQuery.TheEmptyLcnQuery)
                 return;
             if (!(q is SpanQuery))
-                throw new InvalidOperationException("Expected SpanQuery: " + q.ToString(FieldName));
+                throw new AssertionException("Expected SpanQuery: " + q.ToString(FieldName));
             AddSpanQueryWeighted((SpanQuery)q, q.Boost);
         }
 

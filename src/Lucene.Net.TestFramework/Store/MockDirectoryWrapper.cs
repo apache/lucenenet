@@ -13,7 +13,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
@@ -38,6 +37,8 @@ namespace Lucene.Net.Store
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using AssertionError = Lucene.Net.Diagnostics.AssertionException; // LUCENENET TODO: Remove this and go with AssertionError class or use alias?
 
     /// <summary>
     /// Enum for controlling hard disk throttling.

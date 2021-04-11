@@ -1,4 +1,5 @@
-using Lucene.Net.Codecs.Lucene45;
+﻿using Lucene.Net.Codecs.Lucene45;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util.Packed;
@@ -42,7 +43,7 @@ namespace Lucene.Net.Codecs.DiskDV
         protected override MonotonicBlockPackedReader GetIntervalInstance(IndexInput data, FieldInfo field,
             BinaryEntry bytes)
         {
-            throw new InvalidOperationException(); // LUCENENET NOTE: This was AssertionError in Lucene
+            throw new AssertionException();
         }
 
         protected override MonotonicBlockPackedReader GetOrdIndexInstance(IndexInput data, FieldInfo field,
