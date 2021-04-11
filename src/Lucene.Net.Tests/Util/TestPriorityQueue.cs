@@ -417,7 +417,7 @@ namespace Lucene.Net.Util
                 pq.Add(3);
                 Assert.Fail();
             }
-            catch (IndexOutOfRangeException)
+            catch (Exception e) when (e.IsIndexOutOfBoundsException())
             {
             }
 
@@ -434,7 +434,7 @@ namespace Lucene.Net.Util
             {
                 pq.Add(666);
             }
-            catch (IndexOutOfRangeException)
+            catch (Exception e) when (e.IsIndexOutOfBoundsException())
             {
             }
         }

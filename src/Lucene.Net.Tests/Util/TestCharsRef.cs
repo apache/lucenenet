@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
@@ -133,7 +133,7 @@ namespace Lucene.Net.Util
         //        c.CharAt(-1);
         //        Assert.Fail();
         //    }
-        //    catch (IndexOutOfRangeException expected)
+        //    catch (Exception expected) when (expected.IsIndexOutOfBoundsException())
         //    {
         //        // expected exception
         //    }
@@ -143,7 +143,7 @@ namespace Lucene.Net.Util
         //        c.CharAt(3);
         //        Assert.Fail();
         //    }
-        //    catch (IndexOutOfRangeException expected)
+        //    catch (Exception expected) when (expected.IsIndexOutOfBoundsException())
         //    {
         //        // expected exception
         //    }
@@ -162,9 +162,7 @@ namespace Lucene.Net.Util
                 var _ = c[-1];
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (ArgumentOutOfRangeException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIndexOutOfBoundsException())
             {
                 // expected exception
             }
@@ -174,9 +172,7 @@ namespace Lucene.Net.Util
                 var _ = c[3];
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (ArgumentOutOfRangeException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIndexOutOfBoundsException())
             {
                 // expected exception
             }
@@ -216,9 +212,7 @@ namespace Lucene.Net.Util
                 c.Subsequence(-1, 1 - -1); // LUCENENET: Corrected 2nd parameter
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (ArgumentOutOfRangeException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIndexOutOfBoundsException())
             {
                 // expected exception
             }
@@ -228,9 +222,7 @@ namespace Lucene.Net.Util
                 c.Subsequence(0, -1 - 0); // LUCENENET: Corrected 2nd parameter
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (ArgumentOutOfRangeException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIndexOutOfBoundsException())
             {
                 // expected exception
             }
@@ -240,9 +232,7 @@ namespace Lucene.Net.Util
                 c.Subsequence(0, 4 - 0); // LUCENENET: Corrected 2nd parameter
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (ArgumentOutOfRangeException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIndexOutOfBoundsException())
             {
                 // expected exception
             }
@@ -252,9 +242,7 @@ namespace Lucene.Net.Util
                 c.Subsequence(2, 1 - 2); // LUCENENET: Corrected 2nd parameter
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (ArgumentOutOfRangeException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIndexOutOfBoundsException())
             {
                 // expected exception
             }
