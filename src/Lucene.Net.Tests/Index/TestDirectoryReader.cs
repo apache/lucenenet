@@ -429,7 +429,7 @@ namespace Lucene.Net.Index
           try {
             DirectoryReader.Open(fileDirName);
             Assert.Fail("opening DirectoryReader on empty directory failed to produce FileNotFoundException/NoSuchFileException");
-          } catch (FileNotFoundException | NoSuchFileException e) {
+          } catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException()) {
             // GOOD
           }
           rmDir(fileDirName);
@@ -477,15 +477,7 @@ namespace Lucene.Net.Index
                 DirectoryReader.Open(dir);
                 Assert.Fail("expected FileNotFoundException/NoSuchFileException");
             }
-#pragma warning disable 168
-            catch (FileNotFoundException /*| NoSuchFileException*/ e)
-#pragma warning restore 168
-            {
-                // expected
-            }
-            // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-            // in Lucene, we need to catch it here to be on the safe side.
-            catch (DirectoryNotFoundException)
+            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
             {
                 // expected
             }
@@ -498,15 +490,7 @@ namespace Lucene.Net.Index
                 DirectoryReader.Open(dir);
                 Assert.Fail("expected FileNotFoundException/NoSuchFileException");
             }
-#pragma warning disable 168
-            catch (FileNotFoundException /*| NoSuchFileException*/ e)
-#pragma warning restore 168
-            {
-                // expected
-            }
-            // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-            // in Lucene, we need to catch it here to be on the safe side.
-            catch (DirectoryNotFoundException)
+            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
             {
                 // expected
             }

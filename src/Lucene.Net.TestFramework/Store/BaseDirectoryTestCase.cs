@@ -153,10 +153,15 @@ namespace Lucene.Net.Store
             dir.DeleteFile("foo.txt");
             Assert.IsFalse(ContainsFile(dir, file));
 
-            Assert.ThrowsAnyOf<DirectoryNotFoundException, FileNotFoundException>(() =>
+            try
             {
                 dir.DeleteFile("foo.txt");
-            });
+                fail();
+            }
+            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
+            {
+                // expected
+            }
         }
 
         [Test]
@@ -718,10 +723,15 @@ namespace Lucene.Net.Store
             tempDir.Delete();
             //IOUtils.rm(tempDir);
             using Directory dir = GetDirectory(tempDir);
-            Assert.ThrowsAnyOf<FileNotFoundException, IndexNotFoundException, DirectoryNotFoundException>(() =>
+            try
             {
                 DirectoryReader.Open(dir);
-            });
+                fail();
+            }
+            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
+            {
+                // expected
+            }
         }
 
         [Test]
@@ -912,10 +922,15 @@ namespace Lucene.Net.Store
             int fileCount = fsdir.ListAll().Length;
 
             // fsync it
-            Assert.ThrowsAnyOf<FileNotFoundException, DirectoryNotFoundException>(() =>
+            try
             {
                 fsdir.Sync(new string[] { "afile" });
-            });
+                fail();
+            }
+            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
+            {
+                // expected
+            }
 
             // no new files created
             assertEquals(fileCount, fsdir.ListAll().Length);
@@ -1436,22 +1451,22 @@ namespace Lucene.Net.Store
         //        Assert.IsFalse(ContainsFile(fsDir, fileName));
 
         //        // Make sure fileLength claims it's deleted:
-        //        Assert.Throws<FileNotFoundException>(() => {
+        //        Assert.Throws<FileNotFoundException>(() => { // LUCENENET: If this is ever uncommented, we need to use e.IsNoSuchFileExceptionOrFileNotFoundException()
         //            fsDir.FileLength(fileName);
         //        });
 
         //        // Make sure rename fails:
-        //        Assert.Throws<FileNotFoundException>(() => {
+        //        Assert.Throws<FileNotFoundException>(() => { // LUCENENET: If this is ever uncommented, we need to use e.IsNoSuchFileExceptionOrFileNotFoundException()
         //            fsDir.Rename(fileName, "file2");
         //        });
 
         //        // Make sure delete fails:
-        //        Assert.Throws<FileNotFoundException>(() => {
+        //        Assert.Throws<FileNotFoundException>(() => { // LUCENENET: If this is ever uncommented, we need to use e.IsNoSuchFileExceptionOrFileNotFoundException()
         //            fsDir.DeleteFile(fileName);
         //        });
 
         //        // Make sure we cannot open it for reading:
-        //        Assert.Throws<FileNotFoundException>(() => {
+        //        Assert.Throws<FileNotFoundException>(() => { // LUCENENET: If this is ever uncommented, we need to use e.IsNoSuchFileExceptionOrFileNotFoundException()
         //            fsDir.OpenInput(fileName, IOContext.DEFAULT);
         //        });
         //    }

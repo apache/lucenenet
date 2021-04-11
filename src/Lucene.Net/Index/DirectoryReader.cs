@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -296,25 +296,7 @@ namespace Lucene.Net.Index
                         // segments_N is corrupt
                         sis.Read(dir, fileName);
                     }
-                    catch (FileNotFoundException)
-                    {
-                        // LUCENE-948: on NFS (and maybe others), if
-                        // you have writers switching back and forth
-                        // between machines, it's very likely that the
-                        // dir listing will be stale and will claim a
-                        // file segments_X exists when in fact it
-                        // doesn't.  So, we catch this and handle it
-                        // as if the file does not exist
-                        sis = null;
-                    }
-                    // LUCENENET specific - .NET (thankfully) only has one FileNotFoundException, so we don't need this
-                    //catch (NoSuchFileException)
-                    //{
-                    //    sis = null;
-                    //}
-                    // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-                    // in Lucene, we need to catch it here to be on the safe side.
-                    catch (DirectoryNotFoundException)
+                    catch (Exception fnfe) when (fnfe.IsNoSuchFileExceptionOrFileNotFoundException())
                     {
                         // LUCENE-948: on NFS (and maybe others), if
                         // you have writers switching back and forth
