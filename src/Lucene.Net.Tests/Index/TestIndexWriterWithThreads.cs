@@ -779,10 +779,10 @@ namespace Lucene.Net.Index
                                 {
                                     // ok
                                 }
-                                catch (NullReferenceException)
-                                {
-                                    // ok
-                                }
+                                //catch (NullReferenceException) // LUCENENET specific - NullReferenceException must be allowed to propagate so we can defensively avoid it in .NET
+                                //{
+                                //    // ok
+                                //}
                                 finally
                                 {
                                     commitLock.Unlock();
@@ -802,15 +802,11 @@ namespace Lucene.Net.Index
                                 {
                                     // ok
                                 }
-                                catch (NullReferenceException)
-                                {
-                                    // ok
-                                }
-                                catch (InvalidOperationException) // LUCENENET TODO: This is being caught here because it was used in some places instead of AssertionError, but should remove this and possibly subclass InvalidOperationExcption with AssertionException instead
-                                {
-                                    // ok
-                                }
-                                catch (AssertionException)
+                                //catch (NullReferenceException) // LUCENENET specific - NullReferenceException must be allowed to propagate so we can defensively avoid it in .NET
+                                //{
+                                //    // ok
+                                //}
+                                catch (Exception ae) when (ae.IsAssertionError())
                                 {
                                     // ok
                                 }
