@@ -217,9 +217,7 @@ namespace Lucene.Net.Util
                     Assert.AreEqual(cpString.Substring(rs, rc), str);
                     continue;
                 }
-#pragma warning disable 168
-                catch (ArgumentOutOfRangeException e1) // LUCENENET specific - changed from IndexOutOfBoundsException to ArgumentOutOfRangeException (.NET convention)
-#pragma warning restore 168
+                catch (Exception e1) when (e1.IsIndexOutOfBoundsException())
                 {
                     // Ignored.
                 }

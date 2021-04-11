@@ -531,7 +531,7 @@ namespace Lucene.Net.Util
                     {
                         return bytesRef.Utf8ToString();
                     }
-                    catch (IndexOutOfRangeException)
+                    catch (Exception e) when (e.IsIndexOutOfBoundsException())
                     {
                         return bytesRef.ToString();
                     }

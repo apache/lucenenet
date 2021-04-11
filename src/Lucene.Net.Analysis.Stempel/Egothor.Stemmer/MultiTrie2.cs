@@ -1,4 +1,5 @@
 ﻿using J2N.IO;
+using Lucene;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -142,7 +143,7 @@ namespace Egothor.Stemmer
                     }
                 }
             }
-            catch (ArgumentOutOfRangeException /*x*/) { }
+            catch (Exception x) when (x.IsIndexOutOfBoundsException()) { }
             return result.ToString();
         }
 
@@ -200,7 +201,7 @@ namespace Egothor.Stemmer
                     }
                 }
             }
-            catch (ArgumentOutOfRangeException /*x*/) { }
+            catch (Exception x) when (x.IsIndexOutOfBoundsException()) { }
             return result.ToString();
         }
 

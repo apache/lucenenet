@@ -1197,7 +1197,7 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 return aliases[id - 1];
             }
-            catch (IndexOutOfRangeException ex)
+            catch (Exception ex) when (ex.IsIndexOutOfBoundsException())
             {
                 throw new ArgumentException("Bad flag alias number:" + id, ex);
             }
