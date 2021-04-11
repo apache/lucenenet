@@ -1285,11 +1285,11 @@ namespace Lucene.Net.Index
             while (iterator.MoveNext())
             {
                 var _ = iterator.Current;
-                // .NET: Testing for iterator.Remove() isn't applicable
+                // LUCENENET: Testing for iterator.Remove() isn't applicable
             }
             Assert.IsFalse(iterator.MoveNext());
 
-            // .NET: Testing for NoSuchElementException with .NET iterators isn't applicable
+            // LUCENENET: Testing for NoSuchElementException with .NET iterators isn't applicable
         }
 
         /// <summary>

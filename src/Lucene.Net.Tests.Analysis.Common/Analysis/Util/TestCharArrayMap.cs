@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -109,7 +109,7 @@ namespace Lucene.Net.Analysis.Util
                 cs.Add("test");
                 fail("keySet() allows adding new keys");
             }
-            catch (NotSupportedException)
+            catch (Exception ue) when (ue.IsUnsupportedOperationException())
             {
                 // pass
             }
@@ -178,7 +178,7 @@ namespace Lucene.Net.Analysis.Util
                 map.Put(NOT_IN_MAP.ToCharArray(), 3);
                 fail("Modified unmodifiable map");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
@@ -191,7 +191,7 @@ namespace Lucene.Net.Analysis.Util
                 map.Put(NOT_IN_MAP, 3);
                 fail("Modified unmodifiable map");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
@@ -204,7 +204,7 @@ namespace Lucene.Net.Analysis.Util
                 map.Put(new StringBuilder(NOT_IN_MAP), 3);
                 fail("Modified unmodifiable map");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
@@ -212,13 +212,13 @@ namespace Lucene.Net.Analysis.Util
                 assertEquals("Size of unmodifiable map has changed", size, map.Count);
             }
 
-            #region Added for better .NET support
+            #region LUCENENET Added for better .NET support
             try
             {
                 map.Add(NOT_IN_MAP, 3);
                 fail("Modified unmodifiable map");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
@@ -231,7 +231,7 @@ namespace Lucene.Net.Analysis.Util
                 map.Add(new KeyValuePair<string, int?>(NOT_IN_MAP, 3));
                 fail("Modified unmodifiable map");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
@@ -244,7 +244,7 @@ namespace Lucene.Net.Analysis.Util
                 map[new StringBuilder(NOT_IN_MAP)] = 3;
                 fail("Modified unmodifiable map");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
@@ -259,19 +259,19 @@ namespace Lucene.Net.Analysis.Util
 #pragma warning restore 612, 618
                 fail("Modified unmodifiable map");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertEquals("Size of unmodifiable map has changed", size, map.Count);
             }
-            #endregion
+            #endregion LUCENENET Added for better .NET support
 
             try
             {
                 map.Clear();
                 fail("Modified unmodifiable map");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertEquals("Size of unmodifiable map has changed", size, map.size());
@@ -282,7 +282,7 @@ namespace Lucene.Net.Analysis.Util
                 map.EntrySet().Clear();
                 fail("Modified unmodifiable map");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertEquals("Size of unmodifiable map has changed", size, map.size());
@@ -293,7 +293,7 @@ namespace Lucene.Net.Analysis.Util
                 map.Keys.Clear();
                 fail("Modified unmodifiable map");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertEquals("Size of unmodifiable map has changed", size, map.size());
@@ -304,7 +304,7 @@ namespace Lucene.Net.Analysis.Util
                 map.Put((object)NOT_IN_MAP, 3);
                 fail("Modified unmodifiable map");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
@@ -317,7 +317,7 @@ namespace Lucene.Net.Analysis.Util
                 map.PutAll(Collections.SingletonMap<string, int?>(NOT_IN_MAP, 3));
                 fail("Modified unmodifiable map");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));

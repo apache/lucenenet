@@ -113,9 +113,7 @@ namespace Lucene.Net.Spatial
             {
                 first = generator.gen(args1);
             }
-#pragma warning disable 168
-            catch (NotSupportedException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 return;
             }
