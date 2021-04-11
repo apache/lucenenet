@@ -906,9 +906,7 @@ namespace Lucene.Net.Index
                 r.DocFreq(new Term("field", "f"));
                 Assert.Fail("did not hit expected exception");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException ise)
-#pragma warning restore 168
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }
@@ -932,9 +930,7 @@ namespace Lucene.Net.Index
                     ctx.Reader.DocFreq(new Term("field", "f"));
                     Assert.Fail("did not hit expected exception");
                 }
-#pragma warning disable 168
-                catch (InvalidOperationException ise)
-#pragma warning restore 168
+                catch (Exception ise) when (ise.IsIllegalStateException())
                 {
                     // expected
                 }
@@ -1312,9 +1308,7 @@ namespace Lucene.Net.Index
                 r.DocFreq(new Term("field", "f"));
                 Assert.Fail("did not hit expected exception");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException ise)
-#pragma warning restore 168
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }
@@ -1328,9 +1322,7 @@ namespace Lucene.Net.Index
                 r.DocFreq(new Term("field", "f"));
                 Assert.Fail("did not hit expected exception");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException ise)
-#pragma warning restore 168
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }

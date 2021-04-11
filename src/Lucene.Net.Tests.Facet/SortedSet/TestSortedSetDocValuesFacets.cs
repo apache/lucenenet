@@ -142,7 +142,7 @@ namespace Lucene.Net.Facet.SortedSet
                 _ = new SortedSetDocValuesFacetCounts(state, c);
                 fail("did not hit expected exception");
             }
-            catch (InvalidOperationException)
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }

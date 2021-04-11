@@ -554,9 +554,7 @@ namespace Lucene.Net.Search
                 new SearcherManager(w.IndexWriter, false, theEvilOne);
                 fail("didn't hit expected exception");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException ise)
-#pragma warning restore 168
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }

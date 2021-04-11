@@ -806,7 +806,7 @@ namespace Lucene.Net.Index
                                 {
                                     // ok
                                 }
-                                catch (InvalidOperationException)
+                                catch (InvalidOperationException) // LUCENENET TODO: This is being caught here because it was used in some places instead of AssertionError, but should remove this and possibly subclass InvalidOperationExcption with AssertionException instead
                                 {
                                     // ok
                                 }

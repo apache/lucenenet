@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                         {
                             rs[l] = ParseRules(CreateScanner(s, rt, l), CreateResourceName(s, rt, l));
                         }
-                        catch (InvalidOperationException e)
+                        catch (Exception e) when (e.IsIllegalStateException())
                         {
                             throw new InvalidOperationException("Problem processing " + CreateResourceName(s, rt, l), e);
                         }

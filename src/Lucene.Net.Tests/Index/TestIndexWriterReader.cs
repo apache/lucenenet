@@ -1282,9 +1282,7 @@ namespace Lucene.Net.Index
                 TestUtil.Docs(Random, r, "f", new BytesRef("val"), null, null, DocsFlags.NONE);
                 Assert.Fail("should have failed to seek since terms index was not loaded.");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalStateException())
             {
                 // expected - we didn't load the term index
             }

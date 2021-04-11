@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis
                 stream.Reset();
                 Assert.Fail("reset() should not succeed.");
             }
-            catch (Exception)
+            catch (Exception e) when (e.IsIllegalStateException())
             {
                 // pass
             }
@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis
                 stream.IncrementToken();
                 Assert.Fail("IncrementToken() should not succeed.");
             }
-            catch (Exception)
+            catch (Exception e) when (e.IsIllegalStateException())
             {
                 // pass
             }
