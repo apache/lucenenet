@@ -227,7 +227,7 @@ namespace Lucene.Net.Codecs.Compressing
                     break;
 
                 default:
-                    throw new InvalidOperationException("Unknown type flag: " + bits.ToString("x"));
+                    throw new AssertionException("Unknown type flag: " + bits.ToString("x"));
             }
         }
 
@@ -252,7 +252,7 @@ namespace Lucene.Net.Codecs.Compressing
                     break;
 
                 default:
-                    throw new InvalidOperationException("Unknown type flag: " + bits.ToString("x"));
+                    throw new AssertionException("Unknown type flag: " + bits.ToString("x"));
             }
         }
 

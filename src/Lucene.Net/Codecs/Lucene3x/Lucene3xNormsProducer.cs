@@ -1,4 +1,4 @@
-using J2N.Runtime.CompilerServices;
+﻿using J2N.Runtime.CompilerServices;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using System;
@@ -269,22 +269,22 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override BinaryDocValues GetBinary(FieldInfo field)
         {
-            throw new InvalidOperationException();
+            throw new AssertionException();
         }
 
         public override SortedDocValues GetSorted(FieldInfo field)
         {
-            throw new InvalidOperationException();
+            throw new AssertionException();
         }
 
         public override SortedSetDocValues GetSortedSet(FieldInfo field)
         {
-            throw new InvalidOperationException();
+            throw new AssertionException();
         }
 
         public override IBits GetDocsWithField(FieldInfo field)
         {
-            throw new InvalidOperationException();
+            throw new AssertionException();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

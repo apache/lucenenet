@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            throw new InvalidOperationException("type=" + type);
+                            throw new AssertionException("type=" + type);
                         }
                     }
                 }

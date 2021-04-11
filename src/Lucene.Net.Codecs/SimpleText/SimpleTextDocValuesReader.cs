@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 else
                 {
-                    throw new ArgumentOutOfRangeException();
+                    throw new AssertionException();
                 }
             }
 
@@ -577,7 +577,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 case DocValuesType.NUMERIC:
                     return GetNumericDocsWithField(field);
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new AssertionException();
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Codecs.Compressing.Dummy;
 using Lucene.Net.Codecs.Lucene46;
+using Lucene.Net.Diagnostics;
 using System;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 
@@ -48,7 +49,7 @@ namespace Lucene.Net.Codecs.Compressing
                     return new DummyCompressingCodec(chunkSize, withSegmentSuffix);
 
                 default:
-                    throw new InvalidOperationException();
+                    throw new AssertionException();
             }
         }
 

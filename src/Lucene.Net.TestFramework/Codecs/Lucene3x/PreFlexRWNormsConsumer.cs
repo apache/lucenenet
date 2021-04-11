@@ -4,7 +4,6 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -24,6 +23,8 @@ namespace Lucene.Net.Codecs.Lucene3x
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using AssertionError = Lucene.Net.Diagnostics.AssertionException; // LUCENENET TODO: Remove this and go with the AssertionError class?
 
     /// <summary>
     /// Writes and Merges Lucene 3.x norms format

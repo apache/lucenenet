@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
@@ -918,7 +919,7 @@ namespace Lucene.Net.Documents
                         break;
 
                     default:
-                        throw new Exception("Should never get here");
+                        throw new AssertionException("Should never get here");
                 }
                 return internalTokenStream;
             }

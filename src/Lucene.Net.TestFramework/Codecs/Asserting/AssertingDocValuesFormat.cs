@@ -246,7 +246,7 @@ namespace Lucene.Net.Codecs.Asserting
                     //try
                     //{
                     //    iterator.remove();
-                    //    throw new InvalidOperationException("broken iterator (supports remove): " + iterator);
+                    //    throw new AssertionError("broken iterator (supports remove): " + iterator);
                     //}
                     //catch (Exception expected) when (e.IsUnsupportedOperationException())
                     //{
@@ -257,7 +257,7 @@ namespace Lucene.Net.Codecs.Asserting
                 /*try
                 {
                   //iterator.next();
-                  throw new InvalidOperationException("broken iterator (allows next() when hasNext==false) " + iterator);
+                  throw new AssertionError("broken iterator (allows next() when hasNext==false) " + iterator);
                 }
                 catch (Exception)
                 {

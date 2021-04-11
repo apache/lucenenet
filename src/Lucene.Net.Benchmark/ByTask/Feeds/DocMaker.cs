@@ -1,5 +1,6 @@
 ﻿using J2N.Threading.Atomic;
 using Lucene.Net.Benchmarks.ByTask.Utils;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Util;
 using System;
@@ -160,7 +161,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                             f = new DoubleField(name, 0.0, Field.Store.NO);
                             break;
                         default:
-                            throw new InvalidOperationException("Cannot get here");
+                            throw new AssertionException("Cannot get here");
                     }
                     if (reuseFields)
                     {

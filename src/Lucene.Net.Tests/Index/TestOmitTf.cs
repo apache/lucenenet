@@ -368,9 +368,9 @@ namespace Lucene.Net.Index
                 {
                     cause = cause.InnerException;
                 }
-                if (!(cause is InvalidOperationException))
+                if (!cause.IsIllegalStateException())
                 {
-                    throw new InvalidOperationException("Expected an IAE", e);
+                    throw new AssertionException("Expected an IAE", e);
                 } // else OK because positions are not indexed
             }
 

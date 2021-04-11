@@ -1,5 +1,6 @@
 ﻿using J2N.Numerics;
 using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
@@ -250,7 +251,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     }
                     else
                     {
-                        throw new Exception();
+                        throw new AssertionException();
                     }
                 }
                 else
@@ -397,7 +398,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     return new Int64ValuesAnonymousClass2(table, ords);
 
                 default:
-                    throw new Exception();
+                    throw new AssertionException();
             }
         }
 
@@ -454,7 +455,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     return GetCompressedBinary(field, bytes);
 
                 default:
-                    throw new Exception();
+                    throw new AssertionException();
             }
         }
 
@@ -706,7 +707,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
             else if (ss.Format != Lucene45DocValuesConsumer.SORTED_SET_WITH_ADDRESSES)
             {
-                throw new Exception();
+                throw new AssertionException();
             }
 
             IndexInput data = (IndexInput)this.data.Clone();
@@ -871,7 +872,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     return GetMissingBits(ne.missingOffset);
 
                 default:
-                    throw new InvalidOperationException();
+                    throw new AssertionException();
             }
         }
 

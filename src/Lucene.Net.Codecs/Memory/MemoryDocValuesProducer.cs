@@ -273,7 +273,7 @@ namespace Lucene.Net.Codecs.Memory
                     ramBytesUsed.AddAndGet(quotientReader.RamBytesUsed());
                     return new NumericDocValuesAnonymousClass3(min, mult, quotientReader);
                 default:
-                    throw new InvalidOperationException();
+                    throw new AssertionException();
             }
         }
 
@@ -691,7 +691,7 @@ namespace Lucene.Net.Codecs.Memory
                     var ne = numerics[field.Number];
                     return GetMissingBits(field.Number, ne.missingOffset, ne.missingBytes);
                 default:
-                    throw new InvalidOperationException();
+                    throw new AssertionException();
             }
         }
 
