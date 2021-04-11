@@ -231,7 +231,7 @@ namespace Lucene.Net.Expressions.JS
                 expr.Evaluate(0, null);
                 Assert.Fail();
             }
-            catch (ArithmeticException e)
+            catch (Exception e) when (e.IsArithmeticException())
             {
                 Assert.AreEqual(MESSAGE, e.Message);
                 StringWriter sw = new StringWriter();
