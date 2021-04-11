@@ -147,9 +147,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
                         if (obj != null)
                             return obj;
                     }
-#pragma warning disable 168
-                    catch (MissingManifestResourceException e)
-#pragma warning restore 168
+                    catch (Exception e) when (e.IsMissingResourceException())
                     {
                         // just continue it might be on the next resource bundle
                     }
@@ -209,7 +207,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
                     }
                 }
             }
-            catch (MissingManifestResourceException) // LUCENENET: IDE0059: Remove unnecessary value assignment
+            catch (Exception e) when (e.IsMissingResourceException())
             {
                 //System.err.println("WARN: Message with key:" + key + " and locale: "
                 //    + Locale.getDefault() + " not found.");
