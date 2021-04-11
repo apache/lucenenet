@@ -96,7 +96,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                             analyzer = CreateAnalyzer(coreClassName);
                             analyzerName = coreClassName;
                         }
-                        catch (TypeLoadException /*e*/)
+                        catch (Exception e) when (e.IsClassNotFoundException())
                         {
                             // If not a core analyzer, try the base analysis package
                             analyzerName = "Lucene.Net.Analysis." + analyzerName;
