@@ -172,7 +172,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                                     {
                                                         intArgValue = int.Parse(argValue, CultureInfo.InvariantCulture);
                                                     }
-                                                    catch (Exception e) when (e.IsParseException())
+                                                    catch (Exception e) when (e.IsNumberFormatException())
                                                     {
                                                         throw new Exception
                                                             ("Line #" + GetLineNumber(stok) + ": Exception parsing " + argName + " value '" + argValue + "'", e);
@@ -204,7 +204,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                                     {
                                                         intArgValue = int.Parse(argValue, CultureInfo.InvariantCulture);
                                                     }
-                                                    catch (Exception e) when (e.IsParseException())
+                                                    catch (Exception e) when (e.IsNumberFormatException())
                                                     {
                                                         throw new Exception
                                                             ("Line #" + GetLineNumber(stok) + ": Exception parsing " + argName + " value '" + argValue + "'", e);
@@ -257,7 +257,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                                     {
                                                         intArgValue = int.Parse(stok.StringValue.Trim(), CultureInfo.InvariantCulture);
                                                     }
-                                                    catch (Exception e) when (e.IsParseException())
+                                                    catch (Exception e) when (e.IsNumberFormatException())
                                                     {
                                                         throw new Exception
                                                             ("Line #" + GetLineNumber(stok) + ": Exception parsing " + argName + " value '" + stok.StringValue + "'", e);
