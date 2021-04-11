@@ -5860,18 +5860,7 @@ namespace Lucene.Net.Index
                 using (var input = dir.OpenInput(fileName, IOContext.DEFAULT)) { }
                 return true;
             }
-            catch (FileNotFoundException)
-            {
-                return false;
-            }
-            // LUCENENET specific - .NET (thankfully) only has one FileNotFoundException, so we don't need this
-            //catch (NoSuchFileException)
-            //{
-            //    return false;
-            //}
-            // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-            // in Lucene, we need to catch it here to be on the safe side.
-            catch (DirectoryNotFoundException)
+            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
             {
                 return false;
             }

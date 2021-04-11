@@ -2048,15 +2048,7 @@ namespace Lucene.Net.Index
                     // Exceptions are fine - we are running out of file handlers here
                     continue;
                 }
-#pragma warning disable 168
-                catch (FileNotFoundException/* | NoSuchFileException*/ ex)
-#pragma warning restore 168
-                {
-                    continue;
-                }
-                // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-                // in Lucene, we need to catch it here to be on the safe side.
-                catch (DirectoryNotFoundException)
+                catch (Exception ex) when (ex.IsNoSuchFileExceptionOrFileNotFoundException())
                 {
                     continue;
                 }

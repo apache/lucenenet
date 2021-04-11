@@ -182,42 +182,7 @@ namespace Lucene.Net.Index
                             {
                                 sis.Read(directory, fileName);
                             }
-#pragma warning disable 168
-                            catch (FileNotFoundException e)
-#pragma warning restore 168
-                            {
-                                // LUCENE-948: on NFS (and maybe others), if
-                                // you have writers switching back and forth
-                                // between machines, it's very likely that the
-                                // dir listing will be stale and will claim a
-                                // file segments_X exists when in fact it
-                                // doesn't.  So, we catch this and handle it
-                                // as if the file does not exist
-                                if (infoStream.IsEnabled("IFD"))
-                                {
-                                    infoStream.Message("IFD", "init: hit FileNotFoundException when loading commit \"" + fileName + "\"; skipping this commit point");
-                                }
-                                sis = null;
-                            }
-                            // LUCENENET specific - .NET (thankfully) only has one FileNotFoundException, so we don't need this
-                            //catch (NoSuchFileException)
-                            //{
-                            //    // LUCENE-948: on NFS (and maybe others), if
-                            //    // you have writers switching back and forth
-                            //    // between machines, it's very likely that the
-                            //    // dir listing will be stale and will claim a
-                            //    // file segments_X exists when in fact it
-                            //    // doesn't.  So, we catch this and handle it
-                            //    // as if the file does not exist
-                            //    if (infoStream.IsEnabled("IFD"))
-                            //    {
-                            //        infoStream.Message("IFD", "init: hit FileNotFoundException when loading commit \"" + fileName + "\"; skipping this commit point");
-                            //    }
-                            //    sis = null;
-                            //}
-                            // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-                            // in Lucene, we need to catch it here to be on the safe side.
-                            catch (DirectoryNotFoundException)
+                            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
                             {
                                 // LUCENE-948: on NFS (and maybe others), if
                                 // you have writers switching back and forth

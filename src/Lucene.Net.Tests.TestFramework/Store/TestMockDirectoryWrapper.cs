@@ -234,12 +234,7 @@ namespace Lucene.Net.Store
         //            {
         //                @in = dir.OpenInput("foo", IOContext.DEFAULT);
         //            }
-        //            catch (FileNotFoundException)
-        //            {
-        //                // ok
-        //                changed = true;
-        //            }
-        //            catch (DirectoryNotFoundException) // LUCENENET specific: Need to catch when the directory is not found
+        //            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
         //            {
         //                // ok
         //                changed = true;
