@@ -40,9 +40,14 @@ namespace Lucene.Net.Util
             try
             {
                 Type clazz = LoadFSDirectoryClass(clazzName);
+
+                // LUCENENET: In .NET, we get a null when the class is not found, so we need to throw here for compatibility
+                if (clazz is null)
+                    throw new ArgumentException(typeof(FSDirectory).Name + " implementation not found: " + clazzName);
+
                 return NewFSDirectory(clazz, dir);
             }
-            catch (TypeLoadException e)
+            catch (Exception e) when (e.IsClassNotFoundException())
             {
                 throw new ArgumentException(typeof(FSDirectory).Name + " implementation not found: " + clazzName, e);
             }

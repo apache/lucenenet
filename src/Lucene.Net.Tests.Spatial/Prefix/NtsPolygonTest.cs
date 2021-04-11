@@ -42,7 +42,7 @@ namespace Lucene.Net.Spatial.Prefix
                     typeof(Spatial4n.Core.Context.Nts.NtsSpatialContextFactory).AssemblyQualifiedName);
                 ctx = SpatialContextFactory.MakeSpatialContext(args /*, getClass().getClassLoader()*/);
             }
-            catch (TypeLoadException e) //LUCENENET TODO: Does this match NoClassDefFoundError ??
+            catch (Exception e) when (e.IsNoClassDefFoundError())
             {
                 AssumeTrue("This test requires Spatial4n.Core.NTS: " + e, false);
             }
