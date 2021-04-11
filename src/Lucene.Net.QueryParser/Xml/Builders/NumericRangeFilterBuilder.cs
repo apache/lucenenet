@@ -150,7 +150,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                 }
                 return filter;
             }
-            catch (FormatException nfe)
+            catch (Exception nfe) when (nfe.IsNumberFormatException())
             {
                 if (strictMode)
                 {

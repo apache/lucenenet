@@ -1043,7 +1043,7 @@ namespace Lucene.Net.Search
                         return wrapper.GetInt32s(reader, key.field, FieldCache.DEFAULT_INT32_PARSER, setDocsWithField);
 #pragma warning restore 612, 618
                     }
-                    catch (FormatException)
+                    catch (Exception ne) when (ne.IsNumberFormatException())
                     {
                         return wrapper.GetInt32s(reader, key.field, FieldCache.NUMERIC_UTILS_INT32_PARSER, setDocsWithField);
                     }
@@ -1307,7 +1307,7 @@ namespace Lucene.Net.Search
                         return wrapper.GetSingles(reader, key.field, FieldCache.DEFAULT_SINGLE_PARSER, setDocsWithField);
 #pragma warning restore 612, 618
                     }
-                    catch (FormatException)
+                    catch (Exception ne) when (ne.IsNumberFormatException())
                     {
                         return wrapper.GetSingles(reader, key.field, FieldCache.NUMERIC_UTILS_SINGLE_PARSER, setDocsWithField);
                     }
@@ -1475,7 +1475,7 @@ namespace Lucene.Net.Search
                         return wrapper.GetInt64s(reader, key.field, FieldCache.DEFAULT_INT64_PARSER, setDocsWithField);
 #pragma warning restore 612, 618
                     }
-                    catch (FormatException)
+                    catch (Exception ne) when (ne.IsNumberFormatException())
                     {
                         return wrapper.GetInt64s(reader, key.field, FieldCache.NUMERIC_UTILS_INT64_PARSER, setDocsWithField);
                     }
@@ -1645,7 +1645,7 @@ namespace Lucene.Net.Search
                         return wrapper.GetDoubles(reader, key.field, FieldCache.DEFAULT_DOUBLE_PARSER, setDocsWithField);
 #pragma warning restore 612, 618
                     }
-                    catch (FormatException)
+                    catch (Exception ne) when (ne.IsNumberFormatException())
                     {
                         return wrapper.GetDoubles(reader, key.field, FieldCache.NUMERIC_UTILS_DOUBLE_PARSER, setDocsWithField);
                     }

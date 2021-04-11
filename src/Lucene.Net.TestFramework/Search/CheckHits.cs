@@ -403,17 +403,18 @@ namespace Lucene.Net.Search
 
                             // LUCENENET NOTE: Using current culture here is intentional because
                             // we are parsing from text that was made using the current culture.
-                            if (float.TryParse(descr.Substring(k1, k2 - k1).Trim(), out x))
+                            if (float.TryParse(descr.Substring(k1, k2 - k1).Trim(), out x) &&
+                                descr.Substring(k2).Trim().Equals("times others of:", StringComparison.Ordinal))
                             {
-                                if (descr.Substring(k2).Trim().Equals("times others of:", StringComparison.Ordinal))
-                                {
-                                    maxTimesOthers = true;
-                                }
+                                maxTimesOthers = true;
                             }
                         }
                     }
                     // TODO: this is a TERRIBLE assertion!!!!
-                    Assert.IsTrue(productOf || sumOf || maxOf || maxTimesOthers, q + ": multi valued explanation description=\"" + descr + "\" must be 'max of plus x times others' or end with 'product of'" + " or 'sum of:' or 'max of:' - " + expl);
+                    Assert.IsTrue(productOf || sumOf || maxOf || maxTimesOthers,
+                        q + ": multi valued explanation description=\"" + descr
+                        + "\" must be 'max of plus x times others' or end with 'product of'"
+                        + " or 'sum of:' or 'max of:' - " + expl);
                     float sum = 0;
                     float product = 1;
                     float max = 0;
@@ -446,7 +447,8 @@ namespace Lucene.Net.Search
                     {
                         Assert.IsTrue(false, "should never get here!");
                     }
-                    Assert.AreEqual(combined, value, ExplainToleranceDelta(combined, value), q + ": actual subDetails combined==" + combined + " != value=" + value + " Explanation: " + expl);
+                    Assert.AreEqual(combined, value, ExplainToleranceDelta(combined, value),
+                        q + ": actual subDetails combined==" + combined + " != value=" + value + " Explanation: " + expl);
                 }
             }
         }

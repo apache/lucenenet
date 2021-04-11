@@ -253,7 +253,7 @@ namespace Lucene.Net.Search.Suggest
                         // keep reading floats for bw compat
                         curWeight = (long)double.Parse(weight, NumberStyles.Float, CultureInfo.InvariantCulture);
                     }
-                    catch (FormatException e)
+                    catch (Exception e) when (e.IsNumberFormatException())
                     {
                         // LUCENENET: This is just so we can see what string and what culture was being tested when parsing failed,
                         // to try to reproduce the conditions of the failure.
