@@ -96,7 +96,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                                 {
                                     qq.Add(qp.Parse(line));
                                 }
-                                catch (ParseException e)
+                                catch (Lucene.Net.QueryParsers.Classic.ParseException e)
                                 {
                                     Console.Error.WriteLine("Exception: " + e.Message + " occurred while parsing line: " + lineNum + " Text: " + line);
                                 }

@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 new Dictionary(affixStream, dictStream);
                 fail("didn't get expected exception");
             }
-            catch (Exception expected)
+            catch (Exception expected) when (expected.IsParseException())
             {
                 assertTrue(expected.Message.StartsWith("The affix file contains a rule with less than four elements", StringComparison.Ordinal));
                 //assertEquals(24, expected.ErrorOffset); // No parse exception in LUCENENET

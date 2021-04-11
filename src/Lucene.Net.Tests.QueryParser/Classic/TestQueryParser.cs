@@ -276,7 +276,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     MockTokenizer.WHITESPACE, false)).Parse("a?t");
                 fail("Wildcard queries should not be allowed");
             }
-            catch (ParseException /*expected*/)
+            catch (Lucene.Net.QueryParsers.Classic.ParseException /*expected*/) // LUCENENET: Classic QueryParser has its own ParseException that is different than the one in Support
             {
                 // expected exception
             }
@@ -291,7 +291,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     MockTokenizer.WHITESPACE, false)).Parse("xunit~");
                 fail("Fuzzy queries should not be allowed");
             }
-            catch (ParseException /*expected*/)
+            catch (Lucene.Net.QueryParsers.Classic.ParseException /*expected*/) // LUCENENET: Classic QueryParser has its own ParseException that is different than the one in Support
             {
                 // expected exception
             }

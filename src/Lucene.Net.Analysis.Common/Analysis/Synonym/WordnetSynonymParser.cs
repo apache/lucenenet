@@ -80,7 +80,7 @@ namespace Lucene.Net.Analysis.Synonym
             }
             catch (Exception e) when (e.IsIllegalArgumentException())
             {
-                throw new Exception("Invalid synonym rule at line " + lineNumber.ToString(), e);
+                throw new FormatException("Invalid synonym rule at line " + lineNumber.ToString(), e);
             }
             finally
             {

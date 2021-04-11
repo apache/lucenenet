@@ -255,7 +255,7 @@ namespace Lucene.Net.Search.Suggest
                     }
                     catch (FormatException e)
                     {
-                        // LUCENENET TODO: This is just so we can see what string and what culture was being tested when parsing failed,
+                        // LUCENENET: This is just so we can see what string and what culture was being tested when parsing failed,
                         // to try to reproduce the conditions of the failure.
                         throw new FormatException($"Weight '{weight}' could not be parsed to long or double in culture '{CultureInfo.CurrentCulture.Name}'.", e);
                     }

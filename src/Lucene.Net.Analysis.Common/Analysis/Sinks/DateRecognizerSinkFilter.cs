@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System;
@@ -144,14 +144,14 @@ namespace Lucene.Net.Analysis.Sinks
                 m_termAtt = source.AddAttribute<ICharTermAttribute>();
             }
 
-            DateTime date; //We don't care about the date, just that we can parse it as a date
+            //We don't care about the date, just that we can parse it as a date
             if (m_formats == null)
             {
-                return DateTime.TryParse(m_termAtt.ToString(), m_culture, m_style, out date);
+                return DateTime.TryParse(m_termAtt.ToString(), m_culture, m_style, out _);
             }
             else
             {
-                return DateTime.TryParseExact(m_termAtt.ToString(), m_formats, m_culture, m_style, out date);
+                return DateTime.TryParseExact(m_termAtt.ToString(), m_formats, m_culture, m_style, out _);
             }
         }
     }

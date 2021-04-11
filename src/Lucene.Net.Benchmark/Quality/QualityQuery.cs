@@ -93,7 +93,7 @@ namespace Lucene.Net.Benchmarks.Quality
                 int nOther = int.Parse(other.queryID, CultureInfo.InvariantCulture);
                 return n - nOther;
             }
-            catch (FormatException /*e*/)
+            catch (Exception e) when (e.IsParseException())
             {
                 // fall back to string comparison
                 return queryID.CompareToOrdinal(other.queryID);

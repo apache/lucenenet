@@ -1,6 +1,5 @@
 ﻿using J2N.Text;
 using Spatial4n.Core.Context;
-using Spatial4n.Core.Exceptions;
 using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
@@ -62,7 +61,7 @@ namespace Lucene.Net.Spatial
                     {
                         data.shape = ctx.ReadShapeFromWkt(vals[2]);
                     }
-                    catch (ParseException e)
+                    catch (Spatial4n.Core.Exceptions.ParseException e) // LUCENENET: Spatial4n has its own ParseException that is different than the one in Support
                     {
                         throw new Exception(e.ToString(), e);
                     }
