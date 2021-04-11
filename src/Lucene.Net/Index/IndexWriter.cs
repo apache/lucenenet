@@ -3377,7 +3377,7 @@ namespace Lucene.Net.Index
             {
                 currentCodec.SegmentInfoFormat.SegmentInfoWriter.Write(trackingDir, newInfo, fis, context);
             }
-            catch (NotSupportedException /*uoe*/)
+            catch (Exception uoe) when (uoe.IsUnsupportedOperationException())
             {
 #pragma warning disable 612, 618
                 if (currentCodec is Lucene3xCodec)

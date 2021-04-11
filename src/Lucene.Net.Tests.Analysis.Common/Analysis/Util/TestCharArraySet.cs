@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Text;
 using Lucene.Net.Attributes;
 using Lucene.Net.Util;
@@ -120,7 +120,7 @@ namespace Lucene.Net.Analysis.Util
                 set.Add(NOT_IN_SET.ToCharArray());
                 fail("Modified unmodifiable set");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable set", set.contains(NOT_IN_SET));
@@ -132,7 +132,7 @@ namespace Lucene.Net.Analysis.Util
                 set.add(NOT_IN_SET);
                 fail("Modified unmodifiable set");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable set", set.contains(NOT_IN_SET));
@@ -144,7 +144,7 @@ namespace Lucene.Net.Analysis.Util
                 set.Add(new StringBuilder(NOT_IN_SET));
                 fail("Modified unmodifiable set");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable set", set.contains(NOT_IN_SET));
@@ -156,7 +156,7 @@ namespace Lucene.Net.Analysis.Util
                 set.clear();
                 fail("Modified unmodifiable set");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertFalse("Changed unmodifiable set", set.contains(NOT_IN_SET));
@@ -167,7 +167,7 @@ namespace Lucene.Net.Analysis.Util
                 set.add(NOT_IN_SET);
                 fail("Modified unmodifiable set");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable set", set.contains(NOT_IN_SET));
@@ -184,13 +184,13 @@ namespace Lucene.Net.Analysis.Util
             //    set.removeAll(new CharArraySet(TEST_VERSION_CURRENT, TEST_STOP_WORDS, true));
             //    fail("Modified unmodifiable set");
             //}
-            //catch (NotSupportedException)
+            //catch (Exception e) when (e.IsUnsupportedOperationException())
             //{
             //    // expected
             //    assertEquals("Size of unmodifiable set has changed", size, set.size());
             //}
 
-            #region Added for better .NET support
+            #region LUCENENET Added for better .NET support
             // This test was added for .NET to check the Remove method, since the extension method
             // above fails to execute.
             try
@@ -200,19 +200,32 @@ namespace Lucene.Net.Analysis.Util
 #pragma warning restore 612, 618
                 fail("Modified unmodifiable set");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertEquals("Size of unmodifiable set has changed", size, set.size());
             }
-            #endregion
+
+            // LUCENENET Specific - added to test .NETified UnionWith method
+            try
+            {
+                set.UnionWith(new[] { NOT_IN_SET });
+                fail("Modified unmodifiable set");
+            }
+            catch (Exception e) when (e.IsUnsupportedOperationException())
+            {
+                // expected
+                assertFalse("Test String has been added to unmodifiable set", set.contains(NOT_IN_SET));
+            }
+
+            #endregion LUCENENET Added for better .NET support
 
             try
             {
                 set.retainAll(new CharArraySet(TEST_VERSION_CURRENT, new [] { NOT_IN_SET }, true));
                 fail("Modified unmodifiable set");
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertEquals("Size of unmodifiable set has changed", size, set.size());
@@ -223,19 +236,7 @@ namespace Lucene.Net.Analysis.Util
                 set.addAll(new[] { NOT_IN_SET});
                 fail("Modified unmodifiable set");
             }
-            catch (NotSupportedException)
-            {
-                // expected
-                assertFalse("Test String has been added to unmodifiable set", set.contains(NOT_IN_SET));
-            }
-
-            // LUCENENET Specific - added to test .NETified UnionWith method
-            try
-            {
-                set.UnionWith(new[] { NOT_IN_SET });
-                fail("Modified unmodifiable set");
-            }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable set", set.contains(NOT_IN_SET));

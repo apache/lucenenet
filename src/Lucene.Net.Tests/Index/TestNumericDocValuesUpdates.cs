@@ -1092,9 +1092,7 @@ namespace Lucene.Net.Index
                 writer.Dispose();
                 Assert.Fail("should not have succeeded to update a segment written with an old Codec");
             }
-#pragma warning disable 168
-            catch (NotSupportedException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 writer.Rollback();
             }

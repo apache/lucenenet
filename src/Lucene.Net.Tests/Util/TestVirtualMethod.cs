@@ -139,7 +139,7 @@ namespace Lucene.Net.Util
                 new VirtualMethod(typeof(BaseTestVirtualMethod), "PublicTest", typeof(string));
                 Assert.Fail("Violating singleton status succeeded");
             }
-            catch (Exception arg) when (arg.IsIllegalArgumentException())
+            catch (Exception arg) when (arg.IsUnsupportedOperationException())
             {
                 // pass
             }

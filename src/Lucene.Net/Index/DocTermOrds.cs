@@ -412,7 +412,7 @@ namespace Lucene.Net.Index
                         m_ordBase = (int)te.Ord;
                         //System.out.println("got ordBase=" + ordBase);
                     }
-                    catch (NotSupportedException) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                    catch (Exception uoe) when (uoe.IsUnsupportedOperationException())
                     {
                         // Reader cannot provide ord support, so we wrap
                         // our own support by creating our own terms index:

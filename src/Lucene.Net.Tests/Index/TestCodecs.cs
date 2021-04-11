@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using J2N.Threading;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
@@ -625,9 +625,7 @@ namespace Lucene.Net.Index
                         termsEnum.SeekExact(idx);
                         success = true;
                     }
-#pragma warning disable 168
-                    catch (NotSupportedException uoe)
-#pragma warning restore 168
+                    catch (Exception uoe) when (uoe.IsUnsupportedOperationException())
                     {
                         // ok -- skip it
                     }
@@ -678,9 +676,7 @@ namespace Lucene.Net.Index
                             Assert.AreEqual(field.terms[i].docs.Length, termsEnum.DocFreq);
                             Assert.IsTrue(termsEnum.Term.BytesEquals(new BytesRef(field.terms[i].text2)));
                         }
-#pragma warning disable 168
-                        catch (NotSupportedException uoe)
-#pragma warning restore 168
+                        catch (Exception uoe) when (uoe.IsUnsupportedOperationException())
                         {
                         }
                     }
@@ -864,9 +860,7 @@ namespace Lucene.Net.Index
                 writer.Dispose();
                 Assert.Fail("should not have succeeded to impersonate an old format!");
             }
-#pragma warning disable 168
-            catch (NotSupportedException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 writer.Rollback();
             }

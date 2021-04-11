@@ -122,7 +122,7 @@ namespace Lucene.Net.Search.Highlight
                     }
                 }
             }
-            catch (NotSupportedException) // LUCENENET: IDE0059: Remove unnecessary value assignment
+            catch (Exception ignore) when (ignore.IsUnsupportedOperationException())
             {
                 //this is non-fatal for our purposes
             }

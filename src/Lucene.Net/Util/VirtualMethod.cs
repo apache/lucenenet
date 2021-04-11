@@ -134,7 +134,7 @@ namespace Lucene.Net.Util
                     throw new NotSupportedException("VirtualMethod instances must be singletons and therefore " + "assigned to static final members in the same class, they use as baseClass ctor param.");
                 }
             }
-            catch (NotSupportedException nsme)
+            catch (MissingMethodException nsme)
             {
                 throw new ArgumentException(baseClass.Name + " has no such method: " + nsme.Message, nsme);
             }

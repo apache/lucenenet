@@ -175,9 +175,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 SetAnalyzeRangeTerms(GetParser(null), true);
                 base.TestCollatedRange();
             }
-#pragma warning disable 168
-            catch (NotSupportedException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
             }
@@ -191,9 +189,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 SetAutoGeneratePhraseQueries(GetParser(null), true);
                 base.TestAutoGeneratePhraseQueriesOn();
             }
-#pragma warning disable 168
-            catch (NotSupportedException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 // expected
             }

@@ -1,4 +1,4 @@
-using Lucene.Net.Codecs.Lucene45;
+﻿using Lucene.Net.Codecs.Lucene45;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
@@ -242,13 +242,13 @@ namespace Lucene.Net.Codecs.Asserting
                     T v = iterator.Current;
                     if (Debugging.AssertsEnabled) Debugging.Assert(allowNull || v != null);
 
-                    // LUCENE.NET specific. removed call to Reset().
+                    // LUCENENET specific - .NET doesn't support remove
                     //try
                     //{
-                    //    iterator.Reset();
+                    //    iterator.remove();
                     //    throw new InvalidOperationException("broken iterator (supports remove): " + iterator);
                     //}
-                    //catch (NotSupportedException)
+                    //catch (Exception expected) when (e.IsUnsupportedOperationException())
                     //{
                     //    // ok
                     //}
