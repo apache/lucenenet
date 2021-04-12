@@ -83,7 +83,7 @@ namespace Lucene.Net.Replicator
                 replicator.ObtainFile(res.Id, entry.Key, entry.Value.First().FileName);
                 fail("should have failed on AlreadyClosedException");
             }
-            catch (ObjectDisposedException)
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // expected
             }
@@ -98,7 +98,7 @@ namespace Lucene.Net.Replicator
                 replicator.Publish(CreateRevision(2));
                 fail("should have failed on AlreadyClosedException");
             }
-            catch (ObjectDisposedException)
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // expected
             }
@@ -113,7 +113,7 @@ namespace Lucene.Net.Replicator
                 replicator.CheckForUpdate(null);
                 fail("should have failed on AlreadyClosedException");
             }
-            catch (ObjectDisposedException)
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // expected
             }

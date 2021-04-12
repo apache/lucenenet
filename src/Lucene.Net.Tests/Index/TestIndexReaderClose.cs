@@ -89,9 +89,7 @@ namespace Lucene.Net.Index
                     var aaa = reader.Fields;
                     Assert.Fail("we are closed");
                 }
-#pragma warning disable 168
-                catch (ObjectDisposedException ex)
-#pragma warning restore 168
+                catch (Exception ex) when (ex.IsAlreadyClosedException())
                 {
                 }
 

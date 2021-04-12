@@ -315,7 +315,7 @@ namespace Lucene.Net.Util
                             }
                         }
                     }
-                    catch (ObjectDisposedException)
+                    catch (Exception ace) when (ace.IsAlreadyClosedException())
                     {
                         // ignore this reader
                     }

@@ -145,9 +145,7 @@ namespace Lucene.Net.Index
                 pr.Document(0);
                 Assert.Fail("ParallelAtomicReader should be already closed because inner reader was closed!");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // pass
             }

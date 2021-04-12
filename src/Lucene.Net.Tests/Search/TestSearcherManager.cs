@@ -303,9 +303,7 @@ namespace Lucene.Net.Search
                 searcherManager.Acquire();
                 fail("already closed");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException ex)
-#pragma warning restore 168
+            catch (Exception ex) when (ex.IsAlreadyClosedException())
             {
                 // expected
             }
@@ -387,7 +385,7 @@ namespace Lucene.Net.Search
                     searcherManager.MaybeRefresh();
                     success.Value = (true);
                 }
-                catch (ObjectDisposedException)
+                catch (Exception e) when (e.IsAlreadyClosedException())
                 {
                     // expected
                 }
@@ -470,9 +468,7 @@ namespace Lucene.Net.Search
                 // this should fail
                 sm.Acquire();
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // ok
             }
@@ -482,9 +478,7 @@ namespace Lucene.Net.Search
                 // this should fail
                 sm.MaybeRefresh();
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // ok
             }

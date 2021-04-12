@@ -148,7 +148,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 dtw.AddCategory(new FacetLabel("a"));
                 fail("should not have succeeded to add a category following rollback.");
             }
-            catch (ObjectDisposedException)
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // expected
             }
@@ -181,7 +181,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 dtw.AddCategory(new FacetLabel("a"));
                 fail("should not have succeeded to add a category following close.");
             }
-            catch (ObjectDisposedException)
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // expected
             }

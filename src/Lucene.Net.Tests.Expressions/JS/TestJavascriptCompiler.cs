@@ -179,7 +179,7 @@ namespace Lucene.Net.Expressions.JS
                 JavascriptCompiler.Compile(null);
                 Assert.Fail();
             }
-            catch (Exception expected)when (expected.IsNullPointerException())
+            catch (Exception expected) when (expected.IsNullPointerException())
             {
                 // expected
             }

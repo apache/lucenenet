@@ -457,9 +457,7 @@ namespace Lucene.Net.Index
                         {
                             finalWriter.AddDocument(doc);
                         }
-#pragma warning disable 168
-                        catch (ObjectDisposedException e)
-#pragma warning restore 168
+                        catch (Exception e) when (e.IsAlreadyClosedException())
                         {
                             done = true;
                             break;
