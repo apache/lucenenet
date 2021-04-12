@@ -369,27 +369,27 @@ namespace Lucene.Net.Queries.Mlt
         }
 
         /// <summary>
-        /// Create the More like query from a <see cref="T:Util.PriorityQueue{object[]}"/>
+        /// Create the More like query from a <see cref="PriorityQueue{T}"/>
         /// </summary>
-        private Query CreateQuery(Util.PriorityQueue<object[]> q)
+        // LUCENENET: Factored out the object[] to avoid boxing
+        private Query CreateQuery(PriorityQueue<ScoreTerm> q)
         {
             BooleanQuery query = new BooleanQuery();
-            object cur;
+            ScoreTerm cur;
             int qterms = 0;
             float bestScore = 0;
 
             while ((cur = q.Pop()) != null)
             {
-                var ar = (object[])cur;
-                var tq = new TermQuery(new Term((string)ar[1], (string)ar[0]));
+                var tq = new TermQuery(new Term(cur.TopField, cur.Word));
 
                 if (ApplyBoost)
                 {
                     if (qterms == 0)
                     {
-                        bestScore = ((float)ar[2]);
+                        bestScore = cur.Score;
                     }
-                    float myScore = ((float)ar[2]);
+                    float myScore = cur.Score;
 
                     tq.Boost = boostFactor * myScore / bestScore;
                 }
@@ -414,11 +414,12 @@ namespace Lucene.Net.Queries.Mlt
         }
 
         /// <summary>
-        /// Create a <see cref="T:Util.PriorityQueue{object[]}"/> from a word-&gt;tf map.
+        /// Create a <see cref="PriorityQueue{T}"/> from a word-&gt;tf map.
         /// </summary>
         /// <param name="words"> a map of words keyed on the word(<see cref="string"/>) with <see cref="Int32"/> objects as the values. </param>
         /// <exception cref="IOException"/>
-        private Util.PriorityQueue<object[]> CreateQueue(IDictionary<string, Int32> words)
+        // LUCENENET: Factored out the object[] to avoid boxing
+        private PriorityQueue<ScoreTerm> CreateQueue(IDictionary<string, Int32> words)
         {
             // have collected all words in doc and their freqs
             int numDocs = ir.NumDocs;
@@ -461,7 +462,7 @@ namespace Lucene.Net.Queries.Mlt
                 float score = tf * idf;
 
                 // only really need 1st 3 entries, other ones are for troubleshooting
-                res.InsertWithOverflow(new object[] { word, topField, score, idf, docFreq, tf }); // freq in all docs -  idf -  overall score -  the top field -  the word
+                res.InsertWithOverflow(new ScoreTerm(word, topField, score, idf, docFreq, tf)); // freq in all docs -  idf -  overall score -  the top field -  the word
             }
             return res;
         }
@@ -494,7 +495,7 @@ namespace Lucene.Net.Queries.Mlt
         /// </summary>
         /// <param name="docNum"> the id of the lucene document from which to find terms </param>
         /// <exception cref="IOException"/>
-        public Util.PriorityQueue<object[]> RetrieveTerms(int docNum)
+        public PriorityQueue<ScoreTerm> RetrieveTerms(int docNum)
         {
             IDictionary<string, Int32> termFreqMap = new Dictionary<string, Int32>();
             foreach (string fieldName in FieldNames)
@@ -534,9 +535,9 @@ namespace Lucene.Net.Queries.Mlt
         }
 
         /// <summary>
-        /// Adds terms and frequencies found in vector into the <see cref="T:IDictionary{string, Int}"/> <paramref name="termFreqMap"/>
+        /// Adds terms and frequencies found in vector into the <see cref="T:IDictionary{string, Int32}"/> <paramref name="termFreqMap"/>
         /// </summary>
-        /// <param name="termFreqMap"> a <see cref="T:IDictionary{string, Int}"/> of terms and their frequencies </param>
+        /// <param name="termFreqMap"> a <see cref="T:IDictionary{string, Int32}"/> of terms and their frequencies </param>
         /// <param name="vector"> List of terms and their frequencies for a doc/field </param>
         private void AddTermFrequencies(IDictionary<string, Int32> termFreqMap, Terms vector)
         {
@@ -618,7 +619,6 @@ namespace Lucene.Net.Queries.Mlt
             }
         }
 
-
         /// <summary>
         /// determines if the passed term is likely to be of interest in "more like" comparisons
         /// </summary>
@@ -638,21 +638,20 @@ namespace Lucene.Net.Queries.Mlt
             return StopWords != null && StopWords.Contains(term);
         }
 
-
         /// <summary>
         /// Find words for a more-like-this query former.
-        /// The result is a priority queue of arrays with one entry for <b>every word</b> in the document.
-        /// Each array has 6 elements.
-        /// The elements are:
+        /// The result is a priority queue of <see cref="ScoreTerm"/> objects with one entry for <b>every word</b> in the document.
+        /// Each object has 6 properties.
+        /// The properties are:
         /// <list type="bullet">
-        ///     <item><description>The word (<see cref="string"/>)</description></item>
-        ///     <item><description>The top field that this word comes from (<see cref="string"/>)</description></item>
-        ///     <item><description>The score for this word (<see cref="float"/>)</description></item>
-        ///     <item><description>The IDF value (<see cref="float"/>)</description></item>
-        ///     <item><description>The frequency of this word in the index (<see cref="int"/>)</description></item>
-        ///     <item><description>The frequency of this word in the source document (<see cref="int"/>)</description></item>
+        ///     <item><description>The <see cref="ScoreTerm.Word"/> (<see cref="string"/>)</description></item>
+        ///     <item><description>The <see cref="ScoreTerm.TopField"/> that this word comes from (<see cref="string"/>)</description></item>
+        ///     <item><description>The <see cref="ScoreTerm.Score"/> for this word (<see cref="float"/>)</description></item>
+        ///     <item><description>The <see cref="ScoreTerm.Idf"/> value (<see cref="float"/>)</description></item>
+        ///     <item><description>The <see cref="ScoreTerm.DocFreq"/> (frequency of this word in the index (<see cref="int"/>))</description></item>
+        ///     <item><description>The <see cref="ScoreTerm.Tf"/> (frequency of this word in the source document (<see cref="int"/>))</description></item>
         /// </list>
-        /// This is a somewhat "advanced" routine, and in general only the 1st entry in the array is of interest.
+        /// This is a somewhat "advanced" routine, and in general only the <see cref="ScoreTerm.Word"/> is of interest.
         /// This method is exposed so that you can identify the "interesting words" in a document.
         /// For an easier method to call see <see cref="RetrieveInterestingTerms(TextReader, string)"/>.
         /// </summary>
@@ -661,7 +660,8 @@ namespace Lucene.Net.Queries.Mlt
         /// <returns> the most interesting words in the document ordered by score, with the highest scoring, or best entry, first </returns>
         /// <exception cref="IOException"/>
         /// <seealso cref="RetrieveInterestingTerms(TextReader, string)"/>
-        public Util.PriorityQueue<object[]> RetrieveTerms(TextReader r, string fieldName)
+        // LUCENENET: Factored out the object[] to avoid boxing
+        public PriorityQueue<ScoreTerm> RetrieveTerms(TextReader r, string fieldName)
         {
             IDictionary<string, Int32> words = new Dictionary<string, Int32>();
             AddTermFrequencies(r, words, fieldName);
@@ -673,13 +673,12 @@ namespace Lucene.Net.Queries.Mlt
         {
             var al = new List<string>(MaxQueryTerms);
             var pq = RetrieveTerms(docNum);
-            object cur;
+            ScoreTerm scoreTerm;
             int lim = MaxQueryTerms; // have to be careful, retrieveTerms returns all words but that's probably not useful to our caller...
             // we just want to return the top words
-            while (((cur = pq.Pop()) != null) && lim-- > 0)
+            while (((scoreTerm = pq.Pop()) != null) && lim-- > 0)
             {
-                var ar = (object[])cur;
-                al.Add(ar[0].ToString()); // the 1st entry is the interesting word
+                al.Add(scoreTerm.Word); // the interesting word
             }
             return al.ToArray();
         }
@@ -693,36 +692,35 @@ namespace Lucene.Net.Queries.Mlt
         /// <returns> the most interesting words in the document </returns>
         /// <seealso cref="RetrieveTerms(TextReader, string)"/>
         /// <seealso cref="MaxQueryTerms"/>
+        // LUCENENET: Factored out the object[] to avoid boxing
         public string[] RetrieveInterestingTerms(TextReader r, string fieldName)
         {
             var al = new List<string>(MaxQueryTerms);
-            Util.PriorityQueue<object[]> pq = RetrieveTerms(r, fieldName);
-            object cur;
+            PriorityQueue<ScoreTerm> pq = RetrieveTerms(r, fieldName);
+            ScoreTerm scoreTerm;
             int lim = MaxQueryTerms; // have to be careful, retrieveTerms returns all words but that's probably not useful to our caller...
             // we just want to return the top words
-            while (((cur = pq.Pop()) != null) && lim-- > 0)
+            while (((scoreTerm = pq.Pop()) != null) && lim-- > 0)
             {
-                var ar = (object[])cur;
-                al.Add(ar[0].ToString()); // the 1st entry is the interesting word
+                al.Add(scoreTerm.Word); // the interesting word
             }
             return al.ToArray();
         }
 
         /// <summary>
-        /// <see cref="T:Util.PriorityQueue{object[]}"/> that orders words by score.
+        /// <see cref="PriorityQueue{T}"/> that orders words by score.
         /// </summary>
-        private class FreqQ : Util.PriorityQueue<object[]>
+        private class FreqQ : PriorityQueue<ScoreTerm>
         {
             internal FreqQ(int s)
                 : base(s)
             {
             }
 
-            protected internal override bool LessThan(object[] aa, object[] bb)
+            // LUCENENET: Factored out the object[] to avoid boxing
+            protected internal override bool LessThan(ScoreTerm aa, ScoreTerm bb)
             {
-                float? fa = (float?)aa[2];
-                float? fb = (float?)bb[2];
-                return fa > fb;
+                return aa.Score > bb.Score;
             }
         }
 
@@ -740,5 +738,54 @@ namespace Lucene.Net.Queries.Mlt
                 x = 1;
             }
         }
+    }
+
+    /// <summary>
+    /// An "interesting word" and related top field, score and frequency information.
+    /// </summary>
+    // LUCENENET specific - added this class to use as the PriorityQueue element to avoid
+    // boxing with value types in an object[] array. This uses the same name as the one
+    // from Lucene 8.2.0 for forward compatibility, however in that version it is internal.
+    public class ScoreTerm
+    {
+        internal ScoreTerm(string word, string topField, float score, float idf, int docFreq, int tf)
+        {
+            Word = word ?? throw new ArgumentNullException(nameof(word));
+            TopField = topField ?? throw new ArgumentNullException(nameof(topField));
+            Score = score;
+            Idf = idf;
+            DocFreq = docFreq;
+            Tf = tf;
+        }
+
+        /// <summary>
+        /// Gets the word.
+        /// </summary>
+        public string Word { get; private set; }
+
+        /// <summary>
+        /// Gets the top field that this word comes from.
+        /// </summary>
+        public string TopField { get; private set; }
+
+        /// <summary>
+        /// Gets the score for this word (<see cref="float"/>).
+        /// </summary>
+        public float Score { get; private set; }
+
+        /// <summary>
+        /// Gets the inverse document frequency (IDF) value (<see cref="float"/>).
+        /// </summary>
+        public float Idf { get; private set; }
+
+        /// <summary>
+        /// Gets the frequency of this word in the index (<see cref="int"/>).
+        /// </summary>
+        public int DocFreq { get; private set; }
+
+        /// <summary>
+        /// Gets the frequency of this word in the source document (<see cref="int"/>).
+        /// </summary>
+        public int Tf { get; private set; }
     }
 }
