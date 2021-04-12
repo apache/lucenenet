@@ -775,7 +775,7 @@ namespace Lucene.Net.Index
                                     }
                                     writerRef.Value.Commit();
                                 }
-                                catch (ObjectDisposedException)
+                                catch (Exception ace) when (ace.IsAlreadyClosedException())
                                 {
                                     // ok
                                 }
@@ -798,7 +798,7 @@ namespace Lucene.Net.Index
                                 {
                                     writerRef.Value.AddDocument(docs.NextDoc());
                                 }
-                                catch (ObjectDisposedException)
+                                catch (Exception ace) when (ace.IsAlreadyClosedException())
                                 {
                                     // ok
                                 }

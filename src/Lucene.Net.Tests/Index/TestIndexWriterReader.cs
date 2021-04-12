@@ -844,9 +844,7 @@ namespace Lucene.Net.Index
                 DirectoryReader.OpenIfChanged(r);
                 Assert.Fail("failed to hit ObjectDisposedException");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException ace)
-#pragma warning restore 168
+            catch (Exception ace) when (ace.IsAlreadyClosedException())
             {
                 // expected
             }

@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -74,9 +74,7 @@ namespace Lucene.Net.Index
             {
                 searcher.Search(query, 5);
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException ace)
-#pragma warning restore 168
+            catch (Exception ace) when (ace.IsAlreadyClosedException())
             {
                 // expected
             }
@@ -98,7 +96,7 @@ namespace Lucene.Net.Index
             {
                 searcher.Search(query, 5);
             }
-            catch (ObjectDisposedException ace)
+            catch (Exception ace) when (ace.IsAlreadyClosedException())
             {
                 //Assert.AreEqual("this IndexReader cannot be used anymore as one of its child readers was closed", ace.Message);
                 // LUCENENET specific - ObjectDisposedExeption appends the type of object to the end of the message,

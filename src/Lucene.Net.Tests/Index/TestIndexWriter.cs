@@ -259,9 +259,7 @@ namespace Lucene.Net.Index
                 AddDoc(writer);
                 Assert.Fail("did not hit ObjectDisposedException");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // expected
             }

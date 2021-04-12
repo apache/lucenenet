@@ -120,7 +120,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 var _ = ltr.Count;
                 fail("An ObjectDisposedException should have been thrown here");
             }
-            catch (ObjectDisposedException)
+            catch (Exception ace) when (ace.IsAlreadyClosedException())
             {
                 // good!
             }

@@ -50,9 +50,7 @@ namespace Lucene.Net.Store
                     dir.CreateOutput("test", NewIOContext(Random));
                     Assert.Fail("did not hit expected exception");
                 }
-#pragma warning disable 168
-                catch (ObjectDisposedException ace)
-#pragma warning restore 168
+                catch (Exception ace) when (ace.IsAlreadyClosedException())
                 {
                 }
             }

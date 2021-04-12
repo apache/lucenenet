@@ -292,16 +292,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestReadAfterClose()
         {
-            try
-            {
-                Demo_FSIndexInputBug(dir, "test");
-            }
-#pragma warning disable 168
-            catch (ObjectDisposedException ode)
-#pragma warning restore 168
-            {
-                // expected
-            }
+            Demo_FSIndexInputBug(dir, "test");
         }
 
         private void Demo_FSIndexInputBug(Directory fsdir, string file)

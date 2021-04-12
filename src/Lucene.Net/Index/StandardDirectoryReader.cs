@@ -480,7 +480,7 @@ namespace Lucene.Net.Index
                 {
                     writer.DecRefDeleter(segmentInfos);
                 }
-                catch (ObjectDisposedException) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                catch (Exception ex) when (ex.IsAlreadyClosedException())
                 {
                     // this is OK, it just means our original writer was
                     // closed before we were, and this may leave some
