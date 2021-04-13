@@ -100,6 +100,8 @@ namespace Lucene.Net.Replicator
             {
                 // give client a chance to update
                 Thread.Sleep(100);
+                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException.
+
                 try
                 {
                     DirectoryReader reader = DirectoryReader.Open(dir);

@@ -77,14 +77,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 {
                     while (tuple == null && nmde == null && !threadDone && !stopped)
                     {
-                        //try
-                        //{
-                            Monitor.Wait(this);
-                        //}
-                        //catch (ThreadInterruptedException ie)
-                        //{
-                        //    throw new ThreadInterruptedException(ie.ToString(), ie);
-                        //}
+                        Monitor.Wait(this);
+                        // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException. Note that it could be thrown above on lock (this).
                     }
                     if (tuple != null)
                     {
@@ -148,14 +142,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                             {
                                 while (tuple != null && !stopped)
                                 {
-                                    //try
-                                    //{
-                                        Monitor.Wait(this); //wait();
-                                    //}
-                                    //catch (ThreadInterruptedException ie)
-                                    //{
-                                    //    throw new ThreadInterruptedException(ie.ToString(), ie);
-                                    //}
+                                    Monitor.Wait(this);
+                                    // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException. Note that it could be thrown above on lock (this).
                                 }
                                 tuple = tmpTuple;
                                 Monitor.Pulse(this); //notify();

@@ -202,7 +202,7 @@ namespace Lucene.Net.Index
                 {
                     latch.Wait();
                 }
-                catch (ThreadInterruptedException e)
+                catch (Exception e) when (e.IsInterruptedException())
                 {
                     failed = e;
                     return;

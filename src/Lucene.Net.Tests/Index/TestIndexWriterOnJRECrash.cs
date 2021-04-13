@@ -108,7 +108,7 @@
 //                {
 //                    Thread.Sleep(CrashTime);
 //                }
-//                catch (ThreadInterruptedException e)
+//                catch (Exception e) when (e.IsInterruptedException())
 //                {
 //                }
 //                outerInstance.CrashJRE();

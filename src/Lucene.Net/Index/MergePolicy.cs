@@ -292,7 +292,7 @@ namespace Lucene.Net.Index
                             // do 1000 msec, defensively
                             Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
                         }
-                        catch (ThreadInterruptedException ie)
+                        catch (Exception ie) when (ie.IsInterruptedException())
                         {
                             throw new Exception(ie.ToString(), ie);
                         }

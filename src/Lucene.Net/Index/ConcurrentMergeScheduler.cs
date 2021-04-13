@@ -342,9 +342,7 @@ namespace Lucene.Net.Index
                         {
                             toSync.Join();
                         }
-#pragma warning disable 168
-                        catch (ThreadInterruptedException ie)
-#pragma warning restore 168
+                        catch (Exception ie) when (ie.IsInterruptedException())
                         {
                             // ignore this Exception, we will retry until all threads are dead
                             interrupted = true;
@@ -436,14 +434,8 @@ namespace Lucene.Net.Index
                         {
                             Message("    too many merges; stalling...");
                         }
-                        //try
-                        //{
                         Monitor.Wait(this);
-                        //}
-                        //catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-                        //{
-                        //    throw new ThreadInterruptedException(ie.ToString(), ie);
-                        //}
+                        // LUCENENET: Just let ThreadInterruptedException propagate. Note that it could be thrown above on lock (this).
                     }
 
                     if (IsVerbose)
@@ -705,8 +697,8 @@ namespace Lucene.Net.Index
             // so, we sleep here to avoid saturating CPU in such
             // cases:
             Thread.Sleep(250);
-            // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
             throw new MergePolicy.MergeException(exc, m_dir);
+            // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
         }
 
         private bool suppressExceptions;

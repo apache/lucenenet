@@ -272,10 +272,9 @@ namespace Lucene.Net.Index
                             {
                                 Assert.IsTrue(sync.await());
                             }
-                            catch (ThreadInterruptedException /*e*/)
+                            catch (Exception e) when (e.IsInterruptedException())
                             {
                                 Console.WriteLine("[Waiter] got interrupted - wait count: " + sync.waiter.CurrentCount);
-                                //throw new ThreadInterruptedException("Thread Interrupted Exception", e);
                                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
                         }
@@ -328,10 +327,9 @@ namespace Lucene.Net.Index
                             {
                                 Assert.IsTrue(sync.await());
                             }
-                            catch (ThreadInterruptedException /*e*/)
+                            catch (Exception e) when (e.IsInterruptedException())
                             {
                                 Console.WriteLine("[Updater] got interrupted - wait count: " + sync.waiter.CurrentCount);
-                                //throw new ThreadInterruptedException("Thread Interrupted Exception", e);
                                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
                             // LUCENENET: Not sure why this catch block was added, but I suspect it was for debugging purposes. Commented it rather than removing it because

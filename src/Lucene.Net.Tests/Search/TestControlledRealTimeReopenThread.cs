@@ -498,7 +498,7 @@ namespace Lucene.Net.Search
                 {
                     thread.WaitForGeneration(lastGen);
                 }
-                catch (ThreadInterruptedException ie)
+                catch (Exception ie) when (ie.IsInterruptedException())
                 {
                     Thread.CurrentThread.Interrupt();
                     throw new Exception(ie.Message, ie);
