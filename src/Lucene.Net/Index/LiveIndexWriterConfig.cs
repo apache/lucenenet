@@ -494,20 +494,8 @@ namespace Lucene.Net.Index
         /// Returns the max number of simultaneous threads that may be indexing
         /// documents at once in <see cref="IndexWriter"/>.
         /// </summary>
-        public virtual int MaxThreadStates
-        {
-            get
-            {
-                try
-                {
-                    return indexerThreadPool.MaxThreadStates;
-                }
-                catch (InvalidCastException cce)
-                {
-                    throw new InvalidOperationException(cce.Message, cce);
-                }
-            }
-        }
+        // LUCENENET: Changes brought over from 4.8.1 mean there is no chance of a cast failure
+        public virtual int MaxThreadStates => indexerThreadPool.MaxThreadStates;
 
         /// <summary>
         /// Returns <c>true</c> if <see cref="IndexWriter"/> should pool readers even if

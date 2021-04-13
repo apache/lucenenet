@@ -364,17 +364,8 @@ namespace Lucene.Net.Index
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new public int MaxThreadStates
         {
-            get
-            {
-                try
-                {
-                    return indexerThreadPool.MaxThreadStates;
-                }
-                catch (InvalidCastException cce)
-                {
-                    throw new InvalidOperationException(cce.Message, cce);
-                }
-            }
+            // LUCENENET: Changes brought over from 4.8.1 mean there is no chance of a cast failure
+            get => indexerThreadPool.MaxThreadStates;
             set => this.indexerThreadPool = new DocumentsWriterPerThreadPool(value);
         }
 
