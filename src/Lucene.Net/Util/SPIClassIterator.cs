@@ -97,7 +97,6 @@ namespace Lucene.Net.Util
                                 types.Add(type);
                             }
                         }
-#pragma warning disable CA1031 // Do not catch general exception types
                         catch
                         {
                             // swallow
@@ -108,7 +107,6 @@ namespace Lucene.Net.Util
                 {
                     // swallow
                 }
-#pragma warning restore CA1031 // Do not catch general exception types
             }
             return types;
         }
@@ -137,144 +135,4 @@ namespace Lucene.Net.Util
             return GetEnumerator();
         }
     }
-
-    /* Being Re-written
-    public sealed class SPIClassIterator<S> : IEnumerator<Type>
-    {
-      private const string META_INF_SERVICES = "META-INF/services/";
-
-      private readonly Type Clazz;
-      private readonly ClassLoader Loader;
-      private readonly IEnumerator<URL> ProfilesEnum;
-      private IEnumerator<string> LinesIterator;
-
-      public static SPIClassIterator<S> Get<S>(Type clazz)
-      {
-        return new SPIClassIterator<S>(clazz, Thread.CurrentThread.ContextClassLoader);
-      }
-
-      public static SPIClassIterator<S> Get<S>(Type clazz, ClassLoader loader)
-      {
-        return new SPIClassIterator<S>(clazz, loader);
-      }
-
-      /// <summary>
-      /// Utility method to check if some class loader is a (grand-)parent of or the same as another one.
-      /// this means the child will be able to load all classes from the parent, too.
-      /// </summary>
-      public static bool IsParentClassLoader(ClassLoader parent, ClassLoader child)
-      {
-        while (child != null)
-        {
-          if (child == parent)
-          {
-            return true;
-          }
-          child = child.Parent;
-        }
-        return false;
-      }
-
-      private SPIClassIterator(Type clazz, ClassLoader loader)
-      {
-        this.Clazz = clazz;
-        try
-        {
-          string fullName = META_INF_SERVICES + clazz.Name;
-          this.ProfilesEnum = (loader == null) ? ClassLoader.getSystemResources(fullName) : loader.getResources(fullName);
-        }
-        catch (Exception ioe) when (ioe.IsIOException())
-        {
-          throw new ServiceConfigurationError("Error loading SPI profiles for type " + clazz.Name + " from classpath", ioe);
-        }
-        this.Loader = (loader == null) ? ClassLoader.SystemClassLoader : loader;
-        this.LinesIterator = Collections.emptySet<string>().GetEnumerator();
-      }
-
-      private bool LoadNextProfile()
-      {
-        List<string> lines = null;
-        while (ProfilesEnum.MoveNext())
-        {
-          if (lines != null)
-          {
-            lines.Clear();
-          }
-          else
-          {
-            lines = new List<string>();
-          }
-          URL url = ProfilesEnum.Current;
-          try
-          {
-            InputStream @in = url.openStream();
-            IOException priorE = null;
-            try
-            {
-              BufferedReader reader = new BufferedReader(new InputStreamReader(@in, IOUtils.CHARSET_UTF_8));
-              string line;
-              while ((line = reader.readLine()) != null)
-              {
-                int pos = line.IndexOf('#');
-                if (pos >= 0)
-                {
-                  line = line.Substring(0, pos);
-                }
-                line = line.Trim();
-                if (line.Length > 0)
-                {
-                  lines.Add(line);
-                }
-              }
-            }
-            catch (Exception ioe) when (ioe.IsIOException())
-            {
-              priorE = ioe;
-            }
-            finally
-            {
-              IOUtils.CloseWhileHandlingException(priorE, @in);
-            }
-          }
-          catch (Exception ioe) when (ioe.IsIOException())
-          {
-            throw new ServiceConfigurationError("Error loading SPI class list from URL: " + url, ioe);
-          }
-          if (lines.Count > 0)
-          {
-            this.LinesIterator = lines.GetEnumerator();
-            return true;
-          }
-        }
-        return false;
-      }
-
-      public override bool HasNext()
-      {
-      }
-
-      public override Type Next()
-      {
-        // hasNext() implicitely loads the next profile, so it is essential to call this here!
-        if (!HasNext())
-        {
-          throw new NoSuchElementException();
-        }
-        string c = LinesIterator.next();
-        try
-        {
-          // don't initialize the class (pass false as 2nd parameter):
-          return Type.GetType(c, false, Loader).asSubclass(Clazz);
-        }
-        catch (ClassNotFoundException cnfe)
-        {
-          throw new ServiceConfigurationError(string.format(Locale.ROOT, "A SPI class of type %s with classname %s does not exist, " + "please fix the file '%s%1$s' in your classpath.", Clazz.Name, c, META_INF_SERVICES));
-        }
-      }
-
-      public override void Remove()
-      {
-        throw new NotSupportedException();
-      }
-    }*/
 }
