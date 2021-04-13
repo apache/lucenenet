@@ -891,7 +891,7 @@ namespace Lucene.Net.Analysis.Core
                     descr.append("(").append(@params).append(")");
                     return instance;
                 }
-                catch (TargetInvocationException ite)
+                catch (Exception ite) when (ite.IsInvocationTargetException())
                 {
                     if (ite.InnerException != null && (ite.InnerException.GetType().Equals(typeof(ArgumentException))
                         || ite.InnerException.GetType().Equals(typeof(ArgumentOutOfRangeException))
@@ -910,13 +910,15 @@ namespace Lucene.Net.Analysis.Core
                         throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
                 }
-                //catch (IllegalAccessException iae)
+                // LUCENENET: These are not necessary because all they do is catch and re-throw as an "unchecked"
+                // exception type, which .NET doesn't care about. Just let them propagate instead of catching.
+                //catch (Exception iae) when (iae.IsIllegalAccessException())
                 //{
-                //    Rethrow.rethrow(iae);
+                //    throw;
                 //}
-                //catch (InstantiationException ie)
+                //catch (Exception ie) when (ie.IsInstantiationException())
                 //{
-                //    Rethrow.rethrow(ie);
+                //    throw;
                 //}
                 return default; // no success
             }

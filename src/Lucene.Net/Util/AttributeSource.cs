@@ -77,7 +77,7 @@ namespace Lucene.Net.Util
                         // directly rather than using Activator.CreateInstance()
                         return CreateInstance(attributeType) ?? (Attribute)Activator.CreateInstance(attributeType);
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsInstantiationException() || e.IsIllegalAccessException())
                     {
                         throw new ArgumentException("Could not instantiate implementing class for " + typeof(S).FullName, e);
                     }

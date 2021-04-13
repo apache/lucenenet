@@ -142,8 +142,10 @@ namespace Lucene.Net.Util
                     reflector.Reflect(interf, f.Name, f.GetValue(this));
                 }
             }
-            catch (MemberAccessException e)
+            catch (Exception e) when (e.IsIllegalAccessException())
             {
+                // this should never happen, because we're just accessing fields
+                // from 'this'
                 throw new Exception(e.ToString(), e);
             }
         }

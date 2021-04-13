@@ -591,7 +591,7 @@ namespace Lucene.Net.Util
 
                         totalSize += cachedInfo.AlignedShallowInstanceSize;
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsIllegalAccessException())
                     {
                         // this should never happen as we enabled setAccessible().
                         throw new Exception("Reflective field access failed?", e);

@@ -325,12 +325,12 @@ namespace Lucene.Net.Collation
                 //factory = clazz.getConstructor(Map.class).newInstance(args);
                 factory = (TokenFilterFactory)Activator.CreateInstance(clazz, args);
             }
-            catch (TargetInvocationException e)
+            catch (Exception e) when (e.IsInvocationTargetException())
             {
                 // to simplify tests that check for illegal parameters
-                if (e.InnerException is ArgumentException)
+                if (e.InnerException is ArgumentException argumentException)
                 {
-                    throw (ArgumentException)e.InnerException;
+                    throw argumentException;
                 }
                 else
                 {

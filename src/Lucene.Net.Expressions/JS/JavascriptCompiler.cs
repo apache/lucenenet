@@ -185,16 +185,10 @@ namespace Lucene.Net.Expressions.JS
                         Activator.CreateInstance(dynamicType.CreateTypeInfo().AsType(), sourceText, externalsMap.Keys.ToArray());
 
             }
-
-            catch (MemberAccessException exception)
+            catch (Exception exception) when (exception.IsInstantiationException() || exception.IsIllegalAccessException() ||
+                                              exception.IsNoSuchMethodException()  || exception.IsInvocationTargetException())
             {
-                throw new InvalidOperationException("An internal error occurred attempting to compile the expression ("
-                                                    + sourceText + ").", exception);
-            }
-            catch (TargetInvocationException exception)
-            {
-                throw new InvalidOperationException("An internal error occurred attempting to compile the expression ("
-                                                    + sourceText + ").", exception);
+                throw new ArgumentException("An internal error occurred attempting to compile the expression (" + sourceText + ").", exception);
             }
         }
 

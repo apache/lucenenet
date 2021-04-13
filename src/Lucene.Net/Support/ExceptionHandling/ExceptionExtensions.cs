@@ -362,6 +362,10 @@ namespace Lucene
         /// <summary>
         /// Used to check whether <paramref name="e"/> corresponds to an InstantiationException
         /// (Reflection) in Java.
+        /// <para/>
+        /// NOTE: The current implementation is intended to work with <see cref="Activator.CreateInstance(Type)"/> and its overloads,
+        /// so if InstantiationException is used in contexts in Java other than <c>&lt;class&gt;.newInstance()</c>
+        /// or <c>Constructor.newInstance()</c>, it may require research.
         /// </summary>
         /// <param name="e">This exception.</param>
         /// <returns><c>true</c> if <paramref name="e"/> corresponds to an InstantiationException type
@@ -369,10 +373,13 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsInstantiationException(this Exception e)
         {
-            // LUCENENET: In Java, the exception comes from Reflection. In .NET, it may
-            // happen due to a class initializer that throws an uncaught exception.
-            // These 2 are definitely not the same thing, but I am not sure it makes a difference.
-            return e is TypeInitializationException;
+            // LUCENENET NOTE: This is just a best guess, being that these are the "variety of reasons"
+            // described in the javadoc that the class might not be created when using Activator.CreateInstance().
+            // The TestFactories class also seems to rule out that this is supposed to catch TargetInvocationException
+            // or security exceptions such as MemberAccessException or TypeAccessException.
+            return e is MissingMethodException ||
+                e is TypeLoadException ||
+                e is TypeInitializationException; // May happen due to a class initializer that throws an uncaught exception.
         }
 
         /// <summary>
