@@ -1217,9 +1217,7 @@ namespace Lucene.Net.Index
                 writer.Dispose();
                 Assert.Fail("OutOfMemoryError expected");
             }
-#pragma warning disable 168
-            catch (OutOfMemoryException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsOutOfMemoryError())
             {
             }
 
