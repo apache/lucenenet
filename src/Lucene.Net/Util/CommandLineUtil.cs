@@ -55,7 +55,7 @@ namespace Lucene.Net.Util
             {
                 throw new ArgumentException(clazzName + " is not a " + typeof(FSDirectory).Name + " implementation", e);
             }
-            catch (MissingMethodException e)
+            catch (Exception e) when (e.IsNoSuchMethodException())
             {
                 throw new ArgumentException(clazzName + " constructor with " + typeof(FileInfo).Name + " as parameter not found", e);
             }
