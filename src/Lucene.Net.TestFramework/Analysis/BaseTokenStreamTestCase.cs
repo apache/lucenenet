@@ -1137,7 +1137,7 @@ namespace Lucene.Net.Analysis
                             while (ts.IncrementToken()) ;
                             Assert.Fail("did not hit exception");
                         }
-                        catch (Exception re)
+                        catch (Exception re) when (re.IsRuntimeException())
                         {
                             Assert.IsTrue(MockReaderWrapper.IsMyEvilException(re));
                         }

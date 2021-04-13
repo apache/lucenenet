@@ -137,7 +137,7 @@ namespace Lucene.Net.Expressions
                     }
                     catch (Exception e) when (e.IsStackOverflowError())
                     {
-                        throw new ArgumentException("Recursion Error: Cycle detected originating in (" + expr.sourceText + ")");
+                        throw new ArgumentException("Recursion Error: Cycle detected originating in (" + expr.SourceText + ")");
                     }
 #endif
                 }

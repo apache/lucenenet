@@ -580,6 +580,9 @@ namespace Lucene.Net.Expressions.JS
             {
                 throw new ArgumentException(re.Message, re);
             }
+            // LUCENENET: Antlr 3.5.1 doesn't ever wrap ParseException, so the other catch block
+            // for RuntimeException that wraps ParseException would have
+            // been completely unnecesary in Java and is also unnecessary here.
         }
 
         /// <summary>The default set of functions available to expressions.</summary>

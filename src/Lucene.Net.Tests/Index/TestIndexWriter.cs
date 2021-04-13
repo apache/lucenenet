@@ -2584,7 +2584,7 @@ namespace Lucene.Net.Index
                     w.AddDocuments(new RandomFailingFieldIterable(docs, Random));
                     success = true;
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsRuntimeException())
                 {
                     Assert.AreEqual("boom", e.Message);
                 }

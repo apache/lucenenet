@@ -41,10 +41,10 @@ namespace Lucene.Net.Analysis.Util
             }
             try
             {
-                rl.NewInstance<TokenFilterFactory>("org.apache.lucene.analysis.FooBarFilterFactory");
+                rl.NewInstance<TokenFilterFactory>("org.apache.lucene.analysis.FooBarFilterFactory"); // LUCENENET TODO: This test is invalid because this type name doesn't work in .NET
                 fail("The class does not exist, should fail!");
             }
-            catch (Exception)
+            catch (Exception iae) when (iae.IsRuntimeException())
             {
                 // pass
             }
