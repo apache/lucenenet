@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Globalization;
@@ -68,9 +68,7 @@ namespace Lucene.Net.Util
                     }
                 }
             }
-#pragma warning disable 168
-            catch (OutOfMemoryException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsOutOfMemoryError())
             {
                 // Release and quit.
             }
@@ -151,9 +149,7 @@ namespace Lucene.Net.Util
                     }
                 }
             }
-#pragma warning disable 168
-            catch (OutOfMemoryException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsOutOfMemoryError())
             {
                 // Release and quit.
             }

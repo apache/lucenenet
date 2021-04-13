@@ -1,4 +1,4 @@
-#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+﻿#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
 using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -100,9 +100,7 @@ namespace Lucene.Net.Support
                     if (i % 1024 == 0) Console.WriteLine("Requested Mem: " + i.ToString() + " MB");
                     OOMECount = 0;
                 }
-#pragma warning disable 168
-                catch (OutOfMemoryException oom)
-#pragma warning restore 168
+                catch (Exception oom) when (oom.IsOutOfMemoryError())
                 {
                     if (OOMECount++ > 10) throw new Exception("Memory Allocation Error in B_TestOutOfMemory");
                     //Try Again. GC will eventually release some memory.
