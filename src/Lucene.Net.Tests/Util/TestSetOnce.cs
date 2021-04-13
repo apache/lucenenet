@@ -60,7 +60,7 @@ namespace Lucene.Net.Util
                 {
                     // ignore
                 }
-                catch (Exception)
+                catch (Exception e) when (e.IsRuntimeException())
                 {
                     // TODO: change exception type
                     // expected.

@@ -45,7 +45,7 @@ namespace Lucene.Net.Queries.Function.DocValues
             {
                 m_termsIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, field);
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsRuntimeException())
             {
                 throw new DocTermsIndexException(field, e);
             }
