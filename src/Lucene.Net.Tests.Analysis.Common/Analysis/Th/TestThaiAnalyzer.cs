@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 #if FEATURE_BREAKITERATOR
 using J2N.Threading;
 using Lucene.Net.Analysis.Core;
@@ -215,9 +215,7 @@ namespace Lucene.Net.Analysis.Th
                 {
                     t.Join();
                 }
-#pragma warning disable 168
-                catch (ThreadInterruptedException e)
-#pragma warning restore 168
+                catch (Exception e) when (e.IsInterruptedException())
                 {
                     fail("Thread interrupted");
                 }

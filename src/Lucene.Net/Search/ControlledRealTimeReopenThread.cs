@@ -243,7 +243,7 @@ namespace Lucene.Net.Search
                     {
                         reopenCond.WaitOne(TimeSpan.FromMilliseconds(sleepNS / Time.MILLISECONDS_PER_NANOSECOND));//Convert NS to Ticks
                     }
-                    catch (ThreadInterruptedException)
+                    catch (Exception ie) when (ie.IsInterruptedException())
                     {
                         Thread.CurrentThread.Interrupt();
                         return;

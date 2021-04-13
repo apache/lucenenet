@@ -1173,7 +1173,7 @@ namespace Lucene.Net.Index
                                 // any pending merges are waiting:
                                 mergeScheduler.Merge(this, MergeTrigger.CLOSING, false);
                             }
-                            catch (ThreadInterruptedException)
+                            catch (ThreadInterruptedException) // LUCENENET: In Lucene, they caught their custom ThreadInterruptedException here, so we are leaving this catch block as is
                             {
                                 // ignore any interruption, does not matter
                                 interrupted = true;
@@ -1193,7 +1193,7 @@ namespace Lucene.Net.Index
                                     FinishMerges(waitForMerges && !interrupted);
                                     break;
                                 }
-                                catch (ThreadInterruptedException)
+                                catch (ThreadInterruptedException) // LUCENENET: In Lucene, they caught their custom ThreadInterruptedException here, so we are leaving this catch block as is
                                 {
                                     // by setting the interrupted status, the
                                     // next call to finishMerges will pass false,

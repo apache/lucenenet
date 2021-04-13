@@ -138,6 +138,7 @@ namespace Lucene.Net.Replicator
             while (client.IsUpdateThreadAlive)
             {
                 Thread.Sleep(100);
+                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException.
 
                 try
                 {

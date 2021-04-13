@@ -878,9 +878,9 @@ namespace Lucene.Net.Search
 
                         return true;
                     }
-                    catch (ThreadInterruptedException /*e*/)
+                    catch (Exception e) when (e.IsInterruptedException())
                     {
-                        //throw new ThreadInterruptedException(e.ToString(), e);
+                        // LUCENENET: Throwing as same type, no need to wrap here
                         throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
                     catch (Exception e)

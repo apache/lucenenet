@@ -1332,7 +1332,7 @@ namespace Lucene.Net.Index
                             allowInterrupt = true;
                         }
                     }
-                    catch (ThreadInterruptedException re)
+                    catch (ThreadInterruptedException re) // LUCENENET: This was a custom wrapper type named ThreadInterruptedException in Lucene, so leaving the catch block as is
                     {
                         // NOTE: important to leave this verbosity/noise
                         // on!!  this test doesn't repro easily so when
@@ -1378,7 +1378,7 @@ namespace Lucene.Net.Index
                         // LUCENENET specific - there is a chance that our thread will be
                         // interrupted here, so we need to catch and ignore that exception
                         // when our MockDirectoryWrapper throws it.
-                        catch (ThreadInterruptedException)
+                        catch (Exception e) when (e.IsInterruptedException())
                         {
                             // ignore
                         }

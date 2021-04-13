@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -58,7 +58,7 @@ namespace Lucene.Net
                 {
                     Thread.Sleep(10000);
                 }
-                catch (ThreadInterruptedException)
+                catch (Exception e) when (e.IsInterruptedException())
                 {
                     // Ignore.
                 }
@@ -140,7 +140,7 @@ namespace Lucene.Net
                 {
                     Thread.Sleep(1000);
                 }
-                catch (ThreadInterruptedException)
+                catch (Exception e) when (e.IsInterruptedException())
                 {
                 }
             }
