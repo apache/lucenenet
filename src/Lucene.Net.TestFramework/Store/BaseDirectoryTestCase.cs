@@ -556,7 +556,7 @@ namespace Lucene.Net.Store
 
         //                                    // Just open, nothing else.
         //                                }
-        //                                catch (UnauthorizedAccessException e)
+        //                                catch (Exception e) when (e.IsAccessDeniedException())
         //                                {
         //                                    // Access denied is allowed for files for which the output is still open (MockDirectoryWriter enforces
         //                                    // this, for example). Since we don't synchronize with the writer thread, just ignore it.
