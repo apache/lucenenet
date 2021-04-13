@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -54,9 +54,7 @@ namespace Lucene.Net.Util
                     RamUsageEstimator.SizeOf(first); // cause SOE or pass.
                     lower = mid;
                 }
-#pragma warning disable 168
-                catch (StackOverflowException e)
-#pragma warning restore 168
+                catch (Exception e) when (e.IsStackOverflowError())
                 {
                     upper = mid;
                 }

@@ -1,4 +1,4 @@
-using Lucene.Net.Queries.Function;
+﻿using Lucene.Net.Queries.Function;
 using Lucene.Net.Queries.Function.ValueSources;
 using Lucene.Net.Search;
 using System;
@@ -128,7 +128,18 @@ namespace Lucene.Net.Expressions
             {
                 if (o is Expression expr)
                 {
-                    expr.GetValueSource(this);
+#if FEATURE_STACKOVERFLOWEXCEPTION__ISCATCHABLE
+                    try
+                    {
+#endif
+                        expr.GetValueSource(this);
+#if FEATURE_STACKOVERFLOWEXCEPTION__ISCATCHABLE
+                    }
+                    catch (Exception e) when (e.IsStackOverflowError())
+                    {
+                        throw new ArgumentException("Recursion Error: Cycle detected originating in (" + expr.sourceText + ")");
+                    }
+#endif
                 }
             }
         }
