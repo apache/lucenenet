@@ -83,7 +83,7 @@ namespace Lucene.Net.Store
             try
             {
                 c = Type.GetType(lockFactoryClassName);
-                if (c == null)
+                if (c is null)
                 {
                     // LUCENENET: try again, this time with the Store namespace
                     c = Type.GetType("Lucene.Net.Store." + lockFactoryClassName);
@@ -99,17 +99,14 @@ namespace Lucene.Net.Store
             {
                 lockFactory = (LockFactory)Activator.CreateInstance(c);
             }
-            catch (UnauthorizedAccessException e)
+            catch (Exception e) when (e.IsIllegalAccessException() || e.IsInstantiationException() || e.IsClassNotFoundException())
             {
                 throw new IOException("Cannot instantiate lock factory " + lockFactoryClassName, e);
             }
-            catch (InvalidCastException e)
+            // LUCENENET specific - added more explicit exception message in this case
+            catch (Exception e) when (e.IsClassCastException())
             {
                 throw new IOException("unable to cast LockClass " + lockFactoryClassName + " instance to a LockFactory", e);
-            }
-            catch (Exception e)
-            {
-                throw new IOException("InstantiationException when instantiating LockClass " + lockFactoryClassName, e);
             }
 
             DirectoryInfo lockDir = new DirectoryInfo(lockDirName);

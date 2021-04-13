@@ -174,7 +174,7 @@ namespace Lucene.Net.Search.Suggest
                 //lookup = cls.newInstance();
                 lookup = (Lookup)Activator.CreateInstance(cls);
             }
-            catch (MissingMethodException /*e*/)
+            catch (Exception e) when (e.IsInstantiationException())
             {
                 Analyzer a = new MockAnalyzer(random, MockTokenizer.KEYWORD, false);
                 if (cls == typeof(AnalyzingInfixSuggester))

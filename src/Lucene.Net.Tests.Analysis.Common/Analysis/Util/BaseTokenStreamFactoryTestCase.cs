@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 factory = (AbstractAnalysisFactory)Activator.CreateInstance(clazz, args);
             }
-            catch (TargetInvocationException e)
+            catch (Exception e) when (e.IsInvocationTargetException())
             {
                 // to simplify tests that check for illegal parameters
                 if (e.InnerException is ArgumentException argumentException)

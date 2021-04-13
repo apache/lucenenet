@@ -152,15 +152,15 @@ namespace Lucene.Net.Analysis.Core
             {
                 factory = (AbstractAnalysisFactory)ctor.Invoke(new object[] { args });
             }
-            catch (TypeInitializationException e)
+            catch (Exception e) when (e.IsInstantiationException())
             {
                 throw new Exception(e.Message, e);
             }
-            catch (MethodAccessException e)
+            catch (Exception e) when (e.IsIllegalAccessException())
             {
                 throw new Exception(e.Message, e);
             }
-            catch (TargetInvocationException e)
+            catch (Exception e) when (e.IsInvocationTargetException())
             {
                 if (e.InnerException is ArgumentException)
                 {
