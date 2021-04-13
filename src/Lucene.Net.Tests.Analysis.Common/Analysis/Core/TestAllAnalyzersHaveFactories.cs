@@ -136,7 +136,7 @@ namespace Lucene.Net.Analysis.Core
                     }
                     catch (Exception e) when (e.IsIllegalArgumentException())
                     {
-                        if (e.InnerException is MissingMethodException)
+                        if (e.InnerException.IsNoSuchMethodException())
                         {
                             // there is no corresponding ctor available
                             throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
@@ -168,7 +168,7 @@ namespace Lucene.Net.Analysis.Core
                     }
                     catch (Exception e) when (e.IsIllegalArgumentException())
                     {
-                        if (e.InnerException is MissingMethodException)
+                        if (e.InnerException.IsNoSuchMethodException())
                         {
                             // there is no corresponding ctor available
                             throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
@@ -200,7 +200,7 @@ namespace Lucene.Net.Analysis.Core
                     }
                     catch (Exception e) when (e.IsIllegalArgumentException())
                     {
-                        if (e.InnerException is MissingMethodException)
+                        if (e.InnerException.IsNoSuchMethodException())
                         {
                             // there is no corresponding ctor available
                             throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)

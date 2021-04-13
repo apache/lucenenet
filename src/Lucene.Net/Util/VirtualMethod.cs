@@ -134,7 +134,7 @@ namespace Lucene.Net.Util
                     throw new NotSupportedException("VirtualMethod instances must be singletons and therefore " + "assigned to static final members in the same class, they use as baseClass ctor param.");
                 }
             }
-            catch (MissingMethodException nsme)
+            catch (Exception nsme) when (nsme.IsNoSuchMethodException())
             {
                 throw new ArgumentException(baseClass.Name + " has no such method: " + nsme.Message, nsme);
             }
@@ -174,12 +174,21 @@ namespace Lucene.Net.Util
                 // lookup method, if success mark as overridden
                 if (!overridden)
                 {
-                    MethodInfo mi =  GetMethod(clazz, method,
-                        BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly,
-                        parameters);
+                    try
+                    {
+                        MethodInfo mi = GetMethod(clazz, method,
+                            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly,
+                            parameters);
 
-                    if (mi != null)
-                        overridden = true;
+                        // LUCENENET specific - .NET returns null when it cannot find a method, it doesn't throw an exception
+                        if (mi != null)
+                            overridden = true;
+                    }
+                    // LUCENENET specific - there is a minor chance this will happen in .NET. This is
+                    // just to mimic the fact they were swallowing in Java when the method isn't found.
+                    catch (AmbiguousMatchException)
+                    {
+                    }
                 }
 
                 // increment distance if overridden

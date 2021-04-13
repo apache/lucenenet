@@ -50,7 +50,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     LuceneVersion.LUCENE_CURRENT);
 #pragma warning restore 612, 618
             }
-            catch (MissingMethodException /*nsme*/)
+            catch (Exception nsme) when (nsme.IsNoSuchMethodException())
             {
                 // otherwise use default ctor
                 return (Analyzer)Activator.CreateInstance(clazz);
