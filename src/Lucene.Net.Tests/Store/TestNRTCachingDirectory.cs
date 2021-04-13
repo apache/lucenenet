@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -151,7 +151,7 @@ namespace Lucene.Net.Store
                 DirectoryReader.Open(dir);
                 Assert.Fail("did not hit expected exception");
             }
-            catch (DirectoryNotFoundException)
+            catch (Exception nsde) when (nsde.IsNoSuchDirectoryException())
             {
                 // expected
             }

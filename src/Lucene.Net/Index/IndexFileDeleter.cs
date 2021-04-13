@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
             {
                 files = directory.ListAll();
             }
-            catch (DirectoryNotFoundException) // LUCENENET: IDE0059: Remove unnecessary value assignment
+            catch (Exception e) when (e.IsNoSuchDirectoryException())
             {
                 // it means the directory is empty, so ignore it.
                 files = Arrays.Empty<string>();

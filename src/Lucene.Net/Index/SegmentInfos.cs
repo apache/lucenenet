@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
             {
                 return GetLastCommitGeneration(directory.ListAll());
             }
-            catch (DirectoryNotFoundException)
+            catch (Exception nsde) when (nsde.IsNoSuchDirectoryException())
             {
                 return -1;
             }

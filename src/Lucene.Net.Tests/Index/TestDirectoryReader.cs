@@ -764,9 +764,7 @@ namespace Lucene.Net.Index
                 DirectoryReader.Open(dir);
                 Assert.Fail("did not hit expected exception");
             }
-#pragma warning disable 168
-            catch (DirectoryNotFoundException nsde)
-#pragma warning restore 168
+            catch (Exception nsde) when (nsde.IsNoSuchDirectoryException())
             {
                 // expected
             }
