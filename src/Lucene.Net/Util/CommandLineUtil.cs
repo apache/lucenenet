@@ -51,7 +51,7 @@ namespace Lucene.Net.Util
             {
                 throw new ArgumentException(typeof(FSDirectory).Name + " implementation not found: " + clazzName, e);
             }
-            catch (InvalidCastException e)
+            catch (Exception e) when (e.IsClassCastException())
             {
                 throw new ArgumentException(clazzName + " is not a " + typeof(FSDirectory).Name + " implementation", e);
             }
