@@ -20,9 +20,9 @@
     <!-- Visual Studio doesn't reload analyzers with changes if you don't manually bump the assembly version on each change to the
          analyzer (or the install/uninstall scripts). See: https://github.com/dotnet/roslyn/issues/4381#issuecomment-342867710
 
-         IMPORTANT: Make sure you update the AssemblyVersionRevision number on every code change!
+         IMPORTANT: Make sure you update the AssemblyVersionRevision number on every code/dependency/script change!
      -->
-    <AssemblyVersionRevision>1</AssemblyVersionRevision>
+    <AssemblyVersionRevision>10</AssemblyVersionRevision>
 
     <AssemblyMajorMinorPatchPattern>^\d+\.\d+\.\d+</AssemblyMajorMinorPatchPattern>
     <AssemblyMajorMinorPatch>$([System.Text.RegularExpressions.Regex]::Match($(AssemblyVersion), $(AssemblyMajorMinorPatchPattern)))</AssemblyMajorMinorPatch>

@@ -43,8 +43,10 @@
     <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>2.0.0</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
     <MicrosoftAspNetCoreTestHostPackageVersion>2.0.0</MicrosoftAspNetCoreTestHostPackageVersion>
     <MicrosoftCodeAnalysisAnalyzersPackageVersion>2.9.8</MicrosoftCodeAnalysisAnalyzersPackageVersion>
-    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>3.4.0</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
-    <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>3.4.0</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
+    <MicrosoftCodeAnalysisCSharpPackageVersion>2.6.1</MicrosoftCodeAnalysisCSharpPackageVersion>
+    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>$(MicrosoftCodeAnalysisCSharpPackageVersion)</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
+    <MicrosoftCodeAnalysisVisualBasicPackageVersion>2.6.1</MicrosoftCodeAnalysisVisualBasicPackageVersion>
+    <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>$(MicrosoftCodeAnalysisVisualBasicPackageVersion)</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
     <MicrosoftExtensionsConfigurationPackageVersion_NET4_5_1>1.1.2</MicrosoftExtensionsConfigurationPackageVersion_NET4_5_1>
     <MicrosoftExtensionsConfigurationAbstractionsPackageVersion_NET4_5_1>$(MicrosoftExtensionsConfigurationPackageVersion_NET4_5_1)</MicrosoftExtensionsConfigurationAbstractionsPackageVersion_NET4_5_1>
     <MicrosoftExtensionsConfigurationCommandLinePackageVersion_NET4_5_1>$(MicrosoftExtensionsConfigurationPackageVersion_NET4_5_1)</MicrosoftExtensionsConfigurationCommandLinePackageVersion_NET4_5_1>
