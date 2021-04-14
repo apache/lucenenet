@@ -205,6 +205,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.CodeAnalysis.VisualBasic", "src\dotnet\Lucene.Net.CodeAnalysis.VisualBasic\Lucene.Net.CodeAnalysis.VisualBasic.csproj", "{5CD4D4E8-6132-4384-98FC-6AB1C97E0B80}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lucene.Net.CodeAnalysis", "Lucene.Net.CodeAnalysis", "{E5E8C5DC-7048-4818-B884-FB2D037D2EF2}"
+	ProjectSection(SolutionItems) = preProject
+		src\dotnet\Lucene.Net.CodeAnalysis\Version.props = src\dotnet\Lucene.Net.CodeAnalysis\Version.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{4D0ED7D9-ABEE-4890-B06C-477E3A32B9A0}"
 	ProjectSection(SolutionItems) = preProject
