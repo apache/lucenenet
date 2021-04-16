@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.QueryParsers.Flexible.Standard.Parser
 summary: *content
 ---
@@ -25,6 +25,6 @@ Lucene Query Parser.
 
 ## Lucene Query Parser
 
- The package org.apache.lucene.queryparser.flexible.standard.parser contains the query parser. 
+The namespace <tt>Lucene.Net.QueryParsers.Flexible.Standard.Parser</tt> contains the query parser. 
 
- This text parser only performs the syntax validation and creates an QueryNode tree from a query string. 
+This text parser only performs the syntax validation and creates an IQueryNode tree from a query string. 

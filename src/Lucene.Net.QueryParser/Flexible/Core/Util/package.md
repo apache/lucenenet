@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.QueryParsers.Flexible.Core.Util
 summary: *content
 ---
@@ -24,4 +24,4 @@ Utility classes to used with the Query Parser.
 
 ## Utility classes to used with the Query Parser
 
- This package contains utility classes used with the query parsers. 
+This namespace contains utility classes used with the query parsers. 

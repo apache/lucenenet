@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.QueryParsers.Xml
 summary: *content
 ---
@@ -20,4 +20,4 @@ summary: *content
  limitations under the License.
 -->
 
-Parser that produces Lucene Query objects from XML streams.
+Parser that produces Lucene Query objects from XML documents.

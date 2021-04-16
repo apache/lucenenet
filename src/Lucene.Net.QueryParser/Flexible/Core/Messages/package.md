@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.QueryParsers.Flexible.Core.Messages
 summary: *content
 ---
@@ -26,4 +26,4 @@ Messages usually used by query parser implementations.
 ## Query Parser Messages
 
 
-Messages for the Flexible Query Parser, they use <tt>org.apache.lucene.messages.NLS</tt> API.
+Messages for the Flexible Query Parser use [Lucene.Net.QueryParsers.Flexible.Messages.NLS](xref:Lucene.Net.QueryParsers.Flexible.Messages.NLS) API.

@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 summary: *content
 ---
@@ -25,4 +25,4 @@ Standard Lucene Query Nodes.
 
 ## Standard Lucene Query Nodes
 
- The package org.apache.lucene.queryparser.flexible.standard.nodes contains QueryNode classes that are used specifically for Lucene query node tree. Any other generic QueryNode is defined under org.apache.lucene.queryParser.nodes. 
+The namespace <tt>Lucene.Net.QueryParsers.Flexible.Standard.Nodes</tt> contains QueryNode classes that are used specifically for Lucene query node tree. Any other generic QueryNode is defined under  <xref:Lucene.Net.QueryParsers.Flexible.Core.Nodes>. 
