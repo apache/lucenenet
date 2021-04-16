@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 
@@ -54,7 +54,7 @@ namespace Lucene.Net.Documents
         /// Create a new binary <see cref="DocValues"/> field. </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> binary content </param>
-        /// <exception cref="ArgumentNullException"> if the field name is null </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
         public BinaryDocValuesField(string name, BytesRef value)
             : base(name, fType)
         {

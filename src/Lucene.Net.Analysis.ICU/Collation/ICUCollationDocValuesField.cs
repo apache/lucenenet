@@ -3,6 +3,7 @@ using ICU4N.Text;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Collation
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.Collation
     public sealed class ICUCollationDocValuesField : Field
     {
         private readonly string name;
-        private readonly Collator collator;
+        internal readonly Collator collator; // LUCENENET: marked internal for testing
         private readonly BytesRef bytes = new BytesRef();
         private RawCollationKey key = new RawCollationKey();
 
@@ -50,11 +51,15 @@ namespace Lucene.Net.Collation
         /// </summary>
         /// <param name="name">Field name.</param>
         /// <param name="collator">Collator for generating collation keys.</param>
+        /// <exception cref="ArgumentNullException">if <paramref name="name"/> or <paramref name="collator"/> is <c>null</c>.</exception>
         // TODO: can we make this trap-free? maybe just synchronize on the collator
         // instead? 
         public ICUCollationDocValuesField(string name, Collator collator)
             : base(name, SortedDocValuesField.TYPE)
         {
+            if (collator is null)
+                throw new ArgumentNullException(nameof(collator));
+
             this.name = name;
             this.collator = (Collator)collator.Clone();
             FieldsData = bytes; // so wrong setters cannot be called

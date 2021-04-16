@@ -1,7 +1,8 @@
 ﻿using ICU4N.Text;
 using Lucene.Net.Collation;
+using System;
 
-namespace Lucene.Net.Documents
+namespace Lucene.Net.Documents.Extensions
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -36,8 +37,12 @@ namespace Lucene.Net.Documents
         /// <param name="name">Field name.</param>
         /// <param name="collator">Collator for generating collation keys.</param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
+        /// <exception cref="ArgumentNullException">This <paramref name="document"/>, <paramref name="name"/> or <paramref name="collator"/> is <c>null</c>. </exception>
         public static ICUCollationDocValuesField AddICUCollationDocValuesField(this Document document, string name, Collator collator)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new ICUCollationDocValuesField(name, collator);
             document.Add(field);
             return field;
