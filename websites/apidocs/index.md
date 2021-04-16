@@ -60,7 +60,7 @@ on some of the conceptual or inner details of Lucene:
 - <xref:Lucene.Net.Misc> - Index tools and other miscellaneous code
 - <xref:Lucene.Net.Queries> - Filters and Queries that add to core Lucene
 - <xref:Lucene.Net.QueryParser> - Text to Query parsers and parsing framework
-- <xref:Lucene.Net.Replicator> Files replication utility
+- <xref:Lucene.Net.Replicator> - Files replication utility
 - <xref:Lucene.Net.Sandbox> - Various third party contributions and new ideas
 - [Lucene.Net.Spatial](xref:Lucene.Net.Spatial) - Geospatial search
 - <xref:Lucene.Net.Suggest> - Auto-suggest and Spell-checking support

@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Replicator.Http
 summary: *content
 ---
@@ -21,4 +21,4 @@ summary: *content
  limitations under the License.
 -->
 
-# HTTP replication implementation
+HTTP replication implementation

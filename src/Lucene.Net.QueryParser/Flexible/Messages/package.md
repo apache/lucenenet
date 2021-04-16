@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.QueryParsers.Flexible.Messages
 summary: *content
 ---
@@ -25,12 +25,61 @@ For Native Language Support (NLS), system of software internationalization.
 
 ## NLS message API
 
- This utility API, adds support for NLS messages in the apache code. It is currently used by the lucene "New Flexible Query PArser". 
+This utility API, adds support for NLS messages in the apache code. It is currently used by the lucene "New Flexible Query PArser". 
 
- Features: 1. Message reference in the code, using static Strings 2. Message resource validation at class load time, for easier debugging 3. Allows for message IDs to be re-factored using eclipse or other code re-factor tools 4. Allows for reference count on messages, just like code 5. Lazy loading of Message Strings 6. Normal loading Message Strings 
+Features:
 
- Lazy loading of Message Strings public class MessagesTestBundle extends NLS { private static final String BUNDLE_NAME = MessagesTestBundle.class.getName(); private MessagesTestBundle() { // should never be instantiated } static { // register all string ids with NLS class and initialize static string // values NLS.initializeMessages(BUNDLE_NAME, MessagesTestBundle.class); } // static string must match the strings in the property files. public static String Q0001E_INVALID_SYNTAX; public static String Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION; // this message is missing from the properties file public static String Q0005E_MESSAGE_NOT_IN_BUNDLE; } // Create a message reference Message invalidSyntax = new MessageImpl(MessagesTestBundle.Q0001E_INVALID_SYNTAX, "XXX"); // Do other stuff in the code... // when is time to display the message to the user or log the message on a file // the message is loaded from the correct bundle String message1 = invalidSyntax.getLocalizedMessage(); String message2 = invalidSyntax.getLocalizedMessage(Locale.JAPANESE); 
+1. Message reference in the code, using static Strings
+2. Message resource validation at class load time, for easier debugging
+3. Allows for message IDs to be re-factored using code re-factor tools
+4. Allows for reference count on messages, just like code
+5. Lazy loading of Message Strings
+6. Normal loading Message Strings 
 
- Normal loading of Message Strings String message1 = NLS.getLocalizedMessage(MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION); String message2 = NLS.getLocalizedMessage(MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION, Locale.JAPANESE); 
 
- The org.apache.lucene.messages.TestNLS junit contains several other examples. The TestNLS java code is available from the Apache Lucene code repository. 
+Prerequisite for these examples: Add a resource file named `MessagesTestBundle.resx` and add messages for each of the public static string fields except for `Q0005E_Message_Not_In_Bundle`.
+
+Lazy loading of Message Strings
+
+```cs
+public class MessagesTest : NLS
+{
+    private static readonly string BundleName = typeof(MessagesTest).FullName;
+
+    private MessagesTest()
+    {
+        // should never be instantiated
+    }
+
+    static MessagesTest()
+    {
+        InitializeMessages(BundleName, typeof(MessagesTest));
+    }
+
+    // static string must match the strings in the property files.
+    public static string Q0001E_Invalid_Syntax;
+    public static string Q0004E_Invalid_Syntax_Escape_Unicode_Truncation;
+
+    // this message is missing from the properties file
+    public static string Q0005E_Message_Not_In_Bundle;
+}
+
+// Create a message reference
+IMessage invalidSyntax = new Message(MessagesTest.Q0001E_Invalid_Syntax, "XXX");
+
+// Do other stuff in the code...
+// when is time to display the message to the user or log the message on a file
+// the message is loaded from the correct bundle
+
+string message1 = invalidSyntax.GetLocalizedMessage();
+string message2 = invalidSyntax.GetLocalizedMessage(new CultureInfo("ja"));
+```
+
+Normal loading of Message Strings
+
+```cs
+string message1 = NLS.GetLocalizedMessage(MessagesTest.Q0004E_Invalid_Syntax_Escape_Unicode_Truncation);
+string message2 = NLS.GetLocalizedMessage(MessagesTest.Q0004E_Invalid_Syntax_Escape_Unicode_Truncation, new CultureInfo("ja"));
+```
+
+The `Lucene.Net.QueryParsers.Flexible.Messages.TestNLS` NUnit test contains several other examples. The TestNLS C# code is available from the Apache Lucene.NET code repository. 
