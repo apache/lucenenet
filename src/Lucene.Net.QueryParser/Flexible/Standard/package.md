@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.QueryParsers.Flexible.Standard
 summary: *content
 ---
@@ -21,12 +21,12 @@ summary: *content
 -->
 
 
-Implementation of the {@linkplain org.apache.lucene.queryparser.classic Lucene classic query parser} using the flexible query parser frameworks
+Implementation of the [Lucene classic query parser](xref:Lucene.Net.QueryParsers.Classic) using the flexible query parser frameworks
 
 ## Lucene Flexible Query Parser Implementation
 
- The old Lucene query parser used to have only one class that performed all the parsing operations. In the new query parser structure, the parsing was divided in 3 steps: parsing (syntax), processing (semantic) and building. 
+The old Lucene query parser used to have only one class that performed all the parsing operations. In the new query parser structure, the parsing was divided in 3 steps: parsing (syntax), processing (semantic) and building. 
 
- The classes contained in the package org.apache.lucene.queryParser.standard are used to reproduce the same behavior as the old query parser. 
+The classes contained in the namespace <xref:Lucene.Net.QueryParsers.Flexible.Standard> are used to reproduce the same behavior as the old query parser. 
 
- Check <xref:Lucene.Net.QueryParsers.Flexible.Standard.StandardQueryParser> to quick start using the Lucene query parser. 
+Check <xref:Lucene.Net.QueryParsers.Flexible.Standard.StandardQueryParser> to quick start using the Lucene query parser. 

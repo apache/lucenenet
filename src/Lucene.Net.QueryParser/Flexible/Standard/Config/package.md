@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.QueryParsers.Flexible.Standard.Config
 summary: *content
 ---
@@ -25,6 +25,6 @@ Standard Lucene Query Configuration.
 
 ## Standard Lucene Query Configuration
 
- The package org.apache.lucene.queryparser.flexible.standard.config contains the Lucene query configuration handler (StandardQueryConfigHandler). This configuration handler reproduces almost everything that could be set on the old query parser. 
+The namespace <tt>Lucene.Net.QueryParsers.Flexible.Standard.Config</tt> contains the Lucene query configuration handler (StandardQueryConfigHandler). This configuration handler reproduces almost everything that could be set on the old query parser. 
 
- StandardQueryConfigHandler is the class that should be used to configure the StandardQueryNodeProcessorPipeline. 
+StandardQueryConfigHandler is the class that should be used to configure the StandardQueryNodeProcessorPipeline. 

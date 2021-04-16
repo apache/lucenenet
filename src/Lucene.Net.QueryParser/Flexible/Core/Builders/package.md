@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.QueryParsers.Flexible.Core.Builders
 summary: *content
 ---
@@ -25,4 +25,4 @@ Necessary classes to implement query builders.
 
 ## Query Parser Builders
 
- The package <tt>org.apache.lucene.queryParser.builders</tt> contains the interface that builders must implement, it also contain a utility <xref:Lucene.Net.QueryParsers.Flexible.Core.Builders.QueryTreeBuilder>, which walks the tree and call the Builder for each node in the tree. Builder normally convert QueryNode Object into a Lucene Query Object, and normally it's a one-to-one mapping class. But other builders implementations can by written to convert QueryNode objects to other non lucene objects. 
+The namespace <tt>Lucene.Net.QueryParsers.Core.Builders</tt> contains the interface that builders must implement, it also contain a utility <xref:Lucene.Net.QueryParsers.Flexible.Core.Builders.QueryTreeBuilder>, which walks the tree and call the Builder for each node in the tree. Builder normally convert QueryNode Object into a Lucene Query Object, and normally it's a one-to-one mapping class. But other builders implementations can by written to convert QueryNode objects to other non-Lucene objects.

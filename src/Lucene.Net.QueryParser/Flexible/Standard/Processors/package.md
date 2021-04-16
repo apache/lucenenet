@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.QueryParsers.Flexible.Standard.Processors
 summary: *content
 ---
@@ -25,6 +25,6 @@ Lucene Query Node Processors.
 
 ## Lucene Query Node Processors
 
- The package org.apache.lucene.queryparser.flexible.standard.processors contains every processor needed to assembly a pipeline that modifies the query node tree according to the actual Lucene queries. 
+The namespace <tt>Lucene.Net.QueryParsers.Flexible.Standard.Processors</tt> contains every processor needed to assembly a pipeline that modifies the query node tree according to the actual Lucene queries. 
 
- These processors are already assembled correctly in the StandardQueryNodeProcessorPipeline. 
+These processors are already assembled correctly in the StandardQueryNodeProcessorPipeline. 
