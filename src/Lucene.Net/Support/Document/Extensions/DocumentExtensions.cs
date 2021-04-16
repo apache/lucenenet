@@ -36,8 +36,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="document">This <see cref="Document"/>.</param>
         /// <param name="name">Field name</param>
         /// <exception cref="InvalidCastException">If the field type cannot be cast to <typeparamref name="T"/>.</exception>
+        /// <exception cref="ArgumentNullException">This <paramref name="document"/> is <c>null</c>.</exception>
         public static T GetField<T>(this Document document, string name) where T : IIndexableField
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             return (T)document.GetField(name);
         }
 
@@ -50,8 +54,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="name"> the name of the field </param>
         /// <returns> a <see cref="T:IndexableField[]"/> array </returns>
         /// <exception cref="InvalidCastException">If the field type cannot be cast to <typeparam name="T"/>.</exception>
+        /// <exception cref="ArgumentNullException">This <paramref name="document"/> is <c>null</c>.</exception>
         public static T[] GetFields<T>(this Document document, string name) where T : IIndexableField
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var fields = document.GetFields(name);
             var result = new T[fields.Length];
             fields.CopyTo(result, 0);
@@ -65,9 +73,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="name"> field name </param>
         /// <param name="value"> binary content </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field name is null </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/> or the field <paramref name="name"/> is <c>null</c>. </exception>
         public static BinaryDocValuesField AddBinaryDocValuesField(this Document document, string name, BytesRef value)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new BinaryDocValuesField(name, value);
             document.Add(field);
             return field;
@@ -90,9 +101,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="name"> field name </param>
         /// <param name="value"> 64-bit double value </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field name is <c>null</c> </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/> or the field <paramref name="name"/> is <c>null</c> </exception>
         public static DoubleDocValuesField AddDoubleDocValuesField(this Document document, string name, double value)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new DoubleDocValuesField(name, value);
             document.Add(field);
             return field;
@@ -108,9 +122,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="value"> 64-bit <see cref="double"/> value </param>
         /// <param name="stored"> <see cref="Field.Store.YES"/> if the content should also be stored </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field name is <c>null</c>.  </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/> or the field <paramref name="name"/> is <c>null</c>.  </exception>
         public static DoubleField AddDoubleField(this Document document, string name, double value, Field.Store stored)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new DoubleField(name, value, stored);
             document.Add(field);
             return field;
@@ -127,10 +144,13 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="type"> customized field type: must have <see cref="FieldType.NumericType"/>
         ///         of <see cref="NumericType.DOUBLE"/>. </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field name or type is <c>null</c>, or
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> or <paramref name="type"/> is <c>null</c>, or
         ///          if the field type does not have a <see cref="NumericType.DOUBLE"/> <see cref="FieldType.NumericType"/> </exception>
         public static DoubleField AddDoubleField(this Document document, string name, double value, FieldType type)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new DoubleField(name, value, type);
             document.Add(field);
             return field;
@@ -142,9 +162,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="name"> field name </param>
         /// <param name="value"> 32-bit <see cref="float"/> value </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field name is <c>null</c> </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/> or the field <paramref name="name"/> is <c>null</c> </exception>
         public static SingleDocValuesField AddSingleDocValuesField(this Document document, string name, float value)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new SingleDocValuesField(name, value);
             document.Add(field);
             return field;
@@ -160,9 +183,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="value"> 32-bit <see cref="float"/> value </param>
         /// <param name="stored"> <see cref="Field.Store.YES"/> if the content should also be stored </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/> or the field <paramref name="name"/> is <c>null</c>. </exception>
         public static SingleField AddSingleField(this Document document, string name, float value, Field.Store stored)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new SingleField(name, value, stored);
             document.Add(field);
             return field;
@@ -179,10 +205,13 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="type"> customized field type: must have <see cref="FieldType.NumericType"/>
         ///         of <see cref="NumericType.SINGLE"/>. </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="type"/> is <see cref="NumericType.NONE"/> </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> or <paramref name="type"/> is <c>null</c>. </exception>
         /// <exception cref="ArgumentException">if the field type does not have a <see cref="NumericType.SINGLE"/> <see cref="FieldType.NumericType"/></exception>
         public static SingleField AddSingleField(this Document document, string name, float value, FieldType type)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new SingleField(name, value, type);
             document.Add(field);
             return field;
@@ -198,9 +227,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="value"> 32-bit <see cref="int"/> value </param>
         /// <param name="stored"> <see cref="Field.Store.YES"/> if the content should also be stored </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/> or the field <paramref name="name"/> is <c>null</c>. </exception>
         public static Int32Field AddInt32Field(this Document document, string name, int value, Field.Store stored)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new Int32Field(name, value, stored);
             document.Add(field);
             return field;
@@ -218,11 +250,14 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="type"> customized field type: must have <see cref="FieldType.NumericType"/>
         ///         of <see cref="NumericType.INT32"/>. </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="type"/> is <see cref="NumericType.NONE"/> </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> or <paramref name="type"/> is <c>null</c>. </exception>
         /// <exception cref="ArgumentException">if the field type does not have a 
         ///         <see cref="FieldType.NumericType"/> of <see cref="NumericType.INT32"/> </exception>
         public static Int32Field AddInt32Field(this Document document, string name, int value, FieldType type)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new Int32Field(name, value, type);
             document.Add(field);
             return field;
@@ -238,9 +273,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="value"> 64-bit <see cref="long"/> value </param>
         /// <param name="stored"> <see cref="Field.Store.YES"/> if the content should also be stored </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/> or the field <paramref name="name"/> is <c>null</c>. </exception>
         public static Int64Field AddInt64Field(this Document document, string name, long value, Field.Store stored)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new Int64Field(name, value, stored);
             document.Add(field);
             return field;
@@ -257,11 +295,14 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="type"> customized field type: must have <see cref="FieldType.NumericType"/>
         ///         of <see cref="NumericType.INT64"/>. </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="type"/> is <see cref="NumericType.NONE"/> </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> or <paramref name="type"/> is <c>null</c>. </exception>
         /// <exception cref="ArgumentException"> if the field type does not have a 
         /// <see cref="FieldType.NumericType"/> of <see cref="NumericType.INT64"/> </exception>
         public static Int64Field AddInt64Field(this Document document, string name, long value, FieldType type)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new Int64Field(name, value, type);
             document.Add(field);
             return field;
@@ -277,9 +318,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="name"> field name </param>
         /// <param name="value"> 64-bit <see cref="long"/> value </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c> </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> is <c>null</c>. </exception>
         public static NumericDocValuesField AddNumericDocValuesField(this Document document, string name, long value)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new NumericDocValuesField(name, value);
             document.Add(field);
             return field;
@@ -295,9 +339,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="name"> field name </param>
         /// <param name="bytes"> binary content </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c> </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> is <c>null</c>. </exception>
         public static SortedDocValuesField AddSortedDocValuesField(this Document document, string name, BytesRef bytes)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new SortedDocValuesField(name, bytes);
             document.Add(field);
             return field;
@@ -313,9 +360,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="name"> field name </param>
         /// <param name="bytes"> binary content </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c> </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> is <c>null</c>. </exception>
         public static SortedSetDocValuesField AddSortedSetDocValuesField(this Document document, string name, BytesRef bytes)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new SortedSetDocValuesField(name, bytes);
             document.Add(field);
             return field;
@@ -330,9 +380,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="name"> field name </param>
         /// <param name="value"> byte array pointing to binary content (not copied) </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> is <c>null</c>. </exception>
         public static StoredField AddStoredField(this Document document, string name, byte[] value)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new StoredField(name, value);
             document.Add(field);
             return field;
@@ -349,9 +402,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="offset"> starting position of the byte array </param>
         /// <param name="length"> valid length of the byte array </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> is <c>null</c>. </exception>
         public static StoredField AddStoredField(this Document document, string name, byte[] value, int offset, int length)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new StoredField(name, value, offset, length);
             document.Add(field);
             return field;
@@ -366,9 +422,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="name"> field name </param>
         /// <param name="value"> <see cref="BytesRef"/> pointing to binary content (not copied) </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> is <c>null</c>. </exception>
         public static StoredField AddStoredField(this Document document, string name, BytesRef value)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new StoredField(name, value);
             document.Add(field);
             return field;
@@ -380,9 +439,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="name"> field name </param>
         /// <param name="value"> <see cref="string"/> value </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="value"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> or <paramref name="value"/> is <c>null</c>. </exception>
         public static StoredField AddStoredField(this Document document, string name, string value)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new StoredField(name, value);
             document.Add(field);
             return field;
@@ -394,9 +456,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="name"> field name </param>
         /// <param name="value"> <see cref="int"/> value </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> is <c>null</c>. </exception>
         public static StoredField AddStoredField(this Document document, string name, int value)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new StoredField(name, value);
             document.Add(field);
             return field;
@@ -408,9 +473,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="name"> field name </param>
         /// <param name="value"> <see cref="float"/> value </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> is <c>null</c>. </exception>
         public static StoredField AddStoredField(this Document document, string name, float value)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new StoredField(name, value);
             document.Add(field);
             return field;
@@ -422,9 +490,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="name"> field name </param>
         /// <param name="value"> <see cref="long"/> value </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> is <c>null</c>. </exception>
         public static StoredField AddStoredField(this Document document, string name, long value)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new StoredField(name, value);
             document.Add(field);
             return field;
@@ -436,9 +507,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="name"> field name </param>
         /// <param name="value"> <see cref="double"/> value </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> is <c>null</c>. </exception>
         public static StoredField AddStoredField(this Document document, string name, double value)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new StoredField(name, value);
             document.Add(field);
             return field;
@@ -452,9 +526,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="value"> <see cref="string"/> value </param>
         /// <param name="stored"> <see cref="Field.Store.YES"/> if the content should also be stored </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="value"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> or <paramref name="value"/> is <c>null</c>. </exception>
         public static StringField AddStringField(this Document document, string name, string value, Field.Store stored)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new StringField(name, value, stored);
             document.Add(field);
             return field;
@@ -466,9 +543,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="name"> field name </param>
         /// <param name="reader"> <see cref="TextReader"/> value </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="reader"/> is <c>null</c> </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> or <paramref name="reader"/> is <c>null</c>. </exception>
         public static TextField AddTextField(this Document document, string name, TextReader reader)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new TextField(name, reader);
             document.Add(field);
             return field;
@@ -481,9 +561,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="value"> <see cref="string"/> value </param>
         /// <param name="stored"> <see cref="Field.Store.YES"/> if the content should also be stored </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="value"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> or <paramref name="value"/> is <c>null</c>. </exception>
         public static TextField AddTextField(this Document document, string name, string value, Field.Store stored)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new TextField(name, value, stored);
             document.Add(field);
             return field;
@@ -495,9 +578,12 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="name"> field name </param>
         /// <param name="stream"> <see cref="TokenStream"/> value </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="stream"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> or <paramref name="stream"/> is <c>null</c>. </exception>
         public static TextField AddTextField(this Document document, string name, TokenStream stream)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new TextField(name, stream);
             document.Add(field);
             return field;

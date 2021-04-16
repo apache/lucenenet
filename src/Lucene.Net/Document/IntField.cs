@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using System;
 
 namespace Lucene.Net.Documents
@@ -177,7 +177,7 @@ namespace Lucene.Net.Documents
         /// <param name="value"> 32-bit <see cref="int"/> value </param>
         /// <param name="type"> customized field type: must have <see cref="FieldType.NumericType"/>
         ///         of <see cref="NumericType.INT32"/>. </param>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="type"/> is <see cref="NumericType.NONE"/> </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="type"/> is <c>null</c>. </exception>
         /// <exception cref="ArgumentException">if the field type does not have a 
         ///         <see cref="FieldType.NumericType"/> of <see cref="NumericType.INT32"/> </exception>
         public Int32Field(string name, int value, FieldType type)

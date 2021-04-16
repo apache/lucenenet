@@ -2,8 +2,9 @@
 using Lucene.Net.Facet.SortedSet;
 using Lucene.Net.Facet.Taxonomy;
 using Lucene.Net.Util;
+using System;
 
-namespace Lucene.Net.Documents
+namespace Lucene.Net.Documents.Extensions
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -38,8 +39,12 @@ namespace Lucene.Net.Documents
         /// <param name="dim">Dimension for this field.</param>
         /// <param name="label">Label for this field.</param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
+        /// <exception cref="ArgumentNullException">This <paramref name="document"/> is <c>null</c>. </exception>
         public static SortedSetDocValuesFacetField AddSortedSetDocValuesFacetField(this Document document, string dim, string label)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new SortedSetDocValuesFacetField(dim, label);
             document.Add(field);
             return field;
@@ -54,8 +59,12 @@ namespace Lucene.Net.Documents
         /// <param name="dim">Dimension for this field.</param>
         /// <param name="path">Facet path for this field.</param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
+        /// <exception cref="ArgumentNullException">This <paramref name="document"/> is <c>null</c>. </exception>
         public static AssociationFacetField AddAssociationFacetField(this Document document, BytesRef assoc, string dim, params string[] path)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new AssociationFacetField(assoc, dim, path);
             document.Add(field);
             return field;
@@ -70,8 +79,12 @@ namespace Lucene.Net.Documents
         /// <param name="dim">Dimension for this field.</param>
         /// <param name="path">Facet path for this field.</param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
+        /// <exception cref="ArgumentNullException">This <paramref name="document"/> is <c>null</c>. </exception>
         public static Int32AssociationFacetField AddInt32AssociationFacetField(this Document document, int assoc, string dim, params string[] path)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new Int32AssociationFacetField(assoc, dim, path);
             document.Add(field);
             return field;
@@ -86,8 +99,12 @@ namespace Lucene.Net.Documents
         /// <param name="dim">Dimension for this field.</param>
         /// <param name="path">Facet path for this field.</param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
+        /// <exception cref="ArgumentNullException">This <paramref name="document"/> is <c>null</c>. </exception>
         public static SingleAssociationFacetField AddSingleAssociationFacetField(this Document document, float assoc, string dim, params string[] path)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new SingleAssociationFacetField(assoc, dim, path);
             document.Add(field);
             return field;
@@ -101,8 +118,12 @@ namespace Lucene.Net.Documents
         /// <param name="dim">Dimension for this field.</param>
         /// <param name="path">Facet path for this field.</param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
+        /// <exception cref="ArgumentNullException">This <paramref name="document"/> is <c>null</c>. </exception>
         public static FacetField AddFacetField(this Document document, string dim, params string[] path)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+
             var field = new FacetField(dim, path);
             document.Add(field);
             return field;

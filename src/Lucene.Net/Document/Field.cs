@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
@@ -72,7 +72,8 @@ namespace Lucene.Net.Documents
         /// </summary>
         // LUCENENET specific: Made into a property
         // so we can set the data type when it is set.
-        protected object FieldsData
+        // Marked internal for testing.
+        protected internal object FieldsData
         {
             get => fieldsData;
             set

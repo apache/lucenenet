@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using System;
 
 namespace Lucene.Net.Documents
@@ -187,7 +187,7 @@ namespace Lucene.Net.Documents
         /// <param name="value"> 64-bit <see cref="long"/> value </param>
         /// <param name="type"> customized field type: must have <see cref="FieldType.NumericType"/>
         ///         of <see cref="NumericType.INT64"/>. </param>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="type"/> is <see cref="NumericType.NONE"/> </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="type"/> is <c>null</c>. </exception>
         /// <exception cref="ArgumentException"> if the field type does not have a 
         /// <see cref="FieldType.NumericType"/> of <see cref="NumericType.INT64"/> </exception>
         public Int64Field(string name, long value, FieldType type)
