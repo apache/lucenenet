@@ -119,7 +119,7 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Set to <c>true</c> to tokenize this field's contents via the
-        /// configured <see cref="Analysis.Analyzer"/>. The default is <c>false</c>.
+        /// configured <see cref="Analysis.Analyzer"/>. The default is <c>true</c>.
         /// </summary>
         /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
@@ -234,6 +234,8 @@ namespace Lucene.Net.Documents
         /// Specifies the field's numeric type, or set to <c>null</c> if the field has no numeric type.
         /// If non-null then the field's value will be indexed numerically so that 
         /// <see cref="Search.NumericRangeQuery"/> can be used at search time.
+        /// <para/>
+        /// The default is <see cref="NumericType.NONE"/>.
         /// </summary>
         /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
