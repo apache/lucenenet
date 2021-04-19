@@ -1,9 +1,10 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
+using RandomizedTesting.Generators;
 using System;
 
 #if TESTFRAMEWORK_MSTEST

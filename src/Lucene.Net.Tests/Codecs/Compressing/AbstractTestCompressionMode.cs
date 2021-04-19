@@ -1,8 +1,9 @@
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
+using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 
 namespace Lucene.Net.Codecs.Compressing
 {

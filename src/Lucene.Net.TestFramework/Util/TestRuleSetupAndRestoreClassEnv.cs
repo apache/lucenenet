@@ -1,4 +1,4 @@
-using Lucene.Net.Codecs;
+﻿using Lucene.Net.Codecs;
 using Lucene.Net.Codecs.Asserting;
 using Lucene.Net.Codecs.CheapBastard;
 using Lucene.Net.Codecs.Compressing;
@@ -22,6 +22,7 @@ using System.Reflection;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
+using RandomizedTesting.Generators;
 
 // LUCENENET NOTE: These are primarily here because they are referred to
 // in the XML documentation. Be sure to add a new option if a new test framework

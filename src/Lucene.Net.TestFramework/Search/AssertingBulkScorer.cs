@@ -1,6 +1,7 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
+using RandomizedTesting.Generators;
 using System;
 
 namespace Lucene.Net.Search

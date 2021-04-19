@@ -8,6 +8,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.IO;

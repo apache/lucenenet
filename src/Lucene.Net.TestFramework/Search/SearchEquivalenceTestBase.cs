@@ -1,9 +1,10 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
+using RandomizedTesting.Generators;
 using System;
 using System.Globalization;
 using System.Text;

@@ -1,9 +1,9 @@
-using Lucene.Net.Randomized.Generators;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 
 namespace Lucene.Net.Util.Automaton
 {

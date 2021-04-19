@@ -1,14 +1,15 @@
 ﻿using J2N.IO;
 using J2N.Numerics;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 
 namespace Lucene.Net.Util.Packed
 {

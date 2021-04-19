@@ -1,10 +1,10 @@
 ﻿using J2N.Numerics;
 using J2N.Text;
-using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
 using System;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
+using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 
 namespace Lucene.Net.Codecs.Compressing
 {

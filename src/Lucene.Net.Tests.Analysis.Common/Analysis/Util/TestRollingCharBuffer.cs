@@ -1,6 +1,7 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System.IO;
 using Console = Lucene.Net.Util.SystemConsole;
 

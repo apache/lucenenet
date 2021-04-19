@@ -3,6 +3,7 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections;
 using System.Collections.Generic;

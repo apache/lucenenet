@@ -2,6 +2,7 @@
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support.IO;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
