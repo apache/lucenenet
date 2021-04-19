@@ -43,12 +43,19 @@ env:
   # which will be parsed to create the version number used in the docs like 4.8.0-beta00013
   CURRENT_TAG: "NO-VERSION"
   RELEASE_VERSION: "(no tag)"
-  SITE_REPO: apache/lucenenet-site
+  SITE_REPO: shazwazza/lucenenet-site
+  #SITE_REPO: apache/lucenenet-site
 
 jobs:
   build:
     runs-on: windows-latest
     steps:
+
+      # Do init checkout
+      - name: Checkout Lucene.Net source
+        uses: actions/checkout@v2
+        with:
+          path: main-repo
 
       - name: Set version from tag
         run: |
@@ -63,6 +70,11 @@ jobs:
           else {
             # Else get the latest tag
             $tag = & git tag --list --sort=-version:refname 'Lucene.Net_*' | select -first 1
+          }
+
+          if ($tag -eq $null)
+            echo "::error::Could not determine current version tag"
+            exit 1
           }
 
           # write the environment var
@@ -85,7 +97,7 @@ jobs:
             echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_ENV
           }
           else {
-            echo "::error::Could not determine current version tag"
+            echo "::error::Could not parse current version tag"
             exit 1
           }
         shell: powershell
@@ -96,11 +108,10 @@ jobs:
           echo "RELEASE_VERSION=$Env:RELEASE_VERSION"
         shell: powershell
 
-      - name: Checkout Lucene.Net source
-        uses: actions/checkout@v2
-        with:
-          path: main-repo
-          ref: "docs/${{ env.RELEASE_VERSION }}"
+      - name: Change branch
+        run: |
+          git checkout -b "docs/${{ env.RELEASE_VERSION }}"
+        shell: powershell
 
       - name: Build docs
         run: ./main-repo/websites/apidocs/docs.ps1 -Clean -LuceneNetVersion ${{ env.RELEASE_VERSION }}
