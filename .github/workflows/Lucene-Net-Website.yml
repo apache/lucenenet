@@ -15,7 +15,6 @@
 # specific language governing permissions and limitations
 # under the License.
 
-
 name: 'Lucene.Net.Website'
 
 # This will:
@@ -42,7 +41,6 @@ env:
   # will be parsed to create the version number used in the docs like 4.8.0-beta00013
   CURRENT_TAG: "NO-VERSION"
   RELEASE_VERSION: "(no tag)"
-  # SITE_REPO: shazwazza/lucenenet-site
   SITE_REPO: apache/lucenenet-site
 
 jobs:
@@ -53,13 +51,13 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: main-repo
-       
+
       - name: Set version from tag
         run: |
           # initialize to SHA
-          echo ("CURRENT_TAG=" + $Env:GITHUB_SHA) >> $env:GITHUB_ENV          
+          echo ("CURRENT_TAG=" + $Env:GITHUB_SHA) >> $env:GITHUB_ENV
           $ref = $Env:GITHUB_REF
-          
+
           # if the ref is a tag
           if ($ref.StartsWith("refs/tags/")) {
             $tag = $ref.Substring(10)
@@ -69,7 +67,7 @@ jobs:
 
             $parts = $tag.Split("_")
             $version = '';
-            For ($i=0; $i -le $parts.Length; $i++) {
+            For ($i=1; $i -le $parts.Length; $i++) {
                 $version += $parts[$i]
                 if ($i -eq ($parts.Length - 2)) {
                     $version += "-"
@@ -84,7 +82,7 @@ jobs:
             }
           }
         shell: powershell
-        
+
       - name: Verify environment variables
         run: |
           echo "CURRENT_TAG=$Env:CURRENT_TAG"
@@ -92,8 +90,9 @@ jobs:
         shell: powershell
 
       - name: Build website
-        run: ./main-repo/websites/site/site.ps1
+        run: ./main-repo/websites/site/site.ps1 -Clean
         shell: powershell
+
       - name: Checkout Lucene.Net website
         uses: actions/checkout@v2
         with:
