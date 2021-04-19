@@ -1,10 +1,10 @@
-﻿using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Search;
+﻿using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Vector;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Distance;
 using Spatial4n.Core.Shapes;

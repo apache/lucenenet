@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Documents;
 using Lucene.Net.Expressions.JS;
 using Lucene.Net.Index;
@@ -7,6 +7,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System.Globalization;
 
 namespace Lucene.Net.Expressions

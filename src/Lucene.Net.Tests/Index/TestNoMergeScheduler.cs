@@ -1,6 +1,6 @@
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Reflection;
 using Assert = Lucene.Net.TestFramework.Assert;

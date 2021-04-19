@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Codecs.Lucene41;
 using Lucene.Net.Codecs.Lucene46;
@@ -14,6 +14,7 @@ using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using RandomizedTesting.Generators;
 
 namespace Lucene.Net.Codecs.PerField
 {

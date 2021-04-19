@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
 
  Licensed to the Apache Software Foundation (ASF) under one
@@ -58,6 +58,7 @@
   <ItemGroup>
     <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
     <PackageReference Include="NUnit" Version="$(NUnitPackageVersion)" />
+    <PackageReference Include="RandomizedTesting.Generators" Version="$(RandomizedTestingGeneratorsPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

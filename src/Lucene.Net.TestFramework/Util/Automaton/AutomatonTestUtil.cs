@@ -1,6 +1,7 @@
-using J2N;
+﻿using J2N;
 using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;

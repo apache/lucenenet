@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using J2N.Threading;
 using J2N.Threading.Atomic;
@@ -9,11 +9,11 @@ using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Documents;
 using Lucene.Net.Documents.Extensions;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -21,6 +21,7 @@ using System.Text;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
+using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;

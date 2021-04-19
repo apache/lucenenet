@@ -4,6 +4,7 @@ using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Util.Packed;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;

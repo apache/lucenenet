@@ -5,6 +5,7 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.IO;
 using System.Threading;

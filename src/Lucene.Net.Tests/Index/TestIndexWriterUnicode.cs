@@ -1,7 +1,8 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Documents;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Text;

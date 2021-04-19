@@ -5,7 +5,6 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Randomized;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -34,6 +33,7 @@ using FieldInfo = Lucene.Net.Index.FieldInfo;
 using static Lucene.Net.Search.FieldCache;
 using static Lucene.Net.Util.FieldCacheSanityChecker;
 using J2N.Collections.Generic.Extensions;
+using RandomizedTesting.Generators;
 
 #if TESTFRAMEWORK_MSTEST
 using Before = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;

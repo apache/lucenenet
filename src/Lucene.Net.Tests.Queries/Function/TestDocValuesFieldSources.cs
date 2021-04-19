@@ -4,13 +4,14 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Queries.Function.ValueSources;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Globalization;
+using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 
 namespace Lucene.Net.Tests.Queries.Function
 {

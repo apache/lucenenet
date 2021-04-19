@@ -1,7 +1,8 @@
-using J2N;
+﻿using J2N;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;

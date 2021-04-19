@@ -9,6 +9,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Tests.Queries

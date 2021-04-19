@@ -1,5 +1,6 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;

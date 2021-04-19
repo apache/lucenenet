@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Analysis;
 using Lucene.Net.Codecs.Lucene42;
 using Lucene.Net.Diagnostics;
@@ -16,6 +16,7 @@ using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using static Lucene.Net.Index.TermsEnum;
 using J2N.Collections.Generic.Extensions;
+using RandomizedTesting.Generators;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;

@@ -1,5 +1,6 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search

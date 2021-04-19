@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System.Collections;
 using Assert = Lucene.Net.TestFramework.Assert;
+using RandomizedTesting.Generators;
 
 namespace Lucene.Net.Util
 {

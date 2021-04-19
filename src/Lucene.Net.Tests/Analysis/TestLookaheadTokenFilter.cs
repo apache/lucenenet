@@ -1,4 +1,5 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 
 namespace Lucene.Net.Analysis

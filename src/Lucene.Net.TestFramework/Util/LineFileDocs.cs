@@ -1,7 +1,8 @@
-using J2N;
+﻿using J2N;
 using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using Lucene.Net.Support.IO;
+using RandomizedTesting.Generators;
 using System;
 using System.Globalization;
 using System.IO;

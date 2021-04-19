@@ -1,7 +1,7 @@
-using Lucene.Net.Codecs.Compressing.Dummy;
+﻿using Lucene.Net.Codecs.Compressing.Dummy;
 using Lucene.Net.Codecs.Lucene46;
-using Lucene.Net.Randomized.Generators;
 using System;
+using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 
 namespace Lucene.Net.Codecs.Compressing
 {

@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Globalization;
 using Assert = Lucene.Net.TestFramework.Assert;

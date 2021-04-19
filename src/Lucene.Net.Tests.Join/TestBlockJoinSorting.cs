@@ -8,6 +8,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Tests.Join

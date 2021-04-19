@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Codecs;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
@@ -12,6 +12,7 @@ using Console = Lucene.Net.Util.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Directory = Lucene.Net.Store.Directory;
 using J2N.Collections.Generic.Extensions;
+using RandomizedTesting.Generators;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;

@@ -1,9 +1,10 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.IO;
 

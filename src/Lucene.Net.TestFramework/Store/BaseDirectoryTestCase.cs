@@ -3,7 +3,6 @@
 using J2N.Threading;
 using Lucene.Net.Index;
 using Lucene.Net.MockFile;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -11,6 +10,7 @@ using System.IO;
 using System.Threading;
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Assert = Lucene.Net.TestFramework.Assert;
+using RandomizedTesting.Generators;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;

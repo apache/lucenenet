@@ -1,10 +1,9 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -19,6 +18,7 @@ using Assert = Lucene.Net.TestFramework.Assert;
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Attribute = Lucene.Net.Util.Attribute;
 using System.Diagnostics.CodeAnalysis;
+using RandomizedTesting.Generators;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;

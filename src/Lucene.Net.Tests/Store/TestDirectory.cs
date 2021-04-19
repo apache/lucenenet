@@ -4,6 +4,7 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.IO;
 using System.Threading;
