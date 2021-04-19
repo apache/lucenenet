@@ -156,11 +156,6 @@ Once pushed, you can merge those changes to the `master` branch. Doing this may 
 
 ### Publishing the docs
 
-> [!NOTE]
-> Before publishing, when testing locally ensure that both the "Improve this doc" button on each documentation page and the "View Source" button (when viewing a Class) links correctly to the newly created version branch on GitHub.
-
-- Create and checkout a new branch based on the release tag on the main branch with the name: `docs/[Version]`, for example `docs/4.8.0-beta00008`. This branch is used for linking to on the API docs "Improve this Doc" and "View Source" buttons. Then build the docs, for example: `./websites/apidocs/docs.ps1 -LuceneNetVersion 4.8.0-beta00008`. For testing [see above](#build-script-1).
-
 - Checkout the Git repo that hosts the documentation: https://github.com/apache/lucenenet-site/tree/asf-site _(ensure you have `asf-site` branch checked out, not `master`)_
 - Create a new folder in this repo: `/docs/[Version]`, for example: `/docs/4.8.0-beta00008`
 - Copy the build output of the documentation site to this new folder. The build output will be all of the files in the `./websites/apidocs/_site` in your main Lucene.NET checked out Git repository.
@@ -174,3 +169,4 @@ Once pushed, you can merge those changes to the `master` branch. Doing this may 
   - Update the `./websites/site/download/toc.yml` and `./websites/site/download/download.md` files to include a reference to the new page which should maintain descending version order.
   - Update the `./websites/site/docs.md` file and add a link to the new documentation for the current version which should maintain descending version order.
   - [Build the website](#website) and test locally, then deploy the changes
+- Once the website is committed/pushed, the last step is to create a named branch on the main [`lucenenet`](https://github.com/apache/lucenenet) repository with the name: `docs/[Version]`, for example `docs/4.8.0-beta00008` based on commit of the latest (if any) changes made to the docs in the `lucenenet` repository on the main branch. This branch is used for linking to on the API docs "Improve this Doc" button.
