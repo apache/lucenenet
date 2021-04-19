@@ -4,7 +4,6 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Randomized;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -42,6 +41,7 @@ using OneTimeSetUp = Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializ
 using OneTimeTearDown = Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute;
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
 using TestFixture = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using AssumptionViolatedException = Microsoft.VisualStudio.TestTools.UnitTesting.AssertInconclusiveException;
 #elif TESTFRAMEWORK_NUNIT
 using Before = NUnit.Framework.SetUpAttribute;
 using After = NUnit.Framework.TearDownAttribute;
@@ -49,6 +49,7 @@ using OneTimeSetUp = NUnit.Framework.OneTimeSetUpAttribute;
 using OneTimeTearDown = NUnit.Framework.OneTimeTearDownAttribute;
 using Test = NUnit.Framework.TestAttribute;
 using TestFixture = NUnit.Framework.TestFixtureAttribute;
+using AssumptionViolatedException = NUnit.Framework.InconclusiveException;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using NUnit.Framework.Internal.Commands;
@@ -59,6 +60,7 @@ using OneTimeSetUp = Lucene.Net.Attributes.NoOpAttribute;
 using OneTimeTearDown = Lucene.Net.Attributes.NoOpAttribute;
 using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
 using TestFixture = Lucene.Net.Attributes.NoOpAttribute;
+using AssumptionViolatedException = Lucene.Net.TestFramework.SkipTestException;
 #endif
 
 namespace Lucene.Net.Util
@@ -1422,19 +1424,58 @@ namespace Lucene.Net.Util
             return Usually(Random);
         }
 
-        public static void AssumeTrue(string msg, bool condition)
+        /// <param name="msg">Message to be included in the exception's string.</param>
+        /// <param name="condition">
+        /// If <c>false</c> an <see cref="AssumptionViolatedException"/> is
+        /// thrown by this method and the test case (should be) ignored (or
+        /// rather technically, flagged as a failure not passing a certain
+        /// assumption). Tests that are assumption-failures do not break
+        /// builds (again: typically).
+        /// </param>
+        public static void AssumeTrue(string msg, bool condition) // LUCENENET: From RandomizedTest
         {
-            RandomizedTest.AssumeTrue(msg, condition);
+#if TESTFRAMEWORK_MSTEST
+            if (!condition)
+                Assert.Inconclusive(msg);
+#elif TESTFRAMEWORK_NUNIT
+            NUnit.Framework.Assume.That(condition, msg);
+#elif TESTFRAMEWORK_XUNIT
+            if (!condition)
+                throw new SkipTestException(msg);
+#endif
         }
 
-        public static void AssumeFalse(string msg, bool condition)
+        /// <param name="msg">Message to be included in the exception's string.</param>
+        /// <param name="condition">
+        /// If <c>true</c> an <see cref="AssumptionViolatedException"/> is
+        /// thrown by this method and the test case (should be) ignored (or
+        /// rather technically, flagged as a failure not passing a certain
+        /// assumption). Tests that are assumption-failures do not break
+        /// builds (again: typically).
+        /// </param>
+        public static void AssumeFalse(string msg, bool condition) // LUCENENET: From RandomizedTest
         {
-            RandomizedTest.AssumeFalse(msg, condition);
+#if TESTFRAMEWORK_MSTEST
+            if (condition)
+                Assert.Inconclusive(msg);
+#elif TESTFRAMEWORK_NUNIT
+            NUnit.Framework.Assume.That(!condition, msg);
+#elif TESTFRAMEWORK_XUNIT
+            if (condition)
+                throw new SkipTestException(msg);
+#endif
         }
 
-        public static void AssumeNoException(string msg, Exception e)
+        /// <summary>
+        /// Assume <paramref name="e"/> is <c>null</c>.
+        /// </summary>
+        public static void AssumeNoException(string msg, Exception e) // LUCENENET: From RandomizedTest
         {
-            RandomizedTest.AssumeNoException(msg, e);
+            if (e != null)
+            {
+                // This does chain the exception as the cause.
+                throw new AssumptionViolatedException(msg, e);
+            }
         }
 
         /// <summary>
