@@ -69,7 +69,7 @@ jobs:
           }
           else {
             # Else get the latest tag
-            $tag = & git tag --list --sort=-version:refname 'Lucene.Net_*' | select -first 1
+            $tag = & git --git-dir '$Env:GITHUB_WORKSPACE\main-repo' tag --list --sort=-version:refname 'Lucene.Net_*' | select -first 1
           }
 
           if ($tag -eq $null) {
