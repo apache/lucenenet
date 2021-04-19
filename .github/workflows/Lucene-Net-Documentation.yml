@@ -26,6 +26,7 @@ name: 'Lucene.Net.Documentation'
 # Create a PR
 
 on:
+  workflow_dispatch:
   create:
     tags:
       - Docs_*

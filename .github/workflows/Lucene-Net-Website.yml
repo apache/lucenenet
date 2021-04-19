@@ -26,6 +26,7 @@ name: 'Lucene.Net.Website'
 # Create a PR
 
 on:
+  workflow_dispatch:
   create:
     tags:
       - Website_*
