@@ -72,7 +72,7 @@ jobs:
             $tag = & git tag --list --sort=-version:refname 'Lucene.Net_*' | select -first 1
           }
 
-          if ($tag -eq $null)
+          if ($tag -eq $null) {
             echo "::error::Could not determine current version tag"
             exit 1
           }
