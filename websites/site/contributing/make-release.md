@@ -275,15 +275,7 @@ Remove the old releases from SVN under https://dist.apache.org/repos/dist/releas
 
 ### Update the API Documentation with new release
 
-- Create and push a new Git branch from the relese tag called `docs/[version]`, for example: `docs/4.8.0-beta00008`.
-- Update the DocFx config file `/websites/apidocs/docfx.json` and change the `globalMetadata` section:
-  - `_appTitle` should be: "Apache Lucene.NET [Version] Documentation"
-  - ensure the `_appFooter` has the correct copyright year
-  - the `_gitContribute.branch` should be the name of the branch just created
-- Follow the instructions on how to [build, test and publish the docs](https://lucenenet.apache.org/contributing/documentation.html#api-docs) and run/test the docs locally. When testing locally ensure that the "Improve this doc" button on each documentation page links to the newly created branch on GitHub.
-- Commit and push any changes done during the docs building process to the new branch.
-- Merge the new branch to the `master` branch, or create a Pull Request to target the `master` branch if you want to review changes that way or want another team member to review changes.
-- [Publish the docs](https://lucenenet.apache.org/contributing/documentation.html#api-docs).
+Follow the instructions on how to [build](https://lucenenet.apache.org/contributing/documentation.html#api-docs), test and [publish](https://lucenenet.apache.org/contributing/documentation.html#publishing-the-docs) the docs.
 
 ### Post-Release Steps
 

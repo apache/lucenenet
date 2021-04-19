@@ -146,20 +146,17 @@ Once pushed, you can merge those changes to the `master` branch. Doing this may 
 - Tool name: `javadoc2markdown`
 - [NuGet feed here](https://dev.azure.com/lucene-net/Lucene.NET/_packaging?_a=feed&feed=lucene-net-tools)
 
-### Building the docs
-
-- Checkout the Lucene.Net release tag to build the docs against
-- Execute the `./websites/apidocs/docs.ps1` script to build and serve the api docs website locally for testing.
-  - Example: `./websites/apidocs/docs.ps1 -LuceneNetVersion 4.8.0-beta00008`
-  - will serve a website on [http://localhost:8080](http://localhost:8080)
-  - It will take quite a while (approx 10 minutes) to build
-
 ### Publishing the docs
 
-- Checkout the Git repo that hosts the documentation: https://github.com/apache/lucenenet-site/tree/asf-site _(ensure you have `asf-site` branch checked out, not `master`)_
-- Create a new folder in this repo: `/docs/[Version]`, for example: `/docs/4.8.0-beta00008`
-- Copy the build output of the documentation site to this new folder. The build output will be all of the files in the `./websites/apidocs/_site` in your main Lucene.NET checked out Git repository.
-- Commit and push these changes
+> [!NOTE]
+> Before publishing, when testing locally ensure that both the "Improve this doc" button on each documentation page and the "View Source" button (when viewing a Class) links correctly to the newly created version branch on GitHub.
+
+- Create and checkout a new branch based on the release tag on the main branch with the name: `docs/[Version]`, for example `docs/4.8.0-beta00008`. This branch is used for linking to on the API docs "Improve this Doc" and "View Source" buttons. Then build the docs, for example: `./websites/apidocs/docs.ps1 -LuceneNetVersion 4.8.0-beta00008` (For testing [see above](#build-script-1)).
+- Commit and push any changes you may need to make for the API docs.
+
+- Checkout the Git repo that hosts the documentation: https://github.com/apache/lucenenet-site/tree/asf-site _(ensure you have `asf-site` branch checked out, not `master`)_.
+- Create a new folder in this repo: `/docs/[Version]`, for example: `/docs/4.8.0-beta00008`.
+- Copy the build output of the documentation site to this new folder. The build output will be all of the files in the `./websites/apidocs/_site` in your main Lucene.NET checked out Git repository. Commit and push these changes.
 - The new version documentation will be live. Due to the amount of new files committed, the new files may take up to 60 minutes to become live.
 - Next the website needs updating which is a manual process currently:
   - In the `./websites/site/download` folder there should be a document per release. It's normally fine to copy the document of the latest release for the same major version. For a new major version some modifications may be needed.
@@ -169,4 +166,3 @@ Once pushed, you can merge those changes to the `master` branch. Doing this may 
   - Update the `./websites/site/download/toc.yml` and `./websites/site/download/download.md` files to include a reference to the new page which should maintain descending version order.
   - Update the `./websites/site/docs.md` file and add a link to the new documentation for the current version which should maintain descending version order.
   - [Build the website](#website) and test locally, then deploy the changes
-- Once the website is committed/pushed, the last step is to create a named branch on the main [`lucenenet`](https://github.com/apache/lucenenet) repository with the name: `docs/[Version]`, for example `docs/4.8.0-beta00008` based on commit of the latest (if any) changes made to the docs in the `lucenenet` repository on the main branch. This branch is used for linking to on the API docs "Improve this Doc" button.
