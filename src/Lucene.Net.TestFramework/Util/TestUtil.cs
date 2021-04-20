@@ -11,8 +11,10 @@ using Lucene.Net.Support.IO;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -238,140 +240,261 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// <paramref name="start"/> and <paramref name="end"/> are BOTH inclusive </summary>
-        public static int NextInt32(Random r, int start, int end)
-        {
-            return RandomInts.RandomInt32Between(r, start, end); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
-        }
-
-        /// <summary>
-        /// <paramref name="start"/> and <paramref name="end"/> are BOTH inclusive </summary>
-        public static long NextInt64(Random r, long start, long end)
-        {
-            return RandomInts.RandomInt64Between(r, start, end); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
-        }
-
-        /// <summary>
-        /// Returns a random string consisting only of lowercase characters 'a' through 'z'.
+        /// Returns a random <see cref="int"/> from <paramref name="minValue"/> (inclusive) to <paramref name="maxValue"/> (inclusive).
         /// </summary>
-        public static string RandomSimpleString(Random r, int maxLength)
+        /// <param name="random">A <see cref="Random"/> instance.</param>
+        /// <param name="minValue">The inclusive start of the range.</param>
+        /// <param name="maxValue">The inclusive end of the range.</param>
+        /// <returns>A random <see cref="int"/> from <paramref name="minValue"/> (inclusive) to <paramref name="maxValue"/> (inclusive).</returns>
+        /// <exception cref="ArgumentException"><paramref name="minValue"/> is greater than <paramref name="maxValue"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int NextInt32(Random random, int minValue, int maxValue)
         {
-            return RandomizedTesting.Generators.RandomExtensions.NextSimpleString(r, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+            return RandomInts.RandomInt32Between(random, minValue, maxValue); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Returns a random string consisting only of lowercase characters 'a' through 'z'.
+        /// Returns a random <see cref="long"/> from <paramref name="minValue"/> to <paramref name="maxValue"/> (inclusive).
         /// </summary>
-        public static string RandomSimpleString(Random r, int minLength, int maxLength)
+        /// <param name="random">A <see cref="Random"/> instance.</param>
+        /// <param name="minValue">The inclusive start of the range.</param>
+        /// <param name="maxValue">The inclusive end of the range.</param>
+        /// <returns>A random <see cref="long"/> from <paramref name="minValue"/> to <paramref name="maxValue"/> (inclusive).</returns>
+        /// <exception cref="ArgumentException"><paramref name="minValue"/> is greater than <paramref name="maxValue"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long NextInt64(Random random, long minValue, long maxValue)
         {
-            return RandomizedTesting.Generators.RandomExtensions.NextSimpleString(r, minLength, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+            return RandomInts.RandomInt64Between(random, minValue, maxValue); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Returns a random string consisting only of characters between <paramref name="minChar"/> and <paramref name="maxChar"/>.
+        /// Returns a random string consisting only of lowercase characters 'a' through 'z'. May be an empty string.
         /// </summary>
-        public static string RandomSimpleStringRange(Random r, char minChar, char maxChar, int maxLength)
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="maxLength">The maximum length of the string to return (inclusive).</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxLength"/> is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomSimpleString(Random random, int maxLength)
         {
-            return RandomizedTesting.Generators.RandomExtensions.NextSimpleStringRange(r, minChar, maxChar, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+            return RandomizedTesting.Generators.RandomExtensions.NextSimpleString(random, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+        }
+
+        /// <summary>
+        /// Returns a random string consisting only of lowercase characters 'a' through 'z'. May be an empty string.
+        /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="minLength">The minimum length of the string to return (inclusive).</param>
+        /// <param name="maxLength">The maximum length of the string to return (inclusive).</param>
+        /// <exception cref="ArgumentException"><paramref name="minLength"/> is greater than <paramref name="maxLength"/>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="minLength"/> or <paramref name="maxLength"/> is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomSimpleString(Random random, int minLength, int maxLength)
+        {
+            return RandomizedTesting.Generators.RandomExtensions.NextSimpleString(random, minLength, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+        }
+
+        /// <summary>
+        /// Returns a random string consisting only of characters between <paramref name="minChar"/> (inclusive)
+        /// and <paramref name="maxChar"/> (inclusive).
+        /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="minChar">The minimum <see cref="char"/> value of the range (inclusive).</param>
+        /// <param name="maxChar">The maximum <see cref="char"/> value of the range (inclusive).</param>
+        /// <param name="maxLength">The maximum length of the string to generate.</param>
+        /// <returns>a random string consisting only of characters between <paramref name="minChar"/> (inclusive)
+        /// and <paramref name="maxChar"/> (inclusive).</returns>
+        /// <exception cref="ArgumentException"><paramref name="minChar"/> is greater than <paramref name="maxChar"/>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="minChar"/> or <paramref name="maxChar"/> is not in
+        /// the range between <see cref="char.MinValue"/> and <see cref="char.MaxValue"/>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="maxLength"/> is less than 0.
+        /// </exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomSimpleStringRange(Random random, char minChar, char maxChar, int maxLength)
+        {
+            return RandomizedTesting.Generators.RandomExtensions.NextSimpleStringRange(random, minChar, maxChar, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
         /// Returns a random string consisting only of lowercase characters 'a' through 'z',
-        /// between 0 and 20 characters in length.
+        /// between 0 and 10 characters in length.
         /// </summary>
-        public static string RandomSimpleString(Random r)
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomSimpleString(Random random)
         {
-            return RandomizedTesting.Generators.RandomExtensions.NextSimpleString(r); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+            return RandomizedTesting.Generators.RandomExtensions.NextSimpleString(random); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Returns random string, including full unicode range. </summary>
-        public static string RandomUnicodeString(Random r)
+        /// Returns random string with up to 20 characters, including full unicode range.
+        /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomUnicodeString(Random random)
         {
-            return RandomizedTesting.Generators.RandomExtensions.NextUnicodeString(r); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+            return RandomizedTesting.Generators.RandomExtensions.NextUnicodeString(random); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
         /// Returns a random string up to a certain length.
         /// </summary>
-        public static string RandomUnicodeString(Random r, int maxLength)
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="maxLength">The maximum length of the string to return.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxLength"/> is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomUnicodeString(Random random, int maxLength)
         {
-            return RandomizedTesting.Generators.RandomExtensions.NextUnicodeString(r, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+            return RandomizedTesting.Generators.RandomExtensions.NextUnicodeString(random, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
         /// Fills provided <see cref="T:char[]"/> with valid random unicode code
         /// unit sequence.
         /// </summary>
-        public static void RandomFixedLengthUnicodeString(Random random, char[] chars, int offset, int length)
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="chars">A <see cref="T:char[]"/> with preallocated space to put the characters.</param>
+        /// <param name="startIndex">The index of <paramref name="chars"/> to begin populating with characters.</param>
+        /// <param name="length">The number of characters to populate.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="startIndex"/> or <paramref name="length"/> is less than 0.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> + <paramref name="length"/> refers to a position outside of the range of <paramref name="chars"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> or <paramref name="chars"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void RandomFixedLengthUnicodeString(Random random, char[] chars, int startIndex, int length)
         {
-            RandomizedTesting.Generators.RandomExtensions.NextFixedLengthUnicodeString(random, chars, offset, length); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+            RandomizedTesting.Generators.RandomExtensions.NextFixedLengthUnicodeString(random, chars, startIndex, length); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Returns a <see cref="string"/> thats "regexpish" (contains lots of operators typically found in regular expressions)
+        /// Returns a <see cref="string"/> thats "regexish" (contains lots of operators typically found in regular expressions)
         /// If you call this enough times, you might get a valid regex!
         /// </summary>
-        public static string RandomRegexpishString(Random r)
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomRegexishString(Random random) // LUCENENET: Renamed from regexpish to make the name .NET-like
         {
-            return RandomizedTesting.Generators.RandomExtensions.NextRegexishString(r); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+            return RandomizedTesting.Generators.RandomExtensions.NextRegexishString(random); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Returns a <see cref="string"/> thats "regexpish" (contains lots of operators typically found in regular expressions)
+        /// Returns a <see cref="string"/> thats "regexish" (contains lots of operators typically found in regular expressions)
         /// If you call this enough times, you might get a valid regex!
         ///
         /// <para/>Note: to avoid practically endless backtracking patterns we replace asterisk and plus
         /// operators with bounded repetitions. See LUCENE-4111 for more info.
         /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
         /// <param name="maxLength"> A hint about maximum length of the regexpish string. It may be exceeded by a few characters. </param>
-        public static string RandomRegexpishString(Random r, int maxLength)
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxLength"/> is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomRegexpishString(Random random, int maxLength)
         {
-            return RandomizedTesting.Generators.RandomExtensions.NextRegexishString(r, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+            return RandomizedTesting.Generators.RandomExtensions.NextRegexishString(random, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
         /// Returns a random HTML-like string.
         /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="numElements">The maximum number of HTML elements to include in the string.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="numElements"/> is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string RandomHtmlishString(Random random, int numElements)
         {
             return RandomizedTesting.Generators.RandomExtensions.NextHtmlishString(random, numElements); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Randomly upcases, downcases, or leaves intact each code point in the given string.
+        /// Randomly upcases, downcases, or leaves intact each code point in the given string in the current culture.
         /// </summary>
-        public static string RandomlyRecaseString(Random random, string str)
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="value">The string to recase randomly.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> or <paramref name="value"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomlyRecaseString(Random random, string value)
         {
-            return RandomizedTesting.Generators.RandomExtensions.NextStringRecasing(random, str); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+            return RandomizedTesting.Generators.RandomExtensions.NextStringRecasing(random, value); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Returns random string of length between 0-20 codepoints, all codepoints within the same unicode block. </summary>
-        public static string RandomRealisticUnicodeString(Random r)
+        /// Randomly upcases, downcases, or leaves intact each code point in the given string in the specified <paramref name="culture"/>.
+        /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="value">The string to recase randomly.</param>
+        /// <param name="culture">The culture to use when recasing the string.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/>, <paramref name="value"/> or <paramref name="culture"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomlyRecaseString(Random random, string value, CultureInfo culture) // LUCENENET specific - allow a way to pass culture
         {
-            return RandomizedTesting.Generators.RandomExtensions.NextRealisticUnicodeString(r); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+            return RandomizedTesting.Generators.RandomExtensions.NextStringRecasing(random, value, culture); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Returns random string of length up to maxLength codepoints, all codepoints within the same unicode block. </summary>
-        public static string RandomRealisticUnicodeString(Random r, int maxLength)
+        /// Returns random string of length between 0-20 codepoints, all codepoints within the same unicode block.
+        /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomRealisticUnicodeString(Random random)
         {
-            return RandomizedTesting.Generators.RandomExtensions.NextRealisticUnicodeString(r, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+            return RandomizedTesting.Generators.RandomExtensions.NextRealisticUnicodeString(random); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Returns random string of length between min and max codepoints, all codepoints within the same unicode block. </summary>
-        public static string RandomRealisticUnicodeString(Random r, int minLength, int maxLength)
+        /// Returns random string of length up to maxLength codepoints, all codepoints within the same unicode block.
+        /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="maxLength">The maximum length of the string to return (inclusive).</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxLength"/> is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomRealisticUnicodeString(Random random, int maxLength)
         {
-            return RandomizedTesting.Generators.RandomExtensions.NextRealisticUnicodeString(r, minLength, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+            return RandomizedTesting.Generators.RandomExtensions.NextRealisticUnicodeString(random, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Returns random string, with a given UTF-8 byte <paramref name="length"/>. </summary>
-        public static string RandomFixedByteLengthUnicodeString(Random r, int length)
+        /// Returns random string of length between min and max codepoints, all codepoints within the same unicode block.
+        /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="minLength">The minimum length of the string to return (inclusive).</param>
+        /// <param name="maxLength">The maximum length of the string to return (inclusive).</param>
+        /// <exception cref="ArgumentException"><paramref name="minLength"/> is greater than <paramref name="maxLength"/>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="minLength"/> or <paramref name="maxLength"/> is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomRealisticUnicodeString(Random random, int minLength, int maxLength)
         {
-            return RandomizedTesting.Generators.RandomExtensions.NextFixedByteLengthUnicodeString(r, length); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+            return RandomizedTesting.Generators.RandomExtensions.NextRealisticUnicodeString(random, minLength, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+        }
+
+        /// <summary>
+        /// Returns random string, with a given UTF-8 byte <paramref name="length"/>.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="length"/> is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomFixedByteLengthUnicodeString(Random random, int length)
+        {
+            return RandomizedTesting.Generators.RandomExtensions.NextFixedByteLengthUnicodeString(random, length); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
@@ -801,13 +924,13 @@ namespace Lucene.Net.Util
         /// entirely of whitespace characters.
         /// </summary>
         /// <seealso cref="WHITESPACE_CHARACTERS"/>
-        public static string RandomWhitespace(Random r, int minLength, int maxLength)
+        public static string RandomWhitespace(Random random, int minLength, int maxLength)
         {
-            int end = NextInt32(r, minLength, maxLength);
+            int end = NextInt32(random, minLength, maxLength);
             StringBuilder @out = new StringBuilder();
             for (int i = 0; i < end; i++)
             {
-                int offset = NextInt32(r, 0, WHITESPACE_CHARACTERS.Length - 1);
+                int offset = NextInt32(random, 0, WHITESPACE_CHARACTERS.Length - 1);
                 char c = WHITESPACE_CHARACTERS[offset];
                 // sanity check
                 Assert.IsTrue(char.IsWhiteSpace(c), "Not really whitespace? (@" + offset + "): " + c);
