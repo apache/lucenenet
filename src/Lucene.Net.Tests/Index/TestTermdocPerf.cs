@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -165,6 +165,7 @@ namespace Lucene.Net.Index
 
         [Test]
         [Slow]
+        [Nightly] // LUCENENET: Since this is more of a benchmark than a test, moving to Nightly to keep us from buring testing time on it
         public virtual void TestTermDocPerf()
         {
             // performance test for 10% of documents containing a term
