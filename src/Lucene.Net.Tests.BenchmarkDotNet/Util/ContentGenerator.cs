@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Lucene.Net.Randomized.Generators
+namespace Lucene.Net.BenchmarkDotNet.Util
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -93,7 +93,7 @@ namespace Lucene.Net.Randomized.Generators
         /// </summary>
         public static string RandomSimpleString(Random r, int minLength, int maxLength)
         {
-            int end = RandomInts.RandomInt32Between(r, minLength, maxLength);
+            int end = RandomNumbers.RandomInt32Between(r, minLength, maxLength);
             if (end == 0)
             {
                 // allow 0 length
@@ -102,7 +102,7 @@ namespace Lucene.Net.Randomized.Generators
             char[] buffer = new char[end];
             for (int i = 0; i < end; i++)
             {
-                buffer[i] = (char)RandomInts.RandomInt32Between(r, 'a', 'z');
+                buffer[i] = (char)RandomNumbers.RandomInt32Between(r, 'a', 'z');
             }
             return new string(buffer, 0, end);
         }

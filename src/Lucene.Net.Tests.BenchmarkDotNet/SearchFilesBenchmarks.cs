@@ -5,10 +5,9 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers.Classic;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using Lucene.Net.Tests.BenchmarkDotNet.Util;
+using Lucene.Net.BenchmarkDotNet.Util;
 using Lucene.Net.Util;
 using System;
 using System.IO;
@@ -42,16 +41,21 @@ namespace Lucene.Net.Tests.BenchmarkDotNet
             {
                 var baseJob = Job.MediumRun;
 
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00014").WithNuGet("Lucene.Net.QueryParser", "4.8.0-beta00014").WithId("4.8.0-beta00014"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00013").WithNuGet("Lucene.Net.QueryParser", "4.8.0-beta00013").WithId("4.8.0-beta00013"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00012").WithNuGet("Lucene.Net.QueryParser", "4.8.0-beta00012").WithId("4.8.0-beta00012"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00011").WithNuGet("Lucene.Net.QueryParser", "4.8.0-beta00011").WithId("4.8.0-beta00011"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00010").WithNuGet("Lucene.Net.QueryParser", "4.8.0-beta00010").WithId("4.8.0-beta00010"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00009").WithNuGet("Lucene.Net.QueryParser", "4.8.0-beta00009").WithId("4.8.0-beta00009"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00008").WithNuGet("Lucene.Net.QueryParser", "4.8.0-beta00008").WithId("4.8.0-beta00008"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00007").WithNuGet("Lucene.Net.QueryParser", "4.8.0-beta00007").WithId("4.8.0-beta00007"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00006").WithNuGet("Lucene.Net.QueryParser", "4.8.0-beta00006").WithId("4.8.0-beta00006"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00005").WithNuGet("Lucene.Net.QueryParser", "4.8.0-beta00005").WithId("4.8.0-beta00005"));
+                for (int i = 0; i < BuildConfigurations.Configs.Count; i++)
+                {
+                    var config = BuildConfigurations.Configs[i];
+                    if (string.IsNullOrEmpty(config.CustomConfigurationName))
+                    {
+                        AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", config.PackageVersion)
+                                      .WithNuGet("Lucene.Net.QueryParser", config.PackageVersion)
+                                      .WithId($"{i:000}-{config.Id}"));
+                    }
+                    else
+                    {
+                        AddJob(baseJob.WithCustomBuildConfiguration(config.CustomConfigurationName)
+                                      .WithId($"{i:000}-{config.Id}"));
+                    }
+                }
             }
         }
 

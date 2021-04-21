@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Lucene.Net.Tests.BenchmarkDotNet.Util
+namespace Lucene.Net.BenchmarkDotNet.Util
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

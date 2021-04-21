@@ -2,8 +2,11 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <StartupObject>Lucene.Net.Tests.BenchmarkDotNet.Program</StartupObject>
+    
+    <!-- Don't sign the assembly so we don't get warnings about early versions of Lucene.NET that weren't signed -->
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,18 +14,28 @@
     <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.12.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="J2N" Version="1.0.0-beta-0001" />
+  <PropertyGroup Condition=" '$(Configuration)' == 'LocalBuild' ">
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(Configuration)' == 'LocalBuild' ">
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Expressions\Lucene.Net.Expressions.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj" />
+    <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj" />
+    <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(Configuration)' != 'LocalBuild' ">
+    <!-- These are minimal versions required to make the project compile - each higher version upgrades these based on NuGet dependencies -->
     <PackageReference Include="Lucene.Net.Analysis.Common" Version="4.8.0-beta00005" />
     <PackageReference Include="Lucene.Net.Expressions" Version="4.8.0-beta00005" />
     <PackageReference Include="Lucene.Net.Facet" Version="4.8.0-beta00005" />
     <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00005" />
+    <PackageReference Include="J2N" Version="1.0.0-beta-0001" />
   </ItemGroup>
   
   <ItemGroup>
-    <Compile Include="..\Lucene.Net.TestFramework\Support\Randomized\Generators\RandomPicks.cs" LinkBase="Util" />
-    <Compile Include="..\Lucene.Net.TestFramework\Support\Randomized\Generators\RandomInts.cs" LinkBase="Util" />
-    <Compile Include="..\Lucene.Net\Support\ExceptionToNetNumericConventionAttribute.cs" LinkBase="Util" />
     <Compile Include="..\Lucene.Net.Demo\Facet\AssociationsFacetsExample.cs" LinkBase="Util" />
     <Compile Include="..\Lucene.Net.Demo\Facet\DistanceFacetsExample.cs" LinkBase="Util" />
     <Compile Include="..\Lucene.Net.Demo\Facet\ExpressionAggregationFacetsExample.cs" LinkBase="Util" />

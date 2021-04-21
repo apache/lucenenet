@@ -39,16 +39,20 @@ namespace Lucene.Net.Tests.BenchmarkDotNet
             {
                 var baseJob = Job.MediumRun;
 
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00014").WithId("4.8.0-beta00014"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00013").WithId("4.8.0-beta00013"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00012").WithId("4.8.0-beta00012"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00011").WithId("4.8.0-beta00011"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00010").WithId("4.8.0-beta00010"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00009").WithId("4.8.0-beta00009"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00008").WithId("4.8.0-beta00008"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00007").WithId("4.8.0-beta00007"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00006").WithId("4.8.0-beta00006"));
-                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00005").WithId("4.8.0-beta00005"));
+                for (int i = 0; i < BuildConfigurations.Configs.Count; i++)
+                {
+                    var config = BuildConfigurations.Configs[i];
+                    if (string.IsNullOrEmpty(config.CustomConfigurationName))
+                    {
+                        AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", config.PackageVersion)
+                                      .WithId($"{i:000}-{config.Id}"));
+                    }
+                    else
+                    {
+                        AddJob(baseJob.WithCustomBuildConfiguration(config.CustomConfigurationName)
+                                      .WithId($"{i:000}-{config.Id}"));
+                    }
+                }
             }
         }
 
