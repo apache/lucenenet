@@ -963,7 +963,7 @@ namespace Lucene.Net.Util
                 int wordLength = -1;
                 while (wordLength < 0)
                 {
-                    wordLength = (int)(random.NextDouble() * 3 + avgWordLength);
+                    wordLength = (int)(random.NextGaussian() * 3 + avgWordLength);
                 }
                 wordLength = Math.Min(wordLength, maxLength - sb.Length);
                 sb.Append(RandomSubString(random, wordLength, simple));
