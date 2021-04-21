@@ -469,7 +469,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 else
                 {
                     // advance()
-                    int skip = docid + (int)Math.Ceiling(Math.Abs(skipInterval + Random.NextDouble() * averageGap));
+                    int skip = docid + (int)Math.Ceiling(Math.Abs(skipInterval + Random.NextGaussian() * averageGap));
                     docid = leftDocs.Advance(skip);
                     Assert.AreEqual(docid, rightDocs.Advance(skip));
                 }
@@ -509,7 +509,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 else
                 {
                     // advance()
-                    int skip = docid + (int)Math.Ceiling(Math.Abs(skipInterval + Random.NextDouble() * averageGap));
+                    int skip = docid + (int)Math.Ceiling(Math.Abs(skipInterval + Random.NextGaussian() * averageGap));
                     docid = leftDocs.Advance(skip);
                     Assert.AreEqual(docid, rightDocs.Advance(skip));
                 }
