@@ -205,7 +205,7 @@ namespace Lucene.Net.Expressions.JS
                     }
                 }
             }
-            throw new ParseException(message, re.CharPositionInLine, re);
+            throw ParseException.Create(message, re.CharPositionInLine, re);
         }
 
         public static string GetReadableTokenString(IToken token)

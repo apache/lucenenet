@@ -46,27 +46,32 @@ namespace Lucene
 #endif
     internal class ParseException : FormatException
     {
+        [Obsolete("Use ParseException.Create() instead.", error: true)]
         public ParseException(string message, int errorOffset) : base(string.Concat(message, ", ErrorOffset = ", errorOffset.ToString()))
         {
             ErrorOffset = errorOffset;
         }
 
+        [Obsolete("Use ParseException.Create() instead.", error: true)]
         public ParseException(string message, int errorOffset, Exception innerException) : base(string.Concat(message, ", ErrorOffset = ", errorOffset.ToString()), innerException)
         {
             ErrorOffset = errorOffset;
         }
 
         // LUCENENET: For testing purposes
+        [Obsolete("Use ParseException.Create() instead.", error: true)]
         internal ParseException()
         {
         }
 
         // LUCENENET: For testing purposes
+        [Obsolete("Use ParseException.Create() instead.", error: true)]
         internal ParseException(string message) : base(message)
         {
         }
 
         // LUCENENET: For testing purposes
+        [Obsolete("Use ParseException.Create() instead.", error: true)]
         internal ParseException(string message, Exception innerException) : base(message, innerException)
         {
         }
@@ -87,5 +92,20 @@ namespace Lucene
         /// Returns the position where the error was found.
         /// </summary>
         public int ErrorOffset { get; private set; }
+
+
+        // Static factory methods
+
+        public static Exception Create(string message, int errorOffset) => new FormatException(string.Concat(message, ", ErrorOffset = ", errorOffset.ToString()));
+
+        public static Exception Create(string message, int errorOffset, Exception innerException) => new FormatException(string.Concat(message, ", ErrorOffset = ", errorOffset.ToString()), innerException);
+
+        public static Exception Create() => new FormatException();
+
+        public static Exception Create(string message) => new FormatException(message);
+
+        public static Exception Create(string message, Exception innerException) => new FormatException(message, innerException);
+
+        public static Exception Create(Exception cause) => new FormatException(cause.Message, cause);
     }
 }

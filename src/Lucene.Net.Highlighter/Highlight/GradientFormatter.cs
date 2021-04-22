@@ -204,7 +204,7 @@ namespace Lucene.Net.Search.Highlight
         {
             int len = hex.Length;
             if (len > 16)
-                throw new FormatException();
+                throw ParseException.Create();
 
             try
             {
@@ -217,7 +217,7 @@ namespace Lucene.Net.Search.Highlight
             }
             catch (ArgumentException e)
             {
-                throw new FormatException(e.Message, e);
+                throw ParseException.Create(e);
             }
         }
     }
