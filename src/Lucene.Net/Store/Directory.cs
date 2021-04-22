@@ -357,7 +357,7 @@ namespace Lucene.Net.Store
                 long start = GetFilePointer();
                 if (start + len > length)
                 {
-                    throw new Exception("read past EOF: " + this);
+                    throw new EndOfStreamException("read past EOF: " + this);
                 }
                 @base.Seek(fileOffset + start);
                 @base.ReadBytes(b, offset, len, false);
