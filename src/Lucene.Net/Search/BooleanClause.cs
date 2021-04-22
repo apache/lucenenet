@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Search
 {
@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
                     return "-";
 
                 default:
-                    throw new Exception("Invalid Occur value");
+                    throw new ArgumentOutOfRangeException("Invalid Occur value"); // LUCENENET specific
             }
         }
 
