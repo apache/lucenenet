@@ -144,22 +144,22 @@ namespace Lucene.Net.Codecs.Lucene45
             // sorted = binary + numeric
             if (meta.ReadVInt32() != fieldNumber)
             {
-                throw new Exception("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             if (meta.ReadByte() != Lucene45DocValuesFormat.BINARY)
             {
-                throw new Exception("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             BinaryEntry b = ReadBinaryEntry(meta);
             binaries[fieldNumber] = b;
 
             if (meta.ReadVInt32() != fieldNumber)
             {
-                throw new Exception("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             if (meta.ReadByte() != Lucene45DocValuesFormat.NUMERIC)
             {
-                throw new Exception("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             NumericEntry n = ReadNumericEntry(meta);
             ords[fieldNumber] = n;
@@ -170,33 +170,33 @@ namespace Lucene.Net.Codecs.Lucene45
             // sortedset = binary + numeric (addresses) + ordIndex
             if (meta.ReadVInt32() != fieldNumber)
             {
-                throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             if (meta.ReadByte() != Lucene45DocValuesFormat.BINARY)
             {
-                throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             BinaryEntry b = ReadBinaryEntry(meta);
             binaries[fieldNumber] = b;
 
             if (meta.ReadVInt32() != fieldNumber)
             {
-                throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             if (meta.ReadByte() != Lucene45DocValuesFormat.NUMERIC)
             {
-                throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             NumericEntry n1 = ReadNumericEntry(meta);
             ords[fieldNumber] = n1;
 
             if (meta.ReadVInt32() != fieldNumber)
             {
-                throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             if (meta.ReadByte() != Lucene45DocValuesFormat.NUMERIC)
             {
-                throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             NumericEntry n2 = ReadNumericEntry(meta);
             ordIndexes[fieldNumber] = n2;
@@ -213,7 +213,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 {
                     // trickier to validate more: because we re-use for norms, because we use multiple entries
                     // for "composite" types like sortedset, etc.
-                    throw new Exception("Invalid field number: " + fieldNumber + " (resource=" + meta + ")");
+                    throw new CorruptIndexException("Invalid field number: " + fieldNumber + " (resource=" + meta + ")");
                 }
                 byte type = meta.ReadByte();
                 if (type == Lucene45DocValuesFormat.NUMERIC)
@@ -241,11 +241,11 @@ namespace Lucene.Net.Codecs.Lucene45
                     {
                         if (meta.ReadVInt32() != fieldNumber)
                         {
-                            throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                            throw new CorruptIndexException("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
                         }
                         if (meta.ReadByte() != Lucene45DocValuesFormat.SORTED)
                         {
-                            throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                            throw new CorruptIndexException("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
                         }
                         ReadSortedField(fieldNumber, meta/*, infos // LUCENENET: Never read */);
                     }
@@ -256,7 +256,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
                 else
                 {
-                    throw new Exception("invalid type: " + type + ", resource=" + meta);
+                    throw new CorruptIndexException("invalid type: " + type + ", resource=" + meta);
                 }
                 fieldNumber = meta.ReadVInt32();
             }
@@ -281,12 +281,12 @@ namespace Lucene.Net.Codecs.Lucene45
                 case Lucene45DocValuesConsumer.TABLE_COMPRESSED:
                     if (entry.Count > int.MaxValue)
                     {
-                        throw new Exception("Cannot use TABLE_COMPRESSED with more than MAX_VALUE values, input=" + meta);
+                        throw new CorruptIndexException("Cannot use TABLE_COMPRESSED with more than MAX_VALUE values, input=" + meta);
                     }
                     int uniqueValues = meta.ReadVInt32();
                     if (uniqueValues > 256)
                     {
-                        throw new Exception("TABLE_COMPRESSED cannot have more than 256 distinct values, input=" + meta);
+                        throw new CorruptIndexException("TABLE_COMPRESSED cannot have more than 256 distinct values, input=" + meta);
                     }
                     entry.table = new long[uniqueValues];
                     for (int i = 0; i < uniqueValues; ++i)
@@ -299,7 +299,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     break;
 
                 default:
-                    throw new Exception("Unknown format: " + entry.format + ", input=" + meta);
+                    throw new CorruptIndexException("Unknown format: " + entry.format + ", input=" + meta);
             }
             return entry;
         }
@@ -332,7 +332,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     break;
 
                 default:
-                    throw new Exception("Unknown format: " + entry.format + ", input=" + meta);
+                    throw new CorruptIndexException("Unknown format: " + entry.format + ", input=" + meta);
             }
             return entry;
         }
@@ -350,7 +350,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
             if (entry.Format != Lucene45DocValuesConsumer.SORTED_SET_SINGLE_VALUED_SORTED && entry.Format != Lucene45DocValuesConsumer.SORTED_SET_WITH_ADDRESSES)
             {
-                throw new Exception("Unknown format: " + entry.Format + ", input=" + meta);
+                throw new CorruptIndexException("Unknown format: " + entry.Format + ", input=" + meta);
             }
             return entry;
         }
