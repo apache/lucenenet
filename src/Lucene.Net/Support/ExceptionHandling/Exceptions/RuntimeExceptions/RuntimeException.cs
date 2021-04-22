@@ -46,18 +46,22 @@ namespace Lucene
 #endif
     internal class RuntimeException : Exception, IRuntimeException
     {
+        [Obsolete("Use RuntimeException.Create() instead.", error: true)]
         public RuntimeException()
         {
         }
 
+        [Obsolete("Use RuntimeException.Create() instead.", error: true)]
         public RuntimeException(string message) : base(message)
         {
         }
 
+        [Obsolete("Use RuntimeException.Create() instead.", error: true)]
         public RuntimeException(string message, Exception innerException) : base(message, innerException)
         {
         }
 
+        [Obsolete("Use RuntimeException.Create() instead.", error: true)]
         public RuntimeException(Exception cause)
             : base(cause?.ToString(), cause)
         {
@@ -74,5 +78,15 @@ namespace Lucene
         {
         }
 #endif
+
+        // Static factory methods
+
+        public static Exception Create() => new Exception();
+
+        public static Exception Create(string message) => new Exception(message);
+
+        public static Exception Create(string message, Exception innerException) => new Exception(message, innerException);
+
+        public static Exception Create(Exception cause) => new Exception(cause.Message, cause);
     }
 }

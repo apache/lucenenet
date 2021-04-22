@@ -376,7 +376,7 @@ namespace Lucene.Net.Index
                     failed.Value = (true);
                     m_writer.MergeFinish(merge);
                     // LUCENENET NOTE: ThreadJob takes care of propagating the exception to the calling thread
-                    throw new Exception(t.ToString(), t);
+                    throw RuntimeException.Create(t);
                 }
             }
         }

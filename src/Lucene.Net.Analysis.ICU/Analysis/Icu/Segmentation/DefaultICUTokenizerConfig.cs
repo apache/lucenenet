@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             }
             catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
         }
     }

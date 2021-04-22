@@ -992,7 +992,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception("unable to parse args: " + args, e);
+                    throw RuntimeException.Create("unable to parse args: " + args, e);
                 }
                 upgrader.Upgrade();
 

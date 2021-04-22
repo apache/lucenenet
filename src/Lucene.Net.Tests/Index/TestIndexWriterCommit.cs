@@ -417,7 +417,7 @@ namespace Lucene.Net.Index
                 catch (Exception t) when (t.IsThrowable())
                 {
                     failed.Value = (true);
-                    throw new Exception(t.Message, t);
+                    throw RuntimeException.Create(t);
                 }
             }
         }

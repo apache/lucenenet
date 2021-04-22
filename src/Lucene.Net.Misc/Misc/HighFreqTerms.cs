@@ -99,7 +99,7 @@ namespace Lucene.Net.Misc
                 Fields fields = MultiFields.GetFields(reader);
                 if (fields == null)
                 {
-                    throw new Exception("field " + field + " not found");
+                    throw RuntimeException.Create("field " + field + " not found");
                 }
                 Terms terms = fields.GetTerms(field);
                 if (terms != null)
@@ -114,7 +114,7 @@ namespace Lucene.Net.Misc
                 Fields fields = MultiFields.GetFields(reader);
                 if (fields == null)
                 {
-                    throw new Exception("no fields found for this index");
+                    throw RuntimeException.Create("no fields found for this index");
                 }
                 tiq = new TermStatsQueue(numTerms, comparer);
                 foreach (string fieldName in fields)

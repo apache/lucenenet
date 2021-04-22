@@ -594,7 +594,7 @@ namespace Lucene.Net.Util
                     catch (Exception e) when (e.IsIllegalAccessException())
                     {
                         // this should never happen as we enabled setAccessible().
-                        throw new Exception("Reflective field access failed?", e);
+                        throw RuntimeException.Create("Reflective field access failed?", e);
                     }
                 }
             }
@@ -669,7 +669,7 @@ namespace Lucene.Net.Util
             //  }
             //  catch (Exception ex)
             //  {
-            //    throw new Exception("Access problem with sun.misc.Unsafe", ex);
+            //    throw RuntimeException.Create("Access problem with sun.misc.Unsafe", ex);
             //  }
             //}
             //else

@@ -254,7 +254,7 @@ namespace Lucene.Net.Index.Memory
             }
             catch (Exception ex) when (ex.IsIOException())
             {
-                throw new Exception(ex.ToString(), ex);
+                throw RuntimeException.Create(ex);
             }
 
             AddField(fieldName, stream, 1.0f, analyzer.GetPositionIncrementGap(fieldName), analyzer.GetOffsetGap(fieldName));
@@ -506,7 +506,7 @@ namespace Lucene.Net.Index.Memory
             } // can never happen
             catch (Exception e) when (e.IsException())
             {
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
             finally
             {
@@ -519,7 +519,7 @@ namespace Lucene.Net.Index.Memory
                 }
                 catch (Exception e2) when (e2.IsIOException())
                 {
-                    throw new Exception(e2.ToString(), e2);
+                    throw RuntimeException.Create(e2);
                 }
             }
         }
@@ -563,7 +563,7 @@ namespace Lucene.Net.Index.Memory
             } // can never happen (RAMDirectory)
             catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
             finally
             {

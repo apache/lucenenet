@@ -714,7 +714,7 @@ namespace Lucene.Net.Store
                     openFiles[name] = 1;
                 }
 
-                openFileHandles[c] = new Exception("unclosed Index" + handle.ToString() + ": " + name);
+                openFileHandles[c] = RuntimeException.Create("unclosed Index" + handle.ToString() + ": " + name);
             }
         }
 
@@ -867,12 +867,12 @@ namespace Lucene.Net.Store
 
                         // RuntimeException instead ofIOException because
                         // super() does not throw IOException currently:
-                        throw new Exception("MockDirectoryWrapper: cannot close: there are still open files: "
+                        throw RuntimeException.Create("MockDirectoryWrapper: cannot close: there are still open files: "
                             + Collections.ToString(openFiles), cause);
                     }
                     if (openLocks.Count > 0)
                     {
-                        throw new Exception("MockDirectoryWrapper: cannot close: there are still open locks: "
+                        throw RuntimeException.Create("MockDirectoryWrapper: cannot close: there are still open locks: "
                             + Collections.ToString(openLocks));
                     }
 

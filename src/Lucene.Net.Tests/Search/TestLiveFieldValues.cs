@@ -238,7 +238,7 @@ namespace Lucene.Net.Search
                 }
                 catch (Exception t) when (t.IsThrowable())
                 {
-                    throw new Exception(t.Message, t);
+                    throw RuntimeException.Create(t);
                 }
             }
         }

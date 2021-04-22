@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.IO;
@@ -113,7 +113,7 @@ namespace Lucene.Net.Analysis
         {
             if (throwExcNext || (excAtChar != -1 && readSoFar >= excAtChar))
             {
-                throw new Exception("fake exception now!");
+                throw RuntimeException.Create("fake exception now!");
             }
         }
 

@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.Message, e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -296,7 +296,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
                 while (Environment.TickCount < endTime)
                 {

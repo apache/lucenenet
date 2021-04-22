@@ -531,10 +531,10 @@ namespace Lucene.Net.Index
                 {
                     this._run();
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     failed = true;
-                    throw new Exception(t.toString(), t);
+                    throw RuntimeException.Create(t);
                 }
             }
 

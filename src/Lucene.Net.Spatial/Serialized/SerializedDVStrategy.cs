@@ -71,7 +71,7 @@ namespace Lucene.Net.Spatial.Serialized
             }
             catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
             this.indexLastBufSize = bytesRef.Length;//cache heuristic
             return new Field[] { new BinaryDocValuesField(FieldName, bytesRef) };
@@ -300,7 +300,7 @@ namespace Lucene.Net.Spatial.Serialized
                     }
                     catch (Exception e) when (e.IsIOException())
                     {
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
                 }
 

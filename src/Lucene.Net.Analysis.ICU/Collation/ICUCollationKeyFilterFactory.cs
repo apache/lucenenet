@@ -227,7 +227,7 @@ namespace Lucene.Net.Collation
             catch (Exception e) when (e.IsException())
             {
                 // io error or invalid rules
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
             finally
             {

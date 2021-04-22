@@ -282,7 +282,7 @@ namespace Lucene.Net.Codecs.Lucene40
             // entering the index.  See LUCENE-1282 for
             // details.
             {
-                throw new Exception("fdx size mismatch: docCount is " + numDocs + " but fdx file size is " + indexStream.GetFilePointer() + " file=" + indexStream.ToString() + "; now aborting this merge to prevent index corruption");
+                throw RuntimeException.Create("fdx size mismatch: docCount is " + numDocs + " but fdx file size is " + indexStream.GetFilePointer() + " file=" + indexStream.ToString() + "; now aborting this merge to prevent index corruption");
             }
         }
 

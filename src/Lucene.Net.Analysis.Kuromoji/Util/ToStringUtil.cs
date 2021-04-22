@@ -260,7 +260,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             }
             catch (Exception bogus) when (bogus.IsIOException())
             {
-                throw new Exception(bogus.ToString(), bogus);
+                throw RuntimeException.Create(bogus);
             }
             return result.ToString();
         }

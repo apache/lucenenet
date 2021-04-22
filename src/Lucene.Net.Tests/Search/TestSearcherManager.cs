@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
                         Console.Out.Write(t.StackTrace);
                     }
                     outerInstance.m_failed.Value = (true);
-                    throw new Exception(t.ToString(), t);
+                    throw RuntimeException.Create(t);
                 }
             }
         }
@@ -634,7 +634,7 @@ namespace Lucene.Net.Search
                 }
                 catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }

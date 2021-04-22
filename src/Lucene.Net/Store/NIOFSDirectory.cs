@@ -152,7 +152,7 @@ namespace Lucene.Net.Store
                 }
                 catch (Exception ex) when (ex.IsIOException())
                 {
-                    throw new Exception(ex.ToString(), ex);
+                    throw RuntimeException.Create(ex);
                 }
             }
         }

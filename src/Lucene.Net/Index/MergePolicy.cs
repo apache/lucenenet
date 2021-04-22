@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
             {
                 if (0 == segments.Count)
                 {
-                    throw new Exception("segments must include at least one segment");
+                    throw RuntimeException.Create("segments must include at least one segment");
                 }
                 // clone the list, as the in list may be based off original SegmentInfos and may be modified
                 this.Segments = new List<SegmentCommitInfo>(segments);
@@ -294,7 +294,7 @@ namespace Lucene.Net.Index
                         }
                         catch (Exception ie) when (ie.IsInterruptedException())
                         {
-                            throw new Exception(ie.ToString(), ie);
+                            throw RuntimeException.Create(ie);
                         }
 
                         if (aborted)

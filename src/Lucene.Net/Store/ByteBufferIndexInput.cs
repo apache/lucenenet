@@ -262,7 +262,7 @@ namespace Lucene.Net.Store
             }
             catch (Exception ioe) when (ioe.IsIOException())
             {
-                throw new Exception("Should never happen: " + this, ioe);
+                throw RuntimeException.Create("Should never happen: " + this, ioe);
             }
 
             return clone;
@@ -288,7 +288,7 @@ namespace Lucene.Net.Store
             }
             catch (Exception ioe) when (ioe.IsIOException())
             {
-                throw new Exception("Should never happen: " + this, ioe);
+                throw RuntimeException.Create("Should never happen: " + this, ioe);
             }
 
             return clone;

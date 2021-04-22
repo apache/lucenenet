@@ -497,7 +497,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             catch (Exception ioe) when (ioe.IsIOException())
             {
                 // bogus:
-                throw new Exception(ioe.ToString(), ioe);
+                throw RuntimeException.Create(ioe);
             }
         }
 
@@ -656,7 +656,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                     catch (Exception bogus) when (bogus.IsIOException())
                     {
-                        throw new Exception(bogus.ToString(), bogus);
+                        throw RuntimeException.Create(bogus);
                     }
                     //System.out.println("  prefixOutput=" + prefixOutput);
 
@@ -731,7 +731,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                     catch (Exception bogus) when (bogus.IsIOException())
                     {
-                        throw new Exception(bogus.ToString(), bogus);
+                        throw RuntimeException.Create(bogus);
                     }
 
                     int prefixLength = token.Length;

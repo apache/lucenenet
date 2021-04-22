@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception("Cannot load CharacterDefinition.", ioe);
+                    throw RuntimeException.Create("Cannot load CharacterDefinition.", ioe);
                 }
             }
         }

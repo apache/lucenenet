@@ -638,11 +638,11 @@ namespace Lucene.Net.Util.Fst
                                     T actual = Util.Get(fst, intsRef);
                                     if (actual == null)
                                     {
-                                        throw new Exception("unexpected null output on input=" + w);
+                                        throw RuntimeException.Create("unexpected null output on input=" + w);
                                     }
                                     if (!actual.Equals(expected))
                                     {
-                                        throw new Exception("wrong output (got " + outputs.OutputToString(actual) + " but expected " + outputs.OutputToString(expected) + ") on input=" + w);
+                                        throw RuntimeException.Create("wrong output (got " + outputs.OutputToString(actual) + " but expected " + outputs.OutputToString(expected) + ") on input=" + w);
                                     }
                                 }
                                 else
@@ -652,11 +652,11 @@ namespace Lucene.Net.Util.Fst
                                     Int32sRef actual = Util.GetByOutput(fst as FST<long?>, output.GetValueOrDefault());
                                     if (actual == null)
                                     {
-                                        throw new Exception("unexpected null input from output=" + output);
+                                        throw RuntimeException.Create("unexpected null input from output=" + output);
                                     }
                                     if (!actual.Equals(intsRef))
                                     {
-                                        throw new Exception("wrong input (got " + actual + " but expected " + intsRef + " from output=" + output);
+                                        throw RuntimeException.Create("wrong input (got " + actual + " but expected " + intsRef + " from output=" + output);
                                     }
                                 }
 

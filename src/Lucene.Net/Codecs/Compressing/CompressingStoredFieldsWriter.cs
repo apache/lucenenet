@@ -382,7 +382,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
             if (docBase != numDocs)
             {
-                throw new Exception("Wrote " + docBase + " docs, finish called with numDocs=" + numDocs);
+                throw RuntimeException.Create("Wrote " + docBase + " docs, finish called with numDocs=" + numDocs);
             }
             indexWriter.Finish(numDocs, fieldsStream.GetFilePointer());
             CodecUtil.WriteFooter(fieldsStream);

@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Analysis.Util;
@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis.Pt
                 {
                     if (!exceptions[i].EndsWith(suffix, StringComparison.Ordinal))
                     {
-                        throw new Exception("useless exception '" + exceptions[i] + "' does not end with '" + suffix + "'");
+                        throw RuntimeException.Create("useless exception '" + exceptions[i] + "' does not end with '" + suffix + "'");
                     }
                 }
                 this.m_exceptions = new CharArraySet(
@@ -163,7 +163,7 @@ namespace Lucene.Net.Analysis.Pt
                 {
                     if (!exceptions[i].EndsWith(suffix, StringComparison.Ordinal))
                     {
-                        throw new Exception("warning: useless exception '" + exceptions[i] + "' does not end with '" + suffix + "'");
+                        throw RuntimeException.Create("warning: useless exception '" + exceptions[i] + "' does not end with '" + suffix + "'");
                     }
                 }
                 this.m_exceptions = new char[exceptions.Length][];
@@ -280,18 +280,25 @@ namespace Lucene.Net.Analysis.Pt
         /// <returns> a Map containing the named <see cref="Step"/>s in this description. </returns>
         protected static IDictionary<string, Step> Parse(Type clazz, string resource)
         {
-            IDictionary<string, Step> steps = new Dictionary<string, Step>();
-
-            using (TextReader r = IOUtils.GetDecodingReader(clazz, resource, Encoding.UTF8))
+            try
             {
-                string step;
-                while ((step = ReadLine(r)) != null)
+                IDictionary<string, Step> steps = new Dictionary<string, Step>();
+
+                using (TextReader r = IOUtils.GetDecodingReader(clazz, resource, Encoding.UTF8))
                 {
-                    Step s = ParseStep(r, step);
-                    steps[s.m_name] = s;
+                    string step;
+                    while ((step = ReadLine(r)) != null)
+                    {
+                        Step s = ParseStep(r, step);
+                        steps[s.m_name] = s;
+                    }
                 }
+                return steps;
             }
-            return steps;
+            catch (Exception e) when (e.IsIOException())
+            {
+                throw RuntimeException.Create(e);
+            }
         }
 
         private static readonly Regex headerPattern = new Regex("^\\{\\s*\"([^\"]*)\",\\s*([0-9]+),\\s*(0|1),\\s*\\{(.*)\\},\\s*$", RegexOptions.Compiled);
@@ -304,7 +311,7 @@ namespace Lucene.Net.Analysis.Pt
             Match matcher = headerPattern.Match(header);
             if (!matcher.Success)
             {
-                throw new Exception("Illegal Step header specified at line " /*+ r.LineNumber*/); // TODO Line number
+                throw RuntimeException.Create("Illegal Step header specified at line " /*+ r.LineNumber*/); // TODO Line number
             }
             //if (Debugging.AssertsEnabled) Debugging.Assert(headerPattern.GetGroupNumbers().Length == 4); // Not possible to read the number of groups that matched in .NET
             string name = matcher.Groups[1].Value;
@@ -349,7 +356,7 @@ namespace Lucene.Net.Analysis.Pt
                         }
                         else
                         {
-                            throw new Exception("Illegal Step rule specified at line " /*+ r.LineNumber*/);
+                            throw RuntimeException.Create("Illegal Step rule specified at line " /*+ r.LineNumber*/);
                         }
                     }
                 }

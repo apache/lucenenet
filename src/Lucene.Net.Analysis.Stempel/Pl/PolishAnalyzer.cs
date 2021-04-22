@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Pl
                 {
                     // default set should always be present as it is part of the
                     // distribution (embedded resource)
-                    throw new InvalidOperationException("Unable to load default stopword set", ex);
+                    throw RuntimeException.Create("Unable to load default stopword set", ex);
                 }
             }
 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Pl
                 {
                     // default set should always be present as it is part of the
                     // distribution (embedded resource)
-                    throw new InvalidOperationException("Unable to load default stemming tables", ex);
+                    throw RuntimeException.Create("Unable to load default stemming tables", ex);
                 }
             }
         }

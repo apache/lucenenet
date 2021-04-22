@@ -392,7 +392,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine(t.ToString());
                         Console.Write(t.StackTrace);
                         outerInstance.m_failed.Value = (true);
-                        throw new Exception(t.ToString(), t);
+                        throw RuntimeException.Create(t);
                     }
                 }
                 if (Verbose)
@@ -537,7 +537,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine(Thread.CurrentThread.Name + ": hit exc");
                         outerInstance.m_failed.Value = (true);
                         Console.WriteLine(t.ToString());
-                        throw new Exception(t.ToString(), t);
+                        throw RuntimeException.Create(t);
                     }
                 }
             }

@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
 
             if (last == null)
             {
-                throw new Exception("Couldn't find commit point " + id);
+                throw RuntimeException.Create("Couldn't find commit point " + id);
             }
 
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetIndexDeletionPolicy(new RollbackDeletionPolicy(this, id)).SetIndexCommit(last));

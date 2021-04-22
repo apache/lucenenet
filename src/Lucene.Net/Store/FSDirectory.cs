@@ -410,7 +410,7 @@ namespace Lucene.Net.Store
             }
             catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
 
             int digest = 0;

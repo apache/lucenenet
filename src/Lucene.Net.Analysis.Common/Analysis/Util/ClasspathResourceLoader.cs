@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Util
             }
             catch (Exception e) when (e.IsException())
             {
-                throw new Exception("Cannot load class: " + cname, e);
+                throw RuntimeException.Create("Cannot load class: " + cname, e);
             }
         }
 
@@ -88,7 +88,7 @@ namespace Lucene.Net.Analysis.Util
             }
             catch (Exception e) when (e.IsException())
             {
-                throw new Exception("Cannot create instance: " + cname, e);
+                throw RuntimeException.Create("Cannot create instance: " + cname, e);
             }
         }
     }

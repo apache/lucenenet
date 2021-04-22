@@ -579,7 +579,7 @@ namespace Lucene.Net.Search
             }
             catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception("exception in hitcollector of [[" + d + "]] for #" + doc, e);
+                throw RuntimeException.Create("exception in hitcollector of [[" + d + "]] for #" + doc, e);
             }
 
             Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");

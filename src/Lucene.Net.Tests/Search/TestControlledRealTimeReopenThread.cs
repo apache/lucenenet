@@ -501,7 +501,7 @@ namespace Lucene.Net.Search
                 catch (Exception ie) when (ie.IsInterruptedException())
                 {
                     Thread.CurrentThread.Interrupt();
-                    throw new Exception(ie.Message, ie);
+                    throw RuntimeException.Create(ie);
                 }
                 finished.Value = true;
             }
@@ -730,7 +730,7 @@ namespace Lucene.Net.Search
                 }
                 catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.toString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }

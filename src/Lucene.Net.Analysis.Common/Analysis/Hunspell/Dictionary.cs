@@ -283,7 +283,7 @@ namespace Lucene.Net.Analysis.Hunspell
             }
             catch (Exception bogus) when (bogus.IsIOException())
             {
-                throw new Exception(bogus.Message, bogus);
+                throw RuntimeException.Create(bogus);
             }
         }
 
@@ -1394,7 +1394,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 }
                 catch (Exception bogus) when (bogus.IsIOException())
                 {
-                    throw new Exception(bogus.Message, bogus);
+                    throw RuntimeException.Create(bogus);
                 }
                 if (ignoreCase)
                 {

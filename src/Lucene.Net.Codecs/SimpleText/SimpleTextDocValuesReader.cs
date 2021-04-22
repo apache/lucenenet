@@ -194,7 +194,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
             }
         }
@@ -235,7 +235,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 
@@ -299,7 +299,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
             }
         }
@@ -357,7 +357,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
             }
 
@@ -419,7 +419,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
             }
 
@@ -455,7 +455,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
             }
 
@@ -520,7 +520,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
             }
 
@@ -557,7 +557,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
             }
 

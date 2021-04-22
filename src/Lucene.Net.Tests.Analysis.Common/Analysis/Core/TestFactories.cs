@@ -144,7 +144,7 @@ namespace Lucene.Net.Analysis.Core
             }
             catch (Exception e) when (e.IsException())
             {
-                throw new Exception("factory '" + factoryClazz + "' does not have a proper ctor!", e);
+                throw RuntimeException.Create("factory '" + factoryClazz + "' does not have a proper ctor!", e);
             }
 
             AbstractAnalysisFactory factory = null;
@@ -154,11 +154,11 @@ namespace Lucene.Net.Analysis.Core
             }
             catch (Exception e) when (e.IsInstantiationException())
             {
-                throw new Exception(e.Message, e);
+                throw RuntimeException.Create(e);
             }
             catch (Exception e) when (e.IsIllegalAccessException())
             {
-                throw new Exception(e.Message, e);
+                throw RuntimeException.Create(e);
             }
             catch (Exception e) when (e.IsInvocationTargetException())
             {

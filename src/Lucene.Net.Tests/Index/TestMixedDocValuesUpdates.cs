@@ -426,7 +426,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
                 finally
                 {
@@ -440,7 +440,7 @@ namespace Lucene.Net.Index
                         {
                             if (success) // suppress this exception only if there was another exception
                             {
-                                throw new Exception(e.ToString(), e);
+                                throw RuntimeException.Create(e);
                             }
                         }
                     }

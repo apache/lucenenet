@@ -409,7 +409,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 }
                 catch (Exception bogus) when (bogus.IsIOException())
                 {
-                    throw new Exception(bogus.ToString(), bogus);
+                    throw RuntimeException.Create(bogus);
                 }
 
                 @ref.Bytes = buffer;

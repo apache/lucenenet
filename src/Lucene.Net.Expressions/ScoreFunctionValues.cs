@@ -48,7 +48,7 @@ namespace Lucene.Net.Expressions
             }
             catch (Exception exception) when (exception.IsIOException())
             {
-                throw new Exception(exception.ToString(), exception);
+                throw RuntimeException.Create(exception);
             }
         }
     }

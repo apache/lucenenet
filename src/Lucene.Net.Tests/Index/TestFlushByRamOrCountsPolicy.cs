@@ -376,8 +376,8 @@ namespace Lucene.Net.Index
                 catch (Exception ex) when (ex.IsThrowable())
                 {
                     Console.WriteLine("FAILED exc:");
-                    Console.WriteLine(ex.StackTrace);
-                    throw new Exception(ex.Message, ex);
+                    ex.printStackTrace(Console.Out);
+                    throw RuntimeException.Create(ex);
                 }
             }
         }

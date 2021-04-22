@@ -126,7 +126,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                             }
                                         case StreamTokenizer.TokenType_EndOfStream:
                                             {
-                                                throw new Exception("Unexpexted EOF: - " + stok.ToString());
+                                                throw RuntimeException.Create("Unexpexted EOF: - " + stok.ToString());
                                             }
                                         case '"':
                                         case '\'':

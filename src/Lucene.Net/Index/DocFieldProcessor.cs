@@ -148,7 +148,7 @@ namespace Lucene.Net.Index
                 if (th.IsRuntimeException()) throw th;
                 if (th.IsError()) throw th;
                 // defensive code - we should not hit unchecked exceptions
-                throw new Exception(th.Message, th);
+                throw RuntimeException.Create(th);
             }
         }
 

@@ -3378,7 +3378,7 @@ namespace Lucene.Net.Util
         ////            {
         ////                if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
         ////                {
-        ////                    throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + directory.FullName);
+        ////                    throw RuntimeException.Create("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + directory.FullName);
         ////                }
         ////                f = new DirectoryInfo(Path.Combine(directory.FullName, prefix + "-" + ctx.RunnerSeed + "-" + string.Format(CultureInfo.InvariantCulture, "%03d", attempt)));
 
@@ -3427,7 +3427,7 @@ namespace Lucene.Net.Util
             {
                 if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
                 {
-                    throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + System.IO.Path.GetTempPath());
+                    throw RuntimeException.Create("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + System.IO.Path.GetTempPath());
                 }
                 // LUCENENET specific - need to use a random file name instead of a sequential one or two threads may attempt to do 
                 // two operations on a file at the same time.
@@ -3470,7 +3470,7 @@ namespace Lucene.Net.Util
             //{
             //    if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
             //    {
-            //        throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + System.IO.Path.GetTempPath());
+            //        throw RuntimeException.Create("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + System.IO.Path.GetTempPath());
             //    }
             //    //f = new FileInfo(Path.Combine(System.IO.Path.GetTempPath(), prefix + "-" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", attempt) + suffix));
             //    f = FileSupport.CreateTempFile(prefix, suffix, new DirectoryInfo(System.IO.Path.GetTempPath()));

@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Nl
                 {
                     // default set should always be present as it is part of the
                     // distribution (JAR)
-                    throw new Exception("Unable to load default stopword set", ex);
+                    throw RuntimeException.Create("Unable to load default stopword set", ex);
                 }
 
             }
@@ -185,7 +185,7 @@ namespace Lucene.Net.Analysis.Nl
                 }
                 catch (Exception ex) when (ex.IsIOException())
                 {
-                    throw new Exception("can not build stem dict", ex);
+                    throw RuntimeException.Create("can not build stem dict", ex);
                 }
             }
         }

@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -157,7 +157,7 @@ namespace Lucene.Net.Search
                 pos = answer.NextSetBit(pos + 1);
                 if (pos != doc + docBase)
                 {
-                    throw new Exception("Expected doc " + pos + " but got " + doc + docBase);
+                    throw RuntimeException.Create("Expected doc " + pos + " but got " + doc + docBase);
                 }
                 base.Collect(doc);
             }

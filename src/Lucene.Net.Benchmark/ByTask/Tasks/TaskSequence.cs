@@ -171,7 +171,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
                 catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -385,7 +385,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
                 catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }

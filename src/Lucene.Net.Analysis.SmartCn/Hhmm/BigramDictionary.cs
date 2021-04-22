@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             }
             catch (Exception e) when (e.IsException())
             {
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
         }
 
@@ -239,7 +239,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
                 SaveToObj(serialObj);
             }

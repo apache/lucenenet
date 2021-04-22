@@ -148,7 +148,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                 }
                 catch (ParseException pe)
                 {
-                    throw new Exception("Error parsing complex phrase", pe);
+                    throw RuntimeException.Create("Error parsing complex phrase", pe);
                 }
             }
             return base.NewTermQuery(term);

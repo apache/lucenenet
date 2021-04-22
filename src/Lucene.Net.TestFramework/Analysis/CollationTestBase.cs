@@ -344,7 +344,7 @@ namespace Lucene.Net.Analysis
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }

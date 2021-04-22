@@ -525,7 +525,7 @@ namespace Lucene.Net.Util.Automaton
 
                     if (s.numTransitions == 0)
                     {
-                        throw new Exception("this automaton has dead states");
+                        throw RuntimeException.Create("this automaton has dead states");
                     }
 
                     bool cheat = r.NextBoolean();

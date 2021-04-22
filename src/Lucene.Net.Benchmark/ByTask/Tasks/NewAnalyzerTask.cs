@@ -108,7 +108,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
             catch (Exception e) when (e.IsException())
             {
-                throw new Exception("Error creating Analyzer: " + analyzerName, e);
+                throw RuntimeException.Create("Error creating Analyzer: " + analyzerName, e);
             }
             return 1;
         }
@@ -160,8 +160,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                             }
                         default:
                             {
-                                //throw new RuntimeException("Unexpected token: " + stok.ToString());
-                                throw new Exception("Unexpected token: " + stok.ToString());
+                                throw RuntimeException.Create("Unexpected token: " + stok.ToString());
                             }
                     }
                 }
@@ -174,12 +173,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
                 else
                 {
-                    throw new Exception("Line #" + (stok.LineNumber + AlgLineNum) + ": ", e);
+                    throw RuntimeException.Create("Line #" + (stok.LineNumber + AlgLineNum) + ": ", e);
                 }
             }
             catch (Exception t) when (t.IsThrowable())
             {
-                throw new Exception("Line #" + (stok.LineNumber + AlgLineNum) + ": ", t);
+                throw RuntimeException.Create("Line #" + (stok.LineNumber + AlgLineNum) + ": ", t);
             }
         }
 

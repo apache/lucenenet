@@ -106,7 +106,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     }
                     catch (Exception e) when (e.IsIOException())
                     {
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
                 }
             }

@@ -161,7 +161,7 @@ namespace Lucene.Net.Search
                 catch (Exception exc) when (exc.IsException())
                 {
                     failed.Value = (true);
-                    throw new Exception(exc.Message, exc);
+                    throw RuntimeException.Create(exc);
                 }
             }
         }

@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
         {
             if ("Lucene3x".Equals(Codec.Default.Name, StringComparison.Ordinal))
             {
-                throw new Exception("this test cannot run with PreFlex codec");
+                throw RuntimeException.Create("this test cannot run with PreFlex codec");
             }
             Console.WriteLine("Starting Test2B");
             long TERM_COUNT = ((long)int.MaxValue) + 100000000;

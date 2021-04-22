@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
             catch (Exception ioe) when (ioe.IsIOException())
             {
                 // Should never happen!
-                throw new Exception(ioe.ToString(), ioe);
+                throw RuntimeException.Create(ioe);
             }
             docsWithField = FixedBitSet.EnsureCapacity(docsWithField, docID);
             docsWithField.Set(docID);
@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
                     catch (Exception ioe) when (ioe.IsIOException())
                     {
                         // Should never happen!
-                        throw new Exception(ioe.ToString(), ioe);
+                        throw RuntimeException.Create(ioe);
                     }
 
                     if (docsWithField.Get(upto))

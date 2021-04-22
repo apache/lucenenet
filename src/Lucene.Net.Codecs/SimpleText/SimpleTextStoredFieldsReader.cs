@@ -163,7 +163,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 else
                 {
-                    throw new Exception("unknown field type");
+                    throw RuntimeException.Create("unknown field type");
                 }
 
                 switch (visitor.NeedsField(fieldInfo))

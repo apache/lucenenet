@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 
@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception e) when (e.IsIOException())
                     {
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
 
                     return true;
@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 
@@ -191,7 +191,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 

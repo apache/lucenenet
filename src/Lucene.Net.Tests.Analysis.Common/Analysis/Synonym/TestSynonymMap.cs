@@ -295,19 +295,19 @@ namespace Lucene.Net.Analysis.Synonym
         {
             public T NewInstance<T>(string cname)
             {
-                throw new Exception("stub");
+                throw RuntimeException.Create("stub");
             }
 
             public Type FindType(string cname)
             {
-                throw new Exception("stub");
+                throw RuntimeException.Create("stub");
             }
 
             public Stream OpenResource(string resource)
             {
                 if (!"something.txt".Equals(resource, StringComparison.Ordinal))
                 {
-                    throw new Exception("should not get a differnt resource");
+                    throw RuntimeException.Create("should not get a differnt resource");
                 }
                 else
                 {
