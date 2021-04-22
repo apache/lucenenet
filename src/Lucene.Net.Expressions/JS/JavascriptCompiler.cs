@@ -603,7 +603,7 @@ namespace Lucene.Net.Expressions.JS
                     string[] vals = property.Value.Split(',').TrimEnd();
                     if (vals.Length != 3)
                     {
-                        throw new Exception("Error reading Javascript functions from settings");
+                        throw Error.Create("Error reading Javascript functions from settings");
                     }
                     string typeName = vals[0];
 
@@ -627,9 +627,9 @@ namespace Lucene.Net.Expressions.JS
                     map[property.Key] = method;
                 }
             }
-            catch (Exception e) // LUCENENET specific: Just wrapping everything in Exception. I don't think it makes any difference here.
+            catch (Exception e) when (e.IsNoSuchMethodException() || e.IsClassNotFoundException() || e.IsIOException())
             {
-                throw new Exception("Cannot resolve function", e);
+                throw Error.Create("Cannot resolve function", e);
             }
             return map.AsReadOnly();
         }

@@ -195,7 +195,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             q = FieldsQuery();
             Jj_consume_token(0);
             { if (true) return q; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public SrndQuery FieldsQuery()
@@ -205,7 +205,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             fieldNames = OptionalFields();
             q = OrQuery();
             { if (true) return (fieldNames == null) ? q : GetFieldsQuery(q, fieldNames); }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public IList<string> OptionalFields()
@@ -234,7 +234,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             }
         label_1:
             { if (true) return fieldNames; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public SrndQuery OrQuery()
@@ -267,7 +267,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             }
         label_2:
             { if (true) return (queries == null) ? q : GetOrQuery(queries, true /* infix */, oprt); }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public SrndQuery AndQuery()
@@ -300,7 +300,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             }
         label_3:
             { if (true) return (queries == null) ? q : GetAndQuery(queries, true /* infix */, oprt); }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public SrndQuery NotQuery()
@@ -333,7 +333,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             }
         label_4:
             { if (true) return (queries == null) ? q : GetNotQuery(queries, oprt); }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public SrndQuery NQuery()
@@ -364,7 +364,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             }
         label_5:
             { if (true) return q; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public SrndQuery WQuery()
@@ -395,7 +395,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             }
         label_6:
             { if (true) return q; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public SrndQuery PrimaryQuery()
@@ -429,7 +429,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             }
             OptionalWeights(q);
             { if (true) return q; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public SrndQuery PrefixOperatorQuery()
@@ -467,7 +467,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                     Jj_consume_token(-1);
                     throw new ParseException();
             }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public IList<SrndQuery> FieldsQueryList()
@@ -496,7 +496,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         label_7:
             Jj_consume_token(RegexpToken.RPAREN);
             { if (true) return queries; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public SrndQuery SimpleTerm()
@@ -544,7 +544,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                     Jj_consume_token(-1);
                     throw new ParseException();
             }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public void OptionalWeights(SrndQuery q)
