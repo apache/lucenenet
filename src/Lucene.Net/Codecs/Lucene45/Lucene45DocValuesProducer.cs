@@ -123,7 +123,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 int version2 = CodecUtil.CheckHeader(data, dataCodec, Lucene45DocValuesFormat.VERSION_START, Lucene45DocValuesFormat.VERSION_CURRENT);
                 if (version != version2)
                 {
-                    throw new Exception("Format versions mismatch");
+                    throw new CorruptIndexException("Format versions mismatch");
                 }
 
                 success = true;
