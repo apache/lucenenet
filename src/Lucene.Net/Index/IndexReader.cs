@@ -81,7 +81,10 @@ namespace Lucene.Net.Index
         {
             if (!(this is CompositeReader || this is AtomicReader))
             {
-                throw new Exception("IndexReader should never be directly extended, subclass AtomicReader or CompositeReader instead.");
+                // LUCENENET specific: Using AssertionError so we don't have to have a public Error type.
+                // This exception can only occur if editing the source, anyway.
+                // But if it does occur, we don't want it swallowed anywhere inappropriately.
+                throw AssertionError.Create("IndexReader should never be directly extended, subclass AtomicReader or CompositeReader instead.");
             }
         }
 
