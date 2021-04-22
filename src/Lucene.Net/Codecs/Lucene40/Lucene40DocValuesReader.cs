@@ -117,7 +117,7 @@ namespace Lucene.Net.Codecs.Lucene40
                         }
                         else
                         {
-                            throw new AssertionException();
+                            throw AssertionError.Create();
                         }
 
                         CodecUtil.CheckEOF(input);
@@ -455,7 +455,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     else
                     {
-                        throw new AssertionException();
+                        throw AssertionError.Create();
                     }
                     binaryInstances[field.Number] = instance;
                 }
@@ -725,7 +725,7 @@ namespace Lucene.Net.Codecs.Lucene40
                         }
                         else
                         {
-                            throw new AssertionException();
+                            throw AssertionError.Create();
                         }
 
                         CodecUtil.CheckEOF(data);

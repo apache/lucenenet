@@ -358,7 +358,7 @@ namespace Lucene.Net.Codecs.Compressing
                         bufferedDocs.WriteInt64(BitConversion.DoubleToInt64Bits(field.GetDoubleValue().Value));
                         break;
                     default:
-                        throw new AssertionException("Cannot get here");
+                        throw AssertionError.Create("Cannot get here");
                 }
             }
         }

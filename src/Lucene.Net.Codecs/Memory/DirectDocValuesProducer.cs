@@ -271,7 +271,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
 
                 default:
-                    throw new AssertionException();
+                    throw AssertionError.Create();
             }
         }
 
@@ -574,7 +574,7 @@ namespace Lucene.Net.Codecs.Memory
                     NumericEntry ne = numerics[field.Number];
                     return GetMissingBits(field.Number, ne.missingOffset, ne.missingBytes);
                 default:
-                    throw new AssertionException();
+                    throw AssertionError.Create();
             }
         }
 

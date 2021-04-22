@@ -370,7 +370,7 @@ namespace Lucene.Net.Index
                 }
                 if (!cause.IsIllegalStateException())
                 {
-                    throw new AssertionException("Expected an IAE", e);
+                    throw AssertionError.Create("Expected an IAE", e);
                 } // else OK because positions are not indexed
             }
 

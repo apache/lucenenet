@@ -37,8 +37,6 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-    using AssertionError = Lucene.Net.Diagnostics.AssertionException; // LUCENENET TODO: Factor out after moving to e.IsAssertionError()
-
     /// <summary>
     /// Attribute that records if it was cleared or not.  this is used
     /// for testing that <see cref="Lucene.Net.Util.AttributeSource.ClearAttributes()"/> was called correctly.
@@ -1304,7 +1302,7 @@ namespace Lucene.Net.Analysis
                 case 1:
                     return AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY;
                 default:
-                    throw new AssertionError("Please fix the Random.nextInt() call above");
+                    throw AssertionError.Create("Please fix the Random.nextInt() call above");
             }
 
             //switch (random.nextInt(3))
@@ -1316,7 +1314,7 @@ namespace Lucene.Net.Analysis
             //    case 2:
             //        return AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY;
             //    default:
-            //        throw new AssertionError("Please fix the Random.nextInt() call above");
+            //        throw AssertionError.Create("Please fix the Random.nextInt() call above");
             //}
         }
 

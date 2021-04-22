@@ -190,7 +190,7 @@ namespace Lucene.Net.Sandbox.Queries
                         case Selector.MIDDLE_MAX: return new MiddleMaxValue(randomOrds);
                         case Selector.MIN:
                         default:
-                            throw new AssertionException();
+                            throw AssertionError.Create();
                     }
                 }
             }

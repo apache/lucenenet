@@ -687,7 +687,7 @@ namespace Lucene.Net.Index
                     else
                     {
                         if (Debugging.AssertsEnabled && !(rld.Info == info))
-                            throw new AssertionException(string.Format("rld.info={0} info={1} isLive?={2} vs {3}", rld.Info, info, InfoIsLive(rld.Info), InfoIsLive(info)));
+                            throw AssertionError.Create(string.Format("rld.info={0} info={1} isLive?={2} vs {3}", rld.Info, info, InfoIsLive(rld.Info), InfoIsLive(info)));
                     }
 
                     if (create)

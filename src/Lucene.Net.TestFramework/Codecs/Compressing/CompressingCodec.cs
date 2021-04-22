@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs.Compressing
                     return new DummyCompressingCodec(chunkSize, withSegmentSuffix);
 
                 default:
-                    throw new AssertionException();
+                    throw AssertionError.Create();
             }
         }
 

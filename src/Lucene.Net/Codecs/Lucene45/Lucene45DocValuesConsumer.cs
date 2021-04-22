@@ -259,7 +259,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     break;
 
                 default:
-                    throw new AssertionException();
+                    throw AssertionError.Create();
             }
         }
 

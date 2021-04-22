@@ -161,7 +161,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                             f = new DoubleField(name, 0.0, Field.Store.NO);
                             break;
                         default:
-                            throw new AssertionException("Cannot get here");
+                            throw AssertionError.Create("Cannot get here");
                     }
                     if (reuseFields)
                     {

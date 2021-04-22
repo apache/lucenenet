@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace Lucene
@@ -39,18 +40,22 @@ namespace Lucene
 #endif
     internal class AssertionError : AssertionException
     {
+        [Obsolete("Use AssertionError.Create() instead.", error: true)]
         public AssertionError()
         {
         }
 
+        [Obsolete("Use AssertionError.Create() instead.", error: true)]
         public AssertionError(string message) : base(message)
         {
         }
 
+        [Obsolete("Use AssertionError.Create() instead.", error: true)]
         public AssertionError(string message, Exception innerException) : base(message, innerException)
         {
         }
 
+        [Obsolete("Use AssertionError.Create() instead.", error: true)]
         public AssertionError(Exception cause) : base(cause?.ToString(), cause)
         {
         }
@@ -67,5 +72,19 @@ namespace Lucene
         {
         }
 #endif
+
+        // Static factory methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create() => new AssertionException();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message) => new AssertionException(message);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message, Exception innerException) => new AssertionException(message, innerException);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(Exception cause) => new AssertionException(cause.Message, cause);
     }
 }

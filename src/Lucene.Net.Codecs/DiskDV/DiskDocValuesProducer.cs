@@ -43,7 +43,7 @@ namespace Lucene.Net.Codecs.DiskDV
         protected override MonotonicBlockPackedReader GetIntervalInstance(IndexInput data, FieldInfo field,
             BinaryEntry bytes)
         {
-            throw new AssertionException();
+            throw AssertionError.Create();
         }
 
         protected override MonotonicBlockPackedReader GetOrdIndexInstance(IndexInput data, FieldInfo field,

@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene46
             }
             else
             {
-                throw new AssertionException();
+                throw AssertionError.Create();
             }
         }
     }

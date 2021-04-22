@@ -41,7 +41,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         {
             if (queries.Count <= 1)
             {
-                throw new AssertionException("Too few subqueries: " + queries.Count);
+                throw AssertionError.Create("Too few subqueries: " + queries.Count);
             }
             BooleanQuery bq = new BooleanQuery();
             AddQueriesToBoolean(bq, queries, occur);

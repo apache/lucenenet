@@ -190,7 +190,7 @@ namespace Lucene.Net.Search
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new RuntimeException(ioe);
+                    throw RuntimeException.Create(ioe);
                 }
             }));
 

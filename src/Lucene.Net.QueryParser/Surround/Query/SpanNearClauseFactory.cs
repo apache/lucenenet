@@ -106,7 +106,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             if (q == SrndQuery.TheEmptyLcnQuery)
                 return;
             if (!(q is SpanQuery))
-                throw new AssertionException("Expected SpanQuery: " + q.ToString(FieldName));
+                throw AssertionError.Create("Expected SpanQuery: " + q.ToString(FieldName));
             AddSpanQueryWeighted((SpanQuery)q, q.Boost);
         }
 

@@ -1,7 +1,6 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System;
-using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Analysis
@@ -132,7 +131,7 @@ namespace Lucene.Net.Analysis
             }
             if (random == null)
             {
-                throw new AssertionError("IncrementToken() called in wrong state!");
+                throw AssertionError.Create("IncrementToken() called in wrong state!");
             }
             return NextToken();
         }
