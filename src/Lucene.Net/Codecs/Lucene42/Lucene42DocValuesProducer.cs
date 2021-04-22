@@ -288,7 +288,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     return new NumericDocValuesAnonymousClass3(min, mult, quotientReader);
 
                 default:
-                    throw new InvalidOperationException();
+                    throw AssertionError.Create();
             }
         }
 
