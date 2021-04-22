@@ -48,6 +48,7 @@ env:
 jobs:
   build:
     runs-on: windows-latest
+    if: ${{ github.repository == 'apache/lucenenet' }} # Run only on the main fork (SHAZWAZZA - check whether this is right)
     steps:
       - name: Checkout Lucene.Net source
         uses: actions/checkout@v2
