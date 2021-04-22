@@ -1,4 +1,4 @@
-// LUCENENET specific - removed this class and replaced it with abstract factories
+﻿// LUCENENET specific - removed this class and replaced it with abstract factories
 // DefaultCodecFactory, DefaultDocValuesFormatFactory, and DefaultPostingsFormatFactory
 // and their common base class, NamedServiceFactory<TService>.
 // The factories have a more efficient default scanning implementation and make
@@ -83,7 +83,7 @@
 //                    }
 //                    catch (Exception e)
 //                    {
-//                        throw new InvalidOperationException("Cannot instantiate SPI class: " + c.Name, e);
+//                        throw ServiceConfigurationError.Create("Cannot instantiate SPI class: " + c.Name, e);
 //                    }
 //                }
 //                this.services = Collections.UnmodifiableMap(services);

@@ -152,6 +152,7 @@ namespace Lucene
 #pragma warning restore CS0618 // Type or member is obsolete
                 typeof(Lucene.OutOfMemoryError),
                 typeof(Lucene.NoClassDefFoundError),
+                typeof(Lucene.ServiceConfigurationError),
 
                 typeof(Lucene.Net.QueryParsers.Classic.TokenMgrError),
                 typeof(Lucene.Net.QueryParsers.Flexible.Core.QueryNodeError),

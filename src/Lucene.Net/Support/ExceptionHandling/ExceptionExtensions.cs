@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using System;
+using System.Configuration;
 using System.IO;
 using System.Reflection;
 using System.Resources;
@@ -642,6 +643,24 @@ namespace Lucene
         public static bool IsAccessDeniedException(this Exception e)
         {
             return e is UnauthorizedAccessException;
+        }
+
+        /// <summary>
+        /// Used to check whether <paramref name="e"/> corresponds to a ServiceConfigurationError
+        /// in Java.
+        /// </summary>
+        /// <param name="e">This exception.</param>
+        /// <returns><c>true</c> if <paramref name="e"/> corresponds to a ServiceConfigurationError type
+        /// in Java; otherwise <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsServiceConfigurationError(this Exception e)
+        {
+            // LUCENENET TODO: Using the internal type here because it is only thrown in AnalysisSPILoader and is not ever likely
+            // a user will have the problem. Users should catch InvalidOperationException, but we throw ServiceConfigurationError internally
+            // to identify it as an Error type to our exception handlers.
+            // Since it is possible that AnalysisSPILoader will someday be factored out in favor of true dependency injection,
+            // it is not sensible to make a public exception that will be factored out along with it.
+            return e is ServiceConfigurationError;
         }
     }
 }
