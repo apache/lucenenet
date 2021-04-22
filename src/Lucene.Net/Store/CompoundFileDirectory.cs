@@ -210,7 +210,7 @@ namespace Lucene.Net.Store
                 IOUtils.DisposeWhileHandlingException(priorE, stream, entriesStream);
             }
             // this is needed until Java 7's real try-with-resources:
-            throw new InvalidOperationException("impossible to get here");
+            throw AssertionError.Create("impossible to get here");
         }
 
         private static IDictionary<string, FileEntry> ReadLegacyEntries(IndexInput stream, int firstInt)
