@@ -34,7 +34,7 @@ on:
     #branches:
     #- master
     paths:
-    - 'websites/site/**'
+    - 'websites/site/**/*'
     #- '.github/workflows/Lucene-Net-Website.yml' # This causes the action to run whenever this file is added to any branch (seems like overkill)
 
 env:
