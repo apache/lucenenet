@@ -505,7 +505,7 @@ namespace Lucene.Net.Util
         {
             if (th != null)
             {
-                if (th is IOException)
+                if (th.IsIOException())
                 {
                     throw th;
                 }
@@ -522,7 +522,11 @@ namespace Lucene.Net.Util
         {
             if (th != null)
             {
-                throw th;
+                if (th.IsRuntimeException())
+                    throw th;
+                if (th.IsError())
+                    throw th;
+                throw RuntimeException.Create(th);
             }
         }
 
