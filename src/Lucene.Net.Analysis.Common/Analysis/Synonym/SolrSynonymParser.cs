@@ -136,7 +136,7 @@ namespace Lucene.Net.Analysis.Synonym
             }
             catch (Exception e) when (e.IsIllegalArgumentException())
             {
-                throw new FormatException("Invalid synonym rule at line " + lineNumber, e);
+                throw ParseException.Create("Invalid synonym rule at line " + lineNumber, 0, e);
                 //ex.initCause(e);
                 //throw ex;
             }

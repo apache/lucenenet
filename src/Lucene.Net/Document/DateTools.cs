@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 
 namespace Lucene.Net.Documents
@@ -192,7 +192,7 @@ namespace Lucene.Net.Documents
             }
             else
             {
-                throw new FormatException("Input is not valid date string: " + dateString);
+                throw ParseException.Create("Input is not valid date string: " + dateString, 0);
             }
             return date;
         }

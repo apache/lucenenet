@@ -117,7 +117,7 @@ namespace Lucene.Net.Expressions.JS
         public override void DisplayRecognitionError(string[] tokenNames, RecognitionException re)
         {
             string message = " unexpected character '" + (char)re.Character + "' at position (" + re.CharPositionInLine + ").";
-            throw new ParseException(message, re.CharPositionInLine, re);
+            throw ParseException.Create(message, re.CharPositionInLine, re);
         }
 
         // delegates
