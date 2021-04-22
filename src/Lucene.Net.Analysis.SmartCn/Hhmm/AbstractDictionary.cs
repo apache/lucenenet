@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             }
             catch (Exception e) when (e.IsUnsupportedEncodingException()) // Encoding is not supported by the platform
             {
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
         }
 

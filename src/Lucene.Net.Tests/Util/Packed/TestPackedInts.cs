@@ -1149,7 +1149,7 @@ namespace Lucene.Net.Util.Packed
                             inc = TestUtil.NextInt32(Random, -1000, 1000);
                             break;
                         default:
-                            throw new Exception("added a type and forgot to add it here?");
+                            throw RuntimeException.Create("added a type and forgot to add it here?");
 
                     }
 

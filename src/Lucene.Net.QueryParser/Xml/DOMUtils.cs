@@ -228,7 +228,7 @@ namespace Lucene.Net.QueryParsers.Xml
             }
             catch (Exception se) // LUCENENET: No need to call the IsException() extension method here because we are dealing only with a .NET platform method
             {
-                throw new Exception("Error parsing file:" + se, se);
+                throw RuntimeException.Create("Error parsing file:" + se, se);
             }
             return result;
         }
@@ -248,7 +248,7 @@ namespace Lucene.Net.QueryParsers.Xml
             }
             catch (Exception se) // LUCENENET: No need to call the IsException() extension method here because we are dealing only with a .NET platform method
             {
-                throw new Exception("Error parsing file:" + se, se);
+                throw RuntimeException.Create("Error parsing file:" + se, se);
             }
             return result;
         }
@@ -268,7 +268,7 @@ namespace Lucene.Net.QueryParsers.Xml
             }
             catch (Exception se) // LUCENENET: No need to call the IsException() extension method here because we are dealing only with a .NET platform method
             {
-                throw new Exception("Error parsing file:" + se, se);
+                throw RuntimeException.Create("Error parsing file:" + se, se);
             }
             return result;
         }

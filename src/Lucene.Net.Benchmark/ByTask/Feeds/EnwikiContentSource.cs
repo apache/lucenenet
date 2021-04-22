@@ -229,11 +229,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
                 catch (SAXException sae)
                 {
-                    throw new Exception(sae.ToString(), sae);
+                    throw RuntimeException.Create(sae);
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
                 finally
                 {

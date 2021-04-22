@@ -273,7 +273,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
             }
         }

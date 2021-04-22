@@ -402,7 +402,7 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": FAILED: unexpected exception");
                     Console.WriteLine(e.StackTrace);
-                    throw new Exception(e.Message, e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -528,7 +528,7 @@ namespace Lucene.Net.Index
                     operations.Value = ((int)-1L);
                     Console.WriteLine(Thread.CurrentThread.Name + ": FAILED: unexpected exception");
                     Console.WriteLine(e.StackTrace);
-                    throw new Exception(e.Message, e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }

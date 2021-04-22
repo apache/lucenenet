@@ -885,9 +885,7 @@ namespace Lucene.Net.Search
                     }
                     catch (Exception e)
                     {
-                        // LUCENENET NOTE: We need to re-throw this as Exception to 
-                        // ensure it is not caught in the wrong place
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
                     finally
                     {

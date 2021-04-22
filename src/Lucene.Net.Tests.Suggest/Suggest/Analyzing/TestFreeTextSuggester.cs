@@ -154,7 +154,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
                 if (doc == null)
                 {

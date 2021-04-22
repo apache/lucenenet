@@ -69,7 +69,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 }
                 catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
             instance.Init(args, ctx);

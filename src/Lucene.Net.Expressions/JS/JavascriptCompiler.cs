@@ -627,7 +627,7 @@ namespace Lucene.Net.Expressions.JS
                     map[property.Key] = method;
                 }
             }
-            catch (Exception e)
+            catch (Exception e) // LUCENENET specific: Just wrapping everything in Exception. I don't think it makes any difference here.
             {
                 throw new Exception("Cannot resolve function", e);
             }

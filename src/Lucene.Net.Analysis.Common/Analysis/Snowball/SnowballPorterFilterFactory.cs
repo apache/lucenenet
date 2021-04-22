@@ -80,7 +80,7 @@ namespace Lucene.Net.Analysis.Snowball
             }
             catch (Exception e) when (e.IsException())
             {
-                throw new Exception("Error instantiating stemmer for language " + language + "from class " + stemClass, e);
+                throw RuntimeException.Create("Error instantiating stemmer for language " + language + "from class " + stemClass, e);
             }
 
             if (protectedWords != null)

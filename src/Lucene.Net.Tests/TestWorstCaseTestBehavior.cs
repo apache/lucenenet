@@ -118,7 +118,7 @@ namespace Lucene.Net
 
             public override void Run()
             {
-                throw new Exception("foobar");
+                throw RuntimeException.Create("foobar");
             }
         }
 

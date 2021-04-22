@@ -54,12 +54,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             IndexWriter w = runData.IndexWriter;
             if (w == null)
             {
-                throw new Exception("please open the writer before invoking NearRealtimeReader");
+                throw RuntimeException.Create("please open the writer before invoking NearRealtimeReader");
             }
 
             if (runData.GetIndexReader() != null)
             {
-                throw new Exception("please close the existing reader before invoking NearRealtimeReader");
+                throw RuntimeException.Create("please close the existing reader before invoking NearRealtimeReader");
             }
 
 

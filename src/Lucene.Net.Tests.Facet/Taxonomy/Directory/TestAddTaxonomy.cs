@@ -101,7 +101,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     }
                     catch (Exception e) when (e.IsIOException())
                     {
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
                 }
             }
@@ -300,7 +300,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     catch (Exception e) when (e.IsIOException())
                     {
                         // shouldn't happen - if it does, let the test fail on uncaught exception.
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
                 }
             }

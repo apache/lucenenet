@@ -66,7 +66,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             }
             catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
         }
 
@@ -143,7 +143,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
                 catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception("Failed to instantiate " + docDataLineReaderClassName, e);
+                    throw RuntimeException.Create("Failed to instantiate " + docDataLineReaderClassName, e);
                 }
             }
 
@@ -215,21 +215,21 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             int k2 = line.IndexOf(WriteLineDocTask.SEP, k1);
             if (k2 < 0)
             {
-                throw new Exception("line: [" + line + "] is in an invalid format (missing: separator title::date)!");
+                throw RuntimeException.Create("line: [" + line + "] is in an invalid format (missing: separator title::date)!");
             }
             docData.Title = line.Substring(k1, k2 - k1);
             k1 = k2 + 1;
             k2 = line.IndexOf(WriteLineDocTask.SEP, k1);
             if (k2 < 0)
             {
-                throw new Exception("line: [" + line + "] is in an invalid format (missing: separator date::body)!");
+                throw RuntimeException.Create("line: [" + line + "] is in an invalid format (missing: separator date::body)!");
             }
             docData.SetDate(line.Substring(k1, k2 - k1));
             k1 = k2 + 1;
             k2 = line.IndexOf(WriteLineDocTask.SEP, k1);
             if (k2 >= 0)
             {
-                throw new Exception("line: [" + line + "] is in an invalid format (too many separators)!");
+                throw RuntimeException.Create("line: [" + line + "] is in an invalid format (too many separators)!");
             }
             // last one
             docData.Body = line.Substring(k1);
@@ -284,7 +284,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             {
                 if (n >= m_header.Length)
                 {
-                    throw new Exception("input line has invalid format: " + (n + 1) + " fields instead of " + m_header.Length + " :: [" + line + "]");
+                    throw RuntimeException.Create("input line has invalid format: " + (n + 1) + " fields instead of " + m_header.Length + " :: [" + line + "]");
                 }
                 SetDocDataField(docData, n, line.Substring(k1, k2 - k1));
                 ++n;
@@ -292,7 +292,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             }
             if (n != m_header.Length - 1)
             {
-                throw new Exception("input line has invalid format: " + (n + 1) + " fields instead of " + m_header.Length + " :: [" + line + "]");
+                throw RuntimeException.Create("input line has invalid format: " + (n + 1) + " fields instead of " + m_header.Length + " :: [" + line + "]");
             }
             // last one
             SetDocDataField(docData, n, line.Substring(k1));

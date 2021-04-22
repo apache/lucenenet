@@ -112,7 +112,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         }
                         catch (Exception ioe) when (ioe.IsIOException())
                         {
-                            throw new Exception(ioe.ToString(), ioe);
+                            throw RuntimeException.Create(ioe);
                         }
 
                         if (Verbose)
@@ -249,7 +249,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     }
                     catch (Exception ioe) when (ioe.IsException())
                     {
-                        throw new Exception(ioe.Message, ioe);
+                        throw RuntimeException.Create(ioe);
                     }
                 }
             }

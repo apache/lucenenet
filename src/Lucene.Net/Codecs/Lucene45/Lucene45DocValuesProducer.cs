@@ -494,7 +494,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -562,7 +562,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -846,7 +846,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 
@@ -1026,7 +1026,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 
@@ -1050,7 +1050,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
                 catch (Exception bogus) when (bogus.IsIOException())
                 {
-                    throw new Exception(bogus.ToString(), bogus);
+                    throw RuntimeException.Create(bogus);
                 }
             }
 
@@ -1063,7 +1063,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 

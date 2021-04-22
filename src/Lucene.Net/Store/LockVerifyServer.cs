@@ -166,7 +166,7 @@ namespace Lucene.Net.Store
                                     break;
 
                                 default:
-                                    throw new Exception("Unrecognized command: " + command);
+                                    throw RuntimeException.Create("Unrecognized command: " + command);
                             }
                             intWriter.Write((byte)command);
                             stream.Flush();
@@ -179,7 +179,7 @@ namespace Lucene.Net.Store
                 }
                 catch (Exception ioe) when (ioe.IsException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
                 finally
                 {

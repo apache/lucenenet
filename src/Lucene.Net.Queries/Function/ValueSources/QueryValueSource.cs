@@ -165,7 +165,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
             catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
+                throw RuntimeException.Create("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
             }
         }
 
@@ -206,7 +206,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
             catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
+                throw RuntimeException.Create("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
             }
         }
 
@@ -218,7 +218,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
             catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
+                throw RuntimeException.Create("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
             }
         }
 
@@ -270,7 +270,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
+                    throw RuntimeException.Create("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
                 }
             });
         }

@@ -323,7 +323,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 return multiTermQuery.Field;
             }
             else
-                throw new Exception("query \"" + query.ToString() + "\" must be flatten first.");
+                throw RuntimeException.Create("query \"" + query.ToString() + "\" must be flatten first.");
         }
 
         /// <summary>
@@ -369,7 +369,7 @@ namespace Lucene.Net.Search.VectorHighlight
                     }
                 }
                 else
-                    throw new Exception("query \"" + query.ToString() + "\" must be flatten first.");
+                    throw RuntimeException.Create("query \"" + query.ToString() + "\" must be flatten first.");
             }
         }
 
@@ -471,7 +471,7 @@ namespace Lucene.Net.Search.VectorHighlight
                     qpm.MarkTerminal(pq.Slop, pq.Boost);
                 }
                 else
-                    throw new Exception("query \"" + query.ToString() + "\" must be flatten first.");
+                    throw RuntimeException.Create("query \"" + query.ToString() + "\" must be flatten first.");
             }
 
             public virtual QueryPhraseMap GetTermMap(string term)

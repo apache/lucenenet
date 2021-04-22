@@ -265,7 +265,7 @@ namespace Lucene.Net.Index
                 }
                 if (r1.NumDocs != r2.NumDocs)
                 {
-                    throw new Exception("doc counts differ: r1=" + r1.NumDocs + " r2=" + r2.NumDocs);
+                    throw RuntimeException.Create("doc counts differ: r1=" + r1.NumDocs + " r2=" + r2.NumDocs);
                 }
                 r1.Dispose();
                 r2.Dispose();

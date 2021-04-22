@@ -128,7 +128,7 @@ namespace Lucene.Net.Util
                 catch (Exception t) when (t.IsThrowable())
                 {
                     failed = true;
-                    throw new Exception(t.Message, t);
+                    throw RuntimeException.Create(t);
                 }
             }
         }

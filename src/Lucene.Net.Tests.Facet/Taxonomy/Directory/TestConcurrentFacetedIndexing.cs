@@ -214,7 +214,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     }
                     catch (Exception e) when (e.IsIOException())
                     {
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
                 }
             }

@@ -336,7 +336,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             catch (Exception e) when (e.IsException())
             {
                 // Should not get here. Throw runtime exception.
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
             // html parser
             try
@@ -348,7 +348,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             catch (Exception e)
             {
                 // Should not get here. Throw runtime exception.
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
             // encoding
             if (m_encoding == null)

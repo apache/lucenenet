@@ -312,7 +312,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine(Thread.CurrentThread.Name + ": NOW FAIL: " + name);
                         Console.WriteLine((new Exception()).StackTrace);
                     }
-                    throw new TestPoint1Exception(Thread.CurrentThread.Name + ": intentionally failing at " + name);
+                    throw new TestPoint1Exception(Thread.CurrentThread.Name + ": intentionally failing at " + name); // LUCENENET TODO: Need to change this to RuntimeException once we add a custom (or flagged) exception that is created by RuntimeException.Create
                 }
             }
         }
@@ -449,7 +449,7 @@ namespace Lucene.Net.Index
             {
                 if (doFail && name.Equals("DocumentsWriterPerThread addDocument start", StringComparison.Ordinal))
                 {
-                    throw new Exception("intentionally failing");
+                    throw RuntimeException.Create("intentionally failing");
                 }
             }
         }
@@ -552,7 +552,7 @@ namespace Lucene.Net.Index
                 if (doFail && name.Equals("startMergeInit", StringComparison.Ordinal))
                 {
                     failed = true;
-                    throw new Exception("intentionally failing");
+                    throw RuntimeException.Create("intentionally failing");
                 }
             }
         }
@@ -1110,7 +1110,7 @@ namespace Lucene.Net.Index
                     if (!isDelete)
                     {
                         failOnCommit = true;
-                        throw new Exception("now fail first");
+                        throw RuntimeException.Create("now fail first");
                     }
                     else
                     {
@@ -1261,7 +1261,7 @@ namespace Lucene.Net.Index
             {
                 if (doFail && name.Equals("rollback before checkpoint", StringComparison.Ordinal))
                 {
-                    throw new Exception("intentionally failing");
+                    throw RuntimeException.Create("intentionally failing");
                 }
             }
         }
@@ -1625,7 +1625,7 @@ namespace Lucene.Net.Index
 
                 if (fail)
                 {
-                    throw new Exception(EXC_MSG);
+                    throw RuntimeException.Create(EXC_MSG);
                 }
             }
         }
@@ -2452,7 +2452,7 @@ namespace Lucene.Net.Index
             {
                 if (messageToFailOn.Equals(message, StringComparison.Ordinal))
                 {
-                    throw new Exception("BOOM!");
+                    throw RuntimeException.Create("BOOM!");
                 }
             }
 

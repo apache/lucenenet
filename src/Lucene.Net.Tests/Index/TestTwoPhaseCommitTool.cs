@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
                 commitCalled = true;
                 if (failOnCommit)
                 {
-                    throw new Exception("failOnCommit");
+                    throw RuntimeException.Create("failOnCommit");
                 }
             }
 
@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
                 rollbackCalled = true;
                 if (failOnRollback)
                 {
-                    throw new Exception("failOnRollback");
+                    throw new Error("failOnRollback");
                 }
             }
         }

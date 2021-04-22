@@ -435,7 +435,7 @@ namespace Lucene.Net.QueryParsers.Classic
             else if (!required && prohibited)
                 clauses.Add(NewBooleanClause(q, Occur.MUST_NOT));
             else
-                throw new Exception("Clause cannot be both required and prohibited");
+                throw RuntimeException.Create("Clause cannot be both required and prohibited");
         }
 
         /// <exception cref="ParseException">throw in overridden method to disallow</exception>
@@ -616,7 +616,7 @@ namespace Lucene.Net.QueryParsers.Classic
             }
             catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception("Error analyzing multiTerm term: " + part, e);
+                throw RuntimeException.Create("Error analyzing multiTerm term: " + part, e);
             }
             finally
             {

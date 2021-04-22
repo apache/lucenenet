@@ -966,7 +966,7 @@ namespace Lucene.Net.Index
                     catch (Exception t) when (t.IsThrowable())
                     {
                         excs.Enqueue(t);
-                        throw new Exception(t.Message, t);
+                        throw RuntimeException.Create(t);
                     }
                 } while (Environment.TickCount < endTime);
             }
@@ -1083,7 +1083,7 @@ namespace Lucene.Net.Index
                     catch (Exception t) when (t.IsThrowable())
                     {
                         excs.Enqueue(t);
-                        throw new Exception(t.Message, t);
+                        throw RuntimeException.Create(t);
                     }
                 } while (Environment.TickCount < endTime);
             }

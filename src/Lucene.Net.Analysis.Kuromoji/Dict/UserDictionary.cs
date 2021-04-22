@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
                 if (segmentation.Length != readings.Length)
                 {
-                    throw new Exception("Illegal user dictionary entry " + values[0] +
+                    throw RuntimeException.Create("Illegal user dictionary entry " + values[0] +
                                                " - the number of segmentations (" + segmentation.Length + ")" +
                                                " does not the match number of readings (" + readings.Length + ")");
                 }

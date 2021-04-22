@@ -146,7 +146,7 @@ namespace Lucene.Net.Util
             {
                 // this should never happen, because we're just accessing fields
                 // from 'this'
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
         }
 

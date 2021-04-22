@@ -265,7 +265,7 @@ namespace Lucene.Net.Search
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
             }
             // this will set the searchingGen so that all waiting threads will exit

@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 
@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
                 IComparer<BytesRef> newTermComp = termsEnum.Comparer;
                 if (lastTermComp != null && newTermComp != null && newTermComp != lastTermComp)
                 {
-                    throw new Exception("term comparer should not change between segments: " + lastTermComp + " != " + newTermComp);
+                    throw RuntimeException.Create("term comparer should not change between segments: " + lastTermComp + " != " + newTermComp);
                 }
                 lastTermComp = newTermComp;
                 collector.SetReaderContext(topReaderContext, context);

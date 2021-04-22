@@ -245,7 +245,7 @@ namespace Lucene.Net.Util
             }
             catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception("Error analyzing query text", e);
+                throw RuntimeException.Create("Error analyzing query text", e);
             }
             finally
             {

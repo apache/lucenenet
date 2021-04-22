@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
                     string fileName = ((IndexCommit)commits[commits.Count - 1]).SegmentsFileName;
                     if (seen.Contains(fileName))
                     {
-                        throw new Exception("onCommit was called twice on the same commit point: " + fileName);
+                        throw RuntimeException.Create("OnCommit was called twice on the same commit point: " + fileName);
                     }
                     seen.Add(fileName);
                     numOnCommit++;

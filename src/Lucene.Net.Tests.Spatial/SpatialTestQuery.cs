@@ -81,7 +81,7 @@ namespace Lucene.Net.Spatial
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("invalid query line: " + test.line, ex);
+                        throw RuntimeException.Create("invalid query line: " + test.line, ex);
                     }
                 }
             }

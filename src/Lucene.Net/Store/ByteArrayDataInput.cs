@@ -153,7 +153,7 @@ namespace Lucene.Net.Store
             {
                 return i;
             }
-            throw new Exception("Invalid VInt32 detected (too many bits)");
+            throw RuntimeException.Create("Invalid VInt32 detected (too many bits)");
         }
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace Lucene.Net.Store
             {
                 return i;
             }
-            throw new Exception("Invalid VInt64 detected (negative values disallowed)");
+            throw RuntimeException.Create("Invalid VInt64 detected (negative values disallowed)");
         }
 
         // NOTE: AIOOBE not EOF if you read too much

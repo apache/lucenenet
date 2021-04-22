@@ -186,7 +186,7 @@ namespace Lucene.Net.Util
                 Console.WriteLine("CheckIndex failed");
                 checker.FlushInfoStream();
                 Console.WriteLine(bos.ToString());
-                throw new Exception("CheckIndex failed");
+                throw RuntimeException.Create("CheckIndex failed");
             }
             else
             {
@@ -228,7 +228,7 @@ namespace Lucene.Net.Util
                 Console.WriteLine("CheckReader failed");
                 infoStream.Flush();
                 Console.WriteLine(bos.ToString());
-                throw new Exception("CheckReader failed");
+                throw RuntimeException.Create("CheckReader failed");
             }
             else
             {

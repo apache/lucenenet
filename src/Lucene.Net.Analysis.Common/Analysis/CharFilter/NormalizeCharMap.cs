@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.CharFilters
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
                     // Bogus FST IOExceptions!!  (will never happen)
-                    throw new Exception("Should never happen", ioe);
+                    throw RuntimeException.Create("Should never happen", ioe);
                 }
             }
         }
@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis.CharFilters
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
                     // Bogus FST IOExceptions!!  (will never happen)
-                    throw new Exception("Should never happen", ioe);
+                    throw RuntimeException.Create("Should never happen", ioe);
                 }
 
                 return new NormalizeCharMap(map);

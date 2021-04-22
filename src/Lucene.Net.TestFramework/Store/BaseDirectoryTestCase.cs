@@ -842,9 +842,9 @@ namespace Lucene.Net.Store
                     using IndexOutput dst = d.CreateOutput("copy" + i, IOContext.DEFAULT);
                     dst.CopyBytes(src, src.Length - 100);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }

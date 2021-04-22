@@ -1,4 +1,4 @@
-#if TESTFRAMEWORK
+﻿#if TESTFRAMEWORK
 // LUCENENET NOTE: This is incomplete
 using System;
 
@@ -82,7 +82,7 @@ namespace Lucene.Net.Util
             Description localDescription = Description;
             if (localDescription == null)
             {
-              throw new Exception("The rule is not currently executing.");
+              throw RuntimeException.Create("The rule is not currently executing.");
             }
             return localDescription.TestClass;
           }

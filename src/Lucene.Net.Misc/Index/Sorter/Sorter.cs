@@ -301,7 +301,7 @@ namespace Lucene.Net.Index.Sorter
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }

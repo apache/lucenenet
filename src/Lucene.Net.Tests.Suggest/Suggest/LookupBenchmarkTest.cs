@@ -305,7 +305,7 @@ namespace Lucene.Net.Search.Suggest
             catch (Exception e) when (e.IsException())
             {
                 e.printStackTrace();
-                throw new Exception(e.Message, e);
+                throw RuntimeException.Create(e);
 
             }
         }

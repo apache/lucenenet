@@ -343,7 +343,7 @@ namespace Lucene.Net.Search.Highlight
             }
             catch (Exception ex) when (ex.IsIOException())
             {
-                throw new Exception(ex.ToString(), ex);
+                throw RuntimeException.Create(ex);
             }
         }
     }

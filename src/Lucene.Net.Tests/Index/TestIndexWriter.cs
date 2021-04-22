@@ -1384,7 +1384,7 @@ namespace Lucene.Net.Index
                         }
                         catch (Exception ioe) when (ioe.IsIOException())
                         {
-                            throw new Exception(ioe.ToString(), ioe);
+                            throw RuntimeException.Create(ioe);
                         }
                     }
 
@@ -1416,7 +1416,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
                 try
                 {
@@ -1424,7 +1424,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -1947,7 +1947,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.Message, e);
+                    throw RuntimeException.Create(e.Message, e);
                 }
             }
 
@@ -2664,7 +2664,7 @@ namespace Lucene.Net.Index
               {
                 if (outerInstance.Random.Next(5) == 0)
                 {
-                  throw new Exception("boom");
+                  throw RuntimeException.Create("boom");
                 }
                 return DocIter.Next();
               }

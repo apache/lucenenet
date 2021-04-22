@@ -80,7 +80,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception("Cannot load ConnectionCosts.", ioe);
+                    throw RuntimeException.Create("Cannot load ConnectionCosts.", ioe);
                 }
             }
         }

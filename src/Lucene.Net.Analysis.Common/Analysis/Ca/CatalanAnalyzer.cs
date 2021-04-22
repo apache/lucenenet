@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Ca
                 {
                     // default set should always be present as it is part of the
                     // distribution (JAR)
-                    throw new Exception("Unable to load default stopword set", ex);
+                    throw RuntimeException.Create("Unable to load default stopword set", ex);
                 }
             }
         }
