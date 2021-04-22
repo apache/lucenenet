@@ -213,7 +213,7 @@ namespace Lucene.Net.Store
 
                     if (position + len > m_end)
                     {
-                        throw new EndOfStreamException("read past EOF: " + this);
+                        throw EOFException.Create("read past EOF: " + this);
                     }
 
                     try
@@ -224,7 +224,7 @@ namespace Lucene.Net.Store
                         //    int i = m_file.Read(b, offset + total, toRead);
                         //    if (i < 0) // be defensive here, even though we checked before hand, something could have changed
                         //    {
-                        //        throw new EndOfStreamException("read past EOF: " + this + " off: " + offset + " len: " + len + " total: " + total + " chunkLen: " + toRead + " end: " + m_end);
+                        //        throw EOFException.Create("read past EOF: " + this + " off: " + offset + " len: " + len + " total: " + total + " chunkLen: " + toRead + " end: " + m_end);
                         //    }
                         //    if (Debugging.AssertsEnabled) Debugging.Assert(i > 0, "RandomAccessFile.read with non zero-length toRead must always read at least one byte");
                         //    total += i;

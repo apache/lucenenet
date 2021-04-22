@@ -99,7 +99,7 @@ namespace Lucene.Net.Store
                 // end of file reached, no more buffers left
                 if (enforceEOF)
                 {
-                    throw new EndOfStreamException("read past EOF: " + this);
+                    throw EOFException.Create("read past EOF: " + this);
                 }
                 else
                 {

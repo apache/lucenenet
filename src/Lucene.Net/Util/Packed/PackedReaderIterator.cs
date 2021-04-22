@@ -75,7 +75,7 @@ namespace Lucene.Net.Util.Packed
             int remaining = m_valueCount - position - 1;
             if (remaining <= 0)
             {
-                throw new EndOfStreamException();
+                throw EOFException.Create();
             }
             count = Math.Min(remaining, count);
 
