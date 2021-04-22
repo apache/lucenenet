@@ -251,7 +251,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     }
                     else
                     {
-                        throw new AssertionException();
+                        throw AssertionError.Create();
                     }
                 }
                 else
@@ -398,7 +398,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     return new Int64ValuesAnonymousClass2(table, ords);
 
                 default:
-                    throw new AssertionException();
+                    throw AssertionError.Create();
             }
         }
 
@@ -455,7 +455,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     return GetCompressedBinary(field, bytes);
 
                 default:
-                    throw new AssertionException();
+                    throw AssertionError.Create();
             }
         }
 
@@ -707,7 +707,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
             else if (ss.Format != Lucene45DocValuesConsumer.SORTED_SET_WITH_ADDRESSES)
             {
-                throw new AssertionException();
+                throw AssertionError.Create();
             }
 
             IndexInput data = (IndexInput)this.data.Clone();
@@ -872,7 +872,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     return GetMissingBits(ne.missingOffset);
 
                 default:
-                    throw new AssertionException();
+                    throw AssertionError.Create();
             }
         }
 

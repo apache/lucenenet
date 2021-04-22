@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
                 {
                     if (!mayMerge.Value && writer.NextMerge() != null)
                     {
-                        throw new AssertionException();
+                        throw AssertionError.Create();
                     }
                     base.Merge(writer, trigger, newMergesFound);
                 }

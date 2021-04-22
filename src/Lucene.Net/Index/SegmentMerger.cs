@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            throw new AssertionException("type=" + type);
+                            throw AssertionError.Create("type=" + type);
                         }
                     }
                 }

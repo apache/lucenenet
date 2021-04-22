@@ -269,22 +269,22 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override BinaryDocValues GetBinary(FieldInfo field)
         {
-            throw new AssertionException();
+            throw AssertionError.Create();
         }
 
         public override SortedDocValues GetSorted(FieldInfo field)
         {
-            throw new AssertionException();
+            throw AssertionError.Create();
         }
 
         public override SortedSetDocValues GetSortedSet(FieldInfo field)
         {
-            throw new AssertionException();
+            throw AssertionError.Create();
         }
 
         public override IBits GetDocsWithField(FieldInfo field)
         {
-            throw new AssertionException();
+            throw AssertionError.Create();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -175,7 +175,7 @@ namespace Lucene.Net.Util.Packed
             }
             else
             {
-                throw new AssertionException();
+                throw AssertionError.Create();
             }
         }
 

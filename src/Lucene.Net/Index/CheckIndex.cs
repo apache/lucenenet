@@ -2025,7 +2025,7 @@ namespace Lucene.Net.Index
                     break;
 
                 default:
-                    throw new AssertionException();
+                    throw AssertionError.Create();
             }
         }
 
@@ -2038,7 +2038,7 @@ namespace Lucene.Net.Index
                     break;
 
                 default:
-                    throw new AssertionException("wtf: " + fi.NormType);
+                    throw AssertionError.Create("wtf: " + fi.NormType);
             }
         }
 

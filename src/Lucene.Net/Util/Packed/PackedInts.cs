@@ -965,7 +965,7 @@ namespace Lucene.Net.Util.Packed
             }
             else
             {
-                throw new AssertionException("Unknown Writer format: " + format);
+                throw AssertionError.Create("Unknown Writer format: " + format);
             }
         }
 
@@ -1094,7 +1094,7 @@ namespace Lucene.Net.Util.Packed
             }
             else
             {
-                throw new AssertionException("Unknwown format: " + format);
+                throw AssertionError.Create("Unknwown format: " + format);
             }
         }
 
@@ -1246,7 +1246,7 @@ namespace Lucene.Net.Util.Packed
             }
             else
             {
-                throw new AssertionException();
+                throw AssertionError.Create();
             }
         }
 

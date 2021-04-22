@@ -24,8 +24,6 @@ namespace Lucene.Net.Codecs.Lucene3x
      * limitations under the License.
      */
 
-    using AssertionError = Lucene.Net.Diagnostics.AssertionException; // LUCENENET TODO: Remove this and go with the AssertionError class?
-
     /// <summary>
     /// Writes and Merges Lucene 3.x norms format
     /// <para/>
@@ -98,17 +96,17 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
         {
-            throw new AssertionError();
+            throw AssertionError.Create();
         }
 
         public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
-            throw new AssertionError();
+            throw AssertionError.Create();
         }
 
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
-            throw new AssertionError();
+            throw AssertionError.Create();
         }
     }
 }

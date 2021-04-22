@@ -2974,7 +2974,7 @@ namespace Lucene.Net.Util
                                 break;
 
                             default:
-                                throw new AssertionException();
+                                throw AssertionError.Create();
                         }
                     }
                 }

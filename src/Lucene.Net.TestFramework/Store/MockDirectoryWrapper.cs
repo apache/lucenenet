@@ -38,8 +38,6 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-    using AssertionError = Lucene.Net.Diagnostics.AssertionException; // LUCENENET TODO: Remove this and go with AssertionError class or use alias?
-
     /// <summary>
     /// Enum for controlling hard disk throttling.
     /// Set via <see cref="MockDirectoryWrapper.Throttling"/>
@@ -574,7 +572,7 @@ namespace Lucene.Net.Store
                         }
                         else
                         {
-                            throw WithAdditionalErrorInformation(new AssertionError("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
+                            throw WithAdditionalErrorInformation(AssertionError.Create("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
                         }
                     }
                     else
@@ -633,7 +631,7 @@ namespace Lucene.Net.Store
                     }
                     else
                     {
-                        throw new AssertionError("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot overwrite");
+                        throw AssertionError.Create("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot overwrite");
                     }
                 }
 

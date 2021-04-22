@@ -265,7 +265,7 @@ namespace Lucene.Net.Codecs.Compressing
                         break;
 
                     default:
-                        throw new Exception();
+                        throw AssertionError.Create();
                 }
                 for (int i = 0; i < numFields; ++i)
                 {

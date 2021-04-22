@@ -281,7 +281,7 @@ namespace Lucene.Net.Store
         //                ints[i] = (Random.nextBoolean() ? -1 : 1) * Random.nextInt(1024);
         //                break;
         //            default:
-        //                throw new AssertionError();
+        //                throw AssertionError.Create();
         //        }
         //    }
 
@@ -326,7 +326,7 @@ namespace Lucene.Net.Store
         //                longs[i] = (Random.nextBoolean() ? -1 : 1) * Random.nextInt(1024);
         //                break;
         //            default:
-        //                throw new AssertionError();
+        //                throw AssertionError.Create();
         //        }
         //    }
 

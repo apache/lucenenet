@@ -919,7 +919,7 @@ namespace Lucene.Net.Documents
                         break;
 
                     default:
-                        throw new AssertionException("Should never get here");
+                        throw AssertionError.Create("Should never get here");
                 }
                 return internalTokenStream;
             }
