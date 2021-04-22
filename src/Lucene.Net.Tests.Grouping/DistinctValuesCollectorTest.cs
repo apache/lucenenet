@@ -424,7 +424,7 @@ namespace Lucene.Net.Search.Grouping
         {
             Random random = Random;
             IEnumerable<ISearchGroup<T>> searchGroups = firstPassGroupingCollector.GetTopGroups(0, false);
-            if (typeof(FunctionFirstPassGroupingCollector).IsAssignableFrom(firstPassGroupingCollector.GetType()))
+            if (typeof(FunctionFirstPassGroupingCollector<MutableValue>).IsAssignableFrom(firstPassGroupingCollector.GetType()))     //LUCENET Specific type for generic must be specified.
             {
                 return (IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<T>>)new FunctionDistinctValuesCollector(new Hashtable(), new BytesRefFieldSource(groupField), new BytesRefFieldSource(countField), searchGroups as IEnumerable<ISearchGroup<MutableValue>>);
             }
@@ -441,7 +441,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 if (random.nextBoolean())
                 {
-                    return new FunctionFirstPassGroupingCollector(new BytesRefFieldSource(groupField), new Hashtable(), groupSort, topNGroups)
+                    return new FunctionFirstPassGroupingCollector<MutableValue>(new BytesRefFieldSource(groupField), new Hashtable(), groupSort, topNGroups)        //LUCENET Specific type for generic must be specified.
                         as IAbstractFirstPassGroupingCollector<IComparable>;
                 }
                 else
@@ -454,7 +454,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 if (random.nextBoolean())
                 {
-                    return new FunctionFirstPassGroupingCollector(new BytesRefFieldSource(groupField), new Hashtable(), groupSort, topNGroups)
+                    return new FunctionFirstPassGroupingCollector<MutableValue>(new BytesRefFieldSource(groupField), new Hashtable(), groupSort, topNGroups)        //LUCENET Specific type for generic must be specified.
                         as IAbstractFirstPassGroupingCollector<IComparable>;
                 }
                 else
