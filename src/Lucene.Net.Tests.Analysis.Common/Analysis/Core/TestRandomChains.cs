@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis.Core
             }
             catch (Exception e) when (e.IsException())
             {
-                throw new Exception(e.Message, e);
+                throw Error.Create(e);
             }
             try
             {
@@ -147,7 +147,7 @@ namespace Lucene.Net.Analysis.Core
             }
             catch (Exception e) when (e.IsException())
             {
-                throw new Exception(e.Message, e);
+                throw Error.Create(e);
             }
 
             allowedTokenizerArgs = new JCG.HashSet<Type>(IdentityEqualityComparer<Type>.Default);

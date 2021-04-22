@@ -112,7 +112,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     break;
             }
             { if (true) return ret; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public Modifier Modifiers()
@@ -148,7 +148,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     break;
             }
             { if (true) return ret; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         // This makes sure that there is no garbage after the query string
@@ -158,7 +158,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             q = Query(field);
             Jj_consume_token(0);
             { if (true) return q; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
 
@@ -215,7 +215,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             {
                 { if (true) return first; }
             }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public IQueryNode DisjQuery(string field)
@@ -253,7 +253,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             {
                 { if (true) return first; }
             }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public IQueryNode ConjQuery(string field)
@@ -291,7 +291,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             {
                 { if (true) return first; }
             }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         // QueryNode Query(CharSequence field) :
@@ -343,7 +343,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 q = new ModifierQueryNode(q, mods);
             }
             { if (true) return q; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public IQueryNode Clause(string field)
@@ -461,7 +461,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                                                          "*", term.BeginColumn, term.EndColumn);
                                 break;
                             default:
-                                { if (true) throw new Exception("Unhandled case: operator=" + @operator.ToString()); }
+                                { if (true) throw Error.Create("Unhandled case: operator=" + @operator.ToString()); }
                         }
                         q = new TermRangeQueryNode(qLower, qUpper, lowerInclusive, upperInclusive);
                         break;
@@ -563,7 +563,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
             if (group) { q = new GroupQueryNode(q); }
             { if (true) return q; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public IQueryNode Term(string field)
@@ -809,7 +809,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 }
             }
             { if (true) return q; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         private bool Jj_2_1(int xla)

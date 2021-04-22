@@ -3480,7 +3480,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
                 message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
             }
 
-            throw new Error(message);
+            throw Error.Create(message);
         }
 
         /// <summary>

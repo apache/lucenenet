@@ -35,7 +35,7 @@ namespace Lucene
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    internal class StackOverflowError : Error // LUCENENET: StackOverflowException is sealed, so we subclass error instead
+    internal class StackOverflowError : Exception, IError // LUCENENET: StackOverflowException is sealed, so we subclass Exception instead and use IError to identify to Lucene.NET as an error
     {
         public StackOverflowError()
         {

@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
                 rollbackCalled = true;
                 if (failOnRollback)
                 {
-                    throw new Error("failOnRollback");
+                    throw Error.Create("failOnRollback");
                 }
             }
         }

@@ -716,7 +716,7 @@ namespace Lucene.Net.Analysis.Wikipedia
                 message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
             }
 
-            throw new Error(message);
+            throw Error.Create(message);
         }
 
 

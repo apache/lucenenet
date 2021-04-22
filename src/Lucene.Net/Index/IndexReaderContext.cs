@@ -46,10 +46,7 @@ namespace Lucene.Net.Index
         {
             if (!(this is CompositeReaderContext || this is AtomicReaderContext))
             {
-                // LUCENENET specific: Using AssertionError so we don't have to have a public Error type.
-                // This exception can only occur if editing the source, anyway.
-                // But if it does occur, we don't want it swallowed anywhere inappropriately.
-                throw AssertionError.Create("this class should never be extended by custom code!");
+                throw Error.Create("this class should never be extended by custom code!");
             }
             this.Parent = parent;
             this.DocBaseInParent = docBaseInParent;
