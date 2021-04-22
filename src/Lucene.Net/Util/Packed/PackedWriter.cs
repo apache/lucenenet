@@ -62,7 +62,7 @@ namespace Lucene.Net.Util.Packed
             }
             if (m_valueCount != -1 && written >= m_valueCount)
             {
-                throw new EndOfStreamException("Writing past end of stream");
+                throw EOFException.Create("Writing past end of stream");
             }
             nextValues[off++] = v;
             if (off == nextValues.Length)

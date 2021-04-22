@@ -123,7 +123,7 @@ namespace Lucene.Net.Store
                 curBufIndex++;
                 if (curBufIndex >= buffers.Length)
                 {
-                    throw new EndOfStreamException("read past EOF: " + this);
+                    throw EOFException.Create("read past EOF: " + this);
                 }
                 curBuf = buffers[curBufIndex];
                 curBuf.Position = 0;
@@ -151,7 +151,7 @@ namespace Lucene.Net.Store
                     curBufIndex++;
                     if (curBufIndex >= buffers.Length)
                     {
-                        throw new EndOfStreamException("read past EOF: " + this);
+                        throw EOFException.Create("read past EOF: " + this);
                     }
                     curBuf = buffers[curBufIndex];
                     curBuf.Position = 0;
@@ -232,7 +232,7 @@ namespace Lucene.Net.Store
             // LUCENENET: Defensive programming so we don't get an IndexOutOfRangeException
             // when reading from buffers.
             if (bi < 0 || bi >= buffers.Length)
-                throw new EndOfStreamException("seek past EOF: " + this);
+                throw EOFException.Create("seek past EOF: " + this);
             
             ByteBuffer b = buffers[bi];
             int newPosition = (int)(pos & chunkSizeMask);
@@ -240,7 +240,7 @@ namespace Lucene.Net.Store
             // LUCENENET: Defensive programming so we don't get an ArgumentOutOfRangeException
             // when setting b.Position.
             if (newPosition < 0 || newPosition > b.Limit)
-                throw new EndOfStreamException("seek past EOF: " + this);
+                throw EOFException.Create("seek past EOF: " + this);
 
             b.Position = newPosition;
             // write values, on exception all is unchanged

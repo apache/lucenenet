@@ -400,7 +400,7 @@ namespace Lucene.Net.Codecs.Compressing
                 if (Debugging.AssertsEnabled) Debugging.Assert(decompressed <= length);
                 if (decompressed == length)
                 {
-                    throw new EndOfStreamException();
+                    throw EOFException.Create();
                 }
                 int toDecompress = Math.Min(length - decompressed, outerInstance.chunkSize);
                 outerInstance.decompressor.Decompress(outerInstance.fieldsStream, toDecompress, 0, toDecompress, outerInstance.bytes);

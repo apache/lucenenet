@@ -166,7 +166,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
                 int read = dictIS.Read(tmpBuffer.Array, 0, size);
                 if (read != size)
                 {
-                    throw new EndOfStreamException("Cannot read whole dictionary");
+                    throw EOFException.Create("Cannot read whole dictionary");
                 }
             }
             buffer = tmpBuffer.AsReadOnlyBuffer();

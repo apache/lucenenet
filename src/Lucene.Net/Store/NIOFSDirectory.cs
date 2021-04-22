@@ -250,7 +250,7 @@ namespace Lucene.Net.Store
 
                 if (pos + len > m_end)
                 {
-                    throw new EndOfStreamException("read past EOF: " + this);
+                    throw EOFException.Create("read past EOF: " + this);
                 }
 
                 try
@@ -263,7 +263,7 @@ namespace Lucene.Net.Store
                         int i = m_channel.Read(bb, pos);
                         if (i <= 0) // be defensive here, even though we checked before hand, something could have changed
                         {
-                            throw new EndOfStreamException("read past EOF: " + this + " off: " + offset + " len: " + len + " pos: " + pos + " chunkLen: " + readLength + " end: " + m_end);
+                            throw EOFException.Create("read past EOF: " + this + " off: " + offset + " len: " + len + " pos: " + pos + " chunkLen: " + readLength + " end: " + m_end);
                         }
                         pos += i;
                         readOffset += i;
