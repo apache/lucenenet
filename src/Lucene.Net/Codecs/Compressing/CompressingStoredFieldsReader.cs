@@ -3,6 +3,7 @@ using Lucene.Net.Codecs.Lucene40;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Compressing
@@ -399,7 +400,7 @@ namespace Lucene.Net.Codecs.Compressing
                 if (Debugging.AssertsEnabled) Debugging.Assert(decompressed <= length);
                 if (decompressed == length)
                 {
-                    throw new Exception();
+                    throw new EndOfStreamException();
                 }
                 int toDecompress = Math.Min(length - decompressed, outerInstance.chunkSize);
                 outerInstance.decompressor.Decompress(outerInstance.fieldsStream, toDecompress, 0, toDecompress, outerInstance.bytes);
