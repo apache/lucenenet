@@ -105,7 +105,7 @@ namespace Lucene.Net.Util.Packed
                         break;
 
                     default:
-                        throw new InvalidOperationException("bitsPerValue too large: " + m_bitsPerValue);
+                        throw AssertionError.Create("bitsPerValue too large: " + m_bitsPerValue);
                 }
                 return (rawValue.TripleShift(shiftRightBits)) & valueMask;
             }
