@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using System;
 using System.Runtime.CompilerServices;
@@ -318,7 +318,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             if (docId < 0 || (docCount > 0 && docDelta <= 0))
             {
-                throw new Exception("docs out of order (" + docId + " <= " + lastDocID + " ) (docOut: " + docOut + ")");
+                throw new CorruptIndexException("docs out of order (" + docId + " <= " + lastDocID + " ) (docOut: " + docOut + ")");
             }
 
             docDeltaBuffer[docBufferUpto] = docDelta;
