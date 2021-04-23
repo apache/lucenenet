@@ -95,17 +95,17 @@ namespace Lucene.Net.Util
             int minRadix = 2, maxRadix = 36;
             if (chars == null || radix < minRadix || radix > maxRadix)
             {
-                throw new FormatException();
+                throw NumberFormatException.Create();
             }
             int i = 0;
             if (len == 0)
             {
-                throw new FormatException("chars length is 0");
+                throw NumberFormatException.Create("chars length is 0");
             }
             bool negative = chars[offset + i] == '-';
             if (negative && ++i == len)
             {
-                throw new FormatException("can't convert to an int");
+                throw NumberFormatException.Create("can't convert to an int");
             }
             if (negative == true)
             {
@@ -124,16 +124,16 @@ namespace Lucene.Net.Util
                 int digit = (int)char.GetNumericValue(chars[i + offset]);
                 if (digit == -1)
                 {
-                    throw new FormatException("Unable to parse");
+                    throw NumberFormatException.Create("Unable to parse");
                 }
                 if (max > result)
                 {
-                    throw new FormatException("Unable to parse");
+                    throw NumberFormatException.Create("Unable to parse");
                 }
                 int next = result * radix - digit;
                 if (next > result)
                 {
-                    throw new FormatException("Unable to parse");
+                    throw NumberFormatException.Create("Unable to parse");
                 }
                 result = next;
             }
@@ -144,7 +144,7 @@ namespace Lucene.Net.Util
                 result = -result;
                 if (result < 0)
                 {
-                    throw new FormatException("Unable to parse");
+                    throw NumberFormatException.Create("Unable to parse");
                 }
             }
             return result;

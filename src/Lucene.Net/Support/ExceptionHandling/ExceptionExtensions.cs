@@ -138,8 +138,6 @@ namespace Lucene
 
             //if (e is null) return false;
 
-            //var typeofE = e.GetType();
-
             //return e is IRuntimeException ||
 
             //    e is IndexOutOfRangeException ||
@@ -156,7 +154,7 @@ namespace Lucene
 
             //    e is SecurityException ||
 
-            //    e is ObjectDisposedException ||
+            ////    e is ObjectDisposedException || // AlreadyClosedException subclasses IOException, so this one doesn't count here
 
             //    // Known implemetnations of IRuntimeException
             //    //e is BytesRefHash.MaxBytesLengthExceededException ||
@@ -172,13 +170,13 @@ namespace Lucene
 
             //    e is InvalidCastException ||
 
-            //    e is InvalidOperationException ||
+            //    (e is InvalidOperationException && !(e is ObjectDisposedException)) ||
 
             //    e is MissingManifestResourceException ||
 
-            //    typeof(FormatException).Equals(typeofE) || // Thrown only on datetime and number format problems, ignore all other FormatException errors (including ParseException)
+            //    (e is FormatException && !(e is J2N.ParseException)) || // Thrown only on datetime and number format problems, ignore ParseException
 
-            //    NUnitInconclusiveExceptionType is null ? false : NUnitInconclusiveExceptionType.IsAssignableFrom(typeofE);
+            //    NUnitInconclusiveExceptionType is null ? false : NUnitInconclusiveExceptionType.IsAssignableFrom(e.GetType());
         }
 
         /// <summary>
