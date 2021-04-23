@@ -164,7 +164,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     {
                         if (nextLength > ArrayUtil.MAX_ARRAY_LENGTH)
                         {
-                            throw new ThreadStateException("too many ordinals (>= " + nextLength + ") to cache");
+                            throw IllegalStateException.Create("too many ordinals (>= " + nextLength + ") to cache");
                         }
                         ords = ArrayUtil.Grow(ords, (int)nextLength);
                     }
