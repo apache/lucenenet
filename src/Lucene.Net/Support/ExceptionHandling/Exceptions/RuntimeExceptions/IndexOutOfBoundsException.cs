@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace Lucene
@@ -29,6 +30,10 @@ namespace Lucene
     /// <code>
     /// catch (Exception ex) when (ex.IsIndexOutOfBoundsException())
     /// </code>
+    /// <para/>
+    /// Note that when an array type is translated to .NET that uses an indexer property <c>this[index]</c>,
+    /// we should instead throw <see cref="IndexOutOfRangeException"/> for that property only.
+    /// In all other cases, use an overload of <see cref="Create()"/>.
     /// </summary>
     // LUCENENET: It is no longer good practice to use binary serialization. 
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
@@ -37,18 +42,22 @@ namespace Lucene
 #endif
     internal class IndexOutOfBoundsException : ArgumentOutOfRangeException
     {
+        [Obsolete("Use IndexOutOfBoundsException.Create() instead.", error: true)]
         public IndexOutOfBoundsException()
         {
         }
 
+        [Obsolete("Use IndexOutOfBoundsException.Create() instead.", error: true)]
         public IndexOutOfBoundsException(string message) : base(message)
         {
         }
 
+        [Obsolete("Use IndexOutOfBoundsException.Create() instead.", error: true)]
         public IndexOutOfBoundsException(string message, Exception innerException) : base(message, innerException)
         {
         }
 
+        [Obsolete("Use IndexOutOfBoundsException.Create() instead.", error: true)]
         public IndexOutOfBoundsException(Exception cause)
             : base(cause?.ToString(), cause)
         {
@@ -65,5 +74,37 @@ namespace Lucene
         {
         }
 #endif
+
+        // Static factory methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create() => new ArgumentOutOfRangeException();
+
+        /// <summary>
+        /// LUCENENET: This overload is for a "direct" translation without passing the name of the argument. In cases where
+        /// there is no message and there is a useful argument name, it would make more senes to call <c>new ArgumentOutOfRangeException()</c> directly.
+        /// Since this class is basically intended as training wheels for those who don't want to bother looking up exception types,
+        /// this is probably a reasonable default.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message) => new ArgumentOutOfRangeException(paramName: null, message);
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string paramName, string message) => new ArgumentOutOfRangeException(paramName, message);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string paramName, object actualValue, string message) => new ArgumentOutOfRangeException(paramName, actualValue, message);
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message, Exception innerException) => new ArgumentOutOfRangeException(message, innerException);
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(Exception cause) => new ArgumentOutOfRangeException(cause.Message, cause);
     }
 }
