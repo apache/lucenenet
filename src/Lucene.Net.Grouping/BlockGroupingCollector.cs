@@ -100,18 +100,18 @@ namespace Lucene.Net.Search.Grouping
                 return score;
             }
 
-            public override int Freq => throw IllegalStateException.Create(); // TODO: wtf does this class do?
+            public override int Freq => throw UnsupportedOperationException.Create(); // TODO: wtf does this class do?
 
             public override int DocID => doc;
 
             public override int Advance(int target)
             {
-                throw IllegalStateException.Create();
+                throw UnsupportedOperationException.Create();
             }
 
             public override int NextDoc()
             {
-                throw IllegalStateException.Create();
+                throw UnsupportedOperationException.Create();
             }
 
             public override long GetCost()
@@ -119,11 +119,11 @@ namespace Lucene.Net.Search.Grouping
                 return 1;
             }
 
-            public override Weight Weight => throw IllegalStateException.Create();
+            public override Weight Weight => throw UnsupportedOperationException.Create();
 
             public override ICollection<ChildScorer> GetChildren()
             {
-                throw IllegalStateException.Create();
+                throw UnsupportedOperationException.Create();
             }
         }
 
