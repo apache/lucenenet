@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace Lucene
@@ -39,18 +40,22 @@ namespace Lucene
 #endif
     internal class IllegalStateException : InvalidOperationException
     {
+        [Obsolete("Use IllegalStateException.Create() instead.", error: true)]
         public IllegalStateException()
         {
         }
 
+        [Obsolete("Use IllegalStateException.Create() instead.", error: true)]
         public IllegalStateException(string message) : base(message)
         {
         }
 
+        [Obsolete("Use IllegalStateException.Create() instead.", error: true)]
         public IllegalStateException(string message, Exception innerException) : base(message, innerException)
         {
         }
 
+        [Obsolete("Use IllegalStateException.Create() instead.", error: true)]
         public IllegalStateException(Exception cause)
             : base(cause?.ToString(), cause)
         {
@@ -67,5 +72,22 @@ namespace Lucene
         {
         }
 #endif
+
+        // Static factory methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create() => new InvalidOperationException();
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message) => new InvalidOperationException(message);
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message, Exception innerException) => new InvalidOperationException(message, innerException);
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(Exception cause) => new InvalidOperationException(cause.Message, cause);
     }
 }

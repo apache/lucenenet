@@ -529,7 +529,7 @@ namespace Lucene.Net.Index
                     int delCount = siPerCommit.DelCount;
                     if (delCount < 0 || delCount > si.DocCount)
                     {
-                        throw new InvalidOperationException("cannot write segment: invalid docCount segment=" + si.Name + " docCount=" + si.DocCount + " delCount=" + delCount);
+                        throw IllegalStateException.Create("cannot write segment: invalid docCount segment=" + si.Name + " docCount=" + si.DocCount + " delCount=" + delCount);
                     }
                     segnOutput.WriteInt32(delCount);
                     segnOutput.WriteInt64(siPerCommit.FieldInfosGen);
@@ -659,7 +659,7 @@ namespace Lucene.Net.Index
                 // so it had better be a 3.x segment or you will get very confusing errors later.
                 if ((si.Codec is Lucene3xCodec) == false)
                 {
-                    throw new InvalidOperationException("cannot write 3x SegmentInfo unless codec is Lucene3x (got: " + si.Codec + ")");
+                    throw IllegalStateException.Create("cannot write 3x SegmentInfo unless codec is Lucene3x (got: " + si.Codec + ")");
                 }
 
                 CodecUtil.WriteHeader(output, Lucene3xSegmentInfoFormat.UPGRADED_SI_CODEC_NAME, Lucene3xSegmentInfoFormat.UPGRADED_SI_VERSION_CURRENT);
@@ -1119,7 +1119,7 @@ namespace Lucene.Net.Index
         {
             if (pendingSegnOutput != null)
             {
-                throw new InvalidOperationException("prepareCommit was already called");
+                throw IllegalStateException.Create("prepareCommit was already called");
             }
             Write(dir);
         }
@@ -1161,7 +1161,7 @@ namespace Lucene.Net.Index
         {
             if (pendingSegnOutput == null)
             {
-                throw new InvalidOperationException("prepareCommit was not called");
+                throw IllegalStateException.Create("prepareCommit was not called");
             }
             bool success = false;
             try

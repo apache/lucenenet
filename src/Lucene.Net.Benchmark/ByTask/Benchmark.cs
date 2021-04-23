@@ -82,7 +82,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             {
                 if (executed)
                 {
-                    throw new InvalidOperationException("Benchmark was already executed");
+                    throw IllegalStateException.Create("Benchmark was already executed");
                 }
                 executed = true;
                 runData.SetStartTimeMillis();

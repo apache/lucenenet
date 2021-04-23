@@ -177,7 +177,7 @@ namespace Lucene.Net.Facet.SortedSet
                 // AIOOBE can happen:
                 if (!Equals(ReaderUtil.GetTopLevelContext(hits.Context).Reader, origReader))
                 {
-                    throw new InvalidOperationException("the SortedSetDocValuesReaderState provided to this class does not match the reader being searched; you must create a new SortedSetDocValuesReaderState every time you open a new IndexReader");
+                    throw IllegalStateException.Create("the SortedSetDocValuesReaderState provided to this class does not match the reader being searched; you must create a new SortedSetDocValuesReaderState every time you open a new IndexReader");
                 }
 
                 SortedSetDocValues segValues = reader.GetSortedSetDocValues(field);

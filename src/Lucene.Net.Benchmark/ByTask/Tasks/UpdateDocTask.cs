@@ -68,7 +68,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             string docID = doc.Get(DocMaker.ID_FIELD);
             if (docID == null)
             {
-                throw new InvalidOperationException("document must define the docid field");
+                throw IllegalStateException.Create("document must define the docid field");
             }
             IndexWriter iw = RunData.IndexWriter;
             iw.UpdateDocument(new Term(DocMaker.ID_FIELD, docID), doc);

@@ -378,7 +378,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 {
                     if (indexEnum == null)
                     {
-                        throw new InvalidOperationException("terms index was not loaded");
+                        throw IllegalStateException.Create("terms index was not loaded");
                     }
 
                     //System.out.println("BTR.seek seg=" + segment + " target=" + fieldInfo.name + ":" + target.utf8ToString() + " " + target + " current=" + term().utf8ToString() + " " + term() + " indexIsCurrent=" + indexIsCurrent + " didIndexNext=" + didIndexNext + " seekPending=" + seekPending + " divisor=" + indexReader.getDivisor() + " this="  + this);
@@ -827,7 +827,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     //System.out.println("BTR.seek by ord ord=" + ord);
                     if (indexEnum == null)
                     {
-                        throw new InvalidOperationException("terms index was not loaded");
+                        throw IllegalStateException.Create("terms index was not loaded");
                     }
 
                     if (Debugging.AssertsEnabled) Debugging.Assert(ord < outerInstance.numTerms);

@@ -369,7 +369,7 @@ namespace Lucene.Net.Search
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(te.SeekExact(t.Bytes), "termstate found but no term exists in reader");
                         // term does exist, but has no positions
-                        throw new InvalidOperationException("field \"" + t.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + t.Text() + ")");
+                        throw IllegalStateException.Create("field \"" + t.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + t.Text() + ")");
                     }
                     postingsFreqs[i] = new PostingsAndFreq(postingsEnum, te.DocFreq, (int)outerInstance.positions[i], t);
                 }

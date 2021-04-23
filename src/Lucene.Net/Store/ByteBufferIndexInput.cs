@@ -278,7 +278,7 @@ namespace Lucene.Net.Store
             EnsureOpen();
             if (isClone) // well we could, but this is stupid
             {
-                throw new InvalidOperationException("cannot slice() " + sliceDescription + " from a cloned IndexInput: " + this);
+                throw IllegalStateException.Create("cannot Slice() " + sliceDescription + " from a cloned IndexInput: " + this);
             }
             ByteBufferIndexInput clone = BuildSlice(offset, length);
             clone.sliceDescription = sliceDescription;

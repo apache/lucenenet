@@ -2301,17 +2301,17 @@ namespace Lucene.Net.Index
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
-                throw new InvalidOperationException("don't invoke me!");
+                throw IllegalStateException.Create("don't invoke me!");
             }
 
             public override int GetPositionIncrementGap(string fieldName)
             {
-                throw new InvalidOperationException("don't invoke me!");
+                throw IllegalStateException.Create("don't invoke me!");
             }
 
             public override int GetOffsetGap(string fieldName)
             {
-                throw new InvalidOperationException("don't invoke me!");
+                throw IllegalStateException.Create("don't invoke me!");
             }
         }
 

@@ -39,7 +39,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
             else
             {
-                throw new InvalidOperationException("TaxonomyWriter is not currently open");
+                throw IllegalStateException.Create("TaxonomyWriter is not currently open");
             }
 
             return 1;

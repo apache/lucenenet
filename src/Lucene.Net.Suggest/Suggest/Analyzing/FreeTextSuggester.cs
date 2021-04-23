@@ -438,7 +438,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                     catch (Exception e)
                     {
-                        throw new InvalidOperationException("failed to remove " + tempIndexPath, e);
+                        throw IllegalStateException.Create("failed to remove " + tempIndexPath, e);
                     }
                 }
             }
@@ -462,12 +462,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             var separatorOrig = (sbyte)input.ReadByte();
             if (separatorOrig != separator)
             {
-                throw new InvalidOperationException("separator=" + separator + " is incorrect: original model was built with separator=" + separatorOrig);
+                throw IllegalStateException.Create("separator=" + separator + " is incorrect: original model was built with separator=" + separatorOrig);
             }
             int gramsOrig = input.ReadVInt32();
             if (gramsOrig != grams)
             {
-                throw new InvalidOperationException("grams=" + grams + " is incorrect: original model was built with grams=" + gramsOrig);
+                throw IllegalStateException.Create("grams=" + grams + " is incorrect: original model was built with grams=" + gramsOrig);
             }
             totTokens = input.ReadVInt64();
 

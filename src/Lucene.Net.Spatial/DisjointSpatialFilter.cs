@@ -107,7 +107,7 @@ namespace Lucene.Net.Spatial
                 int maxDoc = context.AtomicReader.MaxDoc;
                 if (docsWithField.Length != maxDoc)
                 {
-                    throw new InvalidOperationException("Bits length should be maxDoc (" + maxDoc + ") but wasn't: " + docsWithField);
+                    throw IllegalStateException.Create("Bits length should be maxDoc (" + maxDoc + ") but wasn't: " + docsWithField);
                 }
 
                 if (docsWithField is Bits.MatchNoBits)

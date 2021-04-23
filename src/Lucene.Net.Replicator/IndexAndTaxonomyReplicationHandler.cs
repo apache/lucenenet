@@ -73,7 +73,7 @@ namespace Lucene.Net.Replicator
             bool taxonomyExists = DirectoryReader.IndexExists(taxonomyDirectory);
 
             if (indexExists != taxonomyExists)
-                throw new InvalidOperationException(string.Format("search and taxonomy indexes must either both exist or not: index={0} taxo={1}", indexExists, taxonomyExists));
+                throw IllegalStateException.Create(string.Format("search and taxonomy indexes must either both exist or not: index={0} taxo={1}", indexExists, taxonomyExists));
 
             if (indexExists)
             {

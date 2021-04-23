@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis
             }
             if (random == null)
             {
-                throw AssertionError.Create("IncrementToken() called in wrong state!");
+                throw IllegalStateException.Create("IncrementToken() called in wrong state!");
             }
             return NextToken();
         }

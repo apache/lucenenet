@@ -239,7 +239,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (numEncoded >= numValues)
             {
-                throw new InvalidOperationException("encodeNext called more than " + numValues + " times.");
+                throw IllegalStateException.Create("EncodeNext() called more than " + numValues + " times.");
             }
             if (lastEncoded > x)
             {

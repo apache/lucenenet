@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
         {
             if (!ShouldMerge)
             {
-                throw new InvalidOperationException("Merge would result in 0 document segment");
+                throw IllegalStateException.Create("Merge would result in 0 document segment");
             }
             // NOTE: it's important to add calls to
             // checkAbort.work(...) if you make any changes to this

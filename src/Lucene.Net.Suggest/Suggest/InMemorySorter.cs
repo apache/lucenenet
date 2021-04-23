@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Suggest
         {
             if (closed)
             {
-                throw new InvalidOperationException();
+                throw IllegalStateException.Create();
             }
             buffer.Append(utf8);
         }

@@ -174,11 +174,11 @@ namespace Lucene.Net.Index.Sorter
                 DocIdSet parents = outerInstance.parentsFilter.GetDocIdSet(context, null);
                 if (parents == null)
                 {
-                    throw new InvalidOperationException("AtomicReader " + context.AtomicReader + " contains no parents!");
+                    throw IllegalStateException.Create("AtomicReader " + context.AtomicReader + " contains no parents!");
                 }
                 if (!(parents is FixedBitSet))
                 {
-                    throw new InvalidOperationException("parentFilter must return FixedBitSet; got " + parents);
+                    throw IllegalStateException.Create("parentFilter must return FixedBitSet; got " + parents);
                 }
                 parentBits = (FixedBitSet)parents;
                 for (int i = 0; i < parentComparers.Length; i++)

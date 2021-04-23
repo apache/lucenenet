@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
                 base.DoClose();
                 if (throwOnClose)
                 {
-                    throw new InvalidOperationException("BOOM!");
+                    throw IllegalStateException.Create("BOOM!");
                 }
             }
         }
@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
         {
             public void OnClose(IndexReader reader)
             {
-                throw new InvalidOperationException("GRRRRRRRRRRRR!");
+                throw IllegalStateException.Create("GRRRRRRRRRRRR!");
             }
         }
     }

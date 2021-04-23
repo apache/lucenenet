@@ -155,7 +155,7 @@ namespace Lucene.Net.Codecs.PerField
                 }
                 if (format == null)
                 {
-                    throw new InvalidOperationException("invalid null DocValuesFormat for field=\"" + field.Name + "\"");
+                    throw IllegalStateException.Create("invalid null DocValuesFormat for field=\"" + field.Name + "\"");
                 }
                 string formatName_ = format.Name;
 

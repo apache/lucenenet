@@ -1135,7 +1135,7 @@ namespace Lucene.Net.Index
             {
                 if (pendingCommit != null)
                 {
-                    throw new InvalidOperationException("cannot close: prepareCommit was already called with no corresponding call to commit");
+                    throw IllegalStateException.Create("cannot close: prepareCommit was already called with no corresponding call to commit");
                 }
 
                 if (infoStream.IsEnabled("IW"))
@@ -2147,7 +2147,7 @@ namespace Lucene.Net.Index
                     {
                         if (hitOOM)
                         {
-                            throw new InvalidOperationException("this writer hit an OutOfMemoryError; cannot complete forceMerge");
+                            throw IllegalStateException.Create("this writer hit an OutOfMemoryError; cannot complete forceMerge");
                         }
 
                         if (mergeExceptions.Count > 0)
@@ -2278,7 +2278,7 @@ namespace Lucene.Net.Index
                     {
                         if (hitOOM)
                         {
-                            throw new InvalidOperationException("this writer hit an OutOfMemoryError; cannot complete forceMergeDeletes");
+                            throw IllegalStateException.Create("this writer hit an OutOfMemoryError; cannot complete forceMergeDeletes");
                         }
 
                         // Check each merge that MergePolicy asked us to
@@ -3534,12 +3534,12 @@ namespace Lucene.Net.Index
 
                 if (hitOOM)
                 {
-                    throw new InvalidOperationException("this writer hit an OutOfMemoryError; cannot commit");
+                    throw IllegalStateException.Create("this writer hit an OutOfMemoryError; cannot commit");
                 }
 
                 if (pendingCommit != null)
                 {
-                    throw new InvalidOperationException("prepareCommit was already called with no corresponding call to commit");
+                    throw IllegalStateException.Create("prepareCommit was already called with no corresponding call to commit");
                 }
 
                 DoBeforeFlush();
@@ -3854,7 +3854,7 @@ namespace Lucene.Net.Index
         {
             if (hitOOM)
             {
-                throw new InvalidOperationException("this writer hit an OutOfMemoryError; cannot flush");
+                throw IllegalStateException.Create("this writer hit an OutOfMemoryError; cannot flush");
             }
 
             DoBeforeFlush();
@@ -4337,7 +4337,7 @@ namespace Lucene.Net.Index
 
                 if (hitOOM)
                 {
-                    throw new InvalidOperationException("this writer hit an OutOfMemoryError; cannot complete merge");
+                    throw IllegalStateException.Create("this writer hit an OutOfMemoryError; cannot complete merge");
                 }
 
                 if (infoStream.IsEnabled("IW"))
@@ -4768,7 +4768,7 @@ namespace Lucene.Net.Index
 
                 if (hitOOM)
                 {
-                    throw new InvalidOperationException("this writer hit an OutOfMemoryError; cannot merge");
+                    throw IllegalStateException.Create("this writer hit an OutOfMemoryError; cannot merge");
                 }
 
                 if (merge.info != null)
@@ -5438,7 +5438,7 @@ namespace Lucene.Net.Index
 
             if (hitOOM)
             {
-                throw new InvalidOperationException("this writer hit an OutOfMemoryError; cannot commit");
+                throw IllegalStateException.Create("this writer hit an OutOfMemoryError; cannot commit");
             }
 
             try

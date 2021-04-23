@@ -91,7 +91,7 @@ namespace Lucene.Net.Index.Sorter
         {
             if (numDocsToCollect <= 0)
             {
-                throw new InvalidOperationException("numDocsToCollect must always be > 0, got " + m_segmentTotalCollect);
+                throw IllegalStateException.Create("numDocsToCollect must always be > 0, got " + m_segmentTotalCollect);
             }
             this.m_in = @in;
             this.m_sort = sort;

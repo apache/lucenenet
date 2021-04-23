@@ -217,17 +217,17 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
             {
-                throw new InvalidOperationException();
+                throw IllegalStateException.Create();
             }
 
             public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
             {
-                throw new InvalidOperationException();
+                throw IllegalStateException.Create();
             }
 
             public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
             {
-                throw new InvalidOperationException();
+                throw IllegalStateException.Create();
             }
         }
 

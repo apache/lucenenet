@@ -276,12 +276,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        //LUCENENET specific -Support for LUCENE - 5889.
+        // LUCENENET specific -Support for LUCENE-5889.
         public void Commit()
         {
             if (writer == null)
             {
-                throw new InvalidOperationException("Cannot commit on an closed writer. Add documents first");
+                throw IllegalStateException.Create("Cannot commit on an closed writer. Add documents first");
             }
             writer.Commit();
         }
@@ -406,9 +406,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public virtual void Refresh()
         {
-            if (m_searcherMgr == null)
+            if (m_searcherMgr == null) // LUCENENET specific -Support for LUCENE-5889.
             {
-                throw new InvalidOperationException("suggester was not built");
+                throw IllegalStateException.Create("suggester was not built");
             }
             m_searcherMgr.MaybeRefreshBlocking();
         }
@@ -465,7 +465,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             if (m_searcherMgr == null)
             {
-                throw new InvalidOperationException("suggester was not built");
+                throw IllegalStateException.Create("suggester was not built");
             }
 
             Occur occur;

@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
                     IComparer<BytesRef> subTermComp = termsEnumIndex.TermsEnum.Comparer;
                     if (subTermComp != null && !subTermComp.Equals(termComp))
                     {
-                        throw new InvalidOperationException("sub-readers have different BytesRef.Comparers: " + subTermComp + " vs " + termComp + "; cannot merge");
+                        throw IllegalStateException.Create("sub-readers have different BytesRef.Comparers: " + subTermComp + " vs " + termComp + "; cannot merge");
                     }
                 }
 

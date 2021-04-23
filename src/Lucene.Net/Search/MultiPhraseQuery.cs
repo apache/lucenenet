@@ -285,7 +285,7 @@ namespace Lucene.Net.Search
                         {
                             // term does exist, but has no positions
                             if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum.Docs(liveDocs, null, DocsFlags.NONE) != null, "termstate found but no term exists in reader");
-                            throw new InvalidOperationException("field \"" + term.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
+                            throw IllegalStateException.Create("field \"" + term.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
                         }
 
                         docFreq = termsEnum.DocFreq;
@@ -621,7 +621,7 @@ namespace Lucene.Net.Search
                 if (postings == null)
                 {
                     // term does exist, but has no positions
-                    throw new InvalidOperationException("field \"" + term.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
+                    throw IllegalStateException.Create("field \"" + term.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
                 }
                 _cost += postings.GetCost();
                 docsEnums.Add(postings);

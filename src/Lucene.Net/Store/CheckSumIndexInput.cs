@@ -51,7 +51,7 @@ namespace Lucene.Net.Store
             long skip = pos - GetFilePointer();
             if (skip < 0)
             {
-                throw new InvalidOperationException(this.GetType() + " cannot seek backwards");
+                throw IllegalStateException.Create(this.GetType() + " cannot seek backwards");
             }
             SkipBytes(skip);
         }

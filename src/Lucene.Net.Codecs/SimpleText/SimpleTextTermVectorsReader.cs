@@ -557,7 +557,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 // IndexOutOfRangeException if we didn't, which doesn't really provide good feedback as to what the cause is.
                 // This matches the behavior of Lucene 8.x. See #267.
                 if (((_positions != null && _nextPos < _positions.Length) || _startOffsets != null && _nextPos < _startOffsets.Length) == false)
-                    throw new InvalidOperationException("Read past last position");
+                    throw IllegalStateException.Create("Read past last position");
 
                 if (_positions != null)
                 {

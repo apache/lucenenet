@@ -46,8 +46,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using AssertionError = Lucene.Net.Diagnostics.AssertionException; // LUCENENET TODO: Remove this after converting to the .IsAssertionError() extension method in catch blocks
-
     /// <summary>
     /// Base class aiming at testing <see cref="TermVectorsFormat"/>.
     /// To test a new format, all you need is to register a new <see cref="Codec"/> which
@@ -126,7 +124,7 @@ namespace Lucene.Net.Index
                         break;
 
                     default:
-                        throw new InvalidOperationException("Invalid Options enum type");
+                        throw new ArgumentOutOfRangeException(nameof(opt), "Invalid Options enum type");
                 }
             }
 

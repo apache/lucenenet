@@ -241,7 +241,7 @@ namespace Lucene.Net.Facet
             public override long Length
             {
                 get => io.Length;
-                set => throw new InvalidOperationException("Length is readonly");
+                set => throw IllegalStateException.Create("Length is readonly"); // LUCENENET specific: We cannot override get without also overriding set, so we throw if it is set
             }
 
             public override long Checksum => io.Checksum;

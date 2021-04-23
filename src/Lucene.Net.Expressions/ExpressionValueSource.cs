@@ -66,7 +66,7 @@ namespace Lucene.Net.Expressions
                         if (source == null)
                         {
                             // LUCENENET specific: Changed from RuntimeException to InvalidOperationException to match .NET conventions
-                            throw new InvalidOperationException("Internal error. Variable (" + expression.Variables[i]
+                            throw IllegalStateException.Create("Internal error. Variable (" + expression.Variables[i]
                                  + ") does not exist.");
                         }
                     }
@@ -98,7 +98,7 @@ namespace Lucene.Net.Expressions
                     {
                         // LUCENENET specific: Changed from RuntimeException to InvalidOperationException to match .NET conventions
 #pragma warning disable IDE0016 // Use 'throw' expression
-                        throw new InvalidOperationException($"Internal error. External ({externalName}) does not exist.");
+                        throw IllegalStateException.Create($"Internal error. External ({externalName}) does not exist.");
 #pragma warning restore IDE0016 // Use 'throw' expression
                     }
                     valuesCache[externalName] = values;

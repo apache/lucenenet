@@ -59,7 +59,7 @@ namespace Lucene.Net.Replicator
             {
                 if (refCount <= 0)
                 {
-                    throw new InvalidOperationException("this revision is already released");
+                    throw IllegalStateException.Create("this revision is already released");
                 }
 
                 var rc = refCount.DecrementAndGet();
@@ -82,7 +82,7 @@ namespace Lucene.Net.Replicator
                 }
                 else if (rc < 0)
                 {
-                    throw new InvalidOperationException(string.Format("too many decRef calls: refCount is {0} after decrement", rc));
+                    throw IllegalStateException.Create(string.Format("too many decRef calls: refCount is {0} after decrement", rc));
                 }
             }
 

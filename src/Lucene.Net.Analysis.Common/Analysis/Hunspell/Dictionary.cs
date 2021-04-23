@@ -673,7 +673,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 }
                 if (mappings.Put(parts[1], parts[2]) != null)
                 {
-                    throw new InvalidOperationException("duplicate mapping specified for: " + parts[1]);
+                    throw IllegalStateException.Create("duplicate mapping specified for: " + parts[1]);
                 }
             }
 

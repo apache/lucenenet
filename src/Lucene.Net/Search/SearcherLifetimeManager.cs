@@ -347,7 +347,7 @@ namespace Lucene.Net.Search
                     // Make some effort to catch mis-use:
                     if (_searchers.Count != 0)
                     {
-                        throw new InvalidOperationException("another thread called record while this SearcherLifetimeManager instance was being disposed; not all searchers were disposed");
+                        throw IllegalStateException.Create("another thread called record while this SearcherLifetimeManager instance was being disposed; not all searchers were disposed");
                     }
                 }
             }

@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis
             }
             else if (this.m_input != ILLEGAL_STATE_READER)
             {
-                throw new InvalidOperationException("TokenStream contract violation: Close() call missing");
+                throw IllegalStateException.Create("TokenStream contract violation: Close() call missing");
             }
             this.inputPending = input;
             if (Debugging.AssertsEnabled) Debugging.Assert(SetReaderTestPoint());
@@ -130,7 +130,7 @@ namespace Lucene.Net.Analysis
         {
             public override int Read(char[] cbuf, int off, int len)
             {
-                throw new InvalidOperationException("TokenStream contract violation: Reset()/Dispose() call missing, " 
+                throw IllegalStateException.Create("TokenStream contract violation: Reset()/Dispose() call missing, " 
                     + "Reset() called multiple times, or subclass does not call base.Reset(). "
                     + "Please see the documentation of TokenStream class for more information about the correct consuming workflow.");
             }

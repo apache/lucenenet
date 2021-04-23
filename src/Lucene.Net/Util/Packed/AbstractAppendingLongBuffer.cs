@@ -83,7 +83,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (pending == null)
             {
-                throw new InvalidOperationException("this buffer is frozen");
+                throw IllegalStateException.Create("this buffer is frozen");
             }
             if (pendingOff == pending.Length)
             {

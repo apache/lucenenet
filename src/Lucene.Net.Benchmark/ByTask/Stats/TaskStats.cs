@@ -175,11 +175,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
             {
                 if (countsByTimeStepMSec != stat2.countsByTimeStepMSec)
                 {
-                    throw new InvalidOperationException("different by-time msec step");
+                    throw IllegalStateException.Create("different by-time msec step");
                 }
                 if (countsByTime.Length != stat2.countsByTime.Length)
                 {
-                    throw new InvalidOperationException("different by-time msec count");
+                    throw IllegalStateException.Create("different by-time msec count");
                 }
                 for (int i = 0; i < stat2.countsByTime.Length; i++)
                 {

@@ -78,11 +78,11 @@ namespace Lucene.Net.Util.Packed
         {
             if (efIndex < 0)
             {
-                throw new InvalidOperationException("index before sequence");
+                throw IllegalStateException.Create("index before sequence");
             }
             if (efIndex >= numEncoded)
             {
-                throw new InvalidOperationException("index after sequence");
+                throw IllegalStateException.Create("index after sequence");
             }
             return efIndex;
         }

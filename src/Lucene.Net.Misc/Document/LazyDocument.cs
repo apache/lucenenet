@@ -103,7 +103,7 @@ namespace Lucene.Net.Documents
                     }
                     catch (Exception ioe) when (ioe.IsIOException())
                     {
-                        throw new InvalidOperationException("unable to load document", ioe);
+                        throw IllegalStateException.Create("unable to load document", ioe);
                     }
                 }
                 return doc;

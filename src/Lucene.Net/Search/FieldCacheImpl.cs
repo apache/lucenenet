@@ -597,7 +597,7 @@ namespace Lucene.Net.Search
                 }
                 else if (info.HasDocValues)
                 {
-                    throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                    throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
                 else if (!info.IsIndexed)
                 {
@@ -770,7 +770,7 @@ namespace Lucene.Net.Search
                 }
                 else if (info.HasDocValues)
                 {
-                    throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                    throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
                 else if (!info.IsIndexed)
                 {
@@ -942,7 +942,7 @@ namespace Lucene.Net.Search
                 }
                 else if (info.HasDocValues)
                 {
-                    throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                    throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
                 else if (!info.IsIndexed)
                 {
@@ -1237,7 +1237,7 @@ namespace Lucene.Net.Search
                 }
                 else if (info.HasDocValues)
                 {
-                    throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                    throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
                 else if (!info.IsIndexed)
                 {
@@ -1403,7 +1403,7 @@ namespace Lucene.Net.Search
                 }
                 else if (info.HasDocValues)
                 {
-                    throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                    throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
                 else if (!info.IsIndexed)
                 {
@@ -1581,7 +1581,7 @@ namespace Lucene.Net.Search
                 }
                 else if (info.HasDocValues)
                 {
-                    throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                    throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
                 else if (!info.IsIndexed)
                 {
@@ -1771,7 +1771,7 @@ namespace Lucene.Net.Search
                 {
                     // we don't try to build a sorted instance from numeric/binary doc
                     // values because dedup can be very costly
-                    throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                    throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
                 else if (!info.IsIndexed)
                 {
@@ -1937,7 +1937,7 @@ namespace Lucene.Net.Search
             }
             else if (info.HasDocValues)
             {
-                throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
             }
             else if (!info.IsIndexed)
             {
@@ -2087,7 +2087,7 @@ namespace Lucene.Net.Search
             }
             else if (info.HasDocValues)
             {
-                throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
             }
             else if (!info.IsIndexed)
             {

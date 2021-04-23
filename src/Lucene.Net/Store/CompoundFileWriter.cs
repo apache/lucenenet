@@ -151,7 +151,7 @@ namespace Lucene.Net.Store
             {
                 if (pendingEntries.Count > 0 || outputTaken)
                 {
-                    throw new InvalidOperationException("CFS has pending open files");
+                    throw IllegalStateException.Create("CFS has pending open files");
                 }
                 closed = true;
                 // open the compound stream

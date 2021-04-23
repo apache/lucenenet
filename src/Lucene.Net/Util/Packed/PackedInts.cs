@@ -1123,7 +1123,7 @@ namespace Lucene.Net.Util.Packed
                     }
                     catch (Exception e) when (e.IsIOException())
                     {
-                        throw new InvalidOperationException("failed", e);
+                        throw IllegalStateException.Create("failed", e);
                     }
                 }
                 return result;

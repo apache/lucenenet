@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
 
             if (mode == OpenMode.APPEND && nextWriteGen == 0)
             {
-                throw new InvalidOperationException("no snapshots stored in this directory");
+                throw IllegalStateException.Create("no snapshots stored in this directory");
             }
         }
 

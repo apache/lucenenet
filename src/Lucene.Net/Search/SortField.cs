@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -467,10 +467,10 @@ namespace Lucene.Net.Search
                     return new FieldComparer.TermValComparer(numHits, field);
 
                 case SortFieldType.REWRITEABLE:
-                    throw new InvalidOperationException("SortField needs to be rewritten through Sort.rewrite(..) and SortField.rewrite(..)");
+                    throw IllegalStateException.Create("SortField needs to be rewritten through Sort.Rewrite(..) and SortField.Rewrite(..)");
 
                 default:
-                    throw new InvalidOperationException("Illegal sort type: " + type);
+                    throw IllegalStateException.Create("Illegal sort type: " + type);
             }
         }
 

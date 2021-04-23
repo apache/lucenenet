@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
             {
                 if (this.readers == null)
                 {
-                    throw new InvalidOperationException("IndexWriter has not initialized readers from the segment infos yet");
+                    throw IllegalStateException.Create("IndexWriter has not initialized readers from the segment infos yet");
                 }
                 IList<AtomicReader> readers = new List<AtomicReader>(this.readers.Count);
                 foreach (AtomicReader reader in this.readers)

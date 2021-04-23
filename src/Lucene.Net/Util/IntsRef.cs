@@ -262,31 +262,31 @@ namespace Lucene.Net.Util
         {
             if (ints == null)
             {
-                throw new InvalidOperationException("ints is null");
+                throw IllegalStateException.Create("ints is null");
             }
             if (Length < 0)
             {
-                throw new InvalidOperationException("length is negative: " + Length);
+                throw IllegalStateException.Create("length is negative: " + Length);
             }
             if (Length > ints.Length)
             {
-                throw new InvalidOperationException("length is out of bounds: " + Length + ",ints.length=" + Int32s.Length);
+                throw IllegalStateException.Create("length is out of bounds: " + Length + ",ints.length=" + Int32s.Length);
             }
             if (Offset < 0)
             {
-                throw new InvalidOperationException("offset is negative: " + Offset);
+                throw IllegalStateException.Create("offset is negative: " + Offset);
             }
             if (Offset > ints.Length)
             {
-                throw new InvalidOperationException("offset out of bounds: " + Offset + ",ints.length=" + Int32s.Length);
+                throw IllegalStateException.Create("offset out of bounds: " + Offset + ",ints.length=" + Int32s.Length);
             }
             if (Offset + Length < 0)
             {
-                throw new InvalidOperationException("offset+length is negative: offset=" + Offset + ",length=" + Length);
+                throw IllegalStateException.Create("offset+length is negative: offset=" + Offset + ",length=" + Length);
             }
             if (Offset + Length > Int32s.Length)
             {
-                throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",ints.length=" + Int32s.Length);
+                throw IllegalStateException.Create("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",ints.length=" + Int32s.Length);
             }
             return true;
         }

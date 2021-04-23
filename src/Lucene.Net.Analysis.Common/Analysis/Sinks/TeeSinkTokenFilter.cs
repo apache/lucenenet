@@ -220,7 +220,7 @@ namespace Lucene.Net.Analysis.Sinks
             {
                 if (it != null)
                 {
-                    throw new InvalidOperationException("The tee must be consumed before sinks are consumed.");
+                    throw IllegalStateException.Create("The tee must be consumed before sinks are consumed.");
                 }
                 cachedStates.Add(state);
             }

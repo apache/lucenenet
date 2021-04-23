@@ -296,7 +296,7 @@ namespace Lucene.Net.Index
             }
             else if (rc < 0)
             {
-                throw new InvalidOperationException("too many decRef calls: refCount is " + rc + " after decrement");
+                throw IllegalStateException.Create("too many decRef calls: refCount is " + rc + " after decrement");
             }
         }
 

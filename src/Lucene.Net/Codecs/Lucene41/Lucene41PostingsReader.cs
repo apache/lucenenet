@@ -94,7 +94,7 @@ namespace Lucene.Net.Codecs.Lucene41
             int indexBlockSize = termsIn.ReadVInt32();
             if (indexBlockSize != Lucene41PostingsFormat.BLOCK_SIZE)
             {
-                throw new InvalidOperationException("index-time BLOCK_SIZE (" + indexBlockSize + ") != read-time BLOCK_SIZE (" + Lucene41PostingsFormat.BLOCK_SIZE + ")");
+                throw IllegalStateException.Create("index-time BLOCK_SIZE (" + indexBlockSize + ") != read-time BLOCK_SIZE (" + Lucene41PostingsFormat.BLOCK_SIZE + ")");
             }
         }
 
