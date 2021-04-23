@@ -165,7 +165,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 Scorer scorer = (Scorer)context["scorer"];
                 if (scorer == null)
                 {
-                    throw new ThreadStateException("scores are missing; be sure to pass keepScores=true to FacetsCollector");
+                    throw IllegalStateException.Create("scores are missing; be sure to pass keepScores=true to FacetsCollector");
                 }
                 return new DoubleDocValuesAnonymousClass(this, scorer);
             }
