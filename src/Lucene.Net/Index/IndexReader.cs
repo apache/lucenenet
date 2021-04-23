@@ -266,7 +266,7 @@ namespace Lucene.Net.Index
             // still close the reader if it was made invalid by a child:
             if (refCount <= 0)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "this IndexReader is closed");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "this IndexReader is disposed.");
             }
 
             int rc = refCount.DecrementAndGet();
@@ -309,13 +309,13 @@ namespace Lucene.Net.Index
         {
             if (refCount <= 0)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "this IndexReader is closed");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "this IndexReader is disposed.");
             }
             // the happens before rule on reading the refCount, which must be after the fake write,
             // ensures that we see the value:
             if (closedByChild)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "this IndexReader cannot be used anymore as one of its child readers was closed");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "this IndexReader cannot be used anymore as one of its child readers was disposed.");
             }
         }
 

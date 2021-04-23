@@ -155,7 +155,7 @@ namespace Lucene.Net.Index
                     return;
                 }
             }
-            throw new ObjectDisposedException(this.GetType().FullName, "SegmentCoreReaders is already closed");
+            throw AlreadyClosedException.Create(this.GetType().FullName, "SegmentCoreReaders is already disposed.");
         }
 
         internal NumericDocValues GetNormValues(FieldInfo fi)
