@@ -2144,7 +2144,7 @@ namespace Lucene.Net.Util
 
             Type clazz = CommandLineUtil.LoadDirectoryClass(clazzName);
             if (clazz == null)
-                throw new InvalidOperationException($"Type '{clazzName}' could not be instantiated.");
+                throw IllegalStateException.Create($"Type '{clazzName}' could not be instantiated."); // LUCENENET: We don't get an exception in this case, so throwing one for compatibility
             // If it is a FSDirectory type, try its ctor(File)
             if (typeof(FSDirectory).IsAssignableFrom(clazz))
             {

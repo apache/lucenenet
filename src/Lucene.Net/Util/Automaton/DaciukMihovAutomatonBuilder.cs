@@ -267,7 +267,7 @@ namespace Lucene.Net.Util.Automaton
         {
             if (this.stateRegistry == null)
             {
-                throw new InvalidOperationException();
+                throw IllegalStateException.Create();
             }
 
             if (root.HasChildren)

@@ -520,7 +520,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             if (fieldFormatter == null)
             {
                 // LUCENENET: Changed from NullPointerException to InvalidOperationException (which isn't caught anywhere outside of tests)
-                throw new InvalidOperationException("PassageFormatter cannot be null");
+                throw IllegalStateException.Create("PassageFormatter cannot be null");
             }
 
             // check if we should do any multiterm processing
@@ -612,7 +612,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             if (scorer == null)
             {
                 // LUCENENET: Changed from NullPointerException to InvalidOperationException (which isn't caught anywhere outside of tests)
-                throw new InvalidOperationException("PassageScorer cannot be null");
+                throw IllegalStateException.Create("PassageScorer cannot be null");
             }
             JCG.PriorityQueue<OffsetsEnum> pq = new JCG.PriorityQueue<OffsetsEnum>();
             float[] weights = new float[terms.Length];

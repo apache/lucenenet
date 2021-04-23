@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis
                 pos += posIncAtt.PositionIncrement;
                 if (pos == -1)
                 {
-                    throw new InvalidOperationException("first posInc must be > 0");
+                    throw IllegalStateException.Create("first posInc must be > 0");
                 }
             }
 
@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis
 
                 if (offsetsAreCorrect && offsetAtt.StartOffset < lastStartOffset)
                 {
-                    throw new InvalidOperationException(name + ": offsets must not go backwards startOffset=" + startOffset + " is < lastStartOffset=" + lastStartOffset);
+                    throw IllegalStateException.Create(name + ": offsets must not go backwards startOffset=" + startOffset + " is < lastStartOffset=" + lastStartOffset);
                 }
                 lastStartOffset = offsetAtt.StartOffset;
             }
@@ -132,7 +132,7 @@ namespace Lucene.Net.Analysis
                     //System.out.println("  + vs " + pos + " -> " + startOffset);
                     if (oldStartOffset != startOffset)
                     {
-                        throw new InvalidOperationException(name + ": inconsistent startOffset at pos=" + pos + ": " + oldStartOffset + " vs " + startOffset + "; token=" + termAtt);
+                        throw IllegalStateException.Create(name + ": inconsistent startOffset at pos=" + pos + ": " + oldStartOffset + " vs " + startOffset + "; token=" + termAtt);
                     }
                 }
 
@@ -151,7 +151,7 @@ namespace Lucene.Net.Analysis
                     //System.out.println("  + ve " + endPos + " -> " + endOffset);
                     if (oldEndOffset != endOffset)
                     {
-                        throw new InvalidOperationException(name + ": inconsistent endOffset at pos=" + endPos + ": " + oldEndOffset + " vs " + endOffset + "; token=" + termAtt);
+                        throw IllegalStateException.Create(name + ": inconsistent endOffset at pos=" + endPos + ": " + oldEndOffset + " vs " + endOffset + "; token=" + termAtt);
                     }
                 }
             }

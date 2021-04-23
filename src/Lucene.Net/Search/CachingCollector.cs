@@ -510,7 +510,7 @@ namespace Lucene.Net.Search
         {
             if (!IsCached)
             {
-                throw new InvalidOperationException("cannot replay: cache was cleared because too much RAM was required");
+                throw IllegalStateException.Create("cannot replay: cache was cleared because too much RAM was required");
             }
 
             if (!other.AcceptsDocsOutOfOrder && this.m_other.AcceptsDocsOutOfOrder)

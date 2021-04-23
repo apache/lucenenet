@@ -300,24 +300,24 @@ namespace Lucene.Net.Index
             {
             }
 
-            public override BytesRef Term => throw new InvalidOperationException("this method should never be called");
+            public override BytesRef Term => throw IllegalStateException.Create("this method should never be called");
 
             public override IComparer<BytesRef> Comparer => null;
 
-            public override int DocFreq => throw new InvalidOperationException("this method should never be called");
+            public override int DocFreq => throw IllegalStateException.Create("this method should never be called");
 
-            public override long TotalTermFreq => throw new InvalidOperationException("this method should never be called");
+            public override long TotalTermFreq => throw IllegalStateException.Create("this method should never be called");
 
-            public override long Ord => throw new InvalidOperationException("this method should never be called");
+            public override long Ord => throw IllegalStateException.Create("this method should never be called");
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
-                throw new InvalidOperationException("this method should never be called");
+                throw IllegalStateException.Create("this method should never be called");
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
-                throw new InvalidOperationException("this method should never be called");
+                throw IllegalStateException.Create("this method should never be called");
             }
 
             // LUCENENET specific
@@ -345,12 +345,12 @@ namespace Lucene.Net.Index
 
             public override TermState GetTermState()
             {
-                throw new InvalidOperationException("this method should never be called");
+                throw IllegalStateException.Create("this method should never be called");
             }
 
             public override void SeekExact(BytesRef term, TermState state)
             {
-                throw new InvalidOperationException("this method should never be called");
+                throw IllegalStateException.Create("this method should never be called");
             }
         }
     }

@@ -128,7 +128,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 if (unsortedReaders == null)
                 {
-                    throw new InvalidOperationException();
+                    throw IllegalStateException.Create();
                 }
                 if (docMap == null)
                 {

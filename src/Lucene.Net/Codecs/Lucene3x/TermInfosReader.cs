@@ -384,7 +384,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             if (index == null)
             {
-                throw new InvalidOperationException("terms index was not loaded when this reader was created");
+                throw IllegalStateException.Create("terms index was not loaded when this reader was created");
             }
         }
 

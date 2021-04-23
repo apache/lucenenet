@@ -286,7 +286,7 @@ namespace Lucene.Net.Util.Fst
                 0 => FST.INPUT_TYPE.BYTE1,
                 1 => FST.INPUT_TYPE.BYTE2,
                 2 => FST.INPUT_TYPE.BYTE4,
-                _ => throw new InvalidOperationException("invalid input type " + t),
+                _ => throw IllegalStateException.Create("invalid input type " + t),
             };
             if (packed)
             {
@@ -347,7 +347,7 @@ namespace Lucene.Net.Util.Fst
         {
             if (startNode != -1)
             {
-                throw new InvalidOperationException("already finished");
+                throw IllegalStateException.Create("already finished");
             }
             if (newStartNode == FST.FINAL_END_NODE && !EqualityComparer<T>.Default.Equals(emptyOutput, default))
             {
@@ -482,15 +482,15 @@ namespace Lucene.Net.Util.Fst
         {
             if (startNode == -1)
             {
-                throw new InvalidOperationException("call finish first");
+                throw IllegalStateException.Create("call finish first");
             }
             if (nodeAddress != null)
             {
-                throw new InvalidOperationException("cannot save an FST pre-packed FST; it must first be packed");
+                throw IllegalStateException.Create("cannot save an FST pre-packed FST; it must first be packed");
             }
             if (packed && !(nodeRefToAddress is PackedInt32s.Mutable))
             {
-                throw new InvalidOperationException("cannot save a FST which has been loaded from disk ");
+                throw IllegalStateException.Create("cannot save a FST which has been loaded from disk ");
             }
             CodecUtil.WriteHeader(@out, FST.FILE_FORMAT_NAME, FST.VERSION_CURRENT);
             if (packed)
@@ -834,7 +834,7 @@ namespace Lucene.Net.Util.Fst
             // > 2.1B nodes when packing:
             if (nodeAddress != null && nodeCount == int.MaxValue)
             {
-                throw new InvalidOperationException("cannot create a packed FST with more than 2.1 billion nodes");
+                throw IllegalStateException.Create("cannot create a packed FST with more than 2.1 billion nodes");
             }
 
             nodeCount++;

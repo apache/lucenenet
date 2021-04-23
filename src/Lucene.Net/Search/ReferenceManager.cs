@@ -127,7 +127,7 @@ namespace Lucene.Net.Search
                        decrements the refcount without a corresponding increment
                        since the RM assigns the new reference before counting down
                        the reference. */
-                    throw new InvalidOperationException("The managed reference has already closed - this is likely a bug when the reference count is modified outside of the ReferenceManager");
+                    throw IllegalStateException.Create("The managed reference has already closed - this is likely a bug when the reference count is modified outside of the ReferenceManager");
                 }
             } while (true);
         }

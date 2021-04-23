@@ -737,7 +737,7 @@ namespace Lucene.Net.Util
                             break;
 
                         default:
-                            throw new InvalidOperationException("unknown Type: " + dvType);
+                            throw IllegalStateException.Create("unknown Type: " + dvType);
                     }
                 }
                 else if (numType != NumericType.NONE)
@@ -761,7 +761,7 @@ namespace Lucene.Net.Util
                             break;
 
                         default:
-                            throw new InvalidOperationException("unknown Type: " + numType);
+                            throw IllegalStateException.Create("unknown Type: " + numType);
                     }
                 }
                 else

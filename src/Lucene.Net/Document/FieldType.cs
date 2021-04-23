@@ -73,7 +73,7 @@ namespace Lucene.Net.Documents
         {
             if (frozen)
             {
-                throw new InvalidOperationException("this FieldType is already frozen and cannot be changed");
+                throw IllegalStateException.Create("this FieldType is already frozen and cannot be changed");
             }
         }
 

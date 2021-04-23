@@ -156,7 +156,7 @@ namespace Lucene.Net.Search.Grouping
             }
             else
             {
-                throw new InvalidOperationException("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
+                throw IllegalStateException.Create("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
             }
         }
 
@@ -183,7 +183,7 @@ namespace Lucene.Net.Search.Grouping
             }
             else
             {
-                throw new InvalidOperationException("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
+                throw IllegalStateException.Create("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
             }
         }
 

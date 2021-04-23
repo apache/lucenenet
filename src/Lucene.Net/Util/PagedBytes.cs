@@ -244,11 +244,11 @@ namespace Lucene.Net.Util
         {
             if (frozen)
             {
-                throw new InvalidOperationException("already frozen");
+                throw IllegalStateException.Create("already frozen");
             }
             if (didSkipBytes)
             {
-                throw new InvalidOperationException("cannot freeze when copy(BytesRef, BytesRef) was used");
+                throw IllegalStateException.Create("cannot freeze when Copy(BytesRef, BytesRef) was used");
             }
             if (trim && upto < blockSize)
             {
@@ -501,7 +501,7 @@ namespace Lucene.Net.Util
         {
             if (!frozen)
             {
-                throw new InvalidOperationException("must call Freeze() before GetDataInput()");
+                throw IllegalStateException.Create("must call Freeze() before GetDataInput()");
             }
             return new PagedBytesDataInput(this);
         }
@@ -517,7 +517,7 @@ namespace Lucene.Net.Util
         {
             if (frozen)
             {
-                throw new InvalidOperationException("cannot get DataOutput after Freeze()");
+                throw IllegalStateException.Create("cannot get DataOutput after Freeze()");
             }
             return new PagedBytesDataOutput(this);
         }

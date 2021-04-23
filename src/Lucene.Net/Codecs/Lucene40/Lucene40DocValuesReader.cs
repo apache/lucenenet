@@ -888,7 +888,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override SortedSetDocValues GetSortedSet(FieldInfo field)
         {
-            throw new InvalidOperationException("Lucene 4.0 does not support SortedSet: how did you pull this off?");
+            throw IllegalStateException.Create("Lucene 4.0 does not support SortedSet: how did you pull this off?");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

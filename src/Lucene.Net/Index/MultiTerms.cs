@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
                     IComparer<BytesRef> subTermComp = subs[i].Comparer;
                     if (subTermComp != null && !subTermComp.Equals(_termComp))
                     {
-                        throw new InvalidOperationException("sub-readers have different BytesRef.Comparers; cannot merge");
+                        throw IllegalStateException.Create("sub-readers have different BytesRef.Comparers; cannot merge");
                     }
                 }
                 _hasFreqs &= subs[i].HasFreqs;

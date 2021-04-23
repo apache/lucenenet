@@ -150,7 +150,7 @@ namespace Lucene.Net.Store
                                     if (currentLock != -1)
                                     {
                                         lockedID[0] = -2;
-                                        throw new InvalidOperationException("id " + id + " got lock, but " + currentLock + " already holds the lock");
+                                        throw IllegalStateException.Create("id " + id + " got lock, but " + currentLock + " already holds the lock");
                                     }
                                     lockedID[0] = id;
                                     break;
@@ -160,7 +160,7 @@ namespace Lucene.Net.Store
                                     if (currentLock != id)
                                     {
                                         lockedID[0] = -2;
-                                        throw new InvalidOperationException("id " + id + " released the lock, but " + currentLock + " is the one holding the lock");
+                                        throw IllegalStateException.Create("id " + id + " released the lock, but " + currentLock + " is the one holding the lock");
                                     }
                                     lockedID[0] = -1;
                                     break;

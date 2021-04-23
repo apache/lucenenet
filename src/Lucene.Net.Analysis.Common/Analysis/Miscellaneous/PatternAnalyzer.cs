@@ -377,7 +377,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 if (!initialized)
                 {
-                    throw new InvalidOperationException("Consumer did not call reset().");
+                    throw IllegalStateException.Create("Consumer did not call Reset().");
                 }
                 if (matcher == null)
                 {
@@ -494,7 +494,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 if (str == null)
                 {
-                    throw new InvalidOperationException("Consumer did not call reset().");
+                    throw IllegalStateException.Create("Consumer did not call Reset().");
                 }
                 ClearAttributes();
                 // cache loop instance vars (performance)

@@ -112,7 +112,7 @@ namespace Lucene.Net.Replicator
             {
                 if (allowEmpty)
                     return null;
-                throw new InvalidOperationException("empty list of files not allowed");
+                throw IllegalStateException.Create("empty list of files not allowed");
             }
 
             string segmentsFile = files[files.Count - 1];
@@ -120,7 +120,7 @@ namespace Lucene.Net.Replicator
             files.RemoveAt(files.Count - 1);
             if (!segmentsFile.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal) || segmentsFile.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal))
             {
-                throw new InvalidOperationException(
+                throw IllegalStateException.Create(
                     string.Format("last file to copy+sync must be segments_N but got {0}; check your Revision implementation!", segmentsFile));
             }
             return segmentsFile;

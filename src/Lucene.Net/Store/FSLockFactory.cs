@@ -41,7 +41,7 @@ namespace Lucene.Net.Store
         {
             if (this.m_lockDir != null)
             {
-                throw new InvalidOperationException("You can set the lock directory for this factory only once.");
+                throw IllegalStateException.Create("You can set the lock directory for this factory only once.");
             }
             this.m_lockDir = lockDir;
         }

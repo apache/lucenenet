@@ -111,7 +111,7 @@ namespace Lucene.Net.Util.Packed
             }
             catch (Exception ioe) when (ioe.IsIOException())
             {
-                throw new InvalidOperationException("failed", ioe);
+                throw IllegalStateException.Create("failed", ioe);
             }
         }
 

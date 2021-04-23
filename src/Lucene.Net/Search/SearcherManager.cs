@@ -176,7 +176,7 @@ namespace Lucene.Net.Search
                 searcher = searcherFactory.NewSearcher(reader);
                 if (searcher.IndexReader != reader)
                 {
-                    throw new InvalidOperationException("SearcherFactory must wrap exactly the provided reader (got " + searcher.IndexReader + " but expected " + reader + ")");
+                    throw IllegalStateException.Create("SearcherFactory must wrap exactly the provided reader (got " + searcher.IndexReader + " but expected " + reader + ")");
                 }
                 success = true;
             }

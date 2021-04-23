@@ -472,7 +472,7 @@ namespace Lucene.Net.Codecs
                 }
                 else
                 {
-                    throw new InvalidOperationException();
+                    throw IllegalStateException.Create();
                 }
                 endBlockCount++;
                 long otherBytes = frame.fpEnd - frame.fp - frame.suffixesReader.Length - frame.statsReader.Length;
@@ -1797,7 +1797,7 @@ namespace Lucene.Net.Codecs
                 {
                     if (outerInstance.index == null)
                     {
-                        throw new InvalidOperationException("terms index was not loaded");
+                        throw IllegalStateException.Create("terms index was not loaded");
                     }
 
                     if (term.Bytes.Length <= target.Length)
@@ -2084,7 +2084,7 @@ namespace Lucene.Net.Codecs
                 {
                     if (outerInstance.index == null)
                     {
-                        throw new InvalidOperationException("terms index was not loaded");
+                        throw IllegalStateException.Create("terms index was not loaded");
                     }
 
                     if (term.Bytes.Length <= target.Length)

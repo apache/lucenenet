@@ -164,7 +164,7 @@ namespace Lucene.Net.Search.Spans
             else
             {
                 // term does exist, but has no positions
-                throw new InvalidOperationException("field \"" + m_term.Field + "\" was indexed without position data; cannot run SpanTermQuery (term=" + m_term.Text() + ")");
+                throw IllegalStateException.Create("field \"" + m_term.Field + "\" was indexed without position data; cannot run SpanTermQuery (term=" + m_term.Text() + ")");
             }
         }
     }

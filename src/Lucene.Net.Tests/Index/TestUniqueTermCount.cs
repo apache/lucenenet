@@ -112,12 +112,12 @@ namespace Lucene.Net.Index
 
             public override SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats)
             {
-                throw new InvalidOperationException();
+                throw IllegalStateException.Create();
             }
 
             public override SimScorer GetSimScorer(SimWeight weight, AtomicReaderContext context)
             {
-                throw new InvalidOperationException();
+                throw IllegalStateException.Create();
             }
         }
     }

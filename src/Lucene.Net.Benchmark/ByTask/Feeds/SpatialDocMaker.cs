@@ -58,7 +58,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             if (!spatialStrategyCache.TryGetValue(roundNumber, out SpatialStrategy result) || result == null)
             {
-                throw new InvalidOperationException("Strategy should have been init'ed by SpatialDocMaker by now");
+                throw IllegalStateException.Create("Strategy should have been init'ed by SpatialDocMaker by now");
             }
             return result;
         }

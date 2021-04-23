@@ -331,7 +331,7 @@ namespace Lucene.Net.Index
             FieldInfo info = reader.FieldInfos.FieldInfo(m_field);
             if (info != null && info.HasDocValues)
             {
-                throw new InvalidOperationException("Type mismatch: " + m_field + " was indexed as " + info.DocValuesType);
+                throw IllegalStateException.Create("Type mismatch: " + m_field + " was indexed as " + info.DocValuesType);
             }
             //System.out.println("DTO uninvert field=" + field + " prefix=" + termPrefix);
             long startTime = Environment.TickCount;
@@ -604,7 +604,7 @@ namespace Lucene.Net.Index
                                 if ((pos & 0xff000000) != 0)
                                 {
                                     // we only have 24 bits for the array index
-                                    throw new InvalidOperationException("Too many values for UnInvertedField faceting on field " + m_field);
+                                    throw IllegalStateException.Create("Too many values for UnInvertedField faceting on field " + m_field);
                                 }
                                 var arr = bytes[doc];
                                 /*

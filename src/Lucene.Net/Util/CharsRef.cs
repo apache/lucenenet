@@ -407,31 +407,31 @@ namespace Lucene.Net.Util
         {
             if (Chars == null)
             {
-                throw new InvalidOperationException("chars is null");
+                throw IllegalStateException.Create("chars is null");
             }
             if (Length < 0)
             {
-                throw new InvalidOperationException("Length is negative: " + Length);
+                throw IllegalStateException.Create("Length is negative: " + Length);
             }
             if (Length > Chars.Length)
             {
-                throw new InvalidOperationException("Length is out of bounds: " + Length + ",chars.Length=" + Chars.Length);
+                throw IllegalStateException.Create("Length is out of bounds: " + Length + ",chars.Length=" + Chars.Length);
             }
             if (Offset < 0)
             {
-                throw new InvalidOperationException("offset is negative: " + Offset);
+                throw IllegalStateException.Create("offset is negative: " + Offset);
             }
             if (Offset > Chars.Length)
             {
-                throw new InvalidOperationException("offset out of bounds: " + Offset + ",chars.Length=" + Chars.Length);
+                throw IllegalStateException.Create("offset out of bounds: " + Offset + ",chars.Length=" + Chars.Length);
             }
             if (Offset + Length < 0)
             {
-                throw new InvalidOperationException("offset+Length is negative: offset=" + Offset + ",Length=" + Length);
+                throw IllegalStateException.Create("offset+Length is negative: offset=" + Offset + ",Length=" + Length);
             }
             if (Offset + Length > Chars.Length)
             {
-                throw new InvalidOperationException("offset+Length out of bounds: offset=" + Offset + ",Length=" + Length + ",chars.Length=" + Chars.Length);
+                throw IllegalStateException.Create("offset+Length out of bounds: offset=" + Offset + ",Length=" + Length + ",chars.Length=" + Chars.Length);
             }
             return true;
         }

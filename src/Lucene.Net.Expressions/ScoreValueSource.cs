@@ -43,7 +43,7 @@ namespace Lucene.Net.Expressions
             Scorer v = (Scorer)context["scorer"];
             if (v == null)
             {
-                throw new InvalidOperationException("Expressions referencing the score can only be used for sorting");
+                throw IllegalStateException.Create("Expressions referencing the score can only be used for sorting");
             }
             return new ScoreFunctionValues(this, v);
         }

@@ -188,7 +188,7 @@ namespace Lucene.Net.Expressions.JS
             catch (Exception exception) when (exception.IsInstantiationException() || exception.IsIllegalAccessException() ||
                                               exception.IsNoSuchMethodException()  || exception.IsInvocationTargetException())
             {
-                throw new ArgumentException("An internal error occurred attempting to compile the expression (" + sourceText + ").", exception);
+                throw IllegalStateException.Create("An internal error occurred attempting to compile the expression (" + sourceText + ").", exception);
             }
         }
 
@@ -489,7 +489,7 @@ namespace Lucene.Net.Expressions.JS
 
                 default:
                     {
-                        throw new InvalidOperationException("Unknown operation specified: (" + current.Text + ").");
+                        throw IllegalStateException.Create("Unknown operation specified: (" + current.Text + ").");
                     }
             }
 
