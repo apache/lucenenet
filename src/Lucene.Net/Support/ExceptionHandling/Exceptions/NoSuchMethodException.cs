@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace Lucene
@@ -37,15 +38,24 @@ namespace Lucene
 #endif
     internal class NoSuchMethodException : MissingMethodException
     {
+        [Obsolete("Use NoSuchMethodException.Create() instead.", error: true)]
         public NoSuchMethodException()
         {
         }
 
+        [Obsolete("Use NoSuchMethodException.Create() instead.", error: true)]
         public NoSuchMethodException(string message) : base(message)
         {
         }
 
+        [Obsolete("Use NoSuchMethodException.Create() instead.", error: true)]
         public NoSuchMethodException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        [Obsolete("Use NoSuchMethodException.Create() instead.", error: true)]
+        public NoSuchMethodException(Exception cause)
+           : base(cause?.ToString(), cause)
         {
         }
 
@@ -60,5 +70,22 @@ namespace Lucene
         {
         }
 #endif
+
+        // Static factory methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create() => new MissingMethodException();
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message) => new MissingMethodException(message);
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message, Exception innerException) => new MissingMethodException(message, innerException);
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(Exception cause) => new MissingMethodException(cause.Message, cause);
     }
 }
