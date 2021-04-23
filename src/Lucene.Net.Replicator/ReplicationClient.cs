@@ -1,4 +1,4 @@
-using Lucene.Net.Store;
+﻿using Lucene.Net.Store;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
@@ -320,7 +320,7 @@ namespace Lucene.Net.Replicator
             if (!disposed)
                 return;
 
-            throw new ObjectDisposedException("this update client has already been closed");
+            throw AlreadyClosedException.Create(this.GetType().FullName, "this update client has already been disposed.");
         }
 
         // LUCENENET specific Utility Method

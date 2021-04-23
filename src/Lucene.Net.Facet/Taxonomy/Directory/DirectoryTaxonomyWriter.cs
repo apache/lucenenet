@@ -556,7 +556,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         {
             if (isClosed)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "The taxonomy writer has already been closed");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "The taxonomy writer has already been disposed.");
             }
         }
 

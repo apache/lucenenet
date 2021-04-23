@@ -750,7 +750,7 @@ namespace Lucene.Net.Index
         {
             if (closed || (failIfDisposing && closing))
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "this IndexWriter is closed");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "this IndexWriter is disposed.");
             }
         }
 

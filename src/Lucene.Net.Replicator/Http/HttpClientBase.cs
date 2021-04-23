@@ -120,7 +120,7 @@ namespace Lucene.Net.Replicator.Http
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException("HttpClient already disposed");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "HttpClient already disposed.");
             }
         }
 

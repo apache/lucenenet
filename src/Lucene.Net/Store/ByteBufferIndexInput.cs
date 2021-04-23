@@ -368,7 +368,7 @@ namespace Lucene.Net.Store
         {
             if (buffers is null)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "Already closed: " + this);
+                throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
             }
         }
 

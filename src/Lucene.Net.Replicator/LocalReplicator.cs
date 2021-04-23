@@ -1,4 +1,4 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -164,7 +164,7 @@ namespace Lucene.Net.Replicator
                 if (!disposed)
                     return;
 
-                throw new ObjectDisposedException("This replicator has already been disposed");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "This replicator has already been disposed.");
             }
         }
 

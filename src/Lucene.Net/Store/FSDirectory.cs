@@ -499,8 +499,9 @@ namespace Lucene.Net.Store
             /// <inheritdoc/>
             public override void WriteByte(byte b)
             {
+                // LUCENENET specific: Guard to ensure we aren't disposed.
                 if (!isOpen)
-                    throw new ObjectDisposedException(nameof(FSIndexOutput));
+                    throw AlreadyClosedException.Create(this.GetType().FullName, "This FSIndexOutput is disposed.");
 
                 crc.Update(b);
                 file.WriteByte(b);
@@ -509,8 +510,9 @@ namespace Lucene.Net.Store
             /// <inheritdoc/>
             public override void WriteBytes(byte[] b, int offset, int length)
             {
+                // LUCENENET specific: Guard to ensure we aren't disposed.
                 if (!isOpen)
-                    throw new ObjectDisposedException(nameof(FSIndexOutput));
+                    throw AlreadyClosedException.Create(this.GetType().FullName, "This FSIndexOutput is disposed.");
 
                 crc.Update(b, offset, length);
                 file.Write(b, offset, length);
@@ -519,8 +521,9 @@ namespace Lucene.Net.Store
             /// <inheritdoc/>
             protected internal override void FlushBuffer(byte[] b, int offset, int size)
             {
+                // LUCENENET specific: Guard to ensure we aren't disposed.
                 if (!isOpen)
-                    throw new ObjectDisposedException(nameof(FSIndexOutput));
+                    throw AlreadyClosedException.Create(this.GetType().FullName, "This FSIndexOutput is disposed.");
 
                 crc.Update(b, offset, size);
                 file.Write(b, offset, size);
@@ -530,8 +533,9 @@ namespace Lucene.Net.Store
             [MethodImpl(MethodImplOptions.NoInlining)]
             public override void Flush()
             {
+                // LUCENENET specific: Guard to ensure we aren't disposed.
                 if (!isOpen)
-                    throw new ObjectDisposedException(nameof(FSIndexOutput));
+                    throw AlreadyClosedException.Create(this.GetType().FullName, "This FSIndexOutput is disposed.");
 
                 file.Flush();
             }
@@ -568,8 +572,9 @@ namespace Lucene.Net.Store
             [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
             public override void Seek(long pos)
             {
+                // LUCENENET specific: Guard to ensure we aren't disposed.
                 if (!isOpen)
-                    throw new ObjectDisposedException(nameof(FSIndexOutput));
+                    throw AlreadyClosedException.Create(this.GetType().FullName, "This FSIndexOutput is disposed.");
 
                 file.Seek(pos, SeekOrigin.Begin);
             }
