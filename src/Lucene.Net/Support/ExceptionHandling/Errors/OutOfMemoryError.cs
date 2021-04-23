@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace Lucene
@@ -39,20 +40,24 @@ namespace Lucene
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    internal class OutOfMemoryError : OutOfMemoryException
+    internal class OutOfMemoryError : OutOfMemoryException, IError
     {
+        [Obsolete("Use OutOfMemoryError.Create() instead.", error: true)]
         public OutOfMemoryError()
         {
         }
 
+        [Obsolete("Use OutOfMemoryError.Create() instead.", error: true)]
         public OutOfMemoryError(string message) : base(message)
         {
         }
 
+        [Obsolete("Use OutOfMemoryError.Create() instead.", error: true)]
         public OutOfMemoryError(string message, Exception innerException) : base(message, innerException)
         {
         }
 
+        [Obsolete("Use OutOfMemoryError.Create() instead.", error: true)]
         public OutOfMemoryError(Exception cause) : base(cause?.ToString(), cause)
         {
         }
@@ -69,5 +74,19 @@ namespace Lucene
         {
         }
 #endif
+
+        // Static factory methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create() => new OutOfMemoryException();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message) => new OutOfMemoryException(message);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message, Exception innerException) => new OutOfMemoryException(message, innerException);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(Exception cause) => new OutOfMemoryException(cause.Message, cause);
     }
 }
