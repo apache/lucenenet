@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace Lucene
@@ -40,18 +41,22 @@ namespace Lucene
 #endif
     internal class NoClassDefFoundError : Exception, IError // LUCENENET: Subclassing Error is not allowed, so we identify with the IError interface and subclass Exception
     {
+        [Obsolete("Use NoClassDefFoundError.Create() instead.", error: true)]
         public NoClassDefFoundError()
         {
         }
 
+        [Obsolete("Use NoClassDefFoundError.Create() instead.", error: true)]
         public NoClassDefFoundError(string message) : base(message)
         {
         }
 
+        [Obsolete("Use NoClassDefFoundError.Create() instead.", error: true)]
         public NoClassDefFoundError(string message, Exception innerException) : base(message, innerException)
         {
         }
 
+        [Obsolete("Use NoClassDefFoundError.Create() instead.", error: true)]
         public NoClassDefFoundError(Exception cause) : base(cause?.ToString(), cause)
         {
         }
@@ -68,5 +73,19 @@ namespace Lucene
         {
         }
 #endif
+
+        // Static factory methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create() => new TypeLoadException();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message) => new TypeLoadException(message);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message, Exception innerException) => new TypeLoadException(message, innerException);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(Exception cause) => new TypeLoadException(cause.Message, cause);
     }
 }
