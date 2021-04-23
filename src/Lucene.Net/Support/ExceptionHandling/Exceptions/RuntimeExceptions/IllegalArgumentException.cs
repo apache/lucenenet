@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace Lucene
@@ -23,12 +24,24 @@ namespace Lucene
     /// <summary>
     /// Thrown to indicate that a method has been passed an illegal or inappropriate argument.
     /// <para/>
-    /// This is a Java compatibility exception, and should be thrown in
+    /// This is a Java compatibility exception, and can be thrown in
     /// Lucene.NET everywhere Lucene throws it, however catch blocks should
     /// always use the <see cref="ExceptionExtensions.IsIllegalArgumentException(Exception)"/> method.
     /// <code>
     /// catch (Exception ex) when (ex.IsIllegalArgumentException())
     /// </code>
+    /// <para/>
+    /// Note that in .NET we should aim to provide the specialized <see cref="ArgumentNullException"/>
+    /// and <see cref="ArgumentOutOfRangeException"/> when appropriate, and since both of them subclass
+    /// <see cref="ArgumentException"/> these are not breaking changes. Unlike in Java, .NET <see cref="ArgumentException"/>
+    /// types also accept a <c>paramName</c> argument to provide more information about the nature of the exception.
+    /// <para/>
+    /// Note also that in Java it is not common practice to use guard clauses. For this reason, we can improve the code
+    /// by adding them when we are sure that, for example, <c>null</c> is not a valid argument. <see cref="NullReferenceException"/>
+    /// is always a bug, <see cref="ArgumentNullException"/> is a fail-fast way of avoiding <see cref="NullReferenceException"/>.
+    /// That said, care must be taken not to disallow <c>null</c> when it is a valid value. The appropriate way to translate is
+    /// usually to add an additional method overload without the nullable argument and to ensure that the one with the argument is
+    /// never passed a <c>null</c> value.
     /// </summary>
     // LUCENENET: It is no longer good practice to use binary serialization. 
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
@@ -65,5 +78,28 @@ namespace Lucene
         {
         }
 #endif
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create() => new ArgumentException();
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message) => new ArgumentException(message);
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message, Exception innerException) => new ArgumentException(message, innerException);
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message, string paramName) => new ArgumentException(message, paramName);
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message, string paramName, Exception innerException) => new ArgumentException(message, paramName, innerException);
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(Exception cause) => new ArgumentException(cause.Message, cause);
     }
 }
