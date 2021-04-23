@@ -579,7 +579,8 @@ namespace Lucene.Net.Queries.Mlt
         {
             if (Analyzer == null)
             {
-                throw new NotSupportedException("To use MoreLikeThis without " + "term vectors, you must provide an Analyzer");
+                throw UnsupportedOperationException.Create("To use MoreLikeThis without " +
+                    "term vectors, you must provide an Analyzer");
             }
             var ts = Analyzer.GetTokenStream(fieldName, r);
             try

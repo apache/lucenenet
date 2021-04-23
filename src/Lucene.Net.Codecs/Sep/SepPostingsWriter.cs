@@ -202,7 +202,7 @@ namespace Lucene.Net.Codecs.Sep
             // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
             if (IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
             {
-                throw new NotSupportedException("this codec cannot index offsets");
+                throw UnsupportedOperationException.Create("this codec cannot index offsets");
             }
             skipListWriter.SetIndexOptions(indexOptions);
             storePayloads = indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS && fieldInfo.HasPayloads;

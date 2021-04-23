@@ -311,7 +311,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 public void Reset()
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
                 public void Dispose()
@@ -554,7 +554,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override void SeekExact(long ord)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -577,7 +577,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override BytesRef Term => termAndPostings[currentTerm].Term;
 
-            public override long Ord => throw new NotSupportedException();
+            public override long Ord => throw UnsupportedOperationException.Create();
 
             public override int DocFreq => 1;
 

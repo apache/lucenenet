@@ -202,9 +202,9 @@ namespace Lucene.Net.Analysis.Util
         [Obsolete("Not applicable in this class.")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public virtual bool Contains(KeyValuePair<string, TValue> item)
+        public virtual bool Contains(KeyValuePair<string, TValue> item) // LUCENENET TODO: API - rather than marking this DesignerSerializationVisibility.Hidden, it would be better to make an explicit implementation that isn't public
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         /// <summary>
@@ -1124,9 +1124,9 @@ namespace Lucene.Net.Analysis.Util
 
             public bool IsReadOnly => outerInstance.IsReadOnly;
 
-            public void Add(string item)
+            public void Add(string item) // LUCENENET TODO: API - make an explicit implementation that isn't public
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public void Clear()
@@ -1153,9 +1153,9 @@ namespace Lucene.Net.Analysis.Util
                 return new KeyEnumerator(outerInstance);
             }
 
-            public bool Remove(string item)
+            public bool Remove(string item) // LUCENENET TODO: API - make an explicit implementation that isn't public
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -1212,9 +1212,9 @@ namespace Lucene.Net.Analysis.Util
 
             public bool IsReadOnly => outerInstance.IsReadOnly;
 
-            public void Add(TValue item)
+            public void Add(TValue item) // LUCENENET TODO: API - make an explicit implementation that isn't public
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public void Clear()
@@ -1233,9 +1233,9 @@ namespace Lucene.Net.Analysis.Util
                 return false;
             }
 
-            public void CopyTo(TValue[] array, int arrayIndex)
+            public void CopyTo(TValue[] array, int arrayIndex) // LUCENENET TODO: API - make an explicit implementation that isn't public
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public IEnumerator<TValue> GetEnumerator()
@@ -1243,9 +1243,9 @@ namespace Lucene.Net.Analysis.Util
                 return new ValueEnumerator(outerInstance);
             }
 
-            public bool Remove(TValue item)
+            public bool Remove(TValue item) // LUCENENET TODO: API - make an explicit implementation that isn't public
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -1335,17 +1335,17 @@ namespace Lucene.Net.Analysis.Util
         [Obsolete("Not applicable in this class.")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public virtual bool Remove(string key)
+        public virtual bool Remove(string key) // LUCENENET TODO: API - make an explicit implementation that isn't public
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         [Obsolete("Not applicable in this class.")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public virtual bool Remove(KeyValuePair<string, TValue> item)
+        public virtual bool Remove(KeyValuePair<string, TValue> item) // LUCENENET TODO: API - make an explicit implementation that isn't public
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         /// <summary>
@@ -1440,21 +1440,21 @@ namespace Lucene.Net.Analysis.Util
             {
             }
 
-            public override bool Add(object o)
+            public override bool Add(object o) // LUCENENET TODO: API - make an explicit implementation that isn't public
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
-            public override bool Add(ICharSequence text)
+            public override bool Add(ICharSequence text) // LUCENENET TODO: API - make an explicit implementation that isn't public
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
-            public override bool Add(string text)
+            public override bool Add(string text) // LUCENENET TODO: API - make an explicit implementation that isn't public
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
-            public override bool Add(char[] text)
+            public override bool Add(char[] text) // LUCENENET TODO: API - make an explicit implementation that isn't public
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
 
@@ -1524,7 +1524,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (!allowModify)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
                 TValue old = outerInstance.values[lastPos].Value;
                 outerInstance.values[lastPos].Value = value;
@@ -1630,9 +1630,9 @@ namespace Lucene.Net.Analysis.Util
             [Obsolete("Not applicable in this class.")]
             [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
             [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-            public bool Remove(KeyValuePair<string, TValue> item)
+            public bool Remove(KeyValuePair<string, TValue> item) // LUCENENET TODO: API - make an explicit implementation that isn't public
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public int Count => outerInstance.count;
@@ -1641,7 +1641,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (!allowModify)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
                 outerInstance.Clear();
             }
@@ -1841,47 +1841,47 @@ namespace Lucene.Net.Analysis.Util
 
             public override void Clear()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override TValue Put(char[] text, TValue val)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override TValue Put(ICharSequence text, TValue val)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override TValue Put(string text, TValue val)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override TValue Put(object o, TValue val)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override bool Put(char[] text)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override bool Put(ICharSequence text)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override bool Put(string text)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override bool Put(object o)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             [Obsolete("Not applicable in this class.")]
@@ -1889,7 +1889,7 @@ namespace Lucene.Net.Analysis.Util
             [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
             public override bool Remove(string key)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             internal override EntrySet_ CreateEntrySet()
@@ -1900,36 +1900,36 @@ namespace Lucene.Net.Analysis.Util
             #region Added for better .NET support LUCENENET
             public override void Add(string key, TValue value)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
             public override void Add(KeyValuePair<string, TValue> item)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
             public override TValue this[char[] key, int offset, int length]
             {
                 get => base[key, offset, length];
-                set => throw new NotSupportedException();
+                set => throw UnsupportedOperationException.Create();
             }
             public override TValue this[char[] key]
             {
                 get => base[key];
-                set => throw new NotSupportedException();
+                set => throw UnsupportedOperationException.Create();
             }
             public override TValue this[ICharSequence key]
             {
                 get => base[key];
-                set => throw new NotSupportedException();
+                set => throw UnsupportedOperationException.Create();
             }
             public override TValue this[string key]
             {
                 get => base[key];
-                set => throw new NotSupportedException();
+                set => throw UnsupportedOperationException.Create();
             }
             public override TValue this[object key]
             {
                 get => base[key];
-                set => throw new NotSupportedException();
+                set => throw UnsupportedOperationException.Create();
             }
 
             [Obsolete("Not applicable in this class.")]
@@ -1937,7 +1937,7 @@ namespace Lucene.Net.Analysis.Util
             [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
             public override bool Remove(KeyValuePair<string, TValue> item)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
             #endregion
         }

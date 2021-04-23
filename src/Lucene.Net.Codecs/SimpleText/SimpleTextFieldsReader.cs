@@ -180,11 +180,11 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override BytesRef Term => _fstEnum.Current.Input;
 
-            public override long Ord => throw new NotSupportedException();
+            public override long Ord => throw UnsupportedOperationException.Create();
 
             public override void SeekExact(long ord)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override int DocFreq => _docFreq;

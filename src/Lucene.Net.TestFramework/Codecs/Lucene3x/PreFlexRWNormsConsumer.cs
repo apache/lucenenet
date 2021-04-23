@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (((sbyte)n) < sbyte.MinValue || ((sbyte)n) > sbyte.MaxValue)
                 {
-                    throw new NotSupportedException("3.x cannot index norms that won't fit in a byte, got: " + ((sbyte)n));
+                    throw UnsupportedOperationException.Create("3.x cannot index norms that won't fit in a byte, got: " + ((sbyte)n));
                 }
                 @out.WriteByte((byte)n);
             }

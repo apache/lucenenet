@@ -366,7 +366,7 @@ namespace Lucene.Net.Store
         /// <exception cref="NotSupportedException"> always: not supported by CFS  </exception>
         public override void DeleteFile(string name)
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         /// <summary>
@@ -376,7 +376,7 @@ namespace Lucene.Net.Store
         public void RenameFile(string from, string to)
 #pragma warning restore IDE0060, CA1822 // Remove unused parameter, Mark members as static
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         /// <summary>
@@ -405,7 +405,7 @@ namespace Lucene.Net.Store
 
         public override void Sync(ICollection<string> names)
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         /// <summary>
@@ -413,7 +413,7 @@ namespace Lucene.Net.Store
         /// <exception cref="NotSupportedException"> always: not supported by CFS  </exception>
         public override Lock MakeLock(string name)
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)

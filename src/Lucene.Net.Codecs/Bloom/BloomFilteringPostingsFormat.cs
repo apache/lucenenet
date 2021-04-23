@@ -114,7 +114,7 @@ namespace Lucene.Net.Codecs.Bloom
         {
             if (_delegatePostingsFormat == null)
             {
-                throw new NotSupportedException("Error - constructed without a choice of PostingsFormat");
+                throw UnsupportedOperationException.Create("Error - constructed without a choice of PostingsFormat");
             }
             return new BloomFilteredFieldsConsumer(this, _delegatePostingsFormat.FieldsConsumer(state), state);
         }

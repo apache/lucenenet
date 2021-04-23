@@ -102,7 +102,7 @@ namespace Lucene.Net.Spatial.Serialized
 
         public override ConstantScoreQuery MakeQuery(SpatialArgs args)
         {
-            throw new NotSupportedException("This strategy can't return a query that operates" +
+            throw UnsupportedOperationException.Create("This strategy can't return a query that operates" +
                 " efficiently. Instead try a Filter or ValueSource.");
         }
 
@@ -162,7 +162,7 @@ namespace Lucene.Net.Spatial.Serialized
 
                 public override DocIdSetIterator GetIterator()
                 {
-                    throw new NotSupportedException(
+                    throw UnsupportedOperationException.Create(
                         "Iteration is too slow; instead try FilteredQuery.QUERY_FIRST_FILTER_STRATEGY");
                         //Note that if you're truly bent on doing this, then see FunctionValues.getRangeScorer
                 }

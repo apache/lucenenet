@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
         ///         support seeking. </exception>
         public override bool SeekExact(BytesRef term)
         {
-            throw new NotSupportedException(this.GetType().Name + " does not support seeking");
+            throw UnsupportedOperationException.Create(this.GetType().Name + " does not support seeking");
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
         ///         support seeking. </exception>
         public override SeekStatus SeekCeil(BytesRef term)
         {
-            throw new NotSupportedException(this.GetType().Name + " does not support seeking");
+            throw UnsupportedOperationException.Create(this.GetType().Name + " does not support seeking");
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
         ///         support seeking. </exception>
         public override void SeekExact(long ord)
         {
-            throw new NotSupportedException(this.GetType().Name + " does not support seeking");
+            throw UnsupportedOperationException.Create(this.GetType().Name + " does not support seeking");
         }
 
         public override long Ord => tenum.Ord;
@@ -199,7 +199,7 @@ namespace Lucene.Net.Index
         ///         support seeking. </exception>
         public override void SeekExact(BytesRef term, TermState state)
         {
-            throw new NotSupportedException(this.GetType().Name + " does not support seeking");
+            throw UnsupportedOperationException.Create(this.GetType().Name + " does not support seeking");
         }
 
         /// <summary>

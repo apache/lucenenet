@@ -88,7 +88,7 @@ namespace Lucene.Net.Spatial.Vector
             if (shape is IPoint point)
                 return CreateIndexableFields(point);
 
-            throw new NotSupportedException("Can only index IPoint, not " + shape);
+            throw UnsupportedOperationException.Create("Can only index IPoint, not " + shape);
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace Lucene.Net.Spatial.Vector
                 return new ConstantScoreQuery(vsf);
             }
 
-            throw new NotSupportedException("Only IRectangles and ICircles are currently supported, " +
+            throw UnsupportedOperationException.Create("Only IRectangles and ICircles are currently supported, " +
                                             "found [" + shape.GetType().Name + "]"); //TODO
         }
 
@@ -160,13 +160,13 @@ namespace Lucene.Net.Spatial.Vector
             // For starters, just limit the bbox
             var shape = args.Shape;
             if (!(shape is IRectangle || shape is ICircle))
-                throw new NotSupportedException("Only Rectangles and Circles are currently supported, found ["
+                throw UnsupportedOperationException.Create("Only IRectangles and ICircles are currently supported, found ["
                     + shape.GetType().Name + "]");//TODO
 
             IRectangle bbox = shape.BoundingBox;
             if (bbox.CrossesDateLine)
             {
-                throw new NotSupportedException("Crossing dateline not yet supported");
+                throw UnsupportedOperationException.Create("Crossing dateline not yet supported");
             }
 
             ValueSource valueSource = null;
@@ -261,7 +261,7 @@ namespace Lucene.Net.Spatial.Vector
         private Query MakeDisjoint(IRectangle bbox)
         {
             if (bbox.CrossesDateLine)
-                throw new NotSupportedException("MakeDisjoint doesn't handle dateline cross");
+                throw UnsupportedOperationException.Create("MakeDisjoint doesn't handle dateline cross");
             Query qX = RangeQuery(fieldNameX, bbox.MinX, bbox.MaxX);
             Query qY = RangeQuery(fieldNameY, bbox.MinY, bbox.MaxY);
 

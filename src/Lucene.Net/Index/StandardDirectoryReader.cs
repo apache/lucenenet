@@ -543,7 +543,7 @@ namespace Lucene.Net.Index
 
             public override void Delete()
             {
-                throw new NotSupportedException("this IndexCommit does not support deletions");
+                throw UnsupportedOperationException.Create("this IndexCommit does not support deletions");
             }
         }
     }

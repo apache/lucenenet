@@ -224,7 +224,7 @@ namespace Lucene.Net.Facet.Range
 
                 public override DocIdSetIterator GetIterator()
                 {
-                    throw new NotSupportedException("this filter can only be accessed via bits()");
+                    throw UnsupportedOperationException.Create("this filter can only be accessed via Bits");
                 }
             }
         }

@@ -33,7 +33,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     {
         public override DocValuesConsumer NormsConsumer(SegmentWriteState state)
         {
-            throw new NotSupportedException("this codec can only be used for reading");
+            throw UnsupportedOperationException.Create("this codec can only be used for reading");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

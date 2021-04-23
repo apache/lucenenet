@@ -1023,7 +1023,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public virtual object Get(string key)
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         /// <summary>
@@ -1039,7 +1039,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             if (value < 0 || value > int.MaxValue)
             {
-                throw new NotSupportedException("cannot encode value: " + value);
+                throw UnsupportedOperationException.Create("cannot encode value: " + value);
             }
             return int.MaxValue - (int)value;
         }

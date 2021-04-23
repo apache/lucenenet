@@ -748,7 +748,7 @@ namespace Lucene.Net.Facet
 
             public override int Advance(int target)
             {
-                throw new NotSupportedException("FakeScorer doesn't support advance(int)");
+                throw UnsupportedOperationException.Create("FakeScorer doesn't support Advance(int)");
             }
 
             public override int DocID => outerInstance.collectDocID;
@@ -757,7 +757,7 @@ namespace Lucene.Net.Facet
 
             public override int NextDoc()
             {
-                throw new NotSupportedException("FakeScorer doesn't support nextDoc()");
+                throw UnsupportedOperationException.Create("FakeScorer doesn't support NextDoc()");
             }
 
             public override float GetScore()
@@ -775,7 +775,7 @@ namespace Lucene.Net.Facet
                 return new[] { new Scorer.ChildScorer(outerInstance.baseScorer, "MUST") };
             }
 
-            public override Weight Weight => throw new NotSupportedException();
+            public override Weight Weight => throw UnsupportedOperationException.Create();
         }
 
         internal class DocsAndCost : IComparable<DocsAndCost>

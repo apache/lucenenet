@@ -97,14 +97,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         public override void SetAnalyzeRangeTerms(ICommonQueryParserConfiguration cqpC,
             bool value)
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
 
         public override void SetAutoGeneratePhraseQueries(ICommonQueryParserConfiguration cqpC,
             bool value)
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
 

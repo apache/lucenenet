@@ -144,7 +144,7 @@ namespace Lucene.Net.Join
             public override Explanation Explain(AtomicReaderContext reader, int doc)
             {
                 // TODO
-                throw new NotSupportedException(GetType().Name + " cannot explain match on parent document");
+                throw UnsupportedOperationException.Create(GetType().Name + " cannot explain match on parent document");
             }
 
             public override bool ScoresDocsOutOfOrder => false;

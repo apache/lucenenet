@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
 
                 public override object Clone()
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
             }
 

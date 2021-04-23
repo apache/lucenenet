@@ -1806,7 +1806,7 @@ namespace Lucene.Net.Index
                     && name.StartsWith("segments_", StringComparison.Ordinal)
                     && StackTraceHelper.DoesStackTraceContainMethod("Read"))
                 {
-                    throw new NotSupportedException("expected UOE");
+                    throw UnsupportedOperationException.Create("expected UOE");
                 }
 
                 return base.OpenInput(name, context);

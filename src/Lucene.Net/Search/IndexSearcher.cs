@@ -863,7 +863,7 @@ namespace Lucene.Net.Search
 
             public void Reset()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public bool MoveNext()

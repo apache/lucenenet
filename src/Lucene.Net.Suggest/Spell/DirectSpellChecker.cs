@@ -121,7 +121,7 @@ namespace Lucene.Net.Search.Spell
             {
                 if (value < 1 || value > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE)
                 {
-                    throw new NotSupportedException("Invalid maxEdits");
+                    throw UnsupportedOperationException.Create("Invalid maxEdits");
                 }
                 maxEdits = value;
             }

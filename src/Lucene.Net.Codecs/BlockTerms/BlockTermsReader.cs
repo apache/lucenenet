@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -867,7 +867,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     {
                         if (!doOrd)
                         {
-                            throw new NotSupportedException();
+                            throw UnsupportedOperationException.Create();
                         }
                         return state.Ord;
                     }

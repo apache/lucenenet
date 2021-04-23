@@ -596,7 +596,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     patternIndex = patterns.Count;
                     if (patternIndex > short.MaxValue)
                     {
-                        throw new NotSupportedException("Too many patterns, please report this to dev@lucene.apache.org");
+                        throw UnsupportedOperationException.Create("Too many patterns, please report this to dev@lucene.apache.org");
                     }
                     seenPatterns[regex] = patternIndex;
                     CharacterRunAutomaton pattern = new CharacterRunAutomaton((new RegExp(regex, RegExpSyntax.NONE)).ToAutomaton());
@@ -609,7 +609,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     seenStrips[strip] = stripOrd;
                     if (stripOrd > char.MaxValue)
                     {
-                        throw new NotSupportedException("Too many unique strips, please report this to dev@lucene.apache.org");
+                        throw UnsupportedOperationException.Create("Too many unique strips, please report this to dev@lucene.apache.org");
                     }
                 }
 
@@ -628,7 +628,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 else if (appendFlagsOrd > short.MaxValue)
                 {
                     // this limit is probably flexible, but its a good sanity check too
-                    throw new NotSupportedException("Too many unique append flags, please report this to dev@lucene.apache.org");
+                    throw UnsupportedOperationException.Create("Too many unique append flags, please report this to dev@lucene.apache.org");
                 }
 
                 affixWriter.WriteInt16((short)flag);

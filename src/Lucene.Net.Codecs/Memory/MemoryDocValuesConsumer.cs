@@ -502,9 +502,11 @@ namespace Lucene.Net.Codecs.Memory
                 this.ords.Dispose();
             }
 
-            public void Reset()
+            // LUCENENET: Remove() not supported in .NET
+
+            public void Reset() // LUCENENET: Required by .NET contract, but not supported here.
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
     }

@@ -913,7 +913,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public virtual object Get(string key)
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
     }
 }

@@ -188,7 +188,7 @@ namespace Lucene.Net.Search
 
             public override void SetTopValue(object value)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             private int DocVal(int doc)
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search
 
             public override int CompareTop(int doc)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
     }

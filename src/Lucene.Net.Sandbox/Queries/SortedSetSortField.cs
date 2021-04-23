@@ -161,7 +161,7 @@ namespace Lucene.Net.Sandbox.Queries
 
                 if (sortedSet.ValueCount >= int.MaxValue)
                 {
-                    throw new NotSupportedException("fields containing more than " + (int.MaxValue - 1) + " unique terms are unsupported");
+                    throw UnsupportedOperationException.Create("fields containing more than " + (int.MaxValue - 1) + " unique terms are unsupported");
                 }
 
                 SortedDocValues singleton = DocValues.UnwrapSingleton(sortedSet);
@@ -180,7 +180,7 @@ namespace Lucene.Net.Sandbox.Queries
                 {
                     if (sortedSet is RandomAccessOrds == false)
                     {
-                        throw new NotSupportedException("codec does not support random access ordinals, cannot use selector: " + outerInstance.selector);
+                        throw UnsupportedOperationException.Create("codec does not support random access ordinals, cannot use selector: " + outerInstance.selector);
                     }
                     RandomAccessOrds randomOrds = (RandomAccessOrds)sortedSet;
                     switch (outerInstance.selector)

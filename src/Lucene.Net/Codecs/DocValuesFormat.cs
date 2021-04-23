@@ -158,7 +158,7 @@ namespace Lucene.Net.Codecs
                 }
                 else
                 {
-                    throw new NotSupportedException("The current DocValuesFormatFactory class does not implement IServiceListable.");
+                    throw UnsupportedOperationException.Create("The current DocValuesFormatFactory class does not implement IServiceListable.");
                 }
             }
         }

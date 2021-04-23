@@ -150,7 +150,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public sealed override int Read(int[] docs, int[] freqs)
         {
-            throw new NotSupportedException("TermPositions does not support processing multiple documents in one call. Use TermDocs instead.");
+            throw UnsupportedOperationException.Create("TermPositions does not support processing multiple documents in one call. Use TermDocs instead.");
         }
 
         /// <summary>

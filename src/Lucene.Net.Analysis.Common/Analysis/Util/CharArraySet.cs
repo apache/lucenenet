@@ -380,10 +380,10 @@ namespace Lucene.Net.Analysis.Util
         [Obsolete("Not applicable in this class.")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public virtual bool Remove(string item)
+        public virtual bool Remove(string item) // LUCENENET TODO: API - make an explicit implementation that isn't public
         {
             // LUCENENET NOTE: According to the documentation header, Remove should not be supported
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         // LUCENENET - Added to ensure equality checking works in tests
@@ -417,7 +417,7 @@ namespace Lucene.Net.Analysis.Util
             }
             if (IsReadOnly)
             {
-                throw new NotSupportedException("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create("CharArraySet is readonly");
             }
             bool modified = false;
             foreach (var item in other)
@@ -444,7 +444,7 @@ namespace Lucene.Net.Analysis.Util
             }
             if (IsReadOnly)
             {
-                throw new NotSupportedException("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create("CharArraySet is readonly");
             }
             bool modified = false;
             foreach (var item in other)
@@ -470,7 +470,7 @@ namespace Lucene.Net.Analysis.Util
             }
             if (IsReadOnly)
             {
-                throw new NotSupportedException("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create("CharArraySet is readonly");
             }
             foreach (var item in other)
             {
@@ -492,7 +492,7 @@ namespace Lucene.Net.Analysis.Util
             }
             if (IsReadOnly)
             {
-                throw new NotSupportedException("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create("CharArraySet is readonly");
             }
             bool modified = false;
             foreach (var item in other)
@@ -526,9 +526,9 @@ namespace Lucene.Net.Analysis.Util
         [Obsolete("Not applicable in this class.")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public void IntersectWith(IEnumerable<string> other)
+        public void IntersectWith(IEnumerable<string> other) // LUCENENET TODO: API - make an explicit implementation that isn't public
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         // LUCENENET - no modifications should be made outside of original
@@ -536,9 +536,9 @@ namespace Lucene.Net.Analysis.Util
         [Obsolete("Not applicable in this class.")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public void ExceptWith(IEnumerable<string> other)
+        public void ExceptWith(IEnumerable<string> other) // LUCENENET TODO: API - make an explicit implementation that isn't public
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         // LUCENENET - no modifications should be made outside of original
@@ -546,9 +546,9 @@ namespace Lucene.Net.Analysis.Util
         [Obsolete("Not applicable in this class.")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public void SymmetricExceptWith(IEnumerable<string> other)
+        public void SymmetricExceptWith(IEnumerable<string> other) // LUCENENET TODO: API - make an explicit implementation that isn't public
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         /// <summary>
@@ -1143,7 +1143,7 @@ namespace Lucene.Net.Analysis.Util
             }
             if (set.IsReadOnly)
             {
-                throw new NotSupportedException("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create("CharArraySet is readonly");
             }
             bool modified = false;
             foreach (var item in other)
@@ -1171,7 +1171,7 @@ namespace Lucene.Net.Analysis.Util
             }
             if (set.IsReadOnly)
             {
-                throw new NotSupportedException("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create("CharArraySet is readonly");
             }
             bool modified = false;
             foreach (var item in other)
@@ -1199,7 +1199,7 @@ namespace Lucene.Net.Analysis.Util
         //    }
         //    if (set.IsReadOnly)
         //    {
-        //        throw new NotSupportedException("CharArraySet is readonly");
+        //        throw UnsupportedOperationException.Create("CharArraySet is readonly");
         //    }
         //    bool modified = false;
         //    foreach (var item in other)
@@ -1227,7 +1227,7 @@ namespace Lucene.Net.Analysis.Util
         //    }
         //    if (set.IsReadOnly)
         //    {
-        //        throw new NotSupportedException("CharArraySet is readonly");
+        //        throw UnsupportedOperationException.Create("CharArraySet is readonly");
         //    }
         //    bool modified = false;
         //    foreach (var item in other)
@@ -1255,7 +1255,7 @@ namespace Lucene.Net.Analysis.Util
         //    }
         //    if (set.IsReadOnly)
         //    {
-        //        throw new NotSupportedException("CharArraySet is readonly");
+        //        throw UnsupportedOperationException.Create("CharArraySet is readonly");
         //    }
         //    bool modified = false;
         //    foreach (var item in other)
@@ -1283,7 +1283,7 @@ namespace Lucene.Net.Analysis.Util
             }
             if (set.IsReadOnly)
             {
-                throw new NotSupportedException("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create("CharArraySet is readonly");
             }
             bool modified = false;
             foreach (var item in other)
@@ -1311,7 +1311,7 @@ namespace Lucene.Net.Analysis.Util
             }
             if (set.IsReadOnly)
             {
-                throw new NotSupportedException("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create("CharArraySet is readonly");
             }
             bool modified = false;
             foreach (var item in other)
@@ -1340,7 +1340,7 @@ namespace Lucene.Net.Analysis.Util
             }
             if (set.IsReadOnly)
             {
-                throw new NotSupportedException("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create("CharArraySet is readonly");
             }
             bool modified = false;
             foreach (var item in other)
@@ -1368,7 +1368,7 @@ namespace Lucene.Net.Analysis.Util
             }
             if (set.IsReadOnly)
             {
-                throw new NotSupportedException("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create("CharArraySet is readonly");
             }
             bool modified = false;
             foreach (var item in other)
@@ -1397,7 +1397,7 @@ namespace Lucene.Net.Analysis.Util
             }
             if (set.IsReadOnly)
             {
-                throw new NotSupportedException("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create("CharArraySet is readonly");
             }
             bool modified = false;
             foreach (var item in other)
@@ -1426,7 +1426,7 @@ namespace Lucene.Net.Analysis.Util
             }
             if (set.IsReadOnly)
             {
-                throw new NotSupportedException("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create("CharArraySet is readonly");
             }
             bool modified = false;
             foreach (var item in other)
@@ -1455,7 +1455,7 @@ namespace Lucene.Net.Analysis.Util
             }
             if (set.IsReadOnly)
             {
-                throw new NotSupportedException("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create("CharArraySet is readonly");
             }
             bool modified = false;
             foreach (var item in other)

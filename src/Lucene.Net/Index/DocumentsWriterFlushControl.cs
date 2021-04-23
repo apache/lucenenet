@@ -539,7 +539,7 @@ namespace Lucene.Net.Index
 
             public void Reset()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
 

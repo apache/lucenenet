@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             public override DocValuesConsumer NormsConsumer(SegmentWriteState state)
             {
-                throw new NotSupportedException("this codec can only be used for reading");
+                throw UnsupportedOperationException.Create("this codec can only be used for reading");
             }
         }
 

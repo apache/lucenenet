@@ -131,7 +131,7 @@ namespace Lucene.Net.Util
                 }
                 else if (!singletonSet.Add(mi))
                 {
-                    throw new NotSupportedException("VirtualMethod instances must be singletons and therefore " + "assigned to static final members in the same class, they use as baseClass ctor param.");
+                    throw UnsupportedOperationException.Create("VirtualMethod instances must be singletons and therefore " + "assigned to static final members in the same class, they use as baseClass ctor param.");
                 }
             }
             catch (Exception nsme) when (nsme.IsNoSuchMethodException())

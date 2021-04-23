@@ -491,7 +491,7 @@ namespace Lucene.Net.Util
             /// </summary>
             public virtual void AddRange(BytesRef minPrefixCoded, BytesRef maxPrefixCoded)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             /// <summary>
@@ -524,7 +524,7 @@ namespace Lucene.Net.Util
             /// </summary>
             public virtual void AddRange(BytesRef minPrefixCoded, BytesRef maxPrefixCoded)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             /// <summary>

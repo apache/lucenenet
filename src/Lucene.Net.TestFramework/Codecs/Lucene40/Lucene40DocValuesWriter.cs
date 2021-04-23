@@ -606,7 +606,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
-            throw new NotSupportedException("Lucene 4.0 does not support SortedSet docvalues");
+            throw UnsupportedOperationException.Create("Lucene 4.0 does not support SortedSet docvalues");
         }
 
         protected override void Dispose(bool disposing)

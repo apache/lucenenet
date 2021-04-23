@@ -96,7 +96,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             public string this[string key]
             {
                 get => config.Get("spatial." + key, null);
-                set => throw new NotSupportedException();
+                set => throw UnsupportedOperationException.Create();
             }
 
             public bool TryGetValue(string key, out string value)
@@ -114,25 +114,25 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             #region IDictionary<string, string> members
 
-            ICollection<string> IDictionary<string, string>.Keys => throw new NotSupportedException();
+            ICollection<string> IDictionary<string, string>.Keys => throw UnsupportedOperationException.Create();
 
-            ICollection<string> IDictionary<string, string>.Values => throw new NotSupportedException();
+            ICollection<string> IDictionary<string, string>.Values => throw UnsupportedOperationException.Create();
 
-            int ICollection<KeyValuePair<string, string>>.Count => throw new NotSupportedException();
+            int ICollection<KeyValuePair<string, string>>.Count => throw UnsupportedOperationException.Create();
 
             public bool IsReadOnly => true;
 
-            void IDictionary<string, string>.Add(string key, string value) => throw new NotSupportedException();
-            void ICollection<KeyValuePair<string, string>>.Add(KeyValuePair<string, string> item) => throw new NotSupportedException();
-            void ICollection<KeyValuePair<string, string>>.Clear() => throw new NotSupportedException();
-            bool ICollection<KeyValuePair<string, string>>.Contains(KeyValuePair<string, string> item) => throw new NotSupportedException();
+            void IDictionary<string, string>.Add(string key, string value) => throw UnsupportedOperationException.Create();
+            void ICollection<KeyValuePair<string, string>>.Add(KeyValuePair<string, string> item) => throw UnsupportedOperationException.Create();
+            void ICollection<KeyValuePair<string, string>>.Clear() => throw UnsupportedOperationException.Create();
+            bool ICollection<KeyValuePair<string, string>>.Contains(KeyValuePair<string, string> item) => throw UnsupportedOperationException.Create();
             
-            void ICollection<KeyValuePair<string, string>>.CopyTo(KeyValuePair<string, string>[] array, int arrayIndex) => throw new NotSupportedException();
-            IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator() => throw new NotSupportedException();
-            bool IDictionary<string, string>.Remove(string key) => throw new NotSupportedException();
-            bool ICollection<KeyValuePair<string, string>>.Remove(KeyValuePair<string, string> item) => throw new NotSupportedException();
+            void ICollection<KeyValuePair<string, string>>.CopyTo(KeyValuePair<string, string>[] array, int arrayIndex) => throw UnsupportedOperationException.Create();
+            IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator() => throw UnsupportedOperationException.Create();
+            bool IDictionary<string, string>.Remove(string key) => throw UnsupportedOperationException.Create();
+            bool ICollection<KeyValuePair<string, string>>.Remove(KeyValuePair<string, string> item) => throw UnsupportedOperationException.Create();
             
-            IEnumerator IEnumerable.GetEnumerator() => throw new NotSupportedException();
+            IEnumerator IEnumerable.GetEnumerator() => throw UnsupportedOperationException.Create();
 
             #endregion IDictionary<string, string> members
         }
@@ -280,7 +280,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         public override Document MakeDocument(int size)
         {
             //TODO consider abusing the 'size' notion to number of shapes per document
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
     }
 
