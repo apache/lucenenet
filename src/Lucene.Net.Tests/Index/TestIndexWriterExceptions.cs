@@ -1238,7 +1238,7 @@ namespace Lucene.Net.Index
             {
                 if (message.StartsWith("now flush at close", StringComparison.Ordinal) && thrown.CompareAndSet(false, true))
                 {
-                    throw new OutOfMemoryException("fake OOME at " + message);
+                    throw OutOfMemoryError.Create("fake OOME at " + message);
                 }
             }
 
