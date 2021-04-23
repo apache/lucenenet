@@ -47,7 +47,7 @@ namespace Lucene.Net.Search.Grouping.Function
         private TMutableValue mval;
 
         /// <summary>
-        /// Constructs a <see cref="FunctionAllGroupsCollector"/> instance.
+        /// Constructs a <see cref="FunctionAllGroupsCollector{TMutableValue}"/> instance.
         /// </summary>
         /// <param name="groupBy">The <see cref="ValueSource"/> to group by</param>
         /// <param name="vsContext">The <see cref="ValueSource"/> context</param>
