@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis
         /// <returns>The number of characters actually skipped</returns>
         public virtual long Skip(int n)
         {
-            throw new NotSupportedException("Skip() not supported");
+            throw UnsupportedOperationException.Create("Skip() not supported");
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis
         /// <returns></returns>
         public virtual void Reset()
         {
-            throw new NotSupportedException("Reset() not supported");
+            throw UnsupportedOperationException.Create("Reset() not supported");
         }
 
         /// <summary>

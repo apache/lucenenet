@@ -179,11 +179,11 @@ namespace Lucene.Net.Codecs.BlockTerms
                 }
             }
 
-            public override long Ord => throw new NotSupportedException();
+            public override long Ord => throw UnsupportedOperationException.Create();
 
             public override long Seek(long ord)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
 

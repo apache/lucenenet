@@ -85,7 +85,7 @@ namespace Lucene.Net.Facet.Range
         public override float GetSpecificValue(string dim, params string[] path)
         {
             // TODO: should we impl this?
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         public override IList<FacetResult> GetAllDims(int topN)

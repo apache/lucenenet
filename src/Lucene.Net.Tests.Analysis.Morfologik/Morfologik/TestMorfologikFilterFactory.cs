@@ -35,17 +35,17 @@ namespace Lucene.Net.Analysis.Morfologik
         {
             public Type FindType(string cname)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public T NewInstance<T>(string cname)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public Stream OpenResource(string resource)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
 

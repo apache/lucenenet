@@ -796,18 +796,18 @@ namespace Lucene.Net.Codecs.Lucene42
 
             public override long Ord => @in.Current.Output.GetValueOrDefault();
 
-            public override int DocFreq => throw new NotSupportedException();
+            public override int DocFreq => throw UnsupportedOperationException.Create();
 
-            public override long TotalTermFreq => throw new NotSupportedException();
+            public override long TotalTermFreq => throw UnsupportedOperationException.Create();
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
     }

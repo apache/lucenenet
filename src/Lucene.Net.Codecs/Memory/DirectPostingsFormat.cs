@@ -1751,12 +1751,12 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override SeekStatus SeekCeil(BytesRef term)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
                 public override void SeekExact(long ord)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
             }
         }

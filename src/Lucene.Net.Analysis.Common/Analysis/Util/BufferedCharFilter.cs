@@ -616,7 +616,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (!isDisposing)
             {
-                throw new NotSupportedException("Close() is not supported. Call Dispose() instead.");
+                throw UnsupportedOperationException.Create("Close() is not supported. Call Dispose() instead.");
             }
         }
 #endif

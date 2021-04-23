@@ -145,7 +145,7 @@ namespace Lucene.Net.Index.Memory
 
                     public void Reset()
                     {
-                        throw new NotSupportedException();
+                        throw UnsupportedOperationException.Create();
                     }
                 }
 

@@ -52,7 +52,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var similarity = IDFValueSource.AsTFIDF(searcher.Similarity, m_indexedField);
             if (similarity == null)
             {
-                throw new NotSupportedException("requires a TFIDFSimilarity (such as DefaultSimilarity)");
+                throw UnsupportedOperationException.Create("requires a TFIDFSimilarity (such as DefaultSimilarity)");
             }
 
             return new SingleDocValuesAnonymousClass(this, this, terms, similarity);

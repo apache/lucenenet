@@ -617,9 +617,12 @@ namespace Lucene.Net.Util.Automaton
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool Equals(object obj)
         {
-            var other = obj as Automaton;
-            return BasicOperations.SameLanguage(this, other);
-            //throw new NotSupportedException("use BasicOperations.sameLanguage instead");
+            if (obj is Automaton other)
+                return BasicOperations.SameLanguage(this, other);
+            return false;
+
+            // LUCENENET specific - need an Equals implementation for collection equality checking
+            //throw UnsupportedOperationException.Create("use BasicOperations.sameLanguage instead");
         }
 
         // LUCENENET specific - in .NET, we can't simply throw an exception here because 
@@ -667,7 +670,7 @@ namespace Lucene.Net.Util.Automaton
             }
 
             return hash;
-            //throw new NotSupportedException();
+            //throw UnsupportedOperationException.Create();
         }
 
         ///// <summary>

@@ -73,52 +73,52 @@ namespace Lucene.Net.Analysis.Core
 
             public override void Mark(int readAheadLimit)
             {
-                throw new NotSupportedException("Mark(int)");
+                throw UnsupportedOperationException.Create("Mark(int)");
             }
 
-            public override bool IsMarkSupported => throw new NotSupportedException("IsMarkSupported");
+            public override bool IsMarkSupported => throw UnsupportedOperationException.Create("IsMarkSupported");
 
             public override int Read()
             {
-                throw new NotSupportedException("Read()");
+                throw UnsupportedOperationException.Create("Read()");
             }
 
             // LUCENENET: We don't support these overloads in .NET
             // public override int Read(char[] cbuf)
             // {
-            //throw new NotSupportedException("Read(char[])");
+            //throw UnsupportedOperationException.Create("Read(char[])");
             // }
 
             //public override int read(CharBuffer target)
             //{
-            //    throw new NotSupportedException("Read(CharBuffer)");
+            //    throw UnsupportedOperationException.Create("Read(CharBuffer)");
             //}
 
-            public override bool IsReady => throw new NotSupportedException("Ready()");
+            public override bool IsReady => throw UnsupportedOperationException.Create("Ready()");
 
             public override void Reset()
             {
-                throw new NotSupportedException("Reset()");
+                throw UnsupportedOperationException.Create("Reset()");
             }
 
             public override long Skip(int n)
             {
-                throw new NotSupportedException("Skip(long)");
+                throw UnsupportedOperationException.Create("Skip(long)");
             }
 
             protected override int Correct(int currentOff)
             {
-                throw new NotSupportedException("Correct(int)");
+                throw UnsupportedOperationException.Create("Correct(int)");
             }
 
             protected override void Dispose(bool disposing)
             {
-                throw new NotSupportedException("Close()");
+                throw UnsupportedOperationException.Create("Close()");
             }
 
             public override int Read(char[] arg0, int arg1, int arg2)
             {
-                throw new NotSupportedException("Read(char[], int, int)");
+                throw UnsupportedOperationException.Create("Read(char[], int, int)");
             }
         }
 

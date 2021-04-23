@@ -320,7 +320,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             public override int NextDoc()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override int Advance(int target)

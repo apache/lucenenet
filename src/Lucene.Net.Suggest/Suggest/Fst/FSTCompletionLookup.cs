@@ -251,7 +251,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             if (value < int.MinValue || value > int.MaxValue)
             {
-                throw new NotSupportedException("cannot encode value: " + value);
+                throw UnsupportedOperationException.Create("cannot encode value: " + value);
             }
             return (int)value;
         }

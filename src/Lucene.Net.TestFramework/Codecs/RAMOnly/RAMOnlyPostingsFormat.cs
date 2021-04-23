@@ -253,7 +253,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                 // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
                 if (IndexOptionsComparer.Default.Compare(field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
                 {
-                    throw new NotSupportedException("this codec cannot index offsets");
+                    throw UnsupportedOperationException.Create("this codec cannot index offsets");
                 }
                 RAMField ramField = new RAMField(field.Name, field);
                 postings.fieldToTerms[field.Name] = ramField;
@@ -420,10 +420,10 @@ namespace Lucene.Net.Codecs.RAMOnly
             }
 
             public override void SeekExact(long ord)
-                => throw new NotSupportedException();
+                => throw UnsupportedOperationException.Create();
 
             public override long Ord
-                => throw new NotSupportedException();
+                => throw UnsupportedOperationException.Create();
 
             // TODO: reuse BytesRef
             public override BytesRef Term => new BytesRef(current);

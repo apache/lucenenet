@@ -114,6 +114,6 @@ namespace Lucene.Net.Search
             => @in.AcceptsDocsOutOfOrder;
 
         public void SetNextReader(AtomicReaderContext context)
-            => throw new NotSupportedException();
+            => throw UnsupportedOperationException.Create();
     }
 }

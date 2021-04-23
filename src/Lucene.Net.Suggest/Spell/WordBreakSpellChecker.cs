@@ -487,11 +487,11 @@ namespace Lucene.Net.Search.Spell
 
             public int FreqSum => freqSum;
 
-            // Required by the PriorityQueue's generic constraint, but we are using
+            // LUCENENET: Required by the PriorityQueue's generic constraint, but we are using
             // IComparer<T> here rather than IComparable<T>
             public int CompareTo(SuggestWordArrayWrapper other)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
 
@@ -510,11 +510,11 @@ namespace Lucene.Net.Search.Spell
 
             public int NumCombinations => numCombinations;
 
-            // Required by the PriorityQueue's generic constraint, but we are using
+            // LUCENENET: Required by the PriorityQueue's generic constraint, but we are using
             // IComparer<T> here rather than IComparable<T>
             public int CompareTo(CombineSuggestionWrapper other)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
     }

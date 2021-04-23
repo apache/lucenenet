@@ -1036,7 +1036,7 @@ namespace Lucene.Net.Util
 
                 public void Reset()
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
                 public void Dispose()

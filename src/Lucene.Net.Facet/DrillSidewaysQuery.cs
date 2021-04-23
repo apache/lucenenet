@@ -146,7 +146,7 @@ namespace Lucene.Net.Facet
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 // We can only run as a top scorer:
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)

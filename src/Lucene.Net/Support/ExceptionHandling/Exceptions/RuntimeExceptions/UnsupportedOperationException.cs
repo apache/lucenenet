@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace Lucene
@@ -39,18 +40,22 @@ namespace Lucene
 #endif
     internal class UnsupportedOperationException : NotSupportedException
     {
+        [Obsolete("Use UnsupportedOperationException.Create() instead.", error: true)]
         public UnsupportedOperationException()
         {
         }
 
+        [Obsolete("Use UnsupportedOperationException.Create() instead.", error: true)]
         public UnsupportedOperationException(string message) : base(message)
         {
         }
 
+        [Obsolete("Use UnsupportedOperationException.Create() instead.", error: true)]
         public UnsupportedOperationException(string message, Exception innerException) : base(message, innerException)
         {
         }
 
+        [Obsolete("Use UnsupportedOperationException.Create() instead.", error: true)]
         public UnsupportedOperationException(Exception cause)
             : base(cause?.ToString(), cause)
         {
@@ -67,5 +72,22 @@ namespace Lucene
         {
         }
 #endif
+
+        // Static factory methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create() => new NotSupportedException();
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message) => new NotSupportedException(message);
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message, Exception innerException) => new NotSupportedException(message, innerException);
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(Exception cause) => new NotSupportedException(cause.Message, cause);
     }
 }

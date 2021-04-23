@@ -70,7 +70,7 @@ namespace Lucene.Net.Store
 
         public override object Clone()
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
     }
 }

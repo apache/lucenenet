@@ -1472,19 +1472,19 @@ namespace Lucene.Net.Codecs
 
                 public override bool SeekExact(BytesRef text)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
                 public override void SeekExact(long ord)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
-                public override long Ord => throw new NotSupportedException();
+                public override long Ord => throw UnsupportedOperationException.Create();
 
                 public override SeekStatus SeekCeil(BytesRef text)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
             }
 
@@ -2582,10 +2582,10 @@ namespace Lucene.Net.Codecs
 
                 public override void SeekExact(long ord)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
-                public override long Ord => throw new NotSupportedException();
+                public override long Ord => throw UnsupportedOperationException.Create();
 
                 // Not static -- references term, postingsReader,
                 // fieldInfo, in

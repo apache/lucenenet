@@ -125,7 +125,7 @@ namespace Lucene.Net.Util
 
             if (interfaces.Count != 1)
             {
-                throw new NotSupportedException(clazz.Name + " implements more than one Attribute interface, the default ReflectWith() implementation cannot handle this.");
+                throw UnsupportedOperationException.Create(clazz.Name + " implements more than one Attribute interface, the default ReflectWith() implementation cannot handle this.");
             }
 
             interfaces.First.Value.TryGetTarget(out Type interf);

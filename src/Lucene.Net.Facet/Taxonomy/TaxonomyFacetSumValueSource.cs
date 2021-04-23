@@ -83,27 +83,27 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 return score;
             }
-            public override int Freq => throw new NotSupportedException();
+            public override int Freq => throw UnsupportedOperationException.Create();
 
             public override int DocID => docID;
 
             public override int NextDoc()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
             public override int Advance(int target)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
             public override long GetCost()
             {
                 return 0;
             }
-            public override Weight Weight => throw new NotSupportedException();
+            public override Weight Weight => throw UnsupportedOperationException.Create();
 
             public override ICollection<ChildScorer> GetChildren()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
 

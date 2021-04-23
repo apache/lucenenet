@@ -1191,17 +1191,17 @@ namespace Lucene.Net.Facet.Range
 
             public override bool Equals(object o)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override int GetHashCode()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override string GetDescription()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
         }

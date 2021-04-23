@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -275,7 +275,7 @@ namespace Lucene.Net.Index
         {
             public override void CopyFrom(TermState other)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
 

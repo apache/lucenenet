@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 
@@ -150,7 +150,7 @@ namespace Lucene.Net.Codecs
                 }
                 else
                 {
-                    throw new NotSupportedException("The current CodecFactory class does not implement IServiceListable.");
+                    throw UnsupportedOperationException.Create("The current CodecFactory class does not implement IServiceListable.");
                 }
             }
         }

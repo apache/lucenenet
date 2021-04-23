@@ -115,7 +115,7 @@ namespace Lucene.Net.Expressions
 
                 default:
                     {
-                        throw new NotSupportedException();
+                        throw UnsupportedOperationException.Create();
                     }
             }
         }

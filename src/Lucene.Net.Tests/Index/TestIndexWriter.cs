@@ -2671,7 +2671,7 @@ namespace Lucene.Net.Index
 
               public virtual void Remove()
               {
-                  throw new NotSupportedException();
+                  throw UnsupportedOperationException.Create();
               }
           }*/
         }
