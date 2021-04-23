@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace Lucene
@@ -37,18 +38,22 @@ namespace Lucene
 #endif
     internal class StackOverflowError : Exception, IError // LUCENENET: StackOverflowException is sealed, so we subclass Exception instead and use IError to identify to Lucene.NET as an error
     {
+        [Obsolete("Use NoClassDefFoundError.Create() instead.", error: true)]
         public StackOverflowError()
         {
         }
 
+        [Obsolete("Use NoClassDefFoundError.Create() instead.", error: true)]
         public StackOverflowError(string message) : base(message)
         {
         }
 
+        [Obsolete("Use NoClassDefFoundError.Create() instead.", error: true)]
         public StackOverflowError(string message, Exception innerException) : base(message, innerException)
         {
         }
 
+        [Obsolete("Use NoClassDefFoundError.Create() instead.", error: true)]
         public StackOverflowError(Exception cause) : base(cause?.ToString(), cause)
         {
         }
@@ -65,5 +70,19 @@ namespace Lucene
         {
         }
 #endif
+
+        // Static factory methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create() => new StackOverflowException();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message) => new StackOverflowException(message);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(string message, Exception innerException) => new StackOverflowException(message, innerException);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Create(Exception cause) => new StackOverflowException(cause.Message, cause);
     }
 }
