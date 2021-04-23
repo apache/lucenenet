@@ -551,7 +551,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
                     if (result == null)
                     {
-                        throw new TypeLoadException("Can't find class '" + className
+                        throw ClassNotFoundException.Create("Can't find class '" + className
                                                  + "' or '" + LUCENE_ANALYSIS_PACKAGE_PREFIX + className + "'");
                     }
                 }
@@ -572,7 +572,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 return TokenFilterFactory.LookupClass(analysisComponentName);
             }
 
-            throw new TypeLoadException("Can't find class '" + className + "'");
+            throw ClassNotFoundException.Create("Can't find class '" + className + "'");
         }
 
         /// <seealso cref="PerfTask.SupportsParams"/>
