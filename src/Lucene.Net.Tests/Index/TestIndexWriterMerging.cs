@@ -5,6 +5,7 @@ using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -409,7 +410,7 @@ namespace Lucene.Net.Index
 
                     if (failure.Count > 0)
                     {
-                        throw failure[0];
+                        ExceptionDispatchInfo.Capture(failure[0]).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
                     }
 
                     t1.Start();

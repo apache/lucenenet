@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.ExceptionServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Store
@@ -108,7 +109,7 @@ namespace Lucene.Net.Store
                 // rethrow the first.
                 if (exc != null)
                 {
-                    throw exc;
+                    ExceptionDispatchInfo.Capture(exc).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
                 }
                 // we got NoSuchDirectoryException from the secondary,
                 // and the primary is empty.
@@ -122,7 +123,7 @@ namespace Lucene.Net.Store
 
             if (exc != null && files.Count == 0)
             {
-                throw exc;
+                ExceptionDispatchInfo.Capture(exc).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
             }
             return files.ToArray();
         }

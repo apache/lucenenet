@@ -17,6 +17,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -515,7 +516,7 @@ namespace Lucene.Net.Index
             } // rd.Dispose();
             if (ex.Value != null)
             {
-                throw ex.Value;
+                ExceptionDispatchInfo.Capture(ex.Value).Throw(); // LUCENENET: Rethrow to preserve stack details from the other thread
             }
         }
 

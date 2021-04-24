@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 
 namespace Lucene.Net.Index
 {
@@ -348,7 +349,7 @@ namespace Lucene.Net.Index
                     if (ioe != null)
                     {
                         // ... not for lack of trying:
-                        throw ioe;
+                        ExceptionDispatchInfo.Capture(ioe).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
                     }
                 }
                 else

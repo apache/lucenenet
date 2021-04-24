@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
 using Directory = Lucene.Net.Store.Directory;
@@ -480,7 +481,7 @@ namespace Lucene.Net.Replicator
                 }
                 else
                 {
-                    throw exception;
+                    ExceptionDispatchInfo.Capture(exception).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
                 }
             }
         }

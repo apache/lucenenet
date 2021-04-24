@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
@@ -978,7 +979,7 @@ namespace Lucene.Net.Index
                         else
                         {
                             // All attempts have failed -- throw first exc:
-                            throw exc;
+                            ExceptionDispatchInfo.Capture(exc).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
                         }
                     }
                     else if (lastGen == gen)

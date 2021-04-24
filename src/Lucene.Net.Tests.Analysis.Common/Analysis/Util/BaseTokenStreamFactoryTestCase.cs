@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using Lucene.Net.Util;
 using Version = Lucene.Net.Util.LuceneVersion;
 
@@ -80,7 +81,7 @@ namespace Lucene.Net.Analysis.Util
                 // to simplify tests that check for illegal parameters
                 if (e.InnerException is ArgumentException argumentException)
                 {
-                    throw argumentException;
+                    ExceptionDispatchInfo.Capture(argumentException).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
                 }
                 else
                 {
