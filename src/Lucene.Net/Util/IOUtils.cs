@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using System.Text;
 
 namespace Lucene.Net.Util
@@ -191,7 +192,7 @@ namespace Lucene.Net.Util
 
             if (priorException != null)
             {
-                throw priorException;
+                ExceptionDispatchInfo.Capture(priorException).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
             }
             else
             {
@@ -228,7 +229,7 @@ namespace Lucene.Net.Util
 
             if (priorException != null)
             {
-                throw priorException;
+                ExceptionDispatchInfo.Capture(priorException).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
             }
             else
             {
@@ -507,7 +508,7 @@ namespace Lucene.Net.Util
             {
                 if (th.IsIOException())
                 {
-                    throw th;
+                    ExceptionDispatchInfo.Capture(th).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
                 }
                 ReThrowUnchecked(th);
             }
@@ -523,9 +524,9 @@ namespace Lucene.Net.Util
             if (th != null)
             {
                 if (th.IsRuntimeException())
-                    throw th;
+                    ExceptionDispatchInfo.Capture(th).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
                 if (th.IsError())
-                    throw th;
+                    ExceptionDispatchInfo.Capture(th).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
                 throw RuntimeException.Create(th);
             }
         }

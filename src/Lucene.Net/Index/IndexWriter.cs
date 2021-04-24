@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
@@ -399,11 +400,9 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception oom) when (oom.IsOutOfMemoryError())
                     {
-                        //HandleOOM(oom, "getReader");
-                        //// never reached but javac disagrees:
-                        //return null;
-                        LogOOM("GetReader");
-                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                        HandleOOM(oom, "GetReader");
+                        // never reached but javac disagrees:
+                        return null;
                     }
                     finally
                     {
@@ -1257,9 +1256,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                //HandleOOM(oom, "closeInternal");
-                LogOOM("CloseInternal");
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                HandleOOM(oom, "CloseInternal");
             }
             finally
             {
@@ -1556,9 +1553,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                //HandleOOM(oom, "updateDocuments");
-                LogOOM("UpdateDocuments");
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                HandleOOM(oom, "UpdateDocuments");
             }
         }
 
@@ -1584,9 +1579,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                //HandleOOM(oom, "deleteDocuments(Term)");
-                LogOOM("DeleteDocuments(Term)");
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                HandleOOM(oom, "DeleteDocuments(Term)");
             }
         }
 
@@ -1708,9 +1701,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                //HandleOOM(oom, "deleteDocuments(Term..)");
-                LogOOM("DeleteDocuments(Term..)");
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                HandleOOM(oom, "DeleteDocuments(Term..)");
             }
         }
 
@@ -1736,9 +1727,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                //HandleOOM(oom, "deleteDocuments(Query)");
-                LogOOM("DeleteDocuments(Query)");
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                HandleOOM(oom, "DeleteDocuments(Query)");
             }
         }
 
@@ -1766,9 +1755,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                //HandleOOM(oom, "deleteDocuments(Query..)");
-                LogOOM("DeleteDocuments(Query..)");
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                HandleOOM(oom, "DeleteDocuments(Query..)");
             }
         }
 
@@ -1838,9 +1825,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                //HandleOOM(oom, "updateDocument");
-                LogOOM("UpdateDocument");
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                HandleOOM(oom, "UpdateDocument");
             }
         }
 
@@ -1882,9 +1867,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                //HandleOOM(oom, "updateNumericDocValue");
-                LogOOM("UpdateNumericDocValue");
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                HandleOOM(oom, "UpdateNumericDocValue");
             }
         }
 
@@ -1930,9 +1913,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                //HandleOOM(oom, "updateBinaryDocValue");
-                LogOOM("UpdateBinaryDocValue");
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                HandleOOM(oom, "UpdateBinaryDocValue");
             }
         }
 
@@ -2587,9 +2568,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                //HandleOOM(oom, "rollbackInternal");
-                LogOOM("RollbackInternal");
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                HandleOOM(oom, "RollbackInternal");
             }
             finally
             {
@@ -2700,9 +2679,7 @@ namespace Lucene.Net.Index
                         }
                         catch (Exception oom) when (oom.IsOutOfMemoryError())
                         {
-                            //HandleOOM(oom, "deleteAll");
-                            LogOOM("DeleteAll");
-                            throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                            HandleOOM(oom, "DeleteAll");
                         }
                         finally
                         {
@@ -3133,9 +3110,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                //HandleOOM(oom, "addIndexes(Directory...)");
-                LogOOM("AddIndexes(Directory..)");
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                HandleOOM(oom, "AddIndexes(Directory...)");
             }
             finally
             {
@@ -3322,9 +3297,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                //HandleOOM(oom, "addIndexes(IndexReader...)");
-                LogOOM("AddIndexes(IndexReader..)");
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                HandleOOM(oom, "AddIndexes(IndexReader...)");
             }
         }
 
@@ -3612,9 +3585,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception oom) when (oom.IsOutOfMemoryError())
                 {
-                    //HandleOOM(oom, "prepareCommit");
-                    LogOOM("PrepareCommit");
-                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                    HandleOOM(oom, "PrepareCommit");
                 }
 
                 bool success_ = false;
@@ -3899,11 +3870,9 @@ namespace Lucene.Net.Index
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                //HandleOOM(oom, "doFlush");
-                //// never hit
-                //return false;
-                LogOOM("DoFlush");
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                HandleOOM(oom, "DoFlush");
+                // never hit
+                return false;
             }
             finally
             {
@@ -4513,7 +4482,7 @@ namespace Lucene.Net.Index
                 // executed.
                 if (merge.isExternal)
                 {
-                    throw t;
+                    ExceptionDispatchInfo.Capture(t).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
                 }
             }
             else
@@ -4590,9 +4559,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                //HandleOOM(oom, "merge");
-                LogOOM("Merge");
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                HandleOOM(oom, "Merge");
             }
             if (merge.info != null && !merge.IsAborted)
             {
@@ -5548,9 +5515,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                //HandleOOM(oom, "startCommit");
-                LogOOM("StartCommit");
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                HandleOOM(oom, "StartCommit");
             }
             if (Debugging.AssertsEnabled) Debugging.Assert(TestPoint("finishStartCommit"));
         }
@@ -5610,38 +5575,14 @@ namespace Lucene.Net.Index
             public abstract void Warm(AtomicReader reader);
         }
 
-        /// <summary>
-        /// LUCENENET specific - call this method to log an out of memory exception.
-        /// <para/>
-        /// IMPORTANT: The exception is not rethrown in this method - you must use
-        /// <c>throw;</c> immediately after this method call to rethrow the exception while
-        /// preserving stack trace details. See: 
-        /// </summary>
-        /// <param name="location"></param>
-        private void LogOOM(string location)
+        private void HandleOOM(/*OutOfMemory*/Exception oom, string location) // LUCENENET: Our handler doesn't cast to OutOfMemoryException, so we need to widen the parameter to accept Exception
         {
             if (infoStream.IsEnabled("IW"))
             {
                 infoStream.Message("IW", "hit OutOfMemoryError inside " + location);
             }
             hitOOM = true;
-        }
-
-        /// <summary>
-        /// IMPORTANT Use LogOOM instead.
-        /// You must re-throw explicitly using <c>throw;</c> to preserve the stack trace.
-        /// </summary>
-        /// <param name="oom"></param>
-        /// <param name="location"></param>
-        [Obsolete("Use LogOOM instead and call `throw;` immediately after the call to preserve stack details.", error: true)]
-        private void HandleOOM(OutOfMemoryException oom, string location)
-        {
-            if (infoStream.IsEnabled("IW"))
-            {
-                infoStream.Message("IW", "hit OutOfMemoryError inside " + location);
-            }
-            hitOOM = true;
-            throw oom;
+            ExceptionDispatchInfo.Capture(oom).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
         }
 
         // Used only by assert for testing.  Current points:

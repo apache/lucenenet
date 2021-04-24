@@ -4,6 +4,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.ExceptionServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -248,7 +249,7 @@ namespace Lucene.Net.Index
                 // throw the first exception
                 if (ioe != null)
                 {
-                    throw ioe;
+                    ExceptionDispatchInfo.Capture(ioe).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
                 }
             }
         }

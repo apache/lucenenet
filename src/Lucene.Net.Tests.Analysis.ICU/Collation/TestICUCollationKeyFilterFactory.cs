@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Text;
 
 namespace Lucene.Net.Collation
@@ -330,7 +331,7 @@ namespace Lucene.Net.Collation
                 // to simplify tests that check for illegal parameters
                 if (e.InnerException is ArgumentException argumentException)
                 {
-                    throw argumentException;
+                    ExceptionDispatchInfo.Capture(argumentException).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
                 }
                 else
                 {
