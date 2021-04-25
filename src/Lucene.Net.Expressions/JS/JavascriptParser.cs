@@ -23,6 +23,7 @@
 
 using Antlr.Runtime;
 using Antlr.Runtime.Tree;
+using J2N.Text;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -205,7 +206,7 @@ namespace Lucene.Net.Expressions.JS
                     }
                 }
             }
-            throw ParseException.Create(message, re.CharPositionInLine, re);
+            throw new ParseException(message, re.CharPositionInLine, re);
         }
 
         public static string GetReadableTokenString(IToken token)

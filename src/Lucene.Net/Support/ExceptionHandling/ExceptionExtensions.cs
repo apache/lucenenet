@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Text;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Configuration;
 using System.IO;
@@ -281,7 +282,7 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsParseException(this Exception e)
         {
-            return e is FormatException;
+            return e is ParseException;
         }
 
         /// <summary>
