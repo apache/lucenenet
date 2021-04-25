@@ -1,4 +1,5 @@
-﻿using System;
+﻿using J2N.Text;
+using System;
 using System.Globalization;
 
 namespace Lucene.Net.Documents
@@ -192,7 +193,7 @@ namespace Lucene.Net.Documents
             }
             else
             {
-                throw ParseException.Create("Input is not valid date string: " + dateString, 0);
+                throw new ParseException("Input is not valid date string: " + dateString, 0);
             }
             return date;
         }

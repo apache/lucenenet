@@ -352,7 +352,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     string[] parts = whitespacePattern.Split(line).TrimEnd();
                     if (parts.Length != 2)
                     {
-                        throw ParseException.Create("Illegal CIRCUMFIX declaration", lineNumber);
+                        throw new ParseException("Illegal CIRCUMFIX declaration", lineNumber);
                     }
                     circumfix = flagParsingStrategy.ParseFlag(parts[1]);
                 }
@@ -361,7 +361,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     string[] parts = whitespacePattern.Split(line).TrimEnd();
                     if (parts.Length != 2)
                     {
-                        throw ParseException.Create("Illegal KEEPCASE declaration");
+                        throw new ParseException("Illegal KEEPCASE declaration", lineNumber);
                     }
                     keepcase = flagParsingStrategy.ParseFlag(parts[1]);
                 }
@@ -370,7 +370,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     string[] parts = whitespacePattern.Split(line).TrimEnd();
                     if (parts.Length != 2)
                     {
-                        throw ParseException.Create("Illegal NEEDAFFIX declaration", lineNumber);
+                        throw new ParseException("Illegal NEEDAFFIX declaration", lineNumber);
                     }
                     needaffix = flagParsingStrategy.ParseFlag(parts[1]);
                 }
@@ -379,7 +379,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     string[] parts = whitespacePattern.Split(line).TrimEnd();
                     if (parts.Length != 2)
                     {
-                        throw ParseException.Create("Illegal ONLYINCOMPOUND declaration", lineNumber);
+                        throw new ParseException("Illegal ONLYINCOMPOUND declaration", lineNumber);
                     }
                     onlyincompound = flagParsingStrategy.ParseFlag(parts[1]);
                 }
@@ -388,7 +388,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     string[] parts = whitespacePattern.Split(line).TrimEnd();
                     if (parts.Length != 2)
                     {
-                        throw ParseException.Create("Illegal IGNORE declaration", lineNumber);
+                        throw new ParseException("Illegal IGNORE declaration", lineNumber);
                     }
                     ignore = parts[1].ToCharArray();
                     Array.Sort(ignore);
@@ -400,10 +400,10 @@ namespace Lucene.Net.Analysis.Hunspell
                     string type = parts[0];
                     if (parts.Length != 2)
                     {
-                        throw ParseException.Create(string.Format("Illegal {0} declaration", type), lineNumber);
+                        throw new ParseException(string.Format("Illegal {0} declaration", type), lineNumber);
                     }
                     int num = int.Parse(parts[1], CultureInfo.InvariantCulture);
-                    FST<CharsRef> res = ParseConversions(reader, num);
+                    FST<CharsRef> res = ParseConversions(reader, num, lineNumber); // LUCENENET: Pass linenumber so we can throw it
                     if (type.Equals("ICONV", StringComparison.Ordinal))
                     {
                         iconv = res;
@@ -532,7 +532,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 // condition is optional
                 if (ruleArgs.Length < 4)
                 {
-                    throw ParseException.Create("The affix file contains a rule with less than four elements: " + line /*, reader.LineNumber */);// LUCENENET TODO: LineNumberReader
+                    throw new ParseException("The affix file contains a rule with less than four elements: " + line, 0  /*, reader.LineNumber */);// LUCENENET TODO: LineNumberReader
                 }
 
                 char flag = flagParsingStrategy.ParseFlag(ruleArgs[1]);
@@ -659,7 +659,7 @@ namespace Lucene.Net.Analysis.Hunspell
             }
         }
 
-        private FST<CharsRef> ParseConversions(TextReader reader, int num)
+        private FST<CharsRef> ParseConversions(TextReader reader, int num, int lineNumber)
         {
             IDictionary<string, string> mappings = new JCG.SortedDictionary<string, string>(StringComparer.Ordinal);
 
@@ -669,7 +669,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 string[] parts = whitespacePattern.Split(line).TrimEnd();
                 if (parts.Length != 3)
                 {
-                    throw ParseException.Create("invalid syntax: " + line /*, reader.LineNumber */); // LUCENENET TODO: LineNumberReader
+                    throw new ParseException("invalid syntax: " + line, lineNumber /*, reader.LineNumber */); // LUCENENET TODO: LineNumberReader
                 }
                 if (mappings.Put(parts[1], parts[2]) != null)
                 {
@@ -723,7 +723,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     // this test only at the end as ineffective but would allow lines only containing spaces:
                     if (ch < 0)
                     {
-                        throw ParseException.Create("Unexpected end of affix file.", 0);
+                        throw new ParseException("Unexpected end of affix file.", 0);
                     }
                     continue;
                 }
