@@ -374,7 +374,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             public ThreadAnonymousClass(string name, WriteLineDocTask wldt)
                 : base(name)
             {
-                this.IsDebug = true;
                 this.wldt = wldt;
             }
 
