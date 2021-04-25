@@ -146,12 +146,6 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsRuntimeException(this Exception e)
         {
-            //// LUCENENET TODO: After creating a RuntimeException replacement (that at least implments IRuntimeException,
-            //// we can use the below code instead and do the proper catch in TestIndexWriterExceptions.IndexerThread using IsRuntimeException().
-            //// For now, this is close enough but we need a separate exception type for our tests to do checks.
-            //return IsException(e);
-
-
             if (e is null ||
 
                 e.IsAlwaysIgnored() ||

@@ -230,13 +230,8 @@ namespace Lucene.Net.Index
                             writer.UpdateDocument(idTerm, doc);
                         }
                     }
-                    // LUCENENET TODO: This exception type was caught just so we can get here, since we don't
-                    // currently have a way to specify RuntimeException without catching all would-be "checked"
-                    // exceptions in Java, as well. We need our code to start throwing something we can identify
-                    // as a RuntimeException first (possibly just a custom type that implements IRuntimeException),
-                    // then we can enable the below line and remove the one below it.
-                    //catch (Exception re) when (re.IsRuntimeException())
-                    catch (TestPoint1Exception re)
+                    // LUCENENET NOTE: These generally correspond to System.SystemException in .NET except for IOException types.
+                    catch (Exception re) when (re.IsRuntimeException())
                     {
                         if (Verbose)
                         {
