@@ -57,12 +57,15 @@
     <ProjectReference Include="..\Lucene.Net.Spatial\Lucene.Net.Spatial.csproj" />
     <ProjectReference Include="..\Lucene.Net.Suggest\Lucene.Net.Suggest.csproj" />
     <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
-    
-    
+
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <ProjectReference Include="..\Lucene.Net.Analysis.OpenNLP\Lucene.Net.Analysis.OpenNLP.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+    <Reference Include="System" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
