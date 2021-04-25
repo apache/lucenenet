@@ -1,7 +1,6 @@
 ﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
 using System;
-using System.Configuration;
 using System.IO;
 using System.Reflection;
 using System.Resources;
@@ -227,7 +226,7 @@ namespace Lucene
             if (e is null || e.IsAlwaysIgnored()) return false;
 
             return e is ArgumentOutOfRangeException ||
-                e is IndexOutOfRangeException; // LUCENENET TODO: These could be real problems where excptions can be prevevented that our catch blocks are hiding
+                e is IndexOutOfRangeException;
         }
 
         /// <summary>
@@ -243,7 +242,7 @@ namespace Lucene
             if (e is null || e.IsAlwaysIgnored()) return false;
 
             return e is ArgumentOutOfRangeException ||
-                e is IndexOutOfRangeException; // LUCENENET TODO: These could be real problems where excptions can be prevevented that our catch blocks are hiding
+                e is IndexOutOfRangeException;
         }
 
         /// <summary>
@@ -259,7 +258,7 @@ namespace Lucene
             if (e is null || e.IsAlwaysIgnored()) return false;
 
             return e is ArgumentOutOfRangeException ||
-                e is IndexOutOfRangeException; // LUCENENET TODO: These could be real problems where excptions can be prevevented that our catch blocks are hiding
+                e is IndexOutOfRangeException;
         }
 
         /// <summary>
@@ -302,6 +301,8 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsParseException(this Exception e)
         {
+            // LUCENNET: Added this exception in J2N to cover this case because it is not a RuntimeException
+            // which makes it different from NumberFormatException in Java and FormatException in .NET.
             return e is ParseException;
         }
 
