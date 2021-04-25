@@ -1163,7 +1163,6 @@ namespace Lucene.Net.Index
             internal IndexerThreadInterrupt(TestIndexWriter outerInstance)
             {
                 this.outerInstance = outerInstance;
-                this.IsDebug = true; // LUCENENET: Rethrow with the original stack trace to assist with debugging
                 this.random = new Random(LuceneTestCase.Random.Next());
                 // make a little directory for addIndexes
                 // LUCENE-2239: won't work with NIOFS/MMAP
