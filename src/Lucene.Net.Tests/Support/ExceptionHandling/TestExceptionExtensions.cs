@@ -1,5 +1,8 @@
 ﻿using J2N.Text;
 using Lucene.Net.Attributes;
+using Lucene.Net.Index;
+using Lucene.Net.Queries.Function.DocValues;
+using Lucene.Net.Search;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
@@ -9,6 +12,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Resources;
+using System.Security;
+using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
@@ -52,6 +58,9 @@ namespace Lucene
         private static readonly Type CrossAppDomainMarshaledExceptionType =
             // .NET Core 2.1 Only
             Type.GetType("System.CrossAppDomainMarshaledException, System.Private.CoreLib");
+
+        private static readonly Type NUnitFrameworkInternalInvalidPlatformExceptionType =
+            Type.GetType("NUnit.Framework.Internal.InvalidPlatformException, NUnit.Framework");
 
 
         // Load exception types from all assemblies
@@ -158,12 +167,26 @@ namespace Lucene
                 typeof(Lucene.Net.QueryParsers.Flexible.Core.QueryNodeError),
                 typeof(Lucene.Net.QueryParsers.Flexible.Standard.Parser.TokenMgrError),
                 typeof(Lucene.Net.QueryParsers.Surround.Parser.TokenMgrError),
+
+                typeof(NUnit.Framework.SuccessException), // Not sure about this, but it seems reasonable to ignore it in most cases because it is NUnit result state
             };
         }
+
+        private static readonly IEnumerable<Type> KnownExceptionTypes = AllExceptionTypes
+            // Exceptions in Java exclude Errors
+            .Except(KnownErrorExceptionTypes)
+            // Special Case: We never want to catch this NUnit exception
+            .Where(t => !Type.Equals(t, NUnitFrameworkInternalInvalidPlatformExceptionType));
+
+        private static readonly IEnumerable<Type> KnownThrowableExceptionTypes = AllExceptionTypes
+            // Special Case: We never want to catch this NUnit exception
+            .Where(t => !Type.Equals(t, NUnitFrameworkInternalInvalidPlatformExceptionType));
+
 
         private static readonly IEnumerable<Type> KnownIOExceptionTypes = new Type[] {
             typeof(UnauthorizedAccessException),
             typeof(ObjectDisposedException),
+            typeof(Lucene.AlreadyClosedException),
         }.Union(AllIOExceptionTypes);
 
         private static readonly IEnumerable<Type> KnownIndexOutOfBoundsExceptionTypes = new Type[] {
@@ -190,7 +213,17 @@ namespace Lucene
             typeof(ArgumentOutOfRangeException),
 
             // Types for use as Java Aliases in .NET
-            typeof(IllegalArgumentException),
+            typeof(Lucene.IllegalArgumentException),
+            typeof(Lucene.ArrayIndexOutOfBoundsException),
+            typeof(Lucene.IndexOutOfBoundsException),
+            typeof(Lucene.NullPointerException), // ArgumentNullException subclass
+            typeof(Lucene.StringIndexOutOfBoundsException),
+
+            // Subclasses
+            typeof(System.DuplicateWaitObjectException),
+            typeof(System.Globalization.CultureNotFoundException),
+            typeof(System.Text.DecoderFallbackException),
+            typeof(System.Text.EncoderFallbackException),
         };
 
         private static readonly IEnumerable<Type> KnownIllegalArgumentExceptionTypes_TestEnvironment = new Type[] {
@@ -198,7 +231,158 @@ namespace Lucene
 
             // Types for use as Java Aliases in .NET
             typeof(IllegalArgumentException),
+
+            // Subclasses
+            typeof(System.DuplicateWaitObjectException),
+            typeof(System.Globalization.CultureNotFoundException),
+            typeof(System.Text.DecoderFallbackException),
+            typeof(System.Text.EncoderFallbackException),
         };
+
+        private static readonly IEnumerable<Type> KnownRuntimeExceptionTypes = LoadKnownRuntimeExceptionTypes();
+
+        private static IEnumerable<Type> LoadKnownRuntimeExceptionTypes()
+        {
+            var result = new HashSet<Type>
+            {
+
+                // ******************************************************************************************
+                // CONFIRMED TYPES - these are for sure mapping to a type in Java that we want to catch
+                // ******************************************************************************************
+
+                typeof(SystemException), // Roughly corresponds to RuntimeException
+
+                // Corresponds to IndexOutOfBoundsException, StringIndexOutOfBoundsException, and ArrayIndexOutOfBoundsException
+                typeof(IndexOutOfRangeException),
+                typeof(ArgumentOutOfRangeException),
+                typeof(Lucene.ArrayIndexOutOfBoundsException),
+                typeof(Lucene.IndexOutOfBoundsException),
+                typeof(Lucene.StringIndexOutOfBoundsException),
+
+                // Corresponds to NullPointerException
+                typeof(NullReferenceException),
+                typeof(ArgumentNullException),
+                typeof(Lucene.NullPointerException),
+
+                // Corresponds to IllegalArgumentException
+                typeof(ArgumentException),
+                typeof(Lucene.IllegalArgumentException),
+
+                // Corresponds to UnsupportedOperationException
+                typeof(NotSupportedException),
+                typeof(Lucene.UnsupportedOperationException),
+
+                // Corresponds to Lucene's ThreadInterruptedException
+                typeof(ThreadInterruptedException),
+
+                // Corresponds to SecurityException
+                typeof(SecurityException),
+
+                // Corresponds to ClassCastException
+                typeof(InvalidCastException),
+
+                // Corresponds to IllegalStateException
+                typeof(InvalidOperationException),
+                typeof(Lucene.IllegalStateException),
+
+                // Corresponds to MissingResourceException
+                typeof(MissingManifestResourceException),
+
+                // Corresponds to NumberFormatException
+                typeof(FormatException),
+                typeof(Lucene.NumberFormatException),
+
+                // Corresponds to ArithmeticException
+                typeof(ArithmeticException),
+
+                // Corresponds to IllformedLocaleException
+                typeof(CultureNotFoundException),
+
+                // Corresponds to JUnit's AssumptionViolatedException
+                typeof(NUnit.Framework.InconclusiveException),
+
+                // Known implementations of IRuntimeException
+
+                typeof(RuntimeException),
+                typeof(LuceneSystemException),
+
+                typeof(BytesRefHash.MaxBytesLengthExceededException),
+                typeof(CollectionTerminatedException),
+                typeof(DocTermsIndexDocValues.DocTermsIndexException),
+                typeof(MergePolicy.MergeException),
+                typeof(SearcherExpiredException),
+                typeof(TimeLimitingCollector.TimeExceededException),
+                typeof(BooleanQuery.TooManyClausesException),
+
+                // Other known runtime exceptions
+                typeof(AlreadySetException), // Subclasses InvalidOperationException
+                typeof(J2N.IO.BufferUnderflowException),
+                typeof(J2N.IO.BufferOverflowException),
+                typeof(J2N.IO.InvalidMarkException),
+                typeof(Lucene.Net.Spatial.Queries.UnsupportedSpatialOperation), // Subclasses NotSupportedException
+
+                //typeof(NUnit.Framework.Internal.InvalidPlatformException),
+
+                // ******************************************************************************************
+                // UNCONFIRMED TYPES - these are SystemException types that are included, but require more
+                // research to determine whether they actually are something we don't want to catch as a RuntimeException.
+                // ******************************************************************************************
+
+                typeof(AccessViolationException),
+                typeof(AppDomainUnloadedException),
+                typeof(ArrayTypeMismatchException),
+                typeof(BadImageFormatException),
+                typeof(CannotUnloadAppDomainException),
+                typeof(KeyNotFoundException),
+                typeof(ContextMarshalException),
+                typeof(DataMisalignedException),
+                typeof(DivideByZeroException), // Subclasses ArithmeticException, so probably okay
+                typeof(DllNotFoundException),
+                typeof(DuplicateWaitObjectException),
+                typeof(EntryPointNotFoundException),
+                typeof(ExecutionEngineException),
+                typeof(InsufficientExecutionStackException),
+                typeof(InvalidProgramException),
+                typeof(InvalidDataException),
+                typeof(MulticastNotSupportedException),
+                typeof(NotFiniteNumberException), // Subclasses ArithmeticException, so probably okay
+                typeof(NotImplementedException),
+                typeof(OperationCanceledException),
+                typeof(OverflowException), // Subclasses ArithmeticException, so probably okay
+                typeof(PlatformNotSupportedException),
+                typeof(RankException),
+                typeof(System.Reflection.CustomAttributeFormatException), // Maybe like AnnotationTypeMismatchException in Java...?
+                typeof(System.Resources.MissingSatelliteAssemblyException),
+                typeof(System.Runtime.CompilerServices.SwitchExpressionException),
+                typeof(System.Runtime.InteropServices.COMException),
+                typeof(System.Runtime.InteropServices.ExternalException),
+                typeof(System.Runtime.InteropServices.InvalidComObjectException),
+                typeof(System.Runtime.InteropServices.InvalidOleVariantTypeException),
+                typeof(System.Runtime.InteropServices.MarshalDirectiveException),
+                typeof(System.Runtime.InteropServices.SafeArrayRankMismatchException),
+                typeof(System.Runtime.InteropServices.SafeArrayTypeMismatchException),
+                typeof(System.Runtime.InteropServices.SEHException),
+                typeof(System.Runtime.Serialization.SerializationException),
+                typeof(System.Security.Cryptography.CryptographicException),
+                typeof(System.Security.VerificationException),
+                typeof(System.Text.DecoderFallbackException), // LUCENENET TODO: Need to be sure about this one
+                typeof(System.Text.EncoderFallbackException), // LUCENENET TODO: Need to be sure about this one
+                typeof(System.Threading.AbandonedMutexException),
+                typeof(System.Threading.SemaphoreFullException),
+                typeof(System.Threading.SynchronizationLockException),
+                typeof(System.Threading.Tasks.TaskCanceledException),
+                typeof(System.Threading.ThreadAbortException),
+                typeof(System.Threading.ThreadStartException),
+                typeof(System.Threading.ThreadStateException),
+                typeof(System.TimeoutException),
+                typeof(System.TypeAccessException),
+                typeof(System.TypeInitializationException),
+                typeof(System.TypeLoadException),
+                typeof(System.TypeUnloadedException),
+            };
+
+            return result;
+        }
 
         #endregion Known types of exception families
 
@@ -365,9 +549,9 @@ namespace Lucene
                 {
                     // expectedToThrow is true when we expect the error to be thrown and false when we expect it to be caught
                     yield return new TestCaseData(
-                        exceptionType,                                      // exception type (to make NUnit display them all)
-                        true,                                               // expectedToThrow
-                        new Action(() => ThrowException(exceptionType)));   // throw exception expression
+                        exceptionType,                                         // exception type (to make NUnit display them all)
+                        !KnownThrowableExceptionTypes.Contains(exceptionType), // expectedToThrow
+                        new Action(() => ThrowException(exceptionType)));      // throw exception expression
                 }
             }
         }
@@ -397,10 +581,25 @@ namespace Lucene
                     // expectedToThrow is true when we expect the error to be thrown and false when we expect it to be caught
                     yield return new TestCaseData(
                         exceptionType,                                      // exception type (to make NUnit display them all)
-                        KnownErrorExceptionTypes.Contains(exceptionType),   // expectedToThrow
+                        !KnownExceptionTypes.Contains(exceptionType),       // expectedToThrow
                         new Action(() => ThrowException(exceptionType)));   // throw exception expression
                 }
             } 
+        }
+
+        public static IEnumerable<TestCaseData> RuntimeExceptionTypeExpressions
+        {
+            get
+            {
+                foreach (var exceptionType in AllExceptionTypes)
+                {
+                    // expectedToThrow is true when we expect the error to be thrown and false when we expect it to be caught
+                    yield return new TestCaseData(
+                        exceptionType,                                      // exception type (to make NUnit display them all)
+                        !KnownRuntimeExceptionTypes.Contains(exceptionType),// expectedToThrow
+                        new Action(() => ThrowException(exceptionType)));   // throw exception expression
+                }
+            }
         }
 
         public static IEnumerable<TestCaseData> IOExceptionTypeExpressions
@@ -579,6 +778,24 @@ namespace Lucene
             }
         }
 
+        // This test ensures that all known Error types from Java are not caught by
+        // our IsRuntimeException() handler.
+        [Test]
+        [TestCaseSource("RuntimeExceptionTypeExpressions")]
+        public void TestIsRuntimeException(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
+        {
+            static bool extensionMethod(Exception e) => e.IsRuntimeException();
+
+            if (expectedToThrow)
+            {
+                AssertDoesNotCatch(expression, extensionMethod);
+            }
+            else
+            {
+                AssertCatches(expression, extensionMethod);
+            }
+        }
+
         [Test]
         [TestCaseSource("IOExceptionTypeExpressions")]
         public void TestIsIOException(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
@@ -722,13 +939,20 @@ namespace Lucene
                 {
                     action();
                 }
+                catch (NUnit.Framework.AssertionException e)
+                {
+                    // Special case - need to suppress this from being thrown to the outer catch
+                    // or we will get a false failure
+                    Assert.IsFalse(extensionMethodExpression(e));
+                    Assert.Pass($"Expected: Did not catch exception {e.GetType().FullName}");
+                }
                 catch (Exception e) when (extensionMethodExpression(e))
                 {
                     // not expected
                     Assert.Fail($"Exception caught when expected to be thrown: {e.GetType().FullName}");
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (!(e is NUnit.Framework.AssertionException))
             {
                 // expected
                 Assert.Pass($"Expected: Did not catch exception {e.GetType().FullName}");

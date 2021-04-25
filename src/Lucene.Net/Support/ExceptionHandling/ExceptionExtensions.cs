@@ -37,11 +37,20 @@ namespace Lucene
     /// </summary>
     internal static class ExceptionExtensions
     {
-        internal static Type NUnitResultStateExceptionType = null; // All NUnit exceptions derive from this base class
+        internal static Type NUnitResultStateExceptionType = null; // All NUnit public exceptions derive from this base class
         internal static Type NUnitAssertionExceptionType = null;
         internal static Type NUnitMultipleAssertExceptionType = null;
         internal static Type NUnitInconclusiveExceptionType = null;
+        internal static Type NUnitSuccessExceptionType = null; // Since this doesn't correspond to anything in Java, we should always ignore it
+        internal static Type NUnitInvalidPlatformException = null; // Internal exception that subclasses ArgumentException that probably isn't thrown outside of NUnit, but if it ever is we should ignore it always
         internal static Type DebugAssertExceptionType = null;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static bool IsAlwaysIgnored(this Exception e)
+        {
+            return (!(NUnitSuccessExceptionType is null) && NUnitSuccessExceptionType.IsAssignableFrom(e.GetType())) ||
+                (!(NUnitInvalidPlatformException is null) && NUnitInvalidPlatformException.IsAssignableFrom(e.GetType()));
+        }
 
         /// <summary>
         /// Used to check whether <paramref name="e"/> corresponds to a Throwable
@@ -52,7 +61,9 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsThrowable(this Exception e)
         {
-            return !(e is null);
+            if (e is null || e.IsAlwaysIgnored()) return false;
+
+            return true;
         }
 
         /// <summary>
@@ -66,7 +77,7 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsAssertionError(this Exception e)
         {
-            if (e is null) return false;
+            if (e is null || e.IsAlwaysIgnored()) return false;
 
             return e is AssertionException ||
                 (!(DebugAssertExceptionType is null) && DebugAssertExceptionType.IsAssignableFrom(e.GetType())) ||
@@ -86,7 +97,10 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsError(this Exception e)
         {
-            if (e is null) return false;
+            if (e is null || e.IsAlwaysIgnored() ||
+                // Exclude InconclusiveException - AssumptionViolatedException derives from RuntimeException in Java so it is not an Error type
+                (!(NUnitInconclusiveExceptionType is null) && NUnitInconclusiveExceptionType.IsAssignableFrom(e.GetType()))
+                ) return false;
 
             return
                 e is IError ||
@@ -97,9 +111,7 @@ namespace Lucene
                 // Ignore .NET debug assert statements (only valid when test framework is attached)
                 (!(DebugAssertExceptionType is null) && DebugAssertExceptionType.IsAssignableFrom(e.GetType())) ||
                 // Ignore NUnit exceptions (in tests)
-                (!(NUnitResultStateExceptionType is null) && NUnitResultStateExceptionType.IsAssignableFrom(e.GetType()) &&
-                    // Exclude InconclusiveException - AssumptionViolatedException derives from RuntimeException in Java so it is not an Error type
-                    (!(NUnitInconclusiveExceptionType is null) && NUnitInconclusiveExceptionType.IsAssignableFrom(e.GetType())) == false);
+                (!(NUnitResultStateExceptionType is null) && NUnitResultStateExceptionType.IsAssignableFrom(e.GetType()));
         }
 
         /// <summary>
@@ -117,6 +129,8 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsException(this Exception e)
         {
+            if (e is null || e.IsAlwaysIgnored()) return false;
+
             return e is Exception && !IsError(e); // IMPORTANT: Error types should not be identified here.
         }
 
@@ -132,52 +146,56 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsRuntimeException(this Exception e)
         {
-            // LUCENENET TODO: After creating a RuntimeException replacement (that at least implments IRuntimeException,
-            // we can use the below code instead and do the proper catch in TestIndexWriterExceptions.IndexerThread using IsRuntimeException().
-            // For now, this is close enough but we need a separate exception type for our tests to do checks.
-            return IsException(e);
+            //// LUCENENET TODO: After creating a RuntimeException replacement (that at least implments IRuntimeException,
+            //// we can use the below code instead and do the proper catch in TestIndexWriterExceptions.IndexerThread using IsRuntimeException().
+            //// For now, this is close enough but we need a separate exception type for our tests to do checks.
+            //return IsException(e);
 
-            //if (e is null) return false;
 
-            //return e is IRuntimeException ||
+            if (e is null ||
 
-            //    e is IndexOutOfRangeException ||
-            //    e is ArgumentOutOfRangeException ||
+                e.IsAlwaysIgnored() ||
 
-            //    e is ArgumentException ||
+                // Some Java errors derive from SystemException in .NET, but we don't want to include them here
+                e.IsError() ||
 
-            //    e is NullReferenceException ||
-            //    e is ArgumentNullException ||
+                // .NET made IOException a SystemExcpetion, but those should not be included here
+                e.IsIOException() ||
 
-            //    e is NotSupportedException ||
+                // ObjectDisposedException is a special case because in Lucene the AlreadyClosedException derived
+                // from IOException and was therefore a checked excpetion type.
+                e is ObjectDisposedException ||
 
-            //    e is ThreadInterruptedException ||
+                // These seem to correspond closely to java.lang.ReflectiveOperationException, which are not derived from RuntimeException
+                e is MemberAccessException ||
+                e is ReflectionTypeLoadException ||
+                e is AmbiguousMatchException
+                )
+            {
+                return false;
+            }
 
-            //    e is SecurityException ||
+            // Known implemetnations of IRuntimeException
 
-            ////    e is ObjectDisposedException || // AlreadyClosedException subclasses IOException, so this one doesn't count here
+            // LuceneExcpetion
+            // BytesRefHash.MaxBytesLengthExceededException
+            // CollectionTerminatedException
+            // TimeLimitingCollector.TimeExceededException
+            // BooleanQuery.TooManyClausesException
+            return e is IRuntimeException ||
 
-            //    // Known implemetnations of IRuntimeException
-            //    //e is BytesRefHash.MaxBytesLengthExceededException ||
-            //    //e is CollectionTerminatedException ||
-            //    //e is TimeLimitingCollector.TimeExceededException ||
-            //    //e is BooleanQuery.TooManyClausesException ||
+                // LUCENENET NOTE: There may be some other types to exclude here, but this is pretty similar to what Java is doing
+                // once you weed out the above exclusions. This handler is only used in a few places (mostly tests to check exception handling)
+                // so it is not likely it matters beyond this point.
 
-            //    //e is Lucene.Net.Util.AlreadySetException || // Subclasses InvalidOperationException
+                // See the tests to see the list of exception types that are expected to be caught here
+                e is SystemException ||
 
-            //    e is J2N.IO.BufferUnderflowException ||
-            //    e is J2N.IO.BufferOverflowException ||
-            //    e is J2N.IO.InvalidMarkException ||
+                e is J2N.IO.BufferUnderflowException ||
+                e is J2N.IO.BufferOverflowException ||
+                e is J2N.IO.InvalidMarkException ||
 
-            //    e is InvalidCastException ||
-
-            //    (e is InvalidOperationException && !(e is ObjectDisposedException)) ||
-
-            //    e is MissingManifestResourceException ||
-
-            //    (e is FormatException && !(e is J2N.ParseException)) || // Thrown only on datetime and number format problems, ignore ParseException
-
-            //    NUnitInconclusiveExceptionType is null ? false : NUnitInconclusiveExceptionType.IsAssignableFrom(e.GetType());
+                (NUnitInconclusiveExceptionType is null ? false : NUnitInconclusiveExceptionType.IsAssignableFrom(e.GetType()));
         }
 
         /// <summary>
@@ -195,6 +213,8 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsIOException(this Exception e)
         {
+            if (e is null || e.IsAlwaysIgnored()) return false;
+
             return e is IOException ||
                 e.IsAlreadyClosedException() || // In Lucene, AlreadyClosedException subclass IOException instead of InvalidOperationException, so we need a special case here
                 e is UnauthorizedAccessException; // In Java, java.nio.file.AccessDeniedException subclasses IOException
@@ -210,6 +230,8 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsArrayIndexOutOfBoundsException(this Exception e)
         {
+            if (e is null || e.IsAlwaysIgnored()) return false;
+
             return e is ArgumentOutOfRangeException ||
                 e is IndexOutOfRangeException; // LUCENENET TODO: These could be real problems where excptions can be prevevented that our catch blocks are hiding
         }
@@ -224,6 +246,8 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsStringIndexOutOfBoundsException(this Exception e)
         {
+            if (e is null || e.IsAlwaysIgnored()) return false;
+
             return e is ArgumentOutOfRangeException ||
                 e is IndexOutOfRangeException; // LUCENENET TODO: These could be real problems where excptions can be prevevented that our catch blocks are hiding
         }
@@ -238,6 +262,8 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsIndexOutOfBoundsException(this Exception e)
         {
+            if (e is null || e.IsAlwaysIgnored()) return false;
+
             return e is ArgumentOutOfRangeException ||
                 e is IndexOutOfRangeException; // LUCENENET TODO: These could be real problems where excptions can be prevevented that our catch blocks are hiding
         }
@@ -337,6 +363,8 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsIllegalArgumentException(this Exception e)
         {
+            if (e is null || e.IsAlwaysIgnored()) return false;
+
             // LUCENENET: In production, there is a chance that we will upgrade to ArgumentNullExcpetion or ArgumentOutOfRangeException
             // and it is still important that those are caught. However, we have a copy of this method in the test environment
             // where this is done more strictly to catch ArgumentException without its known subclasses so we can be more explicit in tests.
@@ -355,6 +383,8 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNullPointerException(this Exception e)
         {
+            if (e is null || e.IsAlwaysIgnored()) return false;
+
             return e is ArgumentNullException ||
                 e is NullReferenceException; // LUCENENET TODO: These could be real problems where excptions can be prevevented that our catch blocks are hiding
         }
@@ -379,6 +409,7 @@ namespace Lucene
             // or security exceptions such as MemberAccessException or TypeAccessException.
             return e is MissingMethodException ||
                 e is TypeLoadException ||
+                e is ReflectionTypeLoadException ||
                 e is TypeInitializationException; // May happen due to a class initializer that throws an uncaught exception.
         }
 

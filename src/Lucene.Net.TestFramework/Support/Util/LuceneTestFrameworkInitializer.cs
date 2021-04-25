@@ -233,6 +233,8 @@ namespace Lucene.Net.Util
                 Lucene.ExceptionExtensions.NUnitAssertionExceptionType = typeof(NUnit.Framework.AssertionException);
                 Lucene.ExceptionExtensions.NUnitMultipleAssertExceptionType = typeof(NUnit.Framework.MultipleAssertException);
                 Lucene.ExceptionExtensions.NUnitInconclusiveExceptionType = typeof(NUnit.Framework.InconclusiveException);
+                Lucene.ExceptionExtensions.NUnitSuccessExceptionType = typeof(NUnit.Framework.SuccessException);
+                Lucene.ExceptionExtensions.NUnitInvalidPlatformException = Type.GetType("NUnit.Framework.Internal.InvalidPlatformException, NUnit.Framework");
 
                 // Identify the Debug.Assert() exception so it can be excluded from being swallowed by catch blocks.
                 // These types are internal, so we can identify them using Reflection.
