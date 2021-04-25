@@ -202,8 +202,6 @@ namespace Lucene.Net.Search.Grouping
             Query matchAllQuery = new MatchAllDocsQuery();
             ITopGroups<MutableValueStr> topGroups = groupingSearch.SearchByFunction<MutableValueStr>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
 
-            var val = FieldCache.DEFAULT;
-
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValueStr> groupDocs in topGroups.Groups)
             {
@@ -502,8 +500,6 @@ namespace Lucene.Net.Search.Grouping
             Query matchAllQuery = new MatchAllDocsQuery();
             ITopGroups<BytesRef> topGroups = groupingSearch.Search<BytesRef>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
 
-            var val = FieldCache.DEFAULT;
-
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<BytesRef> groupDocs in topGroups.Groups)
             {
@@ -615,8 +611,6 @@ namespace Lucene.Net.Search.Grouping
             Query matchAllQuery = new MatchAllDocsQuery();
             ITopGroups<MutableValue> topGroups = groupingSearch.Search<MutableValue>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
 
-            var val = FieldCache.DEFAULT;
-
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValue> groupDocs in topGroups.Groups)
             {
@@ -713,8 +707,6 @@ namespace Lucene.Net.Search.Grouping
 
             ITopGroups<MutableValueInt32> topGroups = groupingSearch.SearchByFunction<MutableValueInt32>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
 
-            var val = FieldCache.DEFAULT;
-
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValueInt32> groupDocs in topGroups.Groups)
             {
@@ -808,8 +800,6 @@ namespace Lucene.Net.Search.Grouping
             Query matchAllQuery = new MatchAllDocsQuery();
 
             ITopGroups<MutableValue> topGroups = groupingSearch.Search<MutableValue>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 4);
-
-            var val = FieldCache.DEFAULT;
 
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValue> groupDocs in topGroups.Groups)
