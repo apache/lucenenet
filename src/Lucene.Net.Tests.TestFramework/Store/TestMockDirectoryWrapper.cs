@@ -276,7 +276,7 @@ namespace Lucene.Net.Store
             } // @out.close();
             IndexInput @in = dir.OpenInput("foo", IOContext.DEFAULT);
             @in.Dispose();
-            Assert.Throws<Exception>(() => @in.ReadByte());
+            Assert.Throws<LuceneException>(() => @in.ReadByte());
         }
 
         // LUCENENET: This test compiles, but is not compatible with 4.8.0 (tested in Java Lucene), as it was ported from 8.2.0
