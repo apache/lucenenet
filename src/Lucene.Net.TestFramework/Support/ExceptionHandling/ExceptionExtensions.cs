@@ -53,6 +53,8 @@ namespace Lucene.Net
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsIllegalArgumentException(this Exception e)
         {
+            if (e is null || e.IsAlwaysIgnored()) return false;
+
             return e is ArgumentException &&
                 !(e is ArgumentNullException) &&     // Corresponds to NullPointerException, so we don't catch it here.
                 !(e is ArgumentOutOfRangeException); // Corresponds to IndexOutOfBoundsException (and subclasses), so we don't catch it here.
