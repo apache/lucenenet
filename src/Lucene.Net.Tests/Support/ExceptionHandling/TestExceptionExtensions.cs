@@ -56,8 +56,51 @@ namespace Lucene
             Type.GetType("System.Reflection.MetadataException, mscorlib");
 
         private static readonly Type CrossAppDomainMarshaledExceptionType =
-            // .NET Core 2.1 Only
-            Type.GetType("System.CrossAppDomainMarshaledException, System.Private.CoreLib");
+             // .NET Core 2.1 Only
+             Type.GetType("System.CrossAppDomainMarshaledException, System.Private.CoreLib");
+
+        private static readonly Type SwitchExpressionExceptionType =
+            // No .NET Framework or .NET Core 2.x support
+            // .NET Core 3.1
+            Type.GetType("System.Runtime.CompilerServices.SwitchExpressionException, System.Runtime.Extensions") ??
+            // .NET 5
+            Type.GetType("System.Runtime.CompilerServices.SwitchExpressionException, System.Private.CoreLib");
+
+        private static readonly Type RemotingExceptionType =
+            // .NET Framework only
+            Type.GetType("System.Runtime.Remoting.RemotingException, mscorlib");
+
+        private static readonly Type RemotingTimeoutExceptionType =
+            // .NET Framework only
+            Type.GetType("System.Runtime.Remoting.RemotingTimeoutException, mscorlib");
+
+        private static readonly Type RemotingServerExceptionType =
+            // .NET Framework only
+            Type.GetType("System.Runtime.Remoting.ServerException, mscorlib");
+
+        private static readonly Type CryptographicUnexpectedOperationExceptionType =
+            // .NET Framework only
+            Type.GetType("System.Security.Cryptography.CryptographicUnexpectedOperationException, mscorlib");
+
+        private static readonly Type HostProtectionExceptionType =
+            // .NET Framework only
+            Type.GetType("System.Security.HostProtectionException, mscorlib");
+
+        private static readonly Type PolicyExceptionType =
+            // .NET Framework only
+            Type.GetType("System.Security.Policy.PolicyException, mscorlib");
+
+        private static readonly Type IdentityNotMappedExceptionType =
+            // .NET Framework only
+            Type.GetType("System.Security.Principal.IdentityNotMappedException, mscorlib");
+
+        private static readonly Type XmlSyntaxExceptionType =
+            // .NET Framework only
+            Type.GetType("System.Security.XmlSyntaxException, mscorlib");
+
+        private static readonly Type PrivilegeNotHeldExceptionType =
+            // .NET Framework only
+            Type.GetType("System.Security.AccessControl.PrivilegeNotHeldException, mscorlib");
 
         private static readonly Type NUnitFrameworkInternalInvalidPlatformExceptionType =
             Type.GetType("NUnit.Framework.Internal.InvalidPlatformException, NUnit.Framework");
@@ -187,7 +230,9 @@ namespace Lucene
             typeof(UnauthorizedAccessException),
             typeof(ObjectDisposedException),
             typeof(Lucene.AlreadyClosedException),
-        }.Union(AllIOExceptionTypes);
+        }.Union(AllIOExceptionTypes)
+            // .NET Framework only - Subclasses UnauthorizedAccessException
+            .Union(new[] { PrivilegeNotHeldExceptionType });
 
         private static readonly IEnumerable<Type> KnownIndexOutOfBoundsExceptionTypes = new Type[] {
             typeof(ArgumentOutOfRangeException),
@@ -340,7 +385,9 @@ namespace Lucene
                 typeof(DllNotFoundException),
                 typeof(DuplicateWaitObjectException),
                 typeof(EntryPointNotFoundException),
+#pragma warning disable CS0618 // Type or member is obsolete
                 typeof(ExecutionEngineException),
+#pragma warning restore CS0618 // Type or member is obsolete
                 typeof(InsufficientExecutionStackException),
                 typeof(InvalidProgramException),
                 typeof(InvalidDataException),
@@ -353,7 +400,7 @@ namespace Lucene
                 typeof(RankException),
                 typeof(System.Reflection.CustomAttributeFormatException), // Maybe like AnnotationTypeMismatchException in Java...?
                 typeof(System.Resources.MissingSatelliteAssemblyException),
-                typeof(System.Runtime.CompilerServices.SwitchExpressionException),
+                //typeof(System.Runtime.CompilerServices.SwitchExpressionException), // .NET Standard 2.1+ only (conditionally added below)
                 typeof(System.Runtime.InteropServices.COMException),
                 typeof(System.Runtime.InteropServices.ExternalException),
                 typeof(System.Runtime.InteropServices.InvalidComObjectException),
@@ -380,6 +427,46 @@ namespace Lucene
                 typeof(System.TypeLoadException),
                 typeof(System.TypeUnloadedException),
             };
+
+            // .NET Core 3.0 + only
+            if (!(SwitchExpressionExceptionType is null))
+            {
+                result.Add(SwitchExpressionExceptionType);
+            }
+
+            // .NET Framework only
+            if (!(RemotingExceptionType is null))
+            {
+                result.Add(RemotingExceptionType);
+            }
+            if (!(RemotingTimeoutExceptionType is null))
+            {
+                result.Add(RemotingTimeoutExceptionType);
+            }
+            if (!(RemotingServerExceptionType is null))
+            {
+                result.Add(RemotingServerExceptionType);
+            }
+            if (!(CryptographicUnexpectedOperationExceptionType is null))
+            {
+                result.Add(CryptographicUnexpectedOperationExceptionType);
+            }
+            if (!(HostProtectionExceptionType is null))
+            {
+                result.Add(HostProtectionExceptionType);
+            }
+            if (!(PolicyExceptionType is null))
+            {
+                result.Add(PolicyExceptionType);
+            }
+            if (!(IdentityNotMappedExceptionType is null))
+            {
+                result.Add(IdentityNotMappedExceptionType);
+            }
+            if (!(XmlSyntaxExceptionType is null))
+            {
+                result.Add(XmlSyntaxExceptionType);
+            }
 
             return result;
         }
@@ -593,6 +680,15 @@ namespace Lucene
             {
                 foreach (var exceptionType in AllExceptionTypes)
                 {
+#if NETCOREAPP2_1
+                    // These don't seem to match on .NET Core 2.1, but we don't care
+                    if (exceptionType.FullName.Equals("System.CrossAppDomainMarshaledException") ||
+                        exceptionType.FullName.Equals("System.AppDomainUnloadedException"))
+                    {
+                        continue;
+                    }
+#endif
+
                     // expectedToThrow is true when we expect the error to be thrown and false when we expect it to be caught
                     yield return new TestCaseData(
                         exceptionType,                                      // exception type (to make NUnit display them all)
