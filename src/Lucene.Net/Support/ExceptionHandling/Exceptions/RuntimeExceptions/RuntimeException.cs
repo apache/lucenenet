@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Util;
+using System;
 using System.Runtime.Serialization;
 
 namespace Lucene
@@ -81,12 +82,12 @@ namespace Lucene
 
         // Static factory methods
 
-        public static Exception Create() => new Exception();
+        public static Exception Create() => new LuceneSystemException();
 
-        public static Exception Create(string message) => new Exception(message);
+        public static Exception Create(string message) => new LuceneSystemException(message);
 
-        public static Exception Create(string message, Exception innerException) => new Exception(message, innerException);
+        public static Exception Create(string message, Exception innerException) => new LuceneSystemException(message, innerException);
 
-        public static Exception Create(Exception cause) => new Exception(cause.Message, cause);
+        public static Exception Create(Exception cause) => new LuceneSystemException(cause.Message, cause);
     }
 }
