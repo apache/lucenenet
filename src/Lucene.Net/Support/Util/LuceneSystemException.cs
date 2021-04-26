@@ -81,7 +81,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="cause">The original <see cref="Exception"/>.</param>
         public LuceneSystemException(Exception cause)
-            : base(cause?.ToString(), cause)
+            : base(cause?.Message, cause)
         {
         }
 
