@@ -89,7 +89,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 {
                                     number = numberFormat.Parse(text);
                                 }
-                                catch (Exception e) when (e.IsParseException())
+                                catch (FormatException e) // LUCENENET: In .NET we are expecting the framework to throw FormatException, not ParseException
                                 {
                                     throw new QueryNodeParseException(new Message(
                                         QueryParserMessages.COULD_NOT_PARSE_NUMBER, fieldNode
