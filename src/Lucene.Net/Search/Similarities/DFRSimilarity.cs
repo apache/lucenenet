@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Search.Similarities
 {
@@ -108,15 +108,14 @@ namespace Lucene.Net.Search.Similarities
         /// <param name="basicModel"> Basic model of information content </param>
         /// <param name="afterEffect"> First normalization of information gain </param>
         /// <param name="normalization"> Second (length) normalization </param>
+        /// <exception cref="ArgumentNullException"><paramref name="basicModel"/>, <paramref name="afterEffect"/>,
+        /// or <paramref name="normalization"/> is <c>null</c>.</exception>
         public DFRSimilarity(BasicModel basicModel, AfterEffect afterEffect, Normalization normalization)
         {
-            if (basicModel == null || afterEffect == null || normalization == null)
-            {
-                throw new NullReferenceException("null parameters not allowed.");
-            }
-            this.m_basicModel = basicModel;
-            this.m_afterEffect = afterEffect;
-            this.m_normalization = normalization;
+            // LUCENENET: Changed guard clauses from NullPointerException to ArgumentNullException
+            this.m_basicModel = basicModel ?? throw new ArgumentNullException(nameof(basicModel));
+            this.m_afterEffect = afterEffect ?? throw new ArgumentNullException(nameof(afterEffect));
+            this.m_normalization = normalization ?? throw new ArgumentNullException(nameof(normalization));
         }
 
         public override float Score(BasicStats stats, float freq, float docLen)

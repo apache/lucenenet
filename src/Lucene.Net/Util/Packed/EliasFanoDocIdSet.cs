@@ -77,7 +77,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (efEncoder.lastEncoded >= DocIdSetIterator.NO_MORE_DOCS)
             {
-                throw new NotSupportedException("Highest encoded value too high for DocIdSetIterator.NO_MORE_DOCS: " + efEncoder.lastEncoded);
+                throw UnsupportedOperationException.Create("Highest encoded value too high for DocIdSetIterator.NO_MORE_DOCS: " + efEncoder.lastEncoded);
             }
             return new DocIdSetIteratorAnonymousClass(this);
         }

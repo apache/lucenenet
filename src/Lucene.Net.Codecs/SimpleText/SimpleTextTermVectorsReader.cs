@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     {
                         Dispose();
                     } 
-                    catch (Exception)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         // ensure we throw our original exception
                     }
@@ -235,7 +235,7 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             if (_input == null)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "this TermVectorsReader is closed");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "this TermVectorsReader is disposed.");
             }
             return new SimpleTextTermVectorsReader(_offsets, (IndexInput)_input.Clone());
         }
@@ -383,7 +383,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override void SeekExact(long ord)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override bool MoveNext()
@@ -409,7 +409,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override BytesRef Term => _current.Key;
 
-            public override long Ord => throw new NotSupportedException();
+            public override long Ord => throw UnsupportedOperationException.Create();
 
             public override int DocFreq => 1;
 
@@ -557,7 +557,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 // IndexOutOfRangeException if we didn't, which doesn't really provide good feedback as to what the cause is.
                 // This matches the behavior of Lucene 8.x. See #267.
                 if (((_positions != null && _nextPos < _positions.Length) || _startOffsets != null && _nextPos < _startOffsets.Length) == false)
-                    throw new InvalidOperationException("Read past last position");
+                    throw IllegalStateException.Create("Read past last position");
 
                 if (_positions != null)
                 {

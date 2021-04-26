@@ -328,7 +328,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             if (!SupportsParams)
             {
-                throw new NotSupportedException(GetName() + " does not support command line parameters.");
+                throw UnsupportedOperationException.Create(GetName() + " does not support command line parameters.");
             }
             this.m_params = @params;
         }

@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Analyzing
 {
@@ -104,7 +100,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
             {
                 string q = ParseWithAnalyzingQueryParser(termStr, stopsAnalyzer, true);
             }
-            catch (ParseException e)
+            catch (Lucene.Net.QueryParsers.Classic.ParseException e)
             {
                 if (e.Message.Contains("returned nothing"))
                 {
@@ -119,7 +115,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
             {
                 qp.AnalyzeSingleChunk(FIELD, "", "not a single chunk");
             }
-            catch (ParseException e)
+            catch (Lucene.Net.QueryParsers.Classic.ParseException e)
             {
                 if (e.Message.Contains("multiple terms"))
                 {
@@ -138,7 +134,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
             {
                 Query q = GetAnalyzedQuery("*", a, false);
             }
-            catch (ParseException /*e*/)
+            catch (Lucene.Net.QueryParsers.Classic.ParseException /*e*/)
             {
                 pex = true;
             }
@@ -150,7 +146,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
                 String qString = ParseWithAnalyzingQueryParser("*", a, true);
                 assertEquals("Every word", "*", qString);
             }
-            catch (ParseException /*e*/)
+            catch (Lucene.Net.QueryParsers.Classic.ParseException /*e*/)
             {
                 pex = true;
             }
@@ -182,7 +178,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
                 string q = ParseWithAnalyzingQueryParser(wildcardInput[0], a, false);
 
             }
-            catch (ParseException /*e*/)
+            catch (Lucene.Net.QueryParsers.Classic.ParseException /*e*/)
             {
                 ex = true;
             }

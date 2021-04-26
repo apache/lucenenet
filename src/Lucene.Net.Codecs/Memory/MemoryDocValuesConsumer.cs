@@ -468,9 +468,9 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     EncodeValues(count);
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
-                    throw new Exception(bogus.ToString(), bogus);
+                    throw RuntimeException.Create(bogus);
                 }
 
                 _current.Bytes = buffer;
@@ -502,9 +502,11 @@ namespace Lucene.Net.Codecs.Memory
                 this.ords.Dispose();
             }
 
-            public void Reset()
+            // LUCENENET: Remove() not supported in .NET
+
+            public void Reset() // LUCENENET: Required by .NET contract, but not supported here.
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
     }

@@ -333,7 +333,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
                 fail();
             }
 #pragma warning disable 168
-            catch (ParseException pe)
+            catch (Lucene.Net.QueryParsers.Flexible.Standard.Parser.ParseException pe)
 #pragma warning restore 168
             {
                 // expected exception

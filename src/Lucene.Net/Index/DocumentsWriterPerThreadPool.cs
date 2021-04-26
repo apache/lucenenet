@@ -165,7 +165,7 @@ namespace Lucene.Net.Index
         {
             if (maxNumThreadStates < 1)
             {
-                throw new ArgumentException("maxNumThreadStates must be >= 1 but was: " + maxNumThreadStates);
+                throw new ArgumentOutOfRangeException(nameof(maxNumThreadStates), "maxNumThreadStates must be >= 1 but was: " + maxNumThreadStates); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             threadStates = new ThreadState[maxNumThreadStates];
             numThreadStatesActive = 0;
@@ -181,7 +181,7 @@ namespace Lucene.Net.Index
             // We should only be cloned before being used:
             if (numThreadStatesActive != 0)
             {
-                throw new InvalidOperationException("clone this object before it is used!");
+                throw IllegalStateException.Create("clone this object before it is used!");
             }
             return new DocumentsWriterPerThreadPool(threadStates.Length);
         }
@@ -351,6 +351,7 @@ namespace Lucene.Net.Index
                     {
                         // Wait until a thread state frees up:
                         Monitor.Wait(this);
+                        // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
                     }
                 }
             }

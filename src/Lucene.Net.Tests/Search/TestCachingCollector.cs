@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -152,9 +152,7 @@ namespace Lucene.Net.Search
                 cc.Replay(new NoOpCollector(false));
                 Assert.Fail("replay should fail if CachingCollector is not cached");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalStateException())
             {
                 // expected
             }
@@ -189,9 +187,7 @@ namespace Lucene.Net.Search
                 cc.Replay(new NoOpCollector(false)); // this call should fail
                 Assert.Fail("should have failed if an in-order Collector was given to replay(), " + "while CachingCollector was initialized with out-of-order collection");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // ok
             }

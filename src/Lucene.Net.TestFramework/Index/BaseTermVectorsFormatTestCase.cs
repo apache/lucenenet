@@ -15,7 +15,6 @@ using System.Threading;
 using JCG = J2N.Collections.Generic;
 using static Lucene.Net.Index.TermsEnum;
 using Assert = Lucene.Net.TestFramework.Assert;
-using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Attribute = Lucene.Net.Util.Attribute;
 using System.Diagnostics.CodeAnalysis;
 using RandomizedTesting.Generators;
@@ -125,7 +124,7 @@ namespace Lucene.Net.Index
                         break;
 
                     default:
-                        throw new InvalidOperationException("Invalid Options enum type");
+                        throw new ArgumentOutOfRangeException(nameof(opt), "Invalid Options enum type");
                 }
             }
 
@@ -630,28 +629,19 @@ namespace Lucene.Net.Index
                                 Assert.IsTrue(foundPayload);
                             }
                         }
-
-                        // LUCENENET specific - In Lucene, there were assertions set up inside TVReaders which throw AssertionError
-                        // (provided assertions are enabled), which in turn signaled this class to skip the check by catching AssertionError.
-                        // In .NET, assertions are not included in the release and cannot be enabled, so there is nothing to catch.
-                        // We have to explicitly exclude the types that rely on this behavior from the check. Otherwise, they would fall
-                        // through to Assert.Fail().
-                        //
-                        // We also have a fake AssertionException for testing mocks. We cannot throw InvalidOperationException in those
-                        // cases because that exception is expected in other contexts.
-                        Assert.ThrowsAnyOf<InvalidOperationException, AssertionError>(() => docsAndPositionsEnum.NextPosition());
-
-//                        try
-//                        {
-//                            docsAndPositionsEnum.NextPosition();
-//                            Assert.Fail();
-//                        }
-//#pragma warning disable 168
-//                        catch (Exception e)
-//#pragma warning restore 168
-//                        {
-//                            // ok
-//                        }
+                        try
+                        {
+                            docsAndPositionsEnum.NextPosition();
+                            Assert.Fail();
+                        }
+                        catch (Exception e) when (e.IsException())
+                        {
+                            // ok
+                        }
+                        catch (Exception e) when (e.IsAssertionError())
+                        {
+                            // ok
+                        }
                     }
                     Assert.AreEqual(DocsEnum.NO_MORE_DOCS, docsAndPositionsEnum.NextDoc());
                 }
@@ -964,7 +954,7 @@ namespace Lucene.Net.Index
                         outerInstance.AssertEquals(docs[idx], reader.GetTermVectors(docID));
                     }
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     this.exception.Value = t;
                 }

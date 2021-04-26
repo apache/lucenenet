@@ -110,9 +110,9 @@ namespace Lucene.Net.Facet.Taxonomy
                                 mgr.MaybeRefresh();
                             }
                         }
-                        catch (IOException ioe)
+                        catch (Exception ioe) when (ioe.IsIOException())
                         {
-                            throw new Exception(ioe.ToString(), ioe);
+                            throw RuntimeException.Create(ioe);
                         }
 
                         if (Verbose)
@@ -247,9 +247,9 @@ namespace Lucene.Net.Facet.Taxonomy
                             Console.WriteLine("TEST: reopen done");
                         }
                     }
-                    catch (Exception ioe)
+                    catch (Exception ioe) when (ioe.IsException())
                     {
-                        throw new Exception(ioe.Message, ioe);
+                        throw RuntimeException.Create(ioe);
                     }
                 }
             }
@@ -346,7 +346,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 mgr.MaybeRefresh();
                 fail("should have hit exception");
             }
-            catch (InvalidOperationException)
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }

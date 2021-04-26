@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -257,7 +257,7 @@ namespace Lucene.Net.Support
 
             public WeakKey(T key)
             {
-                if (key == null)
+                if (key is null)
                     throw new ArgumentNullException(nameof(key));
 
                 hashCode = key.GetHashCode();
@@ -271,7 +271,7 @@ namespace Lucene.Net.Support
 
             public override bool Equals(object obj)
             {
-                if (!reference.IsAlive || obj == null) return false;
+                if (!reference.IsAlive || obj is null) return false;
 
                 if (object.ReferenceEquals(this, obj))
                 {

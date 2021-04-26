@@ -55,13 +55,10 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <param name="escape">true if text should be html-escaped</param>
         public DefaultPassageFormatter(string preTag, string postTag, string ellipsis, bool escape)
         {
-            if (preTag == null || postTag == null || ellipsis == null)
-            {
-                throw new ArgumentException(); //throw new NullPointerException();
-            }
-            this.m_preTag = preTag;
-            this.m_postTag = postTag;
-            this.m_ellipsis = ellipsis;
+            // LUCENENET specific - changed from NullPointerException to ArgumentNullException (.NET convention)
+            this.m_preTag = preTag ?? throw new ArgumentNullException(nameof(preTag));
+            this.m_postTag = postTag ?? throw new ArgumentNullException(nameof(postTag));
+            this.m_ellipsis = ellipsis ?? throw new ArgumentNullException(nameof(ellipsis));
             this.m_escape = escape;
         }
 

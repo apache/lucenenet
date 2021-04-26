@@ -69,7 +69,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override DocValuesConsumer FieldsConsumer(SegmentWriteState state)
             {
-                throw new NotSupportedException("this codec cannot write docvalues");
+                throw UnsupportedOperationException.Create("this codec cannot write docvalues");
             }
 
             public override DocValuesProducer FieldsProducer(SegmentReadState state)

@@ -41,7 +41,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             if (pos < start || pos > end)
             {
-                throw new ArgumentException("offset out of bounds");
+                throw new ArgumentOutOfRangeException(nameof(pos), "offset out of bounds"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             else if (pos == end)
             {
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             if (pos < start || pos > end)
             {
-                throw new ArgumentException("offset out of bounds");
+                throw new ArgumentOutOfRangeException(nameof(pos), "offset out of bounds"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             else if (pos == start)
             {
@@ -125,19 +125,21 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
         }
 
-        public override bool IsBoundary(int offset)
-        {
-            if (offset == 0)
-            {
-                return true;
-            }
-            int boundary = Following(offset - 1);
-            if (boundary == Done)
-            {
-                throw new ArgumentException();
-            }
-            return boundary == offset;
-        }
+        // LUCENENET: This method override didn't exist in Lucene 4.8.1 and it isn't clear why this was
+        // here because there were no comments.
+        //public override bool IsBoundary(int offset)
+        //{
+        //    if (offset == 0)
+        //    {
+        //        return true;
+        //    }
+        //    int boundary = Following(offset - 1);
+        //    if (boundary == Done)
+        //    {
+        //        throw new ArgumentException();
+        //    }
+        //    return boundary == offset;
+        //}
 
         public override void SetText(CharacterIterator newText)
         {

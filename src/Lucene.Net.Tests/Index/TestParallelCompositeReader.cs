@@ -249,9 +249,7 @@ namespace Lucene.Net.Index
                 psub.Document(0);
                 Assert.Fail("Subreader should be already closed because inner reader was closed!");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // pass
             }
@@ -261,9 +259,7 @@ namespace Lucene.Net.Index
                 pr.Document(0);
                 Assert.Fail("ParallelCompositeReader should be already closed because inner reader was closed!");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // pass
             }
@@ -295,9 +291,7 @@ namespace Lucene.Net.Index
                 new ParallelCompositeReader(ir1, ir2);
                 Assert.Fail("didn't get expected exception: indexes don't have same number of documents");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected exception
             }
@@ -306,9 +300,7 @@ namespace Lucene.Net.Index
                 new ParallelCompositeReader(Random.NextBoolean(), ir1, ir2);
                 Assert.Fail("didn't get expected exception: indexes don't have same number of documents");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected exception
             }
@@ -335,9 +327,7 @@ namespace Lucene.Net.Index
                 new ParallelCompositeReader(readers);
                 Assert.Fail("didn't get expected exception: indexes don't have same subreader structure");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected exception
             }
@@ -346,9 +336,7 @@ namespace Lucene.Net.Index
                 new ParallelCompositeReader(Random.NextBoolean(), readers, readers);
                 Assert.Fail("didn't get expected exception: indexes don't have same subreader structure");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected exception
             }
@@ -375,9 +363,7 @@ namespace Lucene.Net.Index
                 new ParallelCompositeReader(readers);
                 Assert.Fail("didn't get expected exception: indexes don't have same subreader structure");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected exception
             }
@@ -386,9 +372,7 @@ namespace Lucene.Net.Index
                 new ParallelCompositeReader(Random.NextBoolean(), readers, readers);
                 Assert.Fail("didn't get expected exception: indexes don't have same subreader structure");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected exception
             }
@@ -458,9 +442,7 @@ namespace Lucene.Net.Index
                 new ParallelCompositeReader(true, new CompositeReader[0], new CompositeReader[] { ir1 });
                 Assert.Fail("didn't get expected exception: need a non-empty main-reader array");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // pass
             }

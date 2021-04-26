@@ -59,7 +59,7 @@ namespace Lucene.Net.QueryParsers.Ext
                 parser.Parse("aField:testExt:\"foo \\& bar\"");
                 fail("extension field delimiter is not escaped");
             }
-            catch (ParseException /*e*/)
+            catch (Lucene.Net.QueryParsers.Classic.ParseException /*e*/)
             {
             }
         }

@@ -33,7 +33,7 @@
     <Compile Include="..\Lucene.Net.Tests\Index\TestIndexWriterReader.cs" Link="Index\TestIndexWriterReader.cs" />
     <Compile Include="..\Lucene.Net.Tests\Search\**\*.cs" LinkBase="Search" />
     <Compile Include="..\Lucene.Net.Tests\Store\**\*.cs" LinkBase="Store" />
-    <Compile Include="..\Lucene.Net.Tests\Support\**\*.cs" LinkBase="Support" />
+    <Compile Include="..\Lucene.Net.Tests\Support\**\*.cs" LinkBase="Support" Exclude="..\Lucene.Net.Tests\Support\ExceptionHandling\**\*" />
     <Compile Include="..\Lucene.Net.Tests\Util\TestNumericUtils.cs" Link="Util\TestNumericUtils.cs" />
     <EmbeddedResource Include="..\Lucene.Net.Tests\Store\LUCENENET521.zip" Link="Store\LUCENENET521.zip" />
   </ItemGroup>

@@ -611,7 +611,7 @@ namespace Lucene.Net.Analysis
         {
             if (analyzer.storedValue == null)
             {
-                throw new ObjectDisposedException(analyzer.GetType().FullName, "this Analyzer is closed");
+                throw AlreadyClosedException.Create(analyzer.GetType().FullName, "this Analyzer is disposed.");
             }
             return analyzer.storedValue.Value;
         }
@@ -626,7 +626,7 @@ namespace Lucene.Net.Analysis
         {
             if (analyzer.storedValue == null)
             {
-                throw new ObjectDisposedException(analyzer.GetType().FullName, "this Analyzer is closed");
+                throw AlreadyClosedException.Create(analyzer.GetType().FullName, "this Analyzer is disposed.");
             }
             analyzer.storedValue.Value = storedValue;
         }

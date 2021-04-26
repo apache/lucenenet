@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
@@ -114,11 +114,11 @@ namespace Lucene.Net.Search
             }
             if (minSimilarity < 0.0f)
             {
-                throw new ArgumentException("minimumSimilarity cannot be less than 0");
+                throw new ArgumentOutOfRangeException(nameof(minSimilarity), "minimumSimilarity cannot be less than 0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (prefixLength < 0)
             {
-                throw new ArgumentException("prefixLength cannot be less than 0");
+                throw new ArgumentOutOfRangeException(nameof(prefixLength), "prefixLength cannot be less than 0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.m_terms = terms;
             this.term = term;
@@ -152,7 +152,7 @@ namespace Lucene.Net.Search
             }
             if (transpositions && m_maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE)
             {
-                throw new NotSupportedException("with transpositions enabled, distances > " + LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE + " are not supported ");
+                throw UnsupportedOperationException.Create("with transpositions enabled, distances > " + LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE + " are not supported ");
             }
             this.transpositions = transpositions;
             this.m_scaleFactor = 1.0f / (1.0f - this.m_minSimilarity);

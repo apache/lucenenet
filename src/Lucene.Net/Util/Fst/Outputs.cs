@@ -102,7 +102,7 @@ namespace Lucene.Net.Util.Fst
         [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual T Merge(T first, T second)
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
     }
 }

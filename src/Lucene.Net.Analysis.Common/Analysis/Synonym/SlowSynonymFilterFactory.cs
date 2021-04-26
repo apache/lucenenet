@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using System;
@@ -221,7 +221,7 @@ namespace Lucene.Net.Analysis.Synonym
                 }
                 return tokFactory;
             }
-            catch (Exception /*e*/)
+            catch (Exception e) when (e.IsException())
             {
                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }

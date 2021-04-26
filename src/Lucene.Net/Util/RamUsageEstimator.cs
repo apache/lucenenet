@@ -439,6 +439,10 @@ namespace Lucene.Net.Util
         /// <exception cref="ArgumentException"> if <paramref name="clazz"/> is an array class. </exception>
         public static long ShallowSizeOfInstance(Type clazz)
         {
+            // LUCENENET: Added guard clause for null
+            if (clazz is null)
+                throw new ArgumentNullException(nameof(clazz));
+
             if (clazz.IsArray)
             {
                 throw new ArgumentException("this method does not work with array classes.");
@@ -587,10 +591,10 @@ namespace Lucene.Net.Util
 
                         totalSize += cachedInfo.AlignedShallowInstanceSize;
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsIllegalAccessException())
                     {
                         // this should never happen as we enabled setAccessible().
-                        throw new Exception("Reflective field access failed?", e);
+                        throw RuntimeException.Create("Reflective field access failed?", e);
                     }
                 }
             }
@@ -665,7 +669,7 @@ namespace Lucene.Net.Util
             //  }
             //  catch (Exception ex)
             //  {
-            //    throw new Exception("Access problem with sun.misc.Unsafe", ex);
+            //    throw RuntimeException.Create("Access problem with sun.misc.Unsafe", ex);
             //  }
             //}
             //else
@@ -1032,7 +1036,7 @@ namespace Lucene.Net.Util
 
                 public void Reset()
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
                 public void Dispose()

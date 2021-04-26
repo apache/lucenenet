@@ -380,7 +380,7 @@ namespace Lucene.Net.Search.Spell
                 }
 
             }
-            //catch (Exception e) // LUCENENET: Senseless to catch and rethrow here
+            //catch (Exception e) when (e.IsException()) // LUCENENET: Senseless to catch and rethrow here
             //{
             //    throw e;
             //}
@@ -390,17 +390,17 @@ namespace Lucene.Net.Search.Spell
                 {
                     ir.Dispose();
                 }
-                catch (Exception /*e1*/) { }
+                catch (Exception e1) when (e1.IsException()) { }
                 try
                 {
                     writer.Dispose();
                 }
-                catch (Exception /*e1*/) { }
+                catch (Exception e1) when (e1.IsException()) { }
                 try
                 {
                     dir.Dispose();
                 }
-                catch (Exception /*e1*/) { }
+                catch (Exception e1) when (e1.IsException()) { }
             }
         }
 

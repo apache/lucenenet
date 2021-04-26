@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support.IO;
 using System;
@@ -74,12 +74,12 @@ namespace Lucene.Net.Util
             {
                 if (bytes > int.MaxValue)
                 {
-                    throw new ArgumentException("Buffer too large for Java (" + (int.MaxValue / MB) + "mb max): " + bytes);
+                    throw new ArgumentOutOfRangeException(nameof(bytes), "Buffer too large for .NET (" + (int.MaxValue / MB) + "mb max): " + bytes); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
 
                 if (bytes < ABSOLUTE_MIN_SORT_BUFFER_SIZE)
                 {
-                    throw new ArgumentException(MIN_BUFFER_SIZE_MSG + ": " + bytes);
+                    throw new ArgumentOutOfRangeException(nameof(bytes), MIN_BUFFER_SIZE_MSG + ": " + bytes); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
 
                 this.bytes = (int)bytes;
@@ -228,7 +228,7 @@ namespace Lucene.Net.Util
 
             if (maxTempfiles < 2)
             {
-                throw new ArgumentException("maxTempFiles must be >= 2");
+                throw new ArgumentOutOfRangeException(nameof(maxTempfiles), "maxTempFiles must be >= 2"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             this.ramBufferSize = ramBufferSize;
@@ -622,12 +622,10 @@ namespace Lucene.Net.Util
                 {
                     length = (ushort)inputStream.ReadInt16();
                 }
-#pragma warning disable CA1031 // Do not catch general exception types
-                catch (EndOfStreamException)
+                catch (Exception e) when (e.IsEOFException())
                 {
                     return false;
                 }
-#pragma warning restore CA1031 // Do not catch general exception types
 
                 @ref.Grow(length);
                 @ref.Offset = 0;
@@ -650,12 +648,10 @@ namespace Lucene.Net.Util
                 {
                     length = (ushort)inputStream.ReadInt16();
                 }
-#pragma warning disable CA1031 // Do not catch general exception types
-                catch (EndOfStreamException)
+                catch (Exception e) when (e.IsEOFException())
                 {
                     return null;
                 }
-#pragma warning restore CA1031 // Do not catch general exception types
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0, "Sanity: sequence length < 0: {0}", length);
                 byte[] result = new byte[length];

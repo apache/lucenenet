@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -195,9 +195,10 @@ namespace Lucene.Net.Util
             OfflineSorter.BufferSize.Megabytes(2047);
             OfflineSorter.BufferSize.Megabytes(1);
 
-            Assert.Throws<ArgumentException>(() => OfflineSorter.BufferSize.Megabytes(2048), "max mb is 2047");
-            Assert.Throws<ArgumentException>(() => OfflineSorter.BufferSize.Megabytes(0), "min mb is 0.5");
-            Assert.Throws<ArgumentException>(() => OfflineSorter.BufferSize.Megabytes(-1), "min mb is 0.5");
+            // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+            Assert.Throws<ArgumentOutOfRangeException>(() => OfflineSorter.BufferSize.Megabytes(2048), "max mb is 2047");
+            Assert.Throws<ArgumentOutOfRangeException>(() => OfflineSorter.BufferSize.Megabytes(0), "min mb is 0.5");
+            Assert.Throws<ArgumentOutOfRangeException>(() => OfflineSorter.BufferSize.Megabytes(-1), "min mb is 0.5");
         }
     }
 }

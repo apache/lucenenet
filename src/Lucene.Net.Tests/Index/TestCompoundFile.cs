@@ -292,16 +292,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestReadAfterClose()
         {
-            try
-            {
-                Demo_FSIndexInputBug(dir, "test");
-            }
-#pragma warning disable 168
-            catch (ObjectDisposedException ode)
-#pragma warning restore 168
-            {
-                // expected
-            }
+            Demo_FSIndexInputBug(dir, "test");
         }
 
         private void Demo_FSIndexInputBug(Directory fsdir, string file)
@@ -336,9 +327,7 @@ namespace Lucene.Net.Index
                 @in.ReadByte();
                 Assert.Fail("expected readByte() to throw exception");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 // expected exception
             }
@@ -568,9 +557,7 @@ namespace Lucene.Net.Index
                 cr.OpenInput("bogus", NewIOContext(Random));
                 Assert.Fail("File not found");
             }
-#pragma warning disable 168
-            catch (Exception e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 /* success */
                 //System.out.println("SUCCESS: File Not Found: " + e);
@@ -594,9 +581,7 @@ namespace Lucene.Net.Index
                 @is.ReadByte();
                 Assert.Fail("Single byte read past end of file");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 /* success */
                 //System.out.println("SUCCESS: single byte read past end of file: " + e);
@@ -608,9 +593,7 @@ namespace Lucene.Net.Index
                 @is.ReadBytes(b, 0, 50);
                 Assert.Fail("Block read past end of file");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 /* success */
                 //System.out.println("SUCCESS: block read past end of file: " + e);

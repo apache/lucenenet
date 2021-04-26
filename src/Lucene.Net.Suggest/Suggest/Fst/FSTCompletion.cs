@@ -161,9 +161,9 @@ namespace Lucene.Net.Search.Suggest.Fst
                 // we want highest weights first.
                 return rootArcs.ToArray();
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
         }
 
@@ -204,10 +204,10 @@ namespace Lucene.Net.Search.Suggest.Fst
                     }
                 }
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 // Should never happen, but anyway.
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
 
             // No match.
@@ -225,7 +225,11 @@ namespace Lucene.Net.Search.Suggest.Fst
         ///         (decreasing) and then alphabetically (UTF-8 codepoint order). </returns>
         public virtual IList<Completion> DoLookup(string key, int num)
         {
-            if (key.Length == 0 || automaton == null)
+            // LUCENENET: Added guard clause for null
+            if (key is null)
+                throw new ArgumentNullException(nameof(key));
+
+            if (key.Length == 0 || automaton is null)
             {
                 return EMPTY_RESULT;
             }
@@ -247,10 +251,10 @@ namespace Lucene.Net.Search.Suggest.Fst
                     return LookupSortedByWeight(keyUtf8, num, false);
                 }
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 // Should never happen, but anyway.
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
         }
 

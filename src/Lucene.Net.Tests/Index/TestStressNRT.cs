@@ -398,11 +398,11 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": FAILED: unexpected exception");
                     Console.WriteLine(e.StackTrace);
-                    throw new Exception(e.Message, e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -523,12 +523,12 @@ namespace Lucene.Net.Index
                         r.DecRef();
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     operations.Value = ((int)-1L);
                     Console.WriteLine(Thread.CurrentThread.Name + ": FAILED: unexpected exception");
                     Console.WriteLine(e.StackTrace);
-                    throw new Exception(e.Message, e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }

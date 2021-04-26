@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             {
                 if (value < 0)
                 {
-                    throw new ArgumentException("Increment must be zero or greater: got " + value);
+                    throw new ArgumentOutOfRangeException(nameof(PositionIncrement), "Increment must be zero or greater: got " + value); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 this.positionIncrement = value;
             }

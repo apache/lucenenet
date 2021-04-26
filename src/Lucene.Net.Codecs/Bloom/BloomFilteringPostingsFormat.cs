@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -114,7 +114,7 @@ namespace Lucene.Net.Codecs.Bloom
         {
             if (_delegatePostingsFormat == null)
             {
-                throw new InvalidOperationException("Error - constructed without a choice of PostingsFormat");
+                throw UnsupportedOperationException.Create("Error - constructed without a choice of PostingsFormat");
             }
             return new BloomFilteredFieldsConsumer(this, _delegatePostingsFormat.FieldsConsumer(state), state);
         }

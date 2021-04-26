@@ -158,9 +158,8 @@
 //                    Assert.IsTrue(c >= newSize, "iteratorSize(" + c + ")>=newSize(" + newSize + ")");
 //                    size = newSize;
 //                }
-//                catch (ThreadInterruptedException)
+//                catch (Exception ie) when (ie.IsInterruptedException())
 //                {
-//                      //LUCENENET NOTE:  If this class is ever uncommented and used, think through weather we really want to be swallowing the exception here.
 //                }
 //            }
 
@@ -268,9 +267,8 @@
 //                    Assert.IsTrue(c >= newSize, "iteratorSize(" + c + ")>=newSize(" + newSize + ")");
 //                    size = newSize;
 //                }
-//                catch (ThreadInterruptedException)
+//                catch (Exception ie) when (ie.IsInterruptedException())
 //                {
-//                      //LUCENENET NOTE:  If this class is ever uncommented and used, think through weather we really want to be swallowing the exception here.
 //                }
 //            }
 //        }

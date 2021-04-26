@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -64,9 +64,9 @@ namespace Lucene.Net.Index
 
         public virtual void AddValue(int docID, BytesRef value)
         {
-            if (value == null)
+            if (value is null)
             {
-                throw new ArgumentException("field \"" + fieldInfo.Name + "\": null value not allowed");
+                throw new ArgumentNullException("field \"" + fieldInfo.Name + "\": null value not allowed"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             if (value.Length > (ByteBlockPool.BYTE_BLOCK_SIZE - 2))
             {

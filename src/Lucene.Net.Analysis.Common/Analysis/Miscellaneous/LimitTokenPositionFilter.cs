@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
 
@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             if (maxTokenPosition < 1)
             {
-                throw new ArgumentException("maxTokenPosition must be greater than zero");
+                throw new ArgumentOutOfRangeException(nameof(maxTokenPosition), "maxTokenPosition must be greater than zero"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.maxTokenPosition = maxTokenPosition;
             this.consumeAllTokens = consumeAllTokens;

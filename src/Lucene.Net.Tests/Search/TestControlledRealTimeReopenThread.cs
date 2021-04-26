@@ -465,10 +465,9 @@ namespace Lucene.Net.Search
                     writer.DeleteDocuments(new TermQuery(new Term("foo", "barista")));
                     manager.MaybeRefresh(); // kick off another reopen so we inc. the internal gen
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    Console.WriteLine(e.ToString());
-                    Console.Write(e.StackTrace);
+                    e.printStackTrace();
                 }
                 finally
                 {
@@ -499,10 +498,10 @@ namespace Lucene.Net.Search
                 {
                     thread.WaitForGeneration(lastGen);
                 }
-                catch (ThreadInterruptedException ie)
+                catch (Exception ie) when (ie.IsInterruptedException())
                 {
                     Thread.CurrentThread.Interrupt();
-                    throw new Exception(ie.Message, ie);
+                    throw RuntimeException.Create(ie);
                 }
                 finished.Value = true;
             }
@@ -555,9 +554,7 @@ namespace Lucene.Net.Search
                 new SearcherManager(w.IndexWriter, false, theEvilOne);
                 fail("didn't hit expected exception");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException ise)
-#pragma warning restore 168
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }
@@ -731,9 +728,9 @@ namespace Lucene.Net.Search
                         assertTrue(SlowFileExists(dir, name));
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.toString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }

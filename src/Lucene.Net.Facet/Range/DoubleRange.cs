@@ -75,7 +75,7 @@ namespace Lucene.Net.Facet.Range
 
             if (double.IsNaN(Min))
             {
-                throw new ArgumentException("min cannot be NaN");
+                throw new ArgumentOutOfRangeException(nameof(minIn), "min cannot be NaN"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (!minInclusive)
             {
@@ -84,7 +84,7 @@ namespace Lucene.Net.Facet.Range
 
             if (double.IsNaN(Max))
             {
-                throw new ArgumentException("max cannot be NaN");
+                throw new ArgumentOutOfRangeException(nameof(maxIn), "max cannot be NaN"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (!maxInclusive)
             {
@@ -169,7 +169,7 @@ namespace Lucene.Net.Facet.Range
                     fastMatchBits = dis.Bits;
                     if (fastMatchBits == null)
                     {
-                        throw new ArgumentException("fastMatchFilter does not implement DocIdSet.bits");
+                        throw new ArgumentException("fastMatchFilter does not implement DocIdSet.Bits");
                     }
                 }
                 else
@@ -227,7 +227,7 @@ namespace Lucene.Net.Facet.Range
 
                 public override DocIdSetIterator GetIterator()
                 {
-                    throw new NotSupportedException("this filter can only be accessed via bits()");
+                    throw UnsupportedOperationException.Create("this filter can only be accessed via Bits");
                 }
             }
         }

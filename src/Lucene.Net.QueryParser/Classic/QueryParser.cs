@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
@@ -157,7 +157,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 if (true) return ret;
             }
-            throw new InvalidOperationException("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public int Modifiers()
@@ -195,7 +195,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 if (true) return ret;
             }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         // This makes sure that there is no garbage after the query string
@@ -207,7 +207,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 if (true) return q;
             }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public Query Query(string field)
@@ -259,7 +259,8 @@ namespace Lucene.Net.QueryParsers.Classic
                 if (true) return firstQuery;
             }
 
-            return GetBooleanQuery(clauses);
+            if (true) return GetBooleanQuery(clauses);
+            throw Error.Create("Missing return statement in function");
         }
 
         public Query Clause(string field)
@@ -327,7 +328,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 if (true) return HandleBoost(q, boost);
             }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public Query Term(string field)
@@ -538,7 +539,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     throw new ParseException();
             }
             { if (true) return HandleBoost(q, boost); }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         private bool Jj_2_1(int xla)

@@ -122,7 +122,7 @@ namespace Lucene.Net.Demo
                 DateTime end = DateTime.UtcNow;
                 Console.WriteLine((end - start).TotalMilliseconds + " total milliseconds");
             }
-            catch (IOException e)
+            catch (Exception e)
             {
                 Console.WriteLine(" caught a " + e.GetType() +
                  "\n with message: " + e.Message);

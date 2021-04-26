@@ -122,9 +122,9 @@ namespace Lucene.Net.Spatial
                 }
                 return new SearchResults(topDocs.TotalHits, results);
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
-                throw new Exception("IOException thrown while executing query", ioe);
+                throw RuntimeException.Create("IOException thrown while executing query", ioe);
             }
         }
 

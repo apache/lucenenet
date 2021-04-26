@@ -298,10 +298,10 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override void SeekExact(long ord)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
-                public override long Ord => throw new NotSupportedException();
+                public override long Ord => throw UnsupportedOperationException.Create();
             }
 
 

@@ -55,7 +55,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 sorter.Add(new BytesRef(new byte[1]));
                 fail("expected contract violation.");
             }
-            catch (InvalidOperationException /*e*/)
+            catch (Exception e) when (e.IsIllegalStateException())
             {
                 // Expected.
             }

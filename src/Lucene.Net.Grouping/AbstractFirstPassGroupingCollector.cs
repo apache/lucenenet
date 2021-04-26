@@ -71,7 +71,7 @@ namespace Lucene.Net.Search.Grouping
         {
             if (topNGroups < 1)
             {
-                throw new ArgumentException("topNGroups must be >= 1 (got " + topNGroups + ")");
+                throw new ArgumentOutOfRangeException("topNGroups must be >= 1 (got " + topNGroups + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             // TODO: allow null groupSort to mean "by relevance",
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search.Grouping
 
             if (groupOffset < 0)
             {
-                throw new ArgumentException("groupOffset must be >= 0 (got " + groupOffset + ")");
+                throw new ArgumentOutOfRangeException("groupOffset must be >= 0 (got " + groupOffset + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             if (groupMap.Count <= groupOffset)

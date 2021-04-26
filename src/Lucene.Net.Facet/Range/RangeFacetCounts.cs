@@ -72,7 +72,7 @@ namespace Lucene.Net.Facet.Range
             }
             if (path.Length != 0)
             {
-                throw new ArgumentException("path.length should be 0");
+                throw new ArgumentException("path.Length should be 0");
             }
             LabelAndValue[] labelValues = new LabelAndValue[m_counts.Length];
             for (int i = 0; i < m_counts.Length; i++)
@@ -85,7 +85,7 @@ namespace Lucene.Net.Facet.Range
         public override float GetSpecificValue(string dim, params string[] path)
         {
             // TODO: should we impl this?
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         public override IList<FacetResult> GetAllDims(int topN)

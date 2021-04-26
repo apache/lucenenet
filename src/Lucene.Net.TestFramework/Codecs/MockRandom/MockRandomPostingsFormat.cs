@@ -50,7 +50,7 @@ namespace Lucene.Net.Codecs.MockRandom
 
             public override int Next(int maxValue)
             {
-                throw new InvalidOperationException("Please use MockRandomPostingsFormat(Random)");
+                throw IllegalStateException.Create("Please use MockRandomPostingsFormat(Random)");
             }
         }
 

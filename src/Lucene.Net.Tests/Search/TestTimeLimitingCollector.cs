@@ -155,7 +155,7 @@ namespace Lucene.Net.Search
                 Search(tlCollector);
                 totalTLCResults = myHc.HitCount();
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 e.printStackTrace();
                 assertTrue("Unexpected exception: " + e, false); //==fail
@@ -205,7 +205,7 @@ namespace Lucene.Net.Search
             {
                 timoutException = x;
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 assertTrue("Unexpected exception: " + e, false); //==fail
             }

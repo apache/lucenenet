@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
                         count++;
                     } while (Environment.TickCount < stopTime);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": exc");
                     Console.WriteLine(e.StackTrace);

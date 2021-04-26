@@ -102,16 +102,16 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             try
             {
                 CultureInfo locale = RunData.Locale;
-                if (locale == null) throw new Exception(
+                if (locale == null) throw RuntimeException.Create(
                     "Locale must be set with the NewLocale task!");
                 Analyzer analyzer = CreateAnalyzer(locale, impl);
                 RunData.Analyzer = analyzer;
                 Console.WriteLine("Changed Analyzer to: "
                     + analyzer.GetType().Name + "(" + locale + ")");
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
-                throw new Exception("Error creating Analyzer: impl=" + impl, e);
+                throw RuntimeException.Create("Error creating Analyzer: impl=" + impl, e);
             }
             return 1;
         }
@@ -136,11 +136,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     //else if (value.Equals("jdk", StringComparison.OrdinalIgnoreCase))
                     //    impl = Implementation.JDK;
                     else
-                        throw new Exception("Unknown parameter " + param);
+                        throw RuntimeException.Create("Unknown parameter " + param);
                 }
                 else
                 {
-                    throw new Exception("Unknown parameter " + param);
+                    throw RuntimeException.Create("Unknown parameter " + param);
                 }
             }
         }

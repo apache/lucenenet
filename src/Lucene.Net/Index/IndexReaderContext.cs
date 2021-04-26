@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
         {
             if (!(this is CompositeReaderContext || this is AtomicReaderContext))
             {
-                throw new Exception("this class should never be extended by custom code!");
+                throw Error.Create("this class should never be extended by custom code!");
             }
             this.Parent = parent;
             this.DocBaseInParent = docBaseInParent;

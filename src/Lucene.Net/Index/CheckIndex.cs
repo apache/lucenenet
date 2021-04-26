@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -518,7 +518,7 @@ namespace Lucene.Net.Index
             {
                 sis.Read(dir);
             }
-            catch (Exception t)
+            catch (Exception t) when (t.IsThrowable())
             {
                 Msg(infoStream, "ERROR: could not read any segments file in directory");
                 result.MissingSegments = true;
@@ -568,7 +568,7 @@ namespace Lucene.Net.Index
             {
                 input = dir.OpenInput(segmentsFileName, IOContext.READ_ONCE);
             }
-            catch (Exception t)
+            catch (Exception t) when (t.IsThrowable())
             {
                 Msg(infoStream, "ERROR: could not open segments file in directory");
                 if (infoStream != null)
@@ -587,7 +587,7 @@ namespace Lucene.Net.Index
             {
                 format = input.ReadInt32();
             }
-            catch (Exception t)
+            catch (Exception t) when (t.IsThrowable())
             {
                 Msg(infoStream, "ERROR: could not read segment file version in directory");
                 if (infoStream != null)
@@ -698,7 +698,7 @@ namespace Lucene.Net.Index
                 string version = info.Info.Version;
                 if (info.Info.DocCount <= 0 && version != null && versionComparer.Compare(version, "4.5") >= 0)
                 {
-                    throw new Exception("illegal number of documents: maxDoc=" + info.Info.DocCount);
+                    throw RuntimeException.Create("illegal number of documents: maxDoc=" + info.Info.DocCount);
                 }
 
                 int toLoseDocCount = info.Info.DocCount;
@@ -766,20 +766,20 @@ namespace Lucene.Net.Index
                     {
                         if (reader.NumDocs != info.Info.DocCount - info.DelCount)
                         {
-                            throw new Exception("delete count mismatch: info=" + (info.Info.DocCount - info.DelCount) + " vs reader=" + reader.NumDocs);
+                            throw RuntimeException.Create("delete count mismatch: info=" + (info.Info.DocCount - info.DelCount) + " vs reader=" + reader.NumDocs);
                         }
                         if ((info.Info.DocCount - reader.NumDocs) > reader.MaxDoc)
                         {
-                            throw new Exception("too many deleted docs: maxDoc()=" + reader.MaxDoc + " vs del count=" + (info.Info.DocCount - reader.NumDocs));
+                            throw RuntimeException.Create("too many deleted docs: maxDoc()=" + reader.MaxDoc + " vs del count=" + (info.Info.DocCount - reader.NumDocs));
                         }
                         if (info.Info.DocCount - numDocs != info.DelCount)
                         {
-                            throw new Exception("delete count mismatch: info=" + info.DelCount + " vs reader=" + (info.Info.DocCount - numDocs));
+                            throw RuntimeException.Create("delete count mismatch: info=" + info.DelCount + " vs reader=" + (info.Info.DocCount - numDocs));
                         }
                         IBits liveDocs = reader.LiveDocs;
                         if (liveDocs == null)
                         {
-                            throw new Exception("segment should have deletions, but liveDocs is null");
+                            throw RuntimeException.Create("segment should have deletions, but liveDocs is null");
                         }
                         else
                         {
@@ -793,7 +793,7 @@ namespace Lucene.Net.Index
                             }
                             if (numLive != numDocs)
                             {
-                                throw new Exception("liveDocs count mismatch: info=" + numDocs + ", vs bits=" + numLive);
+                                throw RuntimeException.Create("liveDocs count mismatch: info=" + numDocs + ", vs bits=" + numLive);
                             }
                         }
 
@@ -804,7 +804,7 @@ namespace Lucene.Net.Index
                     {
                         if (info.DelCount != 0)
                         {
-                            throw new Exception("delete count mismatch: info=" + info.DelCount + " vs reader=" + (info.Info.DocCount - numDocs));
+                            throw RuntimeException.Create("delete count mismatch: info=" + info.DelCount + " vs reader=" + (info.Info.DocCount - numDocs));
                         }
                         IBits liveDocs = reader.LiveDocs;
                         if (liveDocs != null)
@@ -814,7 +814,7 @@ namespace Lucene.Net.Index
                             {
                                 if (!liveDocs.Get(j))
                                 {
-                                    throw new Exception("liveDocs mismatch: info says no deletions but doc " + j + " is deleted.");
+                                    throw RuntimeException.Create("liveDocs mismatch: info says no deletions but doc " + j + " is deleted.");
                                 }
                             }
                         }
@@ -822,7 +822,7 @@ namespace Lucene.Net.Index
                     }
                     if (reader.MaxDoc != info.Info.DocCount)
                     {
-                        throw new Exception("SegmentReader.maxDoc() " + reader.MaxDoc + " != SegmentInfos.docCount " + info.Info.DocCount);
+                        throw RuntimeException.Create("SegmentReader.MaxDoc " + reader.MaxDoc + " != SegmentInfos.docCount " + info.Info.DocCount);
                     }
 
                     // Test getFieldInfos()
@@ -852,28 +852,28 @@ namespace Lucene.Net.Index
                     //  this will cause stats for failed segments to be incremented properly
                     if (segInfoStat.FieldNormStatus.Error != null)
                     {
-                        throw new Exception("Field Norm test failed");
+                        throw RuntimeException.Create("Field Norm test failed");
                     }
                     else if (segInfoStat.TermIndexStatus.Error != null)
                     {
-                        throw new Exception("Term Index test failed");
+                        throw RuntimeException.Create("Term Index test failed");
                     }
                     else if (segInfoStat.StoredFieldStatus.Error != null)
                     {
-                        throw new Exception("Stored Field test failed");
+                        throw RuntimeException.Create("Stored Field test failed");
                     }
                     else if (segInfoStat.TermVectorStatus.Error != null)
                     {
-                        throw new Exception("Term Vector test failed");
+                        throw RuntimeException.Create("Term Vector test failed");
                     }
                     else if (segInfoStat.DocValuesStatus.Error != null)
                     {
-                        throw new Exception("DocValues test failed");
+                        throw RuntimeException.Create("DocValues test failed");
                     }
 
                     Msg(infoStream, "");
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     Msg(infoStream, "FAILED");
                     string comment;
@@ -885,7 +885,6 @@ namespace Lucene.Net.Index
                         // the message. We can't get the error type with StackTrace, we
                         // need ToString() for that.
                         infoStream.WriteLine(t.ToString());
-                        //infoStream.WriteLine(t.StackTrace);
                     }
                     Msg(infoStream, "");
                     result.TotLoseDocCount += toLoseDocCount;
@@ -961,14 +960,14 @@ namespace Lucene.Net.Index
 #pragma warning restore 612, 618
                         if (reader.GetNormValues(info.Name) != null)
                         {
-                            throw new Exception("field: " + info.Name + " should omit norms but has them!");
+                            throw RuntimeException.Create("field: " + info.Name + " should omit norms but has them!");
                         }
                     }
                 }
 
                 Msg(infoStream, "OK [" + status.TotFields + " fields]");
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsThrowable())
             {
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
@@ -1012,7 +1011,7 @@ namespace Lucene.Net.Index
                 // MultiFieldsEnum relies upon this order...
                 if (lastField != null && field.CompareToOrdinal(lastField) <= 0)
                 {
-                    throw new Exception("fields out of order: lastField=" + lastField + " field=" + field);
+                    throw RuntimeException.Create("fields out of order: lastField=" + lastField + " field=" + field);
                 }
                 lastField = field;
 
@@ -1021,11 +1020,11 @@ namespace Lucene.Net.Index
                 FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
                 if (fieldInfo == null)
                 {
-                    throw new Exception("fieldsEnum inconsistent with fieldInfos, no fieldInfos for: " + field);
+                    throw RuntimeException.Create("fieldsEnum inconsistent with fieldInfos, no fieldInfos for: " + field);
                 }
                 if (!fieldInfo.IsIndexed)
                 {
-                    throw new Exception("fieldsEnum inconsistent with fieldInfos, isIndexed == false for: " + field);
+                    throw RuntimeException.Create("fieldsEnum inconsistent with fieldInfos, isIndexed == false for: " + field);
                 }
 
                 // TODO: really the codec should not return a field
@@ -1051,14 +1050,14 @@ namespace Lucene.Net.Index
 
                 if (hasFreqs != expectedHasFreqs)
                 {
-                    throw new Exception("field \"" + field + "\" should have hasFreqs=" + expectedHasFreqs + " but got " + hasFreqs);
+                    throw RuntimeException.Create("field \"" + field + "\" should have hasFreqs=" + expectedHasFreqs + " but got " + hasFreqs);
                 }
 
                 if (hasFreqs == false)
                 {
                     if (terms.SumTotalTermFreq != -1)
                     {
-                        throw new Exception("field \"" + field + "\" hasFreqs is false, but Terms.getSumTotalTermFreq()=" + terms.SumTotalTermFreq + " (should be -1)");
+                        throw RuntimeException.Create("field \"" + field + "\" hasFreqs is false, but Terms.getSumTotalTermFreq()=" + terms.SumTotalTermFreq + " (should be -1)");
                     }
                 }
 
@@ -1068,20 +1067,20 @@ namespace Lucene.Net.Index
                     bool expectedHasPositions = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
                     if (hasPositions != expectedHasPositions)
                     {
-                        throw new Exception("field \"" + field + "\" should have hasPositions=" + expectedHasPositions + " but got " + hasPositions);
+                        throw RuntimeException.Create("field \"" + field + "\" should have hasPositions=" + expectedHasPositions + " but got " + hasPositions);
                     }
 
                     bool expectedHasPayloads = fieldInfo.HasPayloads;
                     if (hasPayloads != expectedHasPayloads)
                     {
-                        throw new Exception("field \"" + field + "\" should have hasPayloads=" + expectedHasPayloads + " but got " + hasPayloads);
+                        throw RuntimeException.Create("field \"" + field + "\" should have hasPayloads=" + expectedHasPayloads + " but got " + hasPayloads);
                     }
 
                     // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
                     bool expectedHasOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                     if (hasOffsets != expectedHasOffsets)
                     {
-                        throw new Exception("field \"" + field + "\" should have hasOffsets=" + expectedHasOffsets + " but got " + hasOffsets);
+                        throw RuntimeException.Create("field \"" + field + "\" should have hasOffsets=" + expectedHasOffsets + " but got " + hasOffsets);
                     }
                 }
 
@@ -1113,7 +1112,7 @@ namespace Lucene.Net.Index
                     {
                         if (termComp.Compare(lastTerm, term) >= 0)
                         {
-                            throw new Exception("terms out of order: lastTerm=" + lastTerm + " term=" + term);
+                            throw RuntimeException.Create("terms out of order: lastTerm=" + lastTerm + " term=" + term);
                         }
                         lastTerm.CopyBytes(term);
                     }
@@ -1121,7 +1120,7 @@ namespace Lucene.Net.Index
                     int docFreq = termsEnum.DocFreq;
                     if (docFreq <= 0)
                     {
-                        throw new Exception("docfreq: " + docFreq + " is out of bounds");
+                        throw RuntimeException.Create("docfreq: " + docFreq + " is out of bounds");
                     }
                     sumDocFreq += docFreq;
 
@@ -1132,7 +1131,7 @@ namespace Lucene.Net.Index
                     {
                         if (termsEnum.TotalTermFreq != -1)
                         {
-                            throw new Exception("field \"" + field + "\" hasFreqs is false, but TermsEnum.totalTermFreq()=" + termsEnum.TotalTermFreq + " (should be -1)");
+                            throw RuntimeException.Create("field \"" + field + "\" hasFreqs is false, but TermsEnum.totalTermFreq()=" + termsEnum.TotalTermFreq + " (should be -1)");
                         }
                     }
 
@@ -1143,9 +1142,7 @@ namespace Lucene.Net.Index
                         {
                             ord = termsEnum.Ord;
                         }
-#pragma warning disable 168
-                        catch (NotSupportedException uoe)
-#pragma warning restore 168
+                        catch (Exception uoe) when (uoe.IsUnsupportedOperationException())
                         {
                             hasOrd = false;
                         }
@@ -1155,7 +1152,7 @@ namespace Lucene.Net.Index
                             long ordExpected = status.DelTermCount + status.TermCount - termCountStart;
                             if (ord != ordExpected)
                             {
-                                throw new Exception("ord mismatch: TermsEnum has ord=" + ord + " vs actual=" + ordExpected);
+                                throw RuntimeException.Create("ord mismatch: TermsEnum has ord=" + ord + " vs actual=" + ordExpected);
                             }
                         }
                     }
@@ -1188,7 +1185,7 @@ namespace Lucene.Net.Index
                             freq = docs2.Freq;
                             if (freq <= 0)
                             {
-                                throw new Exception("term " + term + ": doc " + doc + ": freq " + freq + " is out of bounds");
+                                throw RuntimeException.Create("term " + term + ": doc " + doc + ": freq " + freq + " is out of bounds");
                             }
                             status.TotPos += freq;
                             totalTermFreq += freq;
@@ -1200,18 +1197,18 @@ namespace Lucene.Net.Index
                             // 1:
                             if (docs2.Freq != 1)
                             {
-                                throw new Exception("term " + term + ": doc " + doc + ": freq " + freq + " != 1 when Terms.hasFreqs() is false");
+                                throw RuntimeException.Create("term " + term + ": doc " + doc + ": freq " + freq + " != 1 when Terms.hasFreqs() is false");
                             }
                         }
                         docCount++;
 
                         if (doc <= lastDoc)
                         {
-                            throw new Exception("term " + term + ": doc " + doc + " <= lastDoc " + lastDoc);
+                            throw RuntimeException.Create("term " + term + ": doc " + doc + " <= lastDoc " + lastDoc);
                         }
                         if (doc >= maxDoc)
                         {
-                            throw new Exception("term " + term + ": doc " + doc + " >= maxDoc " + maxDoc);
+                            throw RuntimeException.Create("term " + term + ": doc " + doc + " >= maxDoc " + maxDoc);
                         }
 
                         lastDoc = doc;
@@ -1226,11 +1223,11 @@ namespace Lucene.Net.Index
 
                                 if (pos < 0)
                                 {
-                                    throw new Exception("term " + term + ": doc " + doc + ": pos " + pos + " is out of bounds");
+                                    throw RuntimeException.Create("term " + term + ": doc " + doc + ": pos " + pos + " is out of bounds");
                                 }
                                 if (pos < lastPos)
                                 {
-                                    throw new Exception("term " + term + ": doc " + doc + ": pos " + pos + " < lastPos " + lastPos);
+                                    throw RuntimeException.Create("term " + term + ": doc " + doc + ": pos " + pos + " < lastPos " + lastPos);
                                 }
                                 lastPos = pos;
                                 BytesRef payload = postings.GetPayload();
@@ -1240,7 +1237,7 @@ namespace Lucene.Net.Index
                                     if (Debugging.AssertsEnabled) Debugging.Assert(payload.IsValid());
                                     if (payload.Length < 1)
                                     {
-                                        throw new Exception("term " + term + ": doc " + doc + ": pos " + pos + " payload length is out of bounds " + payload.Length);
+                                        throw RuntimeException.Create("term " + term + ": doc " + doc + ": pos " + pos + " payload length is out of bounds " + payload.Length);
                                     }
                                 }
                                 if (hasOffsets)
@@ -1253,19 +1250,19 @@ namespace Lucene.Net.Index
                                     {
                                         if (startOffset < 0)
                                         {
-                                            throw new Exception("term " + term + ": doc " + doc + ": pos " + pos + ": startOffset " + startOffset + " is out of bounds");
+                                            throw RuntimeException.Create("term " + term + ": doc " + doc + ": pos " + pos + ": startOffset " + startOffset + " is out of bounds");
                                         }
                                         if (startOffset < lastOffset)
                                         {
-                                            throw new Exception("term " + term + ": doc " + doc + ": pos " + pos + ": startOffset " + startOffset + " < lastStartOffset " + lastOffset);
+                                            throw RuntimeException.Create("term " + term + ": doc " + doc + ": pos " + pos + ": startOffset " + startOffset + " < lastStartOffset " + lastOffset);
                                         }
                                         if (endOffset < 0)
                                         {
-                                            throw new Exception("term " + term + ": doc " + doc + ": pos " + pos + ": endOffset " + endOffset + " is out of bounds");
+                                            throw RuntimeException.Create("term " + term + ": doc " + doc + ": pos " + pos + ": endOffset " + endOffset + " is out of bounds");
                                         }
                                         if (endOffset < startOffset)
                                         {
-                                            throw new Exception("term " + term + ": doc " + doc + ": pos " + pos + ": endOffset " + endOffset + " < startOffset " + startOffset);
+                                            throw RuntimeException.Create("term " + term + ": doc " + doc + ": pos " + pos + ": endOffset " + endOffset + " < startOffset " + startOffset);
                                         }
                                     }
                                     lastOffset = startOffset;
@@ -1316,18 +1313,18 @@ namespace Lucene.Net.Index
 
                     if (docCount != docFreq)
                     {
-                        throw new Exception("term " + term + " docFreq=" + docFreq + " != tot docs w/o deletions " + docCount);
+                        throw RuntimeException.Create("term " + term + " docFreq=" + docFreq + " != tot docs w/o deletions " + docCount);
                     }
                     if (hasTotalTermFreq)
                     {
                         if (totalTermFreq2 <= 0)
                         {
-                            throw new Exception("totalTermFreq: " + totalTermFreq2 + " is out of bounds");
+                            throw RuntimeException.Create("totalTermFreq: " + totalTermFreq2 + " is out of bounds");
                         }
                         sumTotalTermFreq += totalTermFreq;
                         if (totalTermFreq != totalTermFreq2)
                         {
-                            throw new Exception("term " + term + " totalTermFreq=" + totalTermFreq2 + " != recomputed totalTermFreq=" + totalTermFreq);
+                            throw RuntimeException.Create("term " + term + " totalTermFreq=" + totalTermFreq2 + " != recomputed totalTermFreq=" + totalTermFreq);
                         }
                     }
 
@@ -1347,12 +1344,12 @@ namespace Lucene.Net.Index
                             {
                                 if (docID < skipDocID)
                                 {
-                                    throw new Exception("term " + term + ": advance(docID=" + skipDocID + ") returned docID=" + docID);
+                                    throw RuntimeException.Create("term " + term + ": advance(docID=" + skipDocID + ") returned docID=" + docID);
                                 }
                                 int freq = postings.Freq;
                                 if (freq <= 0)
                                 {
-                                    throw new Exception("termFreq " + freq + " is out of bounds");
+                                    throw RuntimeException.Create("termFreq " + freq + " is out of bounds");
                                 }
                                 int lastPosition = -1;
                                 int lastOffset = 0;
@@ -1362,11 +1359,11 @@ namespace Lucene.Net.Index
 
                                     if (pos < 0)
                                     {
-                                        throw new Exception("position " + pos + " is out of bounds");
+                                        throw RuntimeException.Create("position " + pos + " is out of bounds");
                                     }
                                     if (pos < lastPosition)
                                     {
-                                        throw new Exception("position " + pos + " is < lastPosition " + lastPosition);
+                                        throw RuntimeException.Create("position " + pos + " is < lastPosition " + lastPosition);
                                     }
                                     lastPosition = pos;
                                     if (hasOffsets)
@@ -1379,19 +1376,19 @@ namespace Lucene.Net.Index
                                         {
                                             if (startOffset < 0)
                                             {
-                                                throw new Exception("term " + term + ": doc " + docID + ": pos " + pos + ": startOffset " + startOffset + " is out of bounds");
+                                                throw RuntimeException.Create("term " + term + ": doc " + docID + ": pos " + pos + ": startOffset " + startOffset + " is out of bounds");
                                             }
                                             if (startOffset < lastOffset)
                                             {
-                                                throw new Exception("term " + term + ": doc " + docID + ": pos " + pos + ": startOffset " + startOffset + " < lastStartOffset " + lastOffset);
+                                                throw RuntimeException.Create("term " + term + ": doc " + docID + ": pos " + pos + ": startOffset " + startOffset + " < lastStartOffset " + lastOffset);
                                             }
                                             if (endOffset < 0)
                                             {
-                                                throw new Exception("term " + term + ": doc " + docID + ": pos " + pos + ": endOffset " + endOffset + " is out of bounds");
+                                                throw RuntimeException.Create("term " + term + ": doc " + docID + ": pos " + pos + ": endOffset " + endOffset + " is out of bounds");
                                             }
                                             if (endOffset < startOffset)
                                             {
-                                                throw new Exception("term " + term + ": doc " + docID + ": pos " + pos + ": endOffset " + endOffset + " < startOffset " + startOffset);
+                                                throw RuntimeException.Create("term " + term + ": doc " + docID + ": pos " + pos + ": endOffset " + endOffset + " < startOffset " + startOffset);
                                             }
                                         }
                                         lastOffset = startOffset;
@@ -1405,7 +1402,7 @@ namespace Lucene.Net.Index
                                 }
                                 if (nextDocID <= docID)
                                 {
-                                    throw new Exception("term " + term + ": Advance(docID=" + skipDocID + "), then .Next() returned docID=" + nextDocID + " vs prev docID=" + docID);
+                                    throw RuntimeException.Create("term " + term + ": Advance(docID=" + skipDocID + "), then .Next() returned docID=" + nextDocID + " vs prev docID=" + docID);
                                 }
                             }
                         }
@@ -1425,7 +1422,7 @@ namespace Lucene.Net.Index
                             {
                                 if (docID < skipDocID)
                                 {
-                                    throw new Exception("term " + term + ": Advance(docID=" + skipDocID + ") returned docID=" + docID);
+                                    throw RuntimeException.Create("term " + term + ": Advance(docID=" + skipDocID + ") returned docID=" + docID);
                                 }
                                 int nextDocID = docs.NextDoc();
                                 if (nextDocID == DocIdSetIterator.NO_MORE_DOCS)
@@ -1434,7 +1431,7 @@ namespace Lucene.Net.Index
                                 }
                                 if (nextDocID <= docID)
                                 {
-                                    throw new Exception("term " + term + ": Advance(docID=" + skipDocID + "), then .Next() returned docID=" + nextDocID + " vs prev docID=" + docID);
+                                    throw RuntimeException.Create("term " + term + ": Advance(docID=" + skipDocID + "), then .Next() returned docID=" + nextDocID + " vs prev docID=" + docID);
                                 }
                             }
                         }
@@ -1468,7 +1465,7 @@ namespace Lucene.Net.Index
                         long v = fields.GetTerms(field).SumTotalTermFreq;
                         if (v != -1 && sumTotalTermFreq != v)
                         {
-                            throw new Exception("sumTotalTermFreq for field " + field + "=" + v + " != recomputed sumTotalTermFreq=" + sumTotalTermFreq);
+                            throw RuntimeException.Create("sumTotalTermFreq for field " + field + "=" + v + " != recomputed sumTotalTermFreq=" + sumTotalTermFreq);
                         }
                     }
 
@@ -1477,7 +1474,7 @@ namespace Lucene.Net.Index
                         long v = fields.GetTerms(field).SumDocFreq;
                         if (v != -1 && sumDocFreq != v)
                         {
-                            throw new Exception("sumDocFreq for field " + field + "=" + v + " != recomputed sumDocFreq=" + sumDocFreq);
+                            throw RuntimeException.Create("sumDocFreq for field " + field + "=" + v + " != recomputed sumDocFreq=" + sumDocFreq);
                         }
                     }
 
@@ -1486,7 +1483,7 @@ namespace Lucene.Net.Index
                         int v = fieldTerms.DocCount;
                         if (v != -1 && visitedDocs.Cardinality() != v)
                         {
-                            throw new Exception("docCount for field " + field + "=" + v + " != recomputed docCount=" + visitedDocs.Cardinality());
+                            throw RuntimeException.Create("docCount for field " + field + "=" + v + " != recomputed docCount=" + visitedDocs.Cardinality());
                         }
                     }
 
@@ -1495,7 +1492,7 @@ namespace Lucene.Net.Index
                     {
                         if (termsEnum.SeekCeil(lastTerm) != TermsEnum.SeekStatus.FOUND)
                         {
-                            throw new Exception("seek to last term " + lastTerm + " failed");
+                            throw RuntimeException.Create("seek to last term " + lastTerm + " failed");
                         }
 
                         int expectedDocFreq = termsEnum.DocFreq;
@@ -1507,7 +1504,7 @@ namespace Lucene.Net.Index
                         }
                         if (docFreq != expectedDocFreq)
                         {
-                            throw new Exception("docFreq for last term " + lastTerm + "=" + expectedDocFreq + " != recomputed docFreq=" + docFreq);
+                            throw RuntimeException.Create("docFreq for last term " + lastTerm + "=" + expectedDocFreq + " != recomputed docFreq=" + docFreq);
                         }
                     }
 
@@ -1520,7 +1517,7 @@ namespace Lucene.Net.Index
 
                         if (termCount != -1 && termCount != status.DelTermCount + status.TermCount - termCountStart)
                         {
-                            throw new Exception("termCount mismatch " + (status.DelTermCount + termCount) + " vs " + (status.TermCount - termCountStart));
+                            throw RuntimeException.Create("termCount mismatch " + (status.DelTermCount + termCount) + " vs " + (status.TermCount - termCountStart));
                         }
                     }
 
@@ -1546,13 +1543,13 @@ namespace Lucene.Net.Index
                             {
                                 if (termsEnum.SeekCeil(seekTerms[i]) != TermsEnum.SeekStatus.FOUND)
                                 {
-                                    throw new Exception("seek to existing term " + seekTerms[i] + " failed");
+                                    throw RuntimeException.Create("seek to existing term " + seekTerms[i] + " failed");
                                 }
 
                                 docs = termsEnum.Docs(liveDocs, docs, DocsFlags.NONE);
                                 if (docs == null)
                                 {
-                                    throw new Exception("null DocsEnum from to existing term " + seekTerms[i]);
+                                    throw RuntimeException.Create("null DocsEnum from to existing term " + seekTerms[i]);
                                 }
 
                                 while (docs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
@@ -1567,14 +1564,14 @@ namespace Lucene.Net.Index
                             {
                                 if (!termsEnum.SeekExact(seekTerms[i]))
                                 {
-                                    throw new Exception("seek to existing term " + seekTerms[i] + " failed");
+                                    throw RuntimeException.Create("seek to existing term " + seekTerms[i] + " failed");
                                 }
 
                                 totDocFreq += termsEnum.DocFreq;
                                 docs = termsEnum.Docs(null, docs, DocsFlags.NONE);
                                 if (docs == null)
                                 {
-                                    throw new Exception("null DocsEnum from to existing term " + seekTerms[i]);
+                                    throw RuntimeException.Create("null DocsEnum from to existing term " + seekTerms[i]);
                                 }
 
                                 while (docs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
@@ -1585,12 +1582,12 @@ namespace Lucene.Net.Index
 
                             if (totDocCount > totDocCountNoDeletes)
                             {
-                                throw new Exception("more postings with deletes=" + totDocCount + " than without=" + totDocCountNoDeletes);
+                                throw RuntimeException.Create("more postings with deletes=" + totDocCount + " than without=" + totDocCountNoDeletes);
                             }
 
                             if (totDocCountNoDeletes != totDocFreq)
                             {
-                                throw new Exception("docfreqs=" + totDocFreq + " != recomputed docfreqs=" + totDocCountNoDeletes);
+                                throw RuntimeException.Create("docfreqs=" + totDocFreq + " != recomputed docfreqs=" + totDocCountNoDeletes);
                             }
                         }
                     }
@@ -1603,11 +1600,11 @@ namespace Lucene.Net.Index
             {
                 if (fieldCount < 0)
                 {
-                    throw new Exception("invalid fieldCount: " + fieldCount);
+                    throw RuntimeException.Create("invalid fieldCount: " + fieldCount);
                 }
                 if (fieldCount != computedFieldCount)
                 {
-                    throw new Exception("fieldCount mismatch " + fieldCount + " vs recomputed field count " + computedFieldCount);
+                    throw RuntimeException.Create("fieldCount mismatch " + fieldCount + " vs recomputed field count " + computedFieldCount);
                 }
             }
 
@@ -1620,7 +1617,7 @@ namespace Lucene.Net.Index
 
             if (uniqueTermCountAllFields != -1 && status.TermCount + status.DelTermCount != uniqueTermCountAllFields)
             {
-                throw new Exception("termCount mismatch " + uniqueTermCountAllFields + " vs " + (status.TermCount + status.DelTermCount));
+                throw RuntimeException.Create("termCount mismatch " + uniqueTermCountAllFields + " vs " + (status.TermCount + status.DelTermCount));
             }
 
             if (doPrint)
@@ -1683,7 +1680,7 @@ namespace Lucene.Net.Index
                     CheckFields(fields, null, maxDoc, fieldInfos, true, false, infoStream, verbose);
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsThrowable())
             {
                 Msg(infoStream, "ERROR: " + e);
                 status = new Status.TermIndexStatus();
@@ -1734,12 +1731,12 @@ namespace Lucene.Net.Index
                 // Validate docCount
                 if (status.DocCount != reader.NumDocs)
                 {
-                    throw new Exception("docCount=" + status.DocCount + " but saw " + status.DocCount + " undeleted docs");
+                    throw RuntimeException.Create("docCount=" + status.DocCount + " but saw " + status.DocCount + " undeleted docs");
                 }
 
                 Msg(infoStream, "OK [" + status.TotFields + " total field count; avg " + ((((float)status.TotFields) / status.DocCount)).ToString(CultureInfo.InvariantCulture.NumberFormat) + " fields per doc]");
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsThrowable())
             {
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
@@ -1781,14 +1778,14 @@ namespace Lucene.Net.Index
                     {
                         if (reader.GetBinaryDocValues(fieldInfo.Name) != null || reader.GetNumericDocValues(fieldInfo.Name) != null || reader.GetSortedDocValues(fieldInfo.Name) != null || reader.GetSortedSetDocValues(fieldInfo.Name) != null || reader.GetDocsWithField(fieldInfo.Name) != null)
                         {
-                            throw new Exception("field: " + fieldInfo.Name + " has docvalues but should omit them!");
+                            throw RuntimeException.Create("field: " + fieldInfo.Name + " has docvalues but should omit them!");
                         }
                     }
                 }
 
                 Msg(infoStream, "OK [" + status.TotalValueFields + " docvalues fields; " + status.TotalBinaryFields + " BINARY; " + status.TotalNumericFields + " NUMERIC; " + status.TotalSortedFields + " SORTED; " + status.TotalSortedSetFields + " SORTED_SET]");
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsThrowable())
             {
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
@@ -1813,7 +1810,7 @@ namespace Lucene.Net.Index
                 if (Debugging.AssertsEnabled) Debugging.Assert(scratch.IsValid());
                 if (docsWithField.Get(i) == false && scratch.Length > 0)
                 {
-                    throw new Exception("dv for field: " + fieldName + " is missing but has value=" + scratch + " for doc: " + i);
+                    throw RuntimeException.Create("dv for field: " + fieldName + " is missing but has value=" + scratch + " for doc: " + i);
                 }
             }
         }
@@ -1831,18 +1828,18 @@ namespace Lucene.Net.Index
                 {
                     if (docsWithField.Get(i))
                     {
-                        throw new Exception("dv for field: " + fieldName + " has -1 ord but is not marked missing for doc: " + i);
+                        throw RuntimeException.Create("dv for field: " + fieldName + " has -1 ord but is not marked missing for doc: " + i);
                     }
                 }
                 else if (ord < -1 || ord > maxOrd)
                 {
-                    throw new Exception("ord out of bounds: " + ord);
+                    throw RuntimeException.Create("ord out of bounds: " + ord);
                 }
                 else
                 {
                     if (!docsWithField.Get(i))
                     {
-                        throw new Exception("dv for field: " + fieldName + " is missing but has ord=" + ord + " for doc: " + i);
+                        throw RuntimeException.Create("dv for field: " + fieldName + " is missing but has ord=" + ord + " for doc: " + i);
                     }
                     maxOrd2 = Math.Max(maxOrd2, ord);
                     seenOrds.Set(ord);
@@ -1850,11 +1847,11 @@ namespace Lucene.Net.Index
             }
             if (maxOrd != maxOrd2)
             {
-                throw new Exception("dv for field: " + fieldName + " reports wrong maxOrd=" + maxOrd + " but this is not the case: " + maxOrd2);
+                throw RuntimeException.Create("dv for field: " + fieldName + " reports wrong maxOrd=" + maxOrd + " but this is not the case: " + maxOrd2);
             }
             if (seenOrds.Cardinality() != dv.ValueCount)
             {
-                throw new Exception("dv for field: " + fieldName + " has holes in its ords, ValueCount=" + dv.ValueCount + " but only used: " + seenOrds.Cardinality());
+                throw RuntimeException.Create("dv for field: " + fieldName + " has holes in its ords, ValueCount=" + dv.ValueCount + " but only used: " + seenOrds.Cardinality());
             }
             BytesRef lastValue = null;
             BytesRef scratch = new BytesRef();
@@ -1866,7 +1863,7 @@ namespace Lucene.Net.Index
                 {
                     if (scratch.CompareTo(lastValue) <= 0)
                     {
-                        throw new Exception("dv for field: " + fieldName + " has ords out of order: " + lastValue + " >=" + scratch);
+                        throw RuntimeException.Create("dv for field: " + fieldName + " has ords out of order: " + lastValue + " >=" + scratch);
                     }
                 }
                 lastValue = BytesRef.DeepCopyOf(scratch);
@@ -1890,18 +1887,18 @@ namespace Lucene.Net.Index
                     {
                         if (ord <= lastOrd)
                         {
-                            throw new Exception("ords out of order: " + ord + " <= " + lastOrd + " for doc: " + i);
+                            throw RuntimeException.Create("ords out of order: " + ord + " <= " + lastOrd + " for doc: " + i);
                         }
                         if (ord < 0 || ord > maxOrd)
                         {
-                            throw new Exception("ord out of bounds: " + ord);
+                            throw RuntimeException.Create("ord out of bounds: " + ord);
                         }
                         if (dv is RandomAccessOrds randomAccessOrds2)
                         {
                             long ord2 = randomAccessOrds2.OrdAt(ordCount);
                             if (ord != ord2)
                             {
-                                throw new Exception("ordAt(" + ordCount + ") inconsistent, expected=" + ord + ",got=" + ord2 + " for doc: " + i);
+                                throw RuntimeException.Create("OrdAt(" + ordCount + ") inconsistent, expected=" + ord + ",got=" + ord2 + " for doc: " + i);
                             }
                         }
                         lastOrd = ord;
@@ -1911,14 +1908,14 @@ namespace Lucene.Net.Index
                     }
                     if (ordCount == 0)
                     {
-                        throw new Exception("dv for field: " + fieldName + " has no ordinals but is not marked missing for doc: " + i);
+                        throw RuntimeException.Create("dv for field: " + fieldName + " has no ordinals but is not marked missing for doc: " + i);
                     }
                     if (dv is RandomAccessOrds randomAccessOrds)
                     {
                         long ordCount2 = randomAccessOrds.Cardinality();
                         if (ordCount != ordCount2)
                         {
-                            throw new Exception("cardinality inconsistent, expected=" + ordCount + ",got=" + ordCount2 + " for doc: " + i);
+                            throw RuntimeException.Create("cardinality inconsistent, expected=" + ordCount + ",got=" + ordCount2 + " for doc: " + i);
                         }
                     }
                 }
@@ -1927,25 +1924,25 @@ namespace Lucene.Net.Index
                     long o = dv.NextOrd();
                     if (o != SortedSetDocValues.NO_MORE_ORDS)
                     {
-                        throw new Exception("dv for field: " + fieldName + " is marked missing but has ord=" + o + " for doc: " + i);
+                        throw RuntimeException.Create("dv for field: " + fieldName + " is marked missing but has ord=" + o + " for doc: " + i);
                     }
                     if (dv is RandomAccessOrds randomAccessOrds)
                     {
                         long ordCount2 = randomAccessOrds.Cardinality();
                         if (ordCount2 != 0)
                         {
-                            throw new Exception("dv for field: " + fieldName + " is marked missing but has cardinality " + ordCount2 + " for doc: " + i);
+                            throw RuntimeException.Create("dv for field: " + fieldName + " is marked missing but has cardinality " + ordCount2 + " for doc: " + i);
                         }
                     }
                 }
             }
             if (maxOrd != maxOrd2)
             {
-                throw new Exception("dv for field: " + fieldName + " reports wrong maxOrd=" + maxOrd + " but this is not the case: " + maxOrd2);
+                throw RuntimeException.Create("dv for field: " + fieldName + " reports wrong maxOrd=" + maxOrd + " but this is not the case: " + maxOrd2);
             }
             if (seenOrds.Cardinality() != dv.ValueCount)
             {
-                throw new Exception("dv for field: " + fieldName + " has holes in its ords, valueCount=" + dv.ValueCount + " but only used: " + seenOrds.Cardinality());
+                throw RuntimeException.Create("dv for field: " + fieldName + " has holes in its ords, valueCount=" + dv.ValueCount + " but only used: " + seenOrds.Cardinality());
             }
 
             BytesRef lastValue = null;
@@ -1958,7 +1955,7 @@ namespace Lucene.Net.Index
                 {
                     if (scratch.CompareTo(lastValue) <= 0)
                     {
-                        throw new Exception("dv for field: " + fieldName + " has ords out of order: " + lastValue + " >=" + scratch);
+                        throw RuntimeException.Create("dv for field: " + fieldName + " has ords out of order: " + lastValue + " >=" + scratch);
                     }
                 }
                 lastValue = BytesRef.DeepCopyOf(scratch);
@@ -1972,7 +1969,7 @@ namespace Lucene.Net.Index
                 long value = ndv.Get(i);
                 if (docsWithField.Get(i) == false && value != 0)
                 {
-                    throw new Exception("dv for field: " + fieldName + " is marked missing but has value=" + value + " for doc: " + i);
+                    throw RuntimeException.Create("dv for field: " + fieldName + " is marked missing but has value=" + value + " for doc: " + i);
                 }
             }
         }
@@ -1982,11 +1979,11 @@ namespace Lucene.Net.Index
             IBits docsWithField = reader.GetDocsWithField(fi.Name);
             if (docsWithField == null)
             {
-                throw new Exception(fi.Name + " docsWithField does not exist");
+                throw RuntimeException.Create(fi.Name + " docsWithField does not exist");
             }
             else if (docsWithField.Length != reader.MaxDoc)
             {
-                throw new Exception(fi.Name + " docsWithField has incorrect length: " + docsWithField.Length + ",expected: " + reader.MaxDoc);
+                throw RuntimeException.Create(fi.Name + " docsWithField has incorrect length: " + docsWithField.Length + ",expected: " + reader.MaxDoc);
             }
             switch (fi.DocValuesType)
             {
@@ -1995,7 +1992,7 @@ namespace Lucene.Net.Index
                     CheckSortedDocValues(fi.Name, reader, reader.GetSortedDocValues(fi.Name), docsWithField);
                     if (reader.GetBinaryDocValues(fi.Name) != null || reader.GetNumericDocValues(fi.Name) != null || reader.GetSortedSetDocValues(fi.Name) != null)
                     {
-                        throw new Exception(fi.Name + " returns multiple docvalues types!");
+                        throw RuntimeException.Create(fi.Name + " returns multiple docvalues types!");
                     }
                     break;
 
@@ -2004,7 +2001,7 @@ namespace Lucene.Net.Index
                     CheckSortedSetDocValues(fi.Name, reader, reader.GetSortedSetDocValues(fi.Name), docsWithField);
                     if (reader.GetBinaryDocValues(fi.Name) != null || reader.GetNumericDocValues(fi.Name) != null || reader.GetSortedDocValues(fi.Name) != null)
                     {
-                        throw new Exception(fi.Name + " returns multiple docvalues types!");
+                        throw RuntimeException.Create(fi.Name + " returns multiple docvalues types!");
                     }
                     break;
 
@@ -2013,7 +2010,7 @@ namespace Lucene.Net.Index
                     CheckBinaryDocValues(fi.Name, reader, reader.GetBinaryDocValues(fi.Name), docsWithField);
                     if (reader.GetNumericDocValues(fi.Name) != null || reader.GetSortedDocValues(fi.Name) != null || reader.GetSortedSetDocValues(fi.Name) != null)
                     {
-                        throw new Exception(fi.Name + " returns multiple docvalues types!");
+                        throw RuntimeException.Create(fi.Name + " returns multiple docvalues types!");
                     }
                     break;
 
@@ -2022,12 +2019,12 @@ namespace Lucene.Net.Index
                     CheckNumericDocValues(fi.Name, reader, reader.GetNumericDocValues(fi.Name), docsWithField);
                     if (reader.GetBinaryDocValues(fi.Name) != null || reader.GetSortedDocValues(fi.Name) != null || reader.GetSortedSetDocValues(fi.Name) != null)
                     {
-                        throw new Exception(fi.Name + " returns multiple docvalues types!");
+                        throw RuntimeException.Create(fi.Name + " returns multiple docvalues types!");
                     }
                     break;
 
                 default:
-                    throw new InvalidOperationException();
+                    throw AssertionError.Create();
             }
         }
 
@@ -2036,11 +2033,11 @@ namespace Lucene.Net.Index
             switch (fi.NormType)
             {
                 case DocValuesType.NUMERIC:
-                    CheckNumericDocValues(fi.Name, reader, reader.GetNormValues(fi.Name), new Lucene.Net.Util.Bits.MatchAllBits(reader.MaxDoc));
+                    CheckNumericDocValues(fi.Name, reader, reader.GetNormValues(fi.Name), new Bits.MatchAllBits(reader.MaxDoc));
                     break;
 
                 default:
-                    throw new InvalidOperationException("wtf: " + fi.NormType);
+                    throw AssertionError.Create("wtf: " + fi.NormType);
             }
         }
 
@@ -2131,7 +2128,7 @@ namespace Lucene.Net.Index
                             FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
                             if (!fieldInfo.HasVectors)
                             {
-                                throw new Exception("docID=" + j + " has term vectors for field=" + field + " but FieldInfo has storeTermVector=false");
+                                throw RuntimeException.Create("docID=" + j + " has term vectors for field=" + field + " but FieldInfo has storeTermVector=false");
                             }
 
                             if (crossCheckTermVectors)
@@ -2146,7 +2143,7 @@ namespace Lucene.Net.Index
                                 Terms postingsTerms = postingsFields.GetTerms(field);
                                 if (postingsTerms == null)
                                 {
-                                    throw new Exception("vector field=" + field + " does not exist in postings; doc=" + j);
+                                    throw RuntimeException.Create("vector field=" + field + " does not exist in postings; doc=" + j);
                                 }
                                 postingsTermsEnum = postingsTerms.GetEnumerator(postingsTermsEnum);
 
@@ -2183,7 +2180,7 @@ namespace Lucene.Net.Index
                                     DocsEnum postingsDocs2;
                                     if (!postingsTermsEnum.SeekExact(term))
                                     {
-                                        throw new Exception("vector term=" + term + " field=" + field + " does not exist in postings; doc=" + j);
+                                        throw RuntimeException.Create("vector term=" + term + " field=" + field + " does not exist in postings; doc=" + j);
                                     }
                                     postingsPostings = postingsTermsEnum.DocsAndPositions(null, postingsPostings);
                                     if (postingsPostings == null)
@@ -2192,7 +2189,7 @@ namespace Lucene.Net.Index
                                         postingsDocs = postingsTermsEnum.Docs(null, postingsDocs);
                                         if (postingsDocs == null)
                                         {
-                                            throw new Exception("vector term=" + term + " field=" + field + " does not exist in postings; doc=" + j);
+                                            throw RuntimeException.Create("vector term=" + term + " field=" + field + " does not exist in postings; doc=" + j);
                                         }
                                     }
 
@@ -2208,14 +2205,14 @@ namespace Lucene.Net.Index
                                     int advanceDoc = postingsDocs2.Advance(j);
                                     if (advanceDoc != j)
                                     {
-                                        throw new Exception("vector term=" + term + " field=" + field + ": doc=" + j + " was not found in postings (got: " + advanceDoc + ")");
+                                        throw RuntimeException.Create("vector term=" + term + " field=" + field + ": doc=" + j + " was not found in postings (got: " + advanceDoc + ")");
                                     }
 
                                     int doc = docs2.NextDoc();
 
                                     if (doc != 0)
                                     {
-                                        throw new Exception("vector for doc " + j + " didn't return docID=0: got docID=" + doc);
+                                        throw RuntimeException.Create("vector for doc " + j + " didn't return docID=0: got docID=" + doc);
                                     }
 
                                     if (postingsHasFreq)
@@ -2223,7 +2220,7 @@ namespace Lucene.Net.Index
                                         int tf = docs2.Freq;
                                         if (postingsHasFreq && postingsDocs2.Freq != tf)
                                         {
-                                            throw new Exception("vector term=" + term + " field=" + field + " doc=" + j + ": freq=" + tf + " differs from postings freq=" + postingsDocs2.Freq);
+                                            throw RuntimeException.Create("vector term=" + term + " field=" + field + " doc=" + j + ": freq=" + tf + " differs from postings freq=" + postingsDocs2.Freq);
                                         }
 
                                         if (hasProx)
@@ -2236,7 +2233,7 @@ namespace Lucene.Net.Index
                                                     int postingsPos = postingsPostings.NextPosition();
                                                     if (terms.HasPositions && pos != postingsPos)
                                                     {
-                                                        throw new Exception("vector term=" + term + " field=" + field + " doc=" + j + ": pos=" + pos + " differs from postings pos=" + postingsPos);
+                                                        throw RuntimeException.Create("vector term=" + term + " field=" + field + " doc=" + j + ": pos=" + pos + " differs from postings pos=" + postingsPos);
                                                     }
                                                 }
 
@@ -2247,10 +2244,10 @@ namespace Lucene.Net.Index
                                                 // TODO: these are too anal...?
                                                 /*
                                                   if (endOffset < startOffset) {
-                                                  throw new RuntimeException("vector startOffset=" + startOffset + " is > endOffset=" + endOffset);
+                                                  throw RuntimeException.Create("vector startOffset=" + startOffset + " is > endOffset=" + endOffset);
                                                   }
                                                   if (startOffset < lastStartOffset) {
-                                                  throw new RuntimeException("vector startOffset=" + startOffset + " is < prior startOffset=" + lastStartOffset);
+                                                  throw RuntimeException.Create("vector startOffset=" + startOffset + " is < prior startOffset=" + lastStartOffset);
                                                   }
                                                   lastStartOffset = startOffset;
                                                 */
@@ -2262,11 +2259,11 @@ namespace Lucene.Net.Index
                                                     int postingsEndOffset = postingsPostings.EndOffset;
                                                     if (startOffset != -1 && postingsStartOffset != -1 && startOffset != postingsStartOffset)
                                                     {
-                                                        throw new Exception("vector term=" + term + " field=" + field + " doc=" + j + ": startOffset=" + startOffset + " differs from postings startOffset=" + postingsStartOffset);
+                                                        throw RuntimeException.Create("vector term=" + term + " field=" + field + " doc=" + j + ": startOffset=" + startOffset + " differs from postings startOffset=" + postingsStartOffset);
                                                     }
                                                     if (endOffset != -1 && postingsEndOffset != -1 && endOffset != postingsEndOffset)
                                                     {
-                                                        throw new Exception("vector term=" + term + " field=" + field + " doc=" + j + ": endOffset=" + endOffset + " differs from postings endOffset=" + postingsEndOffset);
+                                                        throw RuntimeException.Create("vector term=" + term + " field=" + field + " doc=" + j + ": endOffset=" + endOffset + " differs from postings endOffset=" + postingsEndOffset);
                                                     }
                                                 }
 
@@ -2287,7 +2284,7 @@ namespace Lucene.Net.Index
                                                         // postings has payloads too, it should not have one at this position
                                                         if (postingsPostings.GetPayload() != null)
                                                         {
-                                                            throw new Exception("vector term=" + term + " field=" + field + " doc=" + j + " has no payload but postings does: " + postingsPostings.GetPayload());
+                                                            throw RuntimeException.Create("vector term=" + term + " field=" + field + " doc=" + j + " has no payload but postings does: " + postingsPostings.GetPayload());
                                                         }
                                                     }
                                                     else
@@ -2296,12 +2293,12 @@ namespace Lucene.Net.Index
                                                         // postings should also have one at this position, with the same bytes.
                                                         if (postingsPostings.GetPayload() == null)
                                                         {
-                                                            throw new Exception("vector term=" + term + " field=" + field + " doc=" + j + " has payload=" + payload + " but postings does not.");
+                                                            throw RuntimeException.Create("vector term=" + term + " field=" + field + " doc=" + j + " has payload=" + payload + " but postings does not.");
                                                         }
                                                         BytesRef postingsPayload = postingsPostings.GetPayload();
                                                         if (!payload.Equals(postingsPayload))
                                                         {
-                                                            throw new Exception("vector term=" + term + " field=" + field + " doc=" + j + " has payload=" + payload + " but differs from postings payload=" + postingsPayload);
+                                                            throw RuntimeException.Create("vector term=" + term + " field=" + field + " doc=" + j + " has payload=" + payload + " but differs from postings payload=" + postingsPayload);
                                                         }
                                                     }
                                                 }
@@ -2316,7 +2313,7 @@ namespace Lucene.Net.Index
                 float vectorAvg = status.DocCount == 0 ? 0 : status.TotVectors / (float)status.DocCount;
                 Msg(infoStream, "OK [" + status.TotVectors + " total vector count; avg " + vectorAvg.ToString(CultureInfo.InvariantCulture.NumberFormat) + " term/freq vector fields per doc]");
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsThrowable())
             {
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
@@ -2350,6 +2347,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual void FixIndex(Status result)
         {
+            if (result is null)
+                throw new ArgumentNullException(nameof(result)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+
             if (result.Partial)
             {
                 throw new ArgumentException("can only fix an index that was fully checked (this status checked a subset of segments)");
@@ -2509,7 +2509,7 @@ namespace Lucene.Net.Index
                     dir = CommandLineUtil.NewFSDirectory(dirImpl, new DirectoryInfo(indexPath));
                 }
             }
-            catch (Exception t)
+            catch (Exception t) when (t.IsThrowable())
             {
                 // LUCENENET specific - we only output from our CLI wrapper
                 throw new ArgumentException("ERROR: could not open directory \"" + indexPath + "\"; exiting\n" + t.ToString());

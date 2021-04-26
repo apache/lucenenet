@@ -140,7 +140,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                     }
 
                 }
-                catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                catch (Exception e) when (e.IsException())
                 {
                     // do nothing
                 }

@@ -353,7 +353,7 @@ namespace Lucene.Net.Search
                     Assert.AreEqual(mulFactor * collector.TotalHits + NUM_EXTRA_DOCS / 2, hits4.TotalHits);
                 }
             }
-            catch (Exception)
+            catch (Exception e) when (e.IsException())
             {
                 // For easier debugging
                 Console.WriteLine("failed query: " + q1);

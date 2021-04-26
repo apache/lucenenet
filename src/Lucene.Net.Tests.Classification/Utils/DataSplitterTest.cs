@@ -140,13 +140,10 @@ namespace Lucene.Net.Classification
                 if (reader != null)
                     reader.Dispose();
             }
-#pragma warning disable 168
-            catch (Exception e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsException())
             {
                 // do nothing
             }
         }
     }
-
 }

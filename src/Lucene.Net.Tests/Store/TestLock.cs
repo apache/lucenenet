@@ -1,4 +1,5 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using System;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -37,9 +38,7 @@ namespace Lucene.Net.Store
                 @lock.Obtain(Lock.LOCK_POLL_INTERVAL);
                 Assert.Fail("Should have failed to obtain lock");
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIOException())
             {
                 Assert.AreEqual(@lock.LockAttempts, 2, "should attempt to lock more than once");
             }

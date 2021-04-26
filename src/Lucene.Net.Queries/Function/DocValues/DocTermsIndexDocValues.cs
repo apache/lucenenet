@@ -45,7 +45,7 @@ namespace Lucene.Net.Queries.Function.DocValues
             {
                 m_termsIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, field);
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsRuntimeException())
             {
                 throw new DocTermsIndexException(field, e);
             }
@@ -166,20 +166,20 @@ namespace Lucene.Net.Queries.Function.DocValues
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-        public sealed class DocTermsIndexException : Exception
+        public sealed class DocTermsIndexException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
         {
             public DocTermsIndexException(string fieldName, Exception cause)
                 : base("Can't initialize DocTermsIndex to generate (function) FunctionValues for field: " + fieldName, cause)
             {
-            }  
+            }
 
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
-            // For testing
-            public DocTermsIndexException(string message)
+            // LUCENENET: For testing purposes
+            internal DocTermsIndexException(string message)
                 : base(message)
             {
             }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>

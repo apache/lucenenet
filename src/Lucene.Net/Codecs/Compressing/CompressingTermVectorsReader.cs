@@ -106,7 +106,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int version2 = CodecUtil.CheckHeader(vectorsStream, codecNameDat, CompressingTermVectorsWriter.VERSION_START, CompressingTermVectorsWriter.VERSION_CURRENT);
                 if (version != version2)
                 {
-                    throw new Exception("Version mismatch between stored fields index and data: " + version + " != " + version2);
+                    throw RuntimeException.Create("Version mismatch between stored fields index and data: " + version + " != " + version2);
                 }
                 if (Debugging.AssertsEnabled) Debugging.Assert(CodecUtil.HeaderLength(codecNameDat) == vectorsStream.GetFilePointer());
 
@@ -147,7 +147,7 @@ namespace Lucene.Net.Codecs.Compressing
         {
             if (closed)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "this FieldsReader is closed");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "this FieldsReader is disposed.");
             }
         }
 
@@ -265,7 +265,7 @@ namespace Lucene.Net.Codecs.Compressing
                         break;
 
                     default:
-                        throw new Exception();
+                        throw AssertionError.Create();
                 }
                 for (int i = 0; i < numFields; ++i)
                 {
@@ -910,12 +910,12 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override void SeekExact(long ord)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override BytesRef Term => term;
 
-            public override long Ord => throw new NotSupportedException();
+            public override long Ord => throw UnsupportedOperationException.Create();
 
             public override int DocFreq => 1;
 
@@ -983,11 +983,11 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 if (doc == NO_MORE_DOCS)
                 {
-                    throw new InvalidOperationException("DocsEnum exhausted");
+                    throw IllegalStateException.Create("DocsEnum exhausted");
                 }
                 else if (doc == -1)
                 {
-                    throw new InvalidOperationException("DocsEnum not started");
+                    throw IllegalStateException.Create("DocsEnum not started");
                 }
             }
 
@@ -997,11 +997,11 @@ namespace Lucene.Net.Codecs.Compressing
                 CheckDoc();
                 if (i < 0)
                 {
-                    throw new InvalidOperationException("Position enum not started");
+                    throw IllegalStateException.Create("Position enum not started");
                 }
                 else if (i >= termFreq)
                 {
-                    throw new InvalidOperationException("Read past last position");
+                    throw IllegalStateException.Create("Read past last position");
                 }
             }
 
@@ -1009,11 +1009,11 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 if (doc != 0)
                 {
-                    throw new InvalidOperationException();
+                    throw IllegalStateException.Create();
                 }
                 else if (i >= termFreq - 1)
                 {
-                    throw new InvalidOperationException("Read past last position");
+                    throw IllegalStateException.Create("Read past last position");
                 }
 
                 ++i;

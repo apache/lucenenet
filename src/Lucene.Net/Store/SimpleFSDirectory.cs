@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.IO;
 
@@ -130,9 +130,9 @@ namespace Lucene.Net.Store
                 {
                     return OpenSlice("full-slice", 0, descriptor.Length);
                 }
-                catch (IOException ex)
+                catch (Exception ex) when (ex.IsIOException())
                 {
-                    throw new Exception(ex.ToString(), ex);
+                    throw RuntimeException.Create(ex);
                 }
             }
         }
@@ -213,7 +213,7 @@ namespace Lucene.Net.Store
 
                     if (position + len > m_end)
                     {
-                        throw new EndOfStreamException("read past EOF: " + this);
+                        throw EOFException.Create("read past EOF: " + this);
                     }
 
                     try
@@ -224,7 +224,7 @@ namespace Lucene.Net.Store
                         //    int i = m_file.Read(b, offset + total, toRead);
                         //    if (i < 0) // be defensive here, even though we checked before hand, something could have changed
                         //    {
-                        //        throw new EndOfStreamException("read past EOF: " + this + " off: " + offset + " len: " + len + " total: " + total + " chunkLen: " + toRead + " end: " + m_end);
+                        //        throw EOFException.Create("read past EOF: " + this + " off: " + offset + " len: " + len + " total: " + total + " chunkLen: " + toRead + " end: " + m_end);
                         //    }
                         //    if (Debugging.AssertsEnabled) Debugging.Assert(i > 0, "RandomAccessFile.read with non zero-length toRead must always read at least one byte");
                         //    total += i;
@@ -237,7 +237,7 @@ namespace Lucene.Net.Store
 
                         if (Debugging.AssertsEnabled) Debugging.Assert(total == len);
                     }
-                    catch (IOException ioe)
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
                         throw new IOException(ioe.Message + ": " + this, ioe);
                     }

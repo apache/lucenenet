@@ -317,7 +317,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     {
                         // we overflowed the payload buffer, just throw UOE
                         // having > System.Int32.MaxValue bytes of payload for a single term in a single doc is nuts.
-                        throw new NotSupportedException("A term cannot have more than System.Int32.MaxValue bytes of payload data in a single document");
+                        throw UnsupportedOperationException.Create("A term cannot have more than System.Int32.MaxValue bytes of payload data in a single document");
                     }
                     payloadData.Append(payload);
                 }
@@ -335,9 +335,8 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 Dispose();
             }
-            catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
+            catch (Exception ignored) when (ignored.IsThrowable())
             {
-                // ignored
             }
             IOUtils.DeleteFilesIgnoringExceptions(directory, 
                 IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_INDEX_EXTENSION), 
@@ -516,7 +515,7 @@ namespace Lucene.Net.Codecs.Lucene40
             // entering the index.  See LUCENE-1282 for
             // details.
             {
-                throw new Exception("tvx size mismatch: mergedDocs is " + numDocs + " but tvx size is " + tvx.GetFilePointer() + " file=" + tvx.ToString() + "; now aborting this merge to prevent index corruption");
+                throw RuntimeException.Create("tvx size mismatch: mergedDocs is " + numDocs + " but tvx size is " + tvx.GetFilePointer() + " file=" + tvx.ToString() + "; now aborting this merge to prevent index corruption");
             }
         }
 

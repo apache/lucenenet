@@ -4,7 +4,6 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -82,7 +81,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (((sbyte)n) < sbyte.MinValue || ((sbyte)n) > sbyte.MaxValue)
                 {
-                    throw new NotSupportedException("3.x cannot index norms that won't fit in a byte, got: " + ((sbyte)n));
+                    throw UnsupportedOperationException.Create("3.x cannot index norms that won't fit in a byte, got: " + ((sbyte)n));
                 }
                 @out.WriteByte((byte)n);
             }
@@ -97,17 +96,17 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
         {
-            throw new AssertionError();
+            throw AssertionError.Create();
         }
 
         public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
-            throw new AssertionError();
+            throw AssertionError.Create();
         }
 
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
-            throw new AssertionError();
+            throw AssertionError.Create();
         }
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
@@ -56,13 +56,13 @@ namespace Lucene.Net.Index
             {
             }
 
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
-            // For testing purposes
-            public PrepareCommitFailException(string message)
+            // LUCENENET: For testing purposes
+            internal PrepareCommitFailException(string message)
                 : base(message)
             {
             }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>
@@ -93,13 +93,13 @@ namespace Lucene.Net.Index
             {
             }
 
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
-            // For testing purposes
-            public CommitFailException(string message)
+            // LUCENENET: For testing purposes
+            internal CommitFailException(string message)
                 : base(message)
             {
             }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>
@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
                     {
                         tpc.Rollback();
                     }
-                    catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         // ignore
                     }
@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            catch (Exception t)
+            catch (Exception t) when (t.IsThrowable())
             {
                 // first object that fails results in rollback all of them and
                 // throwing an exception.
@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            catch (Exception t)
+            catch (Exception t) when (t.IsThrowable())
             {
                 // first object that fails results in rollback all of them and
                 // throwing an exception.

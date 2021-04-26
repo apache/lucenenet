@@ -115,7 +115,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             if (pathElements.Count <= 1)
             {
                 // this should not happen
-                throw new Exception(
+                throw RuntimeException.Create(
                     "PathQuerynode requires more 2 or more path elements.");
             }
         }

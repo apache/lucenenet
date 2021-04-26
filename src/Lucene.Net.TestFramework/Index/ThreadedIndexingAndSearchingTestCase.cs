@@ -386,13 +386,13 @@ namespace Lucene.Net.Index
                             doc.RemoveField(addedField);
                         }
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": hit exc");
                         Console.WriteLine(t.ToString());
                         Console.Write(t.StackTrace);
                         outerInstance.m_failed.Value = (true);
-                        throw new Exception(t.ToString(), t);
+                        throw RuntimeException.Create(t);
                     }
                 }
                 if (Verbose)
@@ -532,12 +532,12 @@ namespace Lucene.Net.Index
                             outerInstance.ReleaseSearcher(s);
                         }
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": hit exc");
                         outerInstance.m_failed.Value = (true);
                         Console.WriteLine(t.ToString());
-                        throw new Exception(t.ToString(), t);
+                        throw RuntimeException.Create(t);
                     }
                 }
             }

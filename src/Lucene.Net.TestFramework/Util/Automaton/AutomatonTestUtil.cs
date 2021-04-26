@@ -51,9 +51,7 @@ namespace Lucene.Net.Util.Automaton
                     new RegExp(regexp, RegExpSyntax.NONE);
                     return regexp;
                 }
-#pragma warning disable 168, IDE0059
-                catch (Exception e)
-#pragma warning restore 168, IDE0059
+                catch (Exception e) when (e.IsException())
                 {
                 }
             }
@@ -489,7 +487,7 @@ namespace Lucene.Net.Util.Automaton
 
         public int[] GetRandomAcceptedString(Random r)
         {
-            IList<int?> soFar = new List<int?>();
+            List<int> soFar = new List<int>();
             if (a.IsSingleton)
             {
                 // accepts only one
@@ -527,7 +525,7 @@ namespace Lucene.Net.Util.Automaton
 
                     if (s.numTransitions == 0)
                     {
-                        throw new Exception("this automaton has dead states");
+                        throw RuntimeException.Create("this automaton has dead states");
                     }
 
                     bool cheat = r.NextBoolean();
@@ -565,7 +563,7 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
-            return ArrayUtil.ToInt32Array(soFar);
+            return soFar.ToArray(); // LUCENENET: ArrayUtil.ToIntArray() call unnecessary
         }
     }
 }

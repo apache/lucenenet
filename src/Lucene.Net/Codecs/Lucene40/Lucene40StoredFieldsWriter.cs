@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 Dispose();
             }
-            catch (Exception)
+            catch (Exception ignored) when (ignored.IsThrowable())
             {
             }
             IOUtils.DeleteFilesIgnoringExceptions(directory, IndexFileNames.SegmentFileName(segment, "", FIELDS_EXTENSION), IndexFileNames.SegmentFileName(segment, "", FIELDS_INDEX_EXTENSION));
@@ -247,7 +247,7 @@ namespace Lucene.Net.Codecs.Lucene40
                         fieldsStream.WriteInt64(BitConversion.DoubleToInt64Bits(field.GetDoubleValue().Value));
                         break;
                     default:
-                        throw new InvalidOperationException("Cannot get here");
+                        throw AssertionError.Create("Cannot get here");
                 }
             }
         }
@@ -282,7 +282,7 @@ namespace Lucene.Net.Codecs.Lucene40
             // entering the index.  See LUCENE-1282 for
             // details.
             {
-                throw new Exception("fdx size mismatch: docCount is " + numDocs + " but fdx file size is " + indexStream.GetFilePointer() + " file=" + indexStream.ToString() + "; now aborting this merge to prevent index corruption");
+                throw RuntimeException.Create("fdx size mismatch: docCount is " + numDocs + " but fdx file size is " + indexStream.GetFilePointer() + " file=" + indexStream.ToString() + "; now aborting this merge to prevent index corruption");
             }
         }
 

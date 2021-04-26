@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Runtime.CompilerServices;
 using Lucene.Net.Analysis.Fr;
 using Lucene.Net.Analysis.In;
@@ -134,9 +134,9 @@ namespace Lucene.Net.Analysis.Core
                         }
                         assertSame(c, instance.Create(new StringReader("")).GetType());
                     }
-                    catch (ArgumentException e)
+                    catch (Exception e) when (e.IsIllegalArgumentException())
                     {
-                        if (e.InnerException is MissingMethodException)
+                        if (e.InnerException.IsNoSuchMethodException())
                         {
                             // there is no corresponding ctor available
                             throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
@@ -166,9 +166,9 @@ namespace Lucene.Net.Analysis.Core
                             assertSame(c, createdClazz);
                         }
                     }
-                    catch (ArgumentException e)
+                    catch (Exception e) when (e.IsIllegalArgumentException())
                     {
-                        if (e.InnerException is MissingMethodException)
+                        if (e.InnerException.IsNoSuchMethodException())
                         {
                             // there is no corresponding ctor available
                             throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
@@ -198,9 +198,9 @@ namespace Lucene.Net.Analysis.Core
                             assertSame(c, createdClazz);
                         }
                     }
-                    catch (ArgumentException e)
+                    catch (Exception e) when (e.IsIllegalArgumentException())
                     {
-                        if (e.InnerException is MissingMethodException)
+                        if (e.InnerException.IsNoSuchMethodException())
                         {
                             // there is no corresponding ctor available
                             throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)

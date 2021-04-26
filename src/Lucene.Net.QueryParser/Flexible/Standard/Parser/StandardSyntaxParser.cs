@@ -67,12 +67,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 IQueryNode querynode = TopLevelQuery(field);
                 return querynode;
             }
-            catch (ParseException tme)
+            catch (Lucene.Net.QueryParsers.Flexible.Standard.Parser.ParseException tme) // LUCENENET: Flexible QueryParser has its own ParseException that is different than the one in Support
             {
                 tme.SetQuery(query);
-                throw tme;
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
-            catch (Exception tme)
+            catch (Exception tme) when (tme.IsError())
             {
                 IMessage message = new Message(QueryParserMessages.INVALID_SYNTAX_CANNOT_PARSE, query, tme.Message);
                 QueryNodeParseException e = new QueryNodeParseException(tme);
@@ -112,7 +112,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     break;
             }
             { if (true) return ret; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public Modifier Modifiers()
@@ -148,7 +148,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     break;
             }
             { if (true) return ret; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         // This makes sure that there is no garbage after the query string
@@ -158,7 +158,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             q = Query(field);
             Jj_consume_token(0);
             { if (true) return q; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
 
@@ -215,7 +215,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             {
                 { if (true) return first; }
             }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public IQueryNode DisjQuery(string field)
@@ -253,7 +253,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             {
                 { if (true) return first; }
             }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public IQueryNode ConjQuery(string field)
@@ -291,7 +291,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             {
                 { if (true) return first; }
             }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         // QueryNode Query(CharSequence field) :
@@ -343,7 +343,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 q = new ModifierQueryNode(q, mods);
             }
             { if (true) return q; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public IQueryNode Clause(string field)
@@ -461,7 +461,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                                                          "*", term.BeginColumn, term.EndColumn);
                                 break;
                             default:
-                                { if (true) throw new Exception("Unhandled case: operator=" + @operator.ToString()); }
+                                { if (true) throw Error.Create("Unhandled case: operator=" + @operator.ToString()); }
                         }
                         q = new TermRangeQueryNode(qLower, qUpper, lowerInclusive, upperInclusive);
                         break;
@@ -544,19 +544,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
             if (boost != null)
             {
-                float f = (float)1.0;
+                // LUCENENET specific - parse without throwing exceptions
+                float f = float.TryParse(boost.Image, NumberStyles.Float, CultureInfo.InvariantCulture, out float temp) ? temp : 1.0f;
                 try
                 {
-                    f = Convert.ToSingle(boost.Image, CultureInfo.InvariantCulture);
                     // avoid boosting null queries, such as those caused by stop words
                     if (q != null)
                     {
                         q = new BoostQueryNode(q, f);
                     }
                 }
-                catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                catch (Exception ignored) when (ignored.IsException())
                 {
-                    //ignored
                     /* Should this be handled somehow? (defaults to "no boost", if
                          * boost number is invalid)
                          */
@@ -564,7 +563,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
             if (group) { q = new GroupQueryNode(q); }
             { if (true) return q; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         public IQueryNode Term(string field)
@@ -634,14 +633,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     }
                     if (fuzzy)
                     {
-                        float fms = defaultMinSimilarity;
-                        try
-                        {
-                            fms = Convert.ToSingle(fuzzySlop.Image.Substring(1), CultureInfo.InvariantCulture);
-                        }
-#pragma warning disable 168
-                        catch (Exception ignored) { }
-#pragma warning restore 168
+                        // LUCENENET specific: parse without throwing exceptions
+                        float fms = float.TryParse(fuzzySlop.Image.Substring(1), NumberStyles.Float, CultureInfo.InvariantCulture, out float temp) ? temp : defaultMinSimilarity;
                         if (fms < 0.0f)
                         {
                             { if (true) throw new ParseException(new Message(QueryParserMessages.INVALID_SYNTAX_FUZZY_LIMITS)); }
@@ -774,17 +767,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
                     if (fuzzySlop != null)
                     {
-                        try
+                        // LUCENENET: don't let parsing throw exceptions
+                        if (float.TryParse(fuzzySlop.Image.Substring(1), NumberStyles.Float, CultureInfo.InvariantCulture, out float temp))
                         {
-                            phraseSlop = (int)Convert.ToSingle(fuzzySlop.Image.Substring(1), CultureInfo.InvariantCulture);
-                            q = new SlopQueryNode(q, phraseSlop);
-                        }
-                        catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
-                        {
-                            // ignored
-                            /* Should this be handled somehow? (defaults to "no PhraseSlop", if
-                           * slop number is invalid)
-                           */
+                            try
+                            {
+                                phraseSlop = (int)temp;
+                                q = new SlopQueryNode(q, phraseSlop);
+                            }
+                            catch (Exception ignored) when (ignored.IsException())
+                            {
+                                /* Should this be handled somehow? (defaults to "no PhraseSlop", if
+                               * slop number is invalid)
+                               */
+                            }
                         }
                     }
                     break;
@@ -795,26 +791,25 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
             if (boost != null)
             {
-                float f = (float)1.0;
+                // LUCENENET specific: parse without throwing exceptions
+                float f = float.TryParse(boost.Image, NumberStyles.Float, CultureInfo.InvariantCulture, out float temp) ? temp : 1.0f;
                 try
                 {
-                    f = Convert.ToSingle(boost.Image, CultureInfo.InvariantCulture);
                     // avoid boosting null queries, such as those caused by stop words
                     if (q != null)
                     {
                         q = new BoostQueryNode(q, f);
                     }
                 }
-                catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                catch (Exception ignored) when (ignored.IsException())
                 {
-                    // ignored
                     /* Should this be handled somehow? (defaults to "no boost", if
                        * boost number is invalid)
                        */
                 }
             }
             { if (true) return q; }
-            throw new Exception("Missing return statement in function");
+            throw Error.Create("Missing return statement in function");
         }
 
         private bool Jj_2_1(int xla)

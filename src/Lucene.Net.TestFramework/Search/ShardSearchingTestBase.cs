@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    public class SearcherExpiredException : Exception
+    public class SearcherExpiredException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
     {
         public SearcherExpiredException(string message)
             : base(message)
@@ -743,11 +743,11 @@ namespace Lucene.Net.Search
                         }
                     }
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     Console.WriteLine("FAILED:");
                     Console.Out.WriteLine(t.StackTrace);
-                    throw new Exception(t.Message, t);
+                    throw RuntimeException.Create(t);
                 }
             }
         }

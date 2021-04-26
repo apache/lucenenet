@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     {
                         Dispose();
                     } // ensure we throw our original exception
-                    catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         // ignored
                     }
@@ -473,7 +473,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override void SeekExact(long ord)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override bool MoveNext()
@@ -554,7 +554,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override BytesRef Term => term;
 
-            public override long Ord => throw new NotSupportedException();
+            public override long Ord => throw UnsupportedOperationException.Create();
 
             public override int DocFreq => 1;
 
@@ -732,7 +732,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 // IndexOutOfRangeException if we didn't, which doesn't really provide good feedback as to what the cause is.
                 // This matches the behavior of Lucene 8.x. See #267.
                 if (((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length) == false)
-                    throw new InvalidOperationException("Read past last position");
+                    throw IllegalStateException.Create("Read past last position");
 
                 if (positions != null)
                 {

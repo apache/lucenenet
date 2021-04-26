@@ -240,7 +240,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override FieldsConsumer FieldsConsumer(SegmentWriteState state)
         {
-            throw new NotSupportedException("this codec can only be used for reading");
+            throw UnsupportedOperationException.Create("this codec can only be used for reading");
         }
 
         public override FieldsProducer FieldsProducer(SegmentReadState state)

@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
                 {
                     continue;
                 }
-                IOException priorException = null;
+                Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
                 TokenStream ts = a.GetTokenStream("foo", new StringReader(s));
                 try
                 {
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
                         return s;
                     }
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     priorException = e;
                 }

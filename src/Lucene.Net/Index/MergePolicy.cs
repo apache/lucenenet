@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
             {
                 if (0 == segments.Count)
                 {
-                    throw new Exception("segments must include at least one segment");
+                    throw RuntimeException.Create("segments must include at least one segment");
                 }
                 // clone the list, as the in list may be based off original SegmentInfos and may be modified
                 this.Segments = new List<SegmentCommitInfo>(segments);
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
             {
                 if (this.readers == null)
                 {
-                    throw new InvalidOperationException("IndexWriter has not initialized readers from the segment infos yet");
+                    throw IllegalStateException.Create("IndexWriter has not initialized readers from the segment infos yet");
                 }
                 IList<AtomicReader> readers = new List<AtomicReader>(this.readers.Count);
                 foreach (AtomicReader reader in this.readers)
@@ -292,9 +292,9 @@ namespace Lucene.Net.Index
                             // do 1000 msec, defensively
                             Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
                         }
-                        catch (ThreadInterruptedException ie)
+                        catch (Exception ie) when (ie.IsInterruptedException())
                         {
-                            throw new Exception(ie.ToString(), ie);
+                            throw RuntimeException.Create(ie);
                         }
 
                         if (aborted)
@@ -456,7 +456,7 @@ namespace Lucene.Net.Index
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
 #endif
-        public class MergeException : Exception
+        public class MergeException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
         {
             private readonly Directory dir; // LUCENENET: marked readonly
 
@@ -476,13 +476,13 @@ namespace Lucene.Net.Index
                 this.dir = dir;
             }
 
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
-            // For testing purposes
-            public MergeException(string message)
+            // LUCENENET: For testing purposes
+            internal MergeException(string message)
                 : base(message)
             {
             }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>
@@ -746,7 +746,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 0.0 || value > 1.0)
                 {
-                    throw new ArgumentException("noCFSRatio must be 0.0 to 1.0 inclusive; got " + value);
+                    throw new ArgumentOutOfRangeException(nameof(NoCFSRatio), "noCFSRatio must be 0.0 to 1.0 inclusive; got " + value); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 this.m_noCFSRatio = value;
             }
@@ -768,7 +768,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 0.0)
                 {
-                    throw new ArgumentException("maxCFSSegmentSizeMB must be >=0 (got " + value + ")");
+                    throw new ArgumentOutOfRangeException(nameof(MaxCFSSegmentSizeMB), "maxCFSSegmentSizeMB must be >=0 (got " + value + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 value *= 1024 * 1024;
                 this.m_maxCFSSegmentSize = (value > long.MaxValue) ? long.MaxValue : (long)value;

@@ -140,7 +140,7 @@ namespace Lucene.Net.Search.Grouping
             }
             else
             {
-                throw new InvalidOperationException("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
+                throw IllegalStateException.Create("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
             }
         }
 
@@ -191,7 +191,7 @@ namespace Lucene.Net.Search.Grouping
             }
             else
             {
-                throw new InvalidOperationException("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
+                throw IllegalStateException.Create("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
             }
         }
 
@@ -226,14 +226,14 @@ namespace Lucene.Net.Search.Grouping
         // LUCENENET additional method signature. Makes searching by field easier due to concrete return type
         public virtual ITopGroups<BytesRef> SearchByField(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
-            if (groupField == null)
+            if (groupField is null)
             {
-                throw new NullReferenceException("Must use constructor to set pass a non null value for groupField.");
+                throw IllegalStateException.Create("Must use constructor to set pass a non null value for groupField.");
             }
 
             if (groupFunction != null)
             {
-                throw new Exception("The groupFunction must be null.");
+                throw IllegalStateException.Create("The groupFunction must be null.");
             }
             return GroupByField<BytesRef>(searcher, filter, query, groupOffset, groupLimit);
         }
@@ -270,10 +270,9 @@ namespace Lucene.Net.Search.Grouping
         public virtual ITopGroups<TMutableValue> SearchByFunction<TMutableValue>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
             where TMutableValue : MutableValue
         {
-            if (groupFunction == null)
+            if (groupFunction is null)
             {
-                throw new NullReferenceException("Must pass a non null ValueSource via constructor.");
-
+                throw IllegalStateException.Create("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
             }
 
             if (groupField != null)
@@ -299,9 +298,9 @@ namespace Lucene.Net.Search.Grouping
             IAbstractAllGroupsCollector<TGroupValue> allGroupsCollector;
             AbstractAllGroupHeadsCollector allGroupHeadsCollector;
 
-            if (groupField == null)
+            if (groupField is null)
             {
-                throw new NullReferenceException("groupField must be set via the constructor.");
+                throw IllegalStateException.Create("groupField must be set via the constructor.");
             }
 
             firstPassCollector = (IAbstractFirstPassGroupingCollector<TGroupValue>)new TermFirstPassGroupingCollector(groupField, groupSort, topN);
@@ -424,7 +423,7 @@ namespace Lucene.Net.Search.Grouping
 
             if (groupFunction == null)
             {
-                throw new NullReferenceException("groupFunction must be set via the constructor by specifying a ValueSource.");
+                throw IllegalStateException.Create("groupFunction must be set via the constructor by specifying a ValueSource.");
             }
            
             firstPassCollector = new FunctionFirstPassGroupingCollector<TMutableValue>(groupFunction, valueSourceContext, groupSort, topN);

@@ -86,7 +86,7 @@ namespace Lucene.Net.Codecs
 
         public override int Advance(int target)
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         public override int NextDoc()

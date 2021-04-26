@@ -1,4 +1,4 @@
-using J2N.Numerics;
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections;
@@ -76,9 +76,9 @@ namespace Lucene.Net.Index
                 {
                     input = new RAMInputStream("PrefixCodedTermsIterator", buffer);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 
@@ -121,9 +121,9 @@ namespace Lucene.Net.Index
                         bytes.Length = prefix + suffix;
                         term.Set(field, bytes);
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
 
                     return true;
@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
 
             public virtual void Reset()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
 
@@ -174,9 +174,9 @@ namespace Lucene.Net.Index
                     lastTerm.Bytes.CopyBytes(term.Bytes);
                     lastTerm.Field = term.Field;
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 
@@ -189,9 +189,9 @@ namespace Lucene.Net.Index
                     output.Dispose();
                     return new PrefixCodedTerms(buffer);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 

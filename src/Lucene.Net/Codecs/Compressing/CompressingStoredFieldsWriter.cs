@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using Lucene.Net.Codecs.Lucene40;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
@@ -358,7 +358,7 @@ namespace Lucene.Net.Codecs.Compressing
                         bufferedDocs.WriteInt64(BitConversion.DoubleToInt64Bits(field.GetDoubleValue().Value));
                         break;
                     default:
-                        throw new Exception("Cannot get here");
+                        throw AssertionError.Create("Cannot get here");
                 }
             }
         }
@@ -382,7 +382,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
             if (docBase != numDocs)
             {
-                throw new Exception("Wrote " + docBase + " docs, finish called with numDocs=" + numDocs);
+                throw RuntimeException.Create("Wrote " + docBase + " docs, finish called with numDocs=" + numDocs);
             }
             indexWriter.Finish(numDocs, fieldsStream.GetFilePointer());
             CodecUtil.WriteFooter(fieldsStream);

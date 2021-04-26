@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Search.Spell;
+﻿using J2N.Text;
+using Lucene.Net.Search.Spell;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -118,9 +119,9 @@ namespace Lucene.Net.Search.Suggest
             {
                 return new FileEnumerator(this);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
         }
 
@@ -248,17 +249,8 @@ namespace Lucene.Net.Search.Suggest
                 // LUCENENET specific - don't use exception, use TryParse
                 if (!long.TryParse(weight, NumberStyles.Integer, CultureInfo.InvariantCulture, out curWeight))
                 {
-                    try
-                    {
-                        // keep reading floats for bw compat
-                        curWeight = (long)double.Parse(weight, NumberStyles.Float, CultureInfo.InvariantCulture);
-                    }
-                    catch (FormatException e)
-                    {
-                        // LUCENENET TODO: This is just so we can see what string and what culture was being tested when parsing failed,
-                        // to try to reproduce the conditions of the failure.
-                        throw new FormatException($"Weight '{weight}' could not be parsed to long or double in culture '{CultureInfo.CurrentCulture.Name}'.", e);
-                    }
+                    // keep reading floats for bw compat
+                    curWeight = (long)double.Parse(weight, NumberStyles.Float, CultureInfo.InvariantCulture);
                 }
             }
 

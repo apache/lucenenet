@@ -523,14 +523,18 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             private readonly AnalyzingInfixSuggester suggester;
             private readonly AtomicBoolean stop;
-            private Exception[] error;
 
-            public LookupThread(AnalyzingInfixSuggesterTest outerInstance, AnalyzingInfixSuggester suggester, AtomicBoolean stop, Exception[] error)
+            public LookupThread(AnalyzingInfixSuggesterTest outerInstance, AnalyzingInfixSuggester suggester)
             {
                 this.outerInstance = outerInstance;
                 this.suggester = suggester;
-                this.stop = stop;
-                this.error = error;
+                this.stop = new AtomicBoolean(false);
+            }
+
+            public virtual void Finish()
+            {
+                stop.Value = true;
+                this.Join();
             }
 
             public override void Run()
@@ -553,28 +557,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                                          topN, allTermsRequired, doHilite);
                         Thread.Sleep(10);// don't starve refresh()'s CPU, which sleeps every 50 bytes for 1 ms
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsIOException())
                     {
-                        error[0] = e;
-                        stop.Value = true;
+                        throw RuntimeException.Create(e);
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Grab the stack trace into a string since the exception was thrown in a thread and we want the assert 
-        /// outside the thread to show the stack trace in case of failure.   
-        /// </summary>
-        private string stackTraceStr(Exception error)
-        {
-            if (error == null)
-            {
-                return "";
-            }
-
-            error.printStackTrace();
-            return error.StackTrace;
         }
 
         internal class TestRandomNRTComparer : IComparer<Input>
@@ -615,10 +603,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // Initial suggester built with nothing:
                 suggester.Build(new InputArrayEnumerator(new Input[0]));
 
-                var stop = new AtomicBoolean(false);
-                Exception[] error = new Exception[] { null };
-
-                LookupThread lookupThread = new LookupThread(this, suggester, stop, error);
+                LookupThread lookupThread = new LookupThread(this, suggester);
                 lookupThread.Start();
 
                 int iters = AtLeast(1000);
@@ -706,13 +691,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         {
                             Console.WriteLine("TEST: now close/reopen suggester");
                         }
-                        //lookupThread.Finish();
-                        stop.Value = true;
-                        lookupThread.Join();
-                        Assert.Null(error[0], "Unexpcted exception at retry : \n" + stackTraceStr(error[0]));
+                        lookupThread.Finish();
                         suggester.Dispose();
                         suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, minPrefixChars);     //LUCENENET TODO: add extra false param at version 4.11.0
-                        lookupThread = new LookupThread(this, suggester, stop, error);
+                        lookupThread = new LookupThread(this, suggester);
                         lookupThread.Start();
 
                         visibleUpto = inputs.size();
@@ -849,10 +831,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                 }
 
-                //lookupThread.finish();
-                stop.Value = true;
-                lookupThread.Join();
-                Assert.Null(error[0], "Unexpcted exception at retry : \n" + stackTraceStr(error[0]));
+                lookupThread.Finish();
             }
             finally
             {
@@ -992,7 +971,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 suggester.Refresh();
                 fail("Cannot call refresh on an suggester when no docs are added to the index");
             }
-            catch (InvalidOperationException)
+            catch (Exception e) when (e.IsIllegalStateException())
             {
                 //Expected
             }
@@ -1038,9 +1017,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 suggester.Add(new BytesRef(key), null, 10, null);
             }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (IOException e)
-#pragma warning restore CS0168 // Variable is declared but never used
+            catch (Exception e) when (e.IsIOException())
             {
                 fail("Could not build suggest dictionary correctly");
             }

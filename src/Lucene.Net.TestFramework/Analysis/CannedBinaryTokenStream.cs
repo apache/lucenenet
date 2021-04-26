@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis
 
         public override object Clone()
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
     }
 

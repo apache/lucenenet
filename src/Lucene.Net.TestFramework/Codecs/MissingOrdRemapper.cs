@@ -89,7 +89,7 @@ namespace Lucene.Net.Codecs
                 object IEnumerator.Current => Current;
 
                 public void Reset()
-                    => throw new NotSupportedException();
+                    => throw UnsupportedOperationException.Create();
 
                 public void Dispose()
                      => @in.Dispose();
@@ -149,7 +149,7 @@ namespace Lucene.Net.Codecs
                 object IEnumerator.Current => Current;
 
                 public void Reset()
-                    => throw new NotSupportedException();
+                    => throw UnsupportedOperationException.Create();
 
                 public void Dispose()
                     => @in.Dispose();
@@ -208,7 +208,7 @@ namespace Lucene.Net.Codecs
                 object IEnumerator.Current => Current;
 
                 public void Reset()
-                    => throw new NotSupportedException();
+                    => throw UnsupportedOperationException.Create();
 
                 public void Dispose()
                     => @in.Dispose();

@@ -72,9 +72,9 @@ namespace Lucene.Net.Queries
         {
             this.subQuery = subQuery;
             this.scoringQueries = scoringQueries ?? Arrays.Empty<Query>();
-            if (subQuery == null)
+            if (subQuery is null)
             {
-                throw new ArgumentException("<subquery> must not be null!");
+                throw new ArgumentNullException(nameof(subQuery), "<subquery> must not be null!"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
         }
 

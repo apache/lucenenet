@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -788,7 +788,7 @@ namespace Lucene.Net.Search
                                 break;
                             }
                         }
-                        IOException priorException = null;
+                        Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
                         TokenStream ts = analyzer.GetTokenStream("ignore", new StringReader(term));
                         try
                         {
@@ -802,7 +802,7 @@ namespace Lucene.Net.Search
                             }
                             ts.End();
                         }
-                        catch (IOException e)
+                        catch (Exception e) when (e.IsIOException())
                         {
                             priorException = e;
                         }
@@ -880,9 +880,7 @@ namespace Lucene.Net.Search
                 query.Slop = -2;
                 Assert.Fail("didn't get expected exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException expected)
-#pragma warning restore 168
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 // expected exception
             }

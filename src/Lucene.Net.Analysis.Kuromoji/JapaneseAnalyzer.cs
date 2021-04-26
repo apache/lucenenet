@@ -75,10 +75,10 @@ namespace Lucene.Net.Analysis.Ja
                 {
                     return LoadStopwordSet(true, typeof(JapaneseAnalyzer), "stopwords.txt", "#");  // ignore case
                 }
-                catch (IOException ex)
+                catch (Exception ex) when (ex.IsIOException())
                 {
                     // default set should always be present as it is part of the distribution (JAR)
-                    throw new Exception("Unable to load default stopword set", ex);
+                    throw RuntimeException.Create("Unable to load default stopword set", ex);
                 }
             }
 
@@ -94,10 +94,10 @@ namespace Lucene.Net.Analysis.Ja
                     }
                     return DEFAULT_STOP_TAGS;
                 }
-                catch (IOException ex)
+                catch (Exception ex) when (ex.IsIOException())
                 {
                     // default set should always be present as it is part of the distribution (JAR)
-                    throw new Exception("Unable to load default stoptag set", ex);
+                    throw RuntimeException.Create("Unable to load default stoptag set", ex);
                 }
             }
         }

@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -244,11 +244,11 @@ namespace Lucene.Net.Util
         {
             if (frozen)
             {
-                throw new InvalidOperationException("already frozen");
+                throw IllegalStateException.Create("already frozen");
             }
             if (didSkipBytes)
             {
-                throw new InvalidOperationException("cannot freeze when copy(BytesRef, BytesRef) was used");
+                throw IllegalStateException.Create("cannot freeze when Copy(BytesRef, BytesRef) was used");
             }
             if (trim && upto < blockSize)
             {
@@ -294,6 +294,10 @@ namespace Lucene.Net.Util
         // TODO: this really needs to be refactored into fieldcacheimpl
         public long CopyUsingLengthPrefix(BytesRef bytes)
         {
+            // LUCENENET: Added guard clause for null
+            if (bytes is null)
+                throw new ArgumentNullException(nameof(bytes));
+
             if (bytes.Length >= 32768)
             {
                 throw new ArgumentException("max length is 32767 (got " + bytes.Length + ")");
@@ -497,7 +501,7 @@ namespace Lucene.Net.Util
         {
             if (!frozen)
             {
-                throw new InvalidOperationException("must call Freeze() before GetDataInput()");
+                throw IllegalStateException.Create("must call Freeze() before GetDataInput()");
             }
             return new PagedBytesDataInput(this);
         }
@@ -513,7 +517,7 @@ namespace Lucene.Net.Util
         {
             if (frozen)
             {
-                throw new InvalidOperationException("cannot get DataOutput after Freeze()");
+                throw IllegalStateException.Create("cannot get DataOutput after Freeze()");
             }
             return new PagedBytesDataOutput(this);
         }

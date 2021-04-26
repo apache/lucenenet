@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
             {
                 if (!IsTopLevel)
                 {
-                    throw new NotSupportedException("this is not a top-level context.");
+                    throw UnsupportedOperationException.Create("this is not a top-level context.");
                 }
                 if (Debugging.AssertsEnabled) Debugging.Assert(leaves != null);
                 return leaves;

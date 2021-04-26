@@ -1,4 +1,4 @@
-using J2N.Numerics;
+﻿using J2N.Numerics;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -151,7 +151,7 @@ namespace Lucene.Net.Util
         {
             if ((shift & ~0x3f) != 0) // ensure shift is 0..63
             {
-                throw new ArgumentException("Illegal shift value, must be 0..63");
+                throw new ArgumentOutOfRangeException(nameof(shift), "Illegal shift value, must be 0..63"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             int nChars = (((63 - shift) * 37) >> 8) + 1; // i/7 is the same as (i*37)>>8 for i in 0..63
             bytes.Offset = 0;
@@ -186,7 +186,7 @@ namespace Lucene.Net.Util
         {
             if ((shift & ~0x1f) != 0) // ensure shift is 0..31
             {
-                throw new ArgumentException("Illegal shift value, must be 0..31");
+                throw new ArgumentOutOfRangeException(nameof(shift), "Illegal shift value, must be 0..31"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             int nChars = (((31 - shift) * 37) >> 8) + 1; // i/7 is the same as (i*37)>>8 for i in 0..63
             bytes.Offset = 0;
@@ -220,7 +220,7 @@ namespace Lucene.Net.Util
             int shift = val.Bytes[val.Offset] - SHIFT_START_INT64;
             if (shift > 63 || shift < 0)
             {
-                throw new FormatException("Invalid shift value (" + shift + ") in prefixCoded bytes (is encoded value really an INT?)");
+                throw NumberFormatException.Create("Invalid shift value (" + shift + ") in prefixCoded bytes (is encoded value really an INT?)");
             }
             return shift;
         }
@@ -238,7 +238,7 @@ namespace Lucene.Net.Util
             int shift = val.Bytes[val.Offset] - SHIFT_START_INT32;
             if (shift > 31 || shift < 0)
             {
-                throw new FormatException("Invalid shift value in prefixCoded bytes (is encoded value really an INT?)");
+                throw NumberFormatException.Create("Invalid shift value in prefixCoded bytes (is encoded value really an INT?)");
             }
             return shift;
         }
@@ -262,7 +262,7 @@ namespace Lucene.Net.Util
                 var b = val.Bytes[i];
                 if (b < 0)
                 {
-                    throw new FormatException("Invalid prefixCoded numerical value representation (byte " + (b & 0xff).ToString("x") + " at position " + (i - val.Offset) + " is invalid)");
+                    throw NumberFormatException.Create("Invalid prefixCoded numerical value representation (byte " + (b & 0xff).ToString("x") + " at position " + (i - val.Offset) + " is invalid)");
                 }
                 sortableBits |= (byte)b;
             }
@@ -288,7 +288,7 @@ namespace Lucene.Net.Util
                 var b = val.Bytes[i];
                 if (b < 0)
                 {
-                    throw new FormatException("Invalid prefixCoded numerical value representation (byte " + (b & 0xff).ToString("x") + " at position " + (i - val.Offset) + " is invalid)");
+                    throw NumberFormatException.Create("Invalid prefixCoded numerical value representation (byte " + (b & 0xff).ToString("x") + " at position " + (i - val.Offset) + " is invalid)");
                 }
                 sortableBits |= b;
             }
@@ -411,7 +411,7 @@ namespace Lucene.Net.Util
         {
             if (precisionStep < 1)
             {
-                throw new ArgumentException("precisionStep must be >=1");
+                throw new ArgumentOutOfRangeException(nameof(precisionStep), "precisionStep must be >=1"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (minBound > maxBound)
             {
@@ -491,7 +491,7 @@ namespace Lucene.Net.Util
             /// </summary>
             public virtual void AddRange(BytesRef minPrefixCoded, BytesRef maxPrefixCoded)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             /// <summary>
@@ -524,7 +524,7 @@ namespace Lucene.Net.Util
             /// </summary>
             public virtual void AddRange(BytesRef minPrefixCoded, BytesRef maxPrefixCoded)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             /// <summary>

@@ -2222,7 +2222,7 @@ namespace Lucene.Net.Search.Highlight
             }
             else
             {
-                throw new Exception("Unknown highlight mode");
+                throw RuntimeException.Create("Unknown highlight mode");
             }
 
             return new Highlighter(formatter, scorer);
@@ -2241,7 +2241,7 @@ namespace Lucene.Net.Search.Highlight
             }
             else
             {
-                throw new Exception("Unknown highlight mode");
+                throw RuntimeException.Create("Unknown highlight mode");
             }
         }
 

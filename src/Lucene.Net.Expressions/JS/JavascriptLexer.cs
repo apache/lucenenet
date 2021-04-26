@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -26,6 +26,7 @@ using System;
 using System.Runtime.Serialization;
 #endif
 using Antlr.Runtime;
+using J2N.Text;
 using Lucene.Net.Support;
 
 namespace Lucene.Net.Expressions.JS
@@ -117,9 +118,7 @@ namespace Lucene.Net.Expressions.JS
         public override void DisplayRecognitionError(string[] tokenNames, RecognitionException re)
         {
             string message = " unexpected character '" + (char)re.Character + "' at position (" + re.CharPositionInLine + ").";
-            ParseException parseException = new ParseException(message, re.CharPositionInLine);
-            
-            throw new InvalidOperationException(parseException.Message, parseException);
+            throw new ParseException(message, re.CharPositionInLine, re);
         }
 
         // delegates
@@ -2177,36 +2176,5 @@ loop2_break: ;
             private readonly JavascriptLexer _enclosing;
 #pragma warning restore IDE0052 // Remove unread private members
         }
-    }
-
-    // LUCENENET: It is no longer good practice to use binary serialization. 
-    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
-    [Serializable]
-#endif
-    public class ParseException : Exception
-    {
-        public ParseException(string message, int charPositionInLine)
-            : base(message + ": " + charPositionInLine)
-        {
-        }
-
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
-        // For testing
-        public ParseException(string message)
-            : base(message)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of this class with serialized data.
-        /// </summary>
-        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
-        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        protected ParseException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
-#endif
     }
 }

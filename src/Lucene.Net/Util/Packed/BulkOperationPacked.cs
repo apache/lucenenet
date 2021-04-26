@@ -133,7 +133,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (bitsPerValue > 32)
             {
-                throw new NotSupportedException("Cannot decode " + bitsPerValue + "-bits values into an int[]");
+                throw UnsupportedOperationException.Create("Cannot decode " + bitsPerValue + "-bits values into an int[]");
             }
             int bitsLeft = 64;
             for (int i = 0; i < longValueCount * iterations; ++i)

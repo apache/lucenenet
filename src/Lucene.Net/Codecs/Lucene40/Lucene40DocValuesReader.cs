@@ -1,4 +1,5 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -116,7 +117,7 @@ namespace Lucene.Net.Codecs.Lucene40
                         }
                         else
                         {
-                            throw new InvalidOperationException();
+                            throw AssertionError.Create();
                         }
 
                         CodecUtil.CheckEOF(input);
@@ -454,7 +455,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     else
                     {
-                        throw new InvalidOperationException();
+                        throw AssertionError.Create();
                     }
                     binaryInstances[field.Number] = instance;
                 }
@@ -724,7 +725,7 @@ namespace Lucene.Net.Codecs.Lucene40
                         }
                         else
                         {
-                            throw new InvalidOperationException();
+                            throw AssertionError.Create();
                         }
 
                         CodecUtil.CheckEOF(data);
@@ -887,7 +888,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override SortedSetDocValues GetSortedSet(FieldInfo field)
         {
-            throw new InvalidOperationException("Lucene 4.0 does not support SortedSet: how did you pull this off?");
+            throw IllegalStateException.Create("Lucene 4.0 does not support SortedSet: how did you pull this off?");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

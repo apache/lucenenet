@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -975,7 +975,7 @@ namespace Lucene.Net.QueryParsers.Util
             {
                 GetQuery(queryString);
             }
-            catch (Exception expected)
+            catch (Exception expected) when (expected.IsException())
             {
                 if (IsQueryParserException(expected))
                 {
@@ -991,7 +991,7 @@ namespace Lucene.Net.QueryParsers.Util
             {
                 GetQuery(queryString, a);
             }
-            catch (Exception expected)
+            catch (Exception expected) when (expected.IsException())
             {
                 if (IsQueryParserException(expected))
                 {

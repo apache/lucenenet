@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 using System.Text;
@@ -73,7 +73,7 @@ namespace Lucene.Net.Documents
         {
             if (frozen)
             {
-                throw new InvalidOperationException("this FieldType is already frozen and cannot be changed");
+                throw IllegalStateException.Create("this FieldType is already frozen and cannot be changed");
             }
         }
 
@@ -267,7 +267,7 @@ namespace Lucene.Net.Documents
                 CheckIfFrozen();
                 if (value < 1)
                 {
-                    throw new ArgumentException("precisionStep must be >= 1 (got " + value + ")");
+                    throw new ArgumentOutOfRangeException(nameof(NumericPrecisionStep), "precisionStep must be >= 1 (got " + value + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 this.numericPrecisionStep = value;
             }

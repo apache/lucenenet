@@ -373,7 +373,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 public void Reset()
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
                 #region IDisposable Support

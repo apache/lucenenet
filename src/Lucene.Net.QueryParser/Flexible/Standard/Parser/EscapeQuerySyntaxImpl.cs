@@ -116,11 +116,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// <param name="escapeChar">the new character to prefix sequence1 in return string.</param>
         /// <param name="locale"></param>
         /// <returns>the new <see cref="ICharSequence"/></returns>
+        /// <exception cref="ArgumentNullException"><paramref name="string"/>, <paramref name="sequence1"/>, or <paramref name="escapeChar"/> is <c>null</c>.</exception>
         private static ICharSequence ReplaceIgnoreCase(ICharSequence @string,
             string sequence1, string escapeChar, CultureInfo locale)
         {
-            if (escapeChar == null || sequence1 == null || @string == null)
-                throw new NullReferenceException(); // LUCNENET TODO: ArgumentException...
+            // LUCENENET specific - changed from NullPointerException to ArgumentNullException (.NET convention)
+            if (escapeChar is null)
+                throw new ArgumentNullException(nameof(escapeChar));
+            if (sequence1 is null)
+                throw new ArgumentNullException(nameof(sequence1));
+            if (@string is null)
+                throw new ArgumentNullException(nameof(@string));
+            if (locale is null)
+                throw new ArgumentNullException(nameof(locale));
 
             // empty string case
             int count = @string.Length;

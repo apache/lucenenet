@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Index.Extensions;
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex.IsThrowable())
                 {
                     Console.WriteLine(ex.StackTrace);
                     this.ex = ex;

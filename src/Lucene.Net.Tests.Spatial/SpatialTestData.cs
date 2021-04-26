@@ -1,6 +1,5 @@
 ﻿using J2N.Text;
 using Spatial4n.Core.Context;
-using Spatial4n.Core.Exceptions;
 using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
@@ -55,16 +54,16 @@ namespace Lucene.Net.Spatial
                     SpatialTestData data = new SpatialTestData();
                     String[] vals = line.Split('\t').TrimEnd();
                     if (vals.Length != 3)
-                        throw new Exception("bad format; expecting 3 tab-separated values for line: " + line);
+                        throw RuntimeException.Create("bad format; expecting 3 tab-separated values for line: " + line);
                     data.id = vals[0];
                     data.name = vals[1];
                     try
                     {
                         data.shape = ctx.ReadShapeFromWkt(vals[2]);
                     }
-                    catch (ParseException e)
+                    catch (Spatial4n.Core.Exceptions.ParseException e) // LUCENENET: Spatial4n has its own ParseException that is different than the one in Support
                     {
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
                     results.Add(data);
                 }

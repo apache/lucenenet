@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -861,7 +861,7 @@ namespace Lucene.Net.Analysis.En
         //                }
         //            }
         //        }
-        //        catch (IOException e)
+        //        catch (Exception e) when (ex.IsIOException())
         //        {
         //            Console.WriteLine("error reading " + args[i]);
         //            Console.WriteLine(e.ToString());

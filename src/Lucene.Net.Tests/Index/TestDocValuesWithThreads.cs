@@ -174,9 +174,9 @@ namespace Lucene.Net.Index
                         Assert.AreEqual(sorted[docID], scratch2);
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.Message, e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -294,9 +294,9 @@ namespace Lucene.Net.Index
                     docIDToID = sr.GetNumericDocValues("id");
                     Assert.IsNotNull(stringDVDirect);
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
                 while (Environment.TickCount < endTime)
                 {

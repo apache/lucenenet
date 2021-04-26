@@ -135,7 +135,7 @@ namespace Lucene.Net.Join
                 }
                 if (!(parents is FixedBitSet))
                 {
-                    throw new InvalidOperationException("parentFilter must return FixedBitSet; got " + parents);
+                    throw IllegalStateException.Create("parentFilter must return FixedBitSet; got " + parents);
                 }
 
                 return new ToChildBlockJoinScorer(this, parentScorer, (FixedBitSet)parents, _doScores, acceptDocs);
@@ -144,7 +144,7 @@ namespace Lucene.Net.Join
             public override Explanation Explain(AtomicReaderContext reader, int doc)
             {
                 // TODO
-                throw new NotSupportedException(GetType().Name + " cannot explain match on parent document");
+                throw UnsupportedOperationException.Create(GetType().Name + " cannot explain match on parent document");
             }
 
             public override bool ScoresDocsOutOfOrder => false;
@@ -265,7 +265,7 @@ namespace Lucene.Net.Join
             {
                 if (_parentDoc != NO_MORE_DOCS && !_parentBits.Get(_parentDoc))
                 {
-                    throw new InvalidOperationException(INVALID_QUERY_MESSAGE + _parentDoc);
+                    throw IllegalStateException.Create(INVALID_QUERY_MESSAGE + _parentDoc);
                 }
             }
 

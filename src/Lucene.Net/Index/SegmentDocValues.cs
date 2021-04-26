@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
@@ -112,7 +112,7 @@ namespace Lucene.Net.Index
                     {
                         dvp.DecRef();
                     }
-                    catch (Exception th)
+                    catch (Exception th) when (th.IsThrowable())
                     {
                         if (t != null)
                         {

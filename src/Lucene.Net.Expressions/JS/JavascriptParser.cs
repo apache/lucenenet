@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,6 +23,7 @@
 
 using Antlr.Runtime;
 using Antlr.Runtime.Tree;
+using J2N.Text;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -205,9 +206,7 @@ namespace Lucene.Net.Expressions.JS
                     }
                 }
             }
-            //ParseException parseException = new ParseException(message, re.CharPositionInLine);
-
-            throw new InvalidOperationException(message);
+            throw new ParseException(message, re.CharPositionInLine, re);
         }
 
         public static string GetReadableTokenString(IToken token)

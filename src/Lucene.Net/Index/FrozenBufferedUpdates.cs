@@ -232,7 +232,7 @@ namespace Lucene.Net.Index
 
                 public virtual void Reset()
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
                 public void Dispose()

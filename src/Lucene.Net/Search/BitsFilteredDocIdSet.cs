@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Search
 {
@@ -50,7 +50,7 @@ namespace Lucene.Net.Search
         public BitsFilteredDocIdSet(DocIdSet innerSet, IBits acceptDocs)
             : base(innerSet)
         {
-            this.acceptDocs = acceptDocs ?? throw new ArgumentNullException(nameof(acceptDocs), "acceptDocs can not be null");
+            this.acceptDocs = acceptDocs ?? throw new ArgumentNullException(nameof(acceptDocs), "acceptDocs can not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         protected override bool Match(int docid)

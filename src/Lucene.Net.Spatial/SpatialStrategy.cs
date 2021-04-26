@@ -59,9 +59,9 @@ namespace Lucene.Net.Spatial
         /// </summary>
         protected SpatialStrategy(SpatialContext ctx, string fieldName)
         {
-            this.m_ctx = ctx ?? throw new ArgumentNullException(nameof(ctx), "ctx is required");
+            this.m_ctx = ctx ?? throw new ArgumentNullException(nameof(ctx), "ctx is required");// LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             if (string.IsNullOrEmpty(fieldName))
-                throw new ArgumentException("fieldName is required", nameof(fieldName));
+                throw new ArgumentNullException(nameof(fieldName), "fieldName is required");// LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             this.fieldName = fieldName;
         }
 

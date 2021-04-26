@@ -166,7 +166,7 @@ namespace Lucene.Net.Search
                         }
                     }
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     if (Verbose)
                     {
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
                         Console.Out.Write(t.StackTrace);
                     }
                     outerInstance.m_failed.Value = (true);
-                    throw new Exception(t.ToString(), t);
+                    throw RuntimeException.Create(t);
                 }
             }
         }
@@ -303,9 +303,7 @@ namespace Lucene.Net.Search
                 searcherManager.Acquire();
                 fail("already closed");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException ex)
-#pragma warning restore 168
+            catch (Exception ex) when (ex.IsAlreadyClosedException())
             {
                 // expected
             }
@@ -349,7 +347,7 @@ namespace Lucene.Net.Search
                         awaitClose.Wait();
                     }
                 }
-                catch (ThreadInterruptedException)
+                catch (Exception e) when (e.IsInterruptedException())
                 {
                     //
                 }
@@ -387,11 +385,11 @@ namespace Lucene.Net.Search
                     searcherManager.MaybeRefresh();
                     success.Value = (true);
                 }
-                catch (ObjectDisposedException)
+                catch (Exception e) when (e.IsAlreadyClosedException())
                 {
                     // expected
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     if (Verbose)
                     {
@@ -438,7 +436,15 @@ namespace Lucene.Net.Search
             acquire.IndexReader.DecRef();
             sm.Release(acquire);
 
-            Assert.Throws<InvalidOperationException>(() => sm.Acquire(), "acquire should have thrown an InvalidOperationException since we modified the refCount outside of the manager");
+            try
+            {
+                sm.Acquire();
+                fail("acquire should have thrown an InvalidOperationException since we modified the refCount outside of the manager");
+            }
+            catch (Exception ise) when (ise.IsIllegalStateException())
+            {
+                // expected
+            }
 
             // sm.Dispose(); -- already closed
             writer.Dispose();
@@ -462,9 +468,7 @@ namespace Lucene.Net.Search
                 // this should fail
                 sm.Acquire();
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // ok
             }
@@ -474,9 +478,7 @@ namespace Lucene.Net.Search
                 // this should fail
                 sm.MaybeRefresh();
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // ok
             }
@@ -546,9 +548,7 @@ namespace Lucene.Net.Search
             {
                 new SearcherManager(dir, theEvilOne);
             }
-#pragma warning disable 168
-            catch (InvalidOperationException ise)
-#pragma warning restore 168
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }
@@ -556,9 +556,7 @@ namespace Lucene.Net.Search
             {
                 new SearcherManager(w.IndexWriter, random.NextBoolean(), theEvilOne);
             }
-#pragma warning disable 168
-            catch (InvalidOperationException ise)
-#pragma warning restore 168
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }
@@ -634,9 +632,9 @@ namespace Lucene.Net.Search
                     // this used to not release the lock, preventing other threads from obtaining it.
                     sm.MaybeRefreshBlocking();
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }

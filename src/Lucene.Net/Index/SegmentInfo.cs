@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Diagnostics;
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
             set
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(this.codec is null);
-                this.codec = value ?? throw new ArgumentNullException(nameof(value), "Codec must be non-null");
+                this.codec = value ?? throw new ArgumentNullException(nameof(Codec), "Codec must be non-null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
         }
 
@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
             {
                 if (this.docCount == -1)
                 {
-                    throw new InvalidOperationException("docCount isn't set yet");
+                    throw IllegalStateException.Create("docCount isn't set yet");
                 }
                 return docCount;
             }
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
             {
                 if (this.docCount != -1)
                 {
-                    throw new InvalidOperationException("docCount was already set");
+                    throw IllegalStateException.Create("docCount was already set");
                 }
                 this.docCount = value;
             }
@@ -172,7 +172,7 @@ namespace Lucene.Net.Index
         {
             if (setFiles == null)
             {
-                throw new InvalidOperationException("files were not computed yet");
+                throw IllegalStateException.Create("files were not computed yet");
             }
             return setFiles.AsReadOnly();
         }

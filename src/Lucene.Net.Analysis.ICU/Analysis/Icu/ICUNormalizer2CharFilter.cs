@@ -63,22 +63,22 @@ namespace Lucene.Net.Analysis.Icu
         public ICUNormalizer2CharFilter(TextReader input, Normalizer2 normalizer)
             : this(input, normalizer, 128)
         {
-            this.normalizer = normalizer ?? throw new ArgumentNullException(nameof(normalizer));
+            this.normalizer = normalizer ?? throw new ArgumentNullException(nameof(normalizer)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         // for testing ONLY
         internal ICUNormalizer2CharFilter(TextReader input, Normalizer2 normalizer, int bufferSize)
             : base(input)
         {
-            this.normalizer = normalizer ?? throw new ArgumentNullException(nameof(normalizer));
+            this.normalizer = normalizer ?? throw new ArgumentNullException(nameof(normalizer)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             this.tmpBuffer = CharacterUtils.NewCharacterBuffer(bufferSize);
         }
 
         public override int Read(char[] cbuf, int off, int len)
         {
-            if (off < 0) throw new ArgumentException("off < 0");
-            if (off >= cbuf.Length) throw new ArgumentException("off >= cbuf.length");
-            if (len <= 0) throw new ArgumentException("len <= 0");
+            if (off < 0) throw new ArgumentOutOfRangeException(nameof(off), "off < 0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+            if (off >= cbuf.Length) throw new ArgumentOutOfRangeException(nameof(off), "off >= cbuf.length"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+            if (len <= 0) throw new ArgumentOutOfRangeException(nameof(len), "len <= 0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
 
             while (!inputFinished || inputBuffer.Length > 0 || resultBuffer.Length > 0)
             {

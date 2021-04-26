@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Ja
             Stream @is = typeof(TestJapaneseTokenizer).getResourceAsStream("userdict.txt");
             if (@is == null)
             {
-                throw new Exception("Cannot find userdict.txt in test classpath!");
+                throw RuntimeException.Create("Cannot find userdict.txt in test classpath!");
             }
             try
             {
@@ -51,9 +51,9 @@ namespace Lucene.Net.Analysis.Ja
                     @is.Dispose();
                 }
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
-                throw new Exception(ioe.ToString(), ioe);
+                throw RuntimeException.Create(ioe);
             }
         }
 

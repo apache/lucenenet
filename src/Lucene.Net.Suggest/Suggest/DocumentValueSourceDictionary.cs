@@ -150,9 +150,9 @@ namespace Lucene.Net.Search.Suggest
                     {
                         currentWeightValues = outerInstance.weightsValueSource.GetValues(new Dictionary<string, object>(), leaves[currentLeafIndex]);
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
                 }
                 return currentWeightValues.Int64Val(docId - starts[subIndex]);

@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -129,7 +129,7 @@ namespace Lucene.Net.Store
         {
             if (bufferSize <= 0)
             {
-                throw new ArgumentException("bufferSize must be greater than 0 (got " + bufferSize + ")");
+                throw new ArgumentOutOfRangeException("bufferSize must be greater than 0 (got " + bufferSize + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
         }
 
@@ -172,7 +172,7 @@ namespace Lucene.Net.Store
                     {
                         // Throw an exception when refill() could not read len bytes:
                         Buffer.BlockCopy(m_buffer, 0, b, offset, bufferLength);
-                        throw new EndOfStreamException("read past EOF: " + this);
+                        throw EOFException.Create("read past EOF: " + this);
                     }
                     else
                     {
@@ -192,7 +192,7 @@ namespace Lucene.Net.Store
                     long after = bufferStart + bufferPosition + len;
                     if (after > Length)
                     {
-                        throw new EndOfStreamException("read past EOF: " + this);
+                        throw EOFException.Create("read past EOF: " + this);
                     }
                     ReadInternal(b, offset, len);
                     bufferStart = after;
@@ -378,7 +378,7 @@ namespace Lucene.Net.Store
             int newLength = (int)(end - start);
             if (newLength <= 0)
             {
-                throw new EndOfStreamException("read past EOF: " + this);
+                throw EOFException.Create("read past EOF: " + this);
             }
 
             if (m_buffer == null)

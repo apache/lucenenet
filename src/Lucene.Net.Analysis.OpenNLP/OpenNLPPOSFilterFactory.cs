@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis.OpenNlp
             {
                 return new OpenNLPPOSFilter(input, OpenNLPOpsFactory.GetPOSTagger(posTaggerModelFile));
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new ArgumentException(e.ToString(), e);
             }
@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.OpenNlp
             { // load and register the read-only model in cache with file/resource name
                 OpenNLPOpsFactory.GetPOSTaggerModel(posTaggerModelFile, loader);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new ArgumentException(e.ToString(), e);
             }

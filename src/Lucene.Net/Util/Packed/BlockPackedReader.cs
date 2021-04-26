@@ -2,6 +2,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using System;
+using System.IO;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -50,7 +51,7 @@ namespace Lucene.Net.Util.Packed
                 int bitsPerValue = token.TripleShift(AbstractBlockPackedWriter.BPV_SHIFT);
                 if (bitsPerValue > 64)
                 {
-                    throw new Exception("Corrupted");
+                    throw new IOException("Corrupted");
                 }
                 if ((token & AbstractBlockPackedWriter.MIN_VALUE_EQUALS_0) == 0)
                 {

@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using J2N.Threading.Atomic;
 using System;
 using System.Collections.Concurrent;
@@ -59,7 +59,7 @@ namespace Lucene.Net.Store
             {
                 SetLockFactory(new SingleInstanceLockFactory());
             }
-            catch (IOException) // LUCENENET: IDE0059: Remove unnecessary value assignment
+            catch (Exception e) when (e.IsIOException())
             {
                 // Cannot happen
             }

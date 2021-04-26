@@ -287,11 +287,11 @@ namespace Lucene.Net.Codecs
         {
             if (minItemsInBlock <= 1)
             {
-                throw new ArgumentException("minItemsInBlock must be >= 2; got " + minItemsInBlock);
+                throw new ArgumentOutOfRangeException(nameof(minItemsInBlock), "minItemsInBlock must be >= 2; got " + minItemsInBlock); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (maxItemsInBlock <= 0)
             {
-                throw new ArgumentException("maxItemsInBlock must be >= 1; got " + maxItemsInBlock);
+                throw new ArgumentOutOfRangeException(nameof(maxItemsInBlock), "maxItemsInBlock must be >= 1; got " + maxItemsInBlock); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (minItemsInBlock > maxItemsInBlock)
             {
@@ -941,7 +941,7 @@ namespace Lucene.Net.Codecs
                 {
                     return b.Utf8ToString() + " " + b;
                 }
-                catch (Exception)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     // If BytesRef isn't actually UTF8, or it's eg a
                     // prefix of UTF8 that ends mid-unicode-char, we
@@ -1283,7 +1283,7 @@ namespace Lucene.Net.Codecs
         {
             if (disposing)
             {
-                IOException ioe = null;
+                Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
                 try
                 {
                     long dirStart = @out.GetFilePointer();
@@ -1312,7 +1312,7 @@ namespace Lucene.Net.Codecs
                     WriteIndexTrailer(indexOut, indexDirStart);
                     CodecUtil.WriteFooter(indexOut);
                 }
-                catch (IOException ioe2)
+                catch (Exception ioe2) when (ioe2.IsIOException())
                 {
                     ioe = ioe2;
                 }

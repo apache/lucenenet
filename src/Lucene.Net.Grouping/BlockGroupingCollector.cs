@@ -100,18 +100,18 @@ namespace Lucene.Net.Search.Grouping
                 return score;
             }
 
-            public override int Freq => throw new InvalidOperationException(); // TODO: wtf does this class do?
+            public override int Freq => throw UnsupportedOperationException.Create(); // TODO: wtf does this class do?
 
             public override int DocID => doc;
 
             public override int Advance(int target)
             {
-                throw new InvalidOperationException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override int NextDoc()
             {
-                throw new InvalidOperationException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override long GetCost()
@@ -119,11 +119,11 @@ namespace Lucene.Net.Search.Grouping
                 return 1;
             }
 
-            public override Weight Weight => throw new InvalidOperationException();
+            public override Weight Weight => throw UnsupportedOperationException.Create();
 
             public override ICollection<ChildScorer> GetChildren()
             {
-                throw new InvalidOperationException();
+                throw UnsupportedOperationException.Create();
             }
         }
 
@@ -279,7 +279,7 @@ namespace Lucene.Net.Search.Grouping
 
             if (topNGroups < 1)
             {
-                throw new ArgumentException("topNGroups must be >= 1 (got " + topNGroups + ")");
+                throw new ArgumentOutOfRangeException(nameof(topNGroups), "topNGroups must be >= 1 (got " + topNGroups + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             groupQueue = new GroupQueue(this, topNGroups);

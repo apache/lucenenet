@@ -1,7 +1,6 @@
 ﻿using J2N.IO;
 using J2N.Numerics;
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Util.Fst;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -124,7 +123,7 @@ namespace Lucene.Net.Store
                 curBufIndex++;
                 if (curBufIndex >= buffers.Length)
                 {
-                    throw new EndOfStreamException("read past EOF: " + this);
+                    throw EOFException.Create("read past EOF: " + this);
                 }
                 curBuf = buffers[curBufIndex];
                 curBuf.Position = 0;
@@ -152,7 +151,7 @@ namespace Lucene.Net.Store
                     curBufIndex++;
                     if (curBufIndex >= buffers.Length)
                     {
-                        throw new EndOfStreamException("read past EOF: " + this);
+                        throw EOFException.Create("read past EOF: " + this);
                     }
                     curBuf = buffers[curBufIndex];
                     curBuf.Position = 0;
@@ -217,35 +216,39 @@ namespace Lucene.Net.Store
 
         public override sealed void Seek(long pos)
         {
+            // LUCENENET: Refactored to avoid calls on invalid conditions instead of
+            // catching and re-throwing exceptions in the normal workflow.
+            EnsureOpen();
             // necessary in case offset != 0 and pos < 0, but pos >= -offset
             if (pos < 0L)
             {
-                throw new ArgumentException("Seeking to negative position: " + this);
+                throw new ArgumentOutOfRangeException("Seeking to negative position: " + this); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             pos += offset;
             // we use >> here to preserve negative, so we will catch AIOOBE,
             // in case pos + offset overflows.
             int bi = (int)(pos >> chunkSizePower);
-            try
-            {
-                ByteBuffer b = buffers[bi];
-                b.Position = ((int)(pos & chunkSizeMask));
-                // write values, on exception all is unchanged
-                this.curBufIndex = bi;
-                this.curBuf = b;
-            }
-            catch (IndexOutOfRangeException aioobe)
-            {
-                throw new EndOfStreamException("seek past EOF: " + this, aioobe);
-            }
-            catch (ArgumentException iae)
-            {
-                throw new EndOfStreamException("seek past EOF: " + this, iae);
-            }
-            catch (NullReferenceException npe)
-            {
-                throw new ObjectDisposedException("Already closed: " + this, npe);
-            }
+
+            // LUCENENET: Defensive programming so we don't get an IndexOutOfRangeException
+            // when reading from buffers.
+            if (bi < 0 || bi >= buffers.Length)
+                throw EOFException.Create("seek past EOF: " + this);
+            
+            ByteBuffer b = buffers[bi];
+            int newPosition = (int)(pos & chunkSizeMask);
+
+            // LUCENENET: Defensive programming so we don't get an ArgumentOutOfRangeException
+            // when setting b.Position.
+            if (newPosition < 0 || newPosition > b.Limit)
+                throw EOFException.Create("seek past EOF: " + this);
+
+            b.Position = newPosition;
+            // write values, on exception all is unchanged
+            this.curBufIndex = bi;
+            this.curBuf = b;
+
+            // LUCENENET: Already checked buffers to see if it was null in EnsureOpen().
+            // If we get a NullReferenceException we definitely need it to be thrown so it is known.
         }
 
         public override sealed long Length => length;
@@ -257,9 +260,9 @@ namespace Lucene.Net.Store
             {
                 clone.Seek(GetFilePointer());
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
-                throw new Exception("Should never happen: " + this, ioe);
+                throw RuntimeException.Create("Should never happen: " + this, ioe);
             }
 
             return clone;
@@ -270,9 +273,12 @@ namespace Lucene.Net.Store
         /// </summary>
         public ByteBufferIndexInput Slice(string sliceDescription, long offset, long length)
         {
+            // LUCENENET: Refactored to avoid calls on invalid conditions instead of
+            // catching and re-throwing exceptions in the normal workflow.
+            EnsureOpen();
             if (isClone) // well we could, but this is stupid
             {
-                throw new InvalidOperationException("cannot slice() " + sliceDescription + " from a cloned IndexInput: " + this);
+                throw IllegalStateException.Create("cannot Slice() " + sliceDescription + " from a cloned IndexInput: " + this);
             }
             ByteBufferIndexInput clone = BuildSlice(offset, length);
             clone.sliceDescription = sliceDescription;
@@ -280,9 +286,9 @@ namespace Lucene.Net.Store
             {
                 clone.Seek(0L);
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
-                throw new Exception("Should never happen: " + this, ioe);
+                throw RuntimeException.Create("Should never happen: " + this, ioe);
             }
 
             return clone;
@@ -290,11 +296,15 @@ namespace Lucene.Net.Store
 
         private ByteBufferIndexInput BuildSlice(long offset, long length)
         {
-            if (buffers == null)
-            {
-                throw new ObjectDisposedException(this.GetType().FullName, "Already closed: " + this);
-            }
-            if (offset < 0 || length < 0 || offset + length > this.length)
+            // LUCENENET: Refactored to avoid calls on invalid conditions instead of
+            // catching and re-throwing exceptions in the normal workflow.
+            EnsureOpen();
+            // LUCENENET: Added .NET-sytle guard clauses that throw ArgumementOutOfRangeException
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset), "offset may not be negative.");
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), "length may not be negative.");
+            if (offset + length > this.length)
             {
                 throw new ArgumentException("slice() " + sliceDescription + " out of bounds: offset=" + offset + ",length=" + length + ",fileLength=" + this.length + ": " + this);
             }
@@ -356,9 +366,9 @@ namespace Lucene.Net.Store
         // for control flow, we check whether we are disposed first.
         private void EnsureOpen()
         {
-            if (buffers == null || curBuf == null)
+            if (buffers is null)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "Already closed: " + this);
+                throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
             }
         }
 

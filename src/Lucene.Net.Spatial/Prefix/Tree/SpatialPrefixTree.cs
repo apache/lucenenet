@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 using System;
@@ -92,7 +92,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             if (level < 1 || level > MaxLevels)
             {
-                throw new ArgumentException("Level must be in 1 to maxLevels range");
+                throw new ArgumentOutOfRangeException(nameof(level), "Level must be in 1 to maxLevels range"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             //TODO cache for each level
             Cell cell = GetCell(m_ctx.WorldBounds.Center, level);

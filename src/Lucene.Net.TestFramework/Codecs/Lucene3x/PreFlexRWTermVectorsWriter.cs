@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             lastFieldName = info.Name;
             if (payloads)
             {
-                throw new NotSupportedException("3.x codec does not support payloads on vectors!");
+                throw UnsupportedOperationException.Create("3.x codec does not support payloads on vectors!");
             }
             this.positions = positions;
             this.offsets = offsets;
@@ -194,12 +194,12 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 Dispose();
             }
-#pragma warning disable 168, IDE0059
-            catch (Exception ignored)
-#pragma warning restore 168, IDE0059
+            catch (Exception ignored) when (ignored.IsThrowable())
             {
             }
-            IOUtils.DeleteFilesIgnoringExceptions(directory, IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_INDEX_EXTENSION), IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION));
+            IOUtils.DeleteFilesIgnoringExceptions(directory, IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_INDEX_EXTENSION),
+                IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_DOCUMENTS_EXTENSION),
+                IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION));
         }
 
         public override void Finish(FieldInfos fis, int numDocs)
@@ -211,7 +211,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             // entering the index.  See LUCENE-1282 for
             // details.
             {
-                throw new Exception("tvx size mismatch: mergedDocs is " + numDocs + " but tvx size is " + tvx.GetFilePointer() + " file=" + tvx.ToString() + "; now aborting this merge to prevent index corruption");
+                throw RuntimeException.Create("tvx size mismatch: mergedDocs is " + numDocs + " but tvx size is " + tvx.GetFilePointer() + " file=" + tvx.ToString() + "; now aborting this merge to prevent index corruption");
             }
         }
 

@@ -120,7 +120,7 @@ namespace Lucene.Net.Replicator.Http
             string param = request.QueryParam(paramName);
             if (param == null)
             {
-                throw new InvalidOperationException("Missing mandatory parameter: " + paramName);
+                throw IllegalStateException.Create("Missing mandatory parameter: " + paramName);
             }
             return param;
         }
@@ -136,17 +136,17 @@ namespace Lucene.Net.Replicator.Http
             string[] pathElements = GetPathElements(request);
             if (pathElements.Length != 2)
             {
-                throw new InvalidOperationException("invalid path, must contain shard ID and action, e.g. */s1/update");
+                throw IllegalStateException.Create("invalid path, must contain shard ID and action, e.g. */s1/update");
             }
 
             if (!Enum.TryParse(pathElements[ACTION_IDX], true, out ReplicationAction action))
             {
-                throw new InvalidOperationException("Unsupported action provided: " + pathElements[ACTION_IDX]);
+                throw IllegalStateException.Create("Unsupported action provided: " + pathElements[ACTION_IDX]);
             }
 
             if (!replicators.TryGetValue(pathElements[SHARD_IDX], out IReplicator replicator))
             {
-                throw new InvalidOperationException("unrecognized shard ID " + pathElements[SHARD_IDX]);
+                throw IllegalStateException.Create("unrecognized shard ID " + pathElements[SHARD_IDX]);
             }
 
             // SOLR-8933 Don't close this stream.

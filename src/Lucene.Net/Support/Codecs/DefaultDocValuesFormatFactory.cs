@@ -203,7 +203,7 @@ namespace Lucene.Net.Codecs
         /// <param name="docValuesFormat">A type that subclasses <see cref="DocValuesFormat"/>.</param>
         protected virtual void PutDocValuesFormatType(Type docValuesFormat)
         {
-            if (docValuesFormat == null)
+            if (docValuesFormat is null)
                 throw new ArgumentNullException(nameof(docValuesFormat));
             if (!typeof(DocValuesFormat).IsAssignableFrom(docValuesFormat))
                 throw new ArgumentException($"The supplied type {docValuesFormat.AssemblyQualifiedName} does not subclass {nameof(DocValuesFormat)}.");
@@ -242,7 +242,7 @@ namespace Lucene.Net.Codecs
         /// <returns>The <see cref="DocValuesFormat"/> instance.</returns>
         protected virtual DocValuesFormat GetDocValuesFormat(Type type)
         {
-            if (type == null)
+            if (type is null)
                 throw new ArgumentNullException(nameof(type));
             if (!docValuesFormatInstanceCache.TryGetValue(type, out DocValuesFormat instance))
             {
@@ -276,7 +276,7 @@ namespace Lucene.Net.Codecs
         /// <returns>The <see cref="DocValuesFormat"/> <see cref="Type"/>.</returns>
         protected virtual Type GetDocValuesFormatType(string name)
         {
-            if (name == null)
+            if (name is null)
                 throw new ArgumentNullException(nameof(name));
             EnsureInitialized();
             if (!docValuesFormatNameToTypeMap.TryGetValue(name, out Type codecType) || codecType == null)

@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -67,9 +67,7 @@ namespace Lucene.Net.Codecs.Compressing
                 var _ = termsEnum.Ord;
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (NotSupportedException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsUnsupportedOperationException())
             {
                 // expected exception
             }
@@ -79,9 +77,7 @@ namespace Lucene.Net.Codecs.Compressing
                 termsEnum.SeekExact(0);
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (NotSupportedException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsUnsupportedOperationException())
             {
                 // expected exception
             }

@@ -52,9 +52,9 @@ namespace Lucene.Net.Util.Packed
                 int offsetInBlock = index % valuesPerBlock;
                 return (block.TripleShift(offsetInBlock * m_bitsPerValue)) & mask;
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
-                throw new InvalidOperationException("failed", e);
+                throw IllegalStateException.Create("failed", e);
             }
         }
 

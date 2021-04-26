@@ -310,7 +310,7 @@ namespace Lucene.Net.Codecs
                 {
                     return b.Utf8ToString() + " " + b;
                 }
-                catch (Exception)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     // If BytesRef isn't actually UTF8, or it's eg a
                     // prefix of UTF8 that ends mid-unicode-char, we
@@ -472,7 +472,7 @@ namespace Lucene.Net.Codecs
                 }
                 else
                 {
-                    throw new InvalidOperationException();
+                    throw IllegalStateException.Create();
                 }
                 endBlockCount++;
                 long otherBytes = frame.fpEnd - frame.fp - frame.suffixesReader.Length - frame.statsReader.Length;
@@ -637,7 +637,7 @@ namespace Lucene.Net.Codecs
             {
                 if (compiled.Type != CompiledAutomaton.AUTOMATON_TYPE.NORMAL)
                 {
-                    throw new ArgumentException("please use CompiledAutomaton.getTermsEnum instead");
+                    throw new ArgumentException("please use CompiledAutomaton.GetTermsEnum() instead");
                 }
                 return new IntersectEnum(this, compiled, startTerm);
             }
@@ -1472,19 +1472,19 @@ namespace Lucene.Net.Codecs
 
                 public override bool SeekExact(BytesRef text)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
                 public override void SeekExact(long ord)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
-                public override long Ord => throw new NotSupportedException();
+                public override long Ord => throw UnsupportedOperationException.Create();
 
                 public override SeekStatus SeekCeil(BytesRef text)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
             }
 
@@ -1797,7 +1797,7 @@ namespace Lucene.Net.Codecs
                 {
                     if (outerInstance.index == null)
                     {
-                        throw new InvalidOperationException("terms index was not loaded");
+                        throw IllegalStateException.Create("terms index was not loaded");
                     }
 
                     if (term.Bytes.Length <= target.Length)
@@ -2084,7 +2084,7 @@ namespace Lucene.Net.Codecs
                 {
                     if (outerInstance.index == null)
                     {
-                        throw new InvalidOperationException("terms index was not loaded");
+                        throw IllegalStateException.Create("terms index was not loaded");
                     }
 
                     if (term.Bytes.Length <= target.Length)
@@ -2582,10 +2582,10 @@ namespace Lucene.Net.Codecs
 
                 public override void SeekExact(long ord)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
-                public override long Ord => throw new NotSupportedException();
+                public override long Ord => throw UnsupportedOperationException.Create();
 
                 // Not static -- references term, postingsReader,
                 // fieldInfo, in

@@ -121,7 +121,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     {
                         Dispose();
                     } // ensure we throw our original exception
-                    catch (Exception)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                     }
                 }
@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             if (closed)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "this FieldsReader is closed");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "this FieldsReader is disposed.");
             }
         }
 

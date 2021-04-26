@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -83,7 +83,7 @@ namespace Lucene.Net.Replicator
                 replicator.ObtainFile(res.Id, entry.Key, entry.Value.First().FileName);
                 fail("should have failed on AlreadyClosedException");
             }
-            catch (ObjectDisposedException)
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // expected
             }
@@ -98,7 +98,7 @@ namespace Lucene.Net.Replicator
                 replicator.Publish(CreateRevision(2));
                 fail("should have failed on AlreadyClosedException");
             }
-            catch (ObjectDisposedException)
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // expected
             }
@@ -113,7 +113,7 @@ namespace Lucene.Net.Replicator
                 replicator.CheckForUpdate(null);
                 fail("should have failed on AlreadyClosedException");
             }
-            catch (ObjectDisposedException)
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // expected
             }
@@ -150,7 +150,7 @@ namespace Lucene.Net.Replicator
                 replicator.Publish(old);
                 fail("should have failed to publish an older revision");
             }
-            catch (ArgumentException)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -167,15 +167,7 @@ namespace Lucene.Net.Replicator
                 replicator.ObtainFile(res.Id, res.SourceFiles.Keys.First(), "madeUpFile");
                 fail("should have failed obtaining an unrecognized file");
             }
-#pragma warning disable 168
-            catch (FileNotFoundException e)
-#pragma warning restore 168
-            {
-                // expected
-            }
-#pragma warning disable 168
-            catch (DirectoryNotFoundException e) // LUCENENET specific: In Java, a FileNotFound exception is thrown when there is no directory, so we need to cover this case as well
-#pragma warning restore 168
+            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
             {
                 // expected
             }

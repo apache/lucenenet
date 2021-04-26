@@ -399,7 +399,7 @@ namespace Lucene.Net.Search.Highlight
 
             internal DelegatingAtomicReader(AtomicReader reader) : base(reader) { }
 
-            public override FieldInfos FieldInfos => throw new NotSupportedException();
+            public override FieldInfos FieldInfos => throw UnsupportedOperationException.Create();
 
             public override Fields Fields => new DelegatingFilterFields(base.Fields);
 

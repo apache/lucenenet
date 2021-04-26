@@ -414,10 +414,10 @@ namespace Lucene.Net.Index
                     } while (Environment.TickCount < endTime);
                     r.Dispose();
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     failed.Value = (true);
-                    throw new Exception(t.Message, t);
+                    throw RuntimeException.Create(t);
                 }
             }
         }

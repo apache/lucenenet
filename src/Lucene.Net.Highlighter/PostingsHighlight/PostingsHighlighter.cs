@@ -128,11 +128,15 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <exception cref="ArgumentException">if <paramref name="maxLength"/> is negative or <c>int.MaxValue</c></exception>
         public ICUPostingsHighlighter(int maxLength)
         {
-            if (maxLength < 0 || maxLength == int.MaxValue)
+            if (maxLength < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(maxLength), "maxLength must be >= 0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+            }
+            if (maxLength == int.MaxValue)
             {
                 // two reasons: no overflow problems in BreakIterator.preceding(offset+1),
                 // our sentinel in the offsets queue uses this value to terminate.
-                throw new ArgumentException("maxLength must be < System.Int32.MaxValue");
+                throw new ArgumentOutOfRangeException(nameof(maxLength), "maxLength must be < System.Int32.MaxValue"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.maxLength = maxLength;
         }
@@ -381,6 +385,18 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <exception cref="ArgumentException">if <c>field</c> was indexed without <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/></exception>
         protected internal virtual IDictionary<string, object[]> HighlightFieldsAsObjects(string[] fieldsIn, Query query, IndexSearcher searcher, int[] docidsIn, int[] maxPassagesIn)
         {
+            // LUCENENET specific - added additional guard clauses to check for null
+            if (fieldsIn is null)
+                throw new ArgumentNullException(nameof(fieldsIn));
+            if (query is null)
+                throw new ArgumentNullException(nameof(query));
+            if (searcher is null)
+                throw new ArgumentNullException(nameof(searcher));
+            if (docidsIn is null)
+                throw new ArgumentNullException(nameof(docidsIn));
+            if (maxPassagesIn is null)
+                throw new ArgumentNullException(nameof(maxPassagesIn));
+
             if (fieldsIn.Length < 1)
             {
                 throw new ArgumentException("fieldsIn must not be empty");
@@ -503,7 +519,8 @@ namespace Lucene.Net.Search.PostingsHighlight
             PassageFormatter fieldFormatter = GetFormatter(field);
             if (fieldFormatter == null)
             {
-                throw new NullReferenceException("PassageFormatter cannot be null");
+                // LUCENENET: Changed from NullPointerException to InvalidOperationException (which isn't caught anywhere outside of tests)
+                throw IllegalStateException.Create("PassageFormatter cannot be null");
             }
 
             // check if we should do any multiterm processing
@@ -594,7 +611,8 @@ namespace Lucene.Net.Search.PostingsHighlight
             PassageScorer scorer = GetScorer(field);
             if (scorer == null)
             {
-                throw new NullReferenceException("PassageScorer cannot be null");
+                // LUCENENET: Changed from NullPointerException to InvalidOperationException (which isn't caught anywhere outside of tests)
+                throw IllegalStateException.Create("PassageScorer cannot be null");
             }
             JCG.PriorityQueue<OffsetsEnum> pq = new JCG.PriorityQueue<OffsetsEnum>();
             float[] weights = new float[terms.Length];
@@ -812,9 +830,9 @@ namespace Lucene.Net.Search.PostingsHighlight
                         return off.CompareTo(otherOff);
                     }
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }

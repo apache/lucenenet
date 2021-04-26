@@ -441,10 +441,10 @@ namespace Lucene.Net.Codecs.Memory
                 //           and should have related tests
                 public override void SeekExact(long ord)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
-                public override long Ord => throw new NotSupportedException();
+                public override long Ord => throw UnsupportedOperationException.Create();
             }
 
             // Iterates through all terms in this field
@@ -654,7 +654,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override SeekStatus SeekCeil(BytesRef target)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
                 public override bool MoveNext()

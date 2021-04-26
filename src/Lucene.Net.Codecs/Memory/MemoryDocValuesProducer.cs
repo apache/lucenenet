@@ -273,7 +273,7 @@ namespace Lucene.Net.Codecs.Memory
                     ramBytesUsed.AddAndGet(quotientReader.RamBytesUsed());
                     return new NumericDocValuesAnonymousClass3(min, mult, quotientReader);
                 default:
-                    throw new InvalidOperationException();
+                    throw AssertionError.Create();
             }
         }
 
@@ -475,9 +475,9 @@ namespace Lucene.Net.Codecs.Memory
                     result.Length = 0;
                     Util.ToBytesRef(output, result);
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
-                    throw new Exception(bogus.ToString(), bogus);
+                    throw RuntimeException.Create(bogus);
                 }
             }
 
@@ -499,9 +499,9 @@ namespace Lucene.Net.Codecs.Memory
                         return (int) -o.Output - 1;
                     }
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
-                    throw new Exception(bogus.ToString(), bogus);
+                    throw RuntimeException.Create(bogus);
                 }
             }
 
@@ -609,9 +609,9 @@ namespace Lucene.Net.Codecs.Memory
                     result.Length = 0;
                     Util.ToBytesRef(output, result);
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
-                    throw new Exception(bogus.ToString(), bogus);
+                    throw RuntimeException.Create(bogus);
                 }
             }
 
@@ -633,9 +633,9 @@ namespace Lucene.Net.Codecs.Memory
                         return -o.Output.Value - 1;
                     }
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
-                    throw new Exception(bogus.ToString(), bogus);
+                    throw RuntimeException.Create(bogus);
                 }
             }
 
@@ -691,7 +691,7 @@ namespace Lucene.Net.Codecs.Memory
                     var ne = numerics[field.Number];
                     return GetMissingBits(field.Number, ne.missingOffset, ne.missingBytes);
                 default:
-                    throw new InvalidOperationException();
+                    throw AssertionError.Create();
             }
         }
 
@@ -806,18 +806,18 @@ namespace Lucene.Net.Codecs.Memory
 
             public override long Ord => input.Current.Output.Value;
 
-            public override int DocFreq => throw new NotSupportedException();
+            public override int DocFreq => throw UnsupportedOperationException.Create();
 
-            public override long TotalTermFreq => throw new NotSupportedException();
+            public override long TotalTermFreq => throw UnsupportedOperationException.Create();
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
     }

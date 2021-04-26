@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using System;
 
 namespace Lucene.Net.Search
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
             {
                 freqs[buffered] = scorer.Freq;
             }
-            catch (NotSupportedException)
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 freqs[buffered] = -1;
             }
@@ -114,6 +114,6 @@ namespace Lucene.Net.Search
             => @in.AcceptsDocsOutOfOrder;
 
         public void SetNextReader(AtomicReaderContext context)
-            => throw new NotSupportedException();
+            => throw UnsupportedOperationException.Create();
     }
 }

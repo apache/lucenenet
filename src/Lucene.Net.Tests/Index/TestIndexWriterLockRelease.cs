@@ -1,5 +1,6 @@
-using Lucene.Net.Index.Extensions;
+﻿using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using System;
 using System.IO;
 
 namespace Lucene.Net.Index
@@ -41,41 +42,13 @@ namespace Lucene.Net.Index
             {
                 new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
             }
-#pragma warning disable 168
-            catch (FileNotFoundException /*| NoSuchFileException*/ e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
             {
                 try
                 {
                     new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
                 }
-#pragma warning disable 168
-                catch (FileNotFoundException /*| NoSuchFileException*/ e1)
-#pragma warning restore 168
-                {
-                }
-                // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-                // in Lucene, we need to catch it here to be on the safe side.
-                catch (DirectoryNotFoundException)
-                {
-                }
-            }
-            // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-            // in Lucene, we need to catch it here to be on the safe side.
-            catch (DirectoryNotFoundException)
-            {
-                try
-                {
-                    new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
-                }
-#pragma warning disable 168
-                catch (FileNotFoundException /*| NoSuchFileException*/ e1)
-#pragma warning restore 168
-                {
-                }
-                // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-                // in Lucene, we need to catch it here to be on the safe side.
-                catch (DirectoryNotFoundException)
+                catch (Exception e1) when (e1.IsNoSuchFileExceptionOrFileNotFoundException())
                 {
                 }
             }

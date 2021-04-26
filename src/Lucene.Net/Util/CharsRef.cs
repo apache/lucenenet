@@ -53,7 +53,7 @@ namespace Lucene.Net.Util
         public char[] Chars
         {
             get => chars;
-            set => chars = value ?? throw new ArgumentNullException(nameof(value), "Chars cannot be null");
+            set => chars = value ?? throw new ArgumentNullException(nameof(Chars), "Chars cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
         private char[] chars;
 
@@ -287,7 +287,7 @@ namespace Lucene.Net.Util
                 // NOTE: must do a real check here to meet the specs of CharSequence
                 if (index < 0 || index >= Length)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(index)); // LUCENENET: Changed exception type to ArgumentOutOfRangeException
+                    throw new ArgumentOutOfRangeException(nameof(index)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 return chars[Offset + index];
             }
@@ -407,31 +407,31 @@ namespace Lucene.Net.Util
         {
             if (Chars == null)
             {
-                throw new InvalidOperationException("chars is null");
+                throw IllegalStateException.Create("chars is null");
             }
             if (Length < 0)
             {
-                throw new InvalidOperationException("Length is negative: " + Length);
+                throw IllegalStateException.Create("Length is negative: " + Length);
             }
             if (Length > Chars.Length)
             {
-                throw new InvalidOperationException("Length is out of bounds: " + Length + ",chars.Length=" + Chars.Length);
+                throw IllegalStateException.Create("Length is out of bounds: " + Length + ",chars.Length=" + Chars.Length);
             }
             if (Offset < 0)
             {
-                throw new InvalidOperationException("offset is negative: " + Offset);
+                throw IllegalStateException.Create("offset is negative: " + Offset);
             }
             if (Offset > Chars.Length)
             {
-                throw new InvalidOperationException("offset out of bounds: " + Offset + ",chars.Length=" + Chars.Length);
+                throw IllegalStateException.Create("offset out of bounds: " + Offset + ",chars.Length=" + Chars.Length);
             }
             if (Offset + Length < 0)
             {
-                throw new InvalidOperationException("offset+Length is negative: offset=" + Offset + ",Length=" + Length);
+                throw IllegalStateException.Create("offset+Length is negative: offset=" + Offset + ",Length=" + Length);
             }
             if (Offset + Length > Chars.Length)
             {
-                throw new InvalidOperationException("offset+Length out of bounds: offset=" + Offset + ",Length=" + Length + ",chars.Length=" + Chars.Length);
+                throw IllegalStateException.Create("offset+Length out of bounds: offset=" + Offset + ",Length=" + Length + ",chars.Length=" + Chars.Length);
             }
             return true;
         }

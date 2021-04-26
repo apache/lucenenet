@@ -186,7 +186,7 @@ namespace Lucene.Net.Util
                 Console.WriteLine("CheckIndex failed");
                 checker.FlushInfoStream();
                 Console.WriteLine(bos.ToString());
-                throw new Exception("CheckIndex failed");
+                throw RuntimeException.Create("CheckIndex failed");
             }
             else
             {
@@ -228,7 +228,7 @@ namespace Lucene.Net.Util
                 Console.WriteLine("CheckReader failed");
                 infoStream.Flush();
                 Console.WriteLine(bos.ToString());
-                throw new Exception("CheckReader failed");
+                throw RuntimeException.Create("CheckReader failed");
             }
             else
             {
@@ -737,7 +737,7 @@ namespace Lucene.Net.Util
                             break;
 
                         default:
-                            throw new InvalidOperationException("unknown Type: " + dvType);
+                            throw IllegalStateException.Create("unknown Type: " + dvType);
                     }
                 }
                 else if (numType != NumericType.NONE)
@@ -761,7 +761,7 @@ namespace Lucene.Net.Util
                             break;
 
                         default:
-                            throw new InvalidOperationException("unknown Type: " + numType);
+                            throw IllegalStateException.Create("unknown Type: " + numType);
                     }
                 }
                 else
@@ -867,7 +867,7 @@ namespace Lucene.Net.Util
         //        ex.shutdown();
         //        ex.awaitTermination(1, TimeUnit.SECONDS);
         //      }
-        //      catch (ThreadInterruptedException e)
+        //      catch (Exception e) when (e.IsInterruptedException())
         //      {
         //        // Just report it on the syserr.
         //        Console.Error.WriteLine("Could not properly shutdown executor service.");

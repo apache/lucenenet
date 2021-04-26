@@ -597,7 +597,7 @@ namespace Lucene.Net.Search
                 }
                 else if (info.HasDocValues)
                 {
-                    throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                    throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
                 else if (!info.IsIndexed)
                 {
@@ -770,7 +770,7 @@ namespace Lucene.Net.Search
                 }
                 else if (info.HasDocValues)
                 {
-                    throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                    throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
                 else if (!info.IsIndexed)
                 {
@@ -942,7 +942,7 @@ namespace Lucene.Net.Search
                 }
                 else if (info.HasDocValues)
                 {
-                    throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                    throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
                 else if (!info.IsIndexed)
                 {
@@ -1043,7 +1043,7 @@ namespace Lucene.Net.Search
                         return wrapper.GetInt32s(reader, key.field, FieldCache.DEFAULT_INT32_PARSER, setDocsWithField);
 #pragma warning restore 612, 618
                     }
-                    catch (FormatException)
+                    catch (Exception ne) when (ne.IsNumberFormatException())
                     {
                         return wrapper.GetInt32s(reader, key.field, FieldCache.NUMERIC_UTILS_INT32_PARSER, setDocsWithField);
                     }
@@ -1237,7 +1237,7 @@ namespace Lucene.Net.Search
                 }
                 else if (info.HasDocValues)
                 {
-                    throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                    throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
                 else if (!info.IsIndexed)
                 {
@@ -1307,7 +1307,7 @@ namespace Lucene.Net.Search
                         return wrapper.GetSingles(reader, key.field, FieldCache.DEFAULT_SINGLE_PARSER, setDocsWithField);
 #pragma warning restore 612, 618
                     }
-                    catch (FormatException)
+                    catch (Exception ne) when (ne.IsNumberFormatException())
                     {
                         return wrapper.GetSingles(reader, key.field, FieldCache.NUMERIC_UTILS_SINGLE_PARSER, setDocsWithField);
                     }
@@ -1403,7 +1403,7 @@ namespace Lucene.Net.Search
                 }
                 else if (info.HasDocValues)
                 {
-                    throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                    throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
                 else if (!info.IsIndexed)
                 {
@@ -1475,7 +1475,7 @@ namespace Lucene.Net.Search
                         return wrapper.GetInt64s(reader, key.field, FieldCache.DEFAULT_INT64_PARSER, setDocsWithField);
 #pragma warning restore 612, 618
                     }
-                    catch (FormatException)
+                    catch (Exception ne) when (ne.IsNumberFormatException())
                     {
                         return wrapper.GetInt64s(reader, key.field, FieldCache.NUMERIC_UTILS_INT64_PARSER, setDocsWithField);
                     }
@@ -1581,7 +1581,7 @@ namespace Lucene.Net.Search
                 }
                 else if (info.HasDocValues)
                 {
-                    throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                    throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
                 else if (!info.IsIndexed)
                 {
@@ -1645,7 +1645,7 @@ namespace Lucene.Net.Search
                         return wrapper.GetDoubles(reader, key.field, FieldCache.DEFAULT_DOUBLE_PARSER, setDocsWithField);
 #pragma warning restore 612, 618
                     }
-                    catch (FormatException)
+                    catch (Exception ne) when (ne.IsNumberFormatException())
                     {
                         return wrapper.GetDoubles(reader, key.field, FieldCache.NUMERIC_UTILS_DOUBLE_PARSER, setDocsWithField);
                     }
@@ -1740,7 +1740,7 @@ namespace Lucene.Net.Search
             {
                 if (ord < 0)
                 {
-                    throw new ArgumentException("ord must be >=0 (got ord=" + ord + ")");
+                    throw new ArgumentOutOfRangeException(nameof(ord), "ord must be >=0 (got ord=" + ord + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 bytes.Fill(ret, termOrdToBytesOffset.Get(ord));
             }
@@ -1771,7 +1771,7 @@ namespace Lucene.Net.Search
                 {
                     // we don't try to build a sorted instance from numeric/binary doc
                     // values because dedup can be very costly
-                    throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                    throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
                 }
                 else if (!info.IsIndexed)
                 {
@@ -1937,7 +1937,7 @@ namespace Lucene.Net.Search
             }
             else if (info.HasDocValues)
             {
-                throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
             }
             else if (!info.IsIndexed)
             {
@@ -2087,7 +2087,7 @@ namespace Lucene.Net.Search
             }
             else if (info.HasDocValues)
             {
-                throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                throw IllegalStateException.Create("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
             }
             else if (!info.IsIndexed)
             {

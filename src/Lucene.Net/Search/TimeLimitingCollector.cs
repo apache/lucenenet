@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
 #endif
-        public class TimeExceededException : Exception
+        public class TimeExceededException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
         {
             private readonly long timeAllowed; // LUCENENET: marked readonly
             private readonly long timeElapsed; // LUCENENET: marked readonly
@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
                 this.lastDocCollected = lastDocCollected;
             }
 
-            // For testing purposes
+            // LUCENENET: For testing purposes
             internal TimeExceededException(string message)
                 : base(message)
             {

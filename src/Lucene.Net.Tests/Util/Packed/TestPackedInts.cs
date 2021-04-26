@@ -382,9 +382,9 @@ namespace Lucene.Net.Util.Packed
                 {
                     Fill(packedInt, PackedInt32s.MaxValue(bitsPerValue), randomSeed);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    Console.Error.WriteLine(e.StackTrace);
+                    e.printStackTrace(Console.Error);
                     Assert.Fail(string.Format(CultureInfo.InvariantCulture, "Exception while filling {0}: valueCount={1}, bitsPerValue={2}", packedInt.GetType().Name, valueCount, bitsPerValue));
                 }
             }
@@ -520,9 +520,7 @@ namespace Lucene.Net.Util.Packed
             {
                 p64 = new Packed64(INDEX, BITS);
             }
-#pragma warning disable 168
-            catch (OutOfMemoryException oome)
-#pragma warning restore 168
+            catch (Exception oome) when (oome.IsOutOfMemoryError())
             {
                 // this can easily happen: we're allocating a
                 // long[] that needs 256-273 MB.  Heap is 512 MB,
@@ -542,9 +540,7 @@ namespace Lucene.Net.Util.Packed
             {
                 p64sb = Packed64SingleBlock.Create(INDEX, BITS);
             }
-#pragma warning disable 168
-            catch (OutOfMemoryException oome)
-#pragma warning restore 168
+            catch (Exception oome) when (oome.IsOutOfMemoryError())
             {
                 // Ignore: see comment above
             }
@@ -560,9 +556,7 @@ namespace Lucene.Net.Util.Packed
             {
                 p8 = new Packed8ThreeBlocks(index);
             }
-#pragma warning disable 168
-            catch (OutOfMemoryException oome)
-#pragma warning restore 168
+            catch (Exception oome) when (oome.IsOutOfMemoryError())
             {
                 // Ignore: see comment above
             }
@@ -579,9 +573,7 @@ namespace Lucene.Net.Util.Packed
             {
                 p16 = new Packed16ThreeBlocks(index);
             }
-#pragma warning disable 168
-            catch (OutOfMemoryException oome)
-#pragma warning restore 168
+            catch (Exception oome) when (oome.IsOutOfMemoryError())
             {
                 // Ignore: see comment above
             }
@@ -1157,7 +1149,7 @@ namespace Lucene.Net.Util.Packed
                             inc = TestUtil.NextInt32(Random, -1000, 1000);
                             break;
                         default:
-                            throw new Exception("added a type and forgot to add it here?");
+                            throw RuntimeException.Create("added a type and forgot to add it here?");
 
                     }
 
@@ -1377,9 +1369,7 @@ namespace Lucene.Net.Util.Packed
                     it.Next();
                     Assert.IsTrue(false);
                 }
-#pragma warning disable 168
-                catch (IOException e)
-#pragma warning restore 168
+                catch (Exception e) when (e.IsIOException())
                 {
                     // OK
                 }
@@ -1416,9 +1406,7 @@ namespace Lucene.Net.Util.Packed
                     it2.Skip(1);
                     Assert.IsTrue(false);
                 }
-#pragma warning disable 168
-                catch (IOException e)
-#pragma warning restore 168
+                catch (Exception e) when (e.IsIOException())
                 {
                     // OK
                 }

@@ -37,7 +37,7 @@ namespace Lucene.Net.Store
             int v = _reader.ReadByte();
             if (v == -1)
             {
-                throw new EndOfStreamException();
+                throw EOFException.Create();
             }
             return (byte)v;
         }
@@ -50,7 +50,7 @@ namespace Lucene.Net.Store
                 if (cnt < 0)
                 {
                     // Partially read the input, but no more data available in the stream.
-                    throw new EndOfStreamException();
+                    throw EOFException.Create();
                 }
                 len -= cnt;
                 offset += cnt;

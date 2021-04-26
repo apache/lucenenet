@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Antlr.Runtime;
 using Antlr.Runtime.Tree;
@@ -164,7 +164,7 @@ namespace Lucene.Net.Expressions.JS
         /// <param name="functions">The set of functions to compile with</param>
         private JavascriptCompiler(string sourceText, IDictionary<string, MethodInfo> functions)
         {
-            this.sourceText = sourceText ?? throw new ArgumentNullException(nameof(sourceText));
+            this.sourceText = sourceText ?? throw new ArgumentNullException(nameof(sourceText)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             this.functions = functions;
         }
 
@@ -185,16 +185,10 @@ namespace Lucene.Net.Expressions.JS
                         Activator.CreateInstance(dynamicType.CreateTypeInfo().AsType(), sourceText, externalsMap.Keys.ToArray());
 
             }
-
-            catch (MemberAccessException exception)
+            catch (Exception exception) when (exception.IsInstantiationException() || exception.IsIllegalAccessException() ||
+                                              exception.IsNoSuchMethodException()  || exception.IsInvocationTargetException())
             {
-                throw new InvalidOperationException("An internal error occurred attempting to compile the expression ("
-                                                    + sourceText + ").", exception);
-            }
-            catch (TargetInvocationException exception)
-            {
-                throw new InvalidOperationException("An internal error occurred attempting to compile the expression ("
-                                                    + sourceText + ").", exception);
+                throw IllegalStateException.Create("An internal error occurred attempting to compile the expression (" + sourceText + ").", exception);
             }
         }
 
@@ -495,7 +489,7 @@ namespace Lucene.Net.Expressions.JS
 
                 default:
                     {
-                        throw new InvalidOperationException("Unknown operation specified: (" + current.Text + ").");
+                        throw IllegalStateException.Create("Unknown operation specified: (" + current.Text + ").");
                     }
             }
 
@@ -586,6 +580,9 @@ namespace Lucene.Net.Expressions.JS
             {
                 throw new ArgumentException(re.Message, re);
             }
+            // LUCENENET: Antlr 3.5.1 doesn't ever wrap ParseException, so the other catch block
+            // for RuntimeException that wraps ParseException would have
+            // been completely unnecesary in Java and is also unnecessary here.
         }
 
         /// <summary>The default set of functions available to expressions.</summary>
@@ -606,7 +603,7 @@ namespace Lucene.Net.Expressions.JS
                     string[] vals = property.Value.Split(',').TrimEnd();
                     if (vals.Length != 3)
                     {
-                        throw new Exception("Error reading Javascript functions from settings");
+                        throw Error.Create("Error reading Javascript functions from settings");
                     }
                     string typeName = vals[0];
 
@@ -630,9 +627,9 @@ namespace Lucene.Net.Expressions.JS
                     map[property.Key] = method;
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsNoSuchMethodException() || e.IsClassNotFoundException() || e.IsIOException())
             {
-                throw new Exception("Cannot resolve function", e);
+                throw Error.Create("Cannot resolve function", e);
             }
             return map.AsReadOnly();
         }

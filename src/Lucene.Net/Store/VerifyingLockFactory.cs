@@ -56,7 +56,7 @@ namespace Lucene.Net.Store
                 int ret = outerInstance.stream.ReadByte();
                 if (ret < 0)
                 {
-                    throw new InvalidOperationException("Lock server died because of locking error.");
+                    throw IllegalStateException.Create("Lock server died because of locking error.");
                 }
                 if (ret != message)
                 {

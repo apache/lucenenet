@@ -395,6 +395,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         public override void Build(IInputEnumerator enumerator)
         {
+            // LUCENENET: Added guard clause for null
+            if (enumerator is null)
+                throw new ArgumentNullException(nameof(enumerator));
+
             if (enumerator.HasContexts)
             {
                 throw new ArgumentException("this suggester doesn't support contexts");
@@ -713,6 +717,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(num > 0);
 
+            // LUCENENET: Added guard clause for null
+            if (key is null)
+                throw new ArgumentNullException(nameof(key));
+
             if (onlyMorePopular)
             {
                 throw new ArgumentException("this suggester only works with onlyMorePopular=false");
@@ -869,9 +877,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 return results;
             }
-            catch (IOException bogus)
+            catch (Exception bogus) when (bogus.IsIOException())
             {
-                throw new Exception(bogus.ToString(), bogus);
+                throw RuntimeException.Create(bogus);
             }
         }
 
@@ -1015,7 +1023,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public virtual object Get(string key)
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         /// <summary>
@@ -1031,7 +1039,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             if (value < 0 || value > int.MaxValue)
             {
-                throw new NotSupportedException("cannot encode value: " + value);
+                throw UnsupportedOperationException.Create("cannot encode value: " + value);
             }
             return int.MaxValue - (int)value;
         }

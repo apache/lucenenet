@@ -118,17 +118,17 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             public override float Boost
             {
                 get => base.Boost;
-                set => throw new NotSupportedException();
+                set => throw UnsupportedOperationException.Create();
             }
 
             public override void Add(BooleanClause clause)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override void Add(Search.Query query, Occur occur)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
     }

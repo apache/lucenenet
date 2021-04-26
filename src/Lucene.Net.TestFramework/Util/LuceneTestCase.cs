@@ -1351,7 +1351,7 @@ namespace Lucene.Net.Util
                 {
                     insanity = FieldCacheSanityChecker.CheckSanity(entries);
                 }
-                catch (Exception /*e*/)
+                catch (Exception e) when (e.IsRuntimeException())
                 {
                     DumpArray(msg + ": FieldCache", entries, Console.Error);
                     throw;  // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
@@ -2120,6 +2120,7 @@ namespace Lucene.Net.Util
         private static Directory NewFSDirectoryImpl(Type clazz, DirectoryInfo file)
         {
             return CommandLineUtil.NewFSDirectory(clazz, file);
+            // LUCENENET: No sense in catching just to rethrow again as the same type
         }
 
         private static Directory NewDirectoryImpl(Random random, string clazzName)
@@ -2143,7 +2144,7 @@ namespace Lucene.Net.Util
 
             Type clazz = CommandLineUtil.LoadDirectoryClass(clazzName);
             if (clazz == null)
-                throw new InvalidOperationException($"Type '{clazzName}' could not be instantiated.");
+                throw IllegalStateException.Create($"Type '{clazzName}' could not be instantiated."); // LUCENENET: We don't get an exception in this case, so throwing one for compatibility
             // If it is a FSDirectory type, try its ctor(File)
             if (typeof(FSDirectory).IsAssignableFrom(clazz))
             {
@@ -2405,6 +2406,7 @@ namespace Lucene.Net.Util
             {
                 if (maybeWrap)
                 {
+                    // LUCENENET: Rethrow.rethrow() call not needed here because it simply rethrows an exception as itself
                     r = MaybeWrapReader(r);
                 }
                 // TODO: this whole check is a coverage hack, we should move it to tests for various filterreaders.
@@ -2413,6 +2415,8 @@ namespace Lucene.Net.Util
                 {
                     // TODO: not useful to check DirectoryReader (redundant with checkindex)
                     // but maybe sometimes run this on the other crazy readers maybeWrapReader creates?
+
+                    // LUCENENET: Rethrow.rethrow() call not needed here because it simply rethrows an exception as itself
                     TestUtil.CheckReader(r);
                 }
                 IndexSearcher ret;
@@ -2485,7 +2489,7 @@ namespace Lucene.Net.Util
             {
                 return this.GetType().getResourceAsStream(name);
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 throw new IOException("Cannot find resource: " + name, e); // LUCENENET specific - wrapped inner exception
             }
@@ -2970,7 +2974,7 @@ namespace Lucene.Net.Util
                                 break;
 
                             default:
-                                throw new InvalidOperationException();
+                                throw AssertionError.Create();
                         }
                     }
                 }
@@ -3329,18 +3333,7 @@ namespace Lucene.Net.Util
                 dir.OpenInput(fileName, IOContext.DEFAULT).Dispose();
                 return true;
             }
-            catch (FileNotFoundException)
-            {
-                return false;
-            }
-            // LUCENENET specific - .NET (thankfully) only has one FileNotFoundException, so we don't need this
-            //catch (NoSuchFileException)
-            //{
-            //    return false;
-            //}
-            // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-            // in Lucene, we need to catch it here to be on the safe side.
-            catch (DirectoryNotFoundException)
+            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
             {
                 return false;
             }
@@ -3385,7 +3378,7 @@ namespace Lucene.Net.Util
         ////            {
         ////                if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
         ////                {
-        ////                    throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + directory.FullName);
+        ////                    throw RuntimeException.Create("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + directory.FullName);
         ////                }
         ////                f = new DirectoryInfo(Path.Combine(directory.FullName, prefix + "-" + ctx.RunnerSeed + "-" + string.Format(CultureInfo.InvariantCulture, "%03d", attempt)));
 
@@ -3393,7 +3386,7 @@ namespace Lucene.Net.Util
         ////                {
         ////                    f.Create();
         ////                }
-        ////                catch (IOException)
+        ////                catch (Exception ioe) when (ioe.IsIOException())
         ////                {
         ////                    iterate = false;
         ////                }
@@ -3434,7 +3427,7 @@ namespace Lucene.Net.Util
             {
                 if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
                 {
-                    throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + System.IO.Path.GetTempPath());
+                    throw RuntimeException.Create("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + System.IO.Path.GetTempPath());
                 }
                 // LUCENENET specific - need to use a random file name instead of a sequential one or two threads may attempt to do 
                 // two operations on a file at the same time.
@@ -3449,9 +3442,7 @@ namespace Lucene.Net.Util
                         iterate = false;
                     }
                 }
-#pragma warning disable 168, IDE0059
-                catch (IOException exc)
-#pragma warning restore 168, IDE0059
+                catch (Exception exc) when (exc.IsIOException())
                 {
                     iterate = true;
                 }
@@ -3479,7 +3470,7 @@ namespace Lucene.Net.Util
             //{
             //    if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
             //    {
-            //        throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + System.IO.Path.GetTempPath());
+            //        throw RuntimeException.Create("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + System.IO.Path.GetTempPath());
             //    }
             //    //f = new FileInfo(Path.Combine(System.IO.Path.GetTempPath(), prefix + "-" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", attempt) + suffix));
             //    f = FileSupport.CreateTempFile(prefix, suffix, new DirectoryInfo(System.IO.Path.GetTempPath()));
@@ -3560,18 +3551,7 @@ namespace Lucene.Net.Util
                 {
                     TestUtil.Rm(everything);
                 }
-                // LUCENENET specific: UnauthorizedAccessException doesn't subclass IOException as
-                // AccessDeniedException does in Java, so we need a special case for it.
-                catch (UnauthorizedAccessException e)
-                {
-                    //                    Type suiteClass = RandomizedContext.Current.GetTargetType;
-                    //                    if (suiteClass.IsAnnotationPresent(typeof(SuppressTempFileChecks)))
-                    //                    {
-                    Console.Error.WriteLine("WARNING: Leftover undeleted temporary files " + e.Message);
-                    return;
-                    //                    }
-                }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     //                    Type suiteClass = RandomizedContext.Current.GetTargetType;
                     //                    if (suiteClass.IsAnnotationPresent(typeof(SuppressTempFileChecks)))

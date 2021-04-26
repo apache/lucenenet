@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     failed = e;
                 }
@@ -171,9 +171,7 @@ namespace Lucene.Net.Index
                         {
                             currentReader.DecRef();
                         }
-#pragma warning disable 168
-                        catch (IOException e)
-#pragma warning restore 168
+                        catch (Exception e) when (e.IsIOException())
                         {
                         }
                     }
@@ -204,7 +202,7 @@ namespace Lucene.Net.Index
                 {
                     latch.Wait();
                 }
-                catch (ThreadInterruptedException e)
+                catch (Exception e) when (e.IsInterruptedException())
                 {
                     failed = e;
                     return;
@@ -224,7 +222,7 @@ namespace Lucene.Net.Index
 
                             Assert.IsFalse(current);
                         }
-                        catch (Exception e)
+                        catch (Exception e) when (e.IsThrowable())
                         {
                             if (Verbose)
                             {
@@ -240,7 +238,7 @@ namespace Lucene.Net.Index
                             {
                                 reader.DecRef();
                             }
-                            catch (IOException e)
+                            catch (Exception e) when (e.IsIOException())
                             {
                                 if (failed == null)
                                 {

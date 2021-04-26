@@ -115,11 +115,11 @@ namespace Lucene.Net.Index
         {
             if (maxThreadCount < 1)
             {
-                throw new ArgumentException("maxThreadCount should be at least 1");
+                throw new ArgumentOutOfRangeException(nameof(maxThreadCount), "maxThreadCount should be at least 1"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (maxMergeCount < 1)
             {
-                throw new ArgumentException("maxMergeCount should be at least 1");
+                throw new ArgumentOutOfRangeException(nameof(maxMergeCount), "maxMergeCount should be at least 1"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (maxThreadCount > maxMergeCount)
             {
@@ -171,7 +171,7 @@ namespace Lucene.Net.Index
             {
                 if (priority > (int)ThreadPriority.Highest || priority < (int)ThreadPriority.Lowest)
                 {
-                    throw new ArgumentException("priority must be in range " + (int)ThreadPriority.Highest + " .. " + (int)ThreadPriority.Lowest + " inclusive");
+                    throw new ArgumentOutOfRangeException("priority must be in range " + (int)ThreadPriority.Highest + " .. " + (int)ThreadPriority.Lowest + " inclusive"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 mergeThreadPriority = priority;
                 UpdateMergeThreads();
@@ -342,9 +342,7 @@ namespace Lucene.Net.Index
                         {
                             toSync.Join();
                         }
-#pragma warning disable 168
-                        catch (ThreadInterruptedException ie)
-#pragma warning restore 168
+                        catch (Exception ie) when (ie.IsInterruptedException())
                         {
                             // ignore this Exception, we will retry until all threads are dead
                             interrupted = true;
@@ -436,14 +434,8 @@ namespace Lucene.Net.Index
                         {
                             Message("    too many merges; stalling...");
                         }
-                        //try
-                        //{
                         Monitor.Wait(this);
-                        //}
-                        //catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-                        //{
-                        //    throw new ThreadInterruptedException(ie.ToString(), ie);
-                        //}
+                        // LUCENENET: Just let ThreadInterruptedException propagate. Note that it could be thrown above on lock (this).
                     }
 
                     if (IsVerbose)
@@ -595,22 +587,25 @@ namespace Lucene.Net.Index
             /// Set the priority of this thread. </summary>
             public virtual void SetThreadPriority(ThreadPriority priority)
             {
-                try
-                {
+                // LUCENENET: We don't have to worry about JRE bugs here, and
+                // SecurityException is not thrown from Thread.Priority. The exceptions
+                // it throws (ArgumentException and ThreadStateException) are both valid
+                // cases and are extremely unlikely (we never abort, and users would have to cast
+                // an invalid int to a ThreadPriority).
+                //try
+                //{
                     Priority = priority;
-                }
-#pragma warning disable 168
-                catch (NullReferenceException npe)
-                {
-                    // Strangely, Sun's JDK 1.5 on Linux sometimes
-                    // throws NPE out of here...
-                }
-                catch (SecurityException /*se*/) // LUCENENET: IDE0059: Remove unnecessary value assignment
-#pragma warning restore 168
-                {
-                    // Ignore this because we will still run fine with
-                    // normal thread priority
-                }
+                //}
+                //catch (NullReferenceException npe)
+                //{
+                //    // Strangely, Sun's JDK 1.5 on Linux sometimes
+                //    // throws NPE out of here...
+                //}
+                //catch (SecurityException se)
+                //{
+                //    // Ignore this because we will still run fine with
+                //    // normal thread priority
+                //}
             }
 
             public override void Run()
@@ -662,7 +657,7 @@ namespace Lucene.Net.Index
                         outerInstance.Message("  merge thread: done");
                     }
                 }
-                catch (Exception exc)
+                catch (Exception exc) when (exc.IsThrowable())
                 {
                     // Ignore the exception if it was due to abort:
                     if (!(exc is MergePolicy.MergeAbortedException))
@@ -695,8 +690,6 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual void HandleMergeException(Exception exc)
         {
-            //try
-            //{
             // When an exception is hit during merge, IndexWriter
             // removes any partial files and then allows another
             // merge to run.  If whatever caused the error is not
@@ -704,12 +697,8 @@ namespace Lucene.Net.Index
             // so, we sleep here to avoid saturating CPU in such
             // cases:
             Thread.Sleep(250);
-            //}
-            //catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-            //{
-            //    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-            //}
             throw new MergePolicy.MergeException(exc, m_dir);
+            // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
         }
 
         private bool suppressExceptions;

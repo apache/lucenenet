@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
                 commitCalled = true;
                 if (failOnCommit)
                 {
-                    throw new Exception("failOnCommit");
+                    throw RuntimeException.Create("failOnCommit");
                 }
             }
 
@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
                 rollbackCalled = true;
                 if (failOnRollback)
                 {
-                    throw new Exception("failOnRollback");
+                    throw Error.Create("failOnRollback");
                 }
             }
         }
@@ -127,9 +127,7 @@ namespace Lucene.Net.Index
             {
                 TwoPhaseCommitTool.Execute(objects);
             }
-#pragma warning disable 168
-            catch (Exception t)
-#pragma warning restore 168
+            catch (Exception t) when (t.IsThrowable())
             {
                 anyFailure = true;
             }

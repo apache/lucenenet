@@ -50,7 +50,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             TFIDFSimilarity sim = AsTFIDF(searcher.Similarity, m_field);
             if (sim == null)
             {
-                throw new NotSupportedException("requires a TFIDFSimilarity (such as DefaultSimilarity)");
+                throw UnsupportedOperationException.Create("requires a TFIDFSimilarity (such as DefaultSimilarity)");
             }
             int docfreq = searcher.IndexReader.DocFreq(new Term(m_indexedField, m_indexedBytes));
             float idf = sim.Idf(docfreq, searcher.IndexReader.MaxDoc);

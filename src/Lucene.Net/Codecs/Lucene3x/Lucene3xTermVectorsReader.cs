@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using System;
 using System.Collections;
@@ -184,7 +184,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         Dispose();
                     } // keep our original exception
-                    catch (Exception)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                     }
                 }
@@ -311,7 +311,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 public void Reset()
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
                 public void Dispose()
@@ -554,7 +554,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override void SeekExact(long ord)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -577,7 +577,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override BytesRef Term => termAndPostings[currentTerm].Term;
 
-            public override long Ord => throw new NotSupportedException();
+            public override long Ord => throw UnsupportedOperationException.Create();
 
             public override int DocFreq => 1;
 
@@ -767,7 +767,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 // IndexOutOfRangeException if we didn't, which doesn't really provide good feedback as to what the cause is.
                 // This matches the behavior of Lucene 8.x. See #267.
                 if (((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length) == false)
-                    throw new InvalidOperationException("Read past last position");
+                    throw IllegalStateException.Create("Read past last position");
 
                 if (positions != null)
                 {

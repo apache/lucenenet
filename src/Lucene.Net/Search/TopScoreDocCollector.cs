@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
@@ -278,7 +278,7 @@ namespace Lucene.Net.Search
         {
             if (numHits <= 0)
             {
-                throw new ArgumentException("numHits must be > 0; please use TotalHitCountCollector if you just need the total hit count");
+                throw new ArgumentOutOfRangeException(nameof(numHits), "numHits must be > 0; please use TotalHitCountCollector if you just need the total hit count"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             if (docsScoredInOrder)

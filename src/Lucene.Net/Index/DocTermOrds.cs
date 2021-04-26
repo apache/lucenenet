@@ -331,7 +331,7 @@ namespace Lucene.Net.Index
             FieldInfo info = reader.FieldInfos.FieldInfo(m_field);
             if (info != null && info.HasDocValues)
             {
-                throw new InvalidOperationException("Type mismatch: " + m_field + " was indexed as " + info.DocValuesType);
+                throw IllegalStateException.Create("Type mismatch: " + m_field + " was indexed as " + info.DocValuesType);
             }
             //System.out.println("DTO uninvert field=" + field + " prefix=" + termPrefix);
             long startTime = Environment.TickCount;
@@ -412,7 +412,7 @@ namespace Lucene.Net.Index
                         m_ordBase = (int)te.Ord;
                         //System.out.println("got ordBase=" + ordBase);
                     }
-                    catch (NotSupportedException) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                    catch (Exception uoe) when (uoe.IsUnsupportedOperationException())
                     {
                         // Reader cannot provide ord support, so we wrap
                         // our own support by creating our own terms index:
@@ -604,7 +604,7 @@ namespace Lucene.Net.Index
                                 if ((pos & 0xff000000) != 0)
                                 {
                                     // we only have 24 bits for the array index
-                                    throw new InvalidOperationException("Too many values for UnInvertedField faceting on field " + m_field);
+                                    throw IllegalStateException.Create("Too many values for UnInvertedField faceting on field " + m_field);
                                 }
                                 var arr = bytes[doc];
                                 /*
@@ -1068,9 +1068,9 @@ namespace Lucene.Net.Index
                 {
                     @ref = outerInstance.LookupTerm(te, (int)ord);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
                 result.Bytes = @ref.Bytes;
                 result.Offset = @ref.Offset;
@@ -1092,9 +1092,9 @@ namespace Lucene.Net.Index
                         return -te.Ord - 1;
                     }
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 
@@ -1104,11 +1104,9 @@ namespace Lucene.Net.Index
                 {
                     return outerInstance.GetOrdTermsEnum(reader);
                 }
-#pragma warning disable 168
-                catch (IOException e)
-#pragma warning restore 168
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }

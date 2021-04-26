@@ -158,10 +158,10 @@ namespace Lucene.Net.Search
                     Assert.IsTrue(totSearch > 0 && totHits > 0);
                     netSearch.AddAndGet(totSearch);
                 }
-                catch (Exception exc)
+                catch (Exception exc) when (exc.IsException())
                 {
                     failed.Value = (true);
-                    throw new Exception(exc.Message, exc);
+                    throw RuntimeException.Create(exc);
                 }
             }
         }

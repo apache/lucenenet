@@ -101,7 +101,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 sug.Build(new InputArrayEnumerator(keys));
                 fail("did not hit expected exception");
             }
-            catch (ArgumentException /*iae*/)
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -123,7 +123,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 sug.DoLookup("foo\u001eb", 10);
                 fail("did not hit expected exception");
             }
-            catch (ArgumentException /*iae*/)
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -152,9 +152,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     doc = lfd.NextDoc();
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
                 if (doc == null)
                 {
@@ -245,7 +245,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 sug.DoLookup("", 10);
                 fail("did not hit exception");
             }
-            catch (ArgumentException /*iae*/)
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }

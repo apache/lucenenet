@@ -125,7 +125,7 @@ namespace Lucene.Net.Util
 
             if (interfaces.Count != 1)
             {
-                throw new NotSupportedException(clazz.Name + " implements more than one Attribute interface, the default ReflectWith() implementation cannot handle this.");
+                throw UnsupportedOperationException.Create(clazz.Name + " implements more than one Attribute interface, the default ReflectWith() implementation cannot handle this.");
             }
 
             interfaces.First.Value.TryGetTarget(out Type interf);
@@ -142,9 +142,11 @@ namespace Lucene.Net.Util
                     reflector.Reflect(interf, f.Name, f.GetValue(this));
                 }
             }
-            catch (MemberAccessException e)
+            catch (Exception e) when (e.IsIllegalAccessException())
             {
-                throw new Exception(e.ToString(), e);
+                // this should never happen, because we're just accessing fields
+                // from 'this'
+                throw RuntimeException.Create(e);
             }
         }
 

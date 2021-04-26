@@ -546,7 +546,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 tw.GetParent(-1);
                 fail("getParent for -1 should throw exception");
             }
-            catch (IndexOutOfRangeException)
+            catch (Exception e) when(e.IsArrayIndexOutOfBoundsException())
             {
                 // ok
             }
@@ -555,7 +555,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 tw.GetParent(TaxonomyReader.INVALID_ORDINAL);
                 fail("getParent for INVALID_ORDINAL should throw exception");
             }
-            catch (IndexOutOfRangeException)
+            catch (Exception e) when (e.IsArrayIndexOutOfBoundsException())
             {
                 // ok
             }
@@ -564,7 +564,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 int parent = tw.GetParent(tr.Count);
                 fail("getParent for getSize() should throw exception, but returned " + parent);
             }
-            catch (IndexOutOfRangeException)
+            catch (Exception e) when (e.IsArrayIndexOutOfBoundsException())
             {
                 // ok
             }
@@ -909,7 +909,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         Thread.Sleep(10);// don't starve refresh()'s CPU, which sleeps every 50 bytes for 1 ms
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     error[0] = e;
                     stop.Value = true;
@@ -983,7 +983,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 Assert.AreEqual(TaxonomyReader.ROOT_ORDINAL, tr.ParallelTaxonomyArrays.Parents[author]);
                 // ok
             }
-            catch (IndexOutOfRangeException)
+            catch (Exception e) when (e.IsArrayIndexOutOfBoundsException())
             {
                 fail("After category addition, commit() and refresh(), getParent for " + author + " should NOT throw exception");
             }

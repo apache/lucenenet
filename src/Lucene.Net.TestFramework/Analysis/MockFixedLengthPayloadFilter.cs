@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using System;
 
 namespace Lucene.Net.Analysis
@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis
         {
             if (length < 0)
             {
-                throw new ArgumentException("length must be >= 0");
+                throw new ArgumentOutOfRangeException(nameof(length), "length must be >= 0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.random = random;
             this.bytes = new byte[length];

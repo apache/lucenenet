@@ -379,7 +379,7 @@ namespace Lucene.Net.Codecs.Memory
                 int numTerms = (int) termsIn.Count;
                 if (numTerms == -1)
                 {
-                    throw new ArgumentException("codec does not provide Terms.size()");
+                    throw new ArgumentException("codec does not provide Terms.Count");
                 }
                 terms = new TermAndSkip[numTerms];
                 termOffsets = new int[1 + numTerms];
@@ -1751,12 +1751,12 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override SeekStatus SeekCeil(BytesRef term)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
                 public override void SeekExact(long ord)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
             }
         }
@@ -1789,6 +1789,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override int NextDoc()
             {
+                // LUCENENET: Refactored to avoid throwing IndexOutOfRangeExcpetion in the normal flow
                 upto++;
                 if (liveDocs == null)
                 {
@@ -2244,13 +2245,9 @@ namespace Lucene.Net.Codecs.Memory
                 upto++;
                 if (liveDocs == null)
                 {
-                    try
-                    {
+                    // LUCENENET: Proactively check bounds so we don't have to catch and ingore an exception
+                    if (upto >= 0 && upto < docIDs.Length)
                         return docID = docIDs[upto];
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                    }
                 }
                 else
                 {

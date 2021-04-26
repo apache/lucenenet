@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
@@ -52,13 +52,13 @@ namespace Lucene.Net.Codecs.Bloom
         public static HashFunction HashFunctionForVersion(int version)
         {
             if (version < VERSION_START)
-                throw new ArgumentException("Version " + version + " is too old, expected at least " +
-                                                   VERSION_START);
-            
+                throw new ArgumentOutOfRangeException(nameof(version), "Version " + version + " is too old, expected at least " +
+                                                   VERSION_START);// LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+
             if (version > VERSION_CURRENT)
-                throw new ArgumentException("Version " + version + " is too new, expected at most " +
-                                                   VERSION_CURRENT);
-            
+                throw new ArgumentOutOfRangeException(nameof(version), "Version " + version + " is too new, expected at most " +
+                                                   VERSION_CURRENT);// LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+
             return MurmurHash2.INSTANCE;
         }
 

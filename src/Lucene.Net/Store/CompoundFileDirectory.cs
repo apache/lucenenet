@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
@@ -140,7 +140,7 @@ namespace Lucene.Net.Store
         /// Helper method that reads CFS entries from an input stream </summary>
         private static IDictionary<string, FileEntry> ReadEntries(IndexInputSlicer handle, Directory dir, string name)
         {
-            IOException priorE = null;
+            Exception priorE = null; // LUCENENET: No need to cast to IOExcpetion
             IndexInput stream = null;
             ChecksumIndexInput entriesStream = null;
             // read the first VInt. If it is negative, it's the version number
@@ -201,7 +201,7 @@ namespace Lucene.Net.Store
                 }
                 return mapping;
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 priorE = ioe;
             }
@@ -210,7 +210,7 @@ namespace Lucene.Net.Store
                 IOUtils.DisposeWhileHandlingException(priorE, stream, entriesStream);
             }
             // this is needed until Java 7's real try-with-resources:
-            throw new InvalidOperationException("impossible to get here");
+            throw AssertionError.Create("impossible to get here");
         }
 
         private static IDictionary<string, FileEntry> ReadLegacyEntries(IndexInput stream, int firstInt)
@@ -366,7 +366,7 @@ namespace Lucene.Net.Store
         /// <exception cref="NotSupportedException"> always: not supported by CFS  </exception>
         public override void DeleteFile(string name)
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         /// <summary>
@@ -376,7 +376,7 @@ namespace Lucene.Net.Store
         public void RenameFile(string from, string to)
 #pragma warning restore IDE0060, CA1822 // Remove unused parameter, Mark members as static
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         /// <summary>
@@ -405,7 +405,7 @@ namespace Lucene.Net.Store
 
         public override void Sync(ICollection<string> names)
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         /// <summary>
@@ -413,7 +413,7 @@ namespace Lucene.Net.Store
         /// <exception cref="NotSupportedException"> always: not supported by CFS  </exception>
         public override Lock MakeLock(string name)
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)

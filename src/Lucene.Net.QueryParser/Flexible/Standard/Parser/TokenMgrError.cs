@@ -33,7 +33,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    public class TokenMgrError : Exception
+    public class TokenMgrError : Exception, IError // LUCENENET specific: Added IError for identification of the Java superclass in .NET
     {
         // Ordinals for various reasons why an Error of this type can be thrown.
 

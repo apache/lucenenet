@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
@@ -503,7 +503,7 @@ namespace Lucene.Net.Index
                 {
                     this.task.Run();
                 }
-                catch (Exception r)
+                catch (Exception r) when (r.IsThrowable())
                 {
                     Console.WriteLine(r.StackTrace);
                     this.error = r;

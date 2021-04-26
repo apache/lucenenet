@@ -77,11 +77,11 @@ namespace Lucene.Net.Analysis.Pl
                         LuceneVersion.LUCENE_CURRENT);
 #pragma warning restore 612, 618
                 }
-                catch (IOException ex)
+                catch (Exception ex) when (ex.IsIOException())
                 {
                     // default set should always be present as it is part of the
                     // distribution (embedded resource)
-                    throw new InvalidOperationException("Unable to load default stopword set", ex);
+                    throw RuntimeException.Create("Unable to load default stopword set", ex);
                 }
             }
 
@@ -91,11 +91,11 @@ namespace Lucene.Net.Analysis.Pl
                 {
                     return StempelStemmer.Load(typeof(PolishAnalyzer).FindAndGetManifestResourceStream(DEFAULT_STEMMER_FILE));
                 }
-                catch (IOException ex)
+                catch (Exception ex) when (ex.IsIOException())
                 {
                     // default set should always be present as it is part of the
                     // distribution (embedded resource)
-                    throw new InvalidOperationException("Unable to load default stemming tables", ex);
+                    throw RuntimeException.Create("Unable to load default stemming tables", ex);
                 }
             }
         }

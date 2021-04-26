@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
 using Directory = Lucene.Net.Store.Directory;
@@ -100,6 +101,8 @@ namespace Lucene.Net.Replicator
             {
                 // give client a chance to update
                 Thread.Sleep(100);
+                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException.
+
                 try
                 {
                     DirectoryReader reader = DirectoryReader.Open(dir);
@@ -385,7 +388,7 @@ namespace Lucene.Net.Replicator
                 }
                 else
                 {
-                    throw exception;
+                    ExceptionDispatchInfo.Capture(exception).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
                 }
             }
         }

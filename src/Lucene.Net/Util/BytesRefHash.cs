@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -575,7 +575,7 @@ namespace Lucene.Net.Util
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-        public class MaxBytesLengthExceededException : Exception
+        public class MaxBytesLengthExceededException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
         {
             internal MaxBytesLengthExceededException(string message)
                 : base(message)

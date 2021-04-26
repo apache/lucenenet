@@ -591,7 +591,7 @@ namespace Lucene.Net.Index
                         //doBody(5, dirs);
                         //}
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         outerInstance.Handle(t);
                     }
@@ -844,9 +844,7 @@ namespace Lucene.Net.Index
                 DirectoryReader.OpenIfChanged(r);
                 Assert.Fail("failed to hit ObjectDisposedException");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException ace)
-#pragma warning restore 168
+            catch (Exception ace) when (ace.IsAlreadyClosedException())
             {
                 // expected
             }
@@ -965,10 +963,10 @@ namespace Lucene.Net.Index
                         writer.AddIndexes(dirs);
                         writer.MaybeMerge();
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         excs.Enqueue(t);
-                        throw new Exception(t.Message, t);
+                        throw RuntimeException.Create(t);
                     }
                 } while (Environment.TickCount < endTime);
             }
@@ -1082,10 +1080,10 @@ namespace Lucene.Net.Index
                             writer.DeleteDocuments(new Term("field3", "b" + x));
                         }
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         excs.Enqueue(t);
-                        throw new Exception(t.Message, t);
+                        throw RuntimeException.Create(t);
                     }
                 } while (Environment.TickCount < endTime);
             }
@@ -1282,9 +1280,7 @@ namespace Lucene.Net.Index
                 TestUtil.Docs(Random, r, "f", new BytesRef("val"), null, null, DocsFlags.NONE);
                 Assert.Fail("should have failed to seek since terms index was not loaded.");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalStateException())
             {
                 // expected - we didn't load the term index
             }

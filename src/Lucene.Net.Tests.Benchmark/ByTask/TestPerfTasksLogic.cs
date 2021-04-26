@@ -263,9 +263,7 @@ namespace Lucene.Net.Benchmarks.ByTask
                 assertTrue("CountingHighlighterTest should have thrown an exception", false);
                 assertNotNull(benchmark); // (avoid compile warning on unused variable)
             }
-#pragma warning disable 168
-            catch (Exception e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsException())
             {
                 assertTrue(true);
             }

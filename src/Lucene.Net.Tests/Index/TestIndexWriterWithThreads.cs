@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
                         writer.UpdateDocument(new Term("id", "" + (idUpto++)), doc);
                         addCount++;
                     }
-                    catch (IOException ioe)
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
                         if (Verbose)
                         {
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
                             break;
                         }
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         //Console.WriteLine(t.StackTrace);
                         if (noErrors)
@@ -350,7 +350,7 @@ namespace Lucene.Net.Index
                     writer.Dispose(false);
                     success = true;
                 }
-                catch (IOException)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     failure.ClearDoFail();
                     writer.Dispose(false);
@@ -407,7 +407,7 @@ namespace Lucene.Net.Index
                 writer.Commit();
                 Assert.Fail("did not hit exception");
             }
-            catch (IOException)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
             }
             failure.ClearDoFail();
@@ -641,7 +641,7 @@ namespace Lucene.Net.Index
                     startIndexing.Wait();
                     writer.AddDocument(doc);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     failed = true;
                     failure = e;
@@ -775,14 +775,14 @@ namespace Lucene.Net.Index
                                     }
                                     writerRef.Value.Commit();
                                 }
-                                catch (ObjectDisposedException)
+                                catch (Exception ace) when (ace.IsAlreadyClosedException())
                                 {
                                     // ok
                                 }
-                                catch (NullReferenceException)
-                                {
-                                    // ok
-                                }
+                                //catch (NullReferenceException) // LUCENENET specific - NullReferenceException must be allowed to propagate so we can defensively avoid it in .NET
+                                //{
+                                //    // ok
+                                //}
                                 finally
                                 {
                                     commitLock.Unlock();
@@ -798,29 +798,25 @@ namespace Lucene.Net.Index
                                 {
                                     writerRef.Value.AddDocument(docs.NextDoc());
                                 }
-                                catch (ObjectDisposedException)
+                                catch (Exception ace) when (ace.IsAlreadyClosedException())
                                 {
                                     // ok
                                 }
-                                catch (NullReferenceException)
-                                {
-                                    // ok
-                                }
-                                catch (InvalidOperationException)
-                                {
-                                    // ok
-                                }
-                                catch (AssertionException)
+                                //catch (NullReferenceException) // LUCENENET specific - NullReferenceException must be allowed to propagate so we can defensively avoid it in .NET
+                                //{
+                                //    // ok
+                                //}
+                                catch (Exception ae) when (ae.IsAssertionError())
                                 {
                                     // ok
                                 }
                                 break;
                         }
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         failed.Value = (true);
-                        throw new Exception(t.Message, t);
+                        throw RuntimeException.Create(t);
                     }
                 }
             }

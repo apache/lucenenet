@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index.Extensions;
@@ -373,11 +373,11 @@ namespace Lucene.Net.Index
                     }
                     writer.Commit();
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex.IsThrowable())
                 {
                     Console.WriteLine("FAILED exc:");
-                    Console.WriteLine(ex.StackTrace);
-                    throw new Exception(ex.Message, ex);
+                    ex.printStackTrace(Console.Out);
+                    throw RuntimeException.Create(ex);
                 }
             }
         }

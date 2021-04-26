@@ -424,9 +424,9 @@ namespace Lucene.Net.Index
                     //            System.out.println("[" + Thread.currentThread().getName() + "] DONE");
                     success = true;
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
                 finally
                 {
@@ -436,11 +436,11 @@ namespace Lucene.Net.Index
                         {
                             reader.Dispose();
                         }
-                        catch (IOException e)
+                        catch (Exception e) when (e.IsIOException())
                         {
                             if (success) // suppress this exception only if there was another exception
                             {
-                                throw new Exception(e.ToString(), e);
+                                throw RuntimeException.Create(e);
                             }
                         }
                     }

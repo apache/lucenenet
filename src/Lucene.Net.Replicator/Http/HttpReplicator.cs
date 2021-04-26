@@ -94,7 +94,7 @@ namespace Lucene.Net.Replicator.Http
         /// <exception cref="NotSupportedException">this replicator implementation does not support remote publishing of revisions</exception>
         public virtual void Publish(IRevision revision)
         {
-            throw new NotSupportedException("this replicator implementation does not support remote publishing of revisions");
+            throw UnsupportedOperationException.Create("this replicator implementation does not support remote publishing of revisions");
         }
 
         /// <summary>

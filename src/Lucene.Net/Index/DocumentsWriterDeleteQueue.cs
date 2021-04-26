@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
 
             internal virtual void Apply(BufferedUpdates bufferedDeletes, int docIDUpto)
             {
-                throw new InvalidOperationException("sentinel item must never be applied");
+                throw IllegalStateException.Create("sentinel item must never be applied");
             }
 
             internal virtual bool CasNext(Node cmp, Node val)

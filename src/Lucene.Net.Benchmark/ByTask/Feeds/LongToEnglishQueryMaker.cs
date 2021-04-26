@@ -42,7 +42,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         public virtual Query MakeQuery(int size)
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
         public virtual Query MakeQuery()

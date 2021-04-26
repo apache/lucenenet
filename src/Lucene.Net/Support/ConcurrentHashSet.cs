@@ -196,7 +196,7 @@ namespace Lucene.Net.Support
         public ConcurrentHashSet(IEnumerable<T> collection, IEqualityComparer<T> comparer)
             : this(comparer)
         {
-            if (collection == null) throw new ArgumentNullException(nameof(collection));
+            if (collection is null) throw new ArgumentNullException(nameof(collection));
 
             InitializeFromCollection(collection);
         }
@@ -223,7 +223,7 @@ namespace Lucene.Net.Support
         public ConcurrentHashSet(int concurrencyLevel, IEnumerable<T> collection, IEqualityComparer<T> comparer)
             : this(concurrencyLevel, DefaultCapacity, false, comparer)
         {
-            if (collection == null) throw new ArgumentNullException(nameof(collection));
+            if (collection is null) throw new ArgumentNullException(nameof(collection));
 
             InitializeFromCollection(collection);
         }
@@ -422,7 +422,7 @@ namespace Lucene.Net.Support
 
         void ICollection<T>.CopyTo(T[] array, int arrayIndex)
         {
-            if (array == null) throw new ArgumentNullException(nameof(array));
+            if (array is null) throw new ArgumentNullException(nameof(array));
             if (arrayIndex < 0) throw new ArgumentOutOfRangeException(nameof(arrayIndex));
 
             var locksAcquired = 0;
@@ -791,7 +791,7 @@ namespace Lucene.Net.Support
 
         public void UnionWith(IEnumerable<T> other)
         {
-            if (other == null)
+            if (other is null)
                 throw new ArgumentNullException(nameof(other));
 
             var locksAcquired = 0;

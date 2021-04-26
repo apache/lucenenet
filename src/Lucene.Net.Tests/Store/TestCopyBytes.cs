@@ -192,9 +192,9 @@ namespace Lucene.Net.Store
                     dst.CopyBytes(src, src.Length - 100);
                     dst.Dispose();
                 }
-                catch (IOException ex)
+                catch (Exception ex) when (ex.IsIOException())
                 {
-                    throw new Exception(ex.ToString(), ex);
+                    throw RuntimeException.Create(ex);
                 }
             }
         }

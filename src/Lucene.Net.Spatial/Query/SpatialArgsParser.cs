@@ -71,7 +71,7 @@ namespace Lucene.Net.Spatial.Queries
         /// <param name="ctx">The spatial context. Mandatory.</param>
         /// <returns>Not null.</returns>
         /// <exception cref="ArgumentException">if the parameters don't make sense or an add-on parameter is unknown</exception>
-        /// <exception cref="ParseException">If there is a problem parsing the string</exception>
+        /// <exception cref="Spatial4n.Core.Exceptions.ParseException">If there is a problem parsing the string</exception>
         /// <exception cref="InvalidShapeException">When the coordinates are invalid for the shape</exception>
         public virtual SpatialArgs Parse(string v, SpatialContext ctx)
         {
@@ -80,7 +80,7 @@ namespace Lucene.Net.Spatial.Queries
 
             if (idx < 0 || idx > edx)
             {
-                throw new ParseException("missing parens: " + v, -1);
+                throw new Spatial4n.Core.Exceptions.ParseException("missing parens: " + v, -1);
             }
 
             SpatialOperation op = SpatialOperation.Get(v.Substring(0, idx - 0).Trim());
@@ -90,7 +90,7 @@ namespace Lucene.Net.Spatial.Queries
             string body = v.Substring(idx + 1, edx - (idx + 1)).Trim();
             if (body.Length < 1)
             {
-                throw new ParseException("missing body : " + v, idx + 1);
+                throw new Spatial4n.Core.Exceptions.ParseException("missing body : " + v, idx + 1);
             }
 
             var shape = ParseShape(body, ctx);

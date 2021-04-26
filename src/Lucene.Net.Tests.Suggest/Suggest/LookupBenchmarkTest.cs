@@ -174,7 +174,7 @@ namespace Lucene.Net.Search.Suggest
                 //lookup = cls.newInstance();
                 lookup = (Lookup)Activator.CreateInstance(cls);
             }
-            catch (MissingMethodException /*e*/)
+            catch (Exception e) when (e.IsInstantiationException())
             {
                 Analyzer a = new MockAnalyzer(random, MockTokenizer.KEYWORD, false);
                 if (cls == typeof(AnalyzingInfixSuggester))
@@ -302,11 +302,10 @@ namespace Lucene.Net.Search.Suggest
                 }
                 return new BenchmarkResult(times, warmup, rounds);
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
-                Console.WriteLine(e.StackTrace);
-                //e.printStackTrace();
-                throw new Exception(e.Message, e);
+                e.printStackTrace();
+                throw RuntimeException.Create(e);
 
             }
         }
