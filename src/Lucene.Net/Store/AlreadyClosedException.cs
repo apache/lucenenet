@@ -1,4 +1,9 @@
-﻿//using System;
+﻿// LUCENENET specific - commented this because we already have an ObjectDisposedException in .NET.
+// This is just reinventing the wheel. However ObjectDisposedException subclasses InvalidOperationException,
+// while AlreadyClosedException, subclasses IOException, so we patch this behavior in ExceptionExtensions.
+// There is a duplicate type in the Lucene namespace that acts as a static factory to create ObjectDisposedException,
+// which is intended to make porting efforts easier.
+//using System;
 //#if FEATURE_SERIALIZABLE_EXCEPTIONS
 //using System.Runtime.Serialization;
 //#endif
