@@ -27,6 +27,8 @@
     <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net45</TargetFrameworks>
 
+    <RootNamespace>Lucene.Net.QueryParsers</RootNamespace>
+    
     <AssemblyTitle>Lucene.Net.QueryParser</AssemblyTitle>
     <Description>Query parsers and parsing framework for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
     <PackageTags>$(PackageTags);query;queryparser</PackageTags>
@@ -48,6 +50,21 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Lucene.Net.Tests.QueryParser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Flexible\Core\Messages\QueryParserMessages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>QueryParserMessages.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Flexible\Core\Messages\QueryParserMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>QueryParserMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

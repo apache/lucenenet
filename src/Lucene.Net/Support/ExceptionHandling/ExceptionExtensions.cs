@@ -358,7 +358,8 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsIllegalArgumentException(this Exception e)
         {
-            if (e is null || e.IsAlwaysIgnored()) return false;
+            // If our exception implements IError and subclasses ArgumentException, we will ignore it.
+            if (e is null || e.IsError() || e.IsAlwaysIgnored()) return false;
 
             // LUCENENET: In production, there is a chance that we will upgrade to ArgumentNullExcpetion or ArgumentOutOfRangeException
             // and it is still important that those are caught. However, we have a copy of this method in the test environment

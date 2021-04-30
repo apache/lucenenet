@@ -1,11 +1,8 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Messages;
-using Lucene.Net.QueryParsers.Flexible.Messages;
-using System;
-using System.Globalization;
+﻿using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 #endif
+#nullable enable
 
 namespace Lucene.Net.QueryParsers.Flexible.Core
 {
@@ -29,44 +26,49 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
     /// <summary>
     /// This exception should be thrown if something wrong happens when dealing with
     /// <see cref="Nodes.IQueryNode"/>s.
-    /// <para>
-    /// It also supports NLS messages.
-    /// </para>
     /// </summary>
-    /// <seealso cref="IMessage"/>
-    /// <seealso cref="NLS"/>
-    /// <seealso cref="INLSException"/>
     /// <seealso cref="Nodes.IQueryNode"/>
     // LUCENENET: It is no longer good practice to use binary serialization. 
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    public class QueryNodeException : Exception, INLSException
+    // LUCENENET specific: Refactored constructors to be more like a .NET type and eliminated IMessage/NLS support.
+    public class QueryNodeException : Exception
     {
-        protected IMessage m_message = new Message(QueryParserMessages.EMPTY_MESSAGE);
-
-        public QueryNodeException(IMessage message)
-            : base(message.Key)
-        {
-            this.m_message = message;
-        }
-
-        public QueryNodeException(Exception throwable)
-            : base(throwable.Message, throwable)
-        {
-        }
-
-        public QueryNodeException(IMessage message, Exception throwable)
-            : base(message.Key, throwable)
-        {
-            this.m_message = message;
-        }
-
-        // LUCENENET: For testing purposes
-        internal QueryNodeException(string message)
+        /// <summary>
+        /// Initializes a new instance of <see cref="QueryNodeException"/>
+        /// with the specified <paramref name="message"/>.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        public QueryNodeException(string? message)
             : base(message)
-        { }
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="QueryNodeException"/>
+        /// with a specified inner exception
+        /// that is the cause of this exception.
+        /// </summary>
+        /// <param name="cause">An exception instance to wrap</param>
+        public QueryNodeException(Exception? cause)
+            : base(cause?.Message, cause)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="QueryNodeException"/>
+        /// with a specified error message and a reference to the inner exception
+        /// that is the cause of this exception.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        /// <param name="innerException">An exception instance to wrap</param>
+        public QueryNodeException(string? message, Exception? innerException)
+            : base(message, innerException)
+        {
+        }
+
 
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
@@ -77,34 +79,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         protected QueryNodeException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            m_message = (IMessage)info.GetValue("m_message", typeof(IMessage));
-        }
-
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-            info.AddValue("m_message", m_message, typeof(IMessage));
         }
 #endif
-
-        public virtual IMessage MessageObject => this.m_message;
-
-        public override string Message => GetLocalizedMessage();
-
-        public virtual string GetLocalizedMessage()
-        {
-            return GetLocalizedMessage(CultureInfo.InvariantCulture);
-        }
-
-        public virtual string GetLocalizedMessage(CultureInfo locale)
-        {
-            return this.m_message.GetLocalizedMessage(locale);
-        }
-
-        public override string ToString()
-        {
-            return this.m_message.Key + ": " + GetLocalizedMessage();
-        }
     }
 }

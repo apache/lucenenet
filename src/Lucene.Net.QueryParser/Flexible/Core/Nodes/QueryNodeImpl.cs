@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using Lucene.Net.QueryParsers.Flexible.Core.Util;
-using Lucene.Net.QueryParsers.Flexible.Messages;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -60,8 +59,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
             if (IsLeaf || this.clauses == null || child == null)
             {
-                throw new ArgumentException(NLS
-                    .GetLocalizedMessage(QueryParserMessages.NODE_ACTION_NOT_SUPPORTED));
+                // LUCENENET: Factored out NLS/Message/IMessage so end users can optionally utilize the built-in .NET localization.
+                throw new ArgumentException(
+                    QueryParserMessages.NODE_ACTION_NOT_SUPPORTED);
             }
 
             this.clauses.Add(child);
@@ -72,8 +72,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
             if (IsLeaf || this.clauses == null)
             {
-                throw new ArgumentException(NLS
-                    .GetLocalizedMessage(QueryParserMessages.NODE_ACTION_NOT_SUPPORTED));
+                // LUCENENET: Factored out NLS/Message/IMessage so end users can optionally utilize the built-in .NET localization.
+                throw new ArgumentException(
+                    QueryParserMessages.NODE_ACTION_NOT_SUPPORTED);
             }
 
             foreach (IQueryNode child in children)
@@ -92,19 +93,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
             if (IsLeaf || this.clauses == null)
             {
-                var factory = NLS.GetResourceManagerFactory();
-                ResourceManager bundle = factory.Create(typeof(QueryParserMessages));
-                string message;
-                try
-                {
-                    message = bundle.GetString(QueryParserMessages.NODE_ACTION_NOT_SUPPORTED);
-                }
-                finally
-                {
-                    factory.Release(bundle);
-                }
-
-                throw new ArgumentException(message);
+                // LUCENENET: Factored out NLS/Message/IMessage so end users can optionally utilize the built-in .NET localization.
+                throw new ArgumentException(QueryParserMessages.NODE_ACTION_NOT_SUPPORTED);
             }
 
             // reset parent value

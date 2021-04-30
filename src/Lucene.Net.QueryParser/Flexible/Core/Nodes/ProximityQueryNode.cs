@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
-using Lucene.Net.QueryParsers.Flexible.Messages;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -71,9 +70,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             {
                 if (distance <= 0)
                 {
-                    throw new QueryNodeError(new Message(
-                        QueryParserMessages.PARAMETER_VALUE_NOT_SUPPORTED, "distance",
-                        distance));
+                    // LUCENENET: Factored out NLS/Message/IMessage so end users can optionally utilize the built-in .NET localization.
+                    // LUCENENET: Added paramName parameter and changed the error message.
+                    // However, we still need this to be an error type so it is not caught in StandardSyntaxParser.
+                    throw new QueryNodeError(QueryParserMessages.NUMBER_CANNOT_BE_NEGATIVE, nameof(distance));
                 }
                 else
                 {

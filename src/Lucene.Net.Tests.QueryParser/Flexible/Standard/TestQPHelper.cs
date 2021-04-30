@@ -163,9 +163,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
                     if (node is WildcardQueryNode || node is FuzzyQueryNode)
                     {
-
-                        throw new QueryNodeException(new Message(
-                            QueryParserMessages.EMPTY_MESSAGE));
+                        // LUCENENET: Factored out NLS/Message/IMessage so end users can optionally utilize the built-in .NET localization.
+                        throw new QueryNodeException(
+                            QueryParserMessages.EMPTY_MESSAGE);
 
                     }
 

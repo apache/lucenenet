@@ -2,7 +2,6 @@
 using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
-using Lucene.Net.QueryParsers.Flexible.Messages;
 using Lucene.Net.QueryParsers.Flexible.Standard.Nodes;
 using System;
 using System.Collections.Generic;
@@ -69,16 +68,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
             catch (Lucene.Net.QueryParsers.Flexible.Standard.Parser.ParseException tme) // LUCENENET: Flexible QueryParser has its own ParseException that is different than the one in Support
             {
-                tme.SetQuery(query);
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                // LUCENENET specific - removed NLS support (since .NET already has localization) so we need to re-throw the exception here with a different message. However,
+                // unlike the original Lucene code we also preserve the original message in the InnerException.
+                throw new Lucene.Net.QueryParsers.Flexible.Standard.Parser.ParseException(string.Format(QueryParserMessages.INVALID_SYNTAX_CANNOT_PARSE, query, string.Empty), tme) { Query = query };
             }
             catch (Exception tme) when (tme.IsError())
             {
-                IMessage message = new Message(QueryParserMessages.INVALID_SYNTAX_CANNOT_PARSE, query, tme.Message);
-                QueryNodeParseException e = new QueryNodeParseException(tme);
-                e.SetQuery(query);
-                e.SetNonLocalizedMessage(message);
-                throw e;
+                // LUCENENET specific - removed NLS support (since .NET already has localization) so we pass everything through the constructor of the
+                // exception.
+                throw new QueryNodeParseException(string.Format(QueryParserMessages.INVALID_SYNTAX_CANNOT_PARSE, query, tme.Message), tme) { Query = query };
             }
         }
 
@@ -637,11 +635,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         float fms = float.TryParse(fuzzySlop.Image.Substring(1), NumberStyles.Float, CultureInfo.InvariantCulture, out float temp) ? temp : defaultMinSimilarity;
                         if (fms < 0.0f)
                         {
-                            { if (true) throw new ParseException(new Message(QueryParserMessages.INVALID_SYNTAX_FUZZY_LIMITS)); }
+                            { if (true) throw new ParseException(QueryParserMessages.INVALID_SYNTAX_FUZZY_LIMITS); }
                         }
                         else if (fms >= 1.0f && fms != (int)fms)
                         {
-                            { if (true) throw new ParseException(new Message(QueryParserMessages.INVALID_SYNTAX_FUZZY_EDITS)); }
+                            { if (true) throw new ParseException(QueryParserMessages.INVALID_SYNTAX_FUZZY_EDITS); }
                         }
                         q = new FuzzyQueryNode(field, EscapeQuerySyntax.DiscardEscapeChar(term.Image), fms, term.BeginColumn, term.EndColumn);
                     }
