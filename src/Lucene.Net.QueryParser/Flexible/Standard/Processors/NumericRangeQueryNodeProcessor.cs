@@ -5,7 +5,6 @@ using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Processors;
 using Lucene.Net.QueryParsers.Flexible.Core.Util;
-using Lucene.Net.QueryParsers.Flexible.Messages;
 using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using Lucene.Net.QueryParsers.Flexible.Standard.Nodes;
 using Lucene.Net.Util;
@@ -89,7 +88,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 }
                                 catch (FormatException e) // LUCENENET: In .NET we are expecting the framework to throw FormatException, not ParseException
                                 {
-                                    throw new QueryNodeParseException(new Message(
+                                    // LUCENENET: Factored out NLS/Message/IMessage so end users can optionally utilize the built-in .NET localization.
+                                    throw new QueryNodeParseException(string.Format(
                                         QueryParserMessages.COULD_NOT_PARSE_NUMBER, lower
                                             .GetTextAsString(), numberFormat.ToString()), e);
                                 }
@@ -103,7 +103,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 }
                                 catch (FormatException e) // LUCENENET: In .NET we are expecting the framework to throw FormatException, not ParseException
                                 {
-                                    throw new QueryNodeParseException(new Message(
+                                    // LUCENENET: Factored out NLS/Message/IMessage so end users can optionally utilize the built-in .NET localization.
+                                    throw new QueryNodeParseException(string.Format(
                                         QueryParserMessages.COULD_NOT_PARSE_NUMBER, upper
                                             .GetTextAsString(), numberFormat.ToString()), e);
                                 }

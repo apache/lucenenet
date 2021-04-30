@@ -1,10 +1,9 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Messages;
-using Lucene.Net.QueryParsers.Flexible.Messages;
-using System;
+﻿using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 #endif
+#nullable enable
 
 namespace Lucene.Net.QueryParsers.Flexible.Core
 {
@@ -37,35 +36,43 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
+    // LUCENENET specific: Refactored constructors to be more like a .NET type and eliminated IMessage/NLS support.
     public class QueryNodeParseException : QueryNodeException
     {
-        private string query;
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
+        [NonSerialized]
+#endif
+        private string? query;
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
+        [NonSerialized]
+#endif
         private int beginColumn = -1;
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
+        [NonSerialized]
+#endif
         private int beginLine = -1;
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
+        [NonSerialized]
+#endif
         private string errorToken = "";
 
-        public QueryNodeParseException(IMessage message)
+        public QueryNodeParseException(string? message)
             : base(message)
         {
         }
 
-        public QueryNodeParseException(Exception throwable)
-            : base(throwable)
+        public QueryNodeParseException(Exception? cause)
+            : base(cause)
         {
         }
 
-        public QueryNodeParseException(IMessage message, Exception throwable)
-            : base(message, throwable)
+        public QueryNodeParseException(string? message, Exception? innerException)
+            : base(message, innerException)
         {
         }
-
-        // LUCENENET: For testing purposes
-        internal QueryNodeParseException(string message)
-            : base(message)
-        { }
 
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
@@ -93,14 +100,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         }
 #endif
 
-        public virtual void SetQuery(string query)
+        public virtual string? Query
         {
-            this.query = query;
-            this.m_message = new Message(
-                QueryParserMessages.INVALID_SYNTAX_CANNOT_PARSE, query, "");
+            get => this.query;
+            set => this.query = value; // LUCENENET specific - set the message only in the constructor
         }
-
-        public virtual string Query => this.query;
 
         /// <summary>
         /// The errorToken in the query
@@ -108,13 +112,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         public virtual string ErrorToken
         {
             get => this.errorToken;
-            protected set => this.errorToken = value;
+            protected set => this.errorToken = value ?? throw new ArgumentNullException(nameof(ErrorToken)); // LUCENENET specific - added null guard clause
         }
 
-        public virtual void SetNonLocalizedMessage(IMessage message)
-        {
-            this.m_message = message;
-        }
+        // LUCENENET specific - removed SetNonLocalizedMessage() because we only set the message in the constructor
 
         /// <summary>
         /// For EndOfLine and EndOfFile ("&lt;EOF&gt;") parsing problems the last char in the

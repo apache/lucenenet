@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
 
  Licensed to the Apache Software Foundation (ASF) under one
@@ -19,7 +19,6 @@
  under the License.
 
 -->
-
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -138,6 +137,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ARGUMENT_CANNOT_BE_NULL" xml:space="preserve">
+    <value>Value cannot be null.</value>
+    <comment>LUCENENET: Added to make the message more specific</comment>
+  </data>
   <data name="COULD_NOT_PARSE_NUMBER" xml:space="preserve">
     <value>Could not parse text "{0}" using {1}</value>
   </data>
@@ -176,6 +179,10 @@
   </data>
   <data name="NODE_ACTION_NOT_SUPPORTED" xml:space="preserve">
     <value>This node does not support this action.</value>
+  </data>
+  <data name="NUMBER_CANNOT_BE_NEGATIVE" xml:space="preserve">
+    <value>The parameter must be greater than or equal to zero.</value>
+    <comment>LUCENENET: Added to make the message more specific</comment>
   </data>
   <data name="NUMBER_CLASS_NOT_SUPPORTED_BY_NUMERIC_RANGE_QUERY" xml:space="preserve">
     <value>Number class not supported by NumericRangeQueryNode: {0}</value>

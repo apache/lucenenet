@@ -53,7 +53,8 @@ namespace Lucene.Net
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsIllegalArgumentException(this Exception e)
         {
-            if (e is null || e.IsAlwaysIgnored()) return false;
+            // If our exception implements IError and subclasses ArgumentException, we will ignore it.
+            if (e is null || e.IsError() || e.IsAlwaysIgnored()) return false;
 
             return e is ArgumentException &&
                 !(e is ArgumentNullException) &&     // Corresponds to NullPointerException, so we don't catch it here.
