@@ -138,7 +138,7 @@ namespace Lucene.Net.Search.Grouping
             else
             {
                 ValueSource vs = new BytesRefFieldSource(groupField);
-                selected = new FunctionAllGroupsCollector<MutableValue>(vs, new Hashtable());   //LUCENET Specific type for generic must be specified.
+                selected = new FunctionAllGroupsCollector<MutableValue>(vs, new Hashtable());   // LUCENENET Specific type for generic must be specified.
             }
 
             if (Verbose)
