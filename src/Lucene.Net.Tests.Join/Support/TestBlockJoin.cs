@@ -5,6 +5,8 @@ using Lucene.Net.Documents;
 using Lucene.Net.Documents.Extensions;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Join;
+using Lucene.Net.Search;
 using Lucene.Net.Search.Grouping;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -17,7 +19,7 @@ using System.Linq;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
 
-namespace Lucene.Net.Search.Join
+namespace Lucene.Net.Tests.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -36,6 +38,7 @@ namespace Lucene.Net.Search.Join
      * limitations under the License.
      */
 
+    [Obsolete("Production tests are in Lucene.Net.Search.Join. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public class TestBlockJoin : LuceneTestCase
     {
         // One resume...
@@ -278,7 +281,7 @@ namespace Lucene.Net.Search.Join
             r.Dispose();
             dir.Dispose();
         }
-        
+
         protected QueryWrapperFilter Skill(string skill)
         {
             return new QueryWrapperFilter(new TermQuery(new Term("skill", skill)));
@@ -369,7 +372,7 @@ namespace Lucene.Net.Search.Join
             r.Dispose();
             dir.Dispose();
         }
-        
+
         private void AddSkillless(RandomIndexWriter w)
         {
             if (Random.NextBoolean())
@@ -377,7 +380,7 @@ namespace Lucene.Net.Search.Join
                 w.AddDocument(MakeResume("Skillless", Random.NextBoolean() ? "United Kingdom" : "United States"));
             }
         }
-        
+
         private Document GetParentDoc(IndexReader reader, Filter parents, int childDocID)
         {
             IList<AtomicReaderContext> leaves = reader.Leaves;
@@ -1090,7 +1093,7 @@ namespace Lucene.Net.Search.Join
             dir.Dispose();
             joinDir.Dispose();
         }
-        
+
         private void CompareChildHits(IndexReader r, IndexReader joinR, TopDocs results, TopDocs joinResults)
         {
             assertEquals(results.TotalHits, joinResults.TotalHits);
@@ -1114,7 +1117,7 @@ namespace Lucene.Net.Search.Join
                 assertArrayEquals(hit0.Fields, joinHit0.Fields);
             }
         }
-        
+
         private void CompareHits(IndexReader r, IndexReader joinR, TopDocs results, ITopGroups<int> joinResults)
         {
             // results is 'complete'; joinResults is a subset

@@ -1,8 +1,9 @@
 ﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Search;
 using System;
 using System.IO;
 
-namespace Lucene.Net.Search.Join
+namespace Lucene.Net.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,10 +23,11 @@ namespace Lucene.Net.Search.Join
      */
 
     /// <summary>
-    /// Utility for query time joining using <see cref="TermsQuery"/> and <see cref="TermsCollector"/>.
+    /// Utility for query time joining using <see cref="Lucene.Net.Search.Join.TermsQuery"/> and <see cref="Lucene.Net.Search.Join.TermsCollector"/>.
     /// 
     /// @lucene.experimental
     /// </summary>
+    [Obsolete("Use Lucene.Net.Search.Join.JoinUtil instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public sealed class JoinUtil
     {
         // No instances allowed
@@ -63,15 +65,15 @@ namespace Lucene.Net.Search.Join
             switch (scoreMode)
             {
                 case ScoreMode.None:
-                    TermsCollector termsCollector = TermsCollector.Create(fromField, multipleValuesPerDocument);
+                    Lucene.Net.Search.Join.TermsCollector termsCollector = Lucene.Net.Search.Join.TermsCollector.Create(fromField, multipleValuesPerDocument);
                     fromSearcher.Search(fromQuery, termsCollector);
-                    return new TermsQuery(toField, fromQuery, termsCollector.CollectorTerms);
+                    return new Lucene.Net.Search.Join.TermsQuery(toField, fromQuery, termsCollector.CollectorTerms);
                 case ScoreMode.Total:
                 case ScoreMode.Max:
                 case ScoreMode.Avg:
-                    TermsWithScoreCollector termsWithScoreCollector = TermsWithScoreCollector.Create(fromField, multipleValuesPerDocument, scoreMode);
+                    Lucene.Net.Search.Join.TermsWithScoreCollector termsWithScoreCollector = Lucene.Net.Search.Join.TermsWithScoreCollector.Create(fromField, multipleValuesPerDocument, (Lucene.Net.Search.Join.ScoreMode)scoreMode);
                     fromSearcher.Search(fromQuery, termsWithScoreCollector);
-                    return new TermsIncludingScoreQuery(toField, multipleValuesPerDocument, termsWithScoreCollector.CollectedTerms, termsWithScoreCollector.ScoresPerTerm, fromQuery);
+                    return new Lucene.Net.Search.Join.TermsIncludingScoreQuery(toField, multipleValuesPerDocument, termsWithScoreCollector.CollectedTerms, termsWithScoreCollector.ScoresPerTerm, fromQuery);
                 default:
                     throw new ArgumentException(string.Format("Score mode {0} isn't supported.", scoreMode));
             }

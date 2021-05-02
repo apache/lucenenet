@@ -126,7 +126,7 @@ namespace Lucene
             typeof(Lucene.Net.Facet.Facets).Assembly,                              // Lucene.Net.Facet
             typeof(Lucene.Net.Search.Grouping.ICollectedSearchGroup).Assembly,     // Lucene.Net.Grouping
             typeof(Lucene.Net.Search.Highlight.DefaultEncoder).Assembly,           // Lucene.Net.Highlighter
-            typeof(Lucene.Net.Join.JoinUtil).Assembly,                             // Lucene.Net.Join
+            typeof(Lucene.Net.Search.Join.JoinUtil).Assembly,                      // Lucene.Net.Join
             typeof(Lucene.Net.Index.Memory.MemoryIndex).Assembly,                  // Lucene.Net.Memory
             typeof(Lucene.Net.Misc.SweetSpotSimilarity).Assembly,                  // Lucene.Net.Misc
             typeof(Lucene.Net.Queries.BooleanFilter).Assembly,                     // Lucene.Net.Queries

@@ -2,6 +2,8 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using Lucene.Net.Join;
+using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -10,7 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lucene.Net.Search.Join
+namespace Lucene.Net.Tests.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -29,6 +31,7 @@ namespace Lucene.Net.Search.Join
      * limitations under the License.
      */
 
+    [Obsolete("Production tests are in Lucene.Net.Search.Join. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public class TestBlockJoinValidation : LuceneTestCase
     {
         public const int AMOUNT_OF_SEGMENTS = 5;
@@ -40,7 +43,7 @@ namespace Lucene.Net.Search.Join
         private IndexReader indexReader;
         private IndexSearcher indexSearcher;
         private Filter parentsFilter;
-        
+
         [SetUp]
         public override void SetUp()
         {
@@ -121,7 +124,7 @@ namespace Lucene.Net.Search.Join
                 assertTrue(ise.Message.Contains(ToChildBlockJoinQuery.INVALID_QUERY_MESSAGE));
             }
         }
-        
+
         [Test]
         public void TestAdvanceValidationForToChildBjq()
         {
@@ -136,7 +139,7 @@ namespace Lucene.Net.Search.Join
             var childQuery = new WildcardQuery(new Term("child", CreateFieldValue(randomChildNumber)));
             conjunctionQuery.Add(new BooleanClause(childQuery, Occur.MUST));
             conjunctionQuery.Add(new BooleanClause(blockJoinQuery, Occur.MUST));
-            
+
             // LUCENENET: Refactored to allow us to use our IsIllegalStateException() extension method
             try
             {
@@ -231,7 +234,7 @@ namespace Lucene.Net.Search.Join
             return childQueryWithRandomParent;
         }
 
-        private static int GetRandomParentId() => Random.Next(AMOUNT_OF_PARENT_DOCS*AMOUNT_OF_SEGMENTS);
+        private static int GetRandomParentId() => Random.Next(AMOUNT_OF_PARENT_DOCS * AMOUNT_OF_SEGMENTS);
 
         private static int GetRandomParentNumber() => Random.Next(AMOUNT_OF_PARENT_DOCS);
 

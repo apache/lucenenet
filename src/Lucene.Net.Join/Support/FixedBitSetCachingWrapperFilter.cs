@@ -1,8 +1,10 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
+using Lucene.Net.Search;
 using Lucene.Net.Util;
+using System;
 
-namespace Lucene.Net.Search.Join
+namespace Lucene.Net.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -25,12 +27,13 @@ namespace Lucene.Net.Search.Join
     /// A <see cref="CachingWrapperFilter"/> that caches sets using a <see cref="FixedBitSet"/>,
     /// as required for joins. 
     /// </summary>
+    [Obsolete("Use Lucene.Net.Search.Join.FixedBitSetCachingWrapperFilter instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public sealed class FixedBitSetCachingWrapperFilter : CachingWrapperFilter
     {
         /// <summary>
         /// Sole constructor, see <see cref="CachingWrapperFilter.CachingWrapperFilter(Filter)"/>.
         /// </summary>
-        public FixedBitSetCachingWrapperFilter(Filter filter) 
+        public FixedBitSetCachingWrapperFilter(Filter filter)
             : base(filter)
         {
         }

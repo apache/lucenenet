@@ -1,9 +1,10 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
+using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
 
-namespace Lucene.Net.Search.Join
+namespace Lucene.Net.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -28,6 +29,7 @@ namespace Lucene.Net.Search.Join
     /// 
     /// @lucene.experimental
     /// </summary>
+    [Obsolete("Use Lucene.Net.Search.Join.ToParentBlockJoinFieldComparer instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public abstract class ToParentBlockJoinFieldComparer : FieldComparer<object>
     {
         private readonly Filter _parentFilter;
@@ -60,7 +62,7 @@ namespace Lucene.Net.Search.Join
         {
             _wrappedComparer.SetTopValue(value);
         }
-        
+
         public override FieldComparer SetNextReader(AtomicReaderContext context)
         {
             DocIdSet innerDocuments = _childFilter.GetDocIdSet(context, null);
@@ -100,7 +102,7 @@ namespace Lucene.Net.Search.Join
         {
             return set == null;
         }
-        
+
         private static FixedBitSet ToFixedBitSet(DocIdSetIterator iterator, int numBits)
         {
             var set = new FixedBitSet(numBits);
@@ -129,11 +131,11 @@ namespace Lucene.Net.Search.Join
             /// <param name="childFilter"><see cref="Filter"/> that defines which child / nested documents participates in sorting. </param>
             /// <param name="spareSlot">The extra slot inside the wrapped comparer that is used to compare which nested document
             ///                  inside the parent document scope is most competitive. </param>
-            public Lowest(FieldComparer wrappedComparer, Filter parentFilter, Filter childFilter, int spareSlot) 
+            public Lowest(FieldComparer wrappedComparer, Filter parentFilter, Filter childFilter, int spareSlot)
                 : base(wrappedComparer, parentFilter, childFilter, spareSlot)
             {
             }
-            
+
             public override int CompareBottom(int parentDoc)
             {
                 if (parentDoc == 0 || _parentDocuments == null || _childDocuments == null)
@@ -174,7 +176,7 @@ namespace Lucene.Net.Search.Join
                     }
                 }
             }
-            
+
             public override void Copy(int slot, int parentDoc)
             {
                 if (parentDoc == 0 || _parentDocuments == null || _childDocuments == null)
@@ -206,7 +208,7 @@ namespace Lucene.Net.Search.Join
                     }
                 }
             }
-            
+
             public override int CompareTop(int parentDoc)
             {
                 if (parentDoc == 0 || _parentDocuments == null || _childDocuments == null)
@@ -264,11 +266,11 @@ namespace Lucene.Net.Search.Join
             /// <param name="childFilter"><see cref="Filter"/> that defines which child / nested documents participates in sorting. </param>
             /// <param name="spareSlot">The extra slot inside the wrapped comparer that is used to compare which nested document
             ///                  inside the parent document scope is most competitive. </param>
-            public Highest(FieldComparer wrappedComparer, Filter parentFilter, Filter childFilter, int spareSlot) 
+            public Highest(FieldComparer wrappedComparer, Filter parentFilter, Filter childFilter, int spareSlot)
                 : base(wrappedComparer, parentFilter, childFilter, spareSlot)
             {
             }
-            
+
             public override int CompareBottom(int parentDoc)
             {
                 if (parentDoc == 0 || _parentDocuments == null || _childDocuments == null)
@@ -310,7 +312,7 @@ namespace Lucene.Net.Search.Join
                     }
                 }
             }
-            
+
             public override void Copy(int slot, int parentDoc)
             {
                 if (parentDoc == 0 || _parentDocuments == null || _childDocuments == null)
@@ -341,7 +343,7 @@ namespace Lucene.Net.Search.Join
                     }
                 }
             }
-            
+
             public override int CompareTop(int parentDoc)
             {
                 if (parentDoc == 0 || _parentDocuments == null || _childDocuments == null)
