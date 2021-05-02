@@ -54,13 +54,13 @@ namespace Lucene.Net.Util
         public override void AssertEquals(int numBits, BitSet ds1, WAH8DocIdSet ds2)
         {
             base.AssertEquals(numBits, ds1, ds2);
-            Assert.AreEqual(ds1.Cardinality, ds2.Cardinality());
+            Assert.AreEqual(ds1.Cardinality, ds2.Cardinality);
         }
 
         //public override void AssertEquals(int numBits, OpenBitSet ds1, WAH8DocIdSet ds2)
         //{
         //    base.AssertEquals(numBits, ds1, ds2);
-        //    Assert.AreEqual(ds1.Cardinality(), ds2.Cardinality());
+        //    Assert.AreEqual(ds1.Cardinality, ds2.Cardinality);
         //}
 
         [Test]
@@ -207,7 +207,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            Assert.AreEqual(ds1.Cardinality(), ds2.Cardinality());
+            Assert.AreEqual(ds1.Cardinality, ds2.Cardinality);
         }
 
         [Test]

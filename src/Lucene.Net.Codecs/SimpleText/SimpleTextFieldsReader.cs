@@ -632,7 +632,7 @@ namespace Lucene.Net.Codecs.SimpleText
                         _termCount++;
                     }
                 }
-                _docCount = visitedDocs.Cardinality();
+                _docCount = visitedDocs.Cardinality;
                 _fst = b.Finish();
             
             }

@@ -454,7 +454,7 @@ namespace Lucene.Net.Search.Grouping
 
         private bool OpenBitSetContains(int[] expectedDocs, FixedBitSet actual, int maxDoc)
         {
-            if (expectedDocs.Length != actual.Cardinality())
+            if (expectedDocs.Length != actual.Cardinality)
             {
                 return false;
             }

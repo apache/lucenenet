@@ -284,7 +284,7 @@ namespace Lucene.Net.Index
                 UndeleteAll(); // initialize main bitset
             }
 
-            public override int NumDocs => liveDocs.Cardinality();
+            public override int NumDocs => liveDocs.Cardinality;
 
             public void UndeleteAll()
             {

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Index
 {
@@ -127,10 +127,7 @@ namespace Lucene.Net.Index
                 throw new IndexOutOfRangeException();
             }
 
-            public override int Cardinality()
-            {
-                return 0;
-            }
+            public override int Cardinality => 0;
         }
 
         /// <summary>

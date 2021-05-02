@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
                         set.Set(docId - docBase);
                     }
                 }
-                return set.Cardinality() == 0 ? null : set;
+                return set.Cardinality == 0 ? null : set;
             }
         }
     }

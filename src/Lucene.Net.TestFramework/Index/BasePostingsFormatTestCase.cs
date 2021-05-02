@@ -674,7 +674,7 @@ namespace Lucene.Net.Index
                         sumDF += postings.DocFreq;
                     }
 
-                    termsConsumer.Finish(doFreq ? sumTotalTF : -1, sumDF, seenDocs.Cardinality());
+                    termsConsumer.Finish(doFreq ? sumTotalTF : -1, sumDF, seenDocs.Cardinality);
                 }
 
             }

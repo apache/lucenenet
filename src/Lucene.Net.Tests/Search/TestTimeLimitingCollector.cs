@@ -335,7 +335,7 @@ namespace Lucene.Net.Search
             {
                 threadArray[i].Join();
             }
-            assertEquals("some threads failed!", N_THREADS, success.Cardinality());
+            assertEquals("some threads failed!", N_THREADS, success.Cardinality);
         }
 
         private class ThreadAnonymousClass : ThreadJob
@@ -386,7 +386,7 @@ namespace Lucene.Net.Search
 
             public int HitCount()
             {
-                return (int) bits.Cardinality();
+                return (int) bits.Cardinality;
             }
 
             public int LastDocCollected => lastDocCollected;

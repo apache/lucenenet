@@ -616,12 +616,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Return the number of documents in this <see cref="DocIdSet"/> in constant time. </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int Cardinality()
-        {
-            return cardinality;
-        }
+        /// Gets the number of documents in this <see cref="DocIdSet"/> in constant time. </summary>
+        public int Cardinality => cardinality;
 
         /// <summary>
         /// Return the memory usage of this instance. </summary>

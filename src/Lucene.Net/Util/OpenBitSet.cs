@@ -153,15 +153,17 @@ namespace Lucene.Net.Util
         //}
 
         /// <summary>
-        /// Returns the current capacity of this set. This is *not* equal to <see cref="Cardinality()"/>.
+        /// Returns the current capacity of this set. This is *not* equal to <see cref="Cardinality"/>.
         /// <para/>
         /// NOTE: This is equivalent to size() or length() in Lucene.
         /// </summary>
         public virtual int Length => m_bits.Length << 6;
 
+        int IBits.Length => Length;
+
         /// <summary>
         /// Returns <c>true</c> if there are no set bits </summary>
-        public virtual bool IsEmpty => Cardinality() == 0;
+        public virtual bool IsEmpty => Cardinality == 0;
 
         /// <summary>
         /// Expert: returns the <see cref="T:long[]"/> storing the bits. </summary>
@@ -647,14 +649,15 @@ namespace Lucene.Net.Util
         */
 
         /// <summary>
-        /// Get the number of set bits.
+        /// Gets the number of set bits.
         /// </summary>
         /// <returns> The number of set bits. </returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual long Cardinality()
+        public virtual long Cardinality
         {
-            return BitUtil.Pop_Array(m_bits, 0, m_wlen);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => BitUtil.Pop_Array(m_bits, 0, m_wlen);
         }
+
 
         /// <summary>
         /// Returns the popcount or cardinality of the intersection of the two sets.

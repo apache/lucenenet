@@ -260,7 +260,7 @@ namespace Lucene.Net.Codecs.Bloom
         /// <return>A smaller <see cref="FuzzySet"/> or <c>null</c> if the current set is already over-saturated.</return>
         public virtual FuzzySet Downsize(float targetMaxSaturation)
         {
-            var numBitsSet = _filter.Cardinality();
+            var numBitsSet = _filter.Cardinality;
             FixedBitSet rightSizedBitSet;
             var rightSizedBitSetSize = _bloomSize;
             //Hopefully find a smaller size bitset into which we can project accumulated values while maintaining desired saturation level
@@ -303,7 +303,7 @@ namespace Lucene.Net.Codecs.Bloom
 
         public virtual int GetEstimatedUniqueValues()
         {
-            return GetEstimatedNumberUniqueValuesAllowingForCollisions(_bloomSize, _filter.Cardinality());
+            return GetEstimatedNumberUniqueValuesAllowingForCollisions(_bloomSize, _filter.Cardinality);
         }
 
         /// <summary>
@@ -321,7 +321,7 @@ namespace Lucene.Net.Codecs.Bloom
 
         public virtual float GetSaturation()
         {
-            var numBitsSet = _filter.Cardinality();
+            var numBitsSet = _filter.Cardinality;
             return numBitsSet/(float) _bloomSize;
         }
 

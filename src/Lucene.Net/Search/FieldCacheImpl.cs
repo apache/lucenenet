@@ -540,7 +540,7 @@ namespace Lucene.Net.Search
             }
             else if (docsWithField is FixedBitSet fixedBitSet)
             {
-                int numSet = fixedBitSet.Cardinality();
+                int numSet = fixedBitSet.Cardinality;
                 if (numSet >= maxDoc)
                 {
                     // The cardinality of the BitSet is maxDoc if all documents have a value.
@@ -1197,7 +1197,7 @@ namespace Lucene.Net.Search
                 {
                     return new Lucene.Net.Util.Bits.MatchNoBits(maxDoc);
                 }
-                int numSet = res.Cardinality();
+                int numSet = res.Cardinality;
                 if (numSet >= maxDoc)
                 {
                     // The cardinality of the BitSet is maxDoc if all documents have a value.

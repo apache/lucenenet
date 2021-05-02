@@ -1,4 +1,4 @@
-namespace Lucene.Net.Index
+﻿namespace Lucene.Net.Index
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
         /// Retrieve the ordinal for the current document (previously
         /// set by <see cref="SortedSetDocValues.SetDocument(int)"/> at the specified index.
         /// <para/>
-        /// An index ranges from <c>0</c> to <c>Cardinality()-1</c>.
+        /// An index ranges from <c>0</c> to <c>Cardinality-1</c>.
         /// The first ordinal value is at index <c>0</c>, the next at index <c>1</c>,
         /// and so on, as for array indexing. </summary>
         /// <param name="index"> index of the ordinal for the document. </param>
@@ -49,9 +49,9 @@ namespace Lucene.Net.Index
         public abstract long OrdAt(int index);
 
         /// <summary>
-        /// Returns the cardinality for the current document (previously
+        /// Gets the cardinality for the current document (previously
         /// set by <see cref="SortedSetDocValues.SetDocument(int)"/>.
         /// </summary>
-        public abstract int Cardinality();
+        public abstract int Cardinality { get; }
     }
 }

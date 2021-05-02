@@ -1,4 +1,4 @@
-using Lucene.Net.Codecs.Lucene41;
+﻿using Lucene.Net.Codecs.Lucene41;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
@@ -176,7 +176,7 @@ namespace Lucene.Net.Codecs.Asserting
                 if (Debugging.AssertsEnabled) Debugging.Assert(state == TermsConsumerState.INITIAL || state == TermsConsumerState.START && lastPostingsConsumer.docFreq == 0);
                 state = TermsConsumerState.FINISHED;
                 if (Debugging.AssertsEnabled) Debugging.Assert(docCount >= 0);
-                if (Debugging.AssertsEnabled) Debugging.Assert(docCount == visitedDocs.Cardinality());
+                if (Debugging.AssertsEnabled) Debugging.Assert(docCount == visitedDocs.Cardinality);
                 if (Debugging.AssertsEnabled) Debugging.Assert(sumDocFreq >= docCount);
                 if (Debugging.AssertsEnabled) Debugging.Assert(sumDocFreq == this.sumDocFreq);
                 if (fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY)

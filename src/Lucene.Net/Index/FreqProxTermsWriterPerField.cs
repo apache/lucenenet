@@ -669,7 +669,7 @@ namespace Lucene.Net.Index
                 sumDocFreq += docFreq;
             }
 
-            termsConsumer.Finish(writeTermFreq ? sumTotalTermFreq : -1, sumDocFreq, visitedDocs.Cardinality());
+            termsConsumer.Finish(writeTermFreq ? sumTotalTermFreq : -1, sumDocFreq, visitedDocs.Cardinality);
         }
     }
 }

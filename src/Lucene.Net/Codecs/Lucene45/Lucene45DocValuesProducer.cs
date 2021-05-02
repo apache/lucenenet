@@ -802,11 +802,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 return ordinals.Get(startOffset + index);
             }
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public override int Cardinality()
-            {
-                return (int)(endOffset - startOffset);
-            }
+            public override int Cardinality => (int)(endOffset - startOffset);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

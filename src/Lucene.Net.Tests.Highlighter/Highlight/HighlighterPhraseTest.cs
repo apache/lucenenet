@@ -112,7 +112,7 @@ namespace Lucene.Net.Search.Highlight
                 FixedBitSet bitset = new FixedBitSet(indexReader.MaxDoc);
                 indexSearcher.Search(phraseQuery, new ConcurrentSpanCollectorAnonymousClass(this, bitset));
 
-                assertEquals(1, bitset.Cardinality());
+                assertEquals(1, bitset.Cardinality);
                 int maxDoc = indexReader.MaxDoc;
                 Highlighter highlighter = new Highlighter(
                          new SimpleHTMLFormatter(), new SimpleHTMLEncoder(),

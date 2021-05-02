@@ -121,7 +121,7 @@ namespace Lucene.Net.Codecs.Asserting
                 }
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(count == maxDoc);
-                if (Debugging.AssertsEnabled) Debugging.Assert(seenOrds.Cardinality() == valueCount);
+                if (Debugging.AssertsEnabled) Debugging.Assert(seenOrds.Cardinality == valueCount);
                 CheckIterator(values.GetEnumerator(), valueCount, false);
                 CheckIterator(docToOrd.GetEnumerator(), maxDoc, false);
                 @in.AddSortedField(field, values, docToOrd);
@@ -171,7 +171,7 @@ namespace Lucene.Net.Codecs.Asserting
                 if (Debugging.AssertsEnabled) Debugging.Assert(ordIterator.MoveNext() == false);
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(docCount == maxDoc);
-                if (Debugging.AssertsEnabled) Debugging.Assert(seenOrds.Cardinality() == valueCount);
+                if (Debugging.AssertsEnabled) Debugging.Assert(seenOrds.Cardinality == valueCount);
                 CheckIterator(values.GetEnumerator(), valueCount, false);
                 CheckIterator(docToOrdCount.GetEnumerator(), maxDoc, false);
                 CheckIterator(ords.GetEnumerator(), ordCount, false);
