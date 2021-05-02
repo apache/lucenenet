@@ -60,9 +60,9 @@ namespace Lucene.Net.Search.Grouping
             string[,] carData = GetCarData();
 
             Directory indexDir = NewDirectory();
-            Analyzer standardAnalyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+            Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
-            IndexWriterConfig indexConfig = new IndexWriterConfig(LuceneVersion.LUCENE_48, standardAnalyzer);
+            IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
             IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             int carCount = carData.GetLength(0);
@@ -154,9 +154,9 @@ namespace Lucene.Net.Search.Grouping
             int[,] numericData = GetNumbers();
 
             Directory indexDir = NewDirectory();
-            Analyzer standardAnalyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+            Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
-            IndexWriterConfig indexConfig = new IndexWriterConfig(LuceneVersion.LUCENE_48, standardAnalyzer);
+            IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
             IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
 
@@ -266,9 +266,9 @@ namespace Lucene.Net.Search.Grouping
             string[,] carData = GetCarData();
 
             Directory indexDir = NewDirectory();
-            Analyzer standardAnalyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+            Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
-            IndexWriterConfig indexConfig = new IndexWriterConfig(LuceneVersion.LUCENE_48, standardAnalyzer);
+            IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
             IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             int carCount = carData.GetLength(0);
@@ -359,9 +359,9 @@ namespace Lucene.Net.Search.Grouping
             string[,] carData = GetCarData();
 
             Directory indexDir = NewDirectory();
-            Analyzer standardAnalyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+            Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
-            IndexWriterConfig indexConfig = new IndexWriterConfig(LuceneVersion.LUCENE_48, standardAnalyzer);
+            IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
             IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             int carCount = carData.GetLength(0);
@@ -454,9 +454,9 @@ namespace Lucene.Net.Search.Grouping
             int[,] numericData = GetNumbers();
 
             Directory indexDir = NewDirectory();
-            Analyzer standardAnalyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+            Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
-            IndexWriterConfig indexConfig = new IndexWriterConfig(LuceneVersion.LUCENE_48, standardAnalyzer);
+            IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
             IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             //Normally we can not group on a Int32Field when using fieldCache because the Int32Field is stored
@@ -563,9 +563,9 @@ namespace Lucene.Net.Search.Grouping
             int[,] numericData = GetNumbers();
 
             Directory indexDir = NewDirectory();
-            Analyzer standardAnalyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+            Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
-            IndexWriterConfig indexConfig = new IndexWriterConfig(LuceneVersion.LUCENE_48, standardAnalyzer);
+            IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
             IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
 
@@ -674,9 +674,9 @@ namespace Lucene.Net.Search.Grouping
             int[,] numericData = GetNumbers();
 
             Directory indexDir = NewDirectory();
-            Analyzer standardAnalyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+            Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
-            IndexWriterConfig indexConfig = new IndexWriterConfig(LuceneVersion.LUCENE_48, standardAnalyzer);
+            IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
             IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
 
@@ -769,9 +769,9 @@ namespace Lucene.Net.Search.Grouping
             int[,] numericData = GetNumbers();
 
             Directory indexDir = NewDirectory();
-            Analyzer standardAnalyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+            Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
-            IndexWriterConfig indexConfig = new IndexWriterConfig(LuceneVersion.LUCENE_48, standardAnalyzer);
+            IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
             IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             int rowCount = numericData.GetLength(0);
@@ -860,9 +860,9 @@ namespace Lucene.Net.Search.Grouping
             string[,] carData = GetCarData();
 
             Directory indexDir = NewDirectory();
-            Analyzer standardAnalyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+            Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
-            IndexWriterConfig indexConfig = new IndexWriterConfig(LuceneVersion.LUCENE_48, standardAnalyzer);
+            IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
             IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             int carCount = carData.GetLength(0);
@@ -973,9 +973,9 @@ namespace Lucene.Net.Search.Grouping
             int[,] numericData = GetNumbers();
 
             Directory indexDir = NewDirectory();
-            Analyzer standardAnalyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+            Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
-            IndexWriterConfig indexConfig = new IndexWriterConfig(LuceneVersion.LUCENE_48, standardAnalyzer);
+            IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
             IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             //Normally we can not group on a Int32Field because it's stored as a 8 term trie structure
@@ -1096,9 +1096,9 @@ namespace Lucene.Net.Search.Grouping
             int[,] numericData = GetNumbers();
 
             Directory indexDir = NewDirectory();
-            Analyzer standardAnalyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+            Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
-            IndexWriterConfig indexConfig = new IndexWriterConfig(LuceneVersion.LUCENE_48, standardAnalyzer);
+            IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
             IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             //Normally we can not group on a Int32Field because it's stored as a 8 term trie structure
@@ -1224,9 +1224,9 @@ namespace Lucene.Net.Search.Grouping
             int[,] numericData = GetNumbers();
 
             Directory indexDir = NewDirectory();
-            Analyzer standardAnalyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+            Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
-            IndexWriterConfig indexConfig = new IndexWriterConfig(LuceneVersion.LUCENE_48, standardAnalyzer);
+            IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
             IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             int rowCount = numericData.GetLength(0);
