@@ -177,7 +177,7 @@ namespace Lucene.Net.Search.Grouping
                 //LUCENENET Specific gaurd clause provides diagnostic info when TGroupValue is inappropriate type.
                 if (!typeof(TGroupValue).IsSubclassOf(typeof(MutableValue)) && typeof(TGroupValue) != typeof(MutableValue) && typeof(TGroupValue) != typeof(object))
                 {
-                    throw new Exception("Gneneric type specified must be MutableValue, inherit from MutableValue, or be of type object since grouping by function.");
+                    throw IllegalStateException.Create("Generic closing type specified must be MutableValue, inherit from MutableValue, or be of type object since grouping by function.");
                 }
                 return (ITopGroups<TGroupValue>)GroupByFunction<MutableValue>(searcher, filter, query, groupOffset, groupLimit);
             }
