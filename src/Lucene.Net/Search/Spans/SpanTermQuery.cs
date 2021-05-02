@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Spans
             StringBuilder buffer = new StringBuilder();
             if (m_term.Field.Equals(field, StringComparison.Ordinal))
             {
-                buffer.Append(m_term.Text());
+                buffer.Append(m_term.Text);
             }
             else
             {
@@ -164,7 +164,7 @@ namespace Lucene.Net.Search.Spans
             else
             {
                 // term does exist, but has no positions
-                throw IllegalStateException.Create("field \"" + m_term.Field + "\" was indexed without position data; cannot run SpanTermQuery (term=" + m_term.Text() + ")");
+                throw IllegalStateException.Create("field \"" + m_term.Field + "\" was indexed without position data; cannot run SpanTermQuery (term=" + m_term.Text + ")");
             }
         }
     }

@@ -322,7 +322,7 @@ namespace Lucene.Net.Search.Spell
             SuggestMode suggestMode, float accuracy)
         {
             CharsRef spare = new CharsRef();
-            string text = term.Text();
+            string text = term.Text;
             if (minQueryLength > 0 && text.CodePointCount(0, text.Length) < minQueryLength)
             {
                 return Arrays.Empty<SuggestWord>();
@@ -433,7 +433,7 @@ namespace Lucene.Net.Search.Spell
 
             var stQueue = new JCG.PriorityQueue<ScoreTerm>();
 
-            BytesRef queryTerm = new BytesRef(term.Text());
+            BytesRef queryTerm = new BytesRef(term.Text);
             BytesRef candidateTerm;
             ScoreTerm st = new ScoreTerm();
             IBoostAttribute boostAtt = e.Attributes.AddAttribute<IBoostAttribute>();
@@ -474,7 +474,7 @@ namespace Lucene.Net.Search.Spell
                 {
                     UnicodeUtil.UTF8toUTF16(candidateTerm, spare);
                     termAsString = spare.ToString();
-                    score = distance.GetDistance(term.Text(), termAsString);
+                    score = distance.GetDistance(term.Text, termAsString);
                 }
 
                 if (score < accuracy)

@@ -1,4 +1,4 @@
-using Lucene.Net.Util.Automaton;
+﻿using Lucene.Net.Util.Automaton;
 using System;
 using System.Text;
 
@@ -93,7 +93,7 @@ namespace Lucene.Net.Search
         /// <param name="flags"> Optional <see cref="RegExp"/> features from <see cref="RegExpSyntax"/> </param>
         /// <param name="provider"> Custom <see cref="IAutomatonProvider"/> for named automata </param>
         public RegexpQuery(Term term, RegExpSyntax flags, IAutomatonProvider provider)
-            : base(term, (new RegExp(term.Text(), flags)).ToAutomaton(provider))
+            : base(term, (new RegExp(term.Text, flags)).ToAutomaton(provider))
         {
         }
 
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
                 buffer.Append(":");
             }
             buffer.Append('/');
-            buffer.Append(m_term.Text());
+            buffer.Append(m_term.Text);
             buffer.Append('/');
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();

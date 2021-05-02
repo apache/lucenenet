@@ -108,7 +108,7 @@ namespace Lucene.Net.Queries
 
         public override string ToString()
         {
-            return term.Field + ":" + term.Text();
+            return term.Field + ":" + term.Text;
         }
     }
 }

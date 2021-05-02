@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -219,7 +219,7 @@ namespace Lucene.Net.Search
                 buffer.Append(term.Field);
                 buffer.Append(":");
             }
-            buffer.Append(term.Text());
+            buffer.Append(term.Text);
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
         }

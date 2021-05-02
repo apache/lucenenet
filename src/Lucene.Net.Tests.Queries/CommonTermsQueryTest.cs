@@ -618,7 +618,7 @@ namespace Lucene.Net.Tests.Queries
             protected override Query NewTermQuery(Term term, TermContext context)
             {
                 Query query = base.NewTermQuery(term, context);
-                if (term.Text().Equals(@"universe", StringComparison.Ordinal))
+                if (term.Text.Equals(@"universe", StringComparison.Ordinal))
                 {
                     query.Boost = 100f;
                 }

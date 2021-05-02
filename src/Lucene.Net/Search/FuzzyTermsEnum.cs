@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
             this.term = term;
 
             // convert the string into a utf32 int[] representation for fast comparisons
-            string utf16 = term.Text();
+            string utf16 = term.Text;
             this.m_termText = new int[utf16.CodePointCount(0, utf16.Length)];
             for (int cp, i = 0, j = 0; i < utf16.Length; i += Character.CharCount(cp))
             {
@@ -375,7 +375,7 @@ namespace Lucene.Net.Search
                 {
                     this.matchers[i] = compiled[i].RunAutomaton;
                 }
-                termRef = new BytesRef(outerInstance.term.Text());
+                termRef = new BytesRef(outerInstance.term.Text);
             }
 
             /// <summary>

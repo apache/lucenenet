@@ -317,12 +317,12 @@ namespace Lucene.Net.Search.Highlight
             {
                 if (FieldNameComparer(queryTerm.Field))
                 {
-                    if (!terms.TryGetValue(queryTerm.Text(), out WeightedSpanTerm weightedSpanTerm) || weightedSpanTerm == null)
+                    if (!terms.TryGetValue(queryTerm.Text, out WeightedSpanTerm weightedSpanTerm) || weightedSpanTerm == null)
                     {
-                        weightedSpanTerm = new WeightedSpanTerm(spanQuery.Boost, queryTerm.Text());
+                        weightedSpanTerm = new WeightedSpanTerm(spanQuery.Boost, queryTerm.Text);
                         weightedSpanTerm.AddPositionSpans(spanPositions);
                         weightedSpanTerm.IsPositionSensitive = true;
-                        terms[queryTerm.Text()] = weightedSpanTerm;
+                        terms[queryTerm.Text] = weightedSpanTerm;
                     }
                     else
                     {
@@ -352,8 +352,8 @@ namespace Lucene.Net.Search.Highlight
 
                 if (FieldNameComparer(queryTerm.Field))
                 {
-                    WeightedSpanTerm weightedSpanTerm = new WeightedSpanTerm(query.Boost, queryTerm.Text());
-                    terms[queryTerm.Text()] = weightedSpanTerm;
+                    WeightedSpanTerm weightedSpanTerm = new WeightedSpanTerm(query.Boost, queryTerm.Text);
+                    terms[queryTerm.Text] = weightedSpanTerm;
                 }
             }
         }

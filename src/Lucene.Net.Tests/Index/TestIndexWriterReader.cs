@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
         public static int Count(Term t, IndexReader r)
         {
             int count = 0;
-            DocsEnum td = TestUtil.Docs(Random, r, t.Field, new BytesRef(t.Text()), MultiFields.GetLiveDocs(r), null, 0);
+            DocsEnum td = TestUtil.Docs(Random, r, t.Field, new BytesRef(t.Text), MultiFields.GetLiveDocs(r), null, 0);
 
             if (td != null)
             {
