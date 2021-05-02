@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using System;
 
 namespace Lucene.Net.Documents
@@ -33,40 +33,28 @@ namespace Lucene.Net.Documents
         /// Indexed, not tokenized, omits norms, indexes
         /// <see cref="IndexOptions.DOCS_ONLY"/>, not stored.
         /// </summary>
-        public static readonly FieldType TYPE_NOT_STORED = LoadTypeNotStored();
-
-        private static FieldType LoadTypeNotStored() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        public static readonly FieldType TYPE_NOT_STORED = new FieldType
         {
-            var typeNotStored = new FieldType
-            {
-                IsIndexed = true,
-                OmitNorms = true,
-                IndexOptions = IndexOptions.DOCS_ONLY,
-                IsTokenized = false
-            };
-            typeNotStored.Freeze();
-            return typeNotStored;
-        }
+            IsIndexed = true,
+            OmitNorms = true,
+            IndexOptions = IndexOptions.DOCS_ONLY,
+            IsTokenized = false
+        }.Freeze();
 
         /// <summary>
         /// Indexed, not tokenized, omits norms, indexes
         /// <see cref="IndexOptions.DOCS_ONLY"/>, stored
         /// </summary>
-        public static readonly FieldType TYPE_STORED = LoadTypeStored();
-
-        private static FieldType LoadTypeStored() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        public static readonly FieldType TYPE_STORED = new FieldType
         {
-            var typeStored = new FieldType
-            {
-                IsIndexed = true,
-                OmitNorms = true,
-                IndexOptions = IndexOptions.DOCS_ONLY,
-                IsStored = true,
-                IsTokenized = false
-            };
-            typeStored.Freeze();
-            return typeStored;
-        }
+            IsIndexed = true,
+            OmitNorms = true,
+            IndexOptions = IndexOptions.DOCS_ONLY,
+            IsStored = true,
+            IsTokenized = false
+        }.Freeze();
 
         /// <summary>
         /// Creates a new <see cref="StringField"/> (a field that is indexed but not tokenized)

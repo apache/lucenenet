@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 
@@ -40,17 +40,11 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// Type for sorted bytes <see cref="DocValues"/>
         /// </summary>
-        public static readonly FieldType TYPE = LoadType();
-
-        private static FieldType LoadType() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        public static readonly FieldType TYPE = new FieldType
         {
-            var type = new FieldType
-            {
-                DocValueType = DocValuesType.SORTED
-            };
-            type.Freeze();
-            return type;
-        }
+            DocValueType = DocValuesType.SORTED
+        }.Freeze();
 
         /// <summary>
         /// Create a new sorted <see cref="DocValues"/> field. </summary>

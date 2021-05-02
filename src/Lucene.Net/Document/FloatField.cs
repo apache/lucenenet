@@ -118,42 +118,30 @@ namespace Lucene.Net.Documents
         /// Type for a <see cref="SingleField"/> that is not stored:
         /// normalization factors, frequencies, and positions are omitted.
         /// </summary>
-        public static readonly FieldType TYPE_NOT_STORED = LoadTypeNotStored();
-
-        private static FieldType LoadTypeNotStored() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        public static readonly FieldType TYPE_NOT_STORED = new FieldType
         {
-            var typeNotStored = new FieldType
-            {
-                IsIndexed = true,
-                IsTokenized = true,
-                OmitNorms = true,
-                IndexOptions = IndexOptions.DOCS_ONLY,
-                NumericType = Documents.NumericType.SINGLE
-            };
-            typeNotStored.Freeze();
-            return typeNotStored;
-        }
+            IsIndexed = true,
+            IsTokenized = true,
+            OmitNorms = true,
+            IndexOptions = IndexOptions.DOCS_ONLY,
+            NumericType = Documents.NumericType.SINGLE
+        }.Freeze();
 
         /// <summary>
         /// Type for a stored <see cref="SingleField"/>:
         /// normalization factors, frequencies, and positions are omitted.
         /// </summary>
-        public static readonly FieldType TYPE_STORED = LoadTypeStored();
-
-        private static FieldType LoadTypeStored() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        public static readonly FieldType TYPE_STORED = new FieldType
         {
-            var typeStored = new FieldType
-            {
-                IsIndexed = true,
-                IsTokenized = true,
-                OmitNorms = true,
-                IndexOptions = IndexOptions.DOCS_ONLY,
-                NumericType = Documents.NumericType.SINGLE,
-                IsStored = true
-            };
-            typeStored.Freeze();
-            return typeStored;
-        }
+            IsIndexed = true,
+            IsTokenized = true,
+            OmitNorms = true,
+            IndexOptions = IndexOptions.DOCS_ONLY,
+            NumericType = Documents.NumericType.SINGLE,
+            IsStored = true
+        }.Freeze();
 
         /// <summary>
         /// Creates a stored or un-stored <see cref="SingleField"/> with the provided value

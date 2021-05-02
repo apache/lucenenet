@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using System;
 
 namespace Lucene.Net.Documents
@@ -30,17 +30,11 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// Type for a stored-only field.
         /// </summary>
-        public static readonly FieldType TYPE = LoadType();
-
-        private static FieldType LoadType() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        public static readonly FieldType TYPE = new FieldType
         {
-            var type = new FieldType
-            {
-                IsStored = true
-            };
-            type.Freeze();
-            return type;
-        }
+            IsStored = true
+        }.Freeze();
 
         /// <summary>
         /// Create a stored-only field with the given binary value.

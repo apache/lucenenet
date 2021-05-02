@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using System;
 using System.IO;
 
@@ -30,34 +30,22 @@ namespace Lucene.Net.Documents
     {
         /// <summary>
         /// Indexed, tokenized, not stored. </summary>
-        public static readonly FieldType TYPE_NOT_STORED = LoadTypeNotStored();
-
-        private static FieldType LoadTypeNotStored() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        public static readonly FieldType TYPE_NOT_STORED = new FieldType
         {
-            var typeNotStored = new FieldType
-            {
-                IsIndexed = true,
-                IsTokenized = true
-            };
-            typeNotStored.Freeze();
-            return typeNotStored;
-        }
+            IsIndexed = true,
+            IsTokenized = true
+        }.Freeze();
 
         /// <summary>
         /// Indexed, tokenized, stored. </summary>
-        public static readonly FieldType TYPE_STORED = LoadTypeStored();
-
-        private static FieldType LoadTypeStored() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        public static readonly FieldType TYPE_STORED = new FieldType
         {
-            var typeStored = new FieldType
-            {
-                IsIndexed = true,
-                IsTokenized = true,
-                IsStored = true
-            };
-            typeStored.Freeze();
-            return typeStored;
-        }
+            IsIndexed = true,
+            IsTokenized = true,
+            IsStored = true
+        }.Freeze();
 
         // TODO: add sugar for term vectors...?
 

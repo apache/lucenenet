@@ -82,9 +82,13 @@ namespace Lucene.Net.Documents
         /// the <see cref="FieldType"/>'s properties have been set, to prevent unintentional state
         /// changes.
         /// </summary>
-        public virtual void Freeze()
+        /// <returns><c>this</c></returns>
+        // LUCENENET specific - returing self to make it possible to chain this to newing up the class so we can set and freeze on a single line.
+        // This is especially important for static field initializers.
+        public virtual FieldType Freeze()
         {
             this.frozen = true;
+            return this;
         }
 
         /// <summary>
