@@ -1,4 +1,4 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -217,7 +217,7 @@ namespace Lucene.Net.Search
                 scorer.Score(c, end);
             }
 
-            Assert.AreEqual(docCount, hits.Cardinality());
+            Assert.AreEqual(docCount, hits.Cardinality);
             r.Dispose();
             dir.Dispose();
         }

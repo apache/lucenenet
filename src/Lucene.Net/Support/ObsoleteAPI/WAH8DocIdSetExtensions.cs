@@ -1,5 +1,5 @@
-﻿using Assert = Lucene.Net.TestFramework.Assert;
-using BitSet = J2N.Collections.BitSet;
+﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -20,22 +20,15 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-    public class TestPForDeltaDocIdSet : BaseDocIdSetTestCase<PForDeltaDocIdSet>
+    public static class WAH8DocIdSetExtensions
     {
-        public override PForDeltaDocIdSet CopyOf(BitSet bs, int length)
+        /// <summary>
+        /// Return the number of documents in this <see cref="Lucene.Net.Search.DocIdSet"/> in constant time. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("Use Cardinality property instead. This extension method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        public static int Cardinality(this WAH8DocIdSet set)
         {
-            PForDeltaDocIdSet.Builder builder = (new PForDeltaDocIdSet.Builder()).SetIndexInterval(TestUtil.NextInt32(Random, 1, 20));
-            for (int doc = bs.NextSetBit(0); doc != -1; doc = bs.NextSetBit(doc + 1))
-            {
-                builder.Add(doc);
-            }
-            return builder.Build();
-        }
-
-        public override void AssertEquals(int numBits, BitSet ds1, PForDeltaDocIdSet ds2)
-        {
-            base.AssertEquals(numBits, ds1, ds2);
-            Assert.AreEqual(ds1.Cardinality, ds2.Cardinality);
+            return set.Cardinality;
         }
     }
 }

@@ -511,10 +511,7 @@ namespace Lucene.Net.Codecs.Memory
                 return ords.Get(ordStart + index);
             }
 
-            public override int Cardinality()
-            {
-                return ordLimit - ordStart;
-            }
+            public override int Cardinality => ordLimit - ordStart;
 
             // Leave lookupTerm to super's binary search
 

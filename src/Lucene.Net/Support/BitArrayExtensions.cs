@@ -314,7 +314,7 @@ namespace Lucene.Net.Support
         public static bool Equal(this BitArray a, OpenBitSet b)
         {
             var bitArrayCardinality = a.Cardinality();
-            if (bitArrayCardinality != b.Cardinality())
+            if (bitArrayCardinality != b.Cardinality)
                 return false;
 
             for (int i = 0; i < bitArrayCardinality; i++)

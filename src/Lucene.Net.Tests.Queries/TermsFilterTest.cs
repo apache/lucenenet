@@ -78,15 +78,15 @@ namespace Lucene.Net.Tests.Queries
 
             terms.Add(new Term(fieldName, "20"));
             bits = (FixedBitSet)TermsFilter(Random.NextBoolean(), terms).GetDocIdSet(context, context.AtomicReader.LiveDocs);
-            assertEquals("Must match 1", 1, bits.Cardinality());
+            assertEquals("Must match 1", 1, bits.Cardinality);
 
             terms.Add(new Term(fieldName, "10"));
             bits = (FixedBitSet)TermsFilter(Random.NextBoolean(), terms).GetDocIdSet(context, context.AtomicReader.LiveDocs);
-            assertEquals("Must match 2", 2, bits.Cardinality());
+            assertEquals("Must match 2", 2, bits.Cardinality);
 
             terms.Add(new Term(fieldName, "00"));
             bits = (FixedBitSet)TermsFilter(Random.NextBoolean(), terms).GetDocIdSet(context, context.AtomicReader.LiveDocs);
-            assertEquals("Must match 2", 2, bits.Cardinality());
+            assertEquals("Must match 2", 2, bits.Cardinality);
 
             reader.Dispose();
             rd.Dispose();
@@ -133,7 +133,7 @@ namespace Lucene.Net.Tests.Queries
                 else
                 {
                     FixedBitSet bits = (FixedBitSet)docIdSet;
-                    assertTrue("Must be >= 0", bits.Cardinality() >= 0);
+                    assertTrue("Must be >= 0", bits.Cardinality >= 0);
                 }
             }
             multi.Dispose();
@@ -178,7 +178,7 @@ namespace Lucene.Net.Tests.Queries
             TermsFilter tf = new TermsFilter(terms);
 
             FixedBitSet bits = (FixedBitSet)tf.GetDocIdSet(context, context.AtomicReader.LiveDocs);
-            assertEquals("Must be num fields - 1 since we skip only one field", num - 1, bits.Cardinality());
+            assertEquals("Must be num fields - 1 since we skip only one field", num - 1, bits.Cardinality);
             reader.Dispose();
             dir.Dispose();
         }
@@ -224,7 +224,7 @@ namespace Lucene.Net.Tests.Queries
             TermsFilter tf = new TermsFilter(terms.ToList());
 
             FixedBitSet bits = (FixedBitSet)tf.GetDocIdSet(context, context.AtomicReader.LiveDocs);
-            assertEquals(context.Reader.NumDocs, bits.Cardinality());
+            assertEquals(context.Reader.NumDocs, bits.Cardinality);
             reader.Dispose();
             dir.Dispose();
         }

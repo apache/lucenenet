@@ -472,7 +472,7 @@ namespace Lucene.Net.Tests.Join
                     // Asserting bit set...
                     if (Verbose)
                     {
-                        Console.WriteLine("expected cardinality:" + expectedResult.Cardinality());
+                        Console.WriteLine("expected cardinality:" + expectedResult.Cardinality);
                         DocIdSetIterator iterator = expectedResult.GetIterator();
                         for (int doc = iterator.NextDoc();
                             doc != DocIdSetIterator.NO_MORE_DOCS;
@@ -480,7 +480,7 @@ namespace Lucene.Net.Tests.Join
                         {
                             Console.WriteLine(string.Format("Expected doc[{0}] with id value {1}", doc, indexSearcher.Doc(doc).Get("id")));
                         }
-                        Console.WriteLine("actual cardinality:" + actualResult.Cardinality());
+                        Console.WriteLine("actual cardinality:" + actualResult.Cardinality);
                         iterator = actualResult.GetIterator();
                         for (int doc = iterator.NextDoc();
                             doc != DocIdSetIterator.NO_MORE_DOCS;

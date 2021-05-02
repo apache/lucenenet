@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -244,7 +244,7 @@ namespace Lucene.Net.Codecs
                     }
                 }
             }
-            Finish(indexOptions == IndexOptions.DOCS_ONLY ? -1 : sumTotalTermFreq, sumDocFreq, visitedDocs.Cardinality());
+            Finish(indexOptions == IndexOptions.DOCS_ONLY ? -1 : sumTotalTermFreq, sumDocFreq, visitedDocs.Cardinality);
         }
     }
 }

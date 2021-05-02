@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
                     sumDF += term.docs.Length;
                     sumTotalTermCount += term.Write(termsConsumer);
                 }
-                termsConsumer.Finish(omitTF ? -1 : sumTotalTermCount, sumDF, (int)visitedDocs.Cardinality());
+                termsConsumer.Finish(omitTF ? -1 : sumTotalTermCount, sumDF, (int)visitedDocs.Cardinality);
             }
         }
 

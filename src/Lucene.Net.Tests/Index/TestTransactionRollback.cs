@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
                 }
             }
             r.Dispose();
-            Assert.AreEqual(0, expecteds.Cardinality(), "Should have 0 docs remaining ");
+            Assert.AreEqual(0, expecteds.Cardinality, "Should have 0 docs remaining ");
         }
 
         /*

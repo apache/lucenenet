@@ -1481,9 +1481,9 @@ namespace Lucene.Net.Index
                     if (fieldTerms != null)
                     {
                         int v = fieldTerms.DocCount;
-                        if (v != -1 && visitedDocs.Cardinality() != v)
+                        if (v != -1 && visitedDocs.Cardinality != v)
                         {
-                            throw RuntimeException.Create("docCount for field " + field + "=" + v + " != recomputed docCount=" + visitedDocs.Cardinality());
+                            throw RuntimeException.Create("docCount for field " + field + "=" + v + " != recomputed docCount=" + visitedDocs.Cardinality);
                         }
                     }
 
@@ -1849,9 +1849,9 @@ namespace Lucene.Net.Index
             {
                 throw RuntimeException.Create("dv for field: " + fieldName + " reports wrong maxOrd=" + maxOrd + " but this is not the case: " + maxOrd2);
             }
-            if (seenOrds.Cardinality() != dv.ValueCount)
+            if (seenOrds.Cardinality != dv.ValueCount)
             {
-                throw RuntimeException.Create("dv for field: " + fieldName + " has holes in its ords, ValueCount=" + dv.ValueCount + " but only used: " + seenOrds.Cardinality());
+                throw RuntimeException.Create("dv for field: " + fieldName + " has holes in its ords, ValueCount=" + dv.ValueCount + " but only used: " + seenOrds.Cardinality);
             }
             BytesRef lastValue = null;
             BytesRef scratch = new BytesRef();
@@ -1912,7 +1912,7 @@ namespace Lucene.Net.Index
                     }
                     if (dv is RandomAccessOrds randomAccessOrds)
                     {
-                        long ordCount2 = randomAccessOrds.Cardinality();
+                        long ordCount2 = randomAccessOrds.Cardinality;
                         if (ordCount != ordCount2)
                         {
                             throw RuntimeException.Create("cardinality inconsistent, expected=" + ordCount + ",got=" + ordCount2 + " for doc: " + i);
@@ -1928,7 +1928,7 @@ namespace Lucene.Net.Index
                     }
                     if (dv is RandomAccessOrds randomAccessOrds)
                     {
-                        long ordCount2 = randomAccessOrds.Cardinality();
+                        long ordCount2 = randomAccessOrds.Cardinality;
                         if (ordCount2 != 0)
                         {
                             throw RuntimeException.Create("dv for field: " + fieldName + " is marked missing but has cardinality " + ordCount2 + " for doc: " + i);
@@ -1940,9 +1940,9 @@ namespace Lucene.Net.Index
             {
                 throw RuntimeException.Create("dv for field: " + fieldName + " reports wrong maxOrd=" + maxOrd + " but this is not the case: " + maxOrd2);
             }
-            if (seenOrds.Cardinality() != dv.ValueCount)
+            if (seenOrds.Cardinality != dv.ValueCount)
             {
-                throw RuntimeException.Create("dv for field: " + fieldName + " has holes in its ords, valueCount=" + dv.ValueCount + " but only used: " + seenOrds.Cardinality());
+                throw RuntimeException.Create("dv for field: " + fieldName + " has holes in its ords, valueCount=" + dv.ValueCount + " but only used: " + seenOrds.Cardinality);
             }
 
             BytesRef lastValue = null;

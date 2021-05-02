@@ -272,7 +272,7 @@ namespace Lucene.Net.Util
             {
                 // after flipping all bits in the range, the cardinality should be zero
                 bits.Flip(0, upper - lower + 1);
-                Assert.AreEqual(0, bits.Cardinality(), "The sub-range concenated should match the whole range");
+                Assert.AreEqual(0, bits.Cardinality, "The sub-range concenated should match the whole range");
             }
         }
 
@@ -465,7 +465,7 @@ namespace Lucene.Net.Util
             {
                 // after flipping all bits in the range, the cardinality should be zero
                 bits.Flip(0, upper - lower + 1);
-                Assert.AreEqual(0, bits.Cardinality(), "The sub-range concenated should match the whole range");
+                Assert.AreEqual(0, bits.Cardinality, "The sub-range concenated should match the whole range");
             }
         }
 

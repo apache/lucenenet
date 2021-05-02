@@ -113,14 +113,14 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns number of set bits.  NOTE: this visits every
+        /// Gets the number of set bits.  NOTE: this visits every
         /// long in the backing bits array, and the result is not
         /// internally cached!
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public long Cardinality()
+        public long Cardinality
         {
-            return BitUtil.Pop_Array(bits, 0, bits.Length);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => BitUtil.Pop_Array(bits, 0, bits.Length);
         }
 
         public bool Get(long index)
