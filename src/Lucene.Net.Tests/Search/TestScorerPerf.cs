@@ -1,9 +1,7 @@
 ﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
-using System.Collections;
 using Assert = Lucene.Net.TestFramework.Assert;
 using BitSet = J2N.Collections.BitSet;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -275,13 +273,13 @@ namespace Lucene.Net.Search
             {
                 int nClauses = Random.Next(maxClauses - 1) + 2; // min 2 clauses
                 BooleanQuery bq = new BooleanQuery();
-                BitArray termflag = new BitArray(termsInIndex);
+                BitSet termflag = new BitSet(termsInIndex);
                 for (int j = 0; j < nClauses; j++)
                 {
                     int tnum;
                     // don't pick same clause twice
                     tnum = Random.Next(termsInIndex);
-                    if (termflag.SafeGet(tnum))
+                    if (termflag.Get(tnum))
                     {
                         tnum = termflag.NextClearBit(tnum);
                     }
@@ -289,7 +287,7 @@ namespace Lucene.Net.Search
                     {
                         tnum = termflag.NextClearBit(0);
                     }
-                    termflag.SafeSet(tnum, true);
+                    termflag.Set(tnum);
                     Query tq = new TermQuery(terms[tnum]);
                     bq.Add(tq, Occur.MUST);
                 }
@@ -319,13 +317,13 @@ namespace Lucene.Net.Search
                 {
                     int nClauses = Random.Next(maxClauses - 1) + 2; // min 2 clauses
                     BooleanQuery bq = new BooleanQuery();
-                    BitArray termflag = new BitArray(termsInIndex);
+                    BitSet termflag = new BitSet(termsInIndex);
                     for (int j = 0; j < nClauses; j++)
                     {
                         int tnum;
                         // don't pick same clause twice
                         tnum = Random.Next(termsInIndex);
-                        if (termflag.SafeGet(tnum))
+                        if (termflag.Get(tnum))
                         {
                             tnum = termflag.NextClearBit(tnum);
                         }
@@ -333,7 +331,7 @@ namespace Lucene.Net.Search
                         {
                             tnum = termflag.NextClearBit(0);
                         }
-                        termflag.SafeSet(tnum, true);
+                        termflag.Set(tnum);
                         Query tq = new TermQuery(terms[tnum]);
                         bq.Add(tq, Occur.MUST);
                     } // inner
