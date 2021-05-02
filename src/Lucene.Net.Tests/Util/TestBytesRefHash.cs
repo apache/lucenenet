@@ -1,11 +1,10 @@
-﻿using Lucene.Net.Support;
-using NUnit.Framework;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using JCG = J2N.Collections.Generic;
-using Assert = Lucene.Net.TestFramework.Assert;
+﻿using NUnit.Framework;
 using RandomizedTesting.Generators;
+using System;
+using System.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
+using BitSet = J2N.Collections.BitSet;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -143,7 +142,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Test method for <seealso cref="Lucene.Net.Util.BytesRefHash#compact()"/>.
+        /// Test method for <seealso cref="Lucene.Net.Util.BytesRefHash.Compact()"/>.
         /// </summary>
         [Test]
         public virtual void TestCompact()
@@ -154,7 +153,7 @@ namespace Lucene.Net.Util
             {
                 int numEntries = 0;
                 const int size = 797;
-                BitArray bits = new BitArray(size);
+                BitSet bits = new BitSet(size);
                 for (int i = 0; i < size; i++)
                 {
                     string str;
@@ -166,25 +165,25 @@ namespace Lucene.Net.Util
                     int key = hash.Add(@ref);
                     if (key < 0)
                     {
-                        Assert.IsTrue(bits.SafeGet((-key) - 1));
+                        Assert.IsTrue(bits.Get((-key) - 1));
                     }
                     else
                     {
-                        Assert.IsFalse(bits.SafeGet(key));
-                        bits.SafeSet(key, true);
+                        Assert.IsFalse(bits.Get(key));
+                        bits.Set(key);
                         numEntries++;
                     }
                 }
-                Assert.AreEqual(hash.Count, bits.Cardinality());
-                Assert.AreEqual(numEntries, bits.Cardinality());
+                Assert.AreEqual(hash.Count, bits.Cardinality);
+                Assert.AreEqual(numEntries, bits.Cardinality);
                 Assert.AreEqual(numEntries, hash.Count);
                 int[] compact = hash.Compact();
                 Assert.IsTrue(numEntries < compact.Length);
                 for (int i = 0; i < numEntries; i++)
                 {
-                    bits.SafeSet(compact[i], false);
+                    bits.Clear(compact[i]);
                 }
-                Assert.AreEqual(0, bits.Cardinality());
+                Assert.AreEqual(0, bits.Cardinality);
                 hash.Clear();
                 Assert.AreEqual(0, hash.Count);
                 hash.Reinit();
