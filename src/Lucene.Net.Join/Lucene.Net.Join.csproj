@@ -27,6 +27,8 @@
     <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net45</TargetFrameworks>
 
+    <RootNamespace>Lucene.Net.Search.Join</RootNamespace>
+
     <AssemblyTitle>Lucene.Net.Join</AssemblyTitle>
     <Description>Index-time and Query-time joins for normalized content of the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
     <PackageTags>$(PackageTags);join</PackageTags>

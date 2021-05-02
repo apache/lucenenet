@@ -6,7 +6,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 
-namespace Lucene.Net.Search.Join
+namespace Lucene.Net.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -33,6 +33,7 @@ namespace Lucene.Net.Search.Join
     /// 
     /// @lucene.experimental
     /// </summary>
+    [Obsolete("Use Lucene.Net.Search.Join.ToChildBlockJoinQuery instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public class ToChildBlockJoinQuery : Query
     {
         /// <summary>
@@ -68,7 +69,7 @@ namespace Lucene.Net.Search.Join
             _doScores = doScores;
         }
 
-        private ToChildBlockJoinQuery(Query origParentQuery, Query parentQuery, Filter parentsFilter, bool doScores) 
+        private ToChildBlockJoinQuery(Query origParentQuery, Query parentQuery, Filter parentsFilter, bool doScores)
             : base()
         {
             _origParentQuery = origParentQuery;
@@ -76,7 +77,7 @@ namespace Lucene.Net.Search.Join
             _parentsFilter = parentsFilter;
             _doScores = doScores;
         }
-        
+
         public override Weight CreateWeight(IndexSearcher searcher)
         {
             return new ToChildBlockJoinWeight(this, _parentQuery.CreateWeight(searcher), _parentsFilter, _doScores);
@@ -89,7 +90,7 @@ namespace Lucene.Net.Search.Join
             private readonly Filter _parentsFilter;
             private readonly bool _doScores;
 
-            public ToChildBlockJoinWeight(Query joinQuery, Weight parentWeight, Filter parentsFilter, bool doScores) 
+            public ToChildBlockJoinWeight(Query joinQuery, Weight parentWeight, Filter parentsFilter, bool doScores)
                 : base()
             {
                 _joinQuery = joinQuery;
@@ -102,7 +103,7 @@ namespace Lucene.Net.Search.Join
 
             public override float GetValueForNormalization()
             {
-                return _parentWeight.GetValueForNormalization() * _joinQuery.Boost*_joinQuery.Boost;
+                return _parentWeight.GetValueForNormalization() * _joinQuery.Boost * _joinQuery.Boost;
             }
 
             public override void Normalize(float norm, float topLevelBoost)
@@ -140,7 +141,7 @@ namespace Lucene.Net.Search.Join
 
                 return new ToChildBlockJoinScorer(this, parentScorer, (FixedBitSet)parents, _doScores, acceptDocs);
             }
-            
+
             public override Explanation Explain(AtomicReaderContext reader, int doc)
             {
                 // TODO
@@ -163,7 +164,7 @@ namespace Lucene.Net.Search.Join
             private int _childDoc = -1;
             private int _parentDoc;
 
-            public ToChildBlockJoinScorer(Weight weight, Scorer parentScorer, FixedBitSet parentBits, bool doScores, IBits acceptDocs) 
+            public ToChildBlockJoinScorer(Weight weight, Scorer parentScorer, FixedBitSet parentBits, bool doScores, IBits acceptDocs)
                 : base(weight)
             {
                 _doScores = doScores;
@@ -176,7 +177,7 @@ namespace Lucene.Net.Search.Join
             {
                 return new List<ChildScorer> { new ChildScorer(_parentScorer, "BLOCK_JOIN") };
             }
-            
+
             public override int NextDoc()
             {
                 //System.out.println("Q.nextDoc() parentDoc=" + parentDoc + " childDoc=" + childDoc);
@@ -254,7 +255,7 @@ namespace Lucene.Net.Search.Join
                     }
                     //System.out.println("  " + childDoc);
                     return _childDoc;
-                    nextChildDocContinue:;
+                nextChildDocContinue:;
                 }
             }
 
@@ -275,7 +276,7 @@ namespace Lucene.Net.Search.Join
             {
                 return _parentScore;
             }
-            
+
             public override int Freq => _parentFreq;
 
             public override int Advance(int childTarget)
@@ -334,7 +335,7 @@ namespace Lucene.Net.Search.Join
         {
             _parentQuery.ExtractTerms(terms);
         }
-        
+
         public override Query Rewrite(IndexReader reader)
         {
             Query parentRewrite = _parentQuery.Rewrite(reader);
@@ -374,16 +375,16 @@ namespace Lucene.Net.Search.Join
             unchecked
             {
                 int hashCode = base.GetHashCode();
-                hashCode = (hashCode*397) ^ (_origParentQuery != null ? _origParentQuery.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ _doScores.GetHashCode();
-                hashCode = (hashCode*397) ^ (_parentsFilter != null ? _parentsFilter.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_origParentQuery != null ? _origParentQuery.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ _doScores.GetHashCode();
+                hashCode = (hashCode * 397) ^ (_parentsFilter != null ? _parentsFilter.GetHashCode() : 0);
                 return hashCode;
             }
         }
 
         public override object Clone()
         {
-            return new ToChildBlockJoinQuery((Query) _origParentQuery.Clone(), _parentsFilter, _doScores);
+            return new ToChildBlockJoinQuery((Query)_origParentQuery.Clone(), _parentsFilter, _doScores);
         }
     }
 }

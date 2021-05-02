@@ -1,6 +1,8 @@
 ﻿// Lucene version compatibility level 4.8.1
 
-namespace Lucene.Net.Search.Join
+using System;
+
+namespace Lucene.Net.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,6 +24,7 @@ namespace Lucene.Net.Search.Join
     /// <summary>
     /// How to aggregate multiple child hit scores into a single parent score.
     /// </summary>
+    [Obsolete("Use Lucene.Net.Search.Join.ScoreMode instead. This enum will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public enum ScoreMode
     {
         /// <summary>

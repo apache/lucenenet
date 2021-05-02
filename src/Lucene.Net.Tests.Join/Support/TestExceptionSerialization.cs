@@ -32,7 +32,7 @@ namespace Lucene.Net.Support
         {
             get
             {
-                var exceptionTypes = typeof(Lucene.Net.Join.FakeScorer).Assembly.GetTypes().Where(t => typeof(Exception).IsAssignableFrom(t)).Cast<object>();
+                var exceptionTypes = typeof(Lucene.Net.Search.Join.FakeScorer).Assembly.GetTypes().Where(t => typeof(Exception).IsAssignableFrom(t)).Cast<object>();
 
                 // If the assembly has no exceptions, just provide Exception so the test will pass
                 if (!exceptionTypes.Any())

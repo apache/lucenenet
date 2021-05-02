@@ -4,6 +4,8 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Join;
+using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -14,7 +16,7 @@ using System.Globalization;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
-namespace Lucene.Net.Search.Join
+namespace Lucene.Net.Tests.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -33,6 +35,7 @@ namespace Lucene.Net.Search.Join
      * limitations under the License.
      */
 
+    [Obsolete("Production tests are in Lucene.Net.Search.Join. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public class TestJoinUtil : LuceneTestCase
     {
         [Test]
@@ -391,13 +394,13 @@ namespace Lucene.Net.Search.Join
         [Test]
         // [Slow] // LUCENENET specific - Not slow in .NET
         public void TestMultiValueRandomJoin()
-            // this test really takes more time, that is why the number of iterations are smaller.
+        // this test really takes more time, that is why the number of iterations are smaller.
         {
             int maxIndexIter = TestUtil.NextInt32(Random, 3, 6);
             int maxSearchIter = TestUtil.NextInt32(Random, 6, 12);
             ExecuteRandomJoin(true, maxIndexIter, maxSearchIter, TestUtil.NextInt32(Random, 11, 57));
         }
-        
+
         private void ExecuteRandomJoin(bool multipleValuesPerDocument, int maxIndexIter, int maxSearchIter,
             int numberOfDocumentsToIndex)
         {
@@ -436,9 +439,9 @@ namespace Lucene.Net.Search.Join
                     {
                         Console.WriteLine("actualQuery=" + actualQuery);
                     }
-                    
+
                     var scoreModeLength = Enum.GetNames(typeof(ScoreMode)).Length;
-                    ScoreMode scoreMode = (ScoreMode) Random.Next(scoreModeLength);
+                    ScoreMode scoreMode = (ScoreMode)Random.Next(scoreModeLength);
                     if (Verbose)
                     {
                         Console.WriteLine("scoreMode=" + scoreMode);
@@ -534,7 +537,7 @@ namespace Lucene.Net.Search.Join
 
 
             private int _docBase;
-            
+
             public virtual void Collect(int doc)
             {
                 actualResult.Set(doc + _docBase);
@@ -546,7 +549,7 @@ namespace Lucene.Net.Search.Join
                 _docBase = context.DocBase;
                 topScoreDocCollector.SetNextReader(context);
             }
-            
+
             public virtual void SetScorer(Scorer scorer)
             {
                 topScoreDocCollector.SetScorer(scorer);
@@ -554,12 +557,12 @@ namespace Lucene.Net.Search.Join
 
             public virtual bool AcceptsDocsOutOfOrder => scoreDocsInOrder;
         }
-        
+
         private IndexIterationContext CreateContext(int nDocs, RandomIndexWriter writer, bool multipleValuesPerDocument, bool scoreDocsInOrder)
         {
             return CreateContext(nDocs, writer, writer, multipleValuesPerDocument, scoreDocsInOrder);
         }
-        
+
         private IndexIterationContext CreateContext(int nDocs, RandomIndexWriter fromWriter, RandomIndexWriter toWriter,
             bool multipleValuesPerDocument, bool scoreDocsInOrder)
         {
@@ -760,7 +763,7 @@ namespace Lucene.Net.Search.Join
             private Scorer scorer;
             private SortedSetDocValues docTermOrds;
             internal readonly BytesRef joinValue;
-            
+
             public virtual void Collect(int doc)
             {
                 docTermOrds.SetDocument(doc);
@@ -775,7 +778,7 @@ namespace Lucene.Net.Search.Join
                     joinScore.AddScore(scorer.GetScore());
                 }
             }
-            
+
             public virtual void SetNextReader(AtomicReaderContext context)
             {
                 docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, fromField);
@@ -807,7 +810,7 @@ namespace Lucene.Net.Search.Join
             private BinaryDocValues terms;
             private IBits docsWithField;
             private readonly BytesRef spare;
-            
+
             public virtual void Collect(int doc)
             {
                 terms.Get(doc, spare);
@@ -823,7 +826,7 @@ namespace Lucene.Net.Search.Join
                 }
                 joinScore.AddScore(scorer.GetScore());
             }
-            
+
             public virtual void SetNextReader(AtomicReaderContext context)
             {
                 terms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, fromField, true);
@@ -849,7 +852,7 @@ namespace Lucene.Net.Search.Join
             private int docBase;
 
             public CollectorAnonymousClass5(
-                string toField, IDictionary<BytesRef, JoinScore> joinValueToJoinScores, 
+                string toField, IDictionary<BytesRef, JoinScore> joinValueToJoinScores,
                 IDictionary<int, JoinScore> docToJoinScore)
             {
                 this.toField = toField;
@@ -877,7 +880,7 @@ namespace Lucene.Net.Search.Join
                     }
                 }
             }
-            
+
             public virtual void SetNextReader(AtomicReaderContext context)
             {
                 docBase = context.DocBase;
@@ -902,8 +905,8 @@ namespace Lucene.Net.Search.Join
             private readonly BytesRef spare = new BytesRef();
 
             public CollectorAnonymousClass6(
-                string toField, 
-                IDictionary<BytesRef, JoinScore> joinValueToJoinScores, 
+                string toField,
+                IDictionary<BytesRef, JoinScore> joinValueToJoinScores,
                 IDictionary<int, JoinScore> docToJoinScore)
             {
                 this.toField = toField;
@@ -920,7 +923,7 @@ namespace Lucene.Net.Search.Join
                 }
                 docToJoinScore[docBase + doc] = joinScore;
             }
-            
+
             public virtual void SetNextReader(AtomicReaderContext context)
             {
                 terms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, toField, false);
@@ -944,18 +947,18 @@ namespace Lucene.Net.Search.Join
                 : context.ToHitsToJoinScore[queryValue];
 
             var hits = new List<KeyValuePair<int, JoinScore>>(hitsToJoinScores);
-            hits.Sort(Comparer< KeyValuePair<int, JoinScore>>.Create( (hit1, hit2) =>
-            {
-                float score1 = hit1.Value.Score(scoreMode);
-                float score2 = hit2.Value.Score(scoreMode);
+            hits.Sort(Comparer<KeyValuePair<int, JoinScore>>.Create((hit1, hit2) =>
+          {
+              float score1 = hit1.Value.Score(scoreMode);
+              float score2 = hit2.Value.Score(scoreMode);
 
-                int cmp = score2.CompareTo(score1);
-                if (cmp != 0)
-                {
-                    return cmp;
-                }
-                return hit1.Key - hit2.Key;
-            }));
+              int cmp = score2.CompareTo(score1);
+              if (cmp != 0)
+              {
+                  return cmp;
+              }
+              return hit1.Key - hit2.Key;
+          }));
             ScoreDoc[] scoreDocs = new ScoreDoc[Math.Min(10, hits.Count)];
             for (int i = 0; i < scoreDocs.Length; i++)
             {

@@ -1,6 +1,8 @@
 ﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Search;
+using System;
 
-namespace Lucene.Net.Search.Join
+namespace Lucene.Net.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -25,6 +27,7 @@ namespace Lucene.Net.Search.Join
     /// 
     /// @lucene.experimental
     /// </summary>
+    [Obsolete("Use Lucene.Net.Search.Join.ToParentBlockJoinSortField instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public class ToParentBlockJoinSortField : SortField
     {
         private readonly bool order;
@@ -39,7 +42,7 @@ namespace Lucene.Net.Search.Join
         /// <param name="reverse"> Whether natural order should be reversed on the nested / child level. </param>
         /// <param name="parentFilter"> <see cref="Filter"/> that identifies the parent documents. </param>
         /// <param name="childFilter"> <see cref="Filter"/> that defines which child documents participates in sorting. </param>
-        public ToParentBlockJoinSortField(string field, SortFieldType type, bool reverse, Filter parentFilter, Filter childFilter) 
+        public ToParentBlockJoinSortField(string field, SortFieldType type, bool reverse, Filter parentFilter, Filter childFilter)
             : base(field, type, reverse)
         {
             this.order = reverse;
@@ -56,14 +59,14 @@ namespace Lucene.Net.Search.Join
         /// <param name="order"> Whether natural order should be reversed on the parent level. </param>
         /// <param name="parentFilter"> <see cref="Filter"/> that identifies the parent documents. </param>
         /// <param name="childFilter"> <see cref="Filter"/> that defines which child documents participates in sorting. </param>
-        public ToParentBlockJoinSortField(string field, SortFieldType type, bool reverse, bool order, Filter parentFilter, Filter childFilter) 
+        public ToParentBlockJoinSortField(string field, SortFieldType type, bool reverse, bool order, Filter parentFilter, Filter childFilter)
             : base(field, type, reverse)
         {
             this.order = order;
             this.parentFilter = parentFilter;
             this.childFilter = childFilter;
         }
-        
+
         public override FieldComparer GetComparer(int numHits, int sortPos)
         {
             var wrappedFieldComparer = base.GetComparer(numHits + 1, sortPos);

@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Join
 summary: *content
 ---

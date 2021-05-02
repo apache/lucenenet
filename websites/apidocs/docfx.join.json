@@ -1,4 +1,4 @@
-{
+﻿{
   "metadata": [
     {
       "src": [
@@ -20,7 +20,13 @@
     }
   ],
   "build": {
-    "content": [       
+    "content": [
+      {
+        "files": [
+          "package.md"
+        ],
+        "src": "../../src/Lucene.Net.Join"
+      },    
       {
         "files": [
           "**.yml",
@@ -44,7 +50,7 @@
         ],
         "src": "../../src/Lucene.Net.Join",
         "exclude": [
-          "overview.md"
+          "package.md"
         ]
       },     
       {

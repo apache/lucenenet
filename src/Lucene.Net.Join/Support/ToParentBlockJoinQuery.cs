@@ -1,11 +1,12 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 
-namespace Lucene.Net.Search.Join
+namespace Lucene.Net.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -67,6 +68,7 @@ namespace Lucene.Net.Search.Join
     /// 
     /// @lucene.experimental
     /// </summary>
+    [Obsolete("Use Lucene.Net.Search.Join.ToParentBlockJoinQuery instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public class ToParentBlockJoinQuery : Query
     {
         private readonly Filter _parentsFilter;
@@ -99,7 +101,7 @@ namespace Lucene.Net.Search.Join
             _scoreMode = scoreMode;
         }
 
-        private ToParentBlockJoinQuery(Query origChildQuery, Query childQuery, Filter parentsFilter, ScoreMode scoreMode) 
+        private ToParentBlockJoinQuery(Query origChildQuery, Query childQuery, Filter parentsFilter, ScoreMode scoreMode)
             : base()
         {
             _origChildQuery = origChildQuery;
@@ -107,7 +109,7 @@ namespace Lucene.Net.Search.Join
             _parentsFilter = parentsFilter;
             _scoreMode = scoreMode;
         }
-        
+
         public override Weight CreateWeight(IndexSearcher searcher)
         {
             return new BlockJoinWeight(this, _childQuery.CreateWeight(searcher), _parentsFilter, _scoreMode);
@@ -120,7 +122,7 @@ namespace Lucene.Net.Search.Join
             private readonly Filter parentsFilter;
             private readonly ScoreMode scoreMode;
 
-            public BlockJoinWeight(Query joinQuery, Weight childWeight, Filter parentsFilter, ScoreMode scoreMode) 
+            public BlockJoinWeight(Query joinQuery, Weight childWeight, Filter parentsFilter, ScoreMode scoreMode)
                 : base()
             {
                 this.joinQuery = joinQuery;
@@ -133,7 +135,7 @@ namespace Lucene.Net.Search.Join
 
             public override float GetValueForNormalization()
             {
-                return childWeight.GetValueForNormalization() * joinQuery.Boost*joinQuery.Boost;
+                return childWeight.GetValueForNormalization() * joinQuery.Boost * joinQuery.Boost;
             }
 
             public override void Normalize(float norm, float topLevelBoost)
@@ -178,7 +180,7 @@ namespace Lucene.Net.Search.Join
 
                 return new BlockJoinScorer(this, childScorer, (FixedBitSet)parents, firstChildDoc, scoreMode, acceptDocs);
             }
-            
+
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
                 BlockJoinScorer scorer = (BlockJoinScorer)GetScorer(context, context.AtomicReader.LiveDocs);
@@ -257,7 +259,7 @@ namespace Lucene.Net.Search.Join
                 }
                 return ret;
             }
-            
+
             public override int NextDoc()
             {
                 //System.out.println("Q.nextDoc() nextChildDoc=" + nextChildDoc);
@@ -420,7 +422,7 @@ namespace Lucene.Net.Search.Join
                 //System.out.println("  return nextParentDoc=" + nd);
                 return nd;
             }
-            
+
             public virtual Explanation Explain(int docBase)
             {
                 int start = docBase + _prevParentDoc + 1; // +1 b/c prevParentDoc is previous parent doc
@@ -450,7 +452,7 @@ namespace Lucene.Net.Search.Join
         {
             _childQuery.ExtractTerms(terms);
         }
-        
+
         public override Query Rewrite(IndexReader reader)
         {
             Query childRewrite = _childQuery.Rewrite(reader);
@@ -489,9 +491,9 @@ namespace Lucene.Net.Search.Join
             unchecked
             {
                 int hashCode = base.GetHashCode();
-                hashCode = (hashCode*397) ^ (_parentsFilter != null ? _parentsFilter.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (int) _scoreMode;
-                hashCode = (hashCode*397) ^ (_origChildQuery != null ? _origChildQuery.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_parentsFilter != null ? _parentsFilter.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (int)_scoreMode;
+                hashCode = (hashCode * 397) ^ (_origChildQuery != null ? _origChildQuery.GetHashCode() : 0);
                 return hashCode;
             }
         }

@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Search;
 using Lucene.Net.Search.Grouping;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -8,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Lucene.Net.Search.Join
+namespace Lucene.Net.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -74,6 +75,7 @@ namespace Lucene.Net.Search.Join
     /// 
     /// @lucene.experimental
     /// </summary>
+    [Obsolete("Use Lucene.Net.Search.Join.ToParentBlockJoinCollector instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public class ToParentBlockJoinCollector : ICollector
     {
         private readonly Sort sort;
@@ -126,7 +128,7 @@ namespace Lucene.Net.Search.Join
 
         private sealed class OneGroup : FieldValueHitQueue.Entry
         {
-            public OneGroup(int comparerSlot, int parentDoc, float parentScore, int numJoins, bool doScores) 
+            public OneGroup(int comparerSlot, int parentDoc, float parentScore, int numJoins, bool doScores)
                 : base(comparerSlot, parentDoc, parentScore)
             {
                 //System.out.println("make OneGroup parentDoc=" + parentDoc);
@@ -150,7 +152,7 @@ namespace Lucene.Net.Search.Join
             internal float[][] scores;
             internal int[] counts;
         }
-        
+
         public virtual void Collect(int parentDoc)
         {
             //System.out.println("\nC parentDoc=" + parentDoc);
@@ -302,7 +304,7 @@ namespace Lucene.Net.Search.Join
                 }
             }
         }
-        
+
         public virtual void SetNextReader(AtomicReaderContext context)
         {
             currentReaderContext = context;
@@ -484,7 +486,7 @@ namespace Lucene.Net.Search.Join
                     fakeScorer.doc = doc;
                     if (trackScores)
                     {
-                        fakeScorer._score = og.scores[slot][docIdx];
+                        fakeScorer.score = og.scores[slot][docIdx];
                     }
                     collector.Collect(doc);
                 }
@@ -508,15 +510,15 @@ namespace Lucene.Net.Search.Join
                 TopDocs topDocs;
                 if (withinGroupSort == null)
                 {
-                    var tempCollector = (TopScoreDocCollector) collector;
+                    var tempCollector = (TopScoreDocCollector)collector;
                     topDocs = tempCollector.GetTopDocs(withinGroupOffset, numDocsInGroup);
                 }
                 else
                 {
-                    var tempCollector = (TopFieldCollector) collector;
+                    var tempCollector = (TopFieldCollector)collector;
                     topDocs = tempCollector.GetTopDocs(withinGroupOffset, numDocsInGroup);
                 }
-                
+
                 groups[groupIdx - offset] = new GroupDocs<int>(og.Score, topDocs.MaxScore, numChildDocs, topDocs.ScoreDocs, og.Doc, groupSortValues);
             }
 
