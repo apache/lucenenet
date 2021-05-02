@@ -36,17 +36,18 @@ namespace Lucene.Net.Search.Grouping.Function
     /// </para>
     /// @lucene.experimental
     /// </summary>
-    public class FunctionAllGroupsCollector : AbstractAllGroupsCollector<MutableValue>
+    // LUCENENET Specific - Made generic to reduce need for casting.
+    public class FunctionAllGroupsCollector<TMutableValue> : AbstractAllGroupsCollector<MutableValue> where TMutableValue : MutableValue
     {
         private readonly IDictionary /* Map<?, ?> */ vsContext;
         private readonly ValueSource groupBy;
         private readonly ISet<MutableValue> groups = new JCG.SortedSet<MutableValue>();
 
         private FunctionValues.ValueFiller filler;
-        private MutableValue mval;
+        private TMutableValue mval;
 
         /// <summary>
-        /// Constructs a <see cref="FunctionAllGroupsCollector"/> instance.
+        /// Constructs a <see cref="FunctionAllGroupsCollector{TMutableValue}"/> instance.
         /// </summary>
         /// <param name="groupBy">The <see cref="ValueSource"/> to group by</param>
         /// <param name="vsContext">The <see cref="ValueSource"/> context</param>
@@ -71,7 +72,7 @@ namespace Lucene.Net.Search.Grouping.Function
         {
             FunctionValues values = groupBy.GetValues(vsContext, context);
             filler = values.GetValueFiller();
-            mval = filler.Value;
+            mval = (TMutableValue) filler.Value;
         }
     }
 }
