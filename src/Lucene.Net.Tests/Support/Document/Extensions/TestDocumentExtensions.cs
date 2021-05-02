@@ -128,8 +128,7 @@ namespace Lucene.Net.Documents.Extensions
                 IndexOptions = IndexOptions.DOCS_ONLY,
                 NumericType = NumericType.DOUBLE,
                 IsStored = true
-            };
-            fieldType.Freeze();
+            }.Freeze();
             AssertDocumentExtensionAddsToDocument(document => field = document.AddDoubleField("theName", value, fieldType));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(value, field.GetDoubleValueOrDefault(), 0.0000001d); // We don't really care about precision, just checking to see if the value got passed through
@@ -174,8 +173,7 @@ namespace Lucene.Net.Documents.Extensions
                 IndexOptions = IndexOptions.DOCS_ONLY,
                 NumericType = NumericType.SINGLE,
                 IsStored = true
-            };
-            fieldType.Freeze();
+            }.Freeze();
             AssertDocumentExtensionAddsToDocument(document => field = document.AddSingleField("theName", value, fieldType));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(value, field.GetSingleValueOrDefault(), 0.0000001f); // We don't really care about precision, just checking to see if the value got passed through
@@ -211,8 +209,7 @@ namespace Lucene.Net.Documents.Extensions
                 IndexOptions = IndexOptions.DOCS_ONLY,
                 NumericType = NumericType.INT32,
                 IsStored = true
-            };
-            fieldType.Freeze();
+            }.Freeze();
             AssertDocumentExtensionAddsToDocument(document => field = document.AddInt32Field("theName", value, fieldType));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(value, field.GetInt32ValueOrDefault());
@@ -248,8 +245,7 @@ namespace Lucene.Net.Documents.Extensions
                 IndexOptions = IndexOptions.DOCS_ONLY,
                 NumericType = NumericType.INT64,
                 IsStored = true
-            };
-            fieldType.Freeze();
+            }.Freeze();
             AssertDocumentExtensionAddsToDocument(document => field = document.AddInt64Field("theName", value, fieldType));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(value, field.GetInt64ValueOrDefault());

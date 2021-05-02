@@ -125,17 +125,9 @@ namespace Lucene.Net.Index.Sorter
         protected static readonly string SORTED_SET_DV_FIELD = "sorted_set";
         protected static readonly string TERM_VECTORS_FIELD = "term_vectors";
 
-        private static readonly FieldType TERM_VECTORS_TYPE = new FieldType(TextField.TYPE_NOT_STORED);
-        private static readonly FieldType POSITIONS_TYPE = new FieldType(TextField.TYPE_NOT_STORED);
-        static SorterTestBase()
-        {
-            TERM_VECTORS_TYPE.StoreTermVectors = true;
-            TERM_VECTORS_TYPE.Freeze();
-            POSITIONS_TYPE.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-            POSITIONS_TYPE.Freeze();
-        }
-
-
+        // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        private static readonly FieldType TERM_VECTORS_TYPE = new FieldType(TextField.TYPE_NOT_STORED) { StoreTermVectors = true }.Freeze();
+        private static readonly FieldType POSITIONS_TYPE = new FieldType(TextField.TYPE_NOT_STORED) { IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS }.Freeze();
 
 
         protected static Directory dir;
