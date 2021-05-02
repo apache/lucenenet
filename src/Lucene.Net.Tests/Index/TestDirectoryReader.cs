@@ -350,7 +350,7 @@ namespace Lucene.Net.Index
 
         internal virtual void AssertTermDocsCount(string msg, IndexReader reader, Term term, int expected)
         {
-            DocsEnum tdocs = TestUtil.Docs(Random, reader, term.Field, new BytesRef(term.Text()), MultiFields.GetLiveDocs(reader), null, 0);
+            DocsEnum tdocs = TestUtil.Docs(Random, reader, term.Field, new BytesRef(term.Text), MultiFields.GetLiveDocs(reader), null, 0);
             int count = 0;
             if (tdocs != null)
             {

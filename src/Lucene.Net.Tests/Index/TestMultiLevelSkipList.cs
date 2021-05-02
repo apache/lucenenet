@@ -1,4 +1,4 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < 5000; i++)
             {
                 Document d1 = new Document();
-                d1.Add(NewTextField(term.Field, term.Text(), Field.Store.NO));
+                d1.Add(NewTextField(term.Field, term.Text, Field.Store.NO));
                 writer.AddDocument(d1);
             }
             writer.Commit();

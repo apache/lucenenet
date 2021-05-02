@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
@@ -358,7 +358,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 if (DEBUG_SURROGATES)
                 {
-                    Console.WriteLine("      got term=" + UnicodeUtil.ToHexString(t2.Text()));
+                    Console.WriteLine("      got term=" + UnicodeUtil.ToHexString(t2.Text));
                 }
 
                 // Now test if prefix is identical and we found
@@ -497,7 +497,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         if (DEBUG_SURROGATES)
                         {
-                            Console.WriteLine("      got term=" + UnicodeUtil.ToHexString(t2.Text()) + " " + t2.Bytes);
+                            Console.WriteLine("      got term=" + UnicodeUtil.ToHexString(t2.Text) + " " + t2.Bytes);
                         }
 
                         BytesRef b2 = t2.Bytes;
@@ -696,7 +696,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                             }
                             else
                             {
-                                Console.WriteLine($"      hit term={UnicodeUtil.ToHexString(t2.Text())} {t2?.Bytes}");
+                                Console.WriteLine($"      hit term={UnicodeUtil.ToHexString(t2.Text)} {t2?.Bytes}");
                             }
                         }
 
@@ -908,7 +908,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                     if (DEBUG_SURROGATES)
                     {
-                        Console.WriteLine("  seek hit non-exact term=" + UnicodeUtil.ToHexString(t.Text()));
+                        Console.WriteLine("  seek hit non-exact term=" + UnicodeUtil.ToHexString(t.Text));
                     }
 
                     BytesRef br = t.Bytes;

@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
@@ -190,7 +190,7 @@ namespace Lucene.Net.Search
             foreach (BooleanClause clause in bq.Clauses)
             {
                 TermQuery mtq = (TermQuery)clause.Query;
-                Assert.AreEqual(Convert.ToSingle(mtq.Term.Text()), mtq.Boost, 0, "Parallel sorting of boosts in rewrite mode broken");
+                Assert.AreEqual(Convert.ToSingle(mtq.Term.Text), mtq.Boost, 0, "Parallel sorting of boosts in rewrite mode broken");
             }
         }
 

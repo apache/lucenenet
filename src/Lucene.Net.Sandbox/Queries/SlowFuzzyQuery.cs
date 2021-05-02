@@ -93,7 +93,7 @@ namespace Lucene.Net.Sandbox.Queries
 
             MultiTermRewriteMethod = new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(maxExpansions);
 
-            string text = term.Text();
+            string text = term.Text;
             int len = text.CodePointCount(0, text.Length);
             if (len > 0 && (minimumSimilarity >= 1f || len > 1.0f / (1.0f - minimumSimilarity)))
             {
@@ -163,7 +163,7 @@ namespace Lucene.Net.Sandbox.Queries
                 buffer.Append(m_term.Field);
                 buffer.Append(":");
             }
-            buffer.Append(m_term.Text());
+            buffer.Append(m_term.Text);
             buffer.Append('~');
             buffer.Append(Number.ToString(minimumSimilarity));
             buffer.Append(ToStringUtils.Boost(Boost));

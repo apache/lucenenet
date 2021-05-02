@@ -98,7 +98,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 if (prefix.Field.Equals(field, StringComparison.Ordinal))
                 {
                     list.Add(new CharacterRunAutomatonToStringAnonymousClass(
-                        BasicOperations.Concatenate(BasicAutomata.MakeString(prefix.Text()), BasicAutomata.MakeAnyString()),
+                        BasicOperations.Concatenate(BasicAutomata.MakeString(prefix.Text), BasicAutomata.MakeAnyString()),
                         () => pq.ToString()));
                 }
             }
@@ -106,7 +106,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             {
                 if (fq.Field.Equals(field, StringComparison.Ordinal))
                 {
-                    string utf16 = fq.Term.Text();
+                    string utf16 = fq.Term.Text;
                     int[] termText = new int[utf16.CodePointCount(0, utf16.Length)];
                     for (int cp, i = 0, j = 0; i < utf16.Length; i += Character.CharCount(cp))
                     {

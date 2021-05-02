@@ -579,7 +579,7 @@ namespace Lucene.Net.QueryParsers.Classic
         protected internal virtual Query NewFuzzyQuery(Term term, float minimumSimilarity, int prefixLength)
         {
             // FuzzyQuery doesn't yet allow constant score rewrite
-            string text = term.Text();
+            string text = term.Text;
 #pragma warning disable 612, 618
             int numEdits = FuzzyQuery.SingleToEdits(minimumSimilarity,
                 text.CodePointCount(0, text.Length));

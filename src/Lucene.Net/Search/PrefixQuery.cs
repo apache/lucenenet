@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
                 buffer.Append(Field);
                 buffer.Append(":");
             }
-            buffer.Append(_prefix.Text());
+            buffer.Append(_prefix.Text);
             buffer.Append('*');
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();

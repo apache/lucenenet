@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -169,7 +169,7 @@ namespace Lucene.Net.Search
             {
                 Assert.IsTrue(c.Query is TermQuery);
                 TermQuery tq = (TermQuery)c.Query;
-                string term = tq.Term.Text();
+                string term = tq.Term.Text;
                 Assert.IsTrue(allowedTerms.Contains(term), "invalid term: " + term);
                 allowedTerms.Remove(term); // remove to fail on double terms
             }

@@ -159,8 +159,8 @@ namespace Lucene.Net.Index
                     // make sure the deleted doc is not here
                     TermsEnum te = MultiFields.GetTerms(ir, "id").GetEnumerator();
                     Term t = new Term("id", (NUM_DOCS - 1) + "");
-                    assertEquals(TermsEnum.SeekStatus.NOT_FOUND, te.SeekCeil(new BytesRef(t.Text())));
-                    assertNotSame(t.Text(), te.Term.Utf8ToString());
+                    assertEquals(TermsEnum.SeekStatus.NOT_FOUND, te.SeekCeil(new BytesRef(t.Text)));
+                    assertNotSame(t.Text, te.Term.Utf8ToString());
                 }
             }
             finally

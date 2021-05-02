@@ -120,7 +120,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         private static void AddField(Document doc)
         {
-            doc.Add(new StringField(A.Field, A.Text(), Store.NO));
+            doc.Add(new StringField(A.Field, A.Text, Store.NO));
         }
 
         private static void AddFacets(Document doc, FacetsConfig config, bool updateTermExpectedCounts)

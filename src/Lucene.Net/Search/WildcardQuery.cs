@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
         {
             IList<Automaton> automata = new List<Automaton>();
 
-            string wildcardText = wildcardquery.Text();
+            string wildcardText = wildcardquery.Text;
 
             for (int i = 0; i < wildcardText.Length; )
             {
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
                 buffer.Append(Field);
                 buffer.Append(":");
             }
-            buffer.Append(Term.Text());
+            buffer.Append(Term.Text);
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
         }

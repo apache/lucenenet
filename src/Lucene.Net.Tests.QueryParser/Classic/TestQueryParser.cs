@@ -233,37 +233,37 @@ namespace Lucene.Net.QueryParsers.Classic
             TermQuery tq;
 
             tq = (TermQuery)qp.Parse("foo:zoo*");
-            assertEquals("zoo", tq.Term.Text());
+            assertEquals("zoo", tq.Term.Text);
             assertEquals(2, qp.type[0]);
 
             tq = (TermQuery)qp.Parse("foo:zoo*^2");
-            assertEquals("zoo", tq.Term.Text());
+            assertEquals("zoo", tq.Term.Text);
             assertEquals(2, qp.type[0]);
             assertEquals(tq.Boost, 2, 0);
 
             tq = (TermQuery)qp.Parse("foo:*");
-            assertEquals("*", tq.Term.Text());
+            assertEquals("*", tq.Term.Text);
             assertEquals(1, qp.type[0]); // could be a valid prefix query in the future too
 
             tq = (TermQuery)qp.Parse("foo:*^2");
-            assertEquals("*", tq.Term.Text());
+            assertEquals("*", tq.Term.Text);
             assertEquals(1, qp.type[0]);
             assertEquals(tq.Boost, 2, 0);
 
             tq = (TermQuery)qp.Parse("*:foo");
             assertEquals("*", tq.Term.Field);
-            assertEquals("foo", tq.Term.Text());
+            assertEquals("foo", tq.Term.Text);
             assertEquals(3, qp.type[0]);
 
             tq = (TermQuery)qp.Parse("*:*");
             assertEquals("*", tq.Term.Field);
-            assertEquals("*", tq.Term.Text());
+            assertEquals("*", tq.Term.Text);
             assertEquals(1, qp.type[0]); // could be handled as a prefix query in the
             // future
 
             tq = (TermQuery)qp.Parse("(*:*)");
             assertEquals("*", tq.Term.Field);
-            assertEquals("*", tq.Term.Text());
+            assertEquals("*", tq.Term.Text);
             assertEquals(1, qp.type[0]);
         }
 

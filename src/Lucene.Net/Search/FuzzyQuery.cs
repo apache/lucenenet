@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
 
         protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
-            if (maxEdits == 0 || prefixLength >= term.Text().Length) // can only match if it's exact
+            if (maxEdits == 0 || prefixLength >= term.Text.Length) // can only match if it's exact
             {
                 return new SingleTermsEnum(terms.GetEnumerator(), term.Bytes);
             }
@@ -168,7 +168,7 @@ namespace Lucene.Net.Search
                 buffer.Append(term.Field);
                 buffer.Append(":");
             }
-            buffer.Append(term.Text());
+            buffer.Append(term.Text);
             buffer.Append('~');
             buffer.Append(Convert.ToString(maxEdits));
             buffer.Append(ToStringUtils.Boost(Boost));

@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
             internal DumbRegexpQuery(Term term, RegExpSyntax flags)
                 : base(term.Field)
             {
-                RegExp re = new RegExp(term.Text(), flags);
+                RegExp re = new RegExp(term.Text, flags);
                 automaton = re.ToAutomaton();
             }
 

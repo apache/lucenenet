@@ -635,7 +635,7 @@ namespace Lucene.Net.Index
 
             // Make sure the doc that hit the exception was marked
             // as deleted:
-            DocsEnum tdocs = TestUtil.Docs(Random, reader, t.Field, new BytesRef(t.Text()), MultiFields.GetLiveDocs(reader), null, 0);
+            DocsEnum tdocs = TestUtil.Docs(Random, reader, t.Field, new BytesRef(t.Text), MultiFields.GetLiveDocs(reader), null, 0);
 
             int count = 0;
             while (tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)

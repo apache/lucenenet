@@ -87,7 +87,7 @@ namespace Lucene.Net.QueryParsers.Ext
                 TermQuery tquery = (TermQuery)query;
                 assertEquals("aField", tquery.Term
                     .Field);
-                assertEquals("foo", tquery.Term.Text());
+                assertEquals("foo", tquery.Term.Text);
 
                 booleanClause = clauses[1];
                 query = booleanClause.Query;
@@ -95,7 +95,7 @@ namespace Lucene.Net.QueryParsers.Ext
                     query is TermQuery);
                 tquery = (TermQuery)query;
                 assertEquals(DefaultField, tquery.Term.Field);
-                assertEquals("bar", tquery.Term.Text());
+                assertEquals("bar", tquery.Term.Text);
             }
         }
 
@@ -114,7 +114,7 @@ namespace Lucene.Net.QueryParsers.Ext
                     parse is TermQuery);
                 TermQuery tquery = (TermQuery)parse;
                 assertEquals(DefaultField, tquery.Term.Field);
-                assertEquals("foo & bar", tquery.Term.Text());
+                assertEquals("foo & bar", tquery.Term.Text);
             }
         }
 
@@ -138,7 +138,7 @@ namespace Lucene.Net.QueryParsers.Ext
                     parse is TermQuery);
                 TermQuery tquery = (TermQuery)parse;
                 assertEquals("afield", tquery.Term.Field);
-                assertEquals("foo & bar", tquery.Term.Text());
+                assertEquals("foo & bar", tquery.Term.Text);
             }
         }
 

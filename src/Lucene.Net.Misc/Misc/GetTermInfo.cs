@@ -55,7 +55,7 @@ namespace Lucene.Net.Misc
         public static void TermInfo(Store.Directory dir, Term term)
         {
             IndexReader reader = DirectoryReader.Open(dir);
-            Console.WriteLine("{0}:{1} \t totalTF = {2:#,##0} \t doc freq = {3:#,##0} \n", term.Field, term.Text(), reader.TotalTermFreq(term), reader.DocFreq(term));
+            Console.WriteLine("{0}:{1} \t totalTF = {2:#,##0} \t doc freq = {3:#,##0} \n", term.Field, term.Text, reader.TotalTermFreq(term), reader.DocFreq(term));
         }
 
         // LUCENENET specific - our wrapper console shows the correct usage

@@ -84,10 +84,7 @@ namespace Lucene.Net.Index
         /// text of the word.  In the case of dates and other types, this is an
         /// encoding of the object as a string.
         /// </summary>
-        public string Text() // LUCENENET TODO: API - Change to a property. While this calls a method internally, its expected usage is that it will return a deterministic value.
-        {
-            return ToString(Bytes);
-        }
+        public string Text => ToString(Bytes); // LUCENENET: Changed to a property. While this calls a method internally, its expected usage is that it will return a deterministic value.
 
         /// <summary>
         /// Returns human-readable form of the term text. If the term is not unicode,
@@ -193,7 +190,7 @@ namespace Lucene.Net.Index
 
         public override string ToString()
         {
-            return Field + ":" + Text();
+            return Field + ":" + Text;
         }
     }
 }

@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
                 {
                     if (Random.Next(freq[j]) == 0)
                     {
-                        d.Add(NewStringField("f", terms[j].Text(), Field.Store.NO));
+                        d.Add(NewStringField("f", terms[j].Text, Field.Store.NO));
                         //System.out.println(d);
                     }
                 }
