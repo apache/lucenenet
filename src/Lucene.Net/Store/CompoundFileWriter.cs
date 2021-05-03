@@ -201,11 +201,11 @@ namespace Lucene.Net.Store
             bool success = false;
             try
             {
-                long startPtr = dataOut.GetFilePointer();
+                long startPtr = dataOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 long length = fileEntry.Length;
                 dataOut.CopyBytes(@is, length);
                 // Verify that the output length diff is equal to original file
-                long endPtr = dataOut.GetFilePointer();
+                long endPtr = dataOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 long diff = endPtr - startPtr;
                 if (diff != length)
                 {
@@ -357,7 +357,7 @@ namespace Lucene.Net.Store
                 this.outerInstance = outerInstance;
                 this.@delegate = @delegate;
                 this.entry = entry;
-                entry.Offset = offset = @delegate.GetFilePointer();
+                entry.Offset = offset = @delegate.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 this.isSeparate = isSeparate;
             }
 
@@ -389,11 +389,7 @@ namespace Lucene.Net.Store
                 }
             }
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public override long GetFilePointer()
-            {
-                return @delegate.GetFilePointer() - offset;
-            }
+            public override long Position => @delegate.Position - offset; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
             [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

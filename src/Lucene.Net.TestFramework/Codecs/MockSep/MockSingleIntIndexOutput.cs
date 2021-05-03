@@ -1,4 +1,4 @@
-using Lucene.Net.Codecs.Sep;
+﻿using Lucene.Net.Codecs.Sep;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 
@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.MockSep
 
         public override string ToString()
         {
-            return "MockSingleIntIndexOutput fp=" + @out.GetFilePointer();
+            return "MockSingleIntIndexOutput fp=" + @out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         }
 
         private class MockSingleInt32IndexOutputIndex : Index // LUCENENET specific: Renamed from MockSingleIntIndexOutputIndex
@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.MockSep
 
             public override void Mark()
             {
-                fp = outerClass.@out.GetFilePointer();
+                fp = outerClass.@out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
 
             public override void CopyFrom(Index other, bool copyLast)

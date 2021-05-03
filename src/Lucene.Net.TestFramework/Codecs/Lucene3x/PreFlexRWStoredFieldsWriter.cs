@@ -68,7 +68,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         // in the correct fields format.
         public override void StartDocument(int numStoredFields)
         {
-            indexStream.WriteInt64(fieldsStream.GetFilePointer());
+            indexStream.WriteInt64(fieldsStream.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             fieldsStream.WriteVInt32(numStoredFields);
         }
 
@@ -196,14 +196,14 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void Finish(FieldInfos fis, int numDocs)
         {
-            if (4 + ((long)numDocs) * 8 != indexStream.GetFilePointer())
+            if (4 + ((long)numDocs) * 8 != indexStream.Position) // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             // this is most likely a bug in Sun JRE 1.6.0_04/_05;
             // we detect that the bug has struck, here, and
             // throw an exception to prevent the corruption from
             // entering the index.  See LUCENE-1282 for
             // details.
             {
-                throw RuntimeException.Create("fdx size mismatch: docCount is " + numDocs + " but fdx file size is " + indexStream.GetFilePointer() + " file=" + indexStream.ToString() + "; now aborting this merge to prevent index corruption");
+                throw RuntimeException.Create("fdx size mismatch: docCount is " + numDocs + " but fdx file size is " + indexStream.Position + " file=" + indexStream.ToString() + "; now aborting this merge to prevent index corruption");
             }
         }
     }

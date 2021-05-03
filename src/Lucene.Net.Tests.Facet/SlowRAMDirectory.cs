@@ -155,10 +155,7 @@ namespace Lucene.Net.Facet
                 return ii.Equals(o);
             }
 
-            public override long GetFilePointer()
-            {
-                return ii.GetFilePointer();
-            }
+            public override long Position => ii.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
             public override int GetHashCode()
             {
@@ -233,10 +230,7 @@ namespace Lucene.Net.Facet
                 io.Flush();
             }
 
-            public override long GetFilePointer()
-            {
-                return io.GetFilePointer();
-            }
+            public override long Position => io.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
             public override long Length
             {

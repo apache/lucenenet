@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Store
 {
@@ -48,7 +48,7 @@ namespace Lucene.Net.Store
         /// </summary>
         public override void Seek(long pos)
         {
-            long skip = pos - GetFilePointer();
+            long skip = pos - Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             if (skip < 0)
             {
                 throw IllegalStateException.Create(this.GetType() + " cannot seek backwards");

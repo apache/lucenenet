@@ -233,7 +233,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 public virtual PostingsWriter Reset()
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(buffer.GetFilePointer() == 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(buffer.Position == 0); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     lastDocID = 0;
                     docCount = 0;
                     lastPayloadLen = 0;
@@ -259,18 +259,18 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(postingsWriter.docCount == stats.DocFreq);
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(buffer2.GetFilePointer() == 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(buffer2.Position == 0); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
                 buffer2.WriteVInt32(stats.DocFreq);
                 if (field.IndexOptions != IndexOptions.DOCS_ONLY)
                 {
                     buffer2.WriteVInt64(stats.TotalTermFreq - stats.DocFreq);
                 }
-                int pos = (int)buffer2.GetFilePointer();
+                int pos = (int)buffer2.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 buffer2.WriteTo(finalBuffer, 0);
                 buffer2.Reset();
 
-                int totalBytes = pos + (int)postingsWriter.buffer.GetFilePointer();
+                int totalBytes = pos + (int)postingsWriter.buffer.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 if (totalBytes > finalBuffer.Length)
                 {
                     finalBuffer = ArrayUtil.Grow(finalBuffer, totalBytes);

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
@@ -51,13 +51,16 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns the current position in this file, where the next write will
-        /// occur. </summary>
+        /// occur.
+        /// <para/>
+        /// This was getFilePointer() in Lucene.
+        /// </summary>
         /// <seealso cref="Seek(long)"/>
-        public abstract long GetFilePointer(); // LUCENENET TODO: API - Make into property
+        public abstract long Position { get; } // LUCENENET specific: Renamed Position to match FileStream
 
         /// <summary>
         /// Sets current position in this file, where the next write will occur. </summary>
-        /// <seealso cref="GetFilePointer()"/>
+        /// <seealso cref="Position"/>
         [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
         public abstract void Seek(long pos);
 

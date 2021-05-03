@@ -66,7 +66,7 @@ namespace Lucene.Net.Store
                 }
 
                 @out.WriteBytes(bytes, 0, byteUpto);
-                Assert.AreEqual(size, @out.GetFilePointer());
+                Assert.AreEqual(size, @out.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 @out.Dispose();
                 Assert.AreEqual(size, dir.FileLength("test"));
 

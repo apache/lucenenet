@@ -111,7 +111,7 @@ namespace Lucene.Net.Util.Packed
                         acceptableOverhead = Random.NextSingle();
                     }
                     PackedInt32s.Writer w = PackedInt32s.GetWriter(@out, valueCount, nbits, acceptableOverhead);
-                    long startFp = @out.GetFilePointer();
+                    long startFp = @out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
                     int actualValueCount = Random.NextBoolean() ? valueCount : TestUtil.NextInt32(Random, 0, valueCount);
                     long[] values = new long[valueCount];
@@ -128,7 +128,7 @@ namespace Lucene.Net.Util.Packed
                         w.Add(values[i]);
                     }
                     w.Finish();
-                    long fp = @out.GetFilePointer();
+                    long fp = @out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     @out.Dispose();
 
                     // ensure that finish() added the (valueCount-actualValueCount) missing values
@@ -142,14 +142,14 @@ namespace Lucene.Net.Util.Packed
                         Assert.AreEqual(w.BitsPerValue, @in.ReadVInt32());
                         Assert.AreEqual(valueCount, @in.ReadVInt32());
                         Assert.AreEqual(w.Format.Id, @in.ReadVInt32());
-                        Assert.AreEqual(startFp, @in.GetFilePointer());
+                        Assert.AreEqual(startFp, @in.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                         @in.Dispose();
                     }
 
                     { // test reader
                         IndexInput @in = d.OpenInput("out.bin", NewIOContext(Random));
                         PackedInt32s.Reader r = PackedInt32s.GetReader(@in);
-                        Assert.AreEqual(fp, @in.GetFilePointer());
+                        Assert.AreEqual(fp, @in.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                         for (int i = 0; i < valueCount; i++)
                         {
                             Assert.AreEqual(values[i], r.Get(i), "index=" + i + " valueCount=" + valueCount + " nbits=" + nbits + " for " + r.GetType().Name);
@@ -169,7 +169,7 @@ namespace Lucene.Net.Util.Packed
                             Assert.AreEqual(values[i], r.Next(), "index=" + i + " valueCount=" + valueCount + " nbits=" + nbits + " for " + r.GetType().Name);
                             Assert.AreEqual(i, r.Ord);
                         }
-                        assertEquals(fp, @in.GetFilePointer());
+                        assertEquals(fp, @in.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                         @in.Dispose();
                     }
 
@@ -187,7 +187,7 @@ namespace Lucene.Net.Util.Packed
                             }
                             i += next.Length;
                         }
-                        Assert.AreEqual(fp, @in.GetFilePointer());
+                        Assert.AreEqual(fp, @in.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                         @in.Dispose();
                     }
 
@@ -201,7 +201,7 @@ namespace Lucene.Net.Util.Packed
                             Assert.AreEqual(values[index], intsEnum.Get(index), msg);
                         }
                         intsEnum.Get(intsEnum.Count - 1);
-                        Assert.AreEqual(fp, @in.GetFilePointer());
+                        Assert.AreEqual(fp, @in.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                         @in.Dispose();
                     }
                     d.Dispose();
@@ -241,18 +241,18 @@ namespace Lucene.Net.Util.Packed
                         {
                             it.Next();
                         }
-                        Assert.AreEqual(byteCount, @in.GetFilePointer(), msg);
+                        Assert.AreEqual(byteCount, @in.Position, msg); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
                         // test direct reader
                         @in.Seek(0L);
                         PackedInt32s.Reader directReader = PackedInt32s.GetDirectReaderNoHeader(@in, format, version, valueCount, bpv);
                         directReader.Get(valueCount - 1);
-                        Assert.AreEqual(byteCount, @in.GetFilePointer(), msg);
+                        Assert.AreEqual(byteCount, @in.Position, msg); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
                         // test reader
                         @in.Seek(0L);
                         PackedInt32s.GetReaderNoHeader(@in, format, version, valueCount, bpv);
-                        Assert.AreEqual(byteCount, @in.GetFilePointer(), msg);
+                        Assert.AreEqual(byteCount, @in.Position, msg); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     }
                 }
             }
@@ -477,7 +477,7 @@ namespace Lucene.Net.Util.Packed
                 long value = 17L & PackedInt32s.MaxValue(bitsPerValue);
                 w.Add(value);
                 w.Finish();
-                long end = @out.GetFilePointer();
+                long end = @out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 @out.Dispose();
 
                 IndexInput @in = dir.OpenInput("out", NewIOContext(Random));
@@ -485,7 +485,7 @@ namespace Lucene.Net.Util.Packed
                 string msg = "Impl=" + w.GetType().Name + ", bitsPerValue=" + bitsPerValue;
                 Assert.AreEqual(1, reader.Count, msg);
                 Assert.AreEqual(value, reader.Get(0), msg);
-                Assert.AreEqual(end, @in.GetFilePointer(), msg);
+                Assert.AreEqual(end, @in.Position, msg); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 @in.Dispose();
 
                 dir.Dispose();
@@ -1275,7 +1275,7 @@ namespace Lucene.Net.Util.Packed
                 }
             }
             pout.Flush();
-            Assert.AreEqual((long)Math.Ceiling((double)totalBits / 8), @out.GetFilePointer());
+            Assert.AreEqual((long)Math.Ceiling((double)totalBits / 8), @out.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             @out.Dispose();
             IndexInput @in = dir.OpenInput("out.bin", IOContext.READ_ONCE);
             PackedDataInput pin = new PackedDataInput(@in);
@@ -1287,7 +1287,7 @@ namespace Lucene.Net.Util.Packed
                     pin.SkipToNextByte();
                 }
             }
-            assertEquals((long)Math.Ceiling((double)totalBits / 8), @in.GetFilePointer());
+            assertEquals((long)Math.Ceiling((double)totalBits / 8), @in.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             @in.Dispose();
             dir.Dispose();
         }
@@ -1335,7 +1335,7 @@ namespace Lucene.Net.Util.Packed
                 Assert.AreEqual(valueCount, writer.Ord);
                 writer.Finish();
                 Assert.AreEqual(valueCount, writer.Ord);
-                long fp = @out.GetFilePointer();
+                long fp = @out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 @out.Dispose();
 
                 IndexInput in1 = dir.OpenInput("out.bin", IOContext.DEFAULT);
@@ -1363,7 +1363,7 @@ namespace Lucene.Net.Util.Packed
                     }
                     Assert.AreEqual(i, it.Ord);
                 }
-                assertEquals(fp, @in is ByteArrayDataInput ? ((ByteArrayDataInput)@in).Position : ((IndexInput)@in).GetFilePointer());
+                assertEquals(fp, @in is ByteArrayDataInput ? ((ByteArrayDataInput)@in).Position : ((IndexInput)@in).Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 try
                 {
                     it.Next();
@@ -1400,7 +1400,7 @@ namespace Lucene.Net.Util.Packed
                         ++k;
                     }
                 }
-                assertEquals(fp, @in is ByteArrayDataInput ? ((ByteArrayDataInput)@in).Position : (((IndexInput)@in).GetFilePointer()));
+                assertEquals(fp, @in is ByteArrayDataInput ? ((ByteArrayDataInput)@in).Position : (((IndexInput)@in).Position)); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 try
                 {
                     it2.Skip(1);
@@ -1413,7 +1413,7 @@ namespace Lucene.Net.Util.Packed
 
                 in1.Seek(0L);
                 BlockPackedReader reader = new BlockPackedReader(in1, PackedInt32s.VERSION_CURRENT, blockSize, valueCount, Random.NextBoolean());
-                assertEquals(in1.GetFilePointer(), in1.Length);
+                assertEquals(in1.Position, in1.Length); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 for (k = 0; k < valueCount; ++k)
                 {
                     Assert.AreEqual(values[k], reader.Get(k), "i=" + k);
@@ -1457,12 +1457,12 @@ namespace Lucene.Net.Util.Packed
                 Assert.AreEqual(valueCount, writer.Ord);
                 writer.Finish();
                 Assert.AreEqual(valueCount, writer.Ord);
-                long fp = @out.GetFilePointer();
+                long fp = @out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 @out.Dispose();
 
                 IndexInput @in = dir.OpenInput("out.bin", IOContext.DEFAULT);
                 MonotonicBlockPackedReader reader = new MonotonicBlockPackedReader(@in, PackedInt32s.VERSION_CURRENT, blockSize, valueCount, Random.NextBoolean());
-                assertEquals(fp, @in.GetFilePointer());
+                assertEquals(fp, @in.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 for (int i = 0; i < valueCount; ++i)
                 {
                     Assert.AreEqual(values[i], reader.Get(i),"i=" + i);

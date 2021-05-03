@@ -354,7 +354,7 @@ namespace Lucene.Net.Store
             /// <param name="len"> the number of bytes to read </param>
             protected override void ReadInternal(byte[] b, int offset, int len)
             {
-                long start = GetFilePointer();
+                long start = Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 if (start + len > length)
                 {
                     throw EOFException.Create("read past EOF: " + this);

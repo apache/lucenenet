@@ -64,14 +64,17 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns the current position in this file, where the next read will
-        /// occur. </summary>
+        /// occur.
+        /// <para/>
+        /// This was getFilePointer() in Lucene.
+        /// </summary>
         /// <seealso cref="Seek(long)"/>
-        public abstract long GetFilePointer(); // LUCENENET TODO: API - make into property
+        public abstract long Position { get; } // LUCENENET specific: Renamed Position to match FileStream
 
         /// <summary>
         /// Sets current position in this file, where the next read will occur.
         /// </summary>
-        /// <seealso cref="GetFilePointer()"/>
+        /// <seealso cref="Position"/>
         public abstract void Seek(long pos);
 
         /// <summary>

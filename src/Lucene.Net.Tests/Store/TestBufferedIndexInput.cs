@@ -140,8 +140,8 @@ namespace Lucene.Net.Store
             // add an arbitrary offset at the beginning of the array
             int offset = size % 10; // arbitrary
             buffer = ArrayUtil.Grow(buffer, offset + size);
-            Assert.AreEqual(pos, input.GetFilePointer());
-            long left = TEST_FILE_LENGTH - input.GetFilePointer();
+            Assert.AreEqual(pos, input.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+            long left = TEST_FILE_LENGTH - input.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             if (left <= 0)
             {
                 return;
@@ -151,7 +151,7 @@ namespace Lucene.Net.Store
                 size = (int)left;
             }
             input.ReadBytes(buffer, offset, size);
-            Assert.AreEqual(pos + size, input.GetFilePointer());
+            Assert.AreEqual(pos + size, input.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             for (int i = 0; i < size; i++)
             {
                 Assert.AreEqual(Byten(pos + i), (byte)buffer[offset + i], "pos=" + i + " filepos=" + (pos + i));

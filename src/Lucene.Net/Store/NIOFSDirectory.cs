@@ -246,7 +246,7 @@ namespace Lucene.Net.Store
 
                 int readOffset = bb.Position;
                 int readLength = bb.Limit - readOffset;
-                long pos = GetFilePointer() + m_off;
+                long pos = Position + m_off; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
                 if (pos + len > m_end)
                 {

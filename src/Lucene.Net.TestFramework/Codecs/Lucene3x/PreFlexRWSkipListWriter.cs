@@ -1,4 +1,4 @@
-using Lucene.Net.Store;
+﻿using Lucene.Net.Store;
 using Lucene.Net.Support;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -61,10 +61,10 @@ namespace Lucene.Net.Codecs.Lucene3x
             this.curDoc = doc;
             this.curStorePayloads = storePayloads;
             this.curPayloadLength = payloadLength;
-            this.curFreqPointer = freqOutput.GetFilePointer();
+            this.curFreqPointer = freqOutput.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             if (proxOutput != null)
             {
-                this.curProxPointer = proxOutput.GetFilePointer();
+                this.curProxPointer = proxOutput.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
         }
 
@@ -73,10 +73,10 @@ namespace Lucene.Net.Codecs.Lucene3x
             base.ResetSkip();
             Arrays.Fill(lastSkipDoc, 0);
             Arrays.Fill(lastSkipPayloadLength, -1); // we don't have to write the first length in the skip list
-            Arrays.Fill(lastSkipFreqPointer, freqOutput.GetFilePointer());
+            Arrays.Fill(lastSkipFreqPointer, freqOutput.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             if (proxOutput != null)
             {
-                Arrays.Fill(lastSkipProxPointer, proxOutput.GetFilePointer());
+                Arrays.Fill(lastSkipProxPointer, proxOutput.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
         }
 

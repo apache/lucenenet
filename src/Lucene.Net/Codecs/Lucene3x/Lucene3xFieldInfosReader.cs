@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -126,9 +126,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                         Collections.EmptyMap<string, string>());
                 }
 
-                if (input.GetFilePointer() != input.Length)
+                if (input.Position != input.Length) // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 {
-                    throw new CorruptIndexException("did not read all bytes from file \"" + fileName + "\": read " + input.GetFilePointer() + " vs size " + input.Length + " (resource: " + input + ")");
+                    throw new CorruptIndexException("did not read all bytes from file \"" + fileName + "\": read " + input.Position + " vs size " + input.Length + " (resource: " + input + ")");
                 }
                 FieldInfos fieldInfos = new FieldInfos(infos);
                 success = true;

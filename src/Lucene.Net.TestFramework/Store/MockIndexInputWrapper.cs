@@ -99,10 +99,13 @@ namespace Lucene.Net.Store
             return clone;
         }
 
-        public override long GetFilePointer()
+        public override long Position // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         {
-            EnsureOpen();
-            return @delegate.GetFilePointer();
+            get
+            {
+                EnsureOpen();
+                return @delegate.Position;
+            }
         }
 
         public override void Seek(long pos)

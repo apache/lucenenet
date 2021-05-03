@@ -198,7 +198,7 @@ namespace Lucene.Net.Codecs.Memory
                 Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
                 try
                 {
-                    var blockDirStart = blockOut.GetFilePointer();
+                    var blockDirStart = blockOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
                     // write field summary
                     blockOut.WriteVInt32(_fields.Count);
@@ -213,9 +213,9 @@ namespace Lucene.Net.Codecs.Memory
                         blockOut.WriteVInt64(field.SumDocFreq);
                         blockOut.WriteVInt32(field.DocCount);
                         blockOut.WriteVInt32(field.Int64sSize);
-                        blockOut.WriteVInt64(field.StatsOut.GetFilePointer());
-                        blockOut.WriteVInt64(field.MetaInt64sOut.GetFilePointer());
-                        blockOut.WriteVInt64(field.MetaBytesOut.GetFilePointer());
+                        blockOut.WriteVInt64(field.StatsOut.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                        blockOut.WriteVInt64(field.MetaInt64sOut.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                        blockOut.WriteVInt64(field.MetaBytesOut.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
                         field.SkipOut.WriteTo(blockOut);
                         field.StatsOut.WriteTo(blockOut);
@@ -364,12 +364,12 @@ namespace Lucene.Net.Codecs.Memory
                     _metaLongsOut.WriteVInt64(longs[i] - _lastLongs[i]);
                     _lastLongs[i] = longs[i];
                 }
-                _metaLongsOut.WriteVInt64(_metaBytesOut.GetFilePointer() - _lastMetaBytesFp);
+                _metaLongsOut.WriteVInt64(_metaBytesOut.Position - _lastMetaBytesFp); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
                 _builder.Add(Util.ToInt32sRef(text, _scratchTerm), _numTerms);
                 _numTerms++;
 
-                _lastMetaBytesFp = _metaBytesOut.GetFilePointer();
+                _lastMetaBytesFp = _metaBytesOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
 
             public override void Finish(long sumTotalTermFreq, long sumDocFreq, int docCount)
@@ -395,16 +395,16 @@ namespace Lucene.Net.Codecs.Memory
 
             private void BufferSkip()
             {
-                _skipOut.WriteVInt64(_statsOut.GetFilePointer() - _lastBlockStatsFp);
-                _skipOut.WriteVInt64(_metaLongsOut.GetFilePointer() - _lastBlockMetaLongsFp);
-                _skipOut.WriteVInt64(_metaBytesOut.GetFilePointer() - _lastBlockMetaBytesFp);
+                _skipOut.WriteVInt64(_statsOut.Position - _lastBlockStatsFp); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                _skipOut.WriteVInt64(_metaLongsOut.Position - _lastBlockMetaLongsFp); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                _skipOut.WriteVInt64(_metaBytesOut.Position - _lastBlockMetaBytesFp); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 for (var i = 0; i < _longsSize; i++)
                 {
                     _skipOut.WriteVInt64(_lastLongs[i] - _lastBlockLongs[i]);
                 }
-                _lastBlockStatsFp = _statsOut.GetFilePointer();
-                _lastBlockMetaLongsFp = _metaLongsOut.GetFilePointer();
-                _lastBlockMetaBytesFp = _metaBytesOut.GetFilePointer();
+                _lastBlockStatsFp = _statsOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                _lastBlockMetaLongsFp = _metaLongsOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                _lastBlockMetaBytesFp = _metaBytesOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 Array.Copy(_lastLongs, 0, _lastBlockLongs, 0, _longsSize);
             }
         }

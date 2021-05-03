@@ -894,7 +894,7 @@ namespace Lucene.Net.Codecs
                         {
                             // Sub-blocks of a single floor block are always
                             // written one after another -- tail recurse:
-                            fpEnd = outerInstance.@in.GetFilePointer();
+                            fpEnd = outerInstance.@in.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                         }
                     }
 
@@ -2799,7 +2799,7 @@ namespace Lucene.Net.Codecs
 
                         // Sub-blocks of a single floor block are always
                         // written one after another -- tail recurse:
-                        fpEnd = outerInstance.@in.GetFilePointer();
+                        fpEnd = outerInstance.@in.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                         // if (DEBUG) {
                         //   System.out.println("      fpEnd=" + fpEnd);
                         // }

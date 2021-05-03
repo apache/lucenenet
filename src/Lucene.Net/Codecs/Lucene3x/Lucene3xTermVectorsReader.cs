@@ -371,7 +371,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 byte bits = outerInstance.tvf.ReadByte();
                 storePositions = (bits & STORE_POSITIONS_WITH_TERMVECTOR) != 0;
                 storeOffsets = (bits & STORE_OFFSET_WITH_TERMVECTOR) != 0;
-                tvfFPStart = outerInstance.tvf.GetFilePointer();
+                tvfFPStart = outerInstance.tvf.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 unicodeSortOrder = outerInstance.SortTermsByUnicode();
             }
 

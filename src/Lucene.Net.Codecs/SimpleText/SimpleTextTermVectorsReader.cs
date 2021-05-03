@@ -106,7 +106,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 SimpleTextUtil.ReadLine(input, _scratch);
                 if (StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.DOC))
                 {
-                    _offsets[upto] = input.GetFilePointer();
+                    _offsets[upto] = input.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     upto++;
                 }
             }

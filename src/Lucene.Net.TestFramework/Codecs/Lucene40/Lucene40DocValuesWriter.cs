@@ -317,7 +317,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             /* values */
 
-            long startPos = data.GetFilePointer();
+            long startPos = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
             foreach (BytesRef v in values)
             {
@@ -329,7 +329,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             /* addresses */
 
-            long maxAddress = data.GetFilePointer() - startPos;
+            long maxAddress = data.Position - startPos; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             index.WriteVInt64(maxAddress);
 
             int maxDoc = state.SegmentInfo.DocCount;
@@ -412,19 +412,19 @@ namespace Lucene.Net.Codecs.Lucene40
             }
 
             /* values */
-            long startPosition = data.GetFilePointer();
+            long startPosition = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             long currentAddress = 0;
             Dictionary<BytesRef, long> valueToAddress = new Dictionary<BytesRef, long>();
             foreach (BytesRef v in dictionary)
             {
-                currentAddress = data.GetFilePointer() - startPosition;
+                currentAddress = data.Position - startPosition; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 valueToAddress[v] = currentAddress;
                 WriteVInt16(data, v.Length);
                 data.WriteBytes(v.Bytes, v.Offset, v.Length);
             }
 
             /* ordinals */
-            long totalBytes = data.GetFilePointer() - startPosition;
+            long totalBytes = data.Position - startPosition; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             index.WriteInt64(totalBytes);
             int maxDoc = state.SegmentInfo.DocCount;
             PackedInt32s.Writer w = PackedInt32s.GetWriter(index, maxDoc, PackedInt32s.BitsRequired(currentAddress), PackedInt32s.DEFAULT);
@@ -564,7 +564,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             /* values */
 
-            long startPos = data.GetFilePointer();
+            long startPos = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
             int valueCount = 0;
             foreach (BytesRef v in values)
@@ -575,7 +575,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             /* addresses */
 
-            long maxAddress = data.GetFilePointer() - startPos;
+            long maxAddress = data.Position - startPos; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             index.WriteInt64(maxAddress);
 
             if (Debugging.AssertsEnabled) Debugging.Assert(valueCount != int.MaxValue); // unsupported by the 4.0 impl

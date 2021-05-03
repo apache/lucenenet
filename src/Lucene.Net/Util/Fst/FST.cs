@@ -512,7 +512,7 @@ namespace Lucene.Net.Util.Fst
                 var ros = new RAMOutputStream();
                 Outputs.WriteFinalOutput(emptyOutput, ros);
 
-                var emptyOutputBytes = new byte[(int)ros.GetFilePointer()];
+                var emptyOutputBytes = new byte[(int)ros.Position]; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 ros.WriteTo(emptyOutputBytes, 0);
 
                 if (!packed)

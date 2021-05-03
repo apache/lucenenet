@@ -35,7 +35,7 @@ namespace Lucene.Net.Util.Packed
             : base(valueCount, bitsPerValue)
         {
             this.@in = @in;
-            startPointer = @in.GetFilePointer();
+            startPointer = @in.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             valuesPerBlock = 64 / bitsPerValue;
             mask = ~(~0L << bitsPerValue);
         }

@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
@@ -127,7 +127,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             //System.out.println("\nBTW.addField seg=" + segment + " field=" + field.name);
             if (Debugging.AssertsEnabled) Debugging.Assert(currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0);
             currentField = field;
-            TermsIndexWriterBase.FieldWriter fieldIndexWriter = termsIndexWriter.AddField(field, m_output.GetFilePointer());
+            TermsIndexWriterBase.FieldWriter fieldIndexWriter = termsIndexWriter.AddField(field, m_output.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             return new TermsWriter(this, fieldIndexWriter, field, postingsWriter);
         }
 
@@ -139,7 +139,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 {
                     try
                     {
-                        long dirStart = m_output.GetFilePointer();
+                        long dirStart = m_output.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
                         m_output.WriteVInt32(fields.Count);
                         foreach (FieldMetaData field in fields)
@@ -219,7 +219,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 {
                     pendingTerms[i] = new TermEntry();
                 }
-                termsStartPointer = outerInstance.m_output.GetFilePointer();
+                termsStartPointer = outerInstance.m_output.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 this.postingsWriter = postingsWriter;
                 this.longsSize = postingsWriter.SetField(fieldInfo);
             }
@@ -251,7 +251,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                         // entire block in between index terms:
                         FlushBlock();
                     }
-                    fieldIndexWriter.Add(text, stats, outerInstance.m_output.GetFilePointer());
+                    fieldIndexWriter.Add(text, stats, outerInstance.m_output.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     //System.out.println("  index term!");
                 }
 
@@ -289,7 +289,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 //this.sumTotalTermFreq = sumTotalTermFreq; // LUCENENET: Not used
                 //this.sumDocFreq = sumDocFreq; // LUCENENET: Not used
                 //this.docCount = docCount; // LUCENENET: Not used
-                fieldIndexWriter.Finish(outerInstance.m_output.GetFilePointer());
+                fieldIndexWriter.Finish(outerInstance.m_output.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 if (numTerms > 0)
                 {
                     outerInstance.fields.Add(new FieldMetaData(fieldInfo,
@@ -354,7 +354,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     bytesWriter.WriteVInt32(suffix);
                     bytesWriter.WriteBytes(pendingTerms[termCount].Term.Bytes, commonPrefix, suffix);
                 }
-                outerInstance.m_output.WriteVInt32((int)bytesWriter.GetFilePointer());
+                outerInstance.m_output.WriteVInt32((int)bytesWriter.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 bytesWriter.WriteTo(outerInstance.m_output);
                 bytesWriter.Reset();
 
@@ -371,7 +371,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                         bytesWriter.WriteVInt64(state.TotalTermFreq - state.DocFreq);
                     }
                 }
-                outerInstance.m_output.WriteVInt32((int)bytesWriter.GetFilePointer());
+                outerInstance.m_output.WriteVInt32((int)bytesWriter.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 bytesWriter.WriteTo(outerInstance.m_output);
                 bytesWriter.Reset();
 
@@ -390,7 +390,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     bufferWriter.Reset();
                     absolute = false;
                 }
-                outerInstance.m_output.WriteVInt32((int)bytesWriter.GetFilePointer());
+                outerInstance.m_output.WriteVInt32((int)bytesWriter.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 bytesWriter.WriteTo(outerInstance.m_output);
                 bytesWriter.Reset();
 

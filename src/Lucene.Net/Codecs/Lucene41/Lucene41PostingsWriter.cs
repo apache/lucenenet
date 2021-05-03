@@ -281,13 +281,13 @@ namespace Lucene.Net.Codecs.Lucene41
 
         public override void StartTerm()
         {
-            docStartFP = docOut.GetFilePointer();
+            docStartFP = docOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             if (fieldHasPositions)
             {
-                posStartFP = posOut.GetFilePointer();
+                posStartFP = posOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 if (fieldHasPayloads || fieldHasOffsets)
                 {
-                    payStartFP = payOut.GetFilePointer();
+                    payStartFP = payOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
             }
             lastDocID = 0;
@@ -431,9 +431,9 @@ namespace Lucene.Net.Codecs.Lucene41
                 {
                     if (payOut != null)
                     {
-                        lastBlockPayFP = payOut.GetFilePointer();
+                        lastBlockPayFP = payOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     }
-                    lastBlockPosFP = posOut.GetFilePointer();
+                    lastBlockPosFP = posOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     lastBlockPosBufferUpto = posBufferUpto;
                     lastBlockPayloadByteUpto = payloadByteUpto;
                 }
@@ -512,7 +512,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 if (state2.TotalTermFreq > Lucene41PostingsFormat.BLOCK_SIZE)
                 {
                     // record file offset for last pos in last block
-                    lastPosBlockOffset = posOut.GetFilePointer() - posStartFP;
+                    lastPosBlockOffset = posOut.Position - posStartFP; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
                 else
                 {

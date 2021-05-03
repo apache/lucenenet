@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -259,7 +259,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 this.fieldInfo = fieldInfo;
                 fstOutputs = PositiveInt32Outputs.Singleton;
                 fstBuilder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, fstOutputs);
-                indexStart = outerInstance.m_output.GetFilePointer();
+                indexStart = outerInstance.m_output.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 ////System.out.println("VGW: field=" + fieldInfo.name);
 
                 // Always put empty string in
@@ -326,7 +326,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 {
                     try
                     {
-                        long dirStart = m_output.GetFilePointer();
+                        long dirStart = m_output.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                         int fieldCount = fields.Count;
 
                         int nonNullFieldCount = 0;

@@ -51,6 +51,8 @@ Several Java conventions were replaced with their .NET counterparts:
 
 * For arrays and files, the `Size` property is now named `Length`.
 
+* For `IndexInput` and `IndexOutput` subclasses, `GetFilePointer()` method has been changed to a `Position` property to match `System.IO.FileStream.Position`.
+
 * Some classes, enums, and interfaces have been de-nested from their original Lucene location to make them easier to find when using Intellisense.
 
 * Some methods were lacking a verb, so the verb `Get` was added to make the method's function more clear. For example, instead of `Analysis.TokenStream()` we now have `Analysis.GetTokenStream()`.

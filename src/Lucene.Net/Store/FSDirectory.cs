@@ -588,10 +588,7 @@ namespace Lucene.Net.Store
             public override long Checksum => crc.Value; // LUCENENET specific - need to override, since we are buffering locally
 
             /// <inheritdoc/>
-            public override long GetFilePointer() // LUCENENET specific - need to override, since we are buffering locally
-            {
-                return file.Position;
-            }
+            public override long Position => file.Position; // LUCENENET specific - need to override, since we are buffering locally, renamed from getFilePointer() to match FileStream
         }
 
         // LUCENENET specific: Fsync is pointless in .NET, since we are 

@@ -57,7 +57,7 @@ namespace Lucene.Net.Util
                 byte[] bytes = new byte[numBytes];
                 r2.NextBytes(bytes);
                 dataOutput.WriteBytes(bytes, bytes.Length);
-                long fp = dataOutput.GetFilePointer();
+                long fp = dataOutput.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 if (Debugging.AssertsEnabled) Debugging.Assert(fp == lastFP + numBytes);
                 lastFP = fp;
                 netBytes += numBytes;

@@ -206,12 +206,15 @@ namespace Lucene.Net.Store
             return base.ReadInt64();
         }
 
-        public override sealed long GetFilePointer()
+        public override sealed long Position // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         {
-            // LUCENENET: Refactored to avoid calls on invalid conditions instead of
-            // catching and re-throwing exceptions in the normal workflow.
-            EnsureOpen();
-            return (((long)curBufIndex) << chunkSizePower) + curBuf.Position - offset;
+            get
+            {
+                // LUCENENET: Refactored to avoid calls on invalid conditions instead of
+                // catching and re-throwing exceptions in the normal workflow.
+                EnsureOpen();
+                return (((long)curBufIndex) << chunkSizePower) + curBuf.Position - offset;
+            }
         }
 
         public override sealed void Seek(long pos)
@@ -258,7 +261,7 @@ namespace Lucene.Net.Store
             ByteBufferIndexInput clone = BuildSlice(0L, this.length);
             try
             {
-                clone.Seek(GetFilePointer());
+                clone.Seek(Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
             catch (Exception ioe) when (ioe.IsIOException())
             {

@@ -104,8 +104,8 @@ namespace Lucene.Net.Index
             {
                 // LUCENENET specific - Since there is no way to check for a next element
                 // without calling this method in .NET, the assert is redundant and ineffective.
-                //if (Debugging.AssertsEnabled) Debugging.Assert(input.GetFilePointer() < input.Length); // Has next
-                if (input.GetFilePointer() < input.Length)
+                //if (Debugging.AssertsEnabled) Debugging.Assert(input.Position < input.Length); // Has next
+                if (input.Position < input.Length) // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 {
                     try
                     {
