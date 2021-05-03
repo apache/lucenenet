@@ -53,17 +53,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Flexible\Core\Messages\QueryParserMessages.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>QueryParserMessages.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Flexible\Core\Messages\QueryParserMessages.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>QueryParserMessages.Designer.cs</LastGenOutput>
+    <EmbeddedResource Update="Flexible\Core\Messages\QueryParserMessages.resx" >
+      <Generator Label="No generator used - we update manually."></Generator>
     </EmbeddedResource>
   </ItemGroup>
 
