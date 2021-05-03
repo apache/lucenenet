@@ -74,7 +74,7 @@ namespace Lucene.Net.Codecs.Memory
 
         private void AddNumericFieldValues(FieldInfo field, IEnumerable<long?> values)
         {
-            meta.WriteInt64(data.GetFilePointer());
+            meta.WriteInt64(data.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             long minValue = long.MaxValue;
             long maxValue = long.MinValue;
             bool missing = false;
@@ -103,10 +103,10 @@ namespace Lucene.Net.Codecs.Memory
 
             if (missing)
             {
-                long start = data.GetFilePointer();
+                long start = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 WriteMissingBitset(values);
                 meta.WriteInt64(start);
-                meta.WriteInt64(data.GetFilePointer() - start);
+                meta.WriteInt64(data.Position - start); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
             else
             {
@@ -196,7 +196,7 @@ namespace Lucene.Net.Codecs.Memory
         private void AddBinaryFieldValues(FieldInfo field, IEnumerable<BytesRef> values)
         {
             // write the byte[] data
-            long startFP = data.GetFilePointer();
+            long startFP = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             bool missing = false;
             long totalBytes = 0;
             int count = 0;
@@ -225,10 +225,10 @@ namespace Lucene.Net.Codecs.Memory
             meta.WriteInt32(count);
             if (missing)
             {
-                long start = data.GetFilePointer();
+                long start = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 WriteMissingBitset(values);
                 meta.WriteInt64(start);
-                meta.WriteInt64(data.GetFilePointer() - start);
+                meta.WriteInt64(data.Position - start); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
             else
             {

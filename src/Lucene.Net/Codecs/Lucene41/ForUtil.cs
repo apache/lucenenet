@@ -229,7 +229,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
             if (Debugging.AssertsEnabled) Debugging.Assert(numBits > 0 && numBits <= 32, numBits.ToString());
             int encodedSize = encodedSizes[numBits];
-            @in.Seek(@in.GetFilePointer() + encodedSize);
+            @in.Seek(@in.Position + encodedSize); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

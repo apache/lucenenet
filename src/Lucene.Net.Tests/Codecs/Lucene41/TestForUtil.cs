@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 {
                     forUtil.WriteBlock(Arrays.CopyOfRange(values, i * Lucene41PostingsFormat.BLOCK_SIZE, values.Length), new byte[Lucene41.ForUtil.MAX_ENCODED_SIZE], @out);
                 }
-                endPointer = @out.GetFilePointer();
+                endPointer = @out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 @out.Dispose();
             }
 
@@ -91,7 +91,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     forUtil.ReadBlock(@in, new byte[Lucene41.ForUtil.MAX_ENCODED_SIZE], restored);
                     Assert.AreEqual(Arrays.CopyOfRange(values, i * Lucene41PostingsFormat.BLOCK_SIZE, (i + 1) * Lucene41PostingsFormat.BLOCK_SIZE), Arrays.CopyOf(restored, Lucene41PostingsFormat.BLOCK_SIZE));
                 }
-                assertEquals(endPointer, @in.GetFilePointer());
+                assertEquals(endPointer, @in.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 @in.Dispose();
             }
         }

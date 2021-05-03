@@ -202,12 +202,12 @@ namespace Lucene.Net.Util
             var @out = dir.CreateOutput("foo", IOContext.DEFAULT);
             for (long i = 0; i < numBytes;)
             {
-                Assert.AreEqual(i, @out.GetFilePointer());
+                Assert.AreEqual(i, @out.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 int len = (int)Math.Min(arr.Length, numBytes - i);
                 @out.WriteBytes(arr, len);
                 i += len;
             }
-            Assert.AreEqual(numBytes, @out.GetFilePointer());
+            Assert.AreEqual(numBytes, @out.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             @out.Dispose();
             IndexInput @in = dir.OpenInput("foo", IOContext.DEFAULT);
             p.Copy(@in, numBytes);

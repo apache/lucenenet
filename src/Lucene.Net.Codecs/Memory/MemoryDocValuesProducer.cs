@@ -357,7 +357,7 @@ namespace Lucene.Net.Codecs.Memory
             }
             else
             {
-                data.Seek(data.GetFilePointer() + entry.missingBytes);
+                data.Seek(data.Position + entry.missingBytes); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 var addresses = new MonotonicBlockPackedReader(data, entry.packedIntsVersion,
                     entry.blockSize, maxDoc, false);
                 ramBytesUsed.AddAndGet(bytes.RamBytesUsed() + addresses.RamBytesUsed());

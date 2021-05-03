@@ -751,7 +751,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 // if (DEBUG) {
                 //   System.out.println("      refillPositions");
                 // }
-                if (posIn.GetFilePointer() == lastPosBlockFP)
+                if (posIn.Position == lastPosBlockFP) // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 {
                     // if (DEBUG) {
                     //   System.out.println("        vInt pos block @ fp=" + posIn.getFilePointer() + " hasPayloads=" + indexHasPayloads + " hasOffsets=" + indexHasOffsets);
@@ -770,7 +770,7 @@ namespace Lucene.Net.Codecs.Lucene41
                             posDeltaBuffer[i] = code.TripleShift(1);
                             if (payloadLength != 0)
                             {
-                                posIn.Seek(posIn.GetFilePointer() + payloadLength);
+                                posIn.Seek(posIn.Position + payloadLength); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                             }
                         }
                         else
@@ -969,7 +969,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("        skip whole block @ fp=" + posIn.getFilePointer());
                         // }
-                        if (Debugging.AssertsEnabled) Debugging.Assert(posIn.GetFilePointer() != lastPosBlockFP);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(posIn.Position != lastPosBlockFP); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                         outerInstance.forUtil.SkipBlock(posIn);
                         toSkip -= Lucene41PostingsFormat.BLOCK_SIZE;
                     }
@@ -1260,7 +1260,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 // if (DEBUG) {
                 //   System.out.println("      refillPositions");
                 // }
-                if (posIn.GetFilePointer() == lastPosBlockFP)
+                if (posIn.Position == lastPosBlockFP) // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 {
                     // if (DEBUG) {
                     //   System.out.println("        vInt pos block @ fp=" + posIn.getFilePointer() + " hasPayloads=" + indexHasPayloads + " hasOffsets=" + indexHasOffsets);
@@ -1348,7 +1348,7 @@ namespace Lucene.Net.Codecs.Lucene41
                             // this works, because when writing a vint block we always force the first length to be written
                             outerInstance.forUtil.SkipBlock(payIn); // skip over lengths
                             int numBytes = payIn.ReadVInt32(); // read length of payloadBytes
-                            payIn.Seek(payIn.GetFilePointer() + numBytes); // skip over payloadBytes
+                            payIn.Seek(payIn.Position + numBytes); // skip over payloadBytes // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                         }
                         payloadByteUpto = 0;
                     }
@@ -1559,7 +1559,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("        skip whole block @ fp=" + posIn.getFilePointer());
                         // }
-                        if (Debugging.AssertsEnabled) Debugging.Assert(posIn.GetFilePointer() != lastPosBlockFP);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(posIn.Position != lastPosBlockFP); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                         outerInstance.forUtil.SkipBlock(posIn);
 
                         if (indexHasPayloads)
@@ -1569,7 +1569,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
                             // Skip payloadBytes block:
                             int numBytes = payIn.ReadVInt32();
-                            payIn.Seek(payIn.GetFilePointer() + numBytes);
+                            payIn.Seek(payIn.Position + numBytes); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                         }
 
                         if (indexHasOffsets)

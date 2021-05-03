@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs.IntBlock
 
             public override void Mark()
             {
-                fp = outerInstance.m_output.GetFilePointer();
+                fp = outerInstance.m_output.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 upto = outerInstance.upto;
             }
 

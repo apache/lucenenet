@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -402,7 +402,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     }
                 }
 
-                state2.bytes = new byte[(int)_buffer.GetFilePointer()];
+                state2.bytes = new byte[(int)_buffer.Position]; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 _buffer.WriteTo(state2.bytes, 0);
                 _buffer.Reset();
             }

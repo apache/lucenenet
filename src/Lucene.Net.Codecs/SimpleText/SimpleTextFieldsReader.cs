@@ -102,7 +102,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     var fieldName = Encoding.UTF8.GetString(scratch.Bytes, scratch.Offset + SimpleTextFieldsWriter.FIELD.Length,
                         scratch.Length - SimpleTextFieldsWriter.FIELD.Length);
-                    fields[fieldName] = input.GetFilePointer();
+                    fields[fieldName] = input.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
             }
         }
@@ -265,7 +265,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 int termFreq = 0;
                 while (true)
                 {
-                    long lineStart = _in.GetFilePointer();
+                    long lineStart = _in.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     SimpleTextUtil.ReadLine(_in, _scratch);
                     if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.DOC))
                     {
@@ -397,7 +397,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 long posStart = 0;
                 while (true)
                 {
-                    long lineStart = _in.GetFilePointer();
+                    long lineStart = _in.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     SimpleTextUtil.ReadLine(_in, _scratch);
                     //System.out.println("NEXT DOC: " + scratch.utf8ToString());
                     if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.DOC))
@@ -419,7 +419,7 @@ namespace Lucene.Net.Codecs.SimpleText
                         UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.FREQ.Length,
                             _scratch.Length - SimpleTextFieldsWriter.FREQ.Length, _scratchUtf16);
                         _tf = ArrayUtil.ParseInt32(_scratchUtf16.Chars, 0, _scratchUtf16.Length);
-                        posStart = _in.GetFilePointer();
+                        posStart = _in.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     }
                     else if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.POS))
                     {
@@ -492,7 +492,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     _endOffset = ArrayUtil.ParseInt32(_scratchUtf162.Chars, 0, _scratchUtf162.Length);
                 }
 
-                long fp = _in.GetFilePointer();
+                long fp = _in.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 SimpleTextUtil.ReadLine(_in, _scratch);
                 if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.PAYLOAD))
                 {
@@ -618,7 +618,7 @@ namespace Lucene.Net.Codecs.SimpleText
                             b.Add(Util.ToInt32sRef(lastTerm, scratchIntsRef),
                                 outputs.NewPair(lastDocsStart, outputsInner.NewPair(docFreq, totalTermFreq)));
                         }
-                        lastDocsStart = input.GetFilePointer();
+                        lastDocsStart = input.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                         int len = _scratch.Length - SimpleTextFieldsWriter.TERM.Length;
                         if (len > lastTerm.Length)
                         {

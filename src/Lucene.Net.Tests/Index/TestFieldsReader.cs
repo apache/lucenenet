@@ -194,7 +194,7 @@ namespace Lucene.Net.Index
             protected override void ReadInternal(byte[] b, int offset, int length)
             {
                 SimOutage();
-                @delegate.Seek(GetFilePointer());
+                @delegate.Seek(Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 @delegate.ReadBytes(b, offset, length);
             }
 
@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
                 // seek the clone to our current position
                 try
                 {
-                    i.Seek(GetFilePointer());
+                    i.Seek(Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
                 catch (Exception e) when (e.IsIOException())
                 {

@@ -501,7 +501,7 @@ namespace Lucene.Net.Codecs
                     // it might contain garbage that cannot be converted into text.
                     Debugging.Assert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null), "isFloor={0} floorBlocks={1}", IsFloor, new PendingBlocksFormatter(floorBlocks));
 
-                    Debugging.Assert(scratchBytes.GetFilePointer() == 0);
+                    Debugging.Assert(scratchBytes.Position == 0); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
 
                 // TODO: try writing the leading vLong in MSB order
@@ -525,7 +525,7 @@ namespace Lucene.Net.Codecs
 
                 ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
                 Builder<BytesRef> indexBuilder = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE1, 0, 0, true, false, int.MaxValue, outputs, null, false, PackedInt32s.COMPACT, true, 15);
-                var bytes = new byte[(int)scratchBytes.GetFilePointer()];
+                var bytes = new byte[(int)scratchBytes.Position]; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 if (Debugging.AssertsEnabled) Debugging.Assert(bytes.Length > 0);
                 scratchBytes.WriteTo(bytes, 0);
                 indexBuilder.Add(Util.ToInt32sRef(Prefix, scratchIntsRef), new BytesRef(bytes, 0, bytes.Length));
@@ -964,7 +964,7 @@ namespace Lucene.Net.Codecs
 
                 IList<PendingEntry> slice = pending.SubList(start, start + length);
 
-                long startFP = outerInstance.@out.GetFilePointer();
+                long startFP = outerInstance.@out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
                 BytesRef prefix = new BytesRef(indexPrefixLength);
                 for (int m = 0; m < indexPrefixLength; m++)
@@ -1138,17 +1138,17 @@ namespace Lucene.Net.Codecs
                 // search on lookup
 
                 // Write suffixes byte[] blob to terms dict output:
-                outerInstance.@out.WriteVInt32((int)(suffixWriter.GetFilePointer() << 1) | (isLeafBlock ? 1 : 0));
+                outerInstance.@out.WriteVInt32((int)(suffixWriter.Position << 1) | (isLeafBlock ? 1 : 0)); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 suffixWriter.WriteTo(outerInstance.@out);
                 suffixWriter.Reset();
 
                 // Write term stats byte[] blob
-                outerInstance.@out.WriteVInt32((int)statsWriter.GetFilePointer());
+                outerInstance.@out.WriteVInt32((int)statsWriter.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 statsWriter.WriteTo(outerInstance.@out);
                 statsWriter.Reset();
 
                 // Write term meta data byte[] blob
-                outerInstance.@out.WriteVInt32((int)metaWriter.GetFilePointer());
+                outerInstance.@out.WriteVInt32((int)metaWriter.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 metaWriter.WriteTo(outerInstance.@out);
                 metaWriter.Reset();
 
@@ -1245,7 +1245,7 @@ namespace Lucene.Net.Codecs
                     this.docCount = docCount;
 
                     // Write FST to index
-                    indexStartFP = outerInstance.indexOut.GetFilePointer();
+                    indexStartFP = outerInstance.indexOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     root.Index.Save(outerInstance.indexOut);
                     //System.out.println("  write FST " + indexStartFP + " field=" + fieldInfo.name);
 
@@ -1286,8 +1286,8 @@ namespace Lucene.Net.Codecs
                 Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
                 try
                 {
-                    long dirStart = @out.GetFilePointer();
-                    long indexDirStart = indexOut.GetFilePointer();
+                    long dirStart = @out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                    long indexDirStart = indexOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
                     @out.WriteVInt32(fields.Count);
 

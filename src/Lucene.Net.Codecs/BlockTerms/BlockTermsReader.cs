@@ -891,7 +891,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     // bsearch w/in the block...
 
                     //System.out.println("BTR.nextBlock() fp=" + in.getFilePointer() + " this=" + this);
-                    state.BlockFilePointer = input.GetFilePointer();
+                    state.BlockFilePointer = input.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     blockTermCount = input.ReadVInt32();
                     //System.out.println("  blockTermCount=" + blockTermCount);
                     if (blockTermCount == 0)

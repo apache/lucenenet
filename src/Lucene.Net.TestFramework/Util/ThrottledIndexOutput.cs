@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using System;
@@ -91,10 +91,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public override long GetFilePointer()
-        {
-            return @delegate.GetFilePointer();
-        }
+        public override long Position => @delegate.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
         [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
         public override void Seek(long pos)

@@ -195,7 +195,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (@in is IndexInput input)
             {
-                input.Seek(input.GetFilePointer() + count);
+                input.Seek(input.Position + count); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
             else
             {

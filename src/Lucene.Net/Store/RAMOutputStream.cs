@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System;
 using Lucene.Net.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -211,10 +211,7 @@ namespace Lucene.Net.Store
             SetFileLength();
         }
 
-        public override long GetFilePointer()
-        {
-            return currentBufferIndex < 0 ? 0 : bufferStart + bufferPosition;
-        }
+        public override long Position => currentBufferIndex < 0 ? 0 : bufferStart + bufferPosition; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
         /// <summary>
         /// Returns byte usage of all buffers. </summary>

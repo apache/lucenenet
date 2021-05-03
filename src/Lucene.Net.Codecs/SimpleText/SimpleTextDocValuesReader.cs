@@ -97,8 +97,8 @@ namespace Lucene.Net.Codecs.SimpleText
                     ReadLine();
                     if (Debugging.AssertsEnabled) Debugging.Assert(StartsWith(SimpleTextDocValuesWriter.PATTERN));
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
-                    field.DataStartFilePointer = data.GetFilePointer();
-                    data.Seek(data.GetFilePointer() + (1 + field.Pattern.Length + 2)*maxDoc);
+                    field.DataStartFilePointer = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                    data.Seek(data.Position + (1 + field.Pattern.Length + 2)*maxDoc); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
                 else if (dvType == DocValuesType.BINARY)
                 {
@@ -108,8 +108,8 @@ namespace Lucene.Net.Codecs.SimpleText
                     ReadLine();
                     if (Debugging.AssertsEnabled) Debugging.Assert(StartsWith(SimpleTextDocValuesWriter.PATTERN));
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
-                    field.DataStartFilePointer = data.GetFilePointer();
-                    data.Seek(data.GetFilePointer() + (9 + field.Pattern.Length + field.MaxLength + 2)*maxDoc);
+                    field.DataStartFilePointer = data.Position;
+                    data.Seek(data.Position + (9 + field.Pattern.Length + field.MaxLength + 2)*maxDoc);
                 }
                 else if (dvType == DocValuesType.SORTED || dvType == DocValuesType.SORTED_SET)
                 {
@@ -125,9 +125,9 @@ namespace Lucene.Net.Codecs.SimpleText
                     ReadLine();
                     if (Debugging.AssertsEnabled) Debugging.Assert(StartsWith(SimpleTextDocValuesWriter.ORDPATTERN));
                     field.OrdPattern = StripPrefix(SimpleTextDocValuesWriter.ORDPATTERN);
-                    field.DataStartFilePointer = data.GetFilePointer();
-                    data.Seek(data.GetFilePointer() + (9 + field.Pattern.Length + field.MaxLength)*field.NumValues +
-                              (1 + field.OrdPattern.Length)*maxDoc);
+                    field.DataStartFilePointer = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                    data.Seek(data.Position + (9 + field.Pattern.Length + field.MaxLength)*field.NumValues +
+                              (1 + field.OrdPattern.Length)*maxDoc); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
                 else
                 {

@@ -90,7 +90,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             meta.WriteVInt32(field.Number);
             meta.WriteByte(MemoryDocValuesProducer.NUMBER);
-            meta.WriteInt64(data.GetFilePointer());
+            meta.WriteInt64(data.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             long minValue = long.MaxValue;
             long maxValue = long.MinValue;
             long gcd = 0;
@@ -151,10 +151,10 @@ namespace Lucene.Net.Codecs.Memory
 
             if (missing)
             {
-                long start = data.GetFilePointer();
+                long start = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 WriteMissingBitset(values);
                 meta.WriteInt64(start);
-                meta.WriteInt64(data.GetFilePointer() - start);
+                meta.WriteInt64(data.Position - start); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
             else
             {
@@ -276,7 +276,7 @@ namespace Lucene.Net.Codecs.Memory
             var minLength = int.MaxValue;
             var maxLength = int.MinValue;
 
-            var startFP = data.GetFilePointer();
+            var startFP = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             var missing = false;
             foreach (var v in values)
             {
@@ -303,13 +303,13 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
             meta.WriteInt64(startFP);
-            meta.WriteInt64(data.GetFilePointer() - startFP);
+            meta.WriteInt64(data.Position - startFP); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             if (missing)
             {
-                long start = data.GetFilePointer();
+                long start = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 WriteMissingBitset(values);
                 meta.WriteInt64(start);
-                meta.WriteInt64(data.GetFilePointer() - start);
+                meta.WriteInt64(data.Position - start); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
             else
             {
@@ -344,7 +344,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             meta.WriteVInt32(field.Number);
             meta.WriteByte(MemoryDocValuesProducer.FST);
-            meta.WriteInt64(data.GetFilePointer());
+            meta.WriteInt64(data.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
             var builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
             var scratch = new Int32sRef();

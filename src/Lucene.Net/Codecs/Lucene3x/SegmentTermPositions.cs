@@ -182,7 +182,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             if (needToLoadPayload && payloadLength > 0)
             {
-                proxStream.Seek(proxStream.GetFilePointer() + payloadLength);
+                proxStream.Seek(proxStream.Position + payloadLength); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
             needToLoadPayload = false;
         }

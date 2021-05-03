@@ -301,7 +301,7 @@ namespace Lucene.Net.Store
         //            {
         //                assertEquals(i, input.ReadZInt32());
         //            }
-        //            assertEquals(input.Length, input.GetFilePointer());
+        //            assertEquals(input.Length, input.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //        } // input.close();
         //    }
         //}
@@ -346,7 +346,7 @@ namespace Lucene.Net.Store
         //            {
         //                assertEquals(l, input.ReadZInt64());
         //            }
-        //            assertEquals(input.Length, input.GetFilePointer());
+        //            assertEquals(input.Length, input.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //        } // input.close();
         //    }
         //}
@@ -388,7 +388,7 @@ namespace Lucene.Net.Store
         //                set3.Add("bogus");
         //            });
 
-        //            assertEquals(input.Length, input.GetFilePointer());
+        //            assertEquals(input.Length, input.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //        } // input.close();
         //    }
         //}
@@ -435,7 +435,7 @@ namespace Lucene.Net.Store
         //                map3["bogus1"] = "bogus2";
         //            });
 
-        //            assertEquals(input.Length, input.GetFilePointer());
+        //            assertEquals(input.Length, input.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //        } // input.close();
         //    }
         //}
@@ -756,7 +756,7 @@ namespace Lucene.Net.Store
                 }
 
                 @out.WriteBytes(bytes, 0, byteUpto);
-                assertEquals(size, @out.GetFilePointer());
+                assertEquals(size, @out.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             } // @out.close();
             assertEquals(size, dir.FileLength("test"));
 
@@ -1222,7 +1222,7 @@ namespace Lucene.Net.Store
         //            for (int i = 0; i < num; i += 16)
         //            {
         //                IndexInput slice1 = input.Slice("slice1", i, num - i);
-        //                assertEquals(0, slice1.GetFilePointer());
+        //                assertEquals(0, slice1.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //                assertEquals(num - i, slice1.Length);
 
         //                // seek to a random spot shouldnt impact slicing.
@@ -1230,7 +1230,7 @@ namespace Lucene.Net.Store
         //                for (int j = 0; j < slice1.Length; j += 16)
         //                {
         //                    IndexInput slice2 = slice1.Slice("slice2", j, num - i - j);
-        //                    assertEquals(0, slice2.GetFilePointer());
+        //                    assertEquals(0, slice2.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //                    assertEquals(num - i - j, slice2.Length);
         //                    byte[] data = new byte[num];
         //                    System.Array.Copy(bytes, 0, data, 0, i + j);
@@ -1269,10 +1269,10 @@ namespace Lucene.Net.Store
             byte[] largeBuf = new byte[2048];
             Random.NextBytes(largeBuf);
 
-            long currentPos = os.GetFilePointer();
+            long currentPos = os.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             os.WriteBytes(largeBuf, largeBuf.Length);
 
-            assertEquals(currentPos + largeBuf.Length, os.GetFilePointer());
+            assertEquals(currentPos + largeBuf.Length, os.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         }
 
         // LUCENENET: This test compiles, but is not compatible with 4.8.0 (tested in Java Lucene), as it was ported from 8.2.0
@@ -1389,9 +1389,9 @@ namespace Lucene.Net.Store
             }
             using IndexInput @in = dir.OpenInput("a", IOContext.DEFAULT);
             @in.Seek(100);
-            assertEquals(100, @in.GetFilePointer());
+            assertEquals(100, @in.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             @in.Seek(1024);
-            assertEquals(1024, @in.GetFilePointer());
+            assertEquals(1024, @in.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         }
 
         // LUCENENET: This test compiles, but is not compatible with 4.8.0 (tested in Java Lucene), as it was ported from 8.2.0
@@ -1410,7 +1410,7 @@ namespace Lucene.Net.Store
         //        using (IndexInput @in = dir.OpenInput("a", IOContext.DEFAULT))
         //        {
         //            @in.Seek(100);
-        //            assertEquals(100, @in.GetFilePointer());
+        //            assertEquals(100, @in.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //            Assert.Throws<EndOfStreamException>(() => {
         //                @in.Seek(1025);
         //            });
@@ -1436,7 +1436,7 @@ namespace Lucene.Net.Store
         //            string candidate = IndexFileNames.SegmentFileName(TestUtil.RandomSimpleString(Random, 1, 6), TestUtil.RandomSimpleString(Random), "test");
         //            using (IndexOutput @out = dir.CreateOutput(candidate, IOContext.DEFAULT))
         //            {
-        //                @out.GetFilePointer(); // just fake access to prevent compiler warning
+        //                @out.Position; // just fake access to prevent compiler warning // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //            }
         //            fsDir.DeleteFile(candidate);
         //            if (fsDir.GetPendingDeletions().Count > 0)

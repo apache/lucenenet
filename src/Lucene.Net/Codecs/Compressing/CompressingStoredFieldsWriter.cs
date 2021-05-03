@@ -116,8 +116,8 @@ namespace Lucene.Net.Codecs.Compressing
                 CodecUtil.WriteHeader(fieldsStream, codecNameDat, VERSION_CURRENT);
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(CodecUtil.HeaderLength(codecNameDat) == fieldsStream.GetFilePointer());
-                    Debugging.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer());
+                    Debugging.Assert(CodecUtil.HeaderLength(codecNameDat) == fieldsStream.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                    Debugging.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
 
                 indexWriter = new CompressingStoredFieldsIndexWriter(indexStream);
@@ -243,7 +243,7 @@ namespace Lucene.Net.Codecs.Compressing
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void Flush()
         {
-            indexWriter.WriteIndex(numBufferedDocs, fieldsStream.GetFilePointer());
+            indexWriter.WriteIndex(numBufferedDocs, fieldsStream.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
             // transform end offsets into lengths
             int[] lengths = endOffsets;
@@ -384,7 +384,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 throw RuntimeException.Create("Wrote " + docBase + " docs, finish called with numDocs=" + numDocs);
             }
-            indexWriter.Finish(numDocs, fieldsStream.GetFilePointer());
+            indexWriter.Finish(numDocs, fieldsStream.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             CodecUtil.WriteFooter(fieldsStream);
             if (Debugging.AssertsEnabled) Debugging.Assert(bufferedDocs.Length == 0);
         }
@@ -450,7 +450,7 @@ namespace Lucene.Net.Codecs.Compressing
                                 if (Debugging.AssertsEnabled) Debugging.Assert(docID == it.docBase);
 
                                 // no need to decompress, just copy data
-                                indexWriter.WriteIndex(it.chunkDocs, fieldsStream.GetFilePointer());
+                                indexWriter.WriteIndex(it.chunkDocs, fieldsStream.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                                 WriteHeader(this.docBase, it.chunkDocs, it.numStoredFields, it.lengths);
                                 it.CopyCompressedData(fieldsStream);
                                 this.docBase += it.chunkDocs;

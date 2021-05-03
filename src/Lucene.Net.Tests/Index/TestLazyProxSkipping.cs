@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -225,10 +225,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override long GetFilePointer()
-            {
-                return this.input.GetFilePointer();
-            }
+            public override long Position => this.input.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
             public override void Seek(long pos)
             {

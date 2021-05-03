@@ -268,8 +268,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             if (isIndex)
             {
-                output.WriteVInt64(other.output.GetFilePointer() - lastIndexPointer);
-                lastIndexPointer = other.output.GetFilePointer(); // write pointer
+                output.WriteVInt64(other.output.Position - lastIndexPointer); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                lastIndexPointer = other.output.Position; // write pointer // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
 
             lastFieldNumber = fieldNumber;

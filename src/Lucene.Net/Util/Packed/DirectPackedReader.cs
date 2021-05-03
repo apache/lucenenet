@@ -37,7 +37,7 @@ namespace Lucene.Net.Util.Packed
         {
             this.@in = @in;
 
-            startPointer = @in.GetFilePointer();
+            startPointer = @in.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             if (bitsPerValue == 64)
             {
                 valueMask = -1L;

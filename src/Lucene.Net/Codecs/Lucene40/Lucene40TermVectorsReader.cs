@@ -125,9 +125,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 int tvfVersion = CodecUtil.CheckHeader(tvf, CODEC_NAME_FIELDS, VERSION_START, VERSION_CURRENT);
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(HEADER_LENGTH_INDEX == tvx.GetFilePointer());
-                    Debugging.Assert(HEADER_LENGTH_DOCS == tvd.GetFilePointer());
-                    Debugging.Assert(HEADER_LENGTH_FIELDS == tvf.GetFilePointer());
+                    Debugging.Assert(HEADER_LENGTH_INDEX == tvx.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                    Debugging.Assert(HEADER_LENGTH_DOCS == tvd.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                    Debugging.Assert(HEADER_LENGTH_FIELDS == tvf.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     Debugging.Assert(tvxVersion == tvdVersion);
                     Debugging.Assert(tvxVersion == tvfVersion);
                 }
@@ -339,7 +339,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 storePositions = (bits & STORE_POSITIONS_WITH_TERMVECTOR) != 0;
                 storeOffsets = (bits & STORE_OFFSET_WITH_TERMVECTOR) != 0;
                 storePayloads = (bits & STORE_PAYLOAD_WITH_TERMVECTOR) != 0;
-                tvfFPStart = outerInstance.tvf.GetFilePointer();
+                tvfFPStart = outerInstance.tvf.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

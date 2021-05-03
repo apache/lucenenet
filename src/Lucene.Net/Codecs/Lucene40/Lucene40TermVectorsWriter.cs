@@ -82,9 +82,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 CodecUtil.WriteHeader(tvf, Lucene40TermVectorsReader.CODEC_NAME_FIELDS, Lucene40TermVectorsReader.VERSION_CURRENT);
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_INDEX == tvx.GetFilePointer());
-                    Debugging.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_DOCS == tvd.GetFilePointer());
-                    Debugging.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_FIELDS == tvf.GetFilePointer());
+                    Debugging.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_INDEX == tvx.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                    Debugging.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_DOCS == tvd.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                    Debugging.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_FIELDS == tvf.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
                 success = true;
             }
@@ -102,8 +102,8 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             lastFieldName = null;
             this.numVectorFields = numVectorFields;
-            tvx.WriteInt64(tvd.GetFilePointer());
-            tvx.WriteInt64(tvf.GetFilePointer());
+            tvx.WriteInt64(tvd.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+            tvx.WriteInt64(tvf.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             tvd.WriteVInt32(numVectorFields);
             fieldCount = 0;
             fps = ArrayUtil.Grow(fps, numVectorFields);
@@ -123,7 +123,7 @@ namespace Lucene.Net.Codecs.Lucene40
             this.payloads = payloads;
             lastTerm.Length = 0;
             lastPayloadLength = -1; // force first payload to write its length
-            fps[fieldCount++] = tvf.GetFilePointer();
+            fps[fieldCount++] = tvf.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             tvd.WriteVInt32(info.Number);
             tvf.WriteVInt32(numTerms);
             sbyte bits = 0x0;
@@ -351,8 +351,8 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         private void AddRawDocuments(Lucene40TermVectorsReader reader, int[] tvdLengths, int[] tvfLengths, int numDocs)
         {
-            long tvdPosition = tvd.GetFilePointer();
-            long tvfPosition = tvf.GetFilePointer();
+            long tvdPosition = tvd.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+            long tvfPosition = tvf.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             long tvdStart = tvdPosition;
             long tvfStart = tvfPosition;
             for (int i = 0; i < numDocs; i++)
@@ -366,8 +366,8 @@ namespace Lucene.Net.Codecs.Lucene40
             tvf.CopyBytes(reader.TvfStream, tvfPosition - tvfStart);
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(tvd.GetFilePointer() == tvdPosition);
-                Debugging.Assert(tvf.GetFilePointer() == tvfPosition);
+                Debugging.Assert(tvd.Position == tvdPosition); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                Debugging.Assert(tvf.Position == tvfPosition); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
         }
 
@@ -508,14 +508,14 @@ namespace Lucene.Net.Codecs.Lucene40
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Finish(FieldInfos fis, int numDocs)
         {
-            if (Lucene40TermVectorsReader.HEADER_LENGTH_INDEX + ((long)numDocs) * 16 != tvx.GetFilePointer())
+            if (Lucene40TermVectorsReader.HEADER_LENGTH_INDEX + ((long)numDocs) * 16 != tvx.Position) // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             // this is most likely a bug in Sun JRE 1.6.0_04/_05;
             // we detect that the bug has struck, here, and
             // throw an exception to prevent the corruption from
             // entering the index.  See LUCENE-1282 for
             // details.
             {
-                throw RuntimeException.Create("tvx size mismatch: mergedDocs is " + numDocs + " but tvx size is " + tvx.GetFilePointer() + " file=" + tvx.ToString() + "; now aborting this merge to prevent index corruption");
+                throw RuntimeException.Create("tvx size mismatch: mergedDocs is " + numDocs + " but tvx size is " + tvx.Position + " file=" + tvx.ToString() + "; now aborting this merge to prevent index corruption");
             }
         }
 

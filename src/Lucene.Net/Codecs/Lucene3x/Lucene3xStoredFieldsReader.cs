@@ -363,7 +363,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             else
             {
                 int length = fieldsStream.ReadVInt32();
-                fieldsStream.Seek(fieldsStream.GetFilePointer() + length);
+                fieldsStream.Seek(fieldsStream.Position + length); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
         }
 

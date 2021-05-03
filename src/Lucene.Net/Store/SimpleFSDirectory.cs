@@ -207,7 +207,7 @@ namespace Lucene.Net.Store
             {
                 lock (m_file)
                 {
-                    long position = m_off + GetFilePointer();
+                    long position = m_off + Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     m_file.Seek(position, SeekOrigin.Begin);
                     int total = 0;
 

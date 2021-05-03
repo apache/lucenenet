@@ -124,7 +124,7 @@ namespace Lucene.Net.Codecs.Sep
             this.curPayloadLength = payloadLength;
             if (payloadOutput != null)
             {
-                this.curPayloadPointer = payloadOutput.GetFilePointer();
+                this.curPayloadPointer = payloadOutput.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
         }
 
@@ -150,7 +150,7 @@ namespace Lucene.Net.Codecs.Sep
             }
             if (payloadOutput != null)
             {
-                Arrays.Fill(lastSkipPayloadPointer, payloadOutput.GetFilePointer());
+                Arrays.Fill(lastSkipPayloadPointer, payloadOutput.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
         }
 

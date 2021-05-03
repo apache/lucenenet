@@ -167,10 +167,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override long GetFilePointer()
-        {
-            return bufferStart + bufferPosition;
-        }
+        public override long Position => bufferStart + bufferPosition; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
         [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
         public override void Seek(long pos)
