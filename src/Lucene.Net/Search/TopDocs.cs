@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -271,7 +271,7 @@ namespace Lucene.Net.Search
 
             int totalHitCount = 0;
             int availHitCount = 0;
-            float maxScore = float.MinValue;
+            float maxScore = float.Epsilon; // LUCENENET: Epsilon in .NET is the same as MIN_VALUE in Java
             for (int shardIDX = 0; shardIDX < shardHits.Length; shardIDX++)
             {
                 TopDocs shard = shardHits[shardIDX];

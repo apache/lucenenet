@@ -113,7 +113,7 @@ namespace Lucene.Net.Search.Join
             this.trackMaxScore = trackMaxScore;
             if (trackMaxScore)
             {
-                maxScore = float.MinValue;
+                maxScore = float.Epsilon; // LUCENENET: Epsilon in .NET is the same as MIN_VALUE in Java
             }
             //System.out.println("numParentHits=" + numParentHits);
             this.trackScores = trackScores;

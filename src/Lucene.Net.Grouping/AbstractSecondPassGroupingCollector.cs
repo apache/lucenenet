@@ -126,7 +126,7 @@ namespace Lucene.Net.Search.Grouping
             GroupDocs<TGroupValue>[] groupDocsResult = new GroupDocs<TGroupValue>[groups.Count()];
 
             int groupIDX = 0;
-            float maxScore = float.MinValue;
+            float maxScore = float.Epsilon; // LUCENENET: Epsilon in .NET is the same as MIN_VALUE in Java
             foreach (var group in groups)
             {
                 AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> groupDocs = m_groupMap[group.GroupValue];

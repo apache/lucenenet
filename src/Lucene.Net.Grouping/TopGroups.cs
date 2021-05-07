@@ -173,13 +173,13 @@ namespace Lucene.Net.Search.Grouping
             var mergedGroupDocs = new GroupDocs<T>[numGroups];
 
             TopDocs[] shardTopDocs = new TopDocs[shardGroups.Length];
-            float totalMaxScore = float.MinValue;
+            float totalMaxScore = float.Epsilon; // LUCENENET: Epsilon in .NET is the same as MIN_VALUE in Java
 
             for (int groupIDX = 0; groupIDX < numGroups; groupIDX++)
             {
                 T groupValue = shardGroups[0].Groups[groupIDX].GroupValue;
                 //System.out.println("  merge groupValue=" + groupValue + " sortValues=" + Arrays.toString(shardGroups[0].groups[groupIDX].groupSortValues));
-                float maxScore = float.MinValue;
+                float maxScore = float.Epsilon; // LUCENENET: Epsilon in .NET is the same as MIN_VALUE in Java
                 int totalHits = 0;
                 double scoreSum = 0.0;
                 for (int shardIdx = 0; shardIdx < shardGroups.Length; shardIdx++)
