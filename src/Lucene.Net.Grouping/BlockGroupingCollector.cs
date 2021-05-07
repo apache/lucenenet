@@ -394,7 +394,7 @@ namespace Lucene.Net.Search.Grouping
 
             FakeScorer fakeScorer = new FakeScorer();
 
-            float maxScore = float.MinValue;
+            float maxScore = float.Epsilon; // LUCENENET: Epsilon in .NET is the same as MIN_VALUE in Java
 
             GroupDocs<TGroupValue>[] groups = new GroupDocs<TGroupValue>[groupQueue.Count - groupOffset];
             for (int downTo = groupQueue.Count - groupOffset - 1; downTo >= 0; downTo--)
