@@ -54,7 +54,7 @@ namespace Lucene.Net.Search.Grouping
         {
 
             //System.out.println("SP init");
-            if (groups.Count() == 0)
+            if (!groups.Any())
             {
                 throw new ArgumentException("no groups to collect (groups.Count is 0)");
             }

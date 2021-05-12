@@ -25,7 +25,7 @@ namespace Lucene.Net.Cli
     {
         public static IEnumerable<IEnumerable<T>> OptionalParameters<T>(this IEnumerable<IEnumerable<T>> input)
         {
-            if (input.Count() == 0)
+            if (!input.Any())
                 yield break;
             else
             {
