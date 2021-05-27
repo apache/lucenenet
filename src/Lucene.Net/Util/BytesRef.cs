@@ -43,6 +43,7 @@ namespace Lucene.Net.Util
     [Serializable]
 #endif
     // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    [DebuggerDisplay("{ToString()} {Utf8ToString()}")]
     public sealed class BytesRef : IComparable<BytesRef>, IComparable, IEquatable<BytesRef> // LUCENENET specific - implemented IComparable for FieldComparator, IEquatable<BytesRef>
     {
         /// <summary>
