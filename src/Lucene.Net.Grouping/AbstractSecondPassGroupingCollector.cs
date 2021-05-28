@@ -54,7 +54,7 @@ namespace Lucene.Net.Search.Grouping
         {
 
             //System.out.println("SP init");
-            if (!groups.Any())
+            if (!groups.Any()) // LUCENENET TODO: Change back to .Count if/when IEnumerable<T> is changed to ICollection<T> or IReadOnlyCollection<T>
             {
                 throw new ArgumentException("no groups to collect (groups.Count is 0)");
             }
