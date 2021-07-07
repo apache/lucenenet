@@ -701,8 +701,9 @@ namespace Lucene.Net.Util
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string NewString(int[] codePoints, int offset, int count)
         {
-            char[] chars = ToCharArray(codePoints, offset, count);
-            return new string(chars);
+            // LUCENENET: Character.ToString() was optimized to use the stack for arrays
+            // of codepoints 256 or less, so it performs better than using ToCharArray().
+            return Character.ToString(codePoints, offset, count);
         }
 
         /// <summary>
