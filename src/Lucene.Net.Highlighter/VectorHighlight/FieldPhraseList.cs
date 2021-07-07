@@ -379,7 +379,7 @@ namespace Lucene.Net.Search.VectorHighlight
             public override string ToString()
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append(GetText()).Append('(').Append(Number.ToString(boost)).Append(")(");
+                sb.Append(GetText()).Append('(').Append(Lucene.Net.Support.Number.ToString(boost)).Append(")(");
                 foreach (Toffs to in termsOffsets)
                 {
                     sb.Append(to);
