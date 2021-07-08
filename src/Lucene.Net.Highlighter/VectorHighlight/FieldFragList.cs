@@ -1,6 +1,6 @@
-﻿using Lucene.Net.Support;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
+using Float = J2N.Numerics.Single;
 using Toffs = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo.Toffs;
 using WeightedPhraseInfo = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo;
 
@@ -86,7 +86,8 @@ namespace Lucene.Net.Search.VectorHighlight
                 sb.Append("subInfos=(");
                 foreach (SubInfo si in subInfos)
                     sb.Append(si.ToString());
-                sb.Append(")/").Append(Number.ToString(totalBoost)).Append('(').Append(startOffset).Append(',').Append(endOffset).Append(')');
+                // LUCENENET: intentionally using current culture here
+                sb.Append(")/").Append(Float.ToString(totalBoost)).Append('(').Append(startOffset).Append(',').Append(endOffset).Append(')');
                 return sb.ToString();
             }
 

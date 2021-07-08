@@ -1,9 +1,9 @@
 ﻿using J2N.Numerics;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Float = J2N.Numerics.Single;
 using QueryPhraseMap = Lucene.Net.Search.VectorHighlight.FieldQuery.QueryPhraseMap;
 using TermInfo = Lucene.Net.Search.VectorHighlight.FieldTermStack.TermInfo;
 
@@ -379,7 +379,8 @@ namespace Lucene.Net.Search.VectorHighlight
             public override string ToString()
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append(GetText()).Append('(').Append(Lucene.Net.Support.Number.ToString(boost)).Append(")(");
+                // LUCENENET: intentionally using current culture here
+                sb.Append(GetText()).Append('(').Append(Float.ToString(boost)).Append(")(");
                 foreach (Toffs to in termsOffsets)
                 {
                     sb.Append(to);

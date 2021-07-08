@@ -1,4 +1,4 @@
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Globalization;
@@ -73,7 +73,7 @@ namespace Lucene.Net.Support
                 assertEquals("", ToStringUtils.Boost(boostNormal));
                 assertEquals("^2.5", ToStringUtils.Boost(boostFractional));
                 assertEquals("^5.0", ToStringUtils.Boost(boostNonFractional));
-                assertEquals("^1.111111", ToStringUtils.Boost(boostLong));
+                assertEquals("^1.1111112", ToStringUtils.Boost(boostLong)); // LUCENENET: Confirmed this is the value returned in Java 7
                 assertEquals("^0.0", ToStringUtils.Boost(boostZeroNonFractional));
                 assertEquals("^0.123", ToStringUtils.Boost(boostZeroFractional));
             }
