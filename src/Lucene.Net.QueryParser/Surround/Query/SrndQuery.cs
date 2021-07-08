@@ -1,7 +1,9 @@
 ﻿using Lucene.Net.Search;
 using Lucene.Net.Support;
 using System;
+using System.Globalization;
 using System.Text;
+using Float = J2N.Numerics.Single;
 
 namespace Lucene.Net.QueryParsers.Surround.Query
 {
@@ -44,7 +46,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             }
         }
 
-        public virtual string WeightString => Number.ToString(Weight);
+        public virtual string WeightString => Float.ToString(Weight, NumberFormatInfo.InvariantInfo);
 
         public virtual string WeightOperator => "^";
 

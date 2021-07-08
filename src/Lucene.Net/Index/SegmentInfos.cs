@@ -12,6 +12,7 @@ using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
+using Long = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Index
 {
@@ -266,7 +267,8 @@ namespace Lucene.Net.Index
             }
             else if (fileName.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal))
             {
-                return Number.Parse(fileName.Substring(1 + IndexFileNames.SEGMENTS.Length), Character.MaxRadix);
+                // LUCENENET: Optimized parse so we don't allocate a substring
+                return Long.Parse(fileName, 1 + IndexFileNames.SEGMENTS.Length, fileName.Length - (1 + IndexFileNames.SEGMENTS.Length), Character.MaxRadix);
             }
             else
             {
