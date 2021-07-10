@@ -17,6 +17,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using JCG = J2N.Collections.Generic;
+using Integer = J2N.Numerics.Int32;
 
 namespace Lucene.Net.Analysis.Hunspell
 {
@@ -402,7 +403,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     {
                         throw new ParseException(string.Format("Illegal {0} declaration", type), lineNumber);
                     }
-                    int num = int.Parse(parts[1], CultureInfo.InvariantCulture);
+                    int num = Integer.Parse(parts[1], radix: 10); // LUCENENET: specify radix 10 to make this culture invariant
                     FST<CharsRef> res = ParseConversions(reader, num, lineNumber); // LUCENENET: Pass linenumber so we can throw it
                     if (type.Equals("ICONV", StringComparison.Ordinal))
                     {
@@ -518,7 +519,7 @@ namespace Lucene.Net.Analysis.Hunspell
             bool crossProduct = args[2].Equals("Y", StringComparison.Ordinal);
             bool isSuffix = conditionPattern == SUFFIX_CONDITION_REGEX_PATTERN;
 
-            int numLines = int.Parse(args[3], CultureInfo.InvariantCulture);
+            int numLines = Integer.Parse(args[3], radix: 10); // LUCENENET: specify radix 10 to make this culture invariant
             affixData = ArrayUtil.Grow(affixData, (currentAffix << 3) + (numLines << 3));
             ByteArrayDataOutput affixWriter = new ByteArrayDataOutput(affixData, currentAffix << 3, numLines << 3);
 
@@ -549,7 +550,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
                     if (aliasCount > 0)
                     {
-                        flagPart = GetAliasValue(int.Parse(flagPart, CultureInfo.InvariantCulture));
+                        flagPart = GetAliasValue(Integer.Parse(flagPart, radix: 10)); // LUCENENET: specify radix 10 to make this culture invariant
                     }
 
                     appendFlags = flagParsingStrategy.ParseFlags(flagPart);
@@ -1063,7 +1064,7 @@ namespace Lucene.Net.Analysis.Hunspell
                         string flagPart = line2.Substring(flagSep + 1, end - (flagSep + 1));
                         if (aliasCount > 0)
                         {
-                            flagPart = GetAliasValue(int.Parse(flagPart, CultureInfo.InvariantCulture));
+                            flagPart = GetAliasValue(Integer.Parse(flagPart, radix: 10)); // LUCENENET: specify radix 10 to make this culture invariant
                         }
 
                         wordForm = flagParsingStrategy.ParseFlags(flagPart);
@@ -1180,7 +1181,7 @@ namespace Lucene.Net.Analysis.Hunspell
             if (aliases == null)
             {
                 //first line should be the aliases count
-                int count = int.Parse(ruleArgs[1], CultureInfo.InvariantCulture);
+                int count = Integer.Parse(ruleArgs[1], radix: 10); // LUCENENET: specify radix 10 to make this culture invariant
                 aliases = new string[count];
             }
             else
@@ -1213,7 +1214,7 @@ namespace Lucene.Net.Analysis.Hunspell
             if (morphAliases == null)
             {
                 //first line should be the aliases count
-                int count = int.Parse(line.Substring(3), CultureInfo.InvariantCulture);
+                int count = Integer.Parse(line.Substring(3), radix: 10); // LUCENENET: specify radix 10 to make this culture invariant
                 morphAliases = new string[count];
             }
             else
@@ -1312,7 +1313,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     {
                         continue;
                     }
-                    flags[upto++] = (char)int.Parse(replacement, CultureInfo.InvariantCulture);
+                    flags[upto++] = (char)Integer.Parse(replacement, radix: 10); // LUCENENET: specify radix 10 to make this culture invariant
                 }
 
                 if (upto < flags.Length)

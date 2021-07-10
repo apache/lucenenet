@@ -1,10 +1,11 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using Integer = J2N.Numerics.Int32;
 
 namespace Lucene.Net.Analysis.CharFilters
 {
@@ -154,8 +155,8 @@ namespace Lucene.Net.Analysis.CharFilters
                             {
                                 throw new ArgumentException("Invalid escaped char in [" + s + "]");
                             }
-                            //c = (char)int.Parse(s.Substring(readPos, 4), 16);
-                            c = (char)int.Parse(s.Substring(readPos, 4), System.Globalization.NumberStyles.HexNumber);
+                            // LUCENENET: Optimized parse so we don't allocate a substring.
+                            c = (char)Integer.Parse(s, readPos, 4, 16);
                             readPos += 4;
                             break;
                     }

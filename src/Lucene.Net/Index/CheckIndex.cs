@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
+using Integer = J2N.Numerics.Int32;
 
 namespace Lucene.Net.Index
 {
@@ -676,7 +677,8 @@ namespace Lucene.Net.Index
                 int segmentName = 0;
                 try
                 {
-                    segmentName = int.Parse(info.Info.Name.Substring(1), CultureInfo.InvariantCulture);
+                    // LUCENENET: Optimized to not allocate a substring during the parse
+                    segmentName = Integer.Parse(info.Info.Name, 1, info.Info.Name.Length - 1, radix: 10);
                 }
                 catch
                 {
