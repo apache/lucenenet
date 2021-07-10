@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
+using Long = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Index
 {
@@ -306,7 +307,8 @@ namespace Lucene.Net.Index
                 {
                     if (file.StartsWith(SNAPSHOTS_PREFIX, StringComparison.Ordinal))
                     {
-                        long gen = Convert.ToInt64(file.Substring(SNAPSHOTS_PREFIX.Length), CultureInfo.InvariantCulture);
+                        // LUCENENET: Optimized to not allocate a substring during the parse
+                        long gen = Long.Parse(file, SNAPSHOTS_PREFIX.Length, file.Length - SNAPSHOTS_PREFIX.Length, radix: 10);
                         if (genLoaded == -1 || gen > genLoaded)
                         {
                             snapshotFiles.Add(file);

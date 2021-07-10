@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Integer = J2N.Numerics.Int32;
 using JCG = J2N.Collections.Generic;
 
 /*
@@ -1121,7 +1122,8 @@ namespace Lucene.Net.Util.Automaton
                     {
                         throw new ArgumentException("integer expected at position " + pos);
                     }
-                    int n = Convert.ToInt32(b.Substring(start, pos - start), CultureInfo.InvariantCulture);
+                    // LUCENENET: Optimized so we don't allocate a substring during the parse
+                    int n = Integer.Parse(b, start, pos - start, radix: 10);
                     int m = -1;
                     if (Match(','))
                     {
@@ -1132,7 +1134,8 @@ namespace Lucene.Net.Util.Automaton
                         }
                         if (start != pos)
                         {
-                            m = Convert.ToInt32(b.Substring(start, pos - start), CultureInfo.InvariantCulture);
+                            // LUCENENET: Optimized so we don't allocate a substring during the parse
+                            m = Integer.Parse(b, start, pos - start, radix: 10);
                         }
                     }
                     else
