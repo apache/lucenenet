@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
 
             AtomicReader sr = GetOnlySegmentReader(r);
 
-            long END_TIME = Environment.TickCount + (TestNightly ? 30 : 1);
+            long END_TIME = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + (TestNightly ? 30 : 1); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             int NUM_THREADS = TestUtil.NextInt32(LuceneTestCase.Random, 1, 10);
             ThreadJob[] threads = new ThreadJob[NUM_THREADS];
@@ -298,7 +298,7 @@ namespace Lucene.Net.Index
                 {
                     throw RuntimeException.Create(ioe);
                 }
-                while (Environment.TickCount < endTime)
+                while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < endTime) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 {
                     SortedDocValues source;
                     source = stringDVDirect;

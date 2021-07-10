@@ -335,10 +335,10 @@ namespace Lucene.Net.Util.Fst
             DirectoryInfo tempDir = CreateTempDir("fstlines");
             Directory dir = NewFSDirectory(tempDir);
             IndexWriter writer = new IndexWriter(dir, conf);
-            long stopTime = Environment.TickCount + RUN_TIME_MSEC;
+            long stopTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + RUN_TIME_MSEC; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             Document doc;
             int docCount = 0;
-            while ((doc = docs.NextDoc()) != null && Environment.TickCount < stopTime)
+            while ((doc = docs.NextDoc()) != null && J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTime) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             {
                 writer.AddDocument(doc);
                 docCount++;
@@ -546,7 +546,7 @@ namespace Lucene.Net.Util.Fst
                 try
                 {
                     Int32sRef intsRef = new Int32sRef(10);
-                    long tStart = Environment.TickCount;
+                    long tStart = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     int ord = 0;
                     while (true)
                     {
@@ -561,7 +561,7 @@ namespace Lucene.Net.Util.Fst
                         ord++;
                         if (ord % 500000 == 0)
                         {
-                            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0:000000.000}s: {1:000000000}...", ((Environment.TickCount - tStart) / 1000.0), ord));
+                            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0:000000.000}s: {1:000000000}...", (((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - tStart) / 1000.0), ord)); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                         }
                         if (ord >= limit)
                         {
@@ -569,12 +569,12 @@ namespace Lucene.Net.Util.Fst
                         }
                     }
 
-                    long tMid = Environment.TickCount;
+                    long tMid = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     Console.WriteLine(((tMid - tStart) / 1000.0) + " sec to add all terms");
 
                     if (Debugging.AssertsEnabled) Debugging.Assert(builder.TermCount == ord);
                     FST<T> fst = builder.Finish();
-                    long tEnd = Environment.TickCount;
+                    long tEnd = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     Console.WriteLine(((tEnd - tMid) / 1000.0) + " sec to finish/pack");
                     if (fst == null)
                     {
@@ -623,7 +623,7 @@ namespace Lucene.Net.Util.Fst
                             @is = new StreamReader(new FileStream(wordsFileIn, FileMode.Open), Encoding.UTF8);
 
                             ord = 0;
-                            tStart = Environment.TickCount;
+                            tStart = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                             while (true)
                             {
                                 string w = @is.ReadLine();
@@ -663,7 +663,7 @@ namespace Lucene.Net.Util.Fst
                                 ord++;
                                 if (ord % 500000 == 0)
                                 {
-                                    Console.WriteLine(((Environment.TickCount - tStart) / 1000.0) + "s: " + ord + "...");
+                                    Console.WriteLine((((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - tStart) / 1000.0) + "s: " + ord + "..."); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                                 }
                                 if (ord >= limit)
                                 {
@@ -671,7 +671,7 @@ namespace Lucene.Net.Util.Fst
                                 }
                             }
 
-                            double totSec = ((Environment.TickCount - tStart) / 1000.0);
+                            double totSec = (((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - tStart) / 1000.0); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                             Console.WriteLine("Verify " + (iter == 1 ? "(by output) " : "") + "took " + totSec + " sec + (" + (int)((totSec * 1000000000 / ord)) + " nsec per lookup)");
 
                             if (!verifyByOutput)

@@ -585,7 +585,7 @@ namespace Lucene.Net.Search
                 float score = scorer.GetScore();
                 try
                 {
-                    long startMS = Environment.TickCount;
+                    long startMS = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     for (int i = lastDoc[0] + 1; i <= doc; i++)
                     {
                         Weight w = s.CreateNormalizedWeight(q);
@@ -598,7 +598,7 @@ namespace Lucene.Net.Search
 
                         // Hurry things along if they are going slow (eg
                         // if you got SimpleText codec this will kick in):
-                        if (i < doc && Environment.TickCount - startMS > 5)
+                        if (i < doc && (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - startMS > 5) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                         {
                             i = doc - 1;
                         }

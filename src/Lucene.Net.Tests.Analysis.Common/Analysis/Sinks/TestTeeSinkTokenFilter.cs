@@ -1,4 +1,5 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
+using J2N;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -209,8 +210,7 @@ namespace Lucene.Net.Analysis.Sinks
                 for (int j = 0; j < modCounts.Length; j++)
                 {
                     int tfPos = 0;
-                    //long start = DateTimeHelperClass.CurrentUnixTimeMillis();
-                    long start = Environment.TickCount;
+                    long start = Time.NanoTime() / Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     for (int i = 0; i < 20; i++)
                     {
                         stream = new StandardFilter(TEST_VERSION_CURRENT, new StandardTokenizer(TEST_VERSION_CURRENT, new StringReader(buffer.ToString())));
@@ -226,13 +226,11 @@ namespace Lucene.Net.Analysis.Sinks
                             tfPos += posIncrAtt.PositionIncrement;
                         }
                     }
-                    //long finish = DateTimeHelperClass.CurrentUnixTimeMillis();
-                    long finish = Environment.TickCount;
+                    long finish = Time.NanoTime() / Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     Console.WriteLine("ModCount: " + modCounts[j] + " Two fields took " + (finish - start) + " ms");
                     int sinkPos = 0;
                     //simulate one field with one sink
-                    //start = DateTimeHelperClass.CurrentUnixTimeMillis();
-                    start = Environment.TickCount;
+                    start = Time.NanoTime() / Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     for (int i = 0; i < 20; i++)
                     {
                         teeStream = new TeeSinkTokenFilter(new StandardFilter(TEST_VERSION_CURRENT, new StandardTokenizer(TEST_VERSION_CURRENT, new StringReader(buffer.ToString()))));
@@ -249,8 +247,7 @@ namespace Lucene.Net.Analysis.Sinks
                             sinkPos += posIncrAtt.PositionIncrement;
                         }
                     }
-                    //finish = DateTimeHelperClass.CurrentUnixTimeMillis();
-                    finish = Environment.TickCount;
+                    finish = Time.NanoTime() / Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     Console.WriteLine("ModCount: " + modCounts[j] + " Tee fields took " + (finish - start) + " ms");
                     assertTrue(sinkPos + " does not equal: " + tfPos, sinkPos == tfPos);
 

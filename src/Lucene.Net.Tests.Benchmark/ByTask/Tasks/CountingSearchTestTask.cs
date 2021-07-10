@@ -48,7 +48,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             lock (syncLock)
             {
                 prevLastMillis = lastMillis;
-                lastMillis = J2N.Time.CurrentTimeMilliseconds();
+                lastMillis = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 if (0 == numSearches)
                 {
                     startMillis = prevLastMillis = lastMillis;

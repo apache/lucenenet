@@ -73,12 +73,12 @@ namespace Lucene.Net.Index
                 stallThreads[i] = new ThreadAnonymousClass(ctrl, stallProbability);
             }
             Start(stallThreads);
-            long time = Environment.TickCount;
+            long time = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             /*
              * use a 100 sec timeout to make sure we not hang forever. join will fail in
              * that case
              */
-            while ((Environment.TickCount - time) < 100 * 1000 && !Terminated(stallThreads))
+            while (((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - time) < 100 * 1000 && !Terminated(stallThreads)) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             {
                 ctrl.UpdateStalled(false);
                 if (Random.NextBoolean())

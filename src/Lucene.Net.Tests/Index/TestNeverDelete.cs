@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
 
             w.Commit();
             ThreadJob[] indexThreads = new ThreadJob[Random.Next(4)];
-            long stopTime = Environment.TickCount + AtLeast(1000);
+            long stopTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + AtLeast(1000); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             for (int x = 0; x < indexThreads.Length; x++)
             {
                 indexThreads[x] = new ThreadAnonymousClass(w, stopTime, NewStringField, NewTextField);
@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
             ISet<string> allFiles = new JCG.HashSet<string>();
 
             DirectoryReader r = DirectoryReader.Open(d);
-            while (Environment.TickCount < stopTime)
+            while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTime) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             {
                 IndexCommit ic = r.IndexCommit;
                 if (Verbose)
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     int docCount = 0;
-                    while (Environment.TickCount < stopTime)
+                    while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTime) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     {
                         Document doc = new Document();
                         doc.Add(newStringField("dc", "" + docCount, Field.Store.YES));

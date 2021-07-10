@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-                long stopTime = Environment.TickCount + (long)RUN_TIME_MSEC;
+                long stopTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + (long)RUN_TIME_MSEC; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
                 count = 0;
 
@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
                         }
                         DoWork();
                         count++;
-                    } while (Environment.TickCount < stopTime);
+                    } while ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) < stopTime); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 }
                 catch (Exception e) when (e.IsThrowable())
                 {

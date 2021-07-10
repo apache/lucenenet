@@ -677,10 +677,10 @@ namespace Lucene.Net.Search
                 Document d = new Document();
                 d.Add(new TextField("count", i + "", Field.Store.NO));
                 d.Add(new TextField("content", content, Field.Store.YES));
-                long start = Environment.TickCount;
+                long start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 long l = tiw.AddDocument(d);
                 controlledRealTimeReopenThread.WaitForGeneration(l);
-                long wait = Environment.TickCount - start;
+                long wait = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - start; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 assertTrue("waited too long for generation " + wait, wait < (maxStaleSecs * 1000));
                 IndexSearcher searcher = sm.Acquire();
                 TopDocs td = searcher.Search(new TermQuery(new Term("count", i + "")), 10);

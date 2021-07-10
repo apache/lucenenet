@@ -881,7 +881,7 @@ namespace Lucene.Net.Index
 
             const float SECONDS = 0.5f;
 
-            long endTime = (long)(Environment.TickCount + 1000.0 * SECONDS);
+            long endTime = (long)((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + 1000.0 * SECONDS); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             ConcurrentQueue<Exception> excs = new ConcurrentQueue<Exception>();
 
             // Only one thread can addIndexes at a time, because
@@ -895,7 +895,7 @@ namespace Lucene.Net.Index
             }
 
             int lastCount = 0;
-            while (Environment.TickCount < endTime)
+            while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < endTime) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             {
                 DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
                 if (r2 != null)
@@ -968,7 +968,7 @@ namespace Lucene.Net.Index
                         excs.Enqueue(t);
                         throw RuntimeException.Create(t);
                     }
-                } while (Environment.TickCount < endTime);
+                } while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < endTime); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
         }
 
@@ -997,7 +997,7 @@ namespace Lucene.Net.Index
 
             const float SECONDS = 0.5f;
 
-            long endTime = (long)(Environment.TickCount + 1000.0 * SECONDS);
+            long endTime = (long)((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + 1000.0 * SECONDS); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             ConcurrentQueue<Exception> excs = new ConcurrentQueue<Exception>();
 
             var threads = new ThreadJob[numThreads];
@@ -1009,7 +1009,7 @@ namespace Lucene.Net.Index
             }
 
             int sum = 0;
-            while (Environment.TickCount < endTime)
+            while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < endTime) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             {
                 DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
                 if (r2 != null)
@@ -1085,7 +1085,7 @@ namespace Lucene.Net.Index
                         excs.Enqueue(t);
                         throw RuntimeException.Create(t);
                     }
-                } while (Environment.TickCount < endTime);
+                } while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < endTime); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
         }
 

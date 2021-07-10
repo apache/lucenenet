@@ -357,9 +357,9 @@ namespace Lucene.Net.Search.Spell
 
         private void Addwords(IndexReader r, SpellChecker sc, string field)
         {
-            long time = Environment.TickCount;
+            long time = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             sc.IndexDictionary(new LuceneDictionary(r, field), NewIndexWriterConfig(TEST_VERSION_CURRENT, null), false);
-            time = Environment.TickCount - time;
+            time = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - time; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             //System.out.println("time to build " + field + ": " + time);
         }
 

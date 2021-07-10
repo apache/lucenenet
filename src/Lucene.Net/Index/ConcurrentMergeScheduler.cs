@@ -429,7 +429,7 @@ namespace Lucene.Net.Index
                         // updateMergeThreads).  We stall this producer
                         // thread to prevent creation of new segments,
                         // until merging has caught up:
-                        startStallTime = Environment.TickCount;
+                        startStallTime = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                         if (IsVerbose)
                         {
                             Message("    too many merges; stalling...");
@@ -442,7 +442,7 @@ namespace Lucene.Net.Index
                     {
                         if (startStallTime != 0)
                         {
-                            Message("  stalled for " + (Environment.TickCount - startStallTime) + " msec");
+                            Message("  stalled for " + ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - startStallTime) + " msec"); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                         }
                     }
 

@@ -308,7 +308,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             if (++logStepCount % m_logStep == 0)
             {
-                double time = (((Stopwatch.GetTimestamp() / Stopwatch.Frequency) * 1000) - runData.StartTimeMillis) / 1000.0;
+                double time = ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - runData.StartTimeMillis) / 1000.0; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0:0000000.00}", time) + " sec --> "
                     + Thread.CurrentThread.Name + " " + GetLogMessage(logStepCount));
             }

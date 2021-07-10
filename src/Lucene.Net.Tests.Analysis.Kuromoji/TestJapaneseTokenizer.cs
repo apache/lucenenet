@@ -1,4 +1,5 @@
-﻿using J2N.Text;
+﻿using J2N;
+using J2N.Text;
 using Lucene.Net.Analysis.Ja.Dict;
 using Lucene.Net.Analysis.Ja.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -718,7 +719,7 @@ namespace Lucene.Net.Analysis.Ja
           final FileInputStream fis = new FileInputStream("/q/lucene/jawiki-20120220-pages-articles.xml");
           final Reader r = new BufferedReader(new InputStreamReader(fis, StandardCharsets.UTF_8));
 
-          final long startTimeNS = System.nanoTime();
+          final long startTimeNS = Time.NanoTime();
           boolean done = false;
           long compoundCount = 0;
           long nonCompoundCount = 0;
@@ -741,7 +742,7 @@ namespace Lucene.Net.Analysis.Ja
                 nonCompoundCount++;
                 if (nonCompoundCount % 1000000 == 0) {
                   System.out.println(String.format("%.2f msec [pos=%d, %d, %d]",
-                                                   (System.nanoTime()-startTimeNS)/1000000.0,
+                                                   (Time.NanoTime()-startTimeNS)/1000000.0,
                                                    netOffset + offsetAtt.startOffset(),
                                                    nonCompoundCount,
                                                    compoundCount));
@@ -784,7 +785,7 @@ namespace Lucene.Net.Analysis.Ja
             }
             */
 
-            long totalStart = Environment.TickCount;
+            long totalStart = Time.NanoTime() / Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             for (int i = 0; i < numIterations; i++)
             {
                 TokenStream ts = analyzer.GetTokenStream("ignored", line);
@@ -802,10 +803,10 @@ namespace Lucene.Net.Analysis.Ja
             String[] sentences = Regex.Split(line, "、|。").TrimEnd();
             if (Verbose)
             {
-                Console.WriteLine("Total time : " + (Environment.TickCount - totalStart));
+                Console.WriteLine("Total time : " + ((Time.NanoTime() / Time.MillisecondsPerNanosecond) - totalStart)); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 Console.WriteLine("Test for Bocchan with pre-splitting sentences (" + sentences.Length + " sentences)");
             }
-            totalStart = Environment.TickCount;
+            totalStart = Time.NanoTime() / Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             for (int i = 0; i < numIterations; i++)
             {
                 foreach (String sentence in sentences)
@@ -825,7 +826,7 @@ namespace Lucene.Net.Analysis.Ja
             }
             if (Verbose)
             {
-                Console.WriteLine("Total time : " + (Environment.TickCount - totalStart));
+                Console.WriteLine("Total time : " + ((Time.NanoTime() / Time.MillisecondsPerNanosecond) - totalStart)); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
         }
 

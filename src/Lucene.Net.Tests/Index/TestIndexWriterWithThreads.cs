@@ -97,7 +97,8 @@ namespace Lucene.Net.Index
 
                 int idUpto = 0;
                 int fullCount = 0;
-                long stopTime = Environment.TickCount + timeToRunInMilliseconds; // LUCENENET specific: added the ability to change how much time to alot
+                // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
+                long stopTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + timeToRunInMilliseconds; // LUCENENET specific: added the ability to change how much time to alot
 
                 do
                 {
@@ -149,7 +150,7 @@ namespace Lucene.Net.Index
                         }
                         break;
                     }
-                } while (Environment.TickCount < stopTime);
+                } while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTime); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
         }
 

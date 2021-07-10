@@ -487,7 +487,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 ts = m_queryAnalyzer.GetTokenStream("", new StringReader(key));
 
-                //long t0 = System.currentTimeMillis();
+                //long t0 = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 ts.Reset();
                 var termAtt = ts.AddAttribute<ICharTermAttribute>();
                 var offsetAtt = ts.AddAttribute<IOffsetAttribute>();
@@ -595,7 +595,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 m_searcherMgr.Release(searcher);
             }
 
-            //System.out.println((System.currentTimeMillis() - t0) + " msec for infix suggest");
+            //System.out.println(((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - t0) + " msec for infix suggest"); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             //System.out.println(results);
 
             return results;

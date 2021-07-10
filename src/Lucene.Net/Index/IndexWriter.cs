@@ -349,7 +349,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
 
-            long tStart = Environment.TickCount;
+            long tStart = Time.NanoTime() / Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             if (infoStream.IsEnabled("IW"))
             {
@@ -425,7 +425,7 @@ namespace Lucene.Net.Index
                 }
                 if (infoStream.IsEnabled("IW"))
                 {
-                    infoStream.Message("IW", "getReader took " + (Environment.TickCount - tStart) + " msec");
+                    infoStream.Message("IW", "getReader took " + ((Time.NanoTime() / Time.MillisecondsPerNanosecond) - tStart) + " msec"); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 }
                 success2 = true;
             }
@@ -4502,7 +4502,7 @@ namespace Lucene.Net.Index
         {
             bool success = false;
 
-            long t0 = Environment.TickCount;
+            long t0 = Time.NanoTime() / Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             try
             {
@@ -4565,7 +4565,7 @@ namespace Lucene.Net.Index
             {
                 if (infoStream.IsEnabled("IW"))
                 {
-                    infoStream.Message("IW", "merge time " + (Environment.TickCount - t0) + " msec for " + merge.info.Info.DocCount + " docs");
+                    infoStream.Message("IW", "merge time " + ((Time.NanoTime() / Time.MillisecondsPerNanosecond) - t0) + " msec for " + merge.info.Info.DocCount + " docs"); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 }
             }
         }
