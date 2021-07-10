@@ -213,15 +213,14 @@ namespace Lucene.Net.Classification
         protected void CheckPerformance(IClassifier<T> classifier, Analyzer analyzer, String classFieldName)
         {
             AtomicReader atomicReader = null;
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
+            long trainStart = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             try
             {
                 PopulatePerformanceIndex(analyzer);
                 atomicReader = SlowCompositeReaderWrapper.Wrap(indexWriter.GetReader());
                 classifier.Train(atomicReader, textFieldName, classFieldName, analyzer);
-                stopwatch.Stop();
-                long trainTime = stopwatch.ElapsedMilliseconds;
+                long trainEnd = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
+                long trainTime = trainEnd - trainStart;
                 Assert.IsTrue(trainTime < 120000, "training took more than 2 mins : " + trainTime / 1000 + "s");
             }
             finally

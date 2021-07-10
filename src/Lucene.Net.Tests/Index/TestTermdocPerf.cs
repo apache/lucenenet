@@ -127,9 +127,9 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
 
-            long start = Environment.TickCount;
+            long start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             AddDocs(LuceneTestCase.Random, dir, ndocs, "foo", "val", maxTF, percentDocs);
-            long end = Environment.TickCount;
+            long end = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             if (Verbose)
             {
                 Console.WriteLine("milliseconds for creation of " + ndocs + " docs = " + (end - start));
@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
 
             TermsEnum tenum = MultiFields.GetTerms(reader, "foo").GetEnumerator();
 
-            start = Environment.TickCount;
+            start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             int ret = 0;
             DocsEnum tdocs = null;
@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            end = Environment.TickCount;
+            end = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             if (Verbose)
             {
                 Console.WriteLine("milliseconds for " + iter + " TermDocs iteration: " + (end - start));

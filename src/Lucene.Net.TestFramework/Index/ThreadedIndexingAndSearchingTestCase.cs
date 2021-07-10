@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
                 // TODO: would be better if this were cross thread, so that we make sure one thread deleting anothers added docs works:
                 IList<string> toDeleteIDs = new List<string>();
                 IList<SubDocs> toDeleteSubDocs = new List<SubDocs>();
-                while (Environment.TickCount < stopTime && !outerInstance.m_failed)
+                while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTime && !outerInstance.m_failed) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 {
                     try
                     {
@@ -454,7 +454,7 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": launch search thread");
                 }
-                while (Environment.TickCount < stopTimeMS)
+                while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTimeMS) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 {
                     try
                     {
@@ -505,7 +505,7 @@ namespace Lucene.Net.Index
                                     trigger = totTermCount / 30;
                                     shift = Random.Next(trigger);
                                 }
-                                while (Environment.TickCount < stopTimeMS)
+                                while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTimeMS) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                                 {
                                     if (!termsEnum.MoveNext())
                                     {
@@ -566,7 +566,7 @@ namespace Lucene.Net.Index
             m_delCount.Value = 0;
             m_packCount.Value = 0;
 
-            long t0 = Environment.TickCount;
+            long t0 = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             Random random = new Random(Random.Next());
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
@@ -627,13 +627,13 @@ namespace Lucene.Net.Index
             ISet<string> delPackIDs = new ConcurrentHashSet<string>();
             ConcurrentQueue<SubDocs> allSubDocs = new ConcurrentQueue<SubDocs>();
 
-            long stopTime = Environment.TickCount + (RUN_TIME_SEC * 1000);
+            long stopTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + (RUN_TIME_SEC * 1000); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             ThreadJob[] indexThreads = LaunchIndexingThreads(docs, NUM_INDEX_THREADS, stopTime, delIDs, delPackIDs, allSubDocs);
 
             if (Verbose)
             {
-                Console.WriteLine("TEST: DONE start " + NUM_INDEX_THREADS + " indexing threads [" + (Environment.TickCount - t0) + " ms]");
+                Console.WriteLine("TEST: DONE start " + NUM_INDEX_THREADS + " indexing threads [" + ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - t0) + " ms]"); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
 
             // Let index build up a bit
@@ -643,7 +643,7 @@ namespace Lucene.Net.Index
 
             if (Verbose)
             {
-                Console.WriteLine("TEST: all searching done [" + (Environment.TickCount - t0) + " ms]");
+                Console.WriteLine("TEST: all searching done [" + ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - t0) + " ms]"); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
 
             for (int thread = 0; thread < indexThreads.Length; thread++)
@@ -653,7 +653,7 @@ namespace Lucene.Net.Index
 
             if (Verbose)
             {
-                Console.WriteLine("TEST: done join indexing threads [" + (Environment.TickCount - t0) + " ms]; addCount=" + m_addCount + " delCount=" + m_delCount);
+                Console.WriteLine("TEST: done join indexing threads [" + ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - t0) + " ms]; addCount=" + m_addCount + " delCount=" + m_delCount); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
 
             IndexSearcher s = GetFinalSearcher();
@@ -792,7 +792,7 @@ namespace Lucene.Net.Index
 
             if (Verbose)
             {
-                Console.WriteLine("TEST: done [" + (Environment.TickCount - t0) + " ms]");
+                Console.WriteLine("TEST: done [" + ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - t0) + " ms]"); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
         }
 

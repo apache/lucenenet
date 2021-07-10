@@ -1,7 +1,6 @@
-﻿using J2N.Threading;
-using Lucene.Net.Support;
+﻿using J2N;
+using J2N.Threading;
 using System;
-using System.IO;
 using System.Threading;
 
 namespace Lucene.Net.Search
@@ -225,7 +224,7 @@ namespace Lucene.Net.Search
         {
             // TODO: maybe use private thread ticktock timer, in
             // case clock shift messes up nanoTime?
-            long lastReopenStartNS = DateTime.UtcNow.Ticks * 100;
+            long lastReopenStartNS = Time.NanoTime();
 
             //System.out.println("reopen: start");
             while (!finish)
@@ -241,7 +240,7 @@ namespace Lucene.Net.Search
                 if (sleepNS > 0)
                     try
                     {
-                        reopenCond.WaitOne(TimeSpan.FromMilliseconds(sleepNS / Time.MILLISECONDS_PER_NANOSECOND));//Convert NS to Ticks
+                        reopenCond.WaitOne(TimeSpan.FromMilliseconds(sleepNS / Time.MillisecondsPerNanosecond));//Convert NS to MS
                     }
                     catch (Exception ie) when (ie.IsInterruptedException())
                     {

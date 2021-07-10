@@ -108,12 +108,12 @@ namespace Lucene.Net.Util
 
         public override void WriteBytes(byte[] b, int offset, int length)
         {
-            long before = Time.NanoTime();
+            long before = J2N.Time.NanoTime();
             // TODO: sometimes, write only half the bytes, then
             // sleep, then 2nd half, then sleep, so we sometimes
             // interrupt having only written not all bytes
             @delegate.WriteBytes(b, offset, length);
-            timeElapsed += Time.NanoTime() - before;
+            timeElapsed += J2N.Time.NanoTime() - before;
             pendingBytes += length;
             Sleep(GetDelay(false));
         }

@@ -163,8 +163,6 @@ namespace Lucene.Net.Index
 
         private class IndexerThread : ThreadJob
         {
-            private readonly DateTime unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
             private readonly TestIndexWriterExceptions outerInstance;
 
             internal IndexWriter writer;
@@ -207,7 +205,7 @@ namespace Lucene.Net.Index
                 Field idField = NewField(r, "id", "", DocCopyIterator.custom2);
                 doc.Add(idField);
 
-                long stopTime = ((long)(DateTime.UtcNow - unixEpoch).TotalMilliseconds) + 500;
+                long stopTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + 500; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
                 do
                 {
@@ -274,7 +272,7 @@ namespace Lucene.Net.Index
                         failure = t;
                         break;
                     }
-                } while (((long)(DateTime.UtcNow - unixEpoch).TotalMilliseconds) < stopTime);
+                } while ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) < stopTime); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
         }
 

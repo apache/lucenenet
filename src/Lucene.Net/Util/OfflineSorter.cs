@@ -242,7 +242,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public SortInfo Sort(FileInfo input, FileInfo output)
         {
-            sortInfo = new SortInfo(this) { TotalTime = Environment.TickCount };
+            sortInfo = new SortInfo(this) { TotalTime = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond }; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             output.Delete();
 
@@ -330,7 +330,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            sortInfo.TotalTime = (Environment.TickCount - sortInfo.TotalTime);
+            sortInfo.TotalTime = ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - sortInfo.TotalTime); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             return sortInfo;
         }
 
@@ -362,8 +362,8 @@ namespace Lucene.Net.Util
             var data = this.buffer;
             FileInfo tempFile = FileSupport.CreateTempFile("sort", "partition", DefaultTempDir());
 
-            long start = Environment.TickCount;
-            sortInfo.SortTime += (Environment.TickCount - start);
+            long start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
+            sortInfo.SortTime += ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - start); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             using (var @out = new ByteSequencesWriter(tempFile))
             {
@@ -384,7 +384,7 @@ namespace Lucene.Net.Util
         /// Merge a list of sorted temporary files (partitions) into an output file. </summary>
         internal void MergePartitions(IList<FileInfo> merges, FileInfo outputFile)
         {
-            long start = Environment.TickCount;
+            long start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             var @out = new ByteSequencesWriter(outputFile);
 
@@ -422,7 +422,7 @@ namespace Lucene.Net.Util
                     }
                 }
 
-                sortInfo.MergeTime += Environment.TickCount - start;
+                sortInfo.MergeTime += (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - start; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 sortInfo.MergeRounds++;
             }
             finally
@@ -461,7 +461,7 @@ namespace Lucene.Net.Util
         /// Read in a single partition of data. </summary>
         internal int ReadPartition(ByteSequencesReader reader)
         {
-            long start = Environment.TickCount;
+            long start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             var scratch = new BytesRef();
             while ((scratch.Bytes = reader.Read()) != null)
             {
@@ -474,7 +474,7 @@ namespace Lucene.Net.Util
                     break;
                 }
             }
-            sortInfo.ReadTime += (Environment.TickCount - start);
+            sortInfo.ReadTime += ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - start); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             return buffer.Length;
         }
 

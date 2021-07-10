@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
         private void RunTest(Random random, Directory dir)
         {
             // Run for ~1 seconds
-            long stopTime = Environment.TickCount + 1000;
+            long stopTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + 1000; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             SnapshotDeletionPolicy dp = DeletionPolicy;
             IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetIndexDeletionPolicy(dp).SetMaxBufferedDocs(2));
@@ -229,7 +229,7 @@ namespace Lucene.Net.Index
                     Thread.Sleep(1);
                     // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
 
-                } while (Environment.TickCount < stopTime);
+                } while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTime); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
         }
 

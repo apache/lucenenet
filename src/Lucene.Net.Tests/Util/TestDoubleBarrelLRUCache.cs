@@ -80,10 +80,10 @@ namespace Lucene.Net.Util
 
             private readonly CloneableObject[] objs;
             private readonly DoubleBarrelLRUCache<CloneableObject, object> c;
-            private readonly DateTime endTime;
+            private readonly long endTime;
             internal volatile bool failed;
 
-            public CacheThread(TestDoubleBarrelLRUCache outerInstance, DoubleBarrelLRUCache<CloneableObject, object> c, CloneableObject[] objs, DateTime endTime)
+            public CacheThread(TestDoubleBarrelLRUCache outerInstance, DoubleBarrelLRUCache<CloneableObject, object> c, CloneableObject[] objs, long endTime)
             {
                 this.outerInstance = outerInstance;
                 this.c = c;
@@ -116,7 +116,7 @@ namespace Lucene.Net.Util
                         }
                         if ((++count % 10000) == 0)
                         {
-                            if (DateTime.Now.CompareTo(endTime) > 0)
+                            if (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond > endTime) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                             {
                                 break;
                             }
@@ -157,7 +157,7 @@ namespace Lucene.Net.Util
             }
 
             CacheThread[] threads = new CacheThread[NUM_THREADS];
-            DateTime endTime = DateTime.Now.AddSeconds(1);
+            long endTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + 1000L; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             for (int i = 0; i < NUM_THREADS; i++)
             {
                 threads[i] = new CacheThread(this, c, objs, endTime);

@@ -231,7 +231,7 @@ namespace Lucene.Net.Benchmarks.ByTask
 
         public virtual long SetStartTimeMillis()
         {
-            startTimeMillis = J2N.Time.CurrentTimeMilliseconds();
+            startTimeMillis = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond;
             return startTimeMillis;
         }
 

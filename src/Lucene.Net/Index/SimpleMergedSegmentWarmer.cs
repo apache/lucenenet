@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 
 namespace Lucene.Net.Index
@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
 
         public override void Warm(AtomicReader reader)
         {
-            long startTime = Environment.TickCount;
+            long startTime = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             int indexedCount = 0;
             int docValuesCount = 0;
             int normsCount = 0;
@@ -92,7 +92,12 @@ namespace Lucene.Net.Index
 
             if (infoStream.IsEnabled("SMSW"))
             {
-                infoStream.Message("SMSW", "Finished warming segment: " + reader + ", indexed=" + indexedCount + ", docValues=" + docValuesCount + ", norms=" + normsCount + ", time=" + (Environment.TickCount - startTime));
+                infoStream.Message("SMSW",
+                    "Finished warming segment: " + reader +
+                    ", indexed=" + indexedCount +
+                    ", docValues=" + docValuesCount +
+                    ", norms=" + normsCount +
+                    ", time=" + ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - startTime)); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
         }
     }

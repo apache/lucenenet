@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -291,7 +291,7 @@ namespace Lucene.Net.Search
                     // recordTime, etc:
                     if (pruner.DoPrune(ageSec, tracker.Searcher))
                     {
-                        //System.out.println("PRUNE version=" + tracker.version + " age=" + ageSec + " ms=" + System.currentTimeMillis());
+                        //System.out.println("PRUNE version=" + tracker.version + " age=" + ageSec + " ms=" + Time.CurrentTimeMilliseconds());
                         Lazy<SearcherTracker> _;
                         _searchers.TryRemove(tracker.Version, out _);
                         tracker.Dispose();

@@ -1,4 +1,4 @@
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
 #endif
                 Random, indexStore);
 
-            long now = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
+            long now = J2N.Time.CurrentTimeMilliseconds();
 
             Document doc = new Document();
             // add time that is in the past
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search
 #endif
                 Random, indexStore);
 
-            long now = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
+            long now = J2N.Time.CurrentTimeMilliseconds();
 
             Document doc = new Document();
             // add time that is in the future

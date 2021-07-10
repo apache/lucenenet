@@ -202,16 +202,16 @@ namespace Lucene.Net.Search
             long start = 0L;
             for (int docId = 0; docId < numDocs; docId++)
             {
-                start = Environment.TickCount;
+                start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 Fields vectors = reader.GetTermVectors(docId);
-                timeElapsed += Environment.TickCount - start;
+                timeElapsed += (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - start; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
                 // verify vectors result
                 VerifyVectors(vectors, docId);
 
-                start = Environment.TickCount;
+                start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 Terms vector = reader.GetTermVectors(docId).GetTerms("field");
-                timeElapsed += Environment.TickCount - start;
+                timeElapsed += (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - start; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
                 VerifyVector(vector.GetEnumerator(), docId);
             }
