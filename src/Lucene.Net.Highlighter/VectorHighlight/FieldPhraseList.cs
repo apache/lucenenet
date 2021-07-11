@@ -223,7 +223,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <summary>
         /// Represents the list of term offsets and boost for some text
         /// </summary>
-        public class WeightedPhraseInfo : IComparable<WeightedPhraseInfo>
+        public class WeightedPhraseInfo : IComparable<WeightedPhraseInfo>, IFormattable // LUCENENET specific - implemented IFormattable for floating point representations
         {
             private readonly List<Toffs> termsOffsets;   // usually termsOffsets.size() == 1, // LUCENENET: marked readonly
                                                          // but if position-gap > 1 and slop > 0 then size() could be greater than 1
@@ -378,9 +378,14 @@ namespace Lucene.Net.Search.VectorHighlight
 
             public override string ToString()
             {
+                return ToString(null);
+            }
+
+            public virtual string ToString(IFormatProvider provider)
+            {
                 StringBuilder sb = new StringBuilder();
-                // LUCENENET: intentionally using current culture here
-                sb.Append(GetText()).Append('(').Append(Float.ToString(boost)).Append(")(");
+                // LUCENENET: allow passing culture
+                sb.Append(GetText()).Append('(').Append(Float.ToString(boost, provider)).Append(")(");
                 foreach (Toffs to in termsOffsets)
                 {
                     sb.Append(to);
@@ -388,6 +393,8 @@ namespace Lucene.Net.Search.VectorHighlight
                 sb.Append(')');
                 return sb.ToString();
             }
+
+            string IFormattable.ToString(string format, IFormatProvider provider) => ToString(provider);
 
             /// <summary>
             /// the seqnum
