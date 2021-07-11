@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using TermInfo = Lucene.Net.Search.VectorHighlight.FieldTermStack.TermInfo;
 using Toffs = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo.Toffs;
 using WeightedPhraseInfo = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo;
@@ -36,7 +37,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             assertEquals(1, fpl.PhraseList.size());
-            assertEquals("a(1.0)((0,1))", fpl.PhraseList[0].toString());
+            assertEquals("a(1.0)((0,1))", fpl.PhraseList[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
 
             fq = new FieldQuery(tq("b"), true, true);
             stack = new FieldTermStack(reader, 0, F, fq);
@@ -53,8 +54,8 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             assertEquals(2, fpl.PhraseList.size());
-            assertEquals("a(1.0)((0,1))", fpl.PhraseList[0].toString());
-            assertEquals("a(1.0)((2,3))", fpl.PhraseList[1].toString());
+            assertEquals("a(1.0)((0,1))", fpl.PhraseList[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
+            assertEquals("a(1.0)((2,3))", fpl.PhraseList[1].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -66,13 +67,13 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             assertEquals(1, fpl.PhraseList.size());
-            assertEquals("ab(1.0)((0,3))", fpl.PhraseList[0].toString());
+            assertEquals("ab(1.0)((0,3))", fpl.PhraseList[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
 
             fq = new FieldQuery(tq("b"), true, true);
             stack = new FieldTermStack(reader, 0, F, fq);
             fpl = new FieldPhraseList(stack, fq);
             assertEquals(1, fpl.PhraseList.size());
-            assertEquals("b(1.0)((2,3))", fpl.PhraseList[0].toString());
+            assertEquals("b(1.0)((2,3))", fpl.PhraseList[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -87,7 +88,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             assertEquals(1, fpl.PhraseList.size());
-            assertEquals("baac(1.0)((2,5))", fpl.PhraseList[0].toString());
+            assertEquals("baac(1.0)((2,5))", fpl.PhraseList[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -102,8 +103,8 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             assertEquals(2, fpl.PhraseList.size());
-            assertEquals("ab(1.0)((0,2))", fpl.PhraseList[0].toString());
-            assertEquals("ab(1.0)((2,4))", fpl.PhraseList[1].toString());
+            assertEquals("ab(1.0)((0,2))", fpl.PhraseList[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
+            assertEquals("ab(1.0)((2,4))", fpl.PhraseList[1].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -116,15 +117,15 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             assertEquals(1, fpl.PhraseList.size());
-            assertEquals("ab(1.0)((4,7))", fpl.PhraseList[0].toString());
+            assertEquals("ab(1.0)((4,7))", fpl.PhraseList[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
 
             // phraseHighlight = false
             fq = new FieldQuery(pqF("a", "b"), false, true);
             stack = new FieldTermStack(reader, 0, F, fq);
             fpl = new FieldPhraseList(stack, fq);
             assertEquals(2, fpl.PhraseList.size());
-            assertEquals("a(1.0)((2,3))", fpl.PhraseList[0].toString());
-            assertEquals("ab(1.0)((4,7))", fpl.PhraseList[1].toString());
+            assertEquals("a(1.0)((2,3))", fpl.PhraseList[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
+            assertEquals("ab(1.0)((4,7))", fpl.PhraseList[1].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -136,7 +137,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             assertEquals(1, fpl.PhraseList.size());
-            assertEquals("ac(2.0)((4,5)(8,9))", fpl.PhraseList[0].toString());
+            assertEquals("ac(2.0)((4,5)(8,9))", fpl.PhraseList[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
             assertEquals(4, fpl.PhraseList[0].StartOffset);
             assertEquals(9, fpl.PhraseList[0].EndOffset);
         }
@@ -153,7 +154,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             assertEquals(1, fpl.PhraseList.size());
-            assertEquals("abc(1.0)((2,7))", fpl.PhraseList[0].toString());
+            assertEquals("abc(1.0)((2,7))", fpl.PhraseList[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -165,7 +166,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             assertEquals(1, fpl.PhraseList.size());
-            assertEquals("abc(1.0)((6,11))", fpl.PhraseList[0].toString());
+            assertEquals("abc(1.0)((6,11))", fpl.PhraseList[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -180,8 +181,8 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             assertEquals(2, fpl.PhraseList.size());
-            assertEquals("ab(1.0)((2,5))", fpl.PhraseList[0].toString());
-            assertEquals("abc(1.0)((10,15))", fpl.PhraseList[1].toString());
+            assertEquals("ab(1.0)((2,5))", fpl.PhraseList[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
+            assertEquals("abc(1.0)((10,15))", fpl.PhraseList[1].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -193,7 +194,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             assertEquals(1, fpl.PhraseList.size());
-            assertEquals("d(1.0)((9,10))", fpl.PhraseList[0].toString());
+            assertEquals("d(1.0)((9,10))", fpl.PhraseList[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -205,8 +206,8 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             assertEquals(2, fpl.PhraseList.size());
-            assertEquals("searchengines(1.0)((102,116))", fpl.PhraseList[0].toString());
-            assertEquals("searchengines(1.0)((157,171))", fpl.PhraseList[1].toString());
+            assertEquals("searchengines(1.0)((102,116))", fpl.PhraseList[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
+            assertEquals("searchengines(1.0)((157,171))", fpl.PhraseList[1].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -218,7 +219,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             assertEquals(1, fpl.PhraseList.size());
-            assertEquals("sppeeeed(1.0)((88,93))", fpl.PhraseList[0].toString());
+            assertEquals("sppeeeed(1.0)((88,93))", fpl.PhraseList[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         /* This test shows a big speedup from limiting the number of analyzed phrases in 

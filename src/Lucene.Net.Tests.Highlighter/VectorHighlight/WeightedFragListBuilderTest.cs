@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Globalization;
 using SubInfo = Lucene.Net.Search.VectorHighlight.FieldFragList.WeightedFragInfo.SubInfo;
 using WeightedFragInfo = Lucene.Net.Search.VectorHighlight.FieldFragList.WeightedFragInfo;
 
@@ -55,7 +56,7 @@ namespace Lucene.Net.Search.VectorHighlight
             WeightedFragListBuilder wflb = new WeightedFragListBuilder();
             FieldFragList ffl = wflb.CreateFieldFragList(fpl, fragCharSize);
             assertEquals(1, ffl.FragInfos.size());
-            assertEquals(expectedFragInfo, ffl.FragInfos[0].toString());
+            assertEquals(expectedFragInfo, ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
 
             float totalSubInfoBoost = 0;
             foreach (WeightedFragInfo info in ffl.FragInfos)
