@@ -1,9 +1,9 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
 
             int numSegments/* = segmentInfos.Count*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
-            IList<SegmentCommitInfo> segments = new List<SegmentCommitInfo>();
+            JCG.List<SegmentCommitInfo> segments = new JCG.List<SegmentCommitInfo>();
             ICollection<SegmentCommitInfo> merging = base.m_writer.Get().MergingSegments;
 
             foreach (SegmentCommitInfo sipc in segmentInfos.Segments)
@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
                 // TODO: sometimes make more than 1 merge?
                 mergeSpec = new MergeSpecification();
                 int segsToMerge = TestUtil.NextInt32(random, 1, numSegments);
-                mergeSpec.Add(new OneMerge(segments.SubList(0, segsToMerge)));
+                mergeSpec.Add(new OneMerge(segments.GetView(0, segsToMerge))); // LUCENENET: Checked length for correctness
             }
 
             return mergeSpec;
@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
 
         public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
         {
-            IList<SegmentCommitInfo> eligibleSegments = new List<SegmentCommitInfo>();
+            JCG.List<SegmentCommitInfo> eligibleSegments = new JCG.List<SegmentCommitInfo>();
             foreach (SegmentCommitInfo info in segmentInfos.Segments)
             {
                 if (segmentsToMerge.ContainsKey(info))
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
                 {
                     int max = Math.Min(10, eligibleSegments.Count - upto);
                     int inc = max <= 2 ? max : TestUtil.NextInt32(random, 2, max);
-                    mergeSpec.Add(new OneMerge(eligibleSegments.SubList(upto, upto + inc)));
+                    mergeSpec.Add(new OneMerge(eligibleSegments.GetView(upto, inc))); // LUCENENET: Converted end index to length
                     upto += inc;
                 }
             }

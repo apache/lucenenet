@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -293,7 +294,7 @@ namespace Lucene.Net.Index
                 MergeSpecification ms = new MergeSpecification();
                 if (doMerge)
                 {
-                    OneMerge om = new OneMerge(segmentInfos.AsList().SubList(start, start + length));
+                    OneMerge om = new OneMerge(segmentInfos.AsList().GetView(start, length)); // LUCENENET: Converted end index to length
                     ms.Add(om);
                     doMerge = false;
                     return ms;

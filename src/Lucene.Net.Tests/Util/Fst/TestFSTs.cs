@@ -1680,7 +1680,7 @@ namespace Lucene.Net.Util.Fst
                 matches.Sort(new TieBreakByInputComparer<long?>(minLongComparer));
                 if (matches.Count > topN)
                 {
-                    matches.SubList(topN, matches.Count).Clear();
+                    matches.RemoveRange(topN, matches.Count - topN); // LUCENENET: Converted end index to length
                 }
 
                 Assert.AreEqual(matches.Count, r.TopN.Count);
@@ -1820,7 +1820,7 @@ namespace Lucene.Net.Util.Fst
                 matches.Sort(new TieBreakByInputComparer<Pair>(minPairWeightComparer));
                 if (matches.Count > topN)
                 {
-                    matches.SubList(topN, matches.Count).Clear();
+                    matches.RemoveRange(topN, matches.Count - topN);  // LUCENENET: Converted end index to length;
                 }
 
                 Assert.AreEqual(matches.Count, r.TopN.Count);

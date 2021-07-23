@@ -927,7 +927,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 IList<Lookup.LookupResult> r = suggester.DoLookup(TestUtil.StringToCharSequence(prefix, Random).ToString(), false, topN);
 
                 // 2. go thru whole set to find suggestions:
-                List<TermFreq2> matches = new List<TermFreq2>();
+                JCG.List<TermFreq2> matches = new JCG.List<TermFreq2>();
 
                 // "Analyze" the key:
                 string[] tokens = prefix.Split(' ').TrimEnd();
@@ -1006,8 +1006,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 if (matches.size() > topN)
                 {
-                    //matches = new List<TermFreq2>(matches.SubList(0, topN));
-                    matches = matches.GetRange(0, topN);
+                    matches = matches.GetView(0, topN); // LUCENENET: Checked length for correctness
                 }
 
                 if (Verbose)

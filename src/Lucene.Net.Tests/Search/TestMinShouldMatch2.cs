@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -292,7 +292,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestNextVaryingNumberOfTerms()
         {
-            IList<string> termsList = new List<string>(commonTerms.Length + mediumTerms.Length + rareTerms.Length);
+            IList<string> termsList = new JCG.List<string>(commonTerms.Length + mediumTerms.Length + rareTerms.Length);
             termsList.AddRange(commonTerms);
             termsList.AddRange(mediumTerms);
             termsList.AddRange(rareTerms);
@@ -300,7 +300,7 @@ namespace Lucene.Net.Search
 
             for (int numTerms = 2; numTerms <= termsList.Count; numTerms++)
             {
-                string[] terms = termsList.SubList(0, numTerms).ToArray(/*new string[0]*/);
+                string[] terms = termsList.GetView(0, numTerms).ToArray(/*new string[0]*/); // LUCENENET: Checked length of GetView() for correctness
                 for (int minNrShouldMatch = 1; minNrShouldMatch <= terms.Length; minNrShouldMatch++)
                 {
                     Scorer expected = Scorer(terms, minNrShouldMatch, true);
@@ -315,7 +315,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestAdvanceVaryingNumberOfTerms()
         {
-            IList<string> termsList = new List<string>(commonTerms.Length + mediumTerms.Length + rareTerms.Length);
+            IList<string> termsList = new JCG.List<string>(commonTerms.Length + mediumTerms.Length + rareTerms.Length);
             termsList.AddRange(commonTerms);
             termsList.AddRange(mediumTerms);
             termsList.AddRange(rareTerms);
@@ -325,7 +325,7 @@ namespace Lucene.Net.Search
             {
                 for (int numTerms = 2; numTerms <= termsList.Count; numTerms++)
                 {
-                    string[] terms = termsList.SubList(0, numTerms).ToArray(/*new string[0]*/);
+                    string[] terms = termsList.GetView(0, numTerms).ToArray(/*new string[0]*/); // LUCENENET: Checked length of GetView() for correctness
                     for (int minNrShouldMatch = 1; minNrShouldMatch <= terms.Length; minNrShouldMatch++)
                     {
                         Scorer expected = Scorer(terms, minNrShouldMatch, true);

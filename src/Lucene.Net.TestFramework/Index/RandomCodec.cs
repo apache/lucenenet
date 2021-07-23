@@ -1,4 +1,4 @@
-using Lucene.Net.Codecs;
+﻿using Lucene.Net.Codecs;
 using Lucene.Net.Codecs.Asserting;
 using Lucene.Net.Codecs.Bloom;
 using Lucene.Net.Codecs.DiskDV;
@@ -56,11 +56,11 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Shuffled list of postings formats to use for new mappings </summary>
-        private readonly IList<PostingsFormat> formats = new List<PostingsFormat>(); // LUCENENET: marked readonly
+        private readonly JCG.List<PostingsFormat> formats = new JCG.List<PostingsFormat>(); // LUCENENET: marked readonly
 
         /// <summary>
         /// Shuffled list of docvalues formats to use for new mappings </summary>
-        private readonly IList<DocValuesFormat> dvFormats = new List<DocValuesFormat>(); // LUCENENET: marked readonly
+        private readonly JCG.List<DocValuesFormat> dvFormats = new JCG.List<DocValuesFormat>(); // LUCENENET: marked readonly
 
         /// <summary>
         /// unique set of format names this codec knows about </summary>
@@ -174,11 +174,11 @@ namespace Lucene.Net.Index
             // Avoid too many open files:
             if (formats.Count > 4)
             {
-                formats = formats.SubList(0, 4);
+                formats = formats.GetView(0, 4); // LUCENENET: Checked length for correctness
             }
             if (dvFormats.Count > 4)
             {
-                dvFormats = dvFormats.SubList(0, 4);
+                dvFormats = dvFormats.GetView(0, 4); // LUCENENET: Checked length for correctness
             }
         }
 

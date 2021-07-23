@@ -621,7 +621,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     if (tmp.size() > num)
                     {
                         //tmp.subList(num, tmp.size()).clear();
-                        tmp.RemoveRange(num, tmp.size() - num);
+                        tmp.RemoveRange(num, tmp.size() - num); // LUCENENET: Converted end index to length
                     }
                     foreach (Lookup.LookupResult result in tmp)
                     {
@@ -654,7 +654,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 if (expected.size() > num)
                 {
-                    expected.RemoveRange(num, expected.size() - num);
+                    expected.RemoveRange(num, expected.size() - num); // LUCENENET: Converted end index to length
                 }
 
                 // Actual:

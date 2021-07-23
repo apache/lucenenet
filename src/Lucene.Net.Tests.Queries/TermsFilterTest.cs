@@ -240,7 +240,7 @@ namespace Lucene.Net.Tests.Queries
                 Random, dir);
             int num = AtLeast(100);
             bool singleField = Random.NextBoolean();
-            IList<Term> terms = new List<Term>();
+            JCG.List<Term> terms = new JCG.List<Term>();
             for (int i = 0; i < num; i++)
             {
                 string field = "field" + (singleField ? "1" : Random.Next(100).ToString(CultureInfo.InvariantCulture));
@@ -268,7 +268,7 @@ namespace Lucene.Net.Tests.Queries
                 TopDocs queryResult = searcher.Search(new ConstantScoreQuery(bq), reader.MaxDoc);
 
                 MatchAllDocsQuery matchAll = new MatchAllDocsQuery();
-                TermsFilter filter = TermsFilter(singleField, terms.SubList(0, numTerms));
+                TermsFilter filter = TermsFilter(singleField, terms.GetView(0, numTerms)); // LUCENENET: Checked length for correctness
                 TopDocs filterResult = searcher.Search(matchAll, filter, reader.MaxDoc);
                 assertEquals(filterResult.TotalHits, queryResult.TotalHits);
                 ScoreDoc[] scoreDocs = filterResult.ScoreDocs;

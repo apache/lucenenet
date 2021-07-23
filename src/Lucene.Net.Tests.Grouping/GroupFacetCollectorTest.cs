@@ -756,7 +756,7 @@ namespace Lucene.Net.Search.Grouping
                 facetValues = context.facetValues;
             }
 
-            List<TermGroupFacetCollector.FacetEntry> entries = new List<TermGroupFacetCollector.FacetEntry>(facetGroups.size());
+            JCG.List<TermGroupFacetCollector.FacetEntry> entries = new JCG.List<TermGroupFacetCollector.FacetEntry>(facetGroups.size());
             // also includes facets with count 0
             foreach (string facetValue in facetValues)
             {
@@ -802,11 +802,11 @@ namespace Lucene.Net.Search.Grouping
             }
             else if (endOffset >= entries.size())
             {
-                entriesResult = entries.GetRange(offset, entries.size() - offset);
+                entriesResult = entries.GetView(offset, entries.size() - offset); // LUCENENET: Converted end index to length
             }
             else
             {
-                entriesResult = entries.GetRange(offset, endOffset - offset);
+                entriesResult = entries.GetView(offset, endOffset - offset); // LUCENENET: Converted end index to length
             }
             return new GroupedFacetResult(totalCount, totalMissCount, entriesResult);
         }

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Search;
+﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Search;
 using System.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Surround.Query
@@ -38,15 +39,10 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 { luceneSubQueries.Count > 0 ? luceneSubQueries[0] : null, Occur.MUST }
             };
 
-            // LUCENENET: SubList() is slow, so we do an array copy operation instead
-            var luceneSubQueriesArray = new Search.Query[luceneSubQueries.Count - 1];
-            for (int i = 1, j = 0; i < luceneSubQueries.Count; i++, j++)
-                luceneSubQueriesArray[j] = luceneSubQueries[i];
-
             SrndBooleanQuery.AddQueriesToBoolean(bq,
                     // FIXME: do not allow weights on prohibited subqueries.
-                    luceneSubQueriesArray,
-                // later subqueries: not required, prohibited
+                    luceneSubQueries.GetView(1, luceneSubQueries.Count - 1), // LUCENENET: Converted end index to length
+                    // later subqueries: not required, prohibited
                     Occur.MUST_NOT);
             return bq;
         }

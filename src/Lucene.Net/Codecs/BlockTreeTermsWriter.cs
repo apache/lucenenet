@@ -1,4 +1,5 @@
-﻿using J2N.Text;
+﻿using J2N.Collections.Generic.Extensions;
+using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs
 {
@@ -608,7 +610,7 @@ namespace Lucene.Net.Codecs
             private readonly Builder<object> blockBuilder;
 
             // PendingTerm or PendingBlock:
-            private readonly IList<PendingEntry> pending = new List<PendingEntry>();
+            private readonly IList<PendingEntry> pending = new JCG.List<PendingEntry>();
 
             // Index into pending of most recently written block
             private int lastBlockIndex = -1;
@@ -730,7 +732,7 @@ namespace Lucene.Net.Codecs
                     // already done this (partitioned these sub-terms
                     // according to their leading prefix byte)
 
-                    IList<PendingEntry> slice = ListExtensions.SubList<PendingEntry>(pending, pending.Count - count, pending.Count);
+                    IList<PendingEntry> slice = pending.GetView(pending.Count - count, count); // LUCENENET: Converted end index to length
                     int lastSuffixLeadLabel = -1;
                     int termCount = 0;
                     int subCount = 0;
@@ -962,7 +964,7 @@ namespace Lucene.Net.Codecs
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(start >= 0, "pending.Count={0} startBackwards={1} length={2}", pending.Count, startBackwards, length);
 
-                IList<PendingEntry> slice = pending.SubList(start, start + length);
+                IList<PendingEntry> slice = pending.GetView(start, length); // LUCENENET: Converted end index to length
 
                 long startFP = outerInstance.@out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 

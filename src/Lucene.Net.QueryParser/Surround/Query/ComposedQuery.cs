@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Surround.Query
 {
@@ -59,7 +60,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
         public virtual IList<Search.Query> MakeLuceneSubQueriesField(string fn, BasicQueryFactory qf)
         {
-            List<Search.Query> luceneSubQueries = new List<Search.Query>();
+            IList<Search.Query> luceneSubQueries = new JCG.List<Search.Query>();
             using (IEnumerator<SrndQuery> sqi = GetSubQueriesEnumerator())
             {
                 while (sqi.MoveNext())

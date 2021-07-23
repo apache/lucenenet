@@ -12,6 +12,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -123,7 +124,7 @@ namespace Lucene.Net.Analysis.Ja
         private int pos;
 
         // Already parsed, but not yet passed to caller, tokens:
-        private readonly IList<Token> pending = new List<Token>();
+        private readonly JCG.List<Token> pending = new JCG.List<Token>();
 
         private readonly ICharTermAttribute termAtt;
         private readonly IOffsetAttribute offsetAtt;
@@ -1098,8 +1099,9 @@ namespace Lucene.Net.Analysis.Ja
                     // Reverse the tokens we just added, because when we
                     // serve them up from incrementToken we serve in
                     // reverse:
-                    Collections.Reverse(pending.SubList(pending.Count - (wordIDAndLength.Length - 1),
-                                                        pending.Count));
+                    pending.Reverse(pending.Count - (wordIDAndLength.Length - 1),
+                        wordIDAndLength.Length - 1); // LUCENENET: Converted from reverse on SubList to reverse on List<T> and converted end index to length
+
 
                     backCount += wordIDAndLength.Length - 1;
                 }

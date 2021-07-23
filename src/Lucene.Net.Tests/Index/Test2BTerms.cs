@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -60,7 +61,7 @@ namespace Lucene.Net.Index
         {
             internal readonly int tokensPerDoc;
             internal int tokenCount;
-            public readonly IList<BytesRef> savedTerms = new List<BytesRef>();
+            public readonly IList<BytesRef> savedTerms = new JCG.List<BytesRef>();
             internal int nextSave;
             internal long termCounter;
             internal readonly Random random;
@@ -236,7 +237,7 @@ namespace Lucene.Net.Index
                 savedTerms = FindTerms(r);
             }
             int numSavedTerms = savedTerms.Count;
-            IList<BytesRef> bigOrdTerms = new List<BytesRef>(savedTerms.SubList(numSavedTerms - 10, numSavedTerms));
+            IList<BytesRef> bigOrdTerms = new List<BytesRef>(savedTerms.GetView(numSavedTerms - 10, 10)); // LUCENENET: Converted end index to length
             Console.WriteLine("TEST: test big ord terms...");
             TestSavedTerms(r, bigOrdTerms);
             Console.WriteLine("TEST: test all saved terms...");

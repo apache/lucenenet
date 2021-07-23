@@ -327,7 +327,7 @@ namespace Lucene.Net.Search
                     if (priorSearches.Count > 200)
                     {
                         priorSearches.Shuffle(Random);
-                        priorSearches.SubList(100, priorSearches.Count).Clear();
+                        priorSearches.RemoveRange(100, priorSearches.Count - 100); // LUCENENET: Converted end index to length
                     }
                 }
             }
