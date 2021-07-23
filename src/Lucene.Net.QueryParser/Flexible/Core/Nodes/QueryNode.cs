@@ -57,6 +57,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// </summary>
         object GetTag(string tagName);
 
+        /// <summary>
+        /// Gets the tag associated with the specified tagName.
+        /// </summary>
+        bool TryGetTag(string tagName, out object tag);
+
         IQueryNode Parent { get; }
 
         /// <summary>
