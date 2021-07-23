@@ -181,7 +181,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return this.tags[CultureInfo.InvariantCulture.TextInfo.ToLower(tagName)];
         }
 
-        // LUCENENET TODO: API - Create TryGetTag method to combine the above 2 operations
+        /// <inheritdoc/>
+        public virtual bool TryGetTag(string tagName, out object tag)
+        {
+            return this.tags.TryGetValue(tagName, out tag);
+        }
 
         private IQueryNode parent = null;
 
