@@ -2190,14 +2190,14 @@ namespace Lucene.Net.Util
 
                         case 3:
                             AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r);
-                            IList<string> allFields = new List<string>();
+                            JCG.List<string> allFields = new JCG.List<string>();
                             foreach (FieldInfo fi in ar.FieldInfos)
                             {
                                 allFields.Add(fi.Name);
                             }
                             allFields.Shuffle(Random);
                             int end = allFields.Count == 0 ? 0 : random.Next(allFields.Count);
-                            ISet<string> fields = new JCG.HashSet<string>(allFields.SubList(0, end));
+                            ISet<string> fields = new JCG.HashSet<string>(allFields.GetView(0, end)); // LUCENENET: Checked length for correctness
                             // will create no FC insanity as ParallelAtomicReader has own cache key:
                             r = new ParallelAtomicReader(new FieldFilterAtomicReader(ar, fields, false), new FieldFilterAtomicReader(ar, fields, true));
                             break;

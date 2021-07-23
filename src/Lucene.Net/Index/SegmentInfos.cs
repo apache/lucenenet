@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
         /// Opaque <see cref="T:IDictionary{string, string}"/> that user can specify during <see cref="IndexWriter.Commit()"/> </summary>
         private IDictionary<string, string> userData = Collections.EmptyMap<string, string>();
 
-        private IList<SegmentCommitInfo> segments = new JCG.List<SegmentCommitInfo>();
+        private JCG.List<SegmentCommitInfo> segments = new JCG.List<SegmentCommitInfo>();
 
         /// <summary>
         /// If non-null, information about loading segments_N files 
@@ -705,7 +705,7 @@ namespace Lucene.Net.Index
         {
             var sis = (SegmentInfos)base.MemberwiseClone();
             // deep clone, first recreate all collections:
-            sis.segments = new List<SegmentCommitInfo>(Count);
+            sis.segments = new JCG.List<SegmentCommitInfo>(Count);
             foreach (SegmentCommitInfo info in segments)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Codec != null);
@@ -1354,7 +1354,7 @@ namespace Lucene.Net.Index
             }
 
             // the rest of the segments in list are duplicates, so don't remove from map, only list!
-            segments.SubList(newSegIdx, segments.Count).Clear();
+            segments.RemoveRange(newSegIdx, segments.Count - newSegIdx); // LUCENENET: Converted end index to length
 
             // Either we found place to insert segment, or, we did
             // not, but only because all segments we merged becamee

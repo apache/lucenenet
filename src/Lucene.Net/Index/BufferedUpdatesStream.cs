@@ -1,11 +1,11 @@
 using J2N.Text;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
     internal class BufferedUpdatesStream
     {
         // TODO: maybe linked list?
-        private readonly IList<FrozenBufferedUpdates> updates = new List<FrozenBufferedUpdates>();
+        private readonly JCG.List<FrozenBufferedUpdates> updates = new JCG.List<FrozenBufferedUpdates>();
 
         // Starts at 1 so that SegmentInfos that have never had
         // deletes applied (whose bufferedDelGen defaults to 0)
@@ -442,7 +442,7 @@ namespace Lucene.Net.Index
                         bytesUsed.AddAndGet(-packet.bytesUsed);
                         if (Debugging.AssertsEnabled) Debugging.Assert(bytesUsed >= 0);
                     }
-                    updates.SubList(0, count).Clear();
+                    updates.RemoveRange(0, count); // LUCENENET: Checked count parameter for correctness
                 }
             }
         }

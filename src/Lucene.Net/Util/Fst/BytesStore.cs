@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
@@ -371,7 +371,7 @@ namespace Lucene.Net.Util.Fst
                 blockIndex--;
                 nextWrite = blockSize;
             }
-            blocks.RemoveRange(blockIndex + 1, blocks.Count - (blockIndex + 1));
+            blocks.RemoveRange(blockIndex + 1, blocks.Count - (blockIndex + 1)); // LUCENENET: Converted end index to length
             if (newLen == 0)
             {
                 current = null;

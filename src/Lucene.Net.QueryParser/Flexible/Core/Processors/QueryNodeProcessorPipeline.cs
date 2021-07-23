@@ -2,6 +2,7 @@
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using System.Collections;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
     /// </summary>
     public class QueryNodeProcessorPipeline : IQueryNodeProcessor, IList<IQueryNodeProcessor>
     {
-        private readonly List<IQueryNodeProcessor> processors = new List<IQueryNodeProcessor>();
+        private readonly JCG.List<IQueryNodeProcessor> processors = new JCG.List<IQueryNodeProcessor>();
 
         private QueryConfigHandler queryConfig;
 
@@ -217,6 +218,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         public virtual IList<IQueryNodeProcessor> GetRange(int index, int count)
         {
             return this.processors.GetRange(index, count);
+        }
+
+        /// <summary>
+        /// <see cref="JCG.List{T}.GetView(int, int)"/>
+        /// </summary>
+        public virtual IList<IQueryNodeProcessor> GetView(int index, int count)
+        {
+            return this.processors.GetView(index, count);
         }
 
         public virtual void Insert(int index, IQueryNodeProcessor item)

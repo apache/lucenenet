@@ -799,7 +799,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 if (results.Count > num)
                 {
-                    results.RemoveRange(num, results.Count - num); //results.SubList(num, results.Count).Clear();
+                    results.RemoveRange(num, results.Count - num); // LUCENENET: Converted end index to length
                 }
 
                 return results;

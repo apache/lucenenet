@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Morfologik
 {
@@ -52,7 +53,7 @@ namespace Lucene.Net.Analysis.Morfologik
         private readonly IStemmer stemmer;
 
         private IList<WordData> lemmaList;
-        private readonly List<StringBuilder> tagsList = new List<StringBuilder>();
+        private readonly JCG.List<StringBuilder> tagsList = new JCG.List<StringBuilder>();
 
         private int lemmaListIndex;
 
@@ -109,7 +110,7 @@ namespace Lucene.Net.Analysis.Morfologik
                     buffer.Length = 0;
                     buffer.Append(tags[i]);
                 }
-                tagsAtt.Tags = tagsList.SubList(0, tags.Length);
+                tagsAtt.Tags = tagsList.GetView(0, tags.Length - 0); // LUCENENET: Converted end index to length
             }
             else
             {

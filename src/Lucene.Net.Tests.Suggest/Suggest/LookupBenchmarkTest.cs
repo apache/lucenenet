@@ -18,6 +18,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
 {
@@ -293,7 +294,7 @@ namespace Lucene.Net.Search.Suggest
 
             try
             {
-                List<double> times = new List<double>();
+                JCG.List<double> times = new JCG.List<double>();
                 for (int i = 0; i < warmup + rounds; i++)
                 {
                     long start = J2N.Time.NanoTime();
@@ -321,7 +322,7 @@ namespace Lucene.Net.Search.Suggest
 
             public BenchmarkResult(IList<double> times, int warmup, int rounds)
             {
-                this.average = Average.From(times.SubList(warmup, times.Count));
+                this.average = Average.From(times.GetView(warmup, times.Count - warmup)); // LUCENENET: Converted end index to length
             }
         }
     }

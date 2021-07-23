@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
             {
                 //if (BlockTreeTermsWriter.DEBUG) System.out.println("FuzzyTE.getAEnum: ed=" + editDistance + " lastTerm=" + (lastTerm==null ? "null" : lastTerm.utf8ToString()));
                 CompiledAutomaton compiled = runAutomata[editDistance];
-                return new AutomatonFuzzyTermsEnum(this, m_terms.Intersect(compiled, lastTerm == null ? null : compiled.Floor(lastTerm, new BytesRef())), runAutomata.SubList(0, editDistance + 1).ToArray(/*new CompiledAutomaton[editDistance + 1]*/));
+                return new AutomatonFuzzyTermsEnum(this, m_terms.Intersect(compiled, lastTerm == null ? null : compiled.Floor(lastTerm, new BytesRef())), runAutomata.GetView(0, editDistance + 1).ToArray(/*new CompiledAutomaton[editDistance + 1]*/)); // LUCENENET: Checked count parameter of GetView()
             }
             else
             {

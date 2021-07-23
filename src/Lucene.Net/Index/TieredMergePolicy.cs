@@ -575,7 +575,7 @@ namespace Lucene.Net.Index
                     " segmentsToMerge=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", segmentsToMerge));
             }
 
-            List<SegmentCommitInfo> eligible = new List<SegmentCommitInfo>();
+            JCG.List<SegmentCommitInfo> eligible = new JCG.List<SegmentCommitInfo>();
             bool forceMergeRunning = false;
             ICollection<SegmentCommitInfo> merging = m_writer.Get().MergingSegments;
             bool? segmentIsOriginal = false;
@@ -628,7 +628,7 @@ namespace Lucene.Net.Index
                 {
                     spec = new MergeSpecification();
                 }
-                OneMerge merge = new OneMerge(eligible.SubList(end - maxMergeAtOnceExplicit, end));
+                OneMerge merge = new OneMerge(eligible.GetView(end - maxMergeAtOnceExplicit, maxMergeAtOnceExplicit)); // LUCENENET: Converted end index to length
                 if (Verbose())
                 {
                     Message("add merge=" + m_writer.Get().SegString(merge.Segments));
@@ -641,7 +641,7 @@ namespace Lucene.Net.Index
             {
                 // Do final merge
                 int numToMerge = end - maxSegmentCount + 1;
-                OneMerge merge = new OneMerge(eligible.SubList(end - numToMerge, end));
+                OneMerge merge = new OneMerge(eligible.GetView(end - numToMerge, numToMerge)); // LUCENENET: Converted end index to length
                 if (Verbose())
                 {
                     Message("add final merge=" + merge.SegString(m_writer.Get().Directory));
@@ -659,7 +659,7 @@ namespace Lucene.Net.Index
             {
                 Message("findForcedDeletesMerges infos=" + m_writer.Get().SegString(infos.Segments) + " forceMergeDeletesPctAllowed=" + forceMergeDeletesPctAllowed);
             }
-            List<SegmentCommitInfo> eligible = new List<SegmentCommitInfo>();
+            JCG.List<SegmentCommitInfo> eligible = new JCG.List<SegmentCommitInfo>();
             ICollection<SegmentCommitInfo> merging = m_writer.Get().MergingSegments;
             foreach (SegmentCommitInfo info in infos.Segments)
             {
@@ -696,7 +696,7 @@ namespace Lucene.Net.Index
                     spec = new MergeSpecification();
                 }
 
-                OneMerge merge = new OneMerge(eligible.SubList(start, end));
+                OneMerge merge = new OneMerge(eligible.GetView(start, end - start)); // LUCENENET: Converted end index to length
                 if (Verbose())
                 {
                     Message("add merge=" + m_writer.Get().SegString(merge.Segments));
