@@ -122,14 +122,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             //if stored is false, then result will be empty, in which case just get all the param fields
             if (m_paramFields.Count > 0 && result.Count > 0)
             {
-                //result.RetainAll(paramFields);
-                var toRemove = new List<string>();
-                foreach (var e in result)
-                {
-                    if (!m_paramFields.Contains(e))
-                        toRemove.Add(e);
-                }
-                result.RemoveAll(toRemove);
+                result.RetainAll(m_paramFields);
             }
             else
             {
