@@ -102,5 +102,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// Removes this query node from its parent.
         /// </summary>
         void RemoveFromParent();
+
+        // LUCENENET: From Lucene 8.8.1, patch to broken RemoveFromParent() behavior
+        /// <summary>
+        /// Remove a child node.
+        /// </summary>
+        /// <param name="childNode">Which child to remove.</param>
+        void RemoveChildren(IQueryNode childNode);
     }
 }
