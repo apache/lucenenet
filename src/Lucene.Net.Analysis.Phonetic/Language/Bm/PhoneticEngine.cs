@@ -445,7 +445,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             }
 
             IList<string> words = WHITESPACE.Split(input).TrimEnd();
-            IList<string> words2 = new List<string>();
+            ISet<string> words2 = new JCG.HashSet<string>();
 
             // special-case handling of word prefixes based upon the name type
             switch (this.nameType)
@@ -457,14 +457,14 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                         string lastPart = parts[parts.Length - 1];
                         words2.Add(lastPart);
                     }
-                    words2.RemoveAll(NAME_PREFIXES[this.nameType]);
+                    words2.ExceptWith(NAME_PREFIXES[this.nameType]);
                     break;
                 case NameType.ASHKENAZI:
-                    words2.AddRange(words);
-                    words2.RemoveAll(NAME_PREFIXES[this.nameType]);
+                    words2.UnionWith(words);
+                    words2.ExceptWith(NAME_PREFIXES[this.nameType]);
                     break;
                 case NameType.GENERIC:
-                    words2.AddRange(words);
+                    words2.UnionWith(words);
                     break;
                 default:
                     throw new InvalidOperationException("Unreachable case: " + this.nameType);

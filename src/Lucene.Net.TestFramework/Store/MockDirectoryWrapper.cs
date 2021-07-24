@@ -255,7 +255,7 @@ namespace Lucene.Net.Store
                 }
                 else
                 {
-                    unSyncedFiles.RemoveAll(names);
+                    unSyncedFiles.ExceptWith(names);
                 }
             }
         }
