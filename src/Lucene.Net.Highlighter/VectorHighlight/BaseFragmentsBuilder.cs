@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Documents;
+﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search.Highlight;
 using Lucene.Net.Support;
@@ -9,6 +10,7 @@ using System.Text;
 using SubInfo = Lucene.Net.Search.VectorHighlight.FieldFragList.WeightedFragInfo.SubInfo;
 using Toffs = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo.Toffs;
 using WeightedFragInfo = Lucene.Net.Search.VectorHighlight.FieldFragList.WeightedFragInfo;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.VectorHighlight
 {
@@ -300,55 +302,39 @@ namespace Lucene.Net.Search.VectorHighlight
                         fragEnd = fragInfo.EndOffset;
                     }
 
-                    // LUCENENET specific - track the fragInfo.SubInfos items to delete
-                    List<SubInfo> fragInfo_SubInfos_ToDelete = new List<SubInfo>();
+                    // LUCENENET NOTE: Instead of removing during iteration (which isn't allowed in .NET when using an IEnumerator),
+                    // We use the IList<T>.RemoveAll() extension method of J2N. This removal happens in a forward way, but since it
+                    // accepts a predicate, we can put in the rest of Lucene's logic without doing something expensive like keeping
+                    // track of the items to remove in a separate collection. In a nutshell, any time Lucene calls iterator.remove(),
+                    // we return true and any time it is skipped, we return false.
 
-                    List<SubInfo> subInfos = new List<SubInfo>();
+                    IList<SubInfo> subInfos = new JCG.List<SubInfo>();
                     float boost = 0.0f;  //  The boost of the new info will be the sum of the boosts of its SubInfos
-                    using (IEnumerator<SubInfo> subInfoIterator = fragInfo.SubInfos.GetEnumerator())
+                    fragInfo.SubInfos.RemoveAll((subInfo) =>
                     {
-                        while (subInfoIterator.MoveNext())
+                        IList<Toffs> toffsList = new JCG.List<Toffs>();
+                        subInfo.TermsOffsets.RemoveAll((toffs) =>
                         {
-                            SubInfo subInfo = subInfoIterator.Current;
-                            List<Toffs> toffsList = new List<Toffs>();
-
-
-                            using (IEnumerator<Toffs> toffsIterator = subInfo.TermsOffsets.GetEnumerator())
+                            if (toffs.StartOffset >= fieldStart && toffs.EndOffset <= fieldEnd)
                             {
-                                while (toffsIterator.MoveNext())
-                                {
-                                    Toffs toffs = toffsIterator.Current;
-                                    if (toffs.StartOffset >= fieldStart && toffs.EndOffset <= fieldEnd)
-                                    {
 
-                                        toffsList.Add(toffs);
-                                        //toffsIterator.Remove();
-                                    }
-                                }
+                                toffsList.Add(toffs);
+                                return true; // Remove
                             }
-                            if (toffsList.Count > 0)
-                            {
-                                // LUCENENET NOTE: Instead of removing during iteration (which isn't allowed in .NET when using an IEnumerator), 
-                                // we just remove the items at this point. We only get here if there are items to remove.
-                                subInfo.TermsOffsets.RemoveAll(toffsList);
-
-                                subInfos.Add(new SubInfo(subInfo.Text, toffsList, subInfo.Seqnum, subInfo.Boost));
-                                boost += subInfo.Boost;
-                            }
-
-                            if (subInfo.TermsOffsets.Count == 0)
-                            {
-                                //subInfoIterator.Remove();
-                                fragInfo_SubInfos_ToDelete.Add(subInfo);
-                            }
+                            return false;
+                        });
+                        if (toffsList.Count > 0)
+                        {
+                            subInfos.Add(new SubInfo(subInfo.Text, toffsList, subInfo.Seqnum, subInfo.Boost));
+                            boost += subInfo.Boost;
                         }
-                    }
 
-                    // LUCENENET specific - now that we are done iterating the loop, it is safe to delete
-                    // the items we earmarked. Note this is just a list of pointers, so it doens't consume
-                    // much RAM.
-                    fragInfo.SubInfos.RemoveAll(fragInfo_SubInfos_ToDelete);
-
+                        if (subInfo.TermsOffsets.Count == 0)
+                        {
+                            return true; // Remove
+                        }
+                        return false;
+                    });
 
                     WeightedFragInfo weightedFragInfo = new WeightedFragInfo(fragStart, fragEnd, subInfos, boost);
                     fieldNameToFragInfos[field.Name].Add(weightedFragInfo);
