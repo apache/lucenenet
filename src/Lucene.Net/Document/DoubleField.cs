@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Index;
 using System;
+using Double = J2N.Numerics.Double;
 
 namespace Lucene.Net.Documents
 {
@@ -151,7 +152,7 @@ namespace Lucene.Net.Documents
         public DoubleField(string name, double value, Store stored)
             : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
-            FieldsData = new Double(value);
+            FieldsData = Double.GetInstance(value);
         }
 
         /// <summary>
@@ -170,7 +171,7 @@ namespace Lucene.Net.Documents
             {
                 throw new ArgumentException("type.NumericType must be NumericType.DOUBLE but got " + type.NumericType);
             }
-            FieldsData = new Double(value);
+            FieldsData = Double.GetInstance(value);
         }
     }
 }

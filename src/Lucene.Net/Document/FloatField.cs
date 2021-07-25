@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Index;
 using System;
+using Single = J2N.Numerics.Single;
 
 namespace Lucene.Net.Documents
 {
@@ -155,7 +156,7 @@ namespace Lucene.Net.Documents
         public SingleField(string name, float value, Store stored)
             : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
-            FieldsData = new Single(value);
+            FieldsData = Single.GetInstance(value);
         }
 
         /// <summary>
@@ -174,7 +175,7 @@ namespace Lucene.Net.Documents
             {
                 throw new ArgumentException("type.NumericType must be NumericType.SINGLE but got " + type.NumericType);
             }
-            FieldsData = new Single(value);
+            FieldsData = Single.GetInstance(value);
         }
     }
 }
