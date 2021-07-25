@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Index;
 using System;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Documents
 {
@@ -165,7 +166,7 @@ namespace Lucene.Net.Documents
         public Int64Field(string name, long value, Store stored)
             : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
-            FieldsData = new Int64(value);
+            FieldsData = Int64.GetInstance(value);
         }
 
         /// <summary>
@@ -185,7 +186,7 @@ namespace Lucene.Net.Documents
             {
                 throw new ArgumentException("type.NumericType must be NumericType.INT64 but got " + type.NumericType);
             }
-            FieldsData = new Int64(value);
+            FieldsData = Int64.GetInstance(value);
         }
     }
 }

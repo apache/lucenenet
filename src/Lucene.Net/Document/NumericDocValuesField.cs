@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Index;
 using System;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Documents
 {
@@ -50,7 +51,7 @@ namespace Lucene.Net.Documents
         public NumericDocValuesField(string name, long value)
             : base(name, TYPE)
         {
-            FieldsData = new Int64(value);
+            FieldsData = Int64.GetInstance(value);
         }
     }
 }
