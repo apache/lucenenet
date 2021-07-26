@@ -482,6 +482,8 @@ namespace Lucene.Net.Search.Grouping
             });
         }
 
+        // LUCENENET NOTE: IComparable because in Java it was IComparable<?>, but note that
+        // there is no reason it cannot be object here because nothing actually calls IComparable.Compare().
         private IComparable[] FillFields(GroupDoc d, Sort sort)
         {
             SortField[] sortFields = sort.GetSort();
@@ -492,7 +494,7 @@ namespace Lucene.Net.Search.Grouping
                 SortField sf = sortFields[fieldIDX];
                 if (sf.Type == SortFieldType.SCORE)
                 {
-                    c = new float?(d.score);
+                    c = J2N.Numerics.Single.GetInstance(d.score);
                 }
                 else if (sf.Field.Equals("sort1", StringComparison.Ordinal))
                 {
@@ -505,7 +507,7 @@ namespace Lucene.Net.Search.Grouping
                 else
                 {
                     assertEquals("id", sf.Field);
-                    c = new int?(d.id);
+                    c = J2N.Numerics.Int32.GetInstance(d.id);
                 }
                 fields[fieldIDX] = c;
             }
@@ -963,7 +965,7 @@ namespace Lucene.Net.Search.Grouping
                     // ReaderBlocks only increases maxDoc() vs reader, which
                     // means a monotonic shift in scores, so we can
                     // reliably remap them w/ Map:
-                    IDictionary<string, IDictionary<float, float>> scoreMap = new Dictionary<string, IDictionary<float, float>>();
+                    IDictionary<string, IDictionary<float, J2N.Numerics.Single>> scoreMap = new Dictionary<string, IDictionary<float, J2N.Numerics.Single>>();
 
                     // Tricky: must separately set .score2, because the doc
                     // block index was created with possible deletions!
@@ -971,7 +973,7 @@ namespace Lucene.Net.Search.Grouping
                     for (int contentID = 0; contentID < 3; contentID++)
                     {
                         //Console.WriteLine("  term=real" + contentID);
-                        IDictionary<float, float> termScoreMap = new Dictionary<float, float>();
+                        IDictionary<float, J2N.Numerics.Single> termScoreMap = new Dictionary<float, J2N.Numerics.Single>();
                         scoreMap.Put("real" + contentID, termScoreMap);
                         //Console.WriteLine("term=real" + contentID + " dfold=" + s.docFreq(new Term("content", "real"+contentID)) +
                         //" dfnew=" + sBlocks.docFreq(new Term("content", "real"+contentID)));
@@ -1366,7 +1368,7 @@ namespace Lucene.Net.Search.Grouping
                             }
 
                             SortField[] sortFields = groupSort.GetSort();
-                            IDictionary<float, float> termScoreMap = scoreMap[searchTerm];
+                            IDictionary<float, J2N.Numerics.Single> termScoreMap = scoreMap[searchTerm];
                             for (int groupSortIDX = 0; groupSortIDX < sortFields.Length; groupSortIDX++)
                             {
                                 if (sortFields[groupSortIDX].Type == SortFieldType.SCORE)

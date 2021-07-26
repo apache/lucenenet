@@ -143,7 +143,7 @@ namespace Lucene.Net.Search.Grouping
                     searchGroup.SortValues = new object[sortFieldCount];
                     for (int sortFieldIDX = 0; sortFieldIDX < sortFieldCount; sortFieldIDX++)
                     {
-                        searchGroup.SortValues[sortFieldIDX] = comparers[sortFieldIDX][group.ComparerSlot];
+                        searchGroup.SortValues[sortFieldIDX] = comparers[sortFieldIDX].GetValue(group.ComparerSlot);
                     }
                 }
                 result.Add(searchGroup);

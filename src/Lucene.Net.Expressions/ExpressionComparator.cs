@@ -4,8 +4,6 @@ using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Expressions
@@ -28,7 +26,7 @@ namespace Lucene.Net.Expressions
      */
 
     /// <summary>A custom comparer for sorting documents by an expression</summary>
-    internal class ExpressionComparer : FieldComparer<double>
+    internal class ExpressionComparer : FieldComparer<J2N.Numerics.Double>
     {
         private readonly double[] values;
         private double bottom;
@@ -75,9 +73,9 @@ namespace Lucene.Net.Expressions
             bottom = values[slot];
         }
 
-        public override void SetTopValue(object value)
+        public override void SetTopValue(J2N.Numerics.Double value)
         {
-            topValue = (double)value;
+            topValue = value ?? throw new ArgumentNullException(nameof(value)); // LUCENENET specific - throw ArgumentNullException rather than getting a cast exception
         }
 
         public override int CompareBottom(int doc)
@@ -98,7 +96,7 @@ namespace Lucene.Net.Expressions
         }
 
         // LUCENENET NOTE: This was value(int) in Lucene.
-        public override IComparable this[int slot] => values[slot];
+        public override J2N.Numerics.Double this[int slot] => values[slot]; // LUCENENET NOTE: Implicit cast will instantiate new instance
 
         public override int CompareTop(int doc)
         {

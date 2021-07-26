@@ -37,7 +37,7 @@ namespace Lucene.Net.Sandbox.Queries
     /// (see below) to ensure that all selections happen in constant-time for performance.
     /// <para/>
     /// Like sorting by string, this also supports sorting missing values as first or last,
-    /// via <see cref="MissingValue"/>.
+    /// via <see cref="SortField.SetMissingValue(object)"/>.
     /// <para/>
     /// Limitations:
     /// <list type="bullet">
@@ -132,17 +132,13 @@ namespace Lucene.Net.Sandbox.Queries
         /// Note that this must be <see cref="SortField.STRING_FIRST"/> or 
         /// <see cref="SortField.STRING_LAST"/>.
         /// </summary>
-        public override object MissingValue
+        public override void SetMissingValue(object value)
         {
-            get => base.m_missingValue;
-            set
+            if (value != STRING_FIRST && value != STRING_LAST)
             {
-                if (value != STRING_FIRST && value != STRING_LAST)
-                {
-                    throw new ArgumentException("For SORTED_SET type, missing value must be either STRING_FIRST or STRING_LAST");
-                }
-                base.m_missingValue = value;
+                throw new ArgumentException("For SORTED_SET type, missing value must be either STRING_FIRST or STRING_LAST");
             }
+            base.m_missingValue = value;
         }
 
         private class TermOrdValComparerAnonymousClass : FieldComparer.TermOrdValComparer

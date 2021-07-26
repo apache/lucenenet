@@ -55,28 +55,8 @@ namespace Lucene.Net.Search
         private readonly FieldComparerSource comparerSource; // LUCENENET: marked readonly
 
         // Used for 'sortMissingFirst/Last'
-        public virtual object MissingValue
-        {
-            get => m_missingValue;
-            set
-            {
-                if (type == SortFieldType.STRING)
-                {
-                    if (value != STRING_FIRST && value != STRING_LAST)
-                    {
-                        throw new ArgumentException("For STRING type, missing value must be either STRING_FIRST or STRING_LAST");
-                    }
-                }
-#pragma warning disable 612, 618
-                else if (type != SortFieldType.BYTE && type != SortFieldType.INT16
-#pragma warning restore 612, 618
-                    && type != SortFieldType.INT32 && type != SortFieldType.SINGLE && type != SortFieldType.INT64 && type != SortFieldType.DOUBLE)
-                {
-                    throw new ArgumentException("Missing value only works for numeric or STRING types");
-                }
-                this.m_missingValue = value;
-            }
-        }
+        public object MissingValue => m_missingValue;
+
         protected object m_missingValue = null; // LUCENENET NOTE: added protected backing field
 
         /// <summary>
@@ -202,22 +182,63 @@ namespace Lucene.Net.Search
             }
         }
 
-        // LUCENENET NOTE: Made this into a property setter above
-        //public virtual void SetMissingValue(object value)
-        //{
-        //    if (type == SortFieldType.STRING)
-        //    {
-        //        if (value != STRING_FIRST && value != STRING_LAST)
-        //        {
-        //            throw new ArgumentException("For STRING type, missing value must be either STRING_FIRST or STRING_LAST");
-        //        }
-        //    }
-        //    else if (type != SortFieldType.BYTE && type != SortFieldType.SHORT && type != SortFieldType.INT && type != SortFieldType.FLOAT && type != SortFieldType.LONG && type != SortFieldType.DOUBLE)
-        //    {
-        //        throw new ArgumentException("Missing value only works for numeric or STRING types");
-        //    }
-        //    this.missingValue = value;
-        //}
+        public virtual void SetMissingValue(object value)
+        {
+            if (type == SortFieldType.STRING)
+            {
+                if (value != STRING_FIRST && value != STRING_LAST)
+                {
+                    throw new ArgumentException("For STRING type, missing value must be either STRING_FIRST or STRING_LAST");
+                }
+            }
+#pragma warning disable 612, 618
+            else if (type != SortFieldType.BYTE && type != SortFieldType.INT16
+#pragma warning restore 612, 618
+                && type != SortFieldType.INT32 && type != SortFieldType.SINGLE && type != SortFieldType.INT64 && type != SortFieldType.DOUBLE)
+            {
+                throw new ArgumentException("Missing value only works for numeric or STRING types");
+            }
+            this.m_missingValue = value;
+        }
+
+        [CLSCompliant(false)]
+        [Obsolete]
+        public void SetMissingValue(sbyte value)
+        {
+            SetMissingValue((object)J2N.Numerics.SByte.GetInstance(value));
+        }
+
+        [Obsolete]
+        public void SetMissingValue(byte value)
+        {
+            SetMissingValue((object)J2N.Numerics.SByte.GetInstance((sbyte)value));
+        }
+
+        [Obsolete]
+        public void SetMissingValue(short value)
+        {
+            SetMissingValue((object)J2N.Numerics.Int16.GetInstance(value));
+        }
+
+        public void SetMissingValue(int value)
+        {
+            SetMissingValue((object)J2N.Numerics.Int32.GetInstance(value));
+        }
+
+        public void SetMissingValue(long value)
+        {
+            SetMissingValue((object)J2N.Numerics.Int64.GetInstance(value));
+        }
+
+        public void SetMissingValue(double value)
+        {
+            SetMissingValue((object)J2N.Numerics.Double.GetInstance(value));
+        }
+
+        public void SetMissingValue(float value)
+        {
+            SetMissingValue((object)J2N.Numerics.Single.GetInstance(value));
+        }
 
         /// <summary>
         /// Creates a sort with a custom comparison function. </summary>
@@ -246,7 +267,7 @@ namespace Lucene.Net.Search
         private void InitFieldType(string field, SortFieldType type)
         {
             this.type = type;
-            if (field == null)
+            if (field is null)
             {
                 if (type != SortFieldType.SCORE && type != SortFieldType.DOC)
                 {
@@ -436,23 +457,23 @@ namespace Lucene.Net.Search
                     return new FieldComparer.DocComparer(numHits);
 
                 case SortFieldType.INT32:
-                    return new FieldComparer.Int32Comparer(numHits, field, parser, (int?)m_missingValue);
+                    return new FieldComparer.Int32Comparer(numHits, field, parser, (J2N.Numerics.Int32)m_missingValue);
 
                 case SortFieldType.SINGLE:
-                    return new FieldComparer.SingleComparer(numHits, field, parser, (float?)m_missingValue);
+                    return new FieldComparer.SingleComparer(numHits, field, parser, (J2N.Numerics.Single)m_missingValue);
 
                 case SortFieldType.INT64:
-                    return new FieldComparer.Int64Comparer(numHits, field, parser, (long?)m_missingValue);
+                    return new FieldComparer.Int64Comparer(numHits, field, parser, (J2N.Numerics.Int64)m_missingValue);
 
                 case SortFieldType.DOUBLE:
-                    return new FieldComparer.DoubleComparer(numHits, field, parser, (double?)m_missingValue);
+                    return new FieldComparer.DoubleComparer(numHits, field, parser, (J2N.Numerics.Double)m_missingValue);
 
 #pragma warning disable 612, 618
                 case SortFieldType.BYTE:
-                    return new FieldComparer.ByteComparer(numHits, field, parser, (sbyte?)m_missingValue);
+                    return new FieldComparer.ByteComparer(numHits, field, parser, (J2N.Numerics.SByte)m_missingValue);
 
                 case SortFieldType.INT16:
-                    return new FieldComparer.Int16Comparer(numHits, field, parser, (short?)m_missingValue);
+                    return new FieldComparer.Int16Comparer(numHits, field, parser, (J2N.Numerics.Int16)m_missingValue);
 #pragma warning restore 612, 618
 
                 case SortFieldType.CUSTOM:

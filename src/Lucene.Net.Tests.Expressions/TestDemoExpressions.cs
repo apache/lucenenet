@@ -119,7 +119,7 @@ namespace Lucene.Net.Expressions
             {
                 FieldDoc d = (FieldDoc)td.ScoreDocs[i];
                 float expected = (float)Math.Sqrt(d.Score);
-                float actual = (float)((double)d.Fields[0]);
+                float actual = ((J2N.Numerics.Double)d.Fields[0]).ToSingle();
                 Assert.AreEqual(expected, actual, CheckHits.ExplainToleranceDelta(expected, actual));
             }
         }
@@ -138,7 +138,7 @@ namespace Lucene.Net.Expressions
             {
                 FieldDoc d = (FieldDoc)td.ScoreDocs[i];
                 float expected = 2 * d.Score;
-                float actual = (float)((double)d.Fields[0]);
+                float actual = ((J2N.Numerics.Double)d.Fields[0]).ToSingle();
                 Assert.AreEqual(expected, actual, CheckHits.ExplainToleranceDelta
                     (expected, actual));
             }
@@ -160,7 +160,7 @@ namespace Lucene.Net.Expressions
             {
                 FieldDoc d = (FieldDoc)td.ScoreDocs[i];
                 float expected = 2 * d.Score;
-                float actual = (float)((double)d.Fields[0]);
+                float actual = ((J2N.Numerics.Double)d.Fields[0]).ToSingle();
                 Assert.AreEqual(expected, actual, CheckHits.ExplainToleranceDelta
                     (expected, actual));
             }
@@ -199,7 +199,7 @@ namespace Lucene.Net.Expressions
             {
                 FieldDoc d = (FieldDoc)td.ScoreDocs[i_1];
                 float expected = n * d.Score;
-                float actual = (float)((double)d.Fields[0]);
+                float actual = ((J2N.Numerics.Double)d.Fields[0]).ToSingle();
                 Assert.AreEqual(expected, actual, CheckHits.ExplainToleranceDelta(expected, actual));
             }
         }
@@ -214,11 +214,11 @@ namespace Lucene.Net.Expressions
             Sort sort = new Sort(distance.GetSortField(bindings, false));
             TopFieldDocs td = searcher.Search(new MatchAllDocsQuery(), null, 3, sort);
             FieldDoc d = (FieldDoc)td.ScoreDocs[0];
-            Assert.AreEqual(0.4619D, (double)d.Fields[0], 1E-4);
+            Assert.AreEqual(0.4619D, (J2N.Numerics.Double)d.Fields[0], 1E-4);
             d = (FieldDoc)td.ScoreDocs[1];
-            Assert.AreEqual(1.0546D, (double)d.Fields[0], 1E-4);
+            Assert.AreEqual(1.0546D, (J2N.Numerics.Double)d.Fields[0], 1E-4);
             d = (FieldDoc)td.ScoreDocs[2];
-            Assert.AreEqual(5.2842D, (double)d.Fields[0], 1E-4);
+            Assert.AreEqual(5.2842D, (J2N.Numerics.Double)d.Fields[0], 1E-4);
         }
     }
 }
