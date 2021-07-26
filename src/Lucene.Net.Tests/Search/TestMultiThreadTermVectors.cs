@@ -177,7 +177,6 @@ namespace Lucene.Net.Search
             }
         }
 
-        [Test]
         public void Run()
         {
             try
