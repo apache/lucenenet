@@ -4,6 +4,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using System;
 using System.Collections;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Queries.Function
 {
@@ -131,7 +132,7 @@ namespace Lucene.Net.Queries.Function
         /// off of the <see cref="FunctionValues"/> for a <see cref="ValueSource"/>
         /// instead of the normal Lucene <see cref="FieldComparer"/> that works off of a <see cref="FieldCache"/>.
         /// </summary>
-        internal class ValueSourceComparer : FieldComparer<double?>
+        internal class ValueSourceComparer : FieldComparer<J2N.Numerics.Double>
         {
             private readonly ValueSource outerInstance;
 
@@ -150,12 +151,14 @@ namespace Lucene.Net.Queries.Function
 
             public override int Compare(int slot1, int slot2)
             {
-                return values[slot1].CompareTo(values[slot2]);
+                // LUCENENET specific - use JCG comparer to get the same logic as Java
+                return JCG.Comparer<double>.Default.Compare(values[slot1], values[slot2]);
             }
 
             public override int CompareBottom(int doc)
             {
-                return bottom.CompareTo(docVals.DoubleVal(doc));
+                // LUCENENET specific - use JCG comparer to get the same logic as Java
+                return JCG.Comparer<double>.Default.Compare(bottom, docVals.DoubleVal(doc));
             }
 
             public override void Copy(int slot, int doc)
@@ -174,18 +177,19 @@ namespace Lucene.Net.Queries.Function
                 this.bottom = values[slot];
             }
 
-            public override void SetTopValue(object value)
+            public override void SetTopValue(J2N.Numerics.Double value)
             {
-                this.topValue = (double)value;
+                this.topValue = value ?? throw new ArgumentNullException(nameof(value)); // LUCENENET specific - throw ArgumentNullException rather than getting a cast exception
             }
 
             // LUCENENET NOTE: This was value(int) in Lucene.
-            public override IComparable this[int slot] => values[slot];
+            public override J2N.Numerics.Double this[int slot] => values[slot]; // LUCENENET NOTE: Implicit cast will instantiate new instance
 
             public override int CompareTop(int doc)
             {
                 double docValue = docVals.DoubleVal(doc);
-                return topValue.CompareTo(docValue);
+                // LUCENENET specific - use JCG comparer to get the same logic as Java
+                return JCG.Comparer<double>.Default.Compare(topValue, docValue);
             }
         }
     }

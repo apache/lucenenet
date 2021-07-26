@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -6,6 +6,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestElevationComparer : LuceneTestCase
     {
-        private readonly IDictionary<BytesRef, int?> priority = new Dictionary<BytesRef, int?>();
+        private readonly IDictionary<BytesRef, int> priority = new Dictionary<BytesRef, int>();
 
         [Test]
         public virtual void TestSorting()
@@ -138,9 +139,9 @@ namespace Lucene.Net.Search
 
     internal class ElevationComparerSource : FieldComparerSource
     {
-        private readonly IDictionary<BytesRef, int?> priority;
+        private readonly IDictionary<BytesRef, int> priority;
 
-        public ElevationComparerSource(IDictionary<BytesRef, int?> boosts)
+        public ElevationComparerSource(IDictionary<BytesRef, int> boosts)
         {
             this.priority = boosts;
         }
@@ -150,7 +151,7 @@ namespace Lucene.Net.Search
             return new FieldComparerAnonymousClass(this, fieldname, numHits);
         }
 
-        private class FieldComparerAnonymousClass : FieldComparer
+        private class FieldComparerAnonymousClass : FieldComparer<J2N.Numerics.Int32>
         {
             private readonly ElevationComparerSource outerInstance;
 
@@ -171,9 +172,9 @@ namespace Lucene.Net.Search
             private readonly BytesRef tempBR;
             internal int bottomVal;
 
-            public override int CompareValues(object first, object second)
+            public override int CompareValues(J2N.Numerics.Int32 first, J2N.Numerics.Int32 second)
             {
-                return ((IComparable) first).CompareTo(second);
+                return JCG.Comparer<J2N.Numerics.Int32>.Default.Compare(first, second);
             }
 
             public override int Compare(int slot1, int slot2)
@@ -186,7 +187,7 @@ namespace Lucene.Net.Search
                 bottomVal = values[slot];
             }
 
-            public override void SetTopValue(object value)
+            public override void SetTopValue(J2N.Numerics.Int32 value)
             {
                 throw UnsupportedOperationException.Create();
             }
@@ -201,9 +202,9 @@ namespace Lucene.Net.Search
                 else
                 {
                     idIndex.LookupOrd(ord, tempBR);
-                    if (outerInstance.priority.TryGetValue(tempBR, out int? prio))
+                    if (outerInstance.priority.TryGetValue(tempBR, out int prio))
                     {
-                        return (int)prio;
+                        return prio;
                     }
                     return 0;
                 }
@@ -226,7 +227,7 @@ namespace Lucene.Net.Search
             }
 
             // LUCENENET NOTE: This was value(int) in Lucene.
-            public override IComparable this[int slot] => values[slot];
+            public override J2N.Numerics.Int32 this[int slot] => J2N.Numerics.Int32.GetInstance(values[slot]);
 
             public override int CompareTop(int doc)
             {

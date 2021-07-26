@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -39,24 +39,17 @@ namespace Lucene.Net.Search
     /// @since   lucene 1.4 </summary>
     /// <seealso cref="ScoreDoc"/>
     /// <seealso cref="TopFieldDocs"/>
-    public class FieldDoc : ScoreDoc // LUCENENET TODO: Is it possible to make this class generic so we don't have to deal with boxing?
+    public class FieldDoc : ScoreDoc
     {
         /// <summary>
         /// Expert: The values which are used to sort the referenced document.
         /// The order of these will match the original sort criteria given by a
         /// <see cref="Sort"/> object.  Each Object will have been returned from
-        /// the <see cref="FieldComparer.this[int]"/> method corresponding
+        /// the <see cref="FieldComparer.GetValue(int)"/> method corresponding
         /// FieldComparer used to sort this field. </summary>
         /// <seealso cref="Sort"/>
         /// <seealso cref="IndexSearcher.Search(Query,Filter,int,Sort)"/>
-        [WritableArray]
-        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public object[] Fields
-        {
-            get => fields;
-            set => fields = value;
-        }
-        private object[] fields;
+        public object[] Fields;
 
         /// <summary>
         /// Expert: Creates one of these objects with empty sort information. </summary>
@@ -70,7 +63,7 @@ namespace Lucene.Net.Search
         public FieldDoc(int doc, float score, object[] fields)
             : base(doc, score)
         {
-            this.fields = fields;
+            this.Fields = fields;
         }
 
         /// <summary>
@@ -78,7 +71,7 @@ namespace Lucene.Net.Search
         public FieldDoc(int doc, float score, object[] fields, int shardIndex)
             : base(doc, score, shardIndex)
         {
-            this.fields = fields;
+            this.Fields = fields;
         }
 
         /// <summary>
@@ -90,7 +83,7 @@ namespace Lucene.Net.Search
             // fields information
             StringBuilder sb = new StringBuilder(base.ToString());
             sb.Append(" fields=");
-            sb.Append(Arrays.ToString(fields));
+            sb.Append(Arrays.ToString(Fields));
             return sb.ToString();
         }
     }

@@ -177,7 +177,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 textDV.Get(fd.Doc, scratch);
                 string text = scratch.Utf8ToString();
-                long weight = (long)fd.Fields[0];
+                long weight = (J2N.Numerics.Int64)fd.Fields[0];
 
                 BytesRef payload;
                 if (payloadsDV != null)

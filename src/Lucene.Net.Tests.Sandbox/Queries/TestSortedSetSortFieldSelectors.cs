@@ -175,7 +175,7 @@ namespace Lucene.Net.Sandbox.Queries
             IndexSearcher searcher = NewSearcher(ir, false);
 
             SortField sortField = new SortedSetSortField("value", false, Selector.MAX);
-            sortField.MissingValue = SortField.STRING_FIRST;
+            sortField.SetMissingValue(SortField.STRING_FIRST);
             Sort sort = new Sort(sortField);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -219,7 +219,7 @@ namespace Lucene.Net.Sandbox.Queries
             IndexSearcher searcher = NewSearcher(ir, false);
 
             SortField sortField = new SortedSetSortField("value", false, Selector.MAX);
-            sortField.MissingValue = SortField.STRING_LAST;
+            sortField.SetMissingValue(SortField.STRING_LAST);
             Sort sort = new Sort(sortField);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -375,7 +375,7 @@ namespace Lucene.Net.Sandbox.Queries
             // slow wrapper does not support random access ordinals (there is no need for that!)
             IndexSearcher searcher = NewSearcher(ir, false);
             SortField sortField = new SortedSetSortField("value", false, Selector.MIDDLE_MIN);
-            sortField.MissingValue = SortField.STRING_FIRST;
+            sortField.SetMissingValue(SortField.STRING_FIRST);
             Sort sort = new Sort(sortField);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -420,7 +420,7 @@ namespace Lucene.Net.Sandbox.Queries
             // slow wrapper does not support random access ordinals (there is no need for that!)
             IndexSearcher searcher = NewSearcher(ir, false);
             SortField sortField = new SortedSetSortField("value", false, Selector.MIDDLE_MIN);
-            sortField.MissingValue = SortField.STRING_LAST;
+            sortField.SetMissingValue(SortField.STRING_LAST);
             Sort sort = new Sort(sortField);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -576,7 +576,7 @@ namespace Lucene.Net.Sandbox.Queries
             // slow wrapper does not support random access ordinals (there is no need for that!)
             IndexSearcher searcher = NewSearcher(ir, false);
             SortField sortField = new SortedSetSortField("value", false, Selector.MIDDLE_MAX);
-            sortField.MissingValue = SortField.STRING_FIRST;
+            sortField.SetMissingValue(SortField.STRING_FIRST);
             Sort sort = new Sort(sortField);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -621,7 +621,7 @@ namespace Lucene.Net.Sandbox.Queries
             // slow wrapper does not support random access ordinals (there is no need for that!)
             IndexSearcher searcher = NewSearcher(ir, false);
             SortField sortField = new SortedSetSortField("value", false, Selector.MIDDLE_MAX);
-            sortField.MissingValue = SortField.STRING_LAST;
+            sortField.SetMissingValue(SortField.STRING_LAST);
             Sort sort = new Sort(sortField);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);

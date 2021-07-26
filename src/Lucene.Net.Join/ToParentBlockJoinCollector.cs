@@ -497,7 +497,7 @@ namespace Lucene.Net.Search.Join
                     groupSortValues = new object[comparers.Length];
                     for (int sortFieldIdx = 0; sortFieldIdx < comparers.Length; sortFieldIdx++)
                     {
-                        groupSortValues[sortFieldIdx] = comparers[sortFieldIdx][og.Slot];
+                        groupSortValues[sortFieldIdx] = comparers[sortFieldIdx].GetValue(og.Slot);
                     }
                 }
                 else
