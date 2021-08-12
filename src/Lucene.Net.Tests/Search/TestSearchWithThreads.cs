@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
 #endif
                 Random, dir);
 
-            long startTime = Environment.TickCount;
+            long startTime = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             // TODO: replace w/ the @nightly test data; make this
             // into an optional @nightly stress test
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
             IndexReader r = w.GetReader();
             w.Dispose();
 
-            long endTime = Environment.TickCount;
+            long endTime = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             if (Verbose)
             {
                 Console.WriteLine("BUILD took " + (endTime - startTime));
@@ -146,8 +146,8 @@ namespace Lucene.Net.Search
                 {
                     long totHits = 0;
                     long totSearch = 0;
-                    long stopAt = Environment.TickCount + outerInstance.RUN_TIME_MSEC;
-                    while (Environment.TickCount < stopAt && !failed)
+                    long stopAt = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + outerInstance.RUN_TIME_MSEC; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
+                    while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopAt && !failed) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     {
                         s.Search(new TermQuery(new Term("body", "aaa")), col);
                         totHits += col.TotalHits;

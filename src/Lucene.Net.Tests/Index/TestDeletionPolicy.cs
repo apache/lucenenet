@@ -273,7 +273,7 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, conf);
             ExpirationTimeDeletionPolicy policy = (ExpirationTimeDeletionPolicy)writer.Config.IndexDeletionPolicy;
             IDictionary<string, string> commitData = new Dictionary<string, string>();
-            commitData["commitTime"] = Convert.ToString(Environment.TickCount);
+            commitData["commitTime"] = Convert.ToString(J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             writer.SetCommitData(commitData);
             writer.Commit();
             writer.Dispose();
@@ -284,7 +284,7 @@ namespace Lucene.Net.Index
             {
                 // Record last time when writer performed deletes of
                 // past commits
-                lastDeleteTime = Environment.TickCount;
+                lastDeleteTime = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetIndexDeletionPolicy(policy);
                 mp = conf.MergePolicy;
                 mp.NoCFSRatio = 1.0;
@@ -295,7 +295,7 @@ namespace Lucene.Net.Index
                     AddDoc(writer);
                 }
                 commitData = new Dictionary<string, string>();
-                commitData["commitTime"] = Convert.ToString(Environment.TickCount);
+                commitData["commitTime"] = Convert.ToString(J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 writer.SetCommitData(commitData);
                 writer.Commit();
                 writer.Dispose();
