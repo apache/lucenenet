@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
                         Console.WriteLine("[" + Thread.CurrentThread.Name + "]: launch reopen thread");
                     }
 
-                    while (Environment.TickCount < stopTime)
+                    while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTime) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     {
                         Thread.Sleep(TestUtil.NextInt32(Random, 1, 100));
                         outerInstance.m_writer.Commit();
