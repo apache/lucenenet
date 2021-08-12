@@ -181,7 +181,7 @@ Building on the Command Line is currently only supported on Windows.
 
 ##### Execution
 
-To build the source, clone or download and unzip the repository. From the repository root, execute:
+To build the source, clone or download and unzip the repository. From the repository root, execute the `batch.bat` file from a command prompt and include the desired options from the build options table below:
 
 ```
 > build [options]
@@ -227,6 +227,14 @@ To build the source, clone or download and unzip the repository. From the reposi
         <td>build&nbsp;&#8209;pv:4.8.0&#8209;beta00001&nbsp;&#8209;v:4.8.0</td>
     </tr>
 </table>
+
+For example the following command creates a Release build with NuGet package version 4.8.0‑beta00014b and assembly file version 4.8.0:
+
+```
+> build ‑‑Configuration:Release ‑pv:4.8.0‑beta00014b ‑v:4.8.0
+```
+
+In the above example we are using "b" at the end of the version to indicate this is not a publically released beta version but rather the ouput of a build from master which occured after beta00014 but before beta00015 was released.  
 
 NuGet packages are output by the build to the `/release/NuGetPackages/` directory. Test results (if applicable) are output to the `/release/TestResults/` directory.
 
