@@ -22,6 +22,7 @@
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
@@ -49,7 +50,9 @@ namespace Lucene.Net.Support
 
         private WeakDictionary(int initialCapacity, IEnumerable<KeyValuePair<TKey, TValue>> otherDict)
         {
-            _hm = new JCG.Dictionary<WeakKey<TKey>, TValue>(initialCapacity);
+            // LUCENENET specific - using ConcurrentDictionary here not because we need concurrency, but because
+            // it allows removing items while iterating forward.
+            _hm = new ConcurrentDictionary<WeakKey<TKey>, TValue>(concurrencyLevel: 10, capacity: initialCapacity);
             foreach (var kvp in otherDict)
             {
                 _hm.Add(new WeakKey<TKey>(kvp.Key), kvp.Value);
@@ -63,19 +66,11 @@ namespace Lucene.Net.Support
         private void Clean()
         {
             if (_hm.Count == 0) return;
-            var newHm = new JCG.Dictionary<WeakKey<TKey>, TValue>(_hm.Count);
             foreach (var kvp in _hm)
             {
-                if (kvp.Key.TryGetTarget(out TKey _))
-                {
-                    // LUCENENET: There is a tiny chance that a call to remove the item
-                    // from the dictionary can happen before this line is executed. Therefore,
-                    // just discard the reference and add it as is, even if it is no longer valid
-                    // in this edge case. It is far more efficient to re-use the same instances, anyway.
-                    newHm.Add(kvp.Key, kvp.Value);
-                }
+                if (!kvp.Key.TryGetTarget(out TKey _))
+                    _hm.Remove(kvp.Key);
             }
-            _hm = newHm;
         }
 
         private void CleanIfNeeded()
