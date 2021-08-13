@@ -534,11 +534,7 @@ namespace Lucene.Net.Store
         {
             if (randomState.NextBoolean())
             {
-#if !FEATURE_THREAD_YIELD
-                Thread.Sleep(0);
-#else
                 Thread.Yield();
-#endif
             }
         }
 

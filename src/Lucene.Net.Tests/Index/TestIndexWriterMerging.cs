@@ -464,7 +464,7 @@ namespace Lucene.Net.Index
                             break;
                         }
 #pragma warning disable 168
-                        catch (NullReferenceException e)
+                        catch (NullReferenceException e) // LUCENENET TODO: We should fix the components so this cannot occur (assuming it can).
 #pragma warning restore 168
                         {
                             done = true;
@@ -478,7 +478,7 @@ namespace Lucene.Net.Index
                             break;
                         }
                     }
-                    Thread.Sleep(0);
+                    Thread.Yield();
                 }
             }
         }

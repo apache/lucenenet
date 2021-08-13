@@ -150,7 +150,7 @@ namespace Lucene.Net.Store
             {
                 int half = len / 2;
                 @delegate.WriteBytes(b, offset, half);
-                Thread.Sleep(0);
+                Thread.Yield();
                 @delegate.WriteBytes(b, offset + half, len - half);
             }
             else
