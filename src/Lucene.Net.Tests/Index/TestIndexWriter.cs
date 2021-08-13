@@ -785,7 +785,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-#if FEATURE_THREAD_PRIORITY
         // LUCENE-1036
         [Test]
         public virtual void TestMaxThreadPriority()
@@ -814,7 +813,6 @@ namespace Lucene.Net.Index
                 Thread.CurrentThread.Priority = pri;
             }
         }
-#endif
 
         [Test]
         public virtual void TestVariableSchema()
