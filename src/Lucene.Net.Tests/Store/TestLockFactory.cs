@@ -1,6 +1,7 @@
 ﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -441,7 +442,7 @@ namespace Lucene.Net.Store
             }
 
             public bool LockPrefixSet;
-            public IDictionary<string, Lock> LocksCreated = /*CollectionsHelper.SynchronizedMap(*/new Dictionary<string, Lock>()/*)*/;
+            public IDictionary<string, Lock> LocksCreated = new Dictionary<string, Lock>().AsConcurrent();
             public int MakeLockCount = 0;
 
             public override string LockPrefix
