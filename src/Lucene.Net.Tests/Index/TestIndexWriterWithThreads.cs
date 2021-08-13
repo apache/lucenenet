@@ -780,10 +780,10 @@ namespace Lucene.Net.Index
                                 {
                                     // ok
                                 }
-                                //catch (NullReferenceException) // LUCENENET specific - NullReferenceException must be allowed to propagate so we can defensively avoid it in .NET
-                                //{
-                                //    // ok
-                                //}
+                                catch (NullReferenceException) // LUCENENET TODO: - NullReferenceException must be allowed to propagate so we can defensively avoid it in .NET
+                                {
+                                    // ok
+                                }
                                 finally
                                 {
                                     commitLock.Unlock();
@@ -803,10 +803,10 @@ namespace Lucene.Net.Index
                                 {
                                     // ok
                                 }
-                                //catch (NullReferenceException) // LUCENENET specific - NullReferenceException must be allowed to propagate so we can defensively avoid it in .NET
-                                //{
-                                //    // ok
-                                //}
+                                catch (NullReferenceException) // LUCENENET TODO: - NullReferenceException must be allowed to propagate so we can defensively avoid it in .NET
+                                {
+                                    // ok
+                                }
                                 catch (Exception ae) when (ae.IsAssertionError())
                                 {
                                     // ok
