@@ -501,11 +501,7 @@ namespace Lucene.Net.Store
         //                        using (IndexOutput output = this.dir.CreateOutput(fileName, NewIOContext(Random)))
         //                        {
         //                            // Add some lags so that the other thread can read the content of the directory.
-        //#if !FEATURE_THREAD_YIELD
-        //                            Thread.Sleep(0);
-        //#else
         //                            Thread.Yield();
-        //#endif
         //                        }
         //                        assertTrue(SlowFileExists(this.dir, fileName));
         //                    }

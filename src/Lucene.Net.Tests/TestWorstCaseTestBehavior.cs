@@ -26,7 +26,6 @@ namespace Lucene.Net
 
     public class TestWorstCaseTestBehavior : LuceneTestCase
     {
-#if FEATURE_THREAD_YIELD
         [Ignore("Ignored in Lucene")]
         [Test]
         public virtual void TestThreadLeak()
@@ -41,7 +40,6 @@ namespace Lucene.Net
 
             // once alive, leave it to run outside of the test scope.
         }
-#endif
 
         private class ThreadAnonymousClass : ThreadJob
         {
