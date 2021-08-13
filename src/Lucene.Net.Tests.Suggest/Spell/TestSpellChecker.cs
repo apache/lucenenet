@@ -561,9 +561,7 @@ namespace Lucene.Net.Search.Spell
 
             public override void Run()
             {
-#if FEATURE_THREAD_PRIORITY
                 Priority += 1;
-#endif
                 try
                 {
                     while (!stop)

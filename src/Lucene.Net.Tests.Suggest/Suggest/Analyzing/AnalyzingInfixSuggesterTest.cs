@@ -539,9 +539,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             public override void Run()
             {
-#if FEATURE_THREAD_PRIORITY
                 Priority += 1;
-#endif
                 while (!stop)
                 {
                     string query = RandomText();
