@@ -1,5 +1,6 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -35,12 +36,15 @@ namespace Lucene.Net.Search
     /// </summary>
     public class CachingWrapperFilter : Filter
     {
-        private readonly Filter _filter;
+        private readonly Filter filter;
 
+        // LUCENENET specific - since neither ConditionalWeakTable or ConcurrentDictionaryWrapper expose its lock, we need to synchronize externally
+        private readonly object cacheLock = new object();
 #if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
-        private readonly ConditionalWeakTable<object, DocIdSet> _cache = new ConditionalWeakTable<object, DocIdSet>();
+        private readonly ConditionalWeakTable<object, DocIdSet> cache = new ConditionalWeakTable<object, DocIdSet>();
 #else
-        private readonly IDictionary<object, DocIdSet> _cache = new WeakDictionary<object, DocIdSet>().AsConcurrent();
+        // LUCENENET specific - since we are doing external synchronization anyway, there is no point in using .AsConcurrent() here.
+        private readonly IDictionary<object, DocIdSet> cache = new WeakDictionary<object, DocIdSet>();
 #endif
 
         /// <summary>
@@ -48,13 +52,14 @@ namespace Lucene.Net.Search
         /// <param name="filter"> Filter to cache results of </param>
         public CachingWrapperFilter(Filter filter)
         {
-            this._filter = filter;
+            // LUCENENET specific - throw when the value is null, since it will cause excpetions in other methods
+            this.filter = filter ?? throw new ArgumentNullException(nameof(filter));
         }
 
         /// <summary>
         /// Gets the contained filter. </summary>
         /// <returns> the contained filter. </returns>
-        public virtual Filter Filter => _filter;
+        public virtual Filter Filter => filter;
 
         /// <summary>
         /// Provide the <see cref="DocIdSet"/> to be cached, using the <see cref="DocIdSet"/> provided
@@ -112,19 +117,28 @@ namespace Lucene.Net.Search
             var reader = context.AtomicReader;
             object key = reader.CoreCacheKey;
 
-            if (_cache.TryGetValue(key, out DocIdSet docIdSet) && docIdSet != null)
+            // LUCENENET specific - externally sync on all methods to the cache, since we cannot do this with our collections
+            bool got;
+            DocIdSet docIdSet;
+            lock (cacheLock)
+                got = cache.TryGetValue(key, out docIdSet);
+
+            if (got && docIdSet != null)
             {
                 hitCount++;
             }
             else
             {
                 missCount++;
-                docIdSet = DocIdSetToCache(_filter.GetDocIdSet(context, null), reader);
+                docIdSet = DocIdSetToCache(filter.GetDocIdSet(context, null), reader);
                 if (Debugging.AssertsEnabled) Debugging.Assert(docIdSet.IsCacheable);
+
+                // LUCENENET specific - externally sync on all methods to the cache, since we cannot do this with our collections
+                lock (cacheLock)
 #if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
-                _cache.AddOrUpdate(key, docIdSet);
+                    cache.AddOrUpdate(key, docIdSet);
 #else
-                _cache[key] = docIdSet;
+                    cache[key] = docIdSet;
 #endif
             }
 
@@ -133,19 +147,19 @@ namespace Lucene.Net.Search
 
         public override string ToString()
         {
-            return this.GetType().Name + "(" + _filter + ")";
+            return this.GetType().Name + "(" + filter + ")";
         }
 
         public override bool Equals(object o)
         {
             if (o is null) return false;
             if (!(o is CachingWrapperFilter other)) return false;
-            return _filter.Equals(other._filter);
+            return filter.Equals(other.filter);
         }
 
         public override int GetHashCode()
         {
-            return (_filter.GetHashCode() ^ this.GetType().GetHashCode());
+            return (filter.GetHashCode() ^ this.GetType().GetHashCode());
         }
 
         /// <summary>
@@ -171,14 +185,14 @@ namespace Lucene.Net.Search
         {
             // Sync only to pull the current set of values:
             List<DocIdSet> docIdSets;
-            lock (_cache)
+            lock (cacheLock)
             {
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                 docIdSets = new List<DocIdSet>();
-                foreach (var pair in _cache)
+                foreach (var pair in cache)
                     docIdSets.Add(pair.Value);
 #else
-                docIdSets = new List<DocIdSet>(_cache.Values);
+                docIdSets = new List<DocIdSet>(cache.Values);
 #endif
             }
 
