@@ -3,6 +3,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
@@ -195,7 +196,7 @@ namespace Lucene.Net.Index
 
         private void NotifyCoreClosedListeners(Exception th)
         {
-            lock (coreClosedListeners)
+            lock (((ICollection)coreClosedListeners).SyncRoot) // LUCENENET: We need to lock on SyncRoot to ensure we are synchronized with the rest of ConcurrentSet<T>
             {
                 foreach (ICoreDisposedListener listener in coreClosedListeners)
                 {
