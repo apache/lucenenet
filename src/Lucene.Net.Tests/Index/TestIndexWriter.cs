@@ -2,6 +2,7 @@
 using J2N.Threading;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Diagnostics;
@@ -1429,6 +1430,7 @@ namespace Lucene.Net.Index
         [Test]
         [Slow]
         [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test occasionally fails
+        [Deadlock][Timeout(900000)] // LUCENENET TODO: this test occasionally deadlocks
         public virtual void TestThreadInterruptDeadlock()
         {
             IndexerThreadInterrupt t = new IndexerThreadInterrupt(this);
@@ -1470,6 +1472,7 @@ namespace Lucene.Net.Index
         [Test]
         [Slow]
         [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test occasionally fails
+        [Deadlock][Timeout(900000)] // LUCENENET TODO: this test occasionally deadlocks
         public virtual void TestTwoThreadsInterruptDeadlock()
         {
             IndexerThreadInterrupt t1 = new IndexerThreadInterrupt(this);
