@@ -755,7 +755,7 @@ namespace Lucene.Net.Index
 
             internal override void Handle(Exception t)
             {
-                Console.Error.WriteLine(t.StackTrace);
+                t.printStackTrace(Console.Out);
                 lock (failures)
                 {
                     failures.Add(t);
@@ -853,9 +853,9 @@ namespace Lucene.Net.Index
 
             internal override void Handle(Exception t)
             {
-                if (!(t is ObjectDisposedException) && !(t is NullReferenceException))
+                if (!t.IsAlreadyClosedException() && !(t is NullReferenceException))
                 {
-                    Console.Error.WriteLine(t.StackTrace);
+                    t.printStackTrace(Console.Out);
                     lock (failures)
                     {
                         failures.Add(t);
@@ -942,7 +942,7 @@ namespace Lucene.Net.Index
             {
                 bool report = true;
 
-                if (t is ObjectDisposedException || t is MergePolicy.MergeAbortedException || t is NullReferenceException)
+                if (t.IsAlreadyClosedException() || t is MergePolicy.MergeAbortedException || t is NullReferenceException)
                 {
                     report = !didClose;
                 }
@@ -950,7 +950,7 @@ namespace Lucene.Net.Index
                 {
                     report = !didClose;
                 }
-                else if (t is IOException)
+                else if (t.IsIOException())
                 {
                     Exception t2 = t.InnerException;
                     if (t2 is MergePolicy.MergeAbortedException)
@@ -960,7 +960,7 @@ namespace Lucene.Net.Index
                 }
                 if (report)
                 {
-                    Console.Out.WriteLine(t.StackTrace);
+                    t.printStackTrace(Console.Out);
                     lock (failures)
                     {
                         failures.Add(t);
