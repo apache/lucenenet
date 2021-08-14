@@ -121,9 +121,9 @@ stages:
       displayName: 'Setup Default Variable Values'
 
     - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk 5.0.100'
+      displayName: 'Use .NET Core sdk 5.0.400'
       inputs:
-        version: 5.0.100
+        version: 5.0.400
 
     - pwsh: |
         Import-Module "$(BuildDirectory)/psake.psm1"

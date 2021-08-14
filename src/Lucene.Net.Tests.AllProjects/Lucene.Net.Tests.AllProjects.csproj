@@ -38,7 +38,13 @@
     <ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
 
     <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Analysis.*\Lucene.Net.Analysis.*.csproj" Exclude="..\Lucene.Net.Analysis.OpenNLP\Lucene.Net.Analysis.OpenNLP.csproj" />
+    <!-- We must not use wildcards here due to the fact that the .github/workflows/Generate-TestWorkflows.ps1 project requires them to be whole in order to resolve dependent projects -->
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Analysis.Kuromoji\Lucene.Net.Analysis.Kuromoji.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Analysis.Morfologik\Lucene.Net.Analysis.Morfologik.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Analysis.Phonetic\Lucene.Net.Analysis.Phonetic.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Analysis.SmartCn\Lucene.Net.Analysis.SmartCn.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Analysis.Stempel\Lucene.Net.Analysis.Stempel.csproj" />
     <ProjectReference Include="..\Lucene.Net.Benchmark\Lucene.Net.Benchmark.csproj" />
     <ProjectReference Include="..\Lucene.Net.Classification\Lucene.Net.Classification.csproj" />
     <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj" />
