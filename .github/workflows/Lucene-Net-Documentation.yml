@@ -65,11 +65,11 @@ jobs:
           $ref = $Env:GITHUB_REF
 
           if ($ref.StartsWith("refs/tags/")) {
-            # if the ref is a tag
             $tag = $ref.Substring(10)
+            echo "extracted tag name from refs/tags as $tag"
           }
           else {
-            echo "::debug::Get the latest Lucene.Net_ tag"
+            echo "Get the latest Lucene.Net_ tag"
             $tag = & git --git-dir "$Env:GITHUB_WORKSPACE\main-repo" tag --list --sort=-version:refname 'Lucene.Net_*' | select -first 1
           }
 
