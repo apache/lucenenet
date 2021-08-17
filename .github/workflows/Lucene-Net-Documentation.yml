@@ -48,7 +48,7 @@ env:
   RELEASE_VERSION: "(no tag)"
   SITE_REPO: shazwazza/lucenenet-site
   #SITE_REPO: apache/lucenenet-site
-  GIT_MAIN_REPO:  "${{ github.workspace }}\main-repo\.git"
+  GIT_MAIN_REPO:  "${{ github.workspace }}\\main-repo\\.git"
 
 jobs:
   build:
