@@ -68,7 +68,7 @@ jobs:
             $tag = $ref.Substring(10)
           }
           else {
-            # Else get the latest tag
+            # Else get the latest Lucene.Net_* tag
             $tag = & git --git-dir "$Env:GITHUB_WORKSPACE\main-repo" tag --list --sort=-version:refname 'Lucene.Net_*' | select -first 1
           }
 
