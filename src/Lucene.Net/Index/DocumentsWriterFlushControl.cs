@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
         // only for safety reasons if a DWPT is close to the RAM limit
         private readonly LinkedList<BlockedFlush> blockedFlushes = new LinkedList<BlockedFlush>();
 
-        private readonly IDictionary<DocumentsWriterPerThread, long?> flushingWriters = new JCG.Dictionary<DocumentsWriterPerThread, long?>(IdentityEqualityComparer<DocumentsWriterPerThread>.Default);
+        private readonly IDictionary<DocumentsWriterPerThread, long> flushingWriters = new JCG.Dictionary<DocumentsWriterPerThread, long>(IdentityEqualityComparer<DocumentsWriterPerThread>.Default);
 
         internal double maxConfiguredRamBuffer = 0;
         internal long peakActiveBytes = 0; // only with assert
@@ -293,9 +293,9 @@ namespace Lucene.Net.Index
                 if (Debugging.AssertsEnabled) Debugging.Assert(flushingWriters.ContainsKey(dwpt));
                 try
                 {
-                    long? bytes = flushingWriters[dwpt];
+                    long bytes = flushingWriters[dwpt];
                     flushingWriters.Remove(dwpt);
-                    flushBytes -= (long)bytes;
+                    flushBytes -= bytes;
                     //perThreadPool.Recycle(dwpt); // LUCENENET: This is a no-op method in Lucene and it cannot be overridden
                     if (Debugging.AssertsEnabled) Debugging.Assert(AssertMemory());
                 }
