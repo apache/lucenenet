@@ -19,6 +19,9 @@ name: 'Lucene.Net.Documentation'
 
 # This will:
 # checkout this repo
+# get current or latest tag to parse a version
+# change to docs/VERSION branch
+
 # Build the website
 # Checkout the website repo
 # Create a branch
@@ -45,6 +48,7 @@ env:
   RELEASE_VERSION: "(no tag)"
   SITE_REPO: shazwazza/lucenenet-site
   #SITE_REPO: apache/lucenenet-site
+  GIT_MAIN_REPO:  "${{ github.workspace }}\main-repo\.git"
 
 jobs:
   build:
@@ -70,7 +74,7 @@ jobs:
           }
           else {
             echo "Get the latest Lucene.Net_ tag"
-            $tag = & git --git-dir "$Env:GITHUB_WORKSPACE\main-repo\.git" tag --list --sort=-version:refname 'Lucene.Net_*' | select -first 1
+            $tag = & git --git-dir "$Env:GIT_MAIN_REPO" tag --list --sort=-version:refname 'Lucene.Net_*' | select -first 1
           }
 
           if ($tag -eq $null) {
@@ -111,7 +115,7 @@ jobs:
 
       - name: Change branch
         run: |
-          git checkout -b "docs/${{ env.RELEASE_VERSION }}"
+          git --git-dir "$Env:GIT_MAIN_REPO" checkout -b "docs/${{ env.RELEASE_VERSION }}"
         shell: powershell
 
       - name: Build docs
