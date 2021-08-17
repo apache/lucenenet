@@ -19,14 +19,16 @@ name: 'Lucene.Net.Documentation'
 
 # This will:
 # checkout this repo
-# get current or latest tag to parse a version
+# get current or latest tag to parse a version for use in the docs
 # change to docs/VERSION branch
+# Build the docs
 
-# Build the website
 # Checkout the website repo
 # Create a branch
 # Commit/Push to the branch
 # Create a PR
+
+# push the docs/VERSION branch
 
 on:
   workflow_dispatch:
@@ -46,8 +48,7 @@ env:
   # which will be parsed to create the version number used in the docs like 4.8.0-beta00013
   CURRENT_TAG: "NO-VERSION"
   RELEASE_VERSION: "(no tag)"
-  SITE_REPO: shazwazza/lucenenet-site
-  #SITE_REPO: apache/lucenenet-site
+  SITE_REPO: "${{ github.repository }}-site"
   GIT_MAIN_REPO:  "${{ github.workspace }}\\main-repo\\.git"
 
 jobs:

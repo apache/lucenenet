@@ -19,6 +19,7 @@ name: 'Lucene.Net.Website'
 
 # This will:
 # checkout this repo
+# get current or latest tag to parse a version for use in the website
 # Build the website
 # Checkout the website repo
 # Create a branch
@@ -42,8 +43,8 @@ env:
   # will be parsed to create the version number used in the docs like 4.8.0-beta00013
   CURRENT_TAG: "NO-VERSION"
   RELEASE_VERSION: "(no tag)"
-  SITE_REPO: shazwazza/lucenenet-site
-  #SITE_REPO: apache/lucenenet-site
+  SITE_REPO: "${{ github.repository }}-site"
+  GIT_MAIN_REPO:  "${{ github.workspace }}\\main-repo\\.git"
 
 jobs:
   build:
@@ -53,6 +54,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: main-repo
+          fetch-depth: 0
 
       - name: Set version from tag
         run: |
@@ -60,28 +62,42 @@ jobs:
           echo ("CURRENT_TAG=" + $Env:GITHUB_SHA) >> $env:GITHUB_ENV
           $ref = $Env:GITHUB_REF
 
-          # if the ref is a tag
           if ($ref.StartsWith("refs/tags/")) {
             $tag = $ref.Substring(10)
+            echo "extracted tag name from refs/tags as $tag"
+          }
+          else {
+            echo "Get the latest Lucene.Net_ tag"
+            $tag = & git --git-dir "$Env:GIT_MAIN_REPO" tag --list --sort=-version:refname 'Lucene.Net_[0-9]_[0-9]_[0-9]*' | select -first 1
+          }
 
-            # write the environment var
-            echo ("CURRENT_TAG=" + $tag) >> $env:GITHUB_ENV
+          if ($tag -eq $null) {
+            echo "::error::Could not determine current version tag"
+            exit 1
+          }
 
-            $parts = $tag.Split("_")
-            $version = '';
-            For ($i=1; $i -le $parts.Length; $i++) {
-                $version += $parts[$i]
-                if ($i -eq ($parts.Length - 2)) {
-                    $version += "-"
-                }
-                elseif ($i -lt ($parts.Length - 1)) {
-                    $version += "."
-                }
+          # write the environment var
+          echo ("CURRENT_TAG=" + $tag) >> $env:GITHUB_ENV
+
+          $parts = $tag.Split("_")
+          $version = '';
+          For ($i=1; $i -le $parts.Length; $i++) {
+            $version += $parts[$i]
+            if ($i -eq ($parts.Length - 2)) {
+              $version += "-"
             }
-            if ($version -ne '') {
-              # the tag parsed to the correct version format, write the environment var
-              echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_ENV
+            elseif ($i -lt ($parts.Length - 1)) {
+              $version += "."
             }
+          }
+
+          if ($version -ne '') {
+            # the tag parsed to the correct version format, write the environment var
+            echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_ENV
+          }
+          else {
+            echo "::error::Could not parse current version tag"
+            exit 1
           }
         shell: powershell
 
