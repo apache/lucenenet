@@ -74,7 +74,7 @@ jobs:
           }
           else {
             echo "Get the latest Lucene.Net_ tag"
-            $tag = & git --git-dir "$Env:GIT_MAIN_REPO" tag --list --sort=-version:refname 'Lucene.Net_*' | select -first 1
+            $tag = & git --git-dir "$Env:GIT_MAIN_REPO" tag --list --sort=-version:refname 'Lucene.Net_[0-9]_[0-9]_[0-9]*' | select -first 1
           }
 
           if ($tag -eq $null) {
