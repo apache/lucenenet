@@ -32,6 +32,11 @@ on:
     - 'src/Lucene.Net.Tests._A-D/Directory.Build.*'
     - 'src/Directory.Build.*'
     - 'Directory.Build.*'
+    - 'src/Lucene.Net.Tests/Properties/AssemblyInfo.cs'
+    - 'src/Lucene.Net.Tests/*.cs'
+    - 'src/Lucene.Net.Tests/Analysis/**/*.cs'
+    - 'src/Lucene.Net.Tests/Codecs/**/*.cs'
+    - 'src/Lucene.Net.Tests/Document/**/*.cs'
 
     # Dependencies
     - 'src/Lucene.Net/**/*'

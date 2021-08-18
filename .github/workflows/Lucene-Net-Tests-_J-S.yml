@@ -32,6 +32,13 @@ on:
     - 'src/Lucene.Net.Tests._J-S/Directory.Build.*'
     - 'src/Directory.Build.*'
     - 'Directory.Build.*'
+    - 'src/Lucene.Net.Tests/Properties/AssemblyInfo.cs'
+    - 'src/Lucene.Net.Tests/Index/TestIndexWriterReader.cs'
+    - 'src/Lucene.Net.Tests/Search/**/*.cs'
+    - 'src/Lucene.Net.Tests/Store/**/*.cs'
+    - 'src/Lucene.Net.Tests/Support/**/*.cs'
+    - 'src/Lucene.Net.Tests/Util/TestNumericUtils.cs'
+    - 'src/Lucene.Net.Tests/Store/LUCENENET521.zip'
 
     # Dependencies
     - 'src/Lucene.Net/**/*'

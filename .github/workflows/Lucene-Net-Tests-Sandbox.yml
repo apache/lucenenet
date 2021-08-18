@@ -32,6 +32,7 @@ on:
     - 'src/Lucene.Net.Tests.Sandbox/Directory.Build.*'
     - 'src/Directory.Build.*'
     - 'Directory.Build.*'
+    - 'src/Lucene.Net.Tests.Sandbox/Queries/fuzzyTestData.txt'
 
     # Dependencies
     - 'src/Lucene.Net/**/*'

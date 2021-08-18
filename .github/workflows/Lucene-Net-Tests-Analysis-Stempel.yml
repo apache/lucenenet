@@ -32,6 +32,7 @@ on:
     - 'src/Lucene.Net.Tests.Analysis.Stempel/Directory.Build.*'
     - 'src/Directory.Build.*'
     - 'Directory.Build.*'
+    - 'src/Lucene.Net.Tests.Analysis.Stempel/Egothor.Stemmer/testRules.txt'
 
     # Dependencies
     - 'src/Lucene.Net/**/*'

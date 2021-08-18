@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------------------
+﻿# -----------------------------------------------------------------------------------
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -99,13 +99,32 @@ function Get-ProjectDependencies([string]$ProjectPath, [string]$RelativeRoot, [S
     $resolvedProjectPath = $ProjectPath
     $rootPath = [System.IO.Path]::GetDirectoryName($resolvedProjectPath)
     [xml]$project = Get-Content $resolvedProjectPath
-    foreach ($name in $project.SelectNodes("//Project/ItemGroup/ProjectReference") | ForEach-Object { $_.Include -split ';'}) {
-        #Write-Host "$rootPath"
-        #Write-Host "$name"
-        #Write-Host [System.IO.Path]::Combine($rootPath, $name)
+    foreach ($name in $project.SelectNodes("//Project/ItemGroup/ProjectReference") | Where-Object { $_.Include -notmatch '^$' } | ForEach-Object { $_.Include -split ';'}) {
         $dependencyFullPath = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($rootPath, $name))
         Get-ProjectDependencies $dependencyFullPath $RelativeRoot $Result
         $dependency = Resolve-RelativePath $RelativeRoot $dependencyFullPath
+        $result.Add($dependency) | Out-Null
+    }
+}
+
+function Get-ProjectExternalPaths([string]$ProjectPath, [string]$RelativeRoot, [System.Collections.Generic.HashSet[string]]$Result) {
+    $resolvedProjectPath = $ProjectPath
+    $rootPath = [System.IO.Path]::GetDirectoryName($resolvedProjectPath)
+    [xml]$project = Get-Content $resolvedProjectPath
+    foreach ($name in $project.SelectNodes("//Project/ItemGroup/Compile") | Where-Object { $_.Include -notmatch '^$' } | ForEach-Object { $_.Include -split ';'}) {
+        # Temporarily override wildcard patterns so we can resolve the path and then put them back.
+        $name = $name -replace '\\\*\*\\\*', 'Wildcard1' -replace '\*', 'Wildcard2'
+        $dependencyFullPath = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($rootPath, $name)) -replace 'Wildcard1', '\**\*' -replace 'Wildcard2', '*'
+        # Make the path relative to the repo root.
+        $dependency = $($($dependencyFullPath.Replace($RelativeRoot, '.')) -replace '\\', '/').TrimStart('./')
+        $result.Add($dependency) | Out-Null
+    }
+    foreach ($name in $project.SelectNodes("//Project/ItemGroup/EmbeddedResource") | Where-Object { $_.Include -notmatch '^$' } | ForEach-Object { $_.Include -split ';'}) {
+        # Temporarily override wildcard patterns so we can resolve the path and then put them back.
+        $name = $name -replace '\\\*\*\\\*', 'Wildcard1' -replace '\*', 'Wildcard2'
+        $dependencyFullPath = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($rootPath, $name)) -replace 'Wildcard1', '\**\*' -replace 'Wildcard2', '*'
+        # Make the path relative to the repo root.
+        $dependency = $($($dependencyFullPath.Replace($RelativeRoot, '.')) -replace '\\', '/').TrimStart('./')
         $result.Add($dependency) | Out-Null
     }
 }
@@ -171,6 +190,13 @@ function Write-TestWorkflow(
     foreach ($directory in $directories) {
         $relativeDirectory = ([System.IO.Path]::Combine($directory, 'Directory.Build.*') -replace '\\', '/').TrimStart('./')
         $directoryBuildPaths += "    - '$relativeDirectory'" + [System.Environment]::NewLine
+    }
+
+    $paths = New-Object System.Collections.Generic.HashSet[string]
+    Get-ProjectExternalPaths $ProjectPath $RelativeRoot $paths
+
+    foreach ($path in $paths) {
+        $directoryBuildPaths += "    - '$path'" + [System.Environment]::NewLine
     }
 
     $fileText = "####################################################################################
@@ -291,8 +317,7 @@ try {
     Pop-Location
 }
 
-
-#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net5.0','netcoreapp3.1') -TestPlatforms $TestPlatforms
+#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net5.0','netcoreapp3.1') -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion -DotNetCore2SDKVersion $DotNetCore2SDKVersion
 
 #Write-Host $TestProjects
 
