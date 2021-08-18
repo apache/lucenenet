@@ -35,6 +35,8 @@ param (
     [int] $StagingPort = 8080
 )
 
+$ErrorActionPreference = "Stop"
+
 # if the base URL is the lucene live site default value we also need to include the version
 if ($BaseUrl -eq 'https://lucenenet.apache.org/docs/') {
     $BaseUrl += $LuceneNetVersion
@@ -121,9 +123,13 @@ if ($DisablePlugins -eq $false) {
     $pluginSln = (Join-Path -Path $RepoRoot "src\docs\DocumentationTools.sln")
     & $nuget restore $pluginSln
 
+    if (-not $?) {throw "Failed to restore plugin sln"}
+
     $PluginsFolder = (Join-Path -Path $ApiDocsFolder "Templates\LuceneTemplate\plugins")
     New-Item $PluginsFolder -type directory -force
     & $msbuild $pluginSln /target:LuceneDocsPlugins "/p:OutDir=$PluginsFolder"
+
+    if (-not $?) {throw "Failed to build plugin sln"}
 }
 
 # update the docjx.global.json file based
