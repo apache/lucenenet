@@ -32,6 +32,7 @@ on:
     - 'src/Lucene.Net.Tests.Memory/Directory.Build.*'
     - 'src/Directory.Build.*'
     - 'Directory.Build.*'
+    - 'src/Lucene.Net.Tests.Memory/**/*.txt'
 
     # Dependencies
     - 'src/Lucene.Net/**/*'

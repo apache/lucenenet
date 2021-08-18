@@ -32,6 +32,13 @@ on:
     - 'src/Lucene.Net.Tests.Analysis.Common/Directory.Build.*'
     - 'src/Directory.Build.*'
     - 'Directory.Build.*'
+    - 'src/Lucene.Net.Tests.Analysis.Common/**/*.dic'
+    - 'src/Lucene.Net.Tests.Analysis.Common/**/*.aff'
+    - 'src/Lucene.Net.Tests.Analysis.Common/**/*.zip'
+    - 'src/Lucene.Net.Tests.Analysis.Common/**/*.txt'
+    - 'src/Lucene.Net.Tests.Analysis.Common/**/*.htm'
+    - 'src/Lucene.Net.Tests.Analysis.Common/**/*.html'
+    - 'src/Lucene.Net.Tests.Analysis.Common/**/*.xml'
 
     # Dependencies
     - 'src/Lucene.Net/**/*'

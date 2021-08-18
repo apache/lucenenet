@@ -33,6 +33,17 @@ on:
     - 'src/dotnet/Directory.Build.*'
     - 'src/Directory.Build.*'
     - 'Directory.Build.*'
+    - 'src/Lucene.Net.Tests.Analysis.Common/Analysis/Th/**/*.cs'
+    - 'src/Lucene.Net.Tests.Analysis.Common/Analysis/Util/TestCharArrayIterator.cs'
+    - 'src/Lucene.Net.Tests.Analysis.Common/Analysis/Util/TestSegmentingTokenizerBase.cs'
+    - 'src/Lucene.Net.Tests.Analysis.ICU/Analysis/**/*.cs'
+    - 'src/Lucene.Net.Tests.Analysis.ICU/Collation/**/*.cs'
+    - 'src/Lucene.Net.Tests.Highlighter/PostingsHighlight/**/*.cs'
+    - 'src/Lucene.Net.Tests.Highlighter/VectorHighlight/BreakIteratorBoundaryScannerTest.cs'
+    - 'src/Lucene.Net.Tests.Analysis.ICU/Analysis/Icu/Segmentation/*.rbbi'
+    - 'src/Lucene.Net.Tests.Highlighter/PostingsHighlight/CambridgeMA.utf8'
+    - 'src/dotnet/Lucene.Net.Tests.ICU/Support/jdksent.brk'
+    - 'src/dotnet/Lucene.Net.Tests.ICU/Support/jdkword.brk'
 
     # Dependencies
     - 'src/Lucene.Net/**/*'

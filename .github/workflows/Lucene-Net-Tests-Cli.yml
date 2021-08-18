@@ -34,6 +34,8 @@ on:
     - 'src/dotnet/Directory.Build.*'
     - 'src/Directory.Build.*'
     - 'Directory.Build.*'
+    - 'src/dotnet/tools/Lucene.Net.Tests.Cli/Configuration/appsettings.json'
+    - 'src/dotnet/tools/Lucene.Net.Tests.Cli/SourceCode/TestInputForParser.cs'
 
     # Dependencies
     - 'src/Lucene.Net/**/*'
