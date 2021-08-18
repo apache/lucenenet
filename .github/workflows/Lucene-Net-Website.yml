@@ -89,7 +89,7 @@ jobs:
 
           if ($version -ne '') {
             # the tag parsed to the correct version format, write the environment var
-            echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_ENV
+            echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_SHA
           }
           else {
             echo "::error::Could not parse current version tag"
@@ -126,11 +126,11 @@ jobs:
           commit-message: New website version built
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          branch: task/website-build-${{ env:GITHUB_ENV }}
+          branch: task/website-build-${{ env:GITHUB_SHA }}
           delete-branch: true
-          title: 'New website build ${{ env.GITHUB_ENV }}'
+          title: 'New website build ${{ env.GITHUB_SHA }}'
           body: |
-            New website build on rev/tag ${{ env.GITHUB_ENV }}
+            New website build on rev/tag ${{ env.GITHUB_SHA }}
             For release version ${{ env.RELEASE_VERSION }}
 
       - name: Check outputs
