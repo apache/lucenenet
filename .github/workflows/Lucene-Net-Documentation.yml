@@ -131,8 +131,8 @@ jobs:
           path: website-repo
 
       - name: Copy documentation site files
-          run: Get-ChildItem -Path "$Env:GITHUB_WORKSPACE\main-repo\websites\apidocs\_site" | Copy-Item -Destination "$Env:GITHUB_WORKSPACE\website-repo\docs\$Env:RELEASE_VERSION" -Recurse -Force
-          shell: powershell
+        run: Get-ChildItem -Path "$Env:GITHUB_WORKSPACE\main-repo\websites\apidocs\_site" | Copy-Item -Destination "$Env:GITHUB_WORKSPACE\website-repo\docs\$Env:RELEASE_VERSION" -Recurse -Force
+        shell: powershell
 
       - name: Create Pull Request
         id: cpr
