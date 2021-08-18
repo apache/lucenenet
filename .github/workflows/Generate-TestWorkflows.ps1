@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------------------
+﻿# -----------------------------------------------------------------------------------
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -100,9 +100,6 @@ function Get-ProjectDependencies([string]$ProjectPath, [string]$RelativeRoot, [S
     $rootPath = [System.IO.Path]::GetDirectoryName($resolvedProjectPath)
     [xml]$project = Get-Content $resolvedProjectPath
     foreach ($name in $project.SelectNodes("//Project/ItemGroup/ProjectReference") | ForEach-Object { $_.Include -split ';'}) {
-        #Write-Host "$rootPath"
-        #Write-Host "$name"
-        #Write-Host [System.IO.Path]::Combine($rootPath, $name)
         $dependencyFullPath = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($rootPath, $name))
         Get-ProjectDependencies $dependencyFullPath $RelativeRoot $Result
         $dependency = Resolve-RelativePath $RelativeRoot $dependencyFullPath
@@ -269,9 +266,9 @@ jobs:
           path: '`${{github.workspace}}/`${{env.test_results_artifact_name}}'
 "
 
-    # GitHub Actions does not support filenames with "." in them, so replace
+    # GitHub Actions does not support filenames with "." or "_" in them, so replace
     # with "-"
-    $projectFileName = $projectName -replace '\.', '-'
+    $projectFileName = $projectName -replace '\.|_', '-'
     $FilePath = "$OutputDirectory/$projectFileName.yml"
 
     #$dir = [System.IO.Path]::GetDirectoryName($File)
