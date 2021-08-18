@@ -28,7 +28,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Index\Memory\testqueries.txt;Index\Memory\testqueries2.txt" />
+    <EmbeddedResource Include="**/*.txt" Exclude="bin/**/*;obj/**/*" Label="Text Test Data" />
   </ItemGroup>
 
   <ItemGroup>

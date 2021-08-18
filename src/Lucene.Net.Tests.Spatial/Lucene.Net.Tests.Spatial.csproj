@@ -28,7 +28,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Test-Files\cities-Intersects-BBox.txt;Test-Files\Data\countries-bbox.txt;Test-Files\Data\countries-poly.txt;Test-Files\Data\geonames-IE.txt;Test-Files\Data\LUCENE-4464.txt;Test-Files\Data\simple-bbox.txt;Test-Files\Data\states-bbox.txt;Test-Files\Data\states-poly.txt;Test-Files\Data\world-cities-points.txt;Test-Files\simple-Queries-BBox.txt;Test-Files\states-Intersects-BBox.txt;Test-Files\states-IsWithin-BBox.txt" />
+    <EmbeddedResource Include="Test-Files\**\*" />
   </ItemGroup>
 
   <ItemGroup>

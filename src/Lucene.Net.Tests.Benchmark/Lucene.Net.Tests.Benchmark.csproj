@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
 
  Licensed to the Apache Software Foundation (ASF) under one
@@ -28,7 +28,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="ByTask\Feeds\trecdocs.zip;ByTask\conf.zip;ByTask\reuters.first20.lines.txt;ByTask\test-mapping-ISOLatin1Accent-partial.txt;Quality\reuters.578.lines.txt.bz2;Quality\trecQRels.txt;Quality\trecTopics.txt" />
+    <EmbeddedResource Include="**/*.zip" Exclude="bin/**/*;obj/**/*" Label="Zip Test Data" />
+    <EmbeddedResource Include="**/*.txt" Exclude="bin/**/*;obj/**/*" Label="Text Test Data" />
+    <EmbeddedResource Include="**/*.bz2" Exclude="bin/**/*;obj/**/*" Label="BZ2 Test Data" />
   </ItemGroup>
 
   <ItemGroup>

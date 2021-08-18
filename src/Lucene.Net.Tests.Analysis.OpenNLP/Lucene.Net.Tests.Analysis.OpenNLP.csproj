@@ -35,23 +35,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="en-test-chunker.bin" />
-    <None Remove="en-test-lemmas.dict" />
-    <None Remove="en-test-lemmatizer.bin" />
-    <None Remove="en-test-ner.bin" />
-    <None Remove="en-test-pos-maxent.bin" />
-    <None Remove="en-test-sent.bin" />
-    <None Remove="en-test-tokenizer.bin" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="en-test-chunker.bin" />
-    <EmbeddedResource Include="en-test-lemmas.dict" />
-    <EmbeddedResource Include="en-test-lemmatizer.bin" />
-    <EmbeddedResource Include="en-test-ner.bin" />
-    <EmbeddedResource Include="en-test-pos-maxent.bin" />
-    <EmbeddedResource Include="en-test-sent.bin" />
-    <EmbeddedResource Include="en-test-tokenizer.bin" />
+    <EmbeddedResource Include="**/*.dict" Exclude="bin/**/*;obj/**/*" Label="Dict Test Data" />
+    <EmbeddedResource Include="**/*.bin" Exclude="bin/**/*;obj/**/*" Label="Bin Test Data" />
   </ItemGroup>
 
   <ItemGroup>

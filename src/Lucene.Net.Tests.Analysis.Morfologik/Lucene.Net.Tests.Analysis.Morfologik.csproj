@@ -29,15 +29,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Morfologik\custom-dictionary.dict" />
-    <None Remove="Morfologik\custom-dictionary.info" />
-    <None Remove="Morfologik\custom-dictionary.input" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Morfologik\custom-dictionary.dict" />
-    <EmbeddedResource Include="Morfologik\custom-dictionary.info" />
-    <EmbeddedResource Include="Morfologik\custom-dictionary.input" />
+    <EmbeddedResource Include="**/*.dict" Exclude="bin/**/*;obj/**/*" Label="Dict Test Data" />
+    <EmbeddedResource Include="**/*.info" Exclude="bin/**/*;obj/**/*" Label="Info Test Data" />
+    <EmbeddedResource Include="**/*.input" Exclude="bin/**/*;obj/**/*" Label="Input Test Data" />
   </ItemGroup>
 
   <ItemGroup>

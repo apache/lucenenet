@@ -28,7 +28,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="bocchan.utf-8;search-segmentation-tests.txt;userdict.txt;Tools\custom-dictionary-input.zip" />
+    <EmbeddedResource Include="**/*.utf-8" Exclude="bin/**/*;obj/**/*" Label="UTF-8 Test Data" />
+    <EmbeddedResource Include="**/*.txt" Exclude="bin/**/*;obj/**/*" Label="Text Test Data" />
+    <EmbeddedResource Include="**/*.zip" Exclude="bin/**/*;obj/**/*" Label="Zip Test Data" />
   </ItemGroup>
 
   <ItemGroup>

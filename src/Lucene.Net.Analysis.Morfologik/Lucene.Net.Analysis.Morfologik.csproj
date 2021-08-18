@@ -40,21 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Uk\mapping_uk.txt" />
-    <None Remove="Uk\README" />
-    <None Remove="Uk\stopwords.txt" />
-    <None Remove="Uk\tagset.txt" />
-    <None Remove="Uk\ukrainian.dict" />
-    <None Remove="Uk\ukrainian.info" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Uk\mapping_uk.txt" />
-    <EmbeddedResource Include="Uk\README" />
-    <EmbeddedResource Include="Uk\stopwords.txt" />
-    <EmbeddedResource Include="Uk\tagset.txt" />
-    <EmbeddedResource Include="Uk\ukrainian.dict" />
-    <EmbeddedResource Include="Uk\ukrainian.info" />
+    <EmbeddedResource Include="Uk/**/*" Exclude="*.cs" />
   </ItemGroup>
 
   <ItemGroup>

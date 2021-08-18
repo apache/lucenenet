@@ -36,9 +36,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="stopwords.txt" />
-    <EmbeddedResource Include="Hhmm\bigramdict.mem" />
-    <EmbeddedResource Include="Hhmm\coredict.mem" />
+    <EmbeddedResource Include="Hhmm/*.mem" Label="Dict Test Data" />
+    <EmbeddedResource Include="**/*.txt" Exclude="bin/**/*;obj/**/*" Label="Text Test Data" />
   </ItemGroup>
 
   <ItemGroup>
