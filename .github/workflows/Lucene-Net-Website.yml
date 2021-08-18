@@ -41,7 +41,6 @@ on:
 env:
   # If a tag is specified, the tag will be in the format: Website_4_8_0_beta00013 which
   # will be parsed to create the version number used in the docs like 4.8.0-beta00013
-  CURRENT_TAG: "NO-VERSION"
   RELEASE_VERSION: "(no tag)"
   SITE_REPO: "${{ github.repository }}-site"
   GIT_MAIN_REPO:  "${{ github.workspace }}\\main-repo\\.git"
@@ -60,8 +59,6 @@ jobs:
 
       - name: Set version from tag
         run: |
-          # initialize to SHA
-          echo ("CURRENT_TAG=" + $Env:GITHUB_SHA) >> $env:GITHUB_ENV
           $ref = $Env:GITHUB_REF
 
           if ($ref.StartsWith("refs/tags/")) {
@@ -77,9 +74,6 @@ jobs:
             echo "::error::Could not determine current version tag"
             exit 1
           }
-
-          # write the environment var
-          echo ("CURRENT_TAG=" + $tag) >> $env:GITHUB_ENV
 
           $parts = $tag.Split("_")
           $version = '';
@@ -105,7 +99,6 @@ jobs:
 
       - name: Verify environment variables
         run: |
-          echo "CURRENT_TAG=$Env:CURRENT_TAG"
           echo "RELEASE_VERSION=$Env:RELEASE_VERSION"
         shell: powershell
 
@@ -133,11 +126,11 @@ jobs:
           commit-message: New website version built
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          branch: task/website-build-${{ env.CURRENT_TAG }}
+          branch: task/website-build-${{ env:GITHUB_ENV }}
           delete-branch: true
-          title: 'New website build ${{ env.CURRENT_TAG }}'
+          title: 'New website build ${{ env.GITHUB_ENV }}'
           body: |
-            New website build on rev/tag ${{ env.CURRENT_TAG }}
+            New website build on rev/tag ${{ env.GITHUB_ENV }}
             For release version ${{ env.RELEASE_VERSION }}
 
       - name: Check outputs

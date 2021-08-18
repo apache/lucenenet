@@ -134,6 +134,8 @@ jobs:
         run: Get-ChildItem -Path "$Env:GITHUB_WORKSPACE\main-repo\websites\apidocs\_site" | Copy-Item -Destination "$Env:GITHUB_WORKSPACE\website-repo\docs\$Env:RELEASE_VERSION" -Recurse -Force
         shell: powershell
 
+      # Always push to the same branch based on the CURRENT_TAG (latest version tag)
+      # Because we are always building the docs against a consistent version
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3

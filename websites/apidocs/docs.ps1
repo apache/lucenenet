@@ -205,18 +205,19 @@ if ($? -and $DisableBuild -eq $false) {
         # build the output
         Write-Host "Building site output for $projFile..."
 
-        # Before we build the site we have to clear the frickin docfx cache!
-        # else the xref links don't work on the home page. That is crazy.
-        # TODO: I 'think' that specifying --force or --forcePostProcess may work around this issue.
-        # There is also an option called "cleanupCacheHistory" (see https://dotnet.github.io/docfx/RELEASENOTE.html?tabs=csharp)
-        # Which may be the answer too.
-        Remove-Item (Join-Path -Path $ApiDocsFolder "obj\.cache") -recurse -force -ErrorAction SilentlyContinue
+        # Specifying --force, --forcePostProcess and --cleanupCacheHistory
+        # Seems to be required in order for all xref links to resolve consistently across
+        # all of the docfx builds (see https://dotnet.github.io/docfx/RELEASENOTE.html?tabs=csharp)
+        # Previously we used to do this:
+        #   Remove-Item (Join-Path -Path $ApiDocsFolder "obj\.cache") -recurse -force -ErrorAction SilentlyContinue
+        # to force remove the cache else the xref's wouldn't work correctly. So far with these new parameters
+        # it seems much happier.
 
         if ($Clean) {
-            & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --force --debug
+            & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --force --debug --cleanupCacheHistory --force --forcePostProcess
         }
         else {
-            & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --debug
+            & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --debug --cleanupCacheHistory --force --forcePostProcess
         }
 
         # Add the baseUrl to the output xrefmap, see https://github.com/dotnet/docfx/issues/2346#issuecomment-356054027
