@@ -126,11 +126,11 @@ jobs:
           commit-message: New website version built
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          branch: task/website-build-${{ env:GITHUB_SHA }}
+          branch: task/website-build-${{ github.sha }}
           delete-branch: true
-          title: 'New website build ${{ env.GITHUB_SHA }}'
+          title: 'New website build ${{ github.sha }}'
           body: |
-            New website build on rev/tag ${{ env.GITHUB_SHA }}
+            New website build on rev/tag ${{ github.sha }}
             For release version ${{ env.RELEASE_VERSION }}
 
       - name: Check outputs
