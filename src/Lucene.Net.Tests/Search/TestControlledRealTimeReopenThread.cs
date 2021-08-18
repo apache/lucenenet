@@ -757,8 +757,8 @@ namespace Lucene.Net.Search
 
             RAMDirectory indexDir = new RAMDirectory();
 
-            Analyzer standardAnalyzer = new StandardAnalyzer(Version.LUCENE_48);
-            IndexWriterConfig indexConfig = new IndexWriterConfig(Version.LUCENE_48, standardAnalyzer);
+            Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
+            IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
             IndexWriter indexWriter = new IndexWriter(indexDir, indexConfig);
             TrackingIndexWriter trackingWriter = new TrackingIndexWriter(indexWriter);
 
@@ -910,8 +910,8 @@ namespace Lucene.Net.Search
             List<ThreadOutput> outputList = new List<ThreadOutput>();
 
             RAMDirectory indexDir = new RAMDirectory();
-            Analyzer standardAnalyzer = new StandardAnalyzer(Version.LUCENE_48);
-            IndexWriterConfig indexConfig = new IndexWriterConfig(Version.LUCENE_48, standardAnalyzer);
+            Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
+            IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
             IndexWriter indexWriter = new IndexWriter(indexDir, indexConfig);
             TrackingIndexWriter trackingWriter = new TrackingIndexWriter(indexWriter);
 
