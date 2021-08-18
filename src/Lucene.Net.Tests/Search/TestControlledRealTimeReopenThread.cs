@@ -753,6 +753,8 @@ namespace Lucene.Net.Search
         /// </summary>
         // LUCENENET specific - An extra test to demonstrate use of ControlledRealTimeReopen.
         [Test]
+        [Ignore("LUCENENET TODO: this test fails on macOS")]
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/513")] // LUCENENET TODO: this test fails on macOS
         public void TestStraightForwardDemonstration()
         {
 
@@ -873,6 +875,8 @@ namespace Lucene.Net.Search
         /// </summary>
         // LUCENENET specific - An extra test to test multithreaded use of ControlledRealTimeReopen.
         [Test]
+        [Ignore("LUCENENET TODO: this test fails on macOS")]
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/513")] // LUCENENET TODO: this test fails on macOS
         public void TestMultithreadedWaitForGeneration()
         {
             Thread CreateWorker(int threadNum, ControlledRealTimeReopenThread<IndexSearcher> controlledReopen, long generation,
