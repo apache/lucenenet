@@ -51,9 +51,9 @@ namespace Lucene.Net.Search
         private long waitingGen;
         private long searchingGen;
         private long refreshStartGen;
-
+        private bool isDisposed = false;
         private readonly EventWaitHandle intrinsic = new ManualResetEvent(false);  // LUCENENET specific: used to mimic intrinsic monitor used by java wait and notifyAll keywords.
-        private readonly EventWaitHandle reopenCond = new AutoResetEvent(false);   // LUCENENET NOTE: unlick java, in c# we don't need to lock reopenCond when calling methods on it.
+        private readonly EventWaitHandle reopenCond = new AutoResetEvent(false);   // LUCENENET NOTE: unlike java, in c# we don't need to lock reopenCond when calling methods on it.
 
 
         /// <summary>
@@ -120,26 +120,52 @@ namespace Lucene.Net.Search
         /// </summary>
         public void Dispose()
         {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+
+
+        /// <summary>
+        /// Kills the thread and releases all resources used by the
+        /// <see cref="ControlledRealTimeReopenThread{T}"/>. Also joins to the
+        /// thread so that when this method returns the thread is no longer alive.
+        /// </summary>
+        // LUCENENET specific - Support for Dispose(bool) since this is a non-sealed class.
+        protected virtual void Dispose(bool disposing)
+        {
             lock (this)
             {
-                finish = true;
+                if (isDisposed)
+                {
+                    return;
+                }
 
-                // So thread wakes up and notices it should finish:
-                reopenCond.Set();
+                if (disposing)
+                {
+                
+                    finish = true;
 
-                Join();
-                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
+                    // So thread wakes up and notices it should finish:
+                    reopenCond.Set();
 
-                // Max it out so any waiting search threads will return:
-                searchingGen = long.MaxValue;
-                intrinsic.Set();                //LUCENENET NOTE: notify all the waiting threads to wake them up.
+                    Join();
+                    // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
 
-                // LUCENENET specific: dispose reset event
-                reopenCond.Dispose();
-                intrinsic.Dispose();
+                    // Max it out so any waiting search threads will return:
+                    searchingGen = long.MaxValue;
+                    intrinsic.Set();                //LUCENENET NOTE: notify all the waiting threads to wake them up.
+
+                    // LUCENENET specific: dispose reset event
+                    reopenCond.Dispose();
+                    intrinsic.Dispose();
+                
+                }
+
+                isDisposed = true;
             }
         }
-        
+
 
         /// <summary>
         /// Waits for the target generation to become visible in
@@ -292,5 +318,7 @@ namespace Lucene.Net.Search
                 
             }
         }
+
+        
     }
 }
