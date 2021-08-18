@@ -56,7 +56,7 @@ jobs:
     runs-on: windows-latest
     steps:
 
-      # Do init checkout
+      # Checkout the main repo with all history so we get all tags
       - name: Checkout Lucene.Net source
         uses: actions/checkout@v2
         with:
@@ -123,36 +123,36 @@ jobs:
         run: ./main-repo/websites/apidocs/docs.ps1 -Clean -LuceneNetVersion ${{ env.RELEASE_VERSION }}
         shell: powershell
 
-      #- name: Checkout Lucene.Net website
-      #  uses: actions/checkout@v2
-      #  with:
-      #    repository: ${{ env.SITE_REPO }}
-      #    ref: asf-site
-      #    path: website-repo
-#
-      #- name: Copy website files
-      #  run: Get-ChildItem -Path "$Env:GITHUB_WORKSPACE\main-repo\websites\apidocs\_site" | Copy-Item -Destination "$Env:GITHUB_WORKSPACE\website-repo\docs\$Env:RELEASE_VERSION" -Recurse -Force
-      #  shell: powershell
-#
-      #- name: Create Pull Request
-      #  id: cpr
-      #  uses: peter-evans/create-pull-request@v3
-      #  with:
-      #    token: ${{ secrets.LUCENE_NET_WEBSITE_BUILD }}
-      #    path: website-repo
-      #    commit-message: New website version built
-      #    committer: GitHub <noreply@github.com>
-      #    author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-      #    branch: ${{ env.CURRENT_TAG }}
-      #    delete-branch: true
-      #    title: 'New website version built ${{ env.CURRENT_TAG }}'
-      #    body: |
-      #      New website version built ${{ env.CURRENT_TAG }}
-      #      - For version ${{ env.RELEASE_VERSION }}
-#
-      #- name: Check outputs
-      #  run: |
-      #    echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
-      #    echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+      - name: Checkout Lucene.Net website
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ env.SITE_REPO }}
+          ref: asf-site
+          path: website-repo
+
+      - name: Copy documentation site files
+          run: Get-ChildItem -Path "$Env:GITHUB_WORKSPACE\main-repo\websites\apidocs\_site" | Copy-Item -Destination "$Env:GITHUB_WORKSPACE\website-repo\docs\$Env:RELEASE_VERSION" -Recurse -Force
+          shell: powershell
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.LUCENE_NET_WEBSITE_BUILD }}
+          path: website-repo
+          commit-message: New documentation version built
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          branch: ${{ env.CURRENT_TAG }}
+          delete-branch: true
+          title: 'New documentation version built ${{ env.CURRENT_TAG }}'
+          body: |
+            New documentation version built ${{ env.CURRENT_TAG }}
+            - For version ${{ env.RELEASE_VERSION }}
+
+      - name: Check outputs
+        run: |
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
 
       # TODO: Commit and push docs branch

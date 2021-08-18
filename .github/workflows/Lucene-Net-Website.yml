@@ -50,6 +50,8 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
+
+      # Checkout the main repo with all history so we get all tags
       - name: Checkout Lucene.Net source
         uses: actions/checkout@v2
         with:
@@ -117,9 +119,11 @@ jobs:
           repository: ${{ env.SITE_REPO }}
           ref: asf-site
           path: website-repo
+
       - name: Copy website files
         run: Get-ChildItem -Path "$Env:GITHUB_WORKSPACE\main-repo\websites\site\_site" | Copy-Item -Destination "$Env:GITHUB_WORKSPACE\website-repo" -Recurse -Force
         shell: powershell
+
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
@@ -135,6 +139,7 @@ jobs:
           body: |
             New website build on rev/tag ${{ env.CURRENT_TAG }}
             For release version ${{ env.RELEASE_VERSION }}
+
       - name: Check outputs
         run: |
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
