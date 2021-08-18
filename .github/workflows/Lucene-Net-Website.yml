@@ -89,7 +89,7 @@ jobs:
 
           if ($version -ne '') {
             # the tag parsed to the correct version format, write the environment var
-            echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_SHA
+            echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_ENV
           }
           else {
             echo "::error::Could not parse current version tag"
