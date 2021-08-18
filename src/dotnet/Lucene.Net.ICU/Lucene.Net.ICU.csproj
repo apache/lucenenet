@@ -51,7 +51,6 @@
     <EmbeddedResource Include="..\..\Lucene.Net.Analysis.ICU\Analysis\**\*.nrm" LinkBase="Analysis" />
     <EmbeddedResource Include="..\..\Lucene.Net.Analysis.ICU\Analysis\**\*.brk" LinkBase="Analysis" />
     <EmbeddedResource Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\**\*.brk" LinkBase="Search\PostingsHighlight" />
-    <None Remove="Support\*.brk" />
   </ItemGroup>
 
   <ItemGroup Label="Documentation">

@@ -35,8 +35,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Language\Bm\lang.txt;Language\dmrules.txt" />
-    <EmbeddedResource Include="Language\Bm\ash_*.txt;Language\Bm\gen_*.txt;Language\Bm\sep_*.txt" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+    <EmbeddedResource Include="Language\*.txt" />
+    <EmbeddedResource Include="Language\Bm\*" Exclude="*.cs" />
   </ItemGroup>
 
   <ItemGroup>

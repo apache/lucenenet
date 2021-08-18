@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
 
  Licensed to the Apache Software Foundation (ASF) under one
@@ -33,15 +33,16 @@
     <Compile Include="..\..\Lucene.Net.Tests.Analysis.Common\Analysis\Util\TestCharArrayIterator.cs" Link="Analysis\Util\TestCharArrayIterator.cs" />
     <Compile Include="..\..\Lucene.Net.Tests.Analysis.Common\Analysis\Util\TestSegmentingTokenizerBase.cs" Link="Analysis\Util\TestSegmentingTokenizerBase.cs" />
     <Compile Include="..\..\Lucene.Net.Tests.Analysis.ICU\Analysis\**\*.cs" LinkBase="Analysis" />
-    <EmbeddedResource Include="..\..\Lucene.Net.Tests.Analysis.ICU\Analysis\Icu\Segmentation\*.rbbi" LinkBase="Analysis\Icu\Segmentation" />
     <Compile Include="..\..\Lucene.Net.Tests.Analysis.ICU\Collation\**\*.cs" LinkBase="Collation" />
     <Compile Include="..\..\Lucene.Net.Tests.Highlighter\PostingsHighlight\**\*.cs" LinkBase="Search\PostingsHighlight" />
-    <None Remove="Support\jdksent.brk" />
-    <None Remove="Support\jdkword.brk" />
+    <Compile Include="..\..\Lucene.Net.Tests.Highlighter\VectorHighlight\BreakIteratorBoundaryScannerTest.cs" Link="Search\VectorHighlight\BreakIteratorBoundaryScannerTest.cs" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\Lucene.Net.Tests.Analysis.ICU\Analysis\Icu\Segmentation\*.rbbi" LinkBase="Analysis\Icu\Segmentation" />
     <EmbeddedResource Include="..\..\Lucene.Net.Tests.Highlighter\PostingsHighlight\CambridgeMA.utf8" Link="Search\PostingsHighlight\CambridgeMA.utf8" />
     <EmbeddedResource Include="Support\jdksent.brk" />
     <EmbeddedResource Include="Support\jdkword.brk" />
-    <Compile Include="..\..\Lucene.Net.Tests.Highlighter\VectorHighlight\BreakIteratorBoundaryScannerTest.cs" Link="Search\VectorHighlight\BreakIteratorBoundaryScannerTest.cs" />
   </ItemGroup>
 
   <ItemGroup>

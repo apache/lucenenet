@@ -35,7 +35,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Pl\stemmer_20000.tbl;Pl\stopwords.txt" />
+    <EmbeddedResource Include="Pl\*.tbl;Pl\*.txt" />
   </ItemGroup>
 
   <ItemGroup>
