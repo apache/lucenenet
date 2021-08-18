@@ -75,6 +75,7 @@ namespace Lucene.Net.Search
             {
                 throw new ArgumentException("targetMaxScaleSec (= " + targetMaxStaleSec.ToString("0.0") + ") < targetMinStaleSec (=" + targetMinStaleSec.ToString("0.0") + ")");
             }
+
             this.writer = writer;
             this.manager = manager;
             this.targetMaxStaleNS = (long)(1000000000 * targetMaxStaleSec);
