@@ -206,8 +206,8 @@ if ($? -and $DisableBuild -eq $false) {
         Write-Host "Building site output for $projFile..."
 
         # Specifying --force, --forcePostProcess and --cleanupCacheHistory
-        # Seems to be required in order for all xref links to resolve consistently across
-        # all of the docfx builds (see https://dotnet.github.io/docfx/RELEASENOTE.html?tabs=csharp)
+        # seems to be required in order for all xref links to resolve consistently across
+        # all of the docfx builds (see https://dotnet.github.io/docfx/RELEASENOTE.html?tabs=csharp).
         # Previously we used to do this:
         #   Remove-Item (Join-Path -Path $ApiDocsFolder "obj\.cache") -recurse -force -ErrorAction SilentlyContinue
         # to force remove the cache else the xref's wouldn't work correctly. So far with these new parameters
