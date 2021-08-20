@@ -42,7 +42,6 @@ namespace Lucene.Net.Search
     public class ControlledRealTimeReopenThread<T> : ThreadJob, IDisposable
          where T : class
     {
-        // LUCENENET: java final converted readonly
         private readonly ReferenceManager<T> manager;
         private readonly long targetMaxStaleNS;
         private readonly long targetMinStaleNS;
@@ -51,10 +50,9 @@ namespace Lucene.Net.Search
         private long waitingGen;
         private long searchingGen;
         private long refreshStartGen;
-        private bool isDisposed = false;
-        private readonly EventWaitHandle intrinsic = new ManualResetEvent(false);  // LUCENENET specific: used to mimic intrinsic monitor used by java wait and notifyAll keywords.
-        private readonly EventWaitHandle reopenCond = new AutoResetEvent(false);   // LUCENENET NOTE: unlike java, in c# we don't need to lock reopenCond when calling methods on it.
 
+        private readonly EventWaitHandle reopenCond = new AutoResetEvent(false); // LUCENENET: marked readonly
+        private readonly EventWaitHandle available = new AutoResetEvent(false); // LUCENENET: marked readonly
 
         /// <summary>
         /// Create <see cref="ControlledRealTimeReopenThread{T}"/>, to periodically
@@ -77,7 +75,6 @@ namespace Lucene.Net.Search
             {
                 throw new ArgumentException("targetMaxScaleSec (= " + targetMaxStaleSec.ToString("0.0") + ") < targetMinStaleSec (=" + targetMinStaleSec.ToString("0.0") + ")");
             }
-
             this.writer = writer;
             this.manager = manager;
             this.targetMaxStaleNS = (long)(1000000000 * targetMaxStaleSec);
@@ -108,64 +105,45 @@ namespace Lucene.Net.Search
         {
             lock (this)
             {
-                searchingGen = refreshStartGen;
-                intrinsic.Set();                        // LUCENENET NOTE:  Will notify all and remain signaled, so it must be reset in WaitForGeneration
+                // if we're finishing, , make it out so that all waiting search threads will return
+                searchingGen = finish ? long.MaxValue : refreshStartGen;
+                available.Set();
             }
+            reopenCond.Reset();
         }
 
         /// <summary>
-        /// Kills the thread and releases all resources used by the
-        /// <see cref="ControlledRealTimeReopenThread{T}"/>. Also joins to the
-        /// thread so that when this method returns the thread is no longer alive.
+        /// Releases all resources used by the <see cref="ControlledRealTimeReopenThread{T}"/>.
         /// </summary>
         public void Dispose()
         {
-            Dispose(disposing: true);
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-
-
         /// <summary>
-        /// Kills the thread and releases all resources used by the
-        /// <see cref="ControlledRealTimeReopenThread{T}"/>. Also joins to the
-        /// thread so that when this method returns the thread is no longer alive.
+        /// Releases resources used by the <see cref="ControlledRealTimeReopenThread{T}"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
         /// </summary>
-        // LUCENENET specific - Support for Dispose(bool) since this is a non-sealed class.
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+
+        // LUCENENET specific - implemented proper dispose pattern
         protected virtual void Dispose(bool disposing)
         {
-            lock (this)
+            if (disposing)
             {
-                if (isDisposed)
-                {
-                    return;
-                }
-
-                if (disposing)
-                {
+                finish = true;
+                reopenCond.Set();
                 
-                    finish = true;
+                Join();
+                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
 
-                    // So thread wakes up and notices it should finish:
-                    reopenCond.Set();
-
-                    Join();
-                    // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
-
-                    // Max it out so any waiting search threads will return:
-                    searchingGen = long.MaxValue;
-                    intrinsic.Set();                //LUCENENET NOTE: notify all the waiting threads to wake them up.
-
-                    // LUCENENET specific: dispose reset event
-                    reopenCond.Dispose();
-                    intrinsic.Dispose();
-                
-                }
-
-                isDisposed = true;
+                // LUCENENET specific: dispose reset event
+                reopenCond.Dispose();
+                available.Dispose();
             }
         }
-
 
         /// <summary>
         /// Waits for the target generation to become visible in
@@ -201,36 +179,29 @@ namespace Lucene.Net.Search
         ///         or false if <paramref name="maxMS"/> wait time was exceeded </returns>
         public virtual bool WaitForGeneration(long targetGen, int maxMS)
         {
-            // LUCENENET NOTE: Porting this method is a bit tricky because the java wait method releases the
-            //                 syncronize lock and c# has no similar primitive.  So we must handle locking a
-            //                 bit differently here to mimic that affect.
-
             long curGen = writer.Generation;
             if (targetGen > curGen)
             {
                 throw new ArgumentException("targetGen=" + targetGen + " was never returned by the ReferenceManager instance (current gen=" + curGen + ")");
             }
-
             lock (this)
-            {
                 if (targetGen <= searchingGen)
-                {
                     return true;
+                else
+                {
+                    waitingGen = Math.Max(waitingGen, targetGen);
+                    reopenCond.Set();
+                    available.Reset();
                 }
 
-                // Need to find waitingGen inside lock as its used to determine
-                // stale time
-                waitingGen = Math.Max(waitingGen, targetGen);
-                reopenCond.Set();                                   // LUCENENET NOTE: gives Run() an oppertunity to notice one is now waiting if one wasn't before.
-                intrinsic.Reset();                                  // LUCENENET specific: required to "close the door". Java's notifyAll keyword didn't need this.
-            }
-
             long startMS = Time.NanoTime() / 1000000;
-            while (targetGen > Interlocked.Read(ref searchingGen))      // LUCENENET specific - reading searchingGen not thread safe, so use Interlocked.Read()
+
+            // LUCENENET specific - reading searchingGen not thread safe, so use Interlocked.Read()
+            while (targetGen > Interlocked.Read(ref searchingGen))
             {
                 if (maxMS < 0)
                 {
-                    intrinsic.WaitOne();
+                    available.WaitOne();
                 }
                 else
                 {
@@ -241,7 +212,7 @@ namespace Lucene.Net.Search
                     }
                     else
                     {
-                        intrinsic.WaitOne(TimeSpan.FromMilliseconds(msLeft));
+                        available.WaitOne(TimeSpan.FromMilliseconds(msLeft));
                     }
                 }
             }
@@ -253,42 +224,23 @@ namespace Lucene.Net.Search
         {
             // TODO: maybe use private thread ticktock timer, in
             // case clock shift messes up nanoTime?
-            // LUCENENET NOTE: Time.NanoTime() is not affected by clock changes.
             long lastReopenStartNS = Time.NanoTime();
 
             //System.out.println("reopen: start");
             while (!finish)
             {
+                bool hasWaiting;
 
-                // TODO: try to guestimate how long reopen might
-                // take based on past data?
+                lock (this)
+                    hasWaiting = waitingGen > searchingGen;
 
-                // Loop until we've waiting long enough before the
-                // next reopen:
-                while (!finish)
-                {
+                long nextReopenStartNS = lastReopenStartNS + (hasWaiting ? targetMinStaleNS : targetMaxStaleNS);
+                long sleepNS = nextReopenStartNS - Time.NanoTime();
 
+                if (sleepNS > 0)
                     try
                     {
-                        // Need lock before finding out if has waiting
-                        bool hasWaiting;
-                        lock (this)
-                        {
-                            // True if we have someone waiting for reopened searcher:
-                            hasWaiting = waitingGen > searchingGen;
-                        }
-
-                        long nextReopenStartNS = lastReopenStartNS + (hasWaiting ? targetMinStaleNS : targetMaxStaleNS);
-                        long sleepNS = nextReopenStartNS - Time.NanoTime();
-
-                        if (sleepNS > 0)
-                        {
-                            reopenCond.WaitOne(TimeSpan.FromMilliseconds(sleepNS / Time.MillisecondsPerNanosecond));//Convert NS to MS
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        reopenCond.WaitOne(TimeSpan.FromMilliseconds(sleepNS / Time.MillisecondsPerNanosecond));//Convert NS to MS
                     }
                     catch (Exception ie) when (ie.IsInterruptedException())
                     {
@@ -296,7 +248,6 @@ namespace Lucene.Net.Search
                         return;
                     }
 
-                }
                 if (finish)
                 {
                     break;
@@ -315,10 +266,9 @@ namespace Lucene.Net.Search
                 {
                     throw RuntimeException.Create(ioe);
                 }
-                
             }
+            // this will set the searchingGen so that all waiting threads will exit
+            RefreshDone();
         }
-
-        
     }
 }
