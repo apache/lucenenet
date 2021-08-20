@@ -32,6 +32,7 @@
     <Compile Include="..\..\Lucene.Net.Tests.Analysis.Common\Analysis\Th\**\*.cs" LinkBase="Analysis\Th" />
     <Compile Include="..\..\Lucene.Net.Tests.Analysis.Common\Analysis\Util\TestCharArrayIterator.cs" Link="Analysis\Util\TestCharArrayIterator.cs" />
     <Compile Include="..\..\Lucene.Net.Tests.Analysis.Common\Analysis\Util\TestSegmentingTokenizerBase.cs" Link="Analysis\Util\TestSegmentingTokenizerBase.cs" />
+    <Compile Include="..\..\Lucene.Net.Tests.Analysis.Common\Analysis\Util\BaseTokenStreamFactoryTestCase.cs" Link="Analysis\Util\BaseTokenStreamFactoryTestCase.cs" />
     <Compile Include="..\..\Lucene.Net.Tests.Analysis.ICU\Analysis\**\*.cs" LinkBase="Analysis" />
     <Compile Include="..\..\Lucene.Net.Tests.Analysis.ICU\Collation\**\*.cs" LinkBase="Collation" />
     <Compile Include="..\..\Lucene.Net.Tests.Highlighter\PostingsHighlight\**\*.cs" LinkBase="Search\PostingsHighlight" />
@@ -46,12 +47,30 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Lucene.Net\Lucene.Net.csproj" />
-    <ProjectReference Include="..\..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
-    <ProjectReference Include="..\..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj" />
-    <ProjectReference Include="..\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
-    <ProjectReference Include="..\..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
-    <ProjectReference Include="..\..\Lucene.Net.Tests.Analysis.Common\Lucene.Net.Tests.Analysis.Common.csproj" />
+    <ProjectReference Include="..\..\Lucene.Net\Lucene.Net.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.ICU\Lucene.Net.ICU.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Lucene.Net.Memory\Lucene.Net.Memory.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
   </ItemGroup>
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
@@ -65,12 +84,11 @@
     <PackageReference Include="ICU4N.Transliterator" Version="$(ICU4NTransliteratorPackageVersion)" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)" />
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+    <PackageReference Include="Microsoft.Extensions.Options" Version="$(MicrosoftExtensionsOptionsPackageVersion)" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion)" />
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <PackageReference Include="Microsoft.Extensions.Options" Version="$(MicrosoftExtensionsOptionsPackageVersion)" />
   </ItemGroup>
 

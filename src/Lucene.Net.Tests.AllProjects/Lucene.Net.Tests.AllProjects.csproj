@@ -35,34 +35,86 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
+    <ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
 
-    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
     <!-- We must not use wildcards here due to the fact that the .github/workflows/Generate-TestWorkflows.ps1 project requires them to be whole in order to resolve dependent projects -->
-    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Analysis.Kuromoji\Lucene.Net.Analysis.Kuromoji.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Analysis.Morfologik\Lucene.Net.Analysis.Morfologik.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Analysis.Phonetic\Lucene.Net.Analysis.Phonetic.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Analysis.SmartCn\Lucene.Net.Analysis.SmartCn.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Analysis.Stempel\Lucene.Net.Analysis.Stempel.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Benchmark\Lucene.Net.Benchmark.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Classification\Lucene.Net.Classification.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj" />
-    <!--<ProjectReference Include="..\Lucene.Net.Demo\Lucene.Net.Demo.csproj" />-->
-    <ProjectReference Include="..\Lucene.Net.Expressions\Lucene.Net.Expressions.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Grouping\Lucene.Net.Grouping.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Join\Lucene.Net.Join.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Memory\Lucene.Net.Memory.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Misc\Lucene.Net.Misc.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />
-    <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Replicator\Lucene.Net.Replicator.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Sandbox\Lucene.Net.Sandbox.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Spatial\Lucene.Net.Spatial.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Suggest\Lucene.Net.Suggest.csproj" />
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Kuromoji\Lucene.Net.Analysis.Kuromoji.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Morfologik\Lucene.Net.Analysis.Morfologik.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Phonetic\Lucene.Net.Analysis.Phonetic.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.SmartCn\Lucene.Net.Analysis.SmartCn.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Stempel\Lucene.Net.Analysis.Stempel.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Benchmark\Lucene.Net.Benchmark.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Classification\Lucene.Net.Classification.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <!--<ProjectReference Include="..\Lucene.Net.Demo\Lucene.Net.Demo.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>-->
+    <ProjectReference Include="..\Lucene.Net.Expressions\Lucene.Net.Expressions.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Grouping\Lucene.Net.Grouping.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Join\Lucene.Net.Join.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Memory\Lucene.Net.Memory.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Misc\Lucene.Net.Misc.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Replicator\Lucene.Net.Replicator.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Sandbox\Lucene.Net.Sandbox.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Spatial\Lucene.Net.Spatial.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Suggest\Lucene.Net.Suggest.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
 
   </ItemGroup>
 
@@ -71,6 +123,10 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+    <Reference Include="System" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <Reference Include="System" />
   </ItemGroup>
 

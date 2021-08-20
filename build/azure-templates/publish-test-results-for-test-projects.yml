@@ -74,7 +74,7 @@ steps:
 - template: publish-test-results.yml
   parameters:
     testProjectName: 'Lucene.Net.Tests.CodeAnalysis'
-    framework: 'netcoreapp2.1' # Since condtions are not supported for templates, we check for the file existence within publish-test-results.yml
+    framework: 'net5.0' # Since condtions are not supported for templates, we check for the file existence within publish-test-results.yml
     vsTestPlatform: '${{ parameters.vsTestPlatform }}'
     osName: '${{ parameters.osName }}'
     testResultsFormat: '${{ parameters.testResultsFormat }}'
