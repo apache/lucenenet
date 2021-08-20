@@ -22,11 +22,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Lucene.Net.CodeAnalysis</RootNamespace>
     
     <IsPublishable>false</IsPublishable>
-    <IsPublishable Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">true</IsPublishable>
+    <IsPublishable Condition=" '$(TargetFramework)' == 'net5.0' ">true</IsPublishable>
   </PropertyGroup>
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
@@ -38,9 +38,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Lucene.Net\Lucene.Net.csproj" />
-    <ProjectReference Include="..\Lucene.Net.CodeAnalysis.CSharp\Lucene.Net.CodeAnalysis.CSharp.csproj" />
-    <ProjectReference Include="..\Lucene.Net.CodeAnalysis.VisualBasic\Lucene.Net.CodeAnalysis.VisualBasic.csproj" />
+    <ProjectReference Include="..\..\Lucene.Net\Lucene.Net.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.CodeAnalysis.CSharp\Lucene.Net.CodeAnalysis.CSharp.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.CodeAnalysis.VisualBasic\Lucene.Net.CodeAnalysis.VisualBasic.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

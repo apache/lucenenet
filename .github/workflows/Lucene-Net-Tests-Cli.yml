@@ -76,8 +76,12 @@ jobs:
         exclude:
           - os: ubuntu-latest
             framework: net48
+          - os: ubuntu-latest
+            framework: net461
           - os: macos-latest
             framework: net48
+          - os: macos-latest
+            framework: net461
     env:
       project_path: './src/dotnet/tools/Lucene.Net.Tests.Cli/Lucene.Net.Tests.Cli.csproj'
       trx_file_name: 'TestResults.trx'
@@ -91,12 +95,6 @@ jobs:
         with:
           dotnet-version: '3.1.412'
         if: ${{ startswith(matrix.framework, 'netcoreapp3.') }}
-
-      - name: Setup .NET 2.1 SDK
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '2.1.817'
-        if: ${{ startswith(matrix.framework, 'netcoreapp2.') }}
 
       - name: Setup .NET 5 SDK
         uses: actions/setup-dotnet@v1

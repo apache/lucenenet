@@ -38,7 +38,7 @@
 
  .PARAMETER TestFrameworks
     A string array of Dotnet target framework monikers to run the tests on. The default is
-    @('net5.0','netcoreapp2.1','net48').
+    @('net5.0','net461','net48').
 
  .PARAMETER OperatingSystems
     A string array of Github Actions operating system monikers to run the tests on.
@@ -59,18 +59,13 @@
     The SDK version of .NET Core 3.x to install on the build agent to be used for building and
     testing. This SDK is only installed on the build agent when targeting .NET Core 3.x.
     The default is 3.1.412.
-
- .PARAMETER DotNetCore2SDKVersion
-    The SDK version of .NET Core 2.x to install on the build agent to be used for building and
-    testing. This SDK is only installed on the build agent when targeting .NET Core 2.x.
-    The default is 2.1.817.
 #>
 param(
     [string]$OutputDirectory =  $PSScriptRoot,
 
     [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot)),
 
-    [string[]]$TestFrameworks = @('net5.0','netcoreapp2.1','net48'),
+    [string[]]$TestFrameworks = @('net5.0','net461','net48'), # targets under test: netstanrd2.1, netstanard2.0, net45
 
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
 
@@ -80,9 +75,7 @@ param(
 
     [string]$DotNet5SDKVersion = '5.0.400',
 
-    [string]$DotNetCore3SDKVersion = '3.1.412',
-
-    [string]$DotNetCore2SDKVersion = '2.1.817'
+    [string]$DotNetCore3SDKVersion = '3.1.412'
 )
 
 
@@ -163,8 +156,7 @@ function Write-TestWorkflow(
     [string[]]$TestPlatforms = @('x64'),
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest', 'macos-latest'),
     [string]$DotNet5SDKVersion = $DotNet5SDKVersion,
-    [string]$DotNetCore3SDKVersion = $DotNetCore3SDKVersion,
-    [string]$DotNetCore2SDKVersion = $DotNetCore2SDKVersion) {
+    [string]$DotNetCore3SDKVersion = $DotNetCore3SDKVersion) {
 
     $dependencies = New-Object System.Collections.Generic.HashSet[string]
     Get-ProjectDependencies $ProjectPath $RelativeRoot $dependencies
@@ -247,8 +239,12 @@ jobs:
         exclude:
           - os: ubuntu-latest
             framework: net48
+          - os: ubuntu-latest
+            framework: net461
           - os: macos-latest
             framework: net48
+          - os: macos-latest
+            framework: net461
     env:
       project_path: '$projectRelativePath'
       trx_file_name: 'TestResults.trx'
@@ -262,12 +258,6 @@ jobs:
         with:
           dotnet-version: '$DotNetCore3SDKVersion'
         if: `${{ startswith(matrix.framework, 'netcoreapp3.') }}
-
-      - name: Setup .NET 2.1 SDK
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '$DotNetCore2SDKVersion'
-        if: `${{ startswith(matrix.framework, 'netcoreapp2.') }}
 
       - name: Setup .NET 5 SDK
         uses: actions/setup-dotnet@v1
@@ -317,7 +307,7 @@ try {
     Pop-Location
 }
 
-#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net5.0','netcoreapp3.1') -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion -DotNetCore2SDKVersion $DotNetCore2SDKVersion
+#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net5.0','netcoreapp3.1') -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion
 
 #Write-Host $TestProjects
 
@@ -325,9 +315,9 @@ foreach ($testProject in $TestProjects) {
     $projectName = [System.IO.Path]::GetFileNameWithoutExtension($testProject)
     [string[]]$frameworks = $TestFrameworks
 
-    # Special case - CodeAnalysis only supports .NET Core 2.1 for testing
+    # Special case - CodeAnalysis only supports .NET 5.0 for testing
     if ($projectName.Contains("Tests.CodeAnalysis")) {
-        $frameworks = @('netcoreapp2.1')
+        $frameworks = @('net5.0')
     }
 
     # Special case - our CLI tool only supports .NET Core 3.1
@@ -341,5 +331,5 @@ foreach ($testProject in $TestProjects) {
     }
 
     #Write-Host "Project: $projectName"
-    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion -DotNetCore2SDKVersion $DotNetCore2SDKVersion
+    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion
 }

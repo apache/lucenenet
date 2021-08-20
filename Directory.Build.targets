@@ -105,8 +105,6 @@
     <DefineConstants>$(DefineConstants);NETFRAMEWORK</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_ARGITERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_MEMORYMAPPEDFILESECURITY</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_OPENNLP</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE_EXCEPTIONS</DefineConstants>
     <!-- Although HostProtectionAttribute is available in .NET Standard 2.0+ via platform extensions, we are excluding
          it due to the fact it is not a primary feature of Lucene.NET -->
     <DefineConstants>$(DefineConstants);FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION</DefineConstants>
@@ -115,6 +113,16 @@
     
     <DebugType>full</DebugType>
   </PropertyGroup>
+
+  <!-- Features in .NET Framework 4.5+ but not in .NET Standard 2.0 -->
+  <!-- net461 is used to test .NET Standard 2.0, so we treat it like it is not part of this group -->
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('net4')) And '$(TargetFramework)' != 'net461'">
+
+    <DefineConstants>$(DefineConstants);FEATURE_OPENNLP</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE_EXCEPTIONS</DefineConstants>
+
+  </PropertyGroup>
+    
 
   <PropertyGroup>
     <!-- NuGet.org only supports portable debug symbol format: 
