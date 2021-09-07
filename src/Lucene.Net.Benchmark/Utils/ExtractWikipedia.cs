@@ -91,9 +91,9 @@ namespace Lucene.Net.Benchmarks.Utils
                 using TextWriter writer = new StreamWriter(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), Encoding.UTF8);
                 writer.Write(contents.ToString());
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
-                throw new Exception(ioe.ToString(), ioe);
+                throw RuntimeException.Create(ioe);
             }
         }
 
@@ -101,7 +101,7 @@ namespace Lucene.Net.Benchmarks.Utils
         {
             Document doc; // LUCENENET: IDE0059: Remove unnecessary value assignment
             Console.WriteLine("Starting Extraction");
-            long start = J2N.Time.CurrentTimeMilliseconds();
+            long start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             try
             {
                 while ((doc = m_docMaker.MakeDocument()) != null)
@@ -114,7 +114,7 @@ namespace Lucene.Net.Benchmarks.Utils
             {
                 //continue
             }
-            long finish = J2N.Time.CurrentTimeMilliseconds();
+            long finish = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             Console.WriteLine("Extraction took " + (finish - start) + " ms");
         }
 

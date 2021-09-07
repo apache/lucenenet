@@ -1,4 +1,4 @@
-using Lucene.Net.Store;
+﻿using Lucene.Net.Store;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
@@ -320,7 +320,7 @@ namespace Lucene.Net.Replicator
             if (!disposed)
                 return;
 
-            throw new ObjectDisposedException("this update client has already been closed");
+            throw AlreadyClosedException.Create(this.GetType().FullName, "this update client has already been disposed.");
         }
 
         // LUCENENET specific Utility Method
@@ -411,7 +411,7 @@ namespace Lucene.Net.Replicator
         {
             EnsureOpen();
             if (updateThread != null && updateThread.IsAlive)
-                throw new InvalidOperationException("cannot start an update thread when one is running, must first call 'stopUpdateThread()'");
+                throw IllegalStateException.Create("cannot start an update thread when one is running, must first call 'stopUpdateThread()'");
 
             threadName = threadName == null ? INFO_STREAM_COMPONENT : "ReplicationThread-" + threadName;
             updateThread = new ReplicationThread(intervalMillis, threadName, DoUpdate, HandleUpdateException, updateLock);

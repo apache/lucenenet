@@ -257,7 +257,7 @@ namespace Lucene.Net.Spatial.Prefix
                 Cell cell = curVNode.cell;
                 if (cell.Level >= m_outerInstance.m_detailLevel)
                 {
-                    throw new InvalidOperationException("Spatial logic error");
+                    throw IllegalStateException.Create("Spatial logic error");
                 }
                 //Check for adjacent leaf (happens for indexed non-point shapes)
                 if (m_hasIndexedLeaves && cell.Level != 0)

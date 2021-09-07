@@ -1,9 +1,10 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -397,11 +398,11 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": FAILED: unexpected exception");
                     Console.WriteLine(e.StackTrace);
-                    throw new Exception(e.Message, e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -522,12 +523,12 @@ namespace Lucene.Net.Index
                         r.DecRef();
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     operations.Value = ((int)-1L);
                     Console.WriteLine(Thread.CurrentThread.Name + ": FAILED: unexpected exception");
                     Console.WriteLine(e.StackTrace);
-                    throw new Exception(e.Message, e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }

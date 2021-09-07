@@ -1,4 +1,4 @@
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -77,9 +77,7 @@ namespace Lucene.Net.Store
                 one.ReadVInt32();
                 Assert.Fail("Must throw ObjectDisposedException");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException ignore)
-#pragma warning restore 168
+            catch (Exception ignore) when (ignore.IsAlreadyClosedException())
             {
                 // pass
             }
@@ -88,9 +86,7 @@ namespace Lucene.Net.Store
                 two.ReadVInt32();
                 Assert.Fail("Must throw ObjectDisposedException");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException ignore)
-#pragma warning restore 168
+            catch (Exception ignore) when (ignore.IsAlreadyClosedException())
             {
                 // pass
             }
@@ -99,9 +95,7 @@ namespace Lucene.Net.Store
                 three.ReadVInt32();
                 Assert.Fail("Must throw ObjectDisposedException");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException ignore)
-#pragma warning restore 168
+            catch (Exception ignore) when (ignore.IsAlreadyClosedException())
             {
                 // pass
             }
@@ -129,9 +123,7 @@ namespace Lucene.Net.Store
                 two.ReadVInt32();
                 Assert.Fail("Must throw ObjectDisposedException");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException ignore)
-#pragma warning restore 168
+            catch (Exception ignore) when (ignore.IsAlreadyClosedException())
             {
                 // pass
             }
@@ -160,9 +152,7 @@ namespace Lucene.Net.Store
                 one.ReadInt32();
                 Assert.Fail("Must throw ObjectDisposedException");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException ignore)
-#pragma warning restore 168
+            catch (Exception ignore) when (ignore.IsAlreadyClosedException())
             {
                 // pass
             }
@@ -171,9 +161,7 @@ namespace Lucene.Net.Store
                 two.ReadInt32();
                 Assert.Fail("Must throw ObjectDisposedException");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException ignore)
-#pragma warning restore 168
+            catch (Exception ignore) when (ignore.IsAlreadyClosedException())
             {
                 // pass
             }
@@ -182,9 +170,7 @@ namespace Lucene.Net.Store
                 three.ReadInt32();
                 Assert.Fail("Must throw ObjectDisposedException");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException ignore)
-#pragma warning restore 168
+            catch (Exception ignore) when (ignore.IsAlreadyClosedException())
             {
                 // pass
             }
@@ -193,9 +179,7 @@ namespace Lucene.Net.Store
                 four.ReadInt32();
                 Assert.Fail("Must throw ObjectDisposedException");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException ignore)
-#pragma warning restore 168
+            catch (Exception ignore) when (ignore.IsAlreadyClosedException())
             {
                 // pass
             }
@@ -225,9 +209,7 @@ namespace Lucene.Net.Store
                 one.ReadInt32();
                 Assert.Fail("Must throw ObjectDisposedException");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException ignore)
-#pragma warning restore 168
+            catch (Exception ignore) when (ignore.IsAlreadyClosedException())
             {
                 // pass
             }

@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     string dictRoot = AnalyzerProfile.ANALYSIS_DATA_DIR;
                     if (string.IsNullOrEmpty(dictRoot))
                     {
-                        singleInstance.Load();
+                        singleInstance.Load(); // LUCENENET: No IOExcpetion can happen here
                     }
                     else
                     {
@@ -134,9 +134,9 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     SortEachItems();
                     // log.info("load dictionary: " + dctFilePath + " total:" + total);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e); // LUCENENET: Passing class so we can wrap it
                 }
 
                 SaveToObj(serialObj);
@@ -164,7 +164,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             }
             catch (Exception e)
             {
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
         }
 

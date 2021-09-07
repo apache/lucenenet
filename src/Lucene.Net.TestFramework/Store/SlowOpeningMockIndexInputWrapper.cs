@@ -33,16 +33,15 @@ namespace Lucene.Net.Store
             {
                 Thread.Sleep(50);
             }
-            catch (ThreadInterruptedException /*ie*/)
+            catch (Exception ie) when (ie.IsInterruptedException())
             {
                 try
                 {
                     base.Dispose();
                 } // we didnt open successfully
-                catch (Exception)
+                catch (Exception ignore) when (ignore.IsThrowable())
                 {
                 }
-                //throw new ThreadInterruptedException(ie.ToString(), ie);
                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
         }

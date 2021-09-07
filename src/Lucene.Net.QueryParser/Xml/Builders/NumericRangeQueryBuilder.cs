@@ -128,7 +128,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                 }
                 return filter;
             }
-            catch (FormatException nfe)
+            catch (Exception nfe) when (nfe.IsNumberFormatException())
             {
                 throw new ParserException("Could not parse lowerTerm or upperTerm into a number", nfe);
             }

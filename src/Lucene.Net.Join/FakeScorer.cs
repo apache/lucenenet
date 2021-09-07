@@ -1,9 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
-using Lucene.Net.Search;
-using System;
 using System.Collections.Generic;
 
-namespace Lucene.Net.Join
+namespace Lucene.Net.Search.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -37,16 +35,16 @@ namespace Lucene.Net.Join
 
         public override int Advance(int target)
         {
-            throw new NotSupportedException("FakeScorer doesn't support Advance(int)");
+            throw UnsupportedOperationException.Create("FakeScorer doesn't support Advance(int)");
         }
 
         public override int DocID => doc;
 
-        public override int Freq => throw new NotSupportedException("FakeScorer doesn't support Freq");
+        public override int Freq => throw UnsupportedOperationException.Create("FakeScorer doesn't support Freq");
 
         public override int NextDoc()
         {
-            throw new NotSupportedException("FakeScorer doesn't support NextDoc()");
+            throw UnsupportedOperationException.Create("FakeScorer doesn't support NextDoc()");
         }
 
         public override float GetScore()
@@ -59,11 +57,11 @@ namespace Lucene.Net.Join
             return 1;
         }
 
-        public override Weight Weight => throw new NotSupportedException();
+        public override Weight Weight => throw UnsupportedOperationException.Create();
 
         public override ICollection<ChildScorer> GetChildren()
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
     }
 }

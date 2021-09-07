@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Search
 {
@@ -35,7 +35,7 @@ namespace Lucene.Net.Search
         /// <param name="innerIter"> Underlying <see cref="DocIdSetIterator"/>. </param>
         protected FilteredDocIdSetIterator(DocIdSetIterator innerIter) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
-            m_innerIter = innerIter ?? throw new ArgumentNullException(nameof(innerIter), "null iterator");
+            m_innerIter = innerIter ?? throw new ArgumentNullException(nameof(innerIter), "null iterator"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             doc = -1;
         }
 

@@ -78,7 +78,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     {
                         Dispose();
                     } 
-                    catch
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         // ensure we throw our original exception
                     }
@@ -110,7 +110,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 SimpleTextUtil.ReadLine(input, _scratch);
                 if (StringHelper.StartsWith(_scratch, SimpleTextStoredFieldsWriter.DOC))
                 {
-                    _offsets[upto] = input.GetFilePointer();
+                    _offsets[upto] = input.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     upto++;
                 }
             }
@@ -163,7 +163,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 else
                 {
-                    throw new Exception("unknown field type");
+                    throw RuntimeException.Create("unknown field type");
                 }
 
                 switch (visitor.NeedsField(fieldInfo))
@@ -227,7 +227,7 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             if (_input == null)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "this FieldsReader is closed");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "this FieldsReader is disposed.");
             }
             return new SimpleTextStoredFieldsReader(_offsets, (IndexInput) _input.Clone(), _fieldInfos);
         }

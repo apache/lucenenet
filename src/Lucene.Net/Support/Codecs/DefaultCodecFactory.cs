@@ -207,7 +207,7 @@ namespace Lucene.Net.Codecs
         /// <param name="codec">A type that subclasses <see cref="Codec"/>.</param>
         protected virtual void PutCodecType(Type codec)
         {
-            if (codec == null)
+            if (codec is null)
                 throw new ArgumentNullException(nameof(codec));
             if (!typeof(Codec).IsAssignableFrom(codec))
                 throw new ArgumentException($"The supplied type {codec.AssemblyQualifiedName} does not subclass {nameof(Codec)}.");
@@ -246,7 +246,7 @@ namespace Lucene.Net.Codecs
         /// <returns>The <see cref="Codec"/> instance.</returns>
         protected virtual Codec GetCodec(Type type)
         {
-            if (type == null)
+            if (type is null)
                 throw new ArgumentNullException(nameof(type));
             if (!codecInstanceCache.TryGetValue(type, out Codec instance))
             {
@@ -280,7 +280,7 @@ namespace Lucene.Net.Codecs
         /// <returns>The <see cref="Codec"/> <see cref="Type"/>.</returns>
         protected virtual Type GetCodecType(string name)
         {
-            if (name == null)
+            if (name is null)
                 throw new ArgumentNullException(nameof(name));
             EnsureInitialized();
             if (!codecNameToTypeMap.TryGetValue(name, out Type codecType) || codecType == null)

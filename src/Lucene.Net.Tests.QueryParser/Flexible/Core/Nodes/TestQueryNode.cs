@@ -62,11 +62,28 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             fieldNode.RemoveFromParent();
             assertNull(fieldNode.Parent);
+            /* LUCENE-5805 - QueryNodeImpl.removeFromParent does a lot of work without any effect */
+            assertFalse(booleanNode.GetChildren().Contains(fieldNode));
 
             booleanNode.Add(fieldNode);
             assertNotNull(fieldNode.Parent);
 
             booleanNode.Set(Collections.EmptyList<IQueryNode>());
+            assertNull(fieldNode.Parent);
+        }
+
+        // LUCENENET: Added this patch in Lucene.NET 4.8.0 from Lucene 5.3.0
+        [Test]
+        public void TestRemoveChildren()
+        {
+            BooleanQueryNode booleanNode = new BooleanQueryNode(Collections.EmptyList<IQueryNode>());
+            FieldQueryNode fieldNode = new FieldQueryNode("foo", "A", 0, 1);
+
+            booleanNode.Add(fieldNode);
+            assertTrue(booleanNode.GetChildren().Count == 1);
+
+            booleanNode.RemoveChildren(fieldNode);
+            assertTrue(booleanNode.GetChildren().Count == 0);
             assertNull(fieldNode.Parent);
         }
     }

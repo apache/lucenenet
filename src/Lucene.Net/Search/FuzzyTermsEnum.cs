@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
@@ -114,17 +114,17 @@ namespace Lucene.Net.Search
             }
             if (minSimilarity < 0.0f)
             {
-                throw new ArgumentException("minimumSimilarity cannot be less than 0");
+                throw new ArgumentOutOfRangeException(nameof(minSimilarity), "minimumSimilarity cannot be less than 0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (prefixLength < 0)
             {
-                throw new ArgumentException("prefixLength cannot be less than 0");
+                throw new ArgumentOutOfRangeException(nameof(prefixLength), "prefixLength cannot be less than 0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.m_terms = terms;
             this.term = term;
 
             // convert the string into a utf32 int[] representation for fast comparisons
-            string utf16 = term.Text();
+            string utf16 = term.Text;
             this.m_termText = new int[utf16.CodePointCount(0, utf16.Length)];
             for (int cp, i = 0, j = 0; i < utf16.Length; i += Character.CharCount(cp))
             {
@@ -152,7 +152,7 @@ namespace Lucene.Net.Search
             }
             if (transpositions && m_maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE)
             {
-                throw new NotSupportedException("with transpositions enabled, distances > " + LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE + " are not supported ");
+                throw UnsupportedOperationException.Create("with transpositions enabled, distances > " + LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE + " are not supported ");
             }
             this.transpositions = transpositions;
             this.m_scaleFactor = 1.0f / (1.0f - this.m_minSimilarity);
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
             {
                 //if (BlockTreeTermsWriter.DEBUG) System.out.println("FuzzyTE.getAEnum: ed=" + editDistance + " lastTerm=" + (lastTerm==null ? "null" : lastTerm.utf8ToString()));
                 CompiledAutomaton compiled = runAutomata[editDistance];
-                return new AutomatonFuzzyTermsEnum(this, m_terms.Intersect(compiled, lastTerm == null ? null : compiled.Floor(lastTerm, new BytesRef())), runAutomata.SubList(0, editDistance + 1).ToArray(/*new CompiledAutomaton[editDistance + 1]*/));
+                return new AutomatonFuzzyTermsEnum(this, m_terms.Intersect(compiled, lastTerm == null ? null : compiled.Floor(lastTerm, new BytesRef())), runAutomata.GetView(0, editDistance + 1).ToArray(/*new CompiledAutomaton[editDistance + 1]*/)); // LUCENENET: Checked count parameter of GetView()
             }
             else
             {
@@ -375,7 +375,7 @@ namespace Lucene.Net.Search
                 {
                     this.matchers[i] = compiled[i].RunAutomaton;
                 }
-                termRef = new BytesRef(outerInstance.term.Text());
+                termRef = new BytesRef(outerInstance.term.Text);
             }
 
             /// <summary>

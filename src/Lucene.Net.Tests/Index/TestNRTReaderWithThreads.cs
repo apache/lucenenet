@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Index.Extensions;
@@ -58,9 +58,9 @@ namespace Lucene.Net.Index
                 indexThreads[x].Name = "Thread " + x;
                 indexThreads[x].Start();
             }
-            long startTime = Environment.TickCount;
+            long startTime = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             long duration = 1000;
-            while ((Environment.TickCount - startTime) < duration)
+            while (((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - startTime) < duration) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             {
                 Thread.Sleep(100);
             }
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex.IsThrowable())
                 {
                     Console.WriteLine(ex.StackTrace);
                     this.ex = ex;

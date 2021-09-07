@@ -149,11 +149,10 @@ namespace Egothor.Stemmer
                     string line;
                     while ((line = input.ReadLine()) != null)
                     {
-                        try
+                        line = line.ToLowerInvariant();
+                        using StringTokenizer st = new StringTokenizer(line);
+                        if (st.MoveNext())
                         {
-                            line = line.ToLowerInvariant();
-                            StringTokenizer st = new StringTokenizer(line);
-                            st.MoveNext();
                             string stem = st.Current;
                             if (storeorig)
                             {
@@ -170,7 +169,7 @@ namespace Egothor.Stemmer
                                 }
                             }
                         }
-                        catch (InvalidOperationException)
+                        else // LUCENENET: st.MoveNext() will return false rather than throwing a NoSuchElementException
                         {
                             // no base token (stem) on a line
                         }

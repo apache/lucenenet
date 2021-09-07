@@ -35,8 +35,8 @@ on:
     #branches:
     #- master
     paths:
-    - 'websites/site/**'
-    - '.github/workflows/Lucene-Net-Website.yml'
+    - 'websites/site/**/*'
+    #- '.github/workflows/Lucene-Net-Website.yml' # This causes the action to run whenever this file is added to any branch (seems like overkill)
 
 env:
   # If a tag is specified, the tag will be in the format: Website_4_8_0_beta00013 which
@@ -48,6 +48,7 @@ env:
 jobs:
   build:
     runs-on: windows-latest
+    if: ${{ github.repository == 'apache/lucenenet' }} # Run only on the main fork (SHAZWAZZA - check whether this is right)
     steps:
 
       # Checkout the main repo with all history so we get all tags

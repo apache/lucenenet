@@ -5,6 +5,7 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.IO;
 using System.Threading;
@@ -130,7 +131,7 @@ namespace Lucene.Net.Index
                         }
                         extraCount++;
                     }
-                    catch (IOException ioe)
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
                         if (Verbose)
                         {
@@ -370,12 +371,12 @@ namespace Lucene.Net.Index
                         runningMergeCount.DecrementAndGet();
                     }
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     failed.Value = (true);
                     m_writer.MergeFinish(merge);
                     // LUCENENET NOTE: ThreadJob takes care of propagating the exception to the calling thread
-                    throw new Exception(t.ToString(), t);
+                    throw RuntimeException.Create(t);
                 }
             }
         }

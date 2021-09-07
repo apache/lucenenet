@@ -6,6 +6,7 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -59,7 +60,7 @@ namespace Lucene.Net.Index
         public static int Count(Term t, IndexReader r)
         {
             int count = 0;
-            DocsEnum td = TestUtil.Docs(Random, r, t.Field, new BytesRef(t.Text()), MultiFields.GetLiveDocs(r), null, 0);
+            DocsEnum td = TestUtil.Docs(Random, r, t.Field, new BytesRef(t.Text), MultiFields.GetLiveDocs(r), null, 0);
 
             if (td != null)
             {
@@ -590,7 +591,7 @@ namespace Lucene.Net.Index
                         //doBody(5, dirs);
                         //}
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         outerInstance.Handle(t);
                     }
@@ -843,9 +844,7 @@ namespace Lucene.Net.Index
                 DirectoryReader.OpenIfChanged(r);
                 Assert.Fail("failed to hit ObjectDisposedException");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException ace)
-#pragma warning restore 168
+            catch (Exception ace) when (ace.IsAlreadyClosedException())
             {
                 // expected
             }
@@ -882,7 +881,7 @@ namespace Lucene.Net.Index
 
             const float SECONDS = 0.5f;
 
-            long endTime = (long)(Environment.TickCount + 1000.0 * SECONDS);
+            long endTime = (long)((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + 1000.0 * SECONDS); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             ConcurrentQueue<Exception> excs = new ConcurrentQueue<Exception>();
 
             // Only one thread can addIndexes at a time, because
@@ -896,7 +895,7 @@ namespace Lucene.Net.Index
             }
 
             int lastCount = 0;
-            while (Environment.TickCount < endTime)
+            while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < endTime) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             {
                 DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
                 if (r2 != null)
@@ -964,12 +963,12 @@ namespace Lucene.Net.Index
                         writer.AddIndexes(dirs);
                         writer.MaybeMerge();
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         excs.Enqueue(t);
-                        throw new Exception(t.Message, t);
+                        throw RuntimeException.Create(t);
                     }
-                } while (Environment.TickCount < endTime);
+                } while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < endTime); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
         }
 
@@ -998,7 +997,7 @@ namespace Lucene.Net.Index
 
             const float SECONDS = 0.5f;
 
-            long endTime = (long)(Environment.TickCount + 1000.0 * SECONDS);
+            long endTime = (long)((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + 1000.0 * SECONDS); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             ConcurrentQueue<Exception> excs = new ConcurrentQueue<Exception>();
 
             var threads = new ThreadJob[numThreads];
@@ -1010,7 +1009,7 @@ namespace Lucene.Net.Index
             }
 
             int sum = 0;
-            while (Environment.TickCount < endTime)
+            while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < endTime) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             {
                 DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
                 if (r2 != null)
@@ -1081,12 +1080,12 @@ namespace Lucene.Net.Index
                             writer.DeleteDocuments(new Term("field3", "b" + x));
                         }
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         excs.Enqueue(t);
-                        throw new Exception(t.Message, t);
+                        throw RuntimeException.Create(t);
                     }
-                } while (Environment.TickCount < endTime);
+                } while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < endTime); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
         }
 
@@ -1281,9 +1280,7 @@ namespace Lucene.Net.Index
                 TestUtil.Docs(Random, r, "f", new BytesRef("val"), null, null, DocsFlags.NONE);
                 Assert.Fail("should have failed to seek since terms index was not loaded.");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalStateException())
             {
                 // expected - we didn't load the term index
             }

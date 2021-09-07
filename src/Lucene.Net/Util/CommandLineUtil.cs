@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -40,17 +40,22 @@ namespace Lucene.Net.Util
             try
             {
                 Type clazz = LoadFSDirectoryClass(clazzName);
+
+                // LUCENENET: In .NET, we get a null when the class is not found, so we need to throw here for compatibility
+                if (clazz is null)
+                    throw new ArgumentException(typeof(FSDirectory).Name + " implementation not found: " + clazzName);
+
                 return NewFSDirectory(clazz, dir);
             }
-            catch (TypeLoadException e)
+            catch (Exception e) when (e.IsClassNotFoundException())
             {
                 throw new ArgumentException(typeof(FSDirectory).Name + " implementation not found: " + clazzName, e);
             }
-            catch (InvalidCastException e)
+            catch (Exception e) when (e.IsClassCastException())
             {
                 throw new ArgumentException(clazzName + " is not a " + typeof(FSDirectory).Name + " implementation", e);
             }
-            catch (MissingMethodException e)
+            catch (Exception e) when (e.IsNoSuchMethodException())
             {
                 throw new ArgumentException(clazzName + " constructor with " + typeof(FileInfo).Name + " as parameter not found", e);
             }
@@ -84,7 +89,7 @@ namespace Lucene.Net.Util
 
         private static string AdjustDirectoryClassName(string clazzName)
         {
-            if (clazzName == null || clazzName.Trim().Length == 0)
+            if (clazzName is null || clazzName.Trim().Length == 0)
             {
                 throw new ArgumentException("The " + typeof(FSDirectory).Name + " implementation cannot be null or empty");
             }

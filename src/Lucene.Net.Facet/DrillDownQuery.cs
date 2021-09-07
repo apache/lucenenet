@@ -162,7 +162,7 @@ namespace Lucene.Net.Facet
             {
                 // App called .add(dim, customQuery) and then tried to
                 // merge a facet label in:
-                throw new Exception("cannot merge with custom Query");
+                throw RuntimeException.Create("cannot merge with custom Query");
             }
             string indexedField = config.GetDimConfig(dim).IndexFieldName;
 

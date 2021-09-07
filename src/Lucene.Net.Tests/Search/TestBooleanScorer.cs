@@ -255,7 +255,7 @@ namespace Lucene.Net.Search
 
                 public override Explanation Explain(AtomicReaderContext context, int doc)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
                 public override Query Query => outerInstance;
@@ -271,7 +271,7 @@ namespace Lucene.Net.Search
 
                 public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
                 public override BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)

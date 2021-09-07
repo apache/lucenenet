@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -400,25 +400,21 @@ namespace Lucene.Net.Search
                         {
                             k1 += "max plus ".Length;
                             int k2 = descr.IndexOf(" ", k1, StringComparison.Ordinal);
-                            try
+
+                            // LUCENENET NOTE: Using current culture here is intentional because
+                            // we are parsing from text that was made using the current culture.
+                            if (float.TryParse(descr.Substring(k1, k2 - k1).Trim(), out x) &&
+                                descr.Substring(k2).Trim().Equals("times others of:", StringComparison.Ordinal))
                             {
-                                // LUCENENET NOTE: Using current culture here is intentional because
-                                // we are parsing from text that was made using the current culture.
-                                x = Convert.ToSingle(descr.Substring(k1, k2 - k1).Trim());
-                                if (descr.Substring(k2).Trim().Equals("times others of:", StringComparison.Ordinal))
-                                {
-                                    maxTimesOthers = true;
-                                }
-                            }
-#pragma warning disable 168, IDE0059
-                            catch (FormatException e)
-#pragma warning restore 168, IDE0059
-                            {
+                                maxTimesOthers = true;
                             }
                         }
                     }
                     // TODO: this is a TERRIBLE assertion!!!!
-                    Assert.IsTrue(productOf || sumOf || maxOf || maxTimesOthers, q + ": multi valued explanation description=\"" + descr + "\" must be 'max of plus x times others' or end with 'product of'" + " or 'sum of:' or 'max of:' - " + expl);
+                    Assert.IsTrue(productOf || sumOf || maxOf || maxTimesOthers,
+                        q + ": multi valued explanation description=\"" + descr
+                        + "\" must be 'max of plus x times others' or end with 'product of'"
+                        + " or 'sum of:' or 'max of:' - " + expl);
                     float sum = 0;
                     float product = 1;
                     float max = 0;
@@ -451,7 +447,8 @@ namespace Lucene.Net.Search
                     {
                         Assert.IsTrue(false, "should never get here!");
                     }
-                    Assert.AreEqual(combined, value, ExplainToleranceDelta(combined, value), q + ": actual subDetails combined==" + combined + " != value=" + value + " Explanation: " + expl);
+                    Assert.AreEqual(combined, value, ExplainToleranceDelta(combined, value),
+                        q + ": actual subDetails combined==" + combined + " != value=" + value + " Explanation: " + expl);
                 }
             }
         }
@@ -580,9 +577,9 @@ namespace Lucene.Net.Search
             {
                 exp = s.Explain(q, doc);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception("exception in hitcollector of [[" + d + "]] for #" + doc, e);
+                throw RuntimeException.Create("exception in hitcollector of [[" + d + "]] for #" + doc, e);
             }
 
             Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");

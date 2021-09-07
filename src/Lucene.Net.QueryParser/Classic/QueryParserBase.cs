@@ -331,7 +331,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (string.IsNullOrEmpty(fieldName))
             {
-                throw new ArgumentNullException("fieldName cannot be null or empty string.");
+                throw new ArgumentNullException(nameof(fieldName), "fieldName cannot be null or empty string."); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             if (fieldToDateResolution == null)
@@ -352,7 +352,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (string.IsNullOrEmpty(fieldName))
             {
-                throw new ArgumentNullException("fieldName cannot be null or empty string.");
+                throw new ArgumentNullException(nameof(fieldName), "fieldName cannot be null or empty string."); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             if (fieldToDateResolution == null)
@@ -435,7 +435,7 @@ namespace Lucene.Net.QueryParsers.Classic
             else if (!required && prohibited)
                 clauses.Add(NewBooleanClause(q, Occur.MUST_NOT));
             else
-                throw new Exception("Clause cannot be both required and prohibited");
+                throw RuntimeException.Create("Clause cannot be both required and prohibited");
         }
 
         /// <exception cref="ParseException">throw in overridden method to disallow</exception>
@@ -579,7 +579,7 @@ namespace Lucene.Net.QueryParsers.Classic
         protected internal virtual Query NewFuzzyQuery(Term term, float minimumSimilarity, int prefixLength)
         {
             // FuzzyQuery doesn't yet allow constant score rewrite
-            string text = term.Text();
+            string text = term.Text;
 #pragma warning disable 612, 618
             int numEdits = FuzzyQuery.SingleToEdits(minimumSimilarity,
                 text.CodePointCount(0, text.Length));
@@ -614,9 +614,9 @@ namespace Lucene.Net.QueryParsers.Classic
                 source.End();
                 return BytesRef.DeepCopyOf(bytes);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception("Error analyzing multiTerm term: " + part, e);
+                throw RuntimeException.Create("Error analyzing multiTerm term: " + part, e);
             }
             finally
             {
@@ -885,7 +885,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 // Perhaps just make it a non-default option?
                 fms = float.Parse(fuzzySlop.Image.Substring(1), CultureInfo.InvariantCulture);
             }
-            catch (Exception /*ignored*/) { }
+            catch (Exception ignored) when (ignored.IsException()) { }
             if (fms < 0.0f)
             {
                 throw new ParseException("Minimum similarity for a FuzzyQuery has to be between 0.0f and 1.0f !");
@@ -916,7 +916,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     // Perhaps just make it a non-default option?
                     s = (int)float.Parse(fuzzySlop.Image.Substring(1), CultureInfo.InvariantCulture);
                 }
-                catch (Exception /*ignored*/) { }
+                catch (Exception ignored) when (ignored.IsException()) { }
             }
             return GetFieldQuery(qfield, DiscardEscapeChar(term.Image.Substring(1, term.Image.Length - 2)), s);
         }
@@ -939,7 +939,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     // Perhaps just make it a non-default option?
                     f = float.Parse(boost.Image, CultureInfo.InvariantCulture);
                 }
-                catch (Exception /*ignored*/)
+                catch (Exception ignored) when (ignored.IsException())
                 {
                     /* Should this be handled somehow? (defaults to "no boost", if
                      * boost number is invalid)
@@ -1069,6 +1069,10 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         public static string Escape(string s)
         {
+            // LUCENENET specific: Added guard clause for null
+            if (s is null)
+                throw new ArgumentNullException(nameof(s));
+
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < s.Length; i++)
             {

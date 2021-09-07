@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
@@ -350,7 +350,7 @@ namespace Lucene.Net.Index
 
         internal virtual void AssertTermDocsCount(string msg, IndexReader reader, Term term, int expected)
         {
-            DocsEnum tdocs = TestUtil.Docs(Random, reader, term.Field, new BytesRef(term.Text()), MultiFields.GetLiveDocs(reader), null, 0);
+            DocsEnum tdocs = TestUtil.Docs(Random, reader, term.Field, new BytesRef(term.Text), MultiFields.GetLiveDocs(reader), null, 0);
             int count = 0;
             if (tdocs != null)
             {
@@ -429,7 +429,7 @@ namespace Lucene.Net.Index
           try {
             DirectoryReader.Open(fileDirName);
             Assert.Fail("opening DirectoryReader on empty directory failed to produce FileNotFoundException/NoSuchFileException");
-          } catch (FileNotFoundException | NoSuchFileException e) {
+          } catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException()) {
             // GOOD
           }
           rmDir(fileDirName);
@@ -477,15 +477,7 @@ namespace Lucene.Net.Index
                 DirectoryReader.Open(dir);
                 Assert.Fail("expected FileNotFoundException/NoSuchFileException");
             }
-#pragma warning disable 168
-            catch (FileNotFoundException /*| NoSuchFileException*/ e)
-#pragma warning restore 168
-            {
-                // expected
-            }
-            // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-            // in Lucene, we need to catch it here to be on the safe side.
-            catch (DirectoryNotFoundException)
+            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
             {
                 // expected
             }
@@ -498,15 +490,7 @@ namespace Lucene.Net.Index
                 DirectoryReader.Open(dir);
                 Assert.Fail("expected FileNotFoundException/NoSuchFileException");
             }
-#pragma warning disable 168
-            catch (FileNotFoundException /*| NoSuchFileException*/ e)
-#pragma warning restore 168
-            {
-                // expected
-            }
-            // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-            // in Lucene, we need to catch it here to be on the safe side.
-            catch (DirectoryNotFoundException)
+            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
             {
                 // expected
             }
@@ -780,9 +764,7 @@ namespace Lucene.Net.Index
                 DirectoryReader.Open(dir);
                 Assert.Fail("did not hit expected exception");
             }
-#pragma warning disable 168
-            catch (DirectoryNotFoundException nsde)
-#pragma warning restore 168
+            catch (Exception nsde) when (nsde.IsNoSuchDirectoryException())
             {
                 // expected
             }
@@ -906,9 +888,7 @@ namespace Lucene.Net.Index
                 r.DocFreq(new Term("field", "f"));
                 Assert.Fail("did not hit expected exception");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException ise)
-#pragma warning restore 168
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }
@@ -932,9 +912,7 @@ namespace Lucene.Net.Index
                     ctx.Reader.DocFreq(new Term("field", "f"));
                     Assert.Fail("did not hit expected exception");
                 }
-#pragma warning disable 168
-                catch (InvalidOperationException ise)
-#pragma warning restore 168
+                catch (Exception ise) when (ise.IsIllegalStateException())
                 {
                     // expected
                 }
@@ -1163,9 +1141,7 @@ namespace Lucene.Net.Index
                 r.Document(1);
                 Assert.Fail("did not hit exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
                 // expected
             }
@@ -1244,7 +1220,7 @@ namespace Lucene.Net.Index
                     }
                     Assert.IsFalse(toInc.TryIncRef());
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     failed = e;
                 }
@@ -1314,9 +1290,7 @@ namespace Lucene.Net.Index
                 r.DocFreq(new Term("field", "f"));
                 Assert.Fail("did not hit expected exception");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException ise)
-#pragma warning restore 168
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }
@@ -1330,9 +1304,7 @@ namespace Lucene.Net.Index
                 r.DocFreq(new Term("field", "f"));
                 Assert.Fail("did not hit expected exception");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException ise)
-#pragma warning restore 168
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }

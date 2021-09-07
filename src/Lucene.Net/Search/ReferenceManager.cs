@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using System;
@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
     public abstract class ReferenceManager<G> : IDisposable
         where G : class //Make G nullable
     {
-        private const string REFERENCE_MANAGER_IS_CLOSED_MSG = "this ReferenceManager is closed";
+        private const string REFERENCE_MANAGER_IS_CLOSED_MSG = "this ReferenceManager is disposed.";
 
         // LUCENENET NOTE: changed this to be a private volatile field
         // with a property to set/get it, since protected volatile 
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
         {
             if (current == null)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, REFERENCE_MANAGER_IS_CLOSED_MSG);
+                throw AlreadyClosedException.Create(this.GetType().FullName, REFERENCE_MANAGER_IS_CLOSED_MSG);
             }
         }
 
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
             {
                 if ((@ref = current) == null)
                 {
-                    throw new ObjectDisposedException(this.GetType().FullName, REFERENCE_MANAGER_IS_CLOSED_MSG);
+                    throw AlreadyClosedException.Create(this.GetType().FullName, REFERENCE_MANAGER_IS_CLOSED_MSG);
                 }
                 if (TryIncRef(@ref))
                 {
@@ -127,7 +127,7 @@ namespace Lucene.Net.Search
                        decrements the refcount without a corresponding increment
                        since the RM assigns the new reference before counting down
                        the reference. */
-                    throw new InvalidOperationException("The managed reference has already closed - this is likely a bug when the reference count is modified outside of the ReferenceManager");
+                    throw IllegalStateException.Create("The managed reference has already closed - this is likely a bug when the reference count is modified outside of the ReferenceManager");
                 }
             } while (true);
         }
@@ -341,9 +341,9 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual void AddListener(ReferenceManager.IRefreshListener listener)
         {
-            if (listener == null)
+            if (listener is null)
             {
-                throw new ArgumentNullException("Listener cannot be null");
+                throw new ArgumentNullException(nameof(listener), "Listener cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             refreshListeners.Add(listener);
         }
@@ -353,9 +353,9 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual void RemoveListener(ReferenceManager.IRefreshListener listener)
         {
-            if (listener == null)
+            if (listener is null)
             {
-                throw new ArgumentNullException("Listener cannot be null");
+                throw new ArgumentNullException(nameof(listener), "Listener cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             refreshListeners.Remove(listener);
         }

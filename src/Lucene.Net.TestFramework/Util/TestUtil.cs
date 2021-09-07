@@ -6,20 +6,22 @@ using Lucene.Net.Codecs.Lucene46;
 using Lucene.Net.Codecs.PerField;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Support.IO;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
-using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 using Directory = Lucene.Net.Store.Directory;
 using JCG = J2N.Collections.Generic;
+using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 
 
 //#if TESTFRAMEWORK_MSTEST
@@ -184,7 +186,7 @@ namespace Lucene.Net.Util
                 Console.WriteLine("CheckIndex failed");
                 checker.FlushInfoStream();
                 Console.WriteLine(bos.ToString());
-                throw new Exception("CheckIndex failed");
+                throw RuntimeException.Create("CheckIndex failed");
             }
             else
             {
@@ -226,7 +228,7 @@ namespace Lucene.Net.Util
                 Console.WriteLine("CheckReader failed");
                 infoStream.Flush();
                 Console.WriteLine(bos.ToString());
-                throw new Exception("CheckReader failed");
+                throw RuntimeException.Create("CheckReader failed");
             }
             else
             {
@@ -238,610 +240,261 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// <paramref name="start"/> and <paramref name="end"/> are BOTH inclusive </summary>
-        public static int NextInt32(Random r, int start, int end)
-        {
-            return RandomInts.RandomInt32Between(r, start, end);
-        }
-
-        /// <summary>
-        /// <paramref name="start"/> and <paramref name="end"/> are BOTH inclusive </summary>
-        public static long NextInt64(Random r, long start, long end)
-        {
-            Assert.True(end >= start);
-            BigInteger range = (BigInteger)end + (BigInteger)1 - (BigInteger)start;
-            if (range.CompareTo((BigInteger)int.MaxValue) <= 0)
-            {
-                return start + r.Next((int)range);
-            }
-            else
-            {
-                // probably not evenly distributed when range is large, but OK for tests
-                //BigInteger augend = BigInteger.Multiply(range,  new BigInteger(r.NextDouble()));
-                //long result = start + (long)augend;
-
-                // LUCENENET NOTE: Using BigInteger/Decimal doesn't work because r.NextDouble() is always
-                // rounded down to 0, which makes the result always the same as start. This alternative solution was
-                // snagged from https://stackoverflow.com/a/13095144. All we really care about here is that we get
-                // a pretty good random distribution of values between start and end.
-
-                //Working with ulong so that modulo works correctly with values > long.MaxValue
-                ulong uRange = (ulong)unchecked(end - start);
-
-                //Prevent a modolo bias; see https://stackoverflow.com/a/10984975/238419
-                //for more information.
-                //In the worst case, the expected number of calls is 2 (though usually it's
-                //much closer to 1) so this loop doesn't really hurt performance at all.
-                ulong ulongRand;
-                do
-                {
-                    byte[] buf = new byte[8];
-                    r.NextBytes(buf);
-                    ulongRand = (ulong)BitConverter.ToInt64(buf, 0);
-                } while (ulongRand > ulong.MaxValue - ((ulong.MaxValue % uRange) + 1) % uRange);
-
-                long result = (long)(ulongRand % uRange) + start + r.Next(0, 1); // Randomly decide whether to increment by 1 to make the second parameter "inclusive"
-
-                Assert.True(result >= start);
-                Assert.True(result <= end);
-                return result;
-            }
-        }
-
-        /// <summary>
-        /// Returns a random string consisting only of lowercase characters 'a' through 'z'.
+        /// Returns a random <see cref="int"/> from <paramref name="minValue"/> (inclusive) to <paramref name="maxValue"/> (inclusive).
         /// </summary>
-        public static string RandomSimpleString(Random r, int maxLength)
+        /// <param name="random">A <see cref="Random"/> instance.</param>
+        /// <param name="minValue">The inclusive start of the range.</param>
+        /// <param name="maxValue">The inclusive end of the range.</param>
+        /// <returns>A random <see cref="int"/> from <paramref name="minValue"/> (inclusive) to <paramref name="maxValue"/> (inclusive).</returns>
+        /// <exception cref="ArgumentException"><paramref name="minValue"/> is greater than <paramref name="maxValue"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int NextInt32(Random random, int minValue, int maxValue)
         {
-            return RandomSimpleString(r, 0, maxLength);
+            return RandomInts.RandomInt32Between(random, minValue, maxValue); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Returns a random string consisting only of lowercase characters 'a' through 'z'.
+        /// Returns a random <see cref="long"/> from <paramref name="minValue"/> to <paramref name="maxValue"/> (inclusive).
         /// </summary>
-        public static string RandomSimpleString(Random r, int minLength, int maxLength)
+        /// <param name="random">A <see cref="Random"/> instance.</param>
+        /// <param name="minValue">The inclusive start of the range.</param>
+        /// <param name="maxValue">The inclusive end of the range.</param>
+        /// <returns>A random <see cref="long"/> from <paramref name="minValue"/> to <paramref name="maxValue"/> (inclusive).</returns>
+        /// <exception cref="ArgumentException"><paramref name="minValue"/> is greater than <paramref name="maxValue"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long NextInt64(Random random, long minValue, long maxValue)
         {
-            int end = NextInt32(r, minLength, maxLength);
-            if (end == 0)
-            {
-                // allow 0 length
-                return "";
-            }
-            char[] buffer = new char[end];
-            for (int i = 0; i < end; i++)
-            {
-                buffer[i] = (char)TestUtil.NextInt32(r, 'a', 'z');
-            }
-            return new string(buffer, 0, end);
+            return RandomInts.RandomInt64Between(random, minValue, maxValue); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Returns a random string consisting only of characters between <paramref name="minChar"/> and <paramref name="maxChar"/>.
+        /// Returns a random string consisting only of lowercase characters 'a' through 'z'. May be an empty string.
         /// </summary>
-        public static string RandomSimpleStringRange(Random r, char minChar, char maxChar, int maxLength)
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="maxLength">The maximum length of the string to return (inclusive).</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxLength"/> is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomSimpleString(Random random, int maxLength)
         {
-            int end = NextInt32(r, 0, maxLength);
-            if (end == 0)
-            {
-                // allow 0 length
-                return "";
-            }
-            char[] buffer = new char[end];
-            for (int i = 0; i < end; i++)
-            {
-                buffer[i] = (char)TestUtil.NextInt32(r, minChar, maxChar);
-            }
-            return new string(buffer, 0, end);
+            return RandomizedTesting.Generators.RandomExtensions.NextSimpleString(random, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+        }
+
+        /// <summary>
+        /// Returns a random string consisting only of lowercase characters 'a' through 'z'. May be an empty string.
+        /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="minLength">The minimum length of the string to return (inclusive).</param>
+        /// <param name="maxLength">The maximum length of the string to return (inclusive).</param>
+        /// <exception cref="ArgumentException"><paramref name="minLength"/> is greater than <paramref name="maxLength"/>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="minLength"/> or <paramref name="maxLength"/> is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomSimpleString(Random random, int minLength, int maxLength)
+        {
+            return RandomizedTesting.Generators.RandomExtensions.NextSimpleString(random, minLength, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+        }
+
+        /// <summary>
+        /// Returns a random string consisting only of characters between <paramref name="minChar"/> (inclusive)
+        /// and <paramref name="maxChar"/> (inclusive).
+        /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="minChar">The minimum <see cref="char"/> value of the range (inclusive).</param>
+        /// <param name="maxChar">The maximum <see cref="char"/> value of the range (inclusive).</param>
+        /// <param name="maxLength">The maximum length of the string to generate.</param>
+        /// <returns>a random string consisting only of characters between <paramref name="minChar"/> (inclusive)
+        /// and <paramref name="maxChar"/> (inclusive).</returns>
+        /// <exception cref="ArgumentException"><paramref name="minChar"/> is greater than <paramref name="maxChar"/>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="minChar"/> or <paramref name="maxChar"/> is not in
+        /// the range between <see cref="char.MinValue"/> and <see cref="char.MaxValue"/>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="maxLength"/> is less than 0.
+        /// </exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomSimpleStringRange(Random random, char minChar, char maxChar, int maxLength)
+        {
+            return RandomizedTesting.Generators.RandomExtensions.NextSimpleStringRange(random, minChar, maxChar, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
         /// Returns a random string consisting only of lowercase characters 'a' through 'z',
-        /// between 0 and 20 characters in length.
+        /// between 0 and 10 characters in length.
         /// </summary>
-        public static string RandomSimpleString(Random r)
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomSimpleString(Random random)
         {
-            return RandomSimpleString(r, 0, 10);
+            return RandomizedTesting.Generators.RandomExtensions.NextSimpleString(random); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Returns random string, including full unicode range. </summary>
-        public static string RandomUnicodeString(Random r)
+        /// Returns random string with up to 20 characters, including full unicode range.
+        /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomUnicodeString(Random random)
         {
-            return RandomUnicodeString(r, 20);
+            return RandomizedTesting.Generators.RandomExtensions.NextUnicodeString(random); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
         /// Returns a random string up to a certain length.
         /// </summary>
-        public static string RandomUnicodeString(Random r, int maxLength)
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="maxLength">The maximum length of the string to return.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxLength"/> is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomUnicodeString(Random random, int maxLength)
         {
-            int end = NextInt32(r, 0, maxLength);
-            if (end == 0)
-            {
-                // allow 0 length
-                return "";
-            }
-            char[] buffer = new char[end];
-            RandomFixedLengthUnicodeString(r, buffer, 0, buffer.Length);
-            return new string(buffer, 0, end);
+            return RandomizedTesting.Generators.RandomExtensions.NextUnicodeString(random, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
         /// Fills provided <see cref="T:char[]"/> with valid random unicode code
         /// unit sequence.
         /// </summary>
-        public static void RandomFixedLengthUnicodeString(Random random, char[] chars, int offset, int length)
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="chars">A <see cref="T:char[]"/> with preallocated space to put the characters.</param>
+        /// <param name="startIndex">The index of <paramref name="chars"/> to begin populating with characters.</param>
+        /// <param name="length">The number of characters to populate.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="startIndex"/> or <paramref name="length"/> is less than 0.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> + <paramref name="length"/> refers to a position outside of the range of <paramref name="chars"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> or <paramref name="chars"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void RandomFixedLengthUnicodeString(Random random, char[] chars, int startIndex, int length)
         {
-            int i = offset;
-            int end = offset + length;
-            while (i < end)
-            {
-                int t = random.Next(5);
-                if (0 == t && i < length - 1)
-                {
-                    // Make a surrogate pair
-                    // High surrogate
-                    chars[i++] = (char)NextInt32(random, 0xd800, 0xdbff);
-                    // Low surrogate
-                    chars[i++] = (char)NextInt32(random, 0xdc00, 0xdfff);
-                }
-                else if (t <= 1)
-                {
-                    chars[i++] = (char)random.Next(0x80);
-                }
-                else if (2 == t)
-                {
-                    chars[i++] = (char)NextInt32(random, 0x80, 0x7ff);
-                }
-                else if (3 == t)
-                {
-                    chars[i++] = (char)NextInt32(random, 0x800, 0xd7ff);
-                }
-                else if (4 == t)
-                {
-                    chars[i++] = (char)NextInt32(random, 0xe000, 0xffff);
-                }
-            }
+            RandomizedTesting.Generators.RandomExtensions.NextFixedLengthUnicodeString(random, chars, startIndex, length); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Returns a <see cref="string"/> thats "regexpish" (contains lots of operators typically found in regular expressions)
+        /// Returns a <see cref="string"/> thats "regexish" (contains lots of operators typically found in regular expressions)
         /// If you call this enough times, you might get a valid regex!
         /// </summary>
-        public static string RandomRegexpishString(Random r)
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomRegexishString(Random random) // LUCENENET: Renamed from regexpish to make the name .NET-like
         {
-            return RandomRegexpishString(r, 20);
+            return RandomizedTesting.Generators.RandomExtensions.NextRegexishString(random); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Maximum recursion bound for '+' and '*' replacements in
-        /// <see cref="RandomRegexpishString(Random, int)"/>.
-        /// </summary>
-        private const int MaxRecursionBound = 5;
-
-        /// <summary>
-        /// Operators for <see cref="RandomRegexpishString(Random, int)"/>.
-        /// </summary>
-        private static readonly IList<string> ops = new string[] {
-            ".", "?",
-            "{0," + MaxRecursionBound + "}", // bounded replacement for '*'
-            "{1," + MaxRecursionBound + "}", // bounded replacement for '+'
-            "(",
-            ")",
-            "-",
-            "[",
-            "]",
-            "|"
-        };
-
-        /// <summary>
-        /// Returns a <see cref="string"/> thats "regexpish" (contains lots of operators typically found in regular expressions)
+        /// Returns a <see cref="string"/> thats "regexish" (contains lots of operators typically found in regular expressions)
         /// If you call this enough times, you might get a valid regex!
         ///
         /// <para/>Note: to avoid practically endless backtracking patterns we replace asterisk and plus
         /// operators with bounded repetitions. See LUCENE-4111 for more info.
         /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
         /// <param name="maxLength"> A hint about maximum length of the regexpish string. It may be exceeded by a few characters. </param>
-        public static string RandomRegexpishString(Random r, int maxLength)
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxLength"/> is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomRegexpishString(Random random, int maxLength)
         {
-            StringBuilder regexp = new StringBuilder(maxLength);
-            for (int i = NextInt32(r, 0, maxLength); i > 0; i--)
-            {
-                if (r.NextBoolean())
-                {
-                    regexp.Append((char)RandomInts.RandomInt32Between(r, 'a', 'z'));
-                }
-                else
-                {
-                    regexp.Append(RandomPicks.RandomFrom(r, ops));
-                }
-            }
-            return regexp.ToString();
+            return RandomizedTesting.Generators.RandomExtensions.NextRegexishString(random, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
-
-        private static readonly string[] HTML_CHAR_ENTITIES = new string[]
-        {
-            "AElig", "Aacute", "Acirc", "Agrave", "Alpha", "AMP", "Aring", "Atilde", "Auml", "Beta", "COPY", "Ccedil", "Chi",
-            "Dagger", "Delta", "ETH", "Eacute", "Ecirc", "Egrave", "Epsilon", "Eta", "Euml", "Gamma", "GT", "Iacute", "Icirc",
-            "Igrave", "Iota", "Iuml", "Kappa", "Lambda", "LT", "Mu", "Ntilde", "Nu", "OElig", "Oacute", "Ocirc", "Ograve",
-            "Omega", "Omicron", "Oslash", "Otilde", "Ouml", "Phi", "Pi", "Prime", "Psi", "QUOT", "REG", "Rho", "Scaron",
-            "Sigma", "THORN", "Tau", "Theta", "Uacute", "Ucirc", "Ugrave", "Upsilon", "Uuml", "Xi", "Yacute", "Yuml", "Zeta",
-            "aacute", "acirc", "acute", "aelig", "agrave", "alefsym", "alpha", "amp", "and", "ang", "apos", "aring", "asymp",
-            "atilde", "auml", "bdquo", "beta", "brvbar", "bull", "cap", "ccedil", "cedil", "cent", "chi", "circ", "clubs",
-            "cong", "copy", "crarr", "cup", "curren", "dArr", "dagger", "darr", "deg", "delta", "diams", "divide", "eacute",
-            "ecirc", "egrave", "empty", "emsp", "ensp", "epsilon", "equiv", "eta", "eth", "euml", "euro", "exist", "fnof",
-            "forall", "frac12", "frac14", "frac34", "frasl", "gamma", "ge", "gt", "hArr", "harr", "hearts", "hellip", "iacute",
-            "icirc", "iexcl", "igrave", "image", "infin", "int", "iota", "iquest", "isin", "iuml", "kappa", "lArr", "lambda",
-            "lang", "laquo", "larr", "lceil", "ldquo", "le", "lfloor", "lowast", "loz", "lrm", "lsaquo", "lsquo", "lt", "macr",
-            "mdash", "micro", "middot", "minus", "mu", "nabla", "nbsp", "ndash", "ne", "ni", "not", "notin", "nsub", "ntilde",
-            "nu", "oacute", "ocirc", "oelig", "ograve", "oline", "omega", "omicron", "oplus", "or", "ordf", "ordm", "oslash",
-            "otilde", "otimes", "ouml", "para", "part", "permil", "perp", "phi", "pi", "piv", "plusmn", "pound", "prime", "prod",
-            "prop", "psi", "quot", "rArr", "radic", "rang", "raquo", "rarr", "rceil", "rdquo", "real", "reg", "rfloor", "rho",
-            "rlm", "rsaquo", "rsquo", "sbquo", "scaron", "sdot", "sect", "shy", "sigma", "sigmaf", "sim", "spades", "sub", "sube",
-            "sum", "sup", "sup1", "sup2", "sup3", "supe", "szlig", "tau", "there4", "theta", "thetasym", "thinsp", "thorn", "tilde",
-            "times", "trade", "uArr", "uacute", "uarr", "ucirc", "ugrave", "uml", "upsih", "upsilon", "uuml", "weierp", "xi",
-            "yacute", "yen", "yuml", "zeta", "zwj", "zwnj"
-        };
 
         /// <summary>
         /// Returns a random HTML-like string.
         /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="numElements">The maximum number of HTML elements to include in the string.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="numElements"/> is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string RandomHtmlishString(Random random, int numElements)
         {
-            int end = NextInt32(random, 0, numElements);
-            if (end == 0)
-            {
-                // allow 0 length
-                return "";
-            }
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < end; i++)
-            {
-                int val = random.Next(25);
-                switch (val)
-                {
-                    case 0:
-                        sb.Append("<p>");
-                        break;
-
-                    case 1:
-                        {
-                            sb.Append("<");
-                            sb.Append("    ".Substring(NextInt32(random, 0, 4)));
-                            sb.Append(RandomSimpleString(random));
-                            for (int j = 0; j < NextInt32(random, 0, 10); ++j)
-                            {
-                                sb.Append(' ');
-                                sb.Append(RandomSimpleString(random));
-                                sb.Append(" ".Substring(NextInt32(random, 0, 1)));
-                                sb.Append('=');
-                                sb.Append(" ".Substring(NextInt32(random, 0, 1)));
-                                sb.Append("\"".Substring(NextInt32(random, 0, 1)));
-                                sb.Append(RandomSimpleString(random));
-                                sb.Append("\"".Substring(NextInt32(random, 0, 1)));
-                            }
-                            sb.Append("    ".Substring(NextInt32(random, 0, 4)));
-                            sb.Append("/".Substring(NextInt32(random, 0, 1)));
-                            sb.Append(">".Substring(NextInt32(random, 0, 1)));
-                            break;
-                        }
-                    case 2:
-                        {
-                            sb.Append("</");
-                            sb.Append("    ".Substring(NextInt32(random, 0, 4)));
-                            sb.Append(RandomSimpleString(random));
-                            sb.Append("    ".Substring(NextInt32(random, 0, 4)));
-                            sb.Append(">".Substring(NextInt32(random, 0, 1)));
-                            break;
-                        }
-                    case 3:
-                        sb.Append(">");
-                        break;
-
-                    case 4:
-                        sb.Append("</p>");
-                        break;
-
-                    case 5:
-                        sb.Append("<!--");
-                        break;
-
-                    case 6:
-                        sb.Append("<!--#");
-                        break;
-
-                    case 7:
-                        sb.Append("<script><!-- f('");
-                        break;
-
-                    case 8:
-                        sb.Append("</script>");
-                        break;
-
-                    case 9:
-                        sb.Append("<?");
-                        break;
-
-                    case 10:
-                        sb.Append("?>");
-                        break;
-
-                    case 11:
-                        sb.Append("\"");
-                        break;
-
-                    case 12:
-                        sb.Append("\\\"");
-                        break;
-
-                    case 13:
-                        sb.Append("'");
-                        break;
-
-                    case 14:
-                        sb.Append("\\'");
-                        break;
-
-                    case 15:
-                        sb.Append("-->");
-                        break;
-
-                    case 16:
-                        {
-                            sb.Append("&");
-                            switch (NextInt32(random, 0, 2))
-                            {
-                                case 0:
-                                    sb.Append(RandomSimpleString(random));
-                                    break;
-
-                                case 1:
-                                    sb.Append(HTML_CHAR_ENTITIES[random.Next(HTML_CHAR_ENTITIES.Length)]);
-                                    break;
-                            }
-                            sb.Append(";".Substring(NextInt32(random, 0, 1)));
-                            break;
-                        }
-                    case 17:
-                        {
-                            sb.Append("&#");
-                            if (0 == NextInt32(random, 0, 1))
-                            {
-                                sb.Append(NextInt32(random, 0, int.MaxValue - 1));
-                                sb.Append(";".Substring(NextInt32(random, 0, 1)));
-                            }
-                            break;
-                        }
-                    case 18:
-                        {
-                            sb.Append("&#x");
-                            if (0 == NextInt32(random, 0, 1))
-                            {
-                                sb.Append(Convert.ToString(NextInt32(random, 0, int.MaxValue - 1), 16));
-                                sb.Append(";".Substring(NextInt32(random, 0, 1)));
-                            }
-                            break;
-                        }
-
-                    case 19:
-                        sb.Append(";");
-                        break;
-
-                    case 20:
-                        sb.Append(NextInt32(random, 0, int.MaxValue - 1));
-                        break;
-
-                    case 21:
-                        sb.Append("\n");
-                        break;
-
-                    case 22:
-                        sb.Append("          ".Substring(NextInt32(random, 0, 10)));
-                        break;
-
-                    case 23:
-                        {
-                            sb.Append("<");
-                            if (0 == NextInt32(random, 0, 3))
-                            {
-                                sb.Append("          ".Substring(NextInt32(random, 1, 10)));
-                            }
-                            if (0 == NextInt32(random, 0, 1))
-                            {
-                                sb.Append("/");
-                                if (0 == NextInt32(random, 0, 3))
-                                {
-                                    sb.Append("          ".Substring(NextInt32(random, 1, 10)));
-                                }
-                            }
-                            switch (NextInt32(random, 0, 3))
-                            {
-                                case 0:
-                                    sb.Append(RandomlyRecaseString(random, "script"));
-                                    break;
-
-                                case 1:
-                                    sb.Append(RandomlyRecaseString(random, "style"));
-                                    break;
-
-                                case 2:
-                                    sb.Append(RandomlyRecaseString(random, "br"));
-                                    break;
-                                // default: append nothing
-                            }
-                            sb.Append(">".Substring(NextInt32(random, 0, 1)));
-                            break;
-                        }
-                    default:
-                        sb.Append(RandomSimpleString(random));
-                        break;
-                }
-            }
-            return sb.ToString();
+            return RandomizedTesting.Generators.RandomExtensions.NextHtmlishString(random, numElements); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Randomly upcases, downcases, or leaves intact each code point in the given string.
+        /// Randomly upcases, downcases, or leaves intact each code point in the given string in the current culture.
         /// </summary>
-        public static string RandomlyRecaseString(Random random, string str)
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="value">The string to recase randomly.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> or <paramref name="value"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomlyRecaseString(Random random, string value)
         {
-            var builder = new StringBuilder();
-            int pos = 0;
-            while (pos < str.Length)
-            {
-                string toRecase;
-
-                // check if the next char sequence is a surrogate pair
-                if (pos + 1 < str.Length && char.IsSurrogatePair(str[pos], str[pos + 1]))
-                {
-                    toRecase = str.Substring(pos, 2);
-                }
-                else
-                {
-                    toRecase = str.Substring(pos, 1);
-                }
-
-                pos += toRecase.Length;
-
-                switch (NextInt32(random, 0, 2))
-                {
-                    case 0:
-                        builder.Append(toRecase.ToUpper()); // LUCENENET NOTE: Intentionally using current culture
-                        break;
-                    case 1:
-                        builder.Append(toRecase.ToLower()); // LUCENENET NOTE: Intentionally using current culture
-                        break;
-                    case 2:
-                        builder.Append(toRecase);
-                        break;
-                }
-            }
-            return builder.ToString();
-        }
-
-        private static readonly int[] blockStarts = new int[]
-        {
-            0x0000, 0x0080, 0x0100, 0x0180, 0x0250, 0x02B0, 0x0300, 0x0370, 0x0400, 0x0500, 0x0530, 0x0590, 0x0600, 0x0700,
-            0x0750, 0x0780, 0x07C0, 0x0800, 0x0900, 0x0980, 0x0A00, 0x0A80, 0x0B00, 0x0B80, 0x0C00, 0x0C80, 0x0D00, 0x0D80,
-            0x0E00, 0x0E80, 0x0F00, 0x1000, 0x10A0, 0x1100, 0x1200, 0x1380, 0x13A0, 0x1400, 0x1680, 0x16A0, 0x1700, 0x1720,
-            0x1740, 0x1760, 0x1780, 0x1800, 0x18B0, 0x1900, 0x1950, 0x1980, 0x19E0, 0x1A00, 0x1A20, 0x1B00, 0x1B80, 0x1C00,
-            0x1C50, 0x1CD0, 0x1D00, 0x1D80, 0x1DC0, 0x1E00, 0x1F00, 0x2000, 0x2070, 0x20A0, 0x20D0, 0x2100, 0x2150, 0x2190,
-            0x2200, 0x2300, 0x2400, 0x2440, 0x2460, 0x2500, 0x2580, 0x25A0, 0x2600, 0x2700, 0x27C0, 0x27F0, 0x2800, 0x2900,
-            0x2980, 0x2A00, 0x2B00, 0x2C00, 0x2C60, 0x2C80, 0x2D00, 0x2D30, 0x2D80, 0x2DE0, 0x2E00, 0x2E80, 0x2F00, 0x2FF0,
-            0x3000, 0x3040, 0x30A0, 0x3100, 0x3130, 0x3190, 0x31A0, 0x31C0, 0x31F0, 0x3200, 0x3300, 0x3400, 0x4DC0, 0x4E00,
-            0xA000, 0xA490, 0xA4D0, 0xA500, 0xA640, 0xA6A0, 0xA700, 0xA720, 0xA800, 0xA830, 0xA840, 0xA880, 0xA8E0, 0xA900,
-            0xA930, 0xA960, 0xA980, 0xAA00, 0xAA60, 0xAA80, 0xABC0, 0xAC00, 0xD7B0, 0xE000, 0xF900, 0xFB00, 0xFB50, 0xFE00,
-            0xFE10, 0xFE20, 0xFE30, 0xFE50, 0xFE70, 0xFF00, 0xFFF0, 0x10000, 0x10080, 0x10100, 0x10140, 0x10190, 0x101D0,
-            0x10280, 0x102A0, 0x10300, 0x10330, 0x10380, 0x103A0, 0x10400, 0x10450, 0x10480, 0x10800, 0x10840, 0x10900,
-            0x10920, 0x10A00, 0x10A60, 0x10B00, 0x10B40, 0x10B60, 0x10C00, 0x10E60, 0x11080, 0x12000, 0x12400, 0x13000,
-            0x1D000, 0x1D100, 0x1D200, 0x1D300, 0x1D360, 0x1D400, 0x1F000, 0x1F030, 0x1F100, 0x1F200, 0x20000, 0x2A700,
-            0x2F800, 0xE0000, 0xE0100, 0xF0000, 0x100000
-        };
-
-        private static readonly int[] blockEnds = new int[]
-        {
-            0x007F, 0x00FF, 0x017F, 0x024F, 0x02AF, 0x02FF, 0x036F, 0x03FF, 0x04FF, 0x052F, 0x058F, 0x05FF, 0x06FF, 0x074F,
-            0x077F, 0x07BF, 0x07FF, 0x083F, 0x097F, 0x09FF, 0x0A7F, 0x0AFF, 0x0B7F, 0x0BFF, 0x0C7F, 0x0CFF, 0x0D7F, 0x0DFF,
-            0x0E7F, 0x0EFF, 0x0FFF, 0x109F, 0x10FF, 0x11FF, 0x137F, 0x139F, 0x13FF, 0x167F, 0x169F, 0x16FF, 0x171F, 0x173F,
-            0x175F, 0x177F, 0x17FF, 0x18AF, 0x18FF, 0x194F, 0x197F, 0x19DF, 0x19FF, 0x1A1F, 0x1AAF, 0x1B7F, 0x1BBF, 0x1C4F,
-            0x1C7F, 0x1CFF, 0x1D7F, 0x1DBF, 0x1DFF, 0x1EFF, 0x1FFF, 0x206F, 0x209F, 0x20CF, 0x20FF, 0x214F, 0x218F, 0x21FF,
-            0x22FF, 0x23FF, 0x243F, 0x245F, 0x24FF, 0x257F, 0x259F, 0x25FF, 0x26FF, 0x27BF, 0x27EF, 0x27FF, 0x28FF, 0x297F,
-            0x29FF, 0x2AFF, 0x2BFF, 0x2C5F, 0x2C7F, 0x2CFF, 0x2D2F, 0x2D7F, 0x2DDF, 0x2DFF, 0x2E7F, 0x2EFF, 0x2FDF, 0x2FFF,
-            0x303F, 0x309F, 0x30FF, 0x312F, 0x318F, 0x319F, 0x31BF, 0x31EF, 0x31FF, 0x32FF, 0x33FF, 0x4DBF, 0x4DFF, 0x9FFF,
-            0xA48F, 0xA4CF, 0xA4FF, 0xA63F, 0xA69F, 0xA6FF, 0xA71F, 0xA7FF, 0xA82F, 0xA83F, 0xA87F, 0xA8DF, 0xA8FF, 0xA92F,
-            0xA95F, 0xA97F, 0xA9DF, 0xAA5F, 0xAA7F, 0xAADF, 0xABFF, 0xD7AF, 0xD7FF, 0xF8FF, 0xFAFF, 0xFB4F, 0xFDFF, 0xFE0F,
-            0xFE1F, 0xFE2F, 0xFE4F, 0xFE6F, 0xFEFF, 0xFFEF, 0xFFFF, 0x1007F, 0x100FF, 0x1013F, 0x1018F, 0x101CF, 0x101FF,
-            0x1029F, 0x102DF, 0x1032F, 0x1034F, 0x1039F, 0x103DF, 0x1044F, 0x1047F, 0x104AF, 0x1083F, 0x1085F, 0x1091F,
-            0x1093F, 0x10A5F, 0x10A7F, 0x10B3F, 0x10B5F, 0x10B7F, 0x10C4F, 0x10E7F, 0x110CF, 0x123FF, 0x1247F, 0x1342F,
-            0x1D0FF, 0x1D1FF, 0x1D24F, 0x1D35F, 0x1D37F, 0x1D7FF, 0x1F02F, 0x1F09F, 0x1F1FF, 0x1F2FF, 0x2A6DF, 0x2B73F,
-            0x2FA1F, 0xE007F, 0xE01EF, 0xFFFFF, 0x10FFFF
-        };
-
-        /// <summary>
-        /// Returns random string of length between 0-20 codepoints, all codepoints within the same unicode block. </summary>
-        public static string RandomRealisticUnicodeString(Random r)
-        {
-            return RandomRealisticUnicodeString(r, 20);
+            return RandomizedTesting.Generators.RandomExtensions.NextStringRecasing(random, value); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Returns random string of length up to maxLength codepoints, all codepoints within the same unicode block. </summary>
-        public static string RandomRealisticUnicodeString(Random r, int maxLength)
+        /// Randomly upcases, downcases, or leaves intact each code point in the given string in the specified <paramref name="culture"/>.
+        /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="value">The string to recase randomly.</param>
+        /// <param name="culture">The culture to use when recasing the string.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/>, <paramref name="value"/> or <paramref name="culture"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomlyRecaseString(Random random, string value, CultureInfo culture) // LUCENENET specific - allow a way to pass culture
         {
-            return RandomRealisticUnicodeString(r, 0, maxLength);
+            return RandomizedTesting.Generators.RandomExtensions.NextStringRecasing(random, value, culture); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Returns random string of length between min and max codepoints, all codepoints within the same unicode block. </summary>
-        public static string RandomRealisticUnicodeString(Random r, int minLength, int maxLength)
+        /// Returns random string of length between 0-20 codepoints, all codepoints within the same unicode block.
+        /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomRealisticUnicodeString(Random random)
         {
-            int end = NextInt32(r, minLength, maxLength);
-            int block = r.Next(blockStarts.Length);
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < end; i++)
-            {
-                sb.AppendCodePoint(NextInt32(r, blockStarts[block], blockEnds[block]));
-            }
-            return sb.ToString();
+            return RandomizedTesting.Generators.RandomExtensions.NextRealisticUnicodeString(random); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
-        /// Returns random string, with a given UTF-8 byte <paramref name="length"/>. </summary>
-        public static string RandomFixedByteLengthUnicodeString(Random r, int length)
+        /// Returns random string of length up to maxLength codepoints, all codepoints within the same unicode block.
+        /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="maxLength">The maximum length of the string to return (inclusive).</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxLength"/> is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomRealisticUnicodeString(Random random, int maxLength)
         {
-            char[] buffer = new char[length * 3];
-            int bytes = length;
-            int i = 0;
-            for (; i < buffer.Length && bytes != 0; i++)
-            {
-                int t;
-                if (bytes >= 4)
-                {
-                    t = r.Next(5);
-                }
-                else if (bytes >= 3)
-                {
-                    t = r.Next(4);
-                }
-                else if (bytes >= 2)
-                {
-                    t = r.Next(2);
-                }
-                else
-                {
-                    t = 0;
-                }
-                if (t == 0)
-                {
-                    buffer[i] = (char)r.Next(0x80);
-                    bytes--;
-                }
-                else if (1 == t)
-                {
-                    buffer[i] = (char)NextInt32(r, 0x80, 0x7ff);
-                    bytes -= 2;
-                }
-                else if (2 == t)
-                {
-                    buffer[i] = (char)NextInt32(r, 0x800, 0xd7ff);
-                    bytes -= 3;
-                }
-                else if (3 == t)
-                {
-                    buffer[i] = (char)NextInt32(r, 0xe000, 0xffff);
-                    bytes -= 3;
-                }
-                else if (4 == t)
-                {
-                    // Make a surrogate pair
-                    // High surrogate
-                    buffer[i++] = (char)NextInt32(r, 0xd800, 0xdbff);
-                    // Low surrogate
-                    buffer[i] = (char)NextInt32(r, 0xdc00, 0xdfff);
-                    bytes -= 4;
-                }
-            }
-            return new string(buffer, 0, i);
+            return RandomizedTesting.Generators.RandomExtensions.NextRealisticUnicodeString(random, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+        }
+
+        /// <summary>
+        /// Returns random string of length between min and max codepoints, all codepoints within the same unicode block.
+        /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="minLength">The minimum length of the string to return (inclusive).</param>
+        /// <param name="maxLength">The maximum length of the string to return (inclusive).</param>
+        /// <exception cref="ArgumentException"><paramref name="minLength"/> is greater than <paramref name="maxLength"/>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="minLength"/> or <paramref name="maxLength"/> is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomRealisticUnicodeString(Random random, int minLength, int maxLength)
+        {
+            return RandomizedTesting.Generators.RandomExtensions.NextRealisticUnicodeString(random, minLength, maxLength); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
+        }
+
+        /// <summary>
+        /// Returns random string, with a given UTF-8 byte <paramref name="length"/>.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="length"/> is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="random"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string RandomFixedByteLengthUnicodeString(Random random, int length)
+        {
+            return RandomizedTesting.Generators.RandomExtensions.NextFixedByteLengthUnicodeString(random, length); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         /// <summary>
@@ -1084,7 +737,7 @@ namespace Lucene.Net.Util
                             break;
 
                         default:
-                            throw new InvalidOperationException("unknown Type: " + dvType);
+                            throw IllegalStateException.Create("unknown Type: " + dvType);
                     }
                 }
                 else if (numType != NumericType.NONE)
@@ -1108,7 +761,7 @@ namespace Lucene.Net.Util
                             break;
 
                         default:
-                            throw new InvalidOperationException("unknown Type: " + numType);
+                            throw IllegalStateException.Create("unknown Type: " + numType);
                     }
                 }
                 else
@@ -1214,7 +867,7 @@ namespace Lucene.Net.Util
         //        ex.shutdown();
         //        ex.awaitTermination(1, TimeUnit.SECONDS);
         //      }
-        //      catch (ThreadInterruptedException e)
+        //      catch (Exception e) when (e.IsInterruptedException())
         //      {
         //        // Just report it on the syserr.
         //        Console.Error.WriteLine("Could not properly shutdown executor service.");
@@ -1230,28 +883,7 @@ namespace Lucene.Net.Util
         /// </summary>        
         public static Regex RandomRegex(Random random) // LUCENENET specific - renamed from RandomPattern()
         {
-            const string nonBmpString = "AB\uD840\uDC00C";
-            while (true)
-            {
-                try
-                {
-                    Regex p = new Regex(TestUtil.RandomRegexpishString(random), RegexOptions.Compiled);
-                    string replacement = p.Replace(nonBmpString, "_");
-
-                    // Make sure the result of applying the pattern to a string with extended
-                    // unicode characters is a valid utf16 string. See LUCENE-4078 for discussion.
-                    if (replacement != null && UnicodeUtil.ValidUTF16String(replacement))
-                    {
-                        return p;
-                    }
-                }
-#pragma warning disable 168, IDE0059
-                catch (Exception ignored)
-#pragma warning restore 168, IDE0059
-                {
-                    // Loop trying until we hit something that compiles.
-                }
-            }
+            return RandomizedTesting.Generators.RandomExtensions.NextRegex(random); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
         }
 
         public static FilteredQuery.FilterStrategy RandomFilterStrategy(Random random)
@@ -1292,13 +924,13 @@ namespace Lucene.Net.Util
         /// entirely of whitespace characters.
         /// </summary>
         /// <seealso cref="WHITESPACE_CHARACTERS"/>
-        public static string RandomWhitespace(Random r, int minLength, int maxLength)
+        public static string RandomWhitespace(Random random, int minLength, int maxLength)
         {
-            int end = NextInt32(r, minLength, maxLength);
+            int end = NextInt32(random, minLength, maxLength);
             StringBuilder @out = new StringBuilder();
             for (int i = 0; i < end; i++)
             {
-                int offset = NextInt32(r, 0, WHITESPACE_CHARACTERS.Length - 1);
+                int offset = NextInt32(random, 0, WHITESPACE_CHARACTERS.Length - 1);
                 char c = WHITESPACE_CHARACTERS[offset];
                 // sanity check
                 Assert.IsTrue(char.IsWhiteSpace(c), "Not really whitespace? (@" + offset + "): " + c);
@@ -1331,7 +963,7 @@ namespace Lucene.Net.Util
                 int wordLength = -1;
                 while (wordLength < 0)
                 {
-                    wordLength = (int)(random.NextDouble() * 3 + avgWordLength);
+                    wordLength = (int)(random.NextGaussian() * 3 + avgWordLength);
                 }
                 wordLength = Math.Min(wordLength, maxLength - sb.Length);
                 sb.Append(RandomSubString(random, wordLength, simple));

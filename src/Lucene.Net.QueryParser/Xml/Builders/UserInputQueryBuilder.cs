@@ -80,7 +80,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                 q.Boost = DOMUtils.GetAttribute(e, "boost", 1.0f);
                 return q;
             }
-            catch (ParseException e1)
+            catch (Lucene.Net.QueryParsers.Classic.ParseException e1) // LUCENENET: Classic QueryParser has its own ParseException that is different than the one in Support
             {
                 throw new ParserException(e1.Message, e1);
             }

@@ -169,9 +169,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     count = task.RunAndMaybeStats(letChildReport);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -189,7 +189,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             long runTime = (long)(runTimeSec * 1000);
             List<RunBackgroundTask> bgTasks = null;
 
-            long t0 = J2N.Time.CurrentTimeMilliseconds();
+            long t0 = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             for (int k = 0; fixedTime || (repetitions == REPEAT_EXHAUST && !exhausted) || k < repetitions; k++)
             {
                 if (Stop)
@@ -220,7 +220,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                             count += inc;
                             if (countsByTime != null)
                             {
-                                int slot = (int)((J2N.Time.CurrentTimeMilliseconds() - t0) / logByTimeMsec);
+                                int slot = (int)(((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - t0) / logByTimeMsec); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                                 if (slot >= countsByTime.Length)
                                 {
                                     countsByTime = ArrayUtil.Grow(countsByTime, 1 + slot);
@@ -236,7 +236,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                         }
                     }
                 }
-                if (fixedTime && J2N.Time.CurrentTimeMilliseconds() - t0 > runTime)
+                if (fixedTime && (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - t0 > runTime) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 {
                     repetitions = k + 1;
                     break;
@@ -270,9 +270,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             InitTasksArray();
             long delayStep = (perMin ? 60000 : 1000) / rate;
-            long nextStartTime = J2N.Time.CurrentTimeMilliseconds();
+            long nextStartTime = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             int count = 0;
-            long t0 = J2N.Time.CurrentTimeMilliseconds();
+            long t0 = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             for (int k = 0; (repetitions == REPEAT_EXHAUST && !exhausted) || k < repetitions; k++)
             {
                 if (Stop)
@@ -284,7 +284,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     PerfTask task = tasksArray[l];
                     while (!Stop)
                     {
-                        long waitMore = nextStartTime - J2N.Time.CurrentTimeMilliseconds();
+                        long waitMore = nextStartTime - (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                         if (waitMore > 0)
                         {
                             // TODO: better to use condition to notify
@@ -306,7 +306,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                         count += inc;
                         if (countsByTime != null)
                         {
-                            int slot = (int)((J2N.Time.CurrentTimeMilliseconds() - t0) / logByTimeMsec);
+                            int slot = (int)(((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - t0) / logByTimeMsec); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                             if (slot >= countsByTime.Length)
                             {
                                 countsByTime = ArrayUtil.Grow(countsByTime, 1 + slot);
@@ -383,9 +383,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     outerInstance.exhausted = true;
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -486,10 +486,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         private void StartlThreadsWithRate(ParallelTask[] t)
         {
             long delayStep = (perMin ? 60000 : 1000) / rate;
-            long nextStartTime = J2N.Time.CurrentTimeMilliseconds();
+            long nextStartTime = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             for (int i = 0; i < t.Length; i++)
             {
-                long waitMore = nextStartTime - J2N.Time.CurrentTimeMilliseconds();
+                long waitMore = nextStartTime - (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 if (waitMore > 0)
                 {
                     Thread.Sleep((int)waitMore);

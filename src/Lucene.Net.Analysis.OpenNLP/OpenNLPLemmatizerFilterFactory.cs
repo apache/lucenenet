@@ -73,9 +73,9 @@ namespace Lucene.Net.Analysis.OpenNlp
                 NLPLemmatizerOp lemmatizerOp = OpenNLPOpsFactory.GetLemmatizer(dictionaryFile, lemmatizerModelFile);
                 return new OpenNLPLemmatizerFilter(input, lemmatizerOp);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
         }
 

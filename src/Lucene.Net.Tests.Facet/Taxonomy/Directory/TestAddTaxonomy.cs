@@ -2,6 +2,7 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Globalization;
 using System.IO;
@@ -98,9 +99,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     {
                         tw.AddCategory(new FacetLabel("a", cat));
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
                 }
             }
@@ -296,10 +297,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     {
                         destTW.AddCategory(new FacetLabel("a", Convert.ToString(i, CultureInfo.InvariantCulture)));
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         // shouldn't happen - if it does, let the test fail on uncaught exception.
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
                 }
             }

@@ -1,4 +1,4 @@
-using J2N.Numerics;
+﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections;
@@ -76,9 +76,9 @@ namespace Lucene.Net.Index
                 {
                     input = new RAMInputStream("PrefixCodedTermsIterator", buffer);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 
@@ -104,8 +104,8 @@ namespace Lucene.Net.Index
             {
                 // LUCENENET specific - Since there is no way to check for a next element
                 // without calling this method in .NET, the assert is redundant and ineffective.
-                //if (Debugging.AssertsEnabled) Debugging.Assert(input.GetFilePointer() < input.Length); // Has next
-                if (input.GetFilePointer() < input.Length)
+                //if (Debugging.AssertsEnabled) Debugging.Assert(input.Position < input.Length); // Has next
+                if (input.Position < input.Length) // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 {
                     try
                     {
@@ -121,9 +121,9 @@ namespace Lucene.Net.Index
                         bytes.Length = prefix + suffix;
                         term.Set(field, bytes);
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
 
                     return true;
@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
 
             public virtual void Reset()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
 
@@ -174,9 +174,9 @@ namespace Lucene.Net.Index
                     lastTerm.Bytes.CopyBytes(term.Bytes);
                     lastTerm.Field = term.Field;
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 
@@ -189,9 +189,9 @@ namespace Lucene.Net.Index
                     output.Dispose();
                     return new PrefixCodedTerms(buffer);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 

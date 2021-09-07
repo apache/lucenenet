@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     // {
     //  String s = "now is the time-for all good men to come to-the aid of their country.";
     //  Token tok = new Token();
-    //  long start = System.currentTimeMillis();
+    //  long start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
     //  int ret = 0;
     //  for (int i = 0; i<1000000; i++) {
     //    StringReader r = new StringReader(s);
@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     //    while (ts.next(tok) != null) ret++;
     //  }
     // 
-    //  System.out.println("ret="+ret+" time="+(System.currentTimeMillis()-start));
+    //  System.out.println("ret="+ret+" time="+(J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond-start)); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
     // }
 
 

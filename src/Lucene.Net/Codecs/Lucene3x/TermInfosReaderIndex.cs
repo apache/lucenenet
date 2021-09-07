@@ -92,7 +92,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 TermInfo termInfo = indexEnum.TermInfo();
                 indexToTerms.Set(i, dataOutput.GetPosition());
                 dataOutput.WriteVInt32(fieldCounter);
-                dataOutput.WriteString(term.Text());
+                dataOutput.WriteString(term.Text);
                 dataOutput.WriteVInt32(termInfo.DocFreq);
                 if (termInfo.DocFreq >= skipInterval)
                 {

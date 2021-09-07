@@ -113,6 +113,36 @@ namespace Lucene.Net.Search.Grouping
             return Search<object>(searcher, null, query, groupOffset, groupLimit);
         }
 
+        /// <summary>
+        /// Executes a grouped search. Both the first pass and second pass are executed on the specified searcher.
+        /// </summary>
+        /// <param name="searcher">The <see cref="IndexSearcher"/> instance to execute the grouped search on.</param>
+        /// <param name="filter">The filter to execute with the grouping</param>
+        /// <param name="query">The query to execute with the grouping</param>
+        /// <param name="groupOffset">The group offset</param>
+        /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <returns>the grouped result as a <see cref="ITopGroups{Object}"/> instance</returns>
+        /// <exception cref="IOException">If any I/O related errors occur</exception>
+        // LUCENENET additional method signature. Makes discovering the return type easier. 
+        public virtual ITopGroups<object> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        {
+            if (groupFunction != null)
+            {
+                return GroupByFunction<MutableValue>(searcher, filter, query, groupOffset, groupLimit);
+            }
+            else if (groupField != null)
+            {
+                return GroupByField<BytesRef>(searcher, filter, query, groupOffset, groupLimit);
+            }
+            else if (groupEndDocs != null)
+            {
+                return GroupByDocBlock<object>(searcher, filter, query, groupOffset, groupLimit);
+            }
+            else
+            {
+                throw IllegalStateException.Create("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
+            }
+        }
 
         /// <summary>
         /// Executes a grouped search. Both the first pass and second pass are executed on the specified searcher.
@@ -132,37 +162,6 @@ namespace Lucene.Net.Search.Grouping
         /// <summary>
         /// Executes a grouped search. Both the first pass and second pass are executed on the specified searcher.
         /// </summary>
-        /// <param name="searcher">The <see cref="IndexSearcher"/> instance to execute the grouped search on.</param>
-        /// <param name="filter">The filter to execute with the grouping</param>
-        /// <param name="query">The query to execute with the grouping</param>
-        /// <param name="groupOffset">The group offset</param>
-        /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
-        /// <returns>the grouped result as a <see cref="ITopGroups{Object}"/> instance</returns>
-        /// <exception cref="IOException">If any I/O related errors occur</exception>
-        // LUCENENET additional method signature. Makes discovering the return type easier. 
-        public virtual ITopGroups<object> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
-        {
-            if (groupFunction != null)
-            {
-                return GroupByFieldOrFunction<MutableValue>(searcher, filter, query, groupOffset, groupLimit);
-            }
-            else if (groupField != null)
-            {
-                return GroupByFieldOrFunction<BytesRef>(searcher, filter, query, groupOffset, groupLimit);
-            }
-            else if (groupEndDocs != null)
-            {
-                return GroupByDocBlock<object>(searcher, filter, query, groupOffset, groupLimit);
-            }
-            else
-            {
-                throw new InvalidOperationException("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
-            }
-        }
-
-        /// <summary>
-        /// Executes a grouped search. Both the first pass and second pass are executed on the specified searcher.
-        /// </summary>
         /// <typeparam name="TGroupValue">The expected return type of the search.</typeparam>
         /// <param name="searcher">The <see cref="IndexSearcher"/> instance to execute the grouped search on.</param>
         /// <param name="filter">The filter to execute with the grouping</param>
@@ -173,9 +172,18 @@ namespace Lucene.Net.Search.Grouping
         /// <exception cref="IOException">If any I/O related errors occur</exception>
         public virtual ITopGroups<TGroupValue> Search<TGroupValue>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
-            if (groupField != null || groupFunction != null)
+            if (groupFunction != null)
             {
-                return GroupByFieldOrFunction<TGroupValue>(searcher, filter, query, groupOffset, groupLimit);
+                //LUCENENET Specific gaurd clause provides diagnostic info when TGroupValue is inappropriate type.
+                if (!typeof(TGroupValue).IsSubclassOf(typeof(MutableValue)) && typeof(TGroupValue) != typeof(MutableValue) && typeof(TGroupValue) != typeof(object))
+                {
+                    throw IllegalStateException.Create("Generic closing type specified must be MutableValue, inherit from MutableValue, or be of type object since grouping by function.");
+                }
+                return (ITopGroups<TGroupValue>)GroupByFunction<MutableValue>(searcher, filter, query, groupOffset, groupLimit);
+            }
+            else if (groupField != null)
+            {
+                return GroupByField<TGroupValue>(searcher, filter, query, groupOffset, groupLimit);
             }
             else if (groupEndDocs != null)
             {
@@ -183,64 +191,142 @@ namespace Lucene.Net.Search.Grouping
             }
             else
             {
-                throw new InvalidOperationException("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
+                throw IllegalStateException.Create("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
             }
         }
 
-        protected virtual ITopGroups<TGroupValue> GroupByFieldOrFunction<TGroupValue>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        /// <summary>
+        /// Executes a grouped search base on the field specified via the constructor. Both the first pass
+        /// and second pass are executed on the specified searcher.
+        /// </summary>
+        /// <param name="searcher">The <see cref="IndexSearcher"/> instance to execute the grouped search on.</param>
+        /// <param name="query">The query to execute with the grouping</param>
+        /// <param name="groupOffset">The group offset</param>
+        /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <returns>the grouped result as a <see cref="ITopGroups{Object}"/> instance</returns>
+        /// <exception cref="IOException">If any I/O related errors occur</exception>
+        // LUCENENET additional method signature. Makes searching by field easier due to concrete return type
+        public virtual ITopGroups<BytesRef> SearchByField(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
+        {
+            return GroupByField<BytesRef>(searcher, null, query, groupOffset, groupLimit);
+        }
+
+
+        /// <summary>
+        /// Executes a grouped search base on the field specified via the constructor. Both the first pass
+        /// and second pass are executed on the specified searcher.
+        /// </summary>
+        /// <param name="searcher">The <see cref="IndexSearcher"/> instance to execute the grouped search on.</param>
+        /// <param name="filter">The filter to execute with the grouping</param>
+        /// <param name="query">The query to execute with the grouping</param>
+        /// <param name="groupOffset">The group offset</param>
+        /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <returns>the grouped result as a <see cref="ITopGroups{Object}"/> instance</returns>
+        /// <exception cref="IOException">If any I/O related errors occur</exception>
+        // LUCENENET additional method signature. Makes searching by field easier due to concrete return type
+        public virtual ITopGroups<BytesRef> SearchByField(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        {
+            if (groupField is null)
+            {
+                throw IllegalStateException.Create("Must use constructor to set pass a non null value for groupField.");
+            }
+
+            if (groupFunction != null)
+            {
+                throw IllegalStateException.Create("The groupFunction must be null.");
+            }
+            return GroupByField<BytesRef>(searcher, filter, query, groupOffset, groupLimit);
+        }
+
+        /// <summary>
+        /// Executes a grouped search base on the function specified by a <see cref="ValueSource"/> passed via the constructor.
+        /// Both the first pass and second pass are executed on the specified searcher.
+        /// </summary>
+        /// <param name="searcher">The <see cref="IndexSearcher"/> instance to execute the grouped search on.</param>
+        /// <param name="query">The query to execute with the grouping</param>
+        /// <param name="groupOffset">The group offset</param>
+        /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <returns>the grouped result as a <see cref="ITopGroups{Object}"/> instance</returns>
+        /// <exception cref="IOException">If any I/O related errors occur</exception>
+        // LUCENENET additional method signature. Makes searching by function easier due to ability to specify type of MutableValue returned.
+        public virtual ITopGroups<TMutableValue> SearchByFunction<TMutableValue>(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
+            where TMutableValue : MutableValue
+        {
+            return GroupByFunction<TMutableValue>(searcher, null, query, groupOffset, groupLimit);
+        }
+
+        /// <summary>
+        /// Executes a grouped search base on the function specified by a <see cref="ValueSource"/> passed via the constructor.
+        /// Both the first pass and second pass are executed on the specified searcher.
+        /// </summary>
+        /// <param name="searcher">The <see cref="IndexSearcher"/> instance to execute the grouped search on.</param>
+        /// <param name="filter">The filter to execute with the grouping</param>
+        /// <param name="query">The query to execute with the grouping</param>
+        /// <param name="groupOffset">The group offset</param>
+        /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <returns>the grouped result as a <see cref="ITopGroups{Object}"/> instance</returns>
+        /// <exception cref="IOException">If any I/O related errors occur</exception>
+        // LUCENENET additional method signature. Makes searching by function easier due to ability to specify type of MutableValue returned.
+        public virtual ITopGroups<TMutableValue> SearchByFunction<TMutableValue>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+            where TMutableValue : MutableValue
+        {
+            if (groupFunction is null)
+            {
+                throw IllegalStateException.Create("Either groupField, groupFunction or groupEndDocs must be set."); // This can't happen...
+            }
+
+            if (groupField != null)
+            {
+                throw new Exception("The valueSource must be null.");
+            }
+            return GroupByFunction<TMutableValue>(searcher, filter, query, groupOffset, groupLimit);
+        }
+
+        //LUCENENET: Method replaced by two methods GroupByField and GroupByFunction so that a generic type constraint
+        //           can be added to the GroupByFunction case.
+        //protected virtual ITopGroups GroupByFieldOrFunction(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        //{
+        //}
+
+
+        //LUCENENET Specific. One of two methods that replace GroupByFieldOrFunction. Used support SearchByField.
+        //          This method is essentually a Field specific version of the GroupByFieldOrFunction.
+        protected virtual ITopGroups<TGroupValue> GroupByField<TGroupValue>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             int topN = groupOffset + groupLimit;
             IAbstractFirstPassGroupingCollector<TGroupValue> firstPassCollector;
             IAbstractAllGroupsCollector<TGroupValue> allGroupsCollector;
             AbstractAllGroupHeadsCollector allGroupHeadsCollector;
-            if (groupFunction != null)
+
+            if (groupField is null)
             {
-                firstPassCollector = (IAbstractFirstPassGroupingCollector<TGroupValue>)new FunctionFirstPassGroupingCollector(groupFunction, valueSourceContext, groupSort, topN);
-                if (allGroups)
-                {
-                    allGroupsCollector = (IAbstractAllGroupsCollector<TGroupValue>)new FunctionAllGroupsCollector(groupFunction, valueSourceContext);
-                }
-                else
-                {
-                    allGroupsCollector = null;
-                }
-                if (allGroupHeads)
-                {
-                    allGroupHeadsCollector = new FunctionAllGroupHeadsCollector(groupFunction, valueSourceContext, sortWithinGroup);
-                }
-                else
-                {
-                    allGroupHeadsCollector = null;
-                }
+                throw IllegalStateException.Create("groupField must be set via the constructor.");
+            }
+
+            firstPassCollector = (IAbstractFirstPassGroupingCollector<TGroupValue>)new TermFirstPassGroupingCollector(groupField, groupSort, topN);
+            if (allGroups)
+            {
+                allGroupsCollector = (IAbstractAllGroupsCollector<TGroupValue>)new TermAllGroupsCollector(groupField, initialSize);
             }
             else
             {
-                firstPassCollector = (IAbstractFirstPassGroupingCollector<TGroupValue>)new TermFirstPassGroupingCollector(groupField, groupSort, topN);
-                if (allGroups)
-                {
-                    allGroupsCollector = (IAbstractAllGroupsCollector<TGroupValue>)new TermAllGroupsCollector(groupField, initialSize);
-                }
-                else
-                {
-                    allGroupsCollector = null;
-                }
-                if (allGroupHeads)
-                {
-                    allGroupHeadsCollector = TermAllGroupHeadsCollector.Create(groupField, sortWithinGroup, initialSize);
-                }
-                else
-                {
-                    allGroupHeadsCollector = null;
-                }
+                allGroupsCollector = null;
+            }
+            if (allGroupHeads)
+            {
+                allGroupHeadsCollector = TermAllGroupHeadsCollector.Create(groupField, sortWithinGroup, initialSize);
+            }
+            else
+            {
+                allGroupHeadsCollector = null;
             }
 
             ICollector firstRound;
             if (allGroupHeads || allGroups)
             {
-                List<ICollector> collectors = new List<ICollector>
-                {
-                    firstPassCollector
-                };
+                List<ICollector> collectors = new List<ICollector>();
+                collectors.Add(firstPassCollector);
+
                 if (allGroups)
                 {
                     collectors.Add(allGroupsCollector);
@@ -300,18 +386,10 @@ namespace Lucene.Net.Search.Grouping
 
             int topNInsideGroup = groupDocsOffset + groupDocsLimit;
             IAbstractSecondPassGroupingCollector<TGroupValue> secondPassCollector;
-            if (groupFunction != null)
-            {
-                secondPassCollector = new FunctionSecondPassGroupingCollector(topSearchGroups as IEnumerable<ISearchGroup<MutableValue>>, 
-                    groupSort, sortWithinGroup, topNInsideGroup, includeScores, includeMaxScore, fillSortFields, groupFunction, valueSourceContext)
-                    as IAbstractSecondPassGroupingCollector<TGroupValue>;
-            }
-            else
-            {
-                secondPassCollector = new TermSecondPassGroupingCollector(groupField, topSearchGroups as IEnumerable<ISearchGroup<BytesRef>>, 
-                    groupSort, sortWithinGroup, topNInsideGroup, includeScores, includeMaxScore, fillSortFields)
-                    as IAbstractSecondPassGroupingCollector<TGroupValue>;
-            }
+            
+            secondPassCollector = new TermSecondPassGroupingCollector(groupField, topSearchGroups as IEnumerable<ISearchGroup<BytesRef>>, 
+                groupSort, sortWithinGroup, topNInsideGroup, includeScores, includeMaxScore, fillSortFields)
+                as IAbstractSecondPassGroupingCollector<TGroupValue>;
 
             if (cachedCollector != null && cachedCollector.IsCached)
             {
@@ -325,6 +403,131 @@ namespace Lucene.Net.Search.Grouping
             if (allGroups)
             {
                 return new TopGroups<TGroupValue>(secondPassCollector.GetTopGroups(groupDocsOffset), matchingGroups.Count);
+            }
+            else
+            {
+                return secondPassCollector.GetTopGroups(groupDocsOffset);
+            }
+        }
+
+        //LUCENENET Specific. One of two methods that replace GroupByFieldOrFunction. Used support
+        //          SearchByFunction in a way that eliminates casting for the caller.
+        //          This method is essentually a Function specific version of the GroupByFieldOrFunction.
+        protected virtual ITopGroups<TMutableValue> GroupByFunction<TMutableValue>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+            where TMutableValue: MutableValue
+        {
+            int topN = groupOffset + groupLimit;
+            FunctionFirstPassGroupingCollector<TMutableValue> firstPassCollector;
+            FunctionAllGroupsCollector<TMutableValue> allGroupsCollector;
+            AbstractAllGroupHeadsCollector allGroupHeadsCollector;
+
+            if (groupFunction == null)
+            {
+                throw IllegalStateException.Create("groupFunction must be set via the constructor by specifying a ValueSource.");
+            }
+           
+            firstPassCollector = new FunctionFirstPassGroupingCollector<TMutableValue>(groupFunction, valueSourceContext, groupSort, topN);
+            if (allGroups)
+            {
+                allGroupsCollector = new FunctionAllGroupsCollector<TMutableValue>(groupFunction, valueSourceContext);
+            }
+            else
+            {
+                allGroupsCollector = null;
+            }
+            if (allGroupHeads)
+            {
+                allGroupHeadsCollector = new FunctionAllGroupHeadsCollector(groupFunction, valueSourceContext, sortWithinGroup);
+            }
+            else
+            {
+                allGroupHeadsCollector = null;
+            }
+            
+
+            ICollector firstRound;
+            if (allGroupHeads || allGroups)
+            {
+                List<ICollector> collectors = new List<ICollector>();
+                collectors.Add(firstPassCollector);
+
+                if (allGroups)
+                {
+                    collectors.Add(allGroupsCollector);
+                }
+                if (allGroupHeads)
+                {
+                    collectors.Add(allGroupHeadsCollector);
+                }
+                firstRound = MultiCollector.Wrap(collectors.ToArray(/* new Collector[collectors.size()] */));
+            }
+            else
+            {
+                firstRound = firstPassCollector;
+            }
+
+            CachingCollector cachedCollector = null;
+            if (maxCacheRAMMB != null || maxDocsToCache != null)
+            {
+                if (maxCacheRAMMB != null)
+                {
+                    cachedCollector = CachingCollector.Create(firstRound, cacheScores, maxCacheRAMMB.Value);
+                }
+                else
+                {
+                    cachedCollector = CachingCollector.Create(firstRound, cacheScores, maxDocsToCache.Value);
+                }
+                searcher.Search(query, filter, cachedCollector);
+            }
+            else
+            {
+                searcher.Search(query, filter, firstRound);
+            }
+
+            if (allGroups)
+            {
+                matchingGroups = (ICollection)allGroupsCollector.Groups;
+            }
+            else
+            {
+                matchingGroups = (ICollection)Collections.EmptyList<TMutableValue>();
+            }
+            if (allGroupHeads)
+            {
+                matchingGroupHeads = allGroupHeadsCollector.RetrieveGroupHeads(searcher.IndexReader.MaxDoc);
+            }
+            else
+            {
+                matchingGroupHeads = new Bits.MatchNoBits(searcher.IndexReader.MaxDoc);
+            }
+
+            IEnumerable<ISearchGroup<TMutableValue>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
+            if (topSearchGroups == null)
+            {
+                // LUCENENET specific - optimized empty array creation
+                return new TopGroups<TMutableValue>(Arrays.Empty<SortField>(), Arrays.Empty<SortField>(), 0, 0, Arrays.Empty<GroupDocs<TMutableValue>>(), float.NaN);
+            }
+
+            int topNInsideGroup = groupDocsOffset + groupDocsLimit;
+            IAbstractSecondPassGroupingCollector<TMutableValue> secondPassCollector;
+           
+            secondPassCollector = new FunctionSecondPassGroupingCollector<TMutableValue>(topSearchGroups as IEnumerable<ISearchGroup<TMutableValue>>,
+                groupSort, sortWithinGroup, topNInsideGroup, includeScores, includeMaxScore, fillSortFields, groupFunction, valueSourceContext)
+                as IAbstractSecondPassGroupingCollector<TMutableValue>;
+            
+
+            if (cachedCollector != null && cachedCollector.IsCached)
+            {
+                cachedCollector.Replay(secondPassCollector);
+            }
+            else
+            {
+                searcher.Search(query, filter, secondPassCollector);
+            }
+
+            if (allGroups)
+            {
+                return new TopGroups<TMutableValue>(secondPassCollector.GetTopGroups(groupDocsOffset), matchingGroups.Count);
             }
             else
             {

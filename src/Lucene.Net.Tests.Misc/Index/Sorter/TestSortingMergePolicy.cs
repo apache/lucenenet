@@ -1,11 +1,11 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -179,7 +179,7 @@ namespace Lucene.Net.Index.Sorter
                 new SortingMergePolicy(NewMergePolicy(), Sort.RELEVANCE);
                 fail("Didn't get expected exception");
             }
-            catch (ArgumentException e)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 assertEquals("Cannot sort an index with a Sort that refers to the relevance score", e.Message);
             }

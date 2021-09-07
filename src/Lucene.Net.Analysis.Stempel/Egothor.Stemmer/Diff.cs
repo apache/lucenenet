@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene;
+using Lucene.Net.Support;
 using System;
 using System.Text;
 
@@ -157,11 +158,11 @@ namespace Egothor.Stemmer
                     pos--;
                 }
             }
-            catch (IndexOutOfRangeException /*x*/)
+            catch (Exception x) when (x.IsStringIndexOutOfBoundsException())
             {
                 // x.printStackTrace();
             }
-            catch (ArgumentOutOfRangeException /*x*/)
+            catch (Exception x) when (x.IsArrayIndexOutOfBoundsException())
             {
                 // x.printStackTrace();
             }

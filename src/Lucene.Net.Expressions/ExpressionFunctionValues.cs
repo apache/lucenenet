@@ -1,4 +1,4 @@
-using Lucene.Net.Queries.Function;
+﻿using Lucene.Net.Queries.Function;
 using Lucene.Net.Queries.Function.DocValues;
 using System;
 
@@ -35,8 +35,8 @@ namespace Lucene.Net.Expressions
         internal ExpressionFunctionValues(ValueSource parent, Expression expression, FunctionValues[] functionValues) 
             : base(parent)
         {
-            this.expression = expression ?? throw new ArgumentNullException(nameof(expression));
-            this.functionValues = functionValues ?? throw new ArgumentNullException(nameof(functionValues));
+            this.expression = expression ?? throw new ArgumentNullException(nameof(expression)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+            this.functionValues = functionValues ?? throw new ArgumentNullException(nameof(functionValues)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         public override double DoubleVal(int document)

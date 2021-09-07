@@ -37,8 +37,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         /// <summary>Round in which task run started.</summary>
         private int round;
 
-        ///// <summary>Task start time.</summary>
-        //private long start; // LUCENENET: Never read
+        /// <summary>Task start time.</summary>
+        private long start;
 
         /// <summary>Task elapsed time.  elapsed >= 0 indicates run completion!</summary>
         private long elapsed = -1;
@@ -80,7 +80,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
             this.round = round;
             maxTotMem = GC.GetTotalMemory(false); //Runtime.getRuntime().totalMemory();
             maxUsedMem = maxTotMem; // - Runtime.getRuntime().freeMemory(); // LUCENENET TODO: available RAM
-            //start = Stopwatch.GetTimestamp(); // LUCENENET: Never read
+            start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         /// </summary>
         internal void MarkEnd(int numParallelTasks, int count)
         {
-            elapsed = J2N.Time.CurrentTimeMilliseconds();
+            elapsed = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - start; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             long totMem = GC.GetTotalMemory(false); //Runtime.getRuntime().totalMemory();
             if (totMem > maxTotMem)
             {
@@ -175,11 +175,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
             {
                 if (countsByTimeStepMSec != stat2.countsByTimeStepMSec)
                 {
-                    throw new InvalidOperationException("different by-time msec step");
+                    throw IllegalStateException.Create("different by-time msec step");
                 }
                 if (countsByTime.Length != stat2.countsByTime.Length)
                 {
-                    throw new InvalidOperationException("different by-time msec count");
+                    throw IllegalStateException.Create("different by-time msec count");
                 }
                 for (int i = 0; i < stat2.countsByTime.Length; i++)
                 {

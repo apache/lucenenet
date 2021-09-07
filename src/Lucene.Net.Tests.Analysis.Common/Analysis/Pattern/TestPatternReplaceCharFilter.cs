@@ -1,4 +1,5 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
+using J2N;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -221,29 +222,28 @@ namespace Lucene.Net.Analysis.Pattern
             return new Regex(p, RegexOptions.Compiled);
         }
 
-        // LUCENENET: This wasn't commented in the original source, but it had the Ignore attribute, so proceeding without it.
-        ///// <summary>
-        ///// A demonstration of how backtracking regular expressions can lead to relatively 
-        ///// easy DoS attacks.
-        ///// </summary>
-        ///// <seealso cref= "http://swtch.com/~rsc/regexp/regexp1.html" </seealso>
-        //[Test]
-        //[Ignore]
-        //public virtual void TestNastyPattern()
-        //{
-        //    Pattern p = Pattern.compile("(c.+)*xy");
-        //    string input = "[;<!--aecbbaa--><    febcfdc fbb = \"fbeeebff\" fc = dd   >\\';<eefceceaa e= babae\" eacbaff =\"fcfaccacd\" = bcced>>><  bccaafe edb = ecfccdff\"   <?</script><    edbd ebbcd=\"faacfcc\" aeca= bedbc ceeaac =adeafde aadccdaf = \"afcc ffda=aafbe &#x16921ed5\"1843785582']";
-        //    for (int i = 0; i < input.Length; i++)
-        //    {
-        //        Matcher matcher = p.matcher(input.Substring(0, i));
-        //        long t = DateTimeHelperClass.CurrentUnixTimeMillis();
-        //        if (matcher.find())
-        //        {
-        //            Console.WriteLine(matcher.group());
-        //        }
-        //        Console.WriteLine(i + " > " + (DateTimeHelperClass.CurrentUnixTimeMillis() - t) / 1000.0);
-        //    }
-        //}
+        /// <summary>
+        /// A demonstration of how backtracking regular expressions can lead to relatively 
+        /// easy DoS attacks.
+        /// </summary>
+        /// <seealso cref= "http://swtch.com/~rsc/regexp/regexp1.html" </seealso>
+        [Test]
+        [Ignore("Ignored in Lucene")]
+        public virtual void TestNastyPattern()
+        {
+            Regex p = new Regex("(c.+)*xy", RegexOptions.Compiled);
+            string input = "[;<!--aecbbaa--><    febcfdc fbb = \"fbeeebff\" fc = dd   >\\';<eefceceaa e= babae\" eacbaff =\"fcfaccacd\" = bcced>>><  bccaafe edb = ecfccdff\"   <?</script><    edbd ebbcd=\"faacfcc\" aeca= bedbc ceeaac =adeafde aadccdaf = \"afcc ffda=aafbe &#x16921ed5\"1843785582']";
+            for (int i = 0; i < input.Length; i++)
+            {
+                Match matcher = p.Match(input.Substring(0, i));
+                long t = Time.NanoTime() / Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
+                if (matcher.Success)
+                {
+                    Console.WriteLine(matcher.Groups[1]);
+                }
+                Console.WriteLine(i + " > " + (Time.NanoTime() / Time.MillisecondsPerNanosecond - t) / 1000.0); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
+            }
+        }
 
         /// <summary>
         /// blast some random strings through the analyzer </summary>

@@ -4,6 +4,7 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.IO;
 using System.Threading;
@@ -49,9 +50,7 @@ namespace Lucene.Net.Store
                     dir.CreateOutput("test", NewIOContext(Random));
                     Assert.Fail("did not hit expected exception");
                 }
-#pragma warning disable 168
-                catch (ObjectDisposedException ace)
-#pragma warning restore 168
+                catch (Exception ace) when (ace.IsAlreadyClosedException())
                 {
                 }
             }
@@ -109,9 +108,9 @@ namespace Lucene.Net.Store
                         using (IndexOutput output = outerBDWrapper.CreateOutput(fileName, NewIOContext(Random))) { }
                         Assert.IsTrue(SlowFileExists(outerBDWrapper, fileName));
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
                 }
             }
@@ -137,25 +136,21 @@ namespace Lucene.Net.Store
                         string[] files = outerBDWrapper.ListAll();
                         foreach (string file in files)
                         {
+                            //System.out.println("file:" + file);
                             try
                             {
                                 using IndexInput input = outerBDWrapper.OpenInput(file, NewIOContext(Random));
                             }
-#pragma warning disable 168
-                            catch (FileNotFoundException fne)
-#pragma warning restore 168
+                            catch (Exception fne) when (fne.IsNoSuchFileExceptionOrFileNotFoundException())
                             {
+                                // ignore
                             }
-                            // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-                            // in Lucene, we need to catch it here to be on the safe side.
-                            catch (DirectoryNotFoundException)
+                            catch (Exception e) when (e.IsIOException())
                             {
-                            }
-                            catch (IOException e)
-                            {
+                                // ignore
                                 if (!e.Message.Contains("still open for writing"))
                                 {
-                                    throw new Exception(e.ToString(), e);
+                                    throw RuntimeException.Create(e);
                                 }
                             }
                             if (Random.NextBoolean())
@@ -164,9 +159,9 @@ namespace Lucene.Net.Store
                             }
                         }
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
                 }
             }
@@ -361,9 +356,7 @@ namespace Lucene.Net.Store
                     var d = new SimpleFSDirectory(new DirectoryInfo(Path.Combine(path.FullName, "afile")), null);
                     Assert.Fail("did not hit expected exception");
                 }
-#pragma warning disable 168
-                catch (DirectoryNotFoundException nsde)
-#pragma warning restore 168
+                catch (Exception nsde) when (nsde.IsNoSuchDirectoryException())
                 {
                     // Expected
                 }
@@ -411,13 +404,7 @@ namespace Lucene.Net.Store
             //    Assert.Fail("didn't get expected exception, instead fsync created new files: " +
             //                Collections.ToString(fsdir.ListAll()));
             //}
-            //catch (FileNotFoundException)
-            //{
-            //    // ok
-            //}
-            //// LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-            //// in Lucene, we need to catch it here to be on the safe side.
-            //catch (DirectoryNotFoundException)
+            //catch (Exception expected) when (expected.IsNoSuchFileExceptionOrFileNotFoundException())
             //{
             //    // ok
             //}

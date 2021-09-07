@@ -1,7 +1,8 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -60,7 +61,7 @@ namespace Lucene.Net.Search
 #endif
                 Random, dir);
 
-            long startTime = Environment.TickCount;
+            long startTime = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             // TODO: replace w/ the @nightly test data; make this
             // into an optional @nightly stress test
@@ -83,7 +84,7 @@ namespace Lucene.Net.Search
             IndexReader r = w.GetReader();
             w.Dispose();
 
-            long endTime = Environment.TickCount;
+            long endTime = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             if (Verbose)
             {
                 Console.WriteLine("BUILD took " + (endTime - startTime));
@@ -145,8 +146,8 @@ namespace Lucene.Net.Search
                 {
                     long totHits = 0;
                     long totSearch = 0;
-                    long stopAt = Environment.TickCount + outerInstance.RUN_TIME_MSEC;
-                    while (Environment.TickCount < stopAt && !failed)
+                    long stopAt = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + outerInstance.RUN_TIME_MSEC; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
+                    while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopAt && !failed) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     {
                         s.Search(new TermQuery(new Term("body", "aaa")), col);
                         totHits += col.TotalHits;
@@ -157,10 +158,10 @@ namespace Lucene.Net.Search
                     Assert.IsTrue(totSearch > 0 && totHits > 0);
                     netSearch.AddAndGet(totSearch);
                 }
-                catch (Exception exc)
+                catch (Exception exc) when (exc.IsException())
                 {
                     failed.Value = (true);
-                    throw new Exception(exc.Message, exc);
+                    throw RuntimeException.Create(exc);
                 }
             }
         }

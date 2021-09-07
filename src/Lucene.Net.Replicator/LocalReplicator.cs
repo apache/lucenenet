@@ -1,4 +1,4 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -59,7 +59,7 @@ namespace Lucene.Net.Replicator
             {
                 if (refCount <= 0)
                 {
-                    throw new InvalidOperationException("this revision is already released");
+                    throw IllegalStateException.Create("this revision is already released");
                 }
 
                 var rc = refCount.DecrementAndGet();
@@ -82,7 +82,7 @@ namespace Lucene.Net.Replicator
                 }
                 else if (rc < 0)
                 {
-                    throw new InvalidOperationException(string.Format("too many decRef calls: refCount is {0} after decrement", rc));
+                    throw IllegalStateException.Create(string.Format("too many decRef calls: refCount is {0} after decrement", rc));
                 }
             }
 
@@ -103,17 +103,17 @@ namespace Lucene.Net.Replicator
             {
                 Session = session;
                 Revision = revision;
-                lastAccessTime = Stopwatch.GetTimestamp();
+                lastAccessTime = Stopwatch.GetTimestamp(); // LUCENENET: Use the most accurate timer to determine expiration
             }
 
             public virtual bool IsExpired(long expirationThreshold)
             {
-                return lastAccessTime < Stopwatch.GetTimestamp() - expirationThreshold * Stopwatch.Frequency / 1000; // LUCENENET TODO: CurrentTimeMilliseconds()
+                return lastAccessTime < Stopwatch.GetTimestamp() - expirationThreshold * Stopwatch.Frequency / 1000; // LUCENENET: Use the most accurate timer to determine expiration
             }
 
             public virtual void MarkAccessed()
             {
-                lastAccessTime = Stopwatch.GetTimestamp(); // LUCENENET TODO: CurrentTimeMilliseconds()
+                lastAccessTime = Stopwatch.GetTimestamp(); // LUCENENET: Use the most accurate timer to determine expiration
             }
         }
 
@@ -164,7 +164,7 @@ namespace Lucene.Net.Replicator
                 if (!disposed)
                     return;
 
-                throw new ObjectDisposedException("This replicator has already been disposed");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "This replicator has already been disposed.");
             }
         }
 

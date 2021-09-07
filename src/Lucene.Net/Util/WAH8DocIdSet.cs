@@ -118,6 +118,10 @@ namespace Lucene.Net.Util
         /// </summary>
         public static WAH8DocIdSet Intersect(ICollection<WAH8DocIdSet> docIdSets, int indexInterval)
         {
+            // LUCENENET: Added guard clause for null
+            if (docIdSets is null)
+                throw new ArgumentNullException(nameof(docIdSets));
+
             switch (docIdSets.Count)
             {
                 case 0:
@@ -298,7 +302,7 @@ namespace Lucene.Net.Util
             {
                 if (indexInterval < MIN_INDEX_INTERVAL)
                 {
-                    throw new ArgumentException("indexInterval must be >= " + MIN_INDEX_INTERVAL);
+                    throw new ArgumentOutOfRangeException(nameof(indexInterval), "indexInterval must be >= " + MIN_INDEX_INTERVAL); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 this.indexInterval = indexInterval;
                 return this;
@@ -353,9 +357,9 @@ namespace Lucene.Net.Util
                 {
                     WriteHeader(reverse, clean, dirtyWords.Length);
                 }
-                catch (IOException cannotHappen)
+                catch (Exception cannotHappen) when (cannotHappen.IsIOException())
                 {
-                    throw new InvalidOperationException(cannotHappen.ToString(), cannotHappen); // LUCENENET NOTE: This was AssertionError in Lucene
+                    throw AssertionError.Create(cannotHappen.Message, cannotHappen);
                 }
                 @out.WriteBytes(dirtyWords.Bytes, 0, dirtyWords.Length);
                 dirtyWords.Length = 0;
@@ -535,7 +539,7 @@ namespace Lucene.Net.Util
             {
                 if (docID <= lastDocID)
                 {
-                    throw new ArgumentException("Doc ids must be added in-order, got " + docID + " which is <= lastDocID=" + lastDocID);
+                    throw new ArgumentOutOfRangeException(nameof(docID), "Doc ids must be added in-order, got " + docID + " which is <= lastDocID=" + lastDocID); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 int wordNum = WordNum(docID);
                 if (this.wordNum == -1)
@@ -901,12 +905,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Return the number of documents in this <see cref="DocIdSet"/> in constant time. </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int Cardinality()
-        {
-            return cardinality;
-        }
+        /// Gets the number of documents in this <see cref="DocIdSet"/> in constant time. </summary>
+        public int Cardinality => cardinality;
 
         /// <summary>
         /// Return the memory usage of this class in bytes. </summary>

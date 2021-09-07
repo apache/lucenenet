@@ -1,10 +1,11 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -334,10 +335,10 @@ namespace Lucene.Net.Util.Fst
             DirectoryInfo tempDir = CreateTempDir("fstlines");
             Directory dir = NewFSDirectory(tempDir);
             IndexWriter writer = new IndexWriter(dir, conf);
-            long stopTime = Environment.TickCount + RUN_TIME_MSEC;
+            long stopTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + RUN_TIME_MSEC; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             Document doc;
             int docCount = 0;
-            while ((doc = docs.NextDoc()) != null && Environment.TickCount < stopTime)
+            while ((doc = docs.NextDoc()) != null && J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTime) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             {
                 writer.AddDocument(doc);
                 docCount++;
@@ -392,9 +393,7 @@ namespace Lucene.Net.Util.Fst
                         {
                             var _ = termsEnum.Ord;
                         }
-#pragma warning disable 168, IDE0059
-                        catch (NotSupportedException uoe)
-#pragma warning restore 168, IDE0059
+                        catch (Exception uoe) when (uoe.IsUnsupportedOperationException())
                         {
                             if (Verbose)
                             {
@@ -547,7 +546,7 @@ namespace Lucene.Net.Util.Fst
                 try
                 {
                     Int32sRef intsRef = new Int32sRef(10);
-                    long tStart = Environment.TickCount;
+                    long tStart = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     int ord = 0;
                     while (true)
                     {
@@ -562,7 +561,7 @@ namespace Lucene.Net.Util.Fst
                         ord++;
                         if (ord % 500000 == 0)
                         {
-                            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0:000000.000}s: {1:000000000}...", ((Environment.TickCount - tStart) / 1000.0), ord));
+                            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0:000000.000}s: {1:000000000}...", (((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - tStart) / 1000.0), ord)); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                         }
                         if (ord >= limit)
                         {
@@ -570,12 +569,12 @@ namespace Lucene.Net.Util.Fst
                         }
                     }
 
-                    long tMid = Environment.TickCount;
+                    long tMid = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     Console.WriteLine(((tMid - tStart) / 1000.0) + " sec to add all terms");
 
                     if (Debugging.AssertsEnabled) Debugging.Assert(builder.TermCount == ord);
                     FST<T> fst = builder.Finish();
-                    long tEnd = Environment.TickCount;
+                    long tEnd = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     Console.WriteLine(((tEnd - tMid) / 1000.0) + " sec to finish/pack");
                     if (fst == null)
                     {
@@ -624,7 +623,7 @@ namespace Lucene.Net.Util.Fst
                             @is = new StreamReader(new FileStream(wordsFileIn, FileMode.Open), Encoding.UTF8);
 
                             ord = 0;
-                            tStart = Environment.TickCount;
+                            tStart = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                             while (true)
                             {
                                 string w = @is.ReadLine();
@@ -639,11 +638,11 @@ namespace Lucene.Net.Util.Fst
                                     T actual = Util.Get(fst, intsRef);
                                     if (actual == null)
                                     {
-                                        throw new Exception("unexpected null output on input=" + w);
+                                        throw RuntimeException.Create("unexpected null output on input=" + w);
                                     }
                                     if (!actual.Equals(expected))
                                     {
-                                        throw new Exception("wrong output (got " + outputs.OutputToString(actual) + " but expected " + outputs.OutputToString(expected) + ") on input=" + w);
+                                        throw RuntimeException.Create("wrong output (got " + outputs.OutputToString(actual) + " but expected " + outputs.OutputToString(expected) + ") on input=" + w);
                                     }
                                 }
                                 else
@@ -653,18 +652,18 @@ namespace Lucene.Net.Util.Fst
                                     Int32sRef actual = Util.GetByOutput(fst as FST<long?>, output.GetValueOrDefault());
                                     if (actual == null)
                                     {
-                                        throw new Exception("unexpected null input from output=" + output);
+                                        throw RuntimeException.Create("unexpected null input from output=" + output);
                                     }
                                     if (!actual.Equals(intsRef))
                                     {
-                                        throw new Exception("wrong input (got " + actual + " but expected " + intsRef + " from output=" + output);
+                                        throw RuntimeException.Create("wrong input (got " + actual + " but expected " + intsRef + " from output=" + output);
                                     }
                                 }
 
                                 ord++;
                                 if (ord % 500000 == 0)
                                 {
-                                    Console.WriteLine(((Environment.TickCount - tStart) / 1000.0) + "s: " + ord + "...");
+                                    Console.WriteLine((((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - tStart) / 1000.0) + "s: " + ord + "..."); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                                 }
                                 if (ord >= limit)
                                 {
@@ -672,7 +671,7 @@ namespace Lucene.Net.Util.Fst
                                 }
                             }
 
-                            double totSec = ((Environment.TickCount - tStart) / 1000.0);
+                            double totSec = (((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - tStart) / 1000.0); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                             Console.WriteLine("Verify " + (iter == 1 ? "(by output) " : "") + "took " + totSec + " sec + (" + (int)((totSec * 1000000000 / ord)) + " nsec per lookup)");
 
                             if (!verifyByOutput)
@@ -1681,7 +1680,7 @@ namespace Lucene.Net.Util.Fst
                 matches.Sort(new TieBreakByInputComparer<long?>(minLongComparer));
                 if (matches.Count > topN)
                 {
-                    matches.SubList(topN, matches.Count).Clear();
+                    matches.RemoveRange(topN, matches.Count - topN); // LUCENENET: Converted end index to length
                 }
 
                 Assert.AreEqual(matches.Count, r.TopN.Count);
@@ -1821,7 +1820,7 @@ namespace Lucene.Net.Util.Fst
                 matches.Sort(new TieBreakByInputComparer<Pair>(minPairWeightComparer));
                 if (matches.Count > topN)
                 {
-                    matches.SubList(topN, matches.Count).Clear();
+                    matches.RemoveRange(topN, matches.Count - topN);  // LUCENENET: Converted end index to length;
                 }
 
                 Assert.AreEqual(matches.Count, r.TopN.Count);

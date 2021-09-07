@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
@@ -270,8 +270,14 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </exception>
         public static Query Parse(LuceneVersion matchVersion, string[] queries, string[] fields, Analyzer analyzer)
         {
+            // LUCENENET: Added null guard clauses
+            if (queries is null)
+                throw new ArgumentNullException(nameof(queries));
+            if (fields is null)
+                throw new ArgumentNullException(nameof(fields));
+
             if (queries.Length != fields.Length)
-                throw new ArgumentException("queries.length != fields.length");
+                throw new ArgumentException("queries.Length != fields.Length");
             BooleanQuery bQuery = new BooleanQuery();
             for (int i = 0; i < fields.Length; i++)
             {
@@ -318,8 +324,16 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </exception>
         public static Query Parse(LuceneVersion matchVersion, string query, string[] fields, Occur[] flags, Analyzer analyzer)
         {
+            // LUCENENET: Added null guard clauses
+            if (query is null)
+                throw new ArgumentNullException(nameof(query));
+            if (fields is null)
+                throw new ArgumentNullException(nameof(fields));
+            if (flags is null)
+                throw new ArgumentNullException(nameof(flags));
+
             if (fields.Length != flags.Length)
-                throw new ArgumentException("fields.length != flags.length");
+                throw new ArgumentException("fields.Length != flags.Length");
             BooleanQuery bQuery = new BooleanQuery();
             for (int i = 0; i < fields.Length; i++)
             {
@@ -364,6 +378,14 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <exception cref="ArgumentException">if the length of the queries, fields, and flags array differ</exception>
         public static Query Parse(LuceneVersion matchVersion, string[] queries, string[] fields, Occur[] flags, Analyzer analyzer)
         {
+            // LUCENENET: Added null guard clauses
+            if (queries is null)
+                throw new ArgumentNullException(nameof(queries));
+            if (fields is null)
+                throw new ArgumentNullException(nameof(fields));
+            if (flags is null)
+                throw new ArgumentNullException(nameof(flags));
+
             if (!(queries.Length == fields.Length && queries.Length == flags.Length))
                 throw new ArgumentException("queries, fields, and flags array have have different length");
             BooleanQuery bQuery = new BooleanQuery();

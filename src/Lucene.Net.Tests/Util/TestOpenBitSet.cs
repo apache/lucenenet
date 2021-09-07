@@ -1,6 +1,7 @@
-using J2N.Collections;
+﻿using J2N.Collections;
 using Lucene.Net.Attributes;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -271,7 +272,7 @@ namespace Lucene.Net.Util
                 {
                     Assert.AreEqual(a.Equals(a0), b.Equals(b0));
 
-                    Assert.AreEqual(a.Cardinality, b.Cardinality());
+                    Assert.AreEqual(a.Cardinality, b.Cardinality);
 
                     BitSet a_and = (BitSet)a.Clone();
                     a_and.And(a0);
@@ -297,16 +298,16 @@ namespace Lucene.Net.Util
                     DoIterate(a_xor, b_xor, mode);
                     DoIterate(a_andn, b_andn, mode);
 
-                    Assert.AreEqual(a_and.Cardinality, b_and.Cardinality());
-                    Assert.AreEqual(a_or.Cardinality, b_or.Cardinality());
-                    Assert.AreEqual(a_xor.Cardinality, b_xor.Cardinality());
-                    Assert.AreEqual(a_andn.Cardinality, b_andn.Cardinality());
+                    Assert.AreEqual(a_and.Cardinality, b_and.Cardinality);
+                    Assert.AreEqual(a_or.Cardinality, b_or.Cardinality);
+                    Assert.AreEqual(a_xor.Cardinality, b_xor.Cardinality);
+                    Assert.AreEqual(a_andn.Cardinality, b_andn.Cardinality);
 
                     // test non-mutating popcounts
-                    Assert.AreEqual(b_and.Cardinality(), OpenBitSet.IntersectionCount(b, b0));
-                    Assert.AreEqual(b_or.Cardinality(), OpenBitSet.UnionCount(b, b0));
-                    Assert.AreEqual(b_xor.Cardinality(), OpenBitSet.XorCount(b, b0));
-                    Assert.AreEqual(b_andn.Cardinality(), OpenBitSet.AndNotCount(b, b0));
+                    Assert.AreEqual(b_and.Cardinality, OpenBitSet.IntersectionCount(b, b0));
+                    Assert.AreEqual(b_or.Cardinality, OpenBitSet.UnionCount(b, b0));
+                    Assert.AreEqual(b_xor.Cardinality, OpenBitSet.XorCount(b, b0));
+                    Assert.AreEqual(b_andn.Cardinality, OpenBitSet.AndNotCount(b, b0));
                 }
 
                 a0 = a;

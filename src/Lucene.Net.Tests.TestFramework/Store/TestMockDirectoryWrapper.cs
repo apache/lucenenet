@@ -102,7 +102,7 @@ namespace Lucene.Net.Store
                         fail("should have failed on disk full");
                     }
 #pragma warning disable 168
-                    catch (IOException e)
+                    catch (Exception e)
 #pragma warning restore 168
                     {
                         // expected
@@ -128,7 +128,7 @@ namespace Lucene.Net.Store
                         fail("should have failed on disk full");
                     }
 #pragma warning disable 168
-                    catch (IOException e)
+                    catch (Exception e)
 #pragma warning restore 168
                     {
                         // expected
@@ -234,12 +234,7 @@ namespace Lucene.Net.Store
         //            {
         //                @in = dir.OpenInput("foo", IOContext.DEFAULT);
         //            }
-        //            catch (FileNotFoundException)
-        //            {
-        //                // ok
-        //                changed = true;
-        //            }
-        //            catch (DirectoryNotFoundException) // LUCENENET specific: Need to catch when the directory is not found
+        //            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
         //            {
         //                // ok
         //                changed = true;
@@ -253,7 +248,7 @@ namespace Lucene.Net.Store
         //                    {
         //                        x = @in.ReadInt32();
         //                    }
-        //                    catch (EndOfStreamException)
+        //                    catch (Exception e) when (e.IsEOFException())
         //                    {
         //                        changed = true;
         //                        break;
@@ -281,7 +276,7 @@ namespace Lucene.Net.Store
             } // @out.close();
             IndexInput @in = dir.OpenInput("foo", IOContext.DEFAULT);
             @in.Dispose();
-            Assert.Throws<Exception>(() => @in.ReadByte());
+            Assert.Throws<LuceneSystemException>(() => @in.ReadByte());
         }
 
         // LUCENENET: This test compiles, but is not compatible with 4.8.0 (tested in Java Lucene), as it was ported from 8.2.0

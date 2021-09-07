@@ -11,6 +11,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -258,9 +259,7 @@ namespace Lucene.Net.Index
                 AddDoc(writer);
                 Assert.Fail("did not hit ObjectDisposedException");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // expected
             }
@@ -1030,9 +1029,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("did not hit expected exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException iea)
-#pragma warning restore 168
+            catch (Exception iea) when (iea.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -1166,7 +1163,6 @@ namespace Lucene.Net.Index
             internal IndexerThreadInterrupt(TestIndexWriter outerInstance)
             {
                 this.outerInstance = outerInstance;
-                this.IsDebug = true; // LUCENENET: Rethrow with the original stack trace to assist with debugging
                 this.random = new Random(LuceneTestCase.Random.Next());
                 // make a little directory for addIndexes
                 // LUCENE-2239: won't work with NIOFS/MMAP
@@ -1335,7 +1331,7 @@ namespace Lucene.Net.Index
                             allowInterrupt = true;
                         }
                     }
-                    catch (ThreadInterruptedException re)
+                    catch (ThreadInterruptedException re) // LUCENENET: This was a custom wrapper type named ThreadInterruptedException in Lucene, so leaving the catch block as is
                     {
                         // NOTE: important to leave this verbosity/noise
                         // on!!  this test doesn't repro easily so when
@@ -1355,7 +1351,7 @@ namespace Lucene.Net.Index
                             break;
                         }
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         Console.WriteLine("FAILED; unexpected exception");
                         Console.WriteLine(t.ToString());
@@ -1381,13 +1377,13 @@ namespace Lucene.Net.Index
                         // LUCENENET specific - there is a chance that our thread will be
                         // interrupted here, so we need to catch and ignore that exception
                         // when our MockDirectoryWrapper throws it.
-                        catch (ThreadInterruptedException)
+                        catch (Exception e) when (e.IsInterruptedException())
                         {
                             // ignore
                         }
-                        catch (IOException ioe)
+                        catch (Exception ioe) when (ioe.IsIOException())
                         {
-                            throw new Exception(ioe.ToString(), ioe);
+                            throw RuntimeException.Create(ioe);
                         }
                     }
 
@@ -1395,7 +1391,7 @@ namespace Lucene.Net.Index
                     {
                         TestUtil.CheckIndex(dir);
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsException())
                     {
                         failed = true;
                         Console.WriteLine("CheckIndex FAILED: unexpected exception");
@@ -1406,7 +1402,7 @@ namespace Lucene.Net.Index
                         using IndexReader r = DirectoryReader.Open(dir);
                         //System.out.println("doc count=" + r.NumDocs);
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsException())
                     {
                         failed = true;
                         Console.WriteLine("DirectoryReader.open FAILED: unexpected exception");
@@ -1417,17 +1413,17 @@ namespace Lucene.Net.Index
                 {
                     IOUtils.Dispose(dir);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
                 try
                 {
                     IOUtils.Dispose(adder);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -1948,9 +1944,9 @@ namespace Lucene.Net.Index
                 {
                     SetReader(r);
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.Message, e);
+                    throw RuntimeException.Create(e.Message, e);
                 }
             }
 
@@ -2012,9 +2008,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("should have hit exception");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -2230,9 +2224,7 @@ namespace Lucene.Net.Index
                 w.Dispose();
                 Assert.Fail("should have hit exception");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException ise)
-#pragma warning restore 168
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }
@@ -2308,17 +2300,17 @@ namespace Lucene.Net.Index
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
-                throw new InvalidOperationException("don't invoke me!");
+                throw IllegalStateException.Create("don't invoke me!");
             }
 
             public override int GetPositionIncrementGap(string fieldName)
             {
-                throw new InvalidOperationException("don't invoke me!");
+                throw IllegalStateException.Create("don't invoke me!");
             }
 
             public override int GetOffsetGap(string fieldName)
             {
-                throw new InvalidOperationException("don't invoke me!");
+                throw IllegalStateException.Create("don't invoke me!");
             }
         }
 
@@ -2591,7 +2583,7 @@ namespace Lucene.Net.Index
                     w.AddDocuments(new RandomFailingFieldIterable(docs, Random));
                     success = true;
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsRuntimeException())
                 {
                     Assert.AreEqual("boom", e.Message);
                 }
@@ -2671,14 +2663,14 @@ namespace Lucene.Net.Index
               {
                 if (outerInstance.Random.Next(5) == 0)
                 {
-                  throw new Exception("boom");
+                  throw RuntimeException.Create("boom");
                 }
                 return DocIter.Next();
               }
 
               public virtual void Remove()
               {
-                  throw new NotSupportedException();
+                  throw UnsupportedOperationException.Create();
               }
           }*/
         }
@@ -2726,7 +2718,7 @@ namespace Lucene.Net.Index
                         Assert.Fail("expected exception");
                     }
                 }
-                catch (IOException /*ioe*/)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     // OpenMode_e.APPEND should throw an exception since no
                     // index exists:

@@ -1,5 +1,6 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Util;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -72,12 +73,12 @@ namespace Lucene.Net.Search
 
             public override void Normalize(float norm, float topLevelBoost)
             {
-                throw new InvalidOperationException("Weight already normalized.");
+                throw IllegalStateException.Create("Weight already normalized.");
             }
 
             public override float GetValueForNormalization()
             {
-                throw new InvalidOperationException("Weight already normalized.");
+                throw IllegalStateException.Create("Weight already normalized.");
             }
         }
 

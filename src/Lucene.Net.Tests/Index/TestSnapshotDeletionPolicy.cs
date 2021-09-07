@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
         private void RunTest(Random random, Directory dir)
         {
             // Run for ~1 seconds
-            long stopTime = Environment.TickCount + 1000;
+            long stopTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + 1000; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             SnapshotDeletionPolicy dp = DeletionPolicy;
             IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetIndexDeletionPolicy(dp).SetMaxBufferedDocs(2));
@@ -136,9 +136,7 @@ namespace Lucene.Net.Index
                 dp.Snapshot();
                 Assert.Fail("did not hit exception");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException ise)
-#pragma warning restore 168
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }
@@ -210,7 +208,7 @@ namespace Lucene.Net.Index
                         {
                             writer.AddDocument(doc);
                         }
-                        catch (Exception t)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                             Console.WriteLine(t.StackTrace);
                             Assert.Fail("addDocument failed");
@@ -221,9 +219,9 @@ namespace Lucene.Net.Index
                             {
                                 writer.Commit();
                             }
-                            catch (Exception e)
+                            catch (Exception e) when (e.IsException())
                             {
-                                throw new Exception(e.Message, e);
+                                throw RuntimeException.Create(e);
                             }
                         }
                     }
@@ -231,7 +229,7 @@ namespace Lucene.Net.Index
                     Thread.Sleep(1);
                     // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
 
-                } while (Environment.TickCount < stopTime);
+                } while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTime); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
         }
 
@@ -406,9 +404,9 @@ namespace Lucene.Net.Index
                     writer.Commit();
                     snapshots[finalI] = sdp.Snapshot();
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.Message, e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }

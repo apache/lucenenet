@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Ja
                 });
                 fail();
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

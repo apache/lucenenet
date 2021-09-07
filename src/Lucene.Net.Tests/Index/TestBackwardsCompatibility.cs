@@ -4,6 +4,7 @@ using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -989,9 +990,9 @@ namespace Lucene.Net.Index
                 {
                     upgrader = IndexUpgrader.ParseArgs(args.ToArray());
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception("unable to parse args: " + args, e);
+                    throw RuntimeException.Create("unable to parse args: " + args, e);
                 }
                 upgrader.Upgrade();
 

@@ -1,4 +1,4 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Concurrent;
@@ -229,7 +229,7 @@ namespace Lucene.Net.Index
         {
             if (closed)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "this IndexWriter is closed");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "this IndexWriter is disposed.");
             }
         }
 

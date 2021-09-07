@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 4.8.1
+using RandomizedTesting.Generators;
 using System;
 using System.Threading;
 
@@ -154,10 +155,7 @@ namespace Lucene.Net.Facet
                 return ii.Equals(o);
             }
 
-            public override long GetFilePointer()
-            {
-                return ii.GetFilePointer();
-            }
+            public override long Position => ii.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
             public override int GetHashCode()
             {
@@ -232,15 +230,12 @@ namespace Lucene.Net.Facet
                 io.Flush();
             }
 
-            public override long GetFilePointer()
-            {
-                return io.GetFilePointer();
-            }
+            public override long Position => io.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
             public override long Length
             {
                 get => io.Length;
-                set => throw new InvalidOperationException("Length is readonly");
+                set => throw IllegalStateException.Create("Length is readonly"); // LUCENENET specific: We cannot override get without also overriding set, so we throw if it is set
             }
 
             public override long Checksum => io.Checksum;

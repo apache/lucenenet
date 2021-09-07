@@ -1,6 +1,7 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -72,12 +73,12 @@ namespace Lucene.Net.Index
                 stallThreads[i] = new ThreadAnonymousClass(ctrl, stallProbability);
             }
             Start(stallThreads);
-            long time = Environment.TickCount;
+            long time = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             /*
              * use a 100 sec timeout to make sure we not hang forever. join will fail in
              * that case
              */
-            while ((Environment.TickCount - time) < 100 * 1000 && !Terminated(stallThreads))
+            while (((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - time) < 100 * 1000 && !Terminated(stallThreads)) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             {
                 ctrl.UpdateStalled(false);
                 if (Random.NextBoolean())
@@ -271,16 +272,15 @@ namespace Lucene.Net.Index
                             {
                                 Assert.IsTrue(sync.await());
                             }
-                            catch (ThreadInterruptedException /*e*/)
+                            catch (Exception e) when (e.IsInterruptedException())
                             {
                                 Console.WriteLine("[Waiter] got interrupted - wait count: " + sync.waiter.CurrentCount);
-                                //throw new ThreadInterruptedException("Thread Interrupted Exception", e);
                                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine(e.ToString());
                     Console.Write(e.StackTrace);
@@ -327,17 +327,18 @@ namespace Lucene.Net.Index
                             {
                                 Assert.IsTrue(sync.await());
                             }
-                            catch (ThreadInterruptedException /*e*/)
+                            catch (Exception e) when (e.IsInterruptedException())
                             {
                                 Console.WriteLine("[Updater] got interrupted - wait count: " + sync.waiter.CurrentCount);
-                                //throw new ThreadInterruptedException("Thread Interrupted Exception", e);
                                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
-                            catch (Exception e)
-                            {
-                                Console.Write("signal failed with : " + e);
-                                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
-                            }
+                            // LUCENENET: Not sure why this catch block was added, but I suspect it was for debugging purposes. Commented it rather than removing it because
+                            // there may be some value to debugging this way.
+                            //catch (Exception e)
+                            //{
+                            //    Console.Write("signal failed with : " + e);
+                            //    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                            //}
 
                             sync.leftCheckpoint.Signal();
                         }
@@ -347,7 +348,7 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine(e.ToString());
                     Console.Write(e.StackTrace);

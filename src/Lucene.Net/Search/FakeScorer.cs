@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
 
         public override int Advance(int target)
         {
-            throw new NotSupportedException("FakeScorer doesn't support advance(int)");
+            throw UnsupportedOperationException.Create("FakeScorer doesn't support advance(int)");
         }
 
         public override int DocID => doc;
@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
 
         public override int NextDoc()
         {
-            throw new NotSupportedException("FakeScorer doesn't support nextDoc()");
+            throw UnsupportedOperationException.Create("FakeScorer doesn't support nextDoc()");
         }
 
         public override float GetScore()
@@ -59,11 +59,11 @@ namespace Lucene.Net.Search
             return 1;
         }
 
-        public override Weight Weight => throw new NotSupportedException();
+        public override Weight Weight => throw UnsupportedOperationException.Create();
 
         public override ICollection<ChildScorer> GetChildren()
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
     }
 }

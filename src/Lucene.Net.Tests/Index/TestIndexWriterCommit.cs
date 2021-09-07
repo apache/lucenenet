@@ -1,9 +1,10 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -342,7 +343,7 @@ namespace Lucene.Net.Index
             w.Commit();
             var failed = new AtomicBoolean();
             var threads = new ThreadJob[NUM_THREADS];
-            long endTime = Environment.TickCount + ((long)(RUN_SEC * 1000));
+            long endTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + ((long)(RUN_SEC * 1000)); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             for (int i = 0; i < NUM_THREADS; i++)
             {
                 int finalI = i;
@@ -410,13 +411,13 @@ namespace Lucene.Net.Index
                             r = r2;
                             Assert.AreEqual(1, r.DocFreq(new Term("f", s)), "term=f:" + s + "; r=" + r);
                         }
-                    } while (Environment.TickCount < endTime);
+                    } while ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) < endTime); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     r.Dispose();
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     failed.Value = (true);
-                    throw new Exception(t.Message, t);
+                    throw RuntimeException.Create(t);
                 }
             }
         }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Support
@@ -40,9 +40,9 @@ namespace Lucene.Net.Support
         /// <returns>A new <see cref="T:System.Collections.Generic.IEnumerable`1" /> containing the results from each pair.</returns>
         public static IEnumerable<TOut> InPairs<T, TOut>(this IEnumerable<T> source, Func<T, T, TOut> join)
         {
-            if (source == null)
+            if (source is null)
                 throw new ArgumentNullException(nameof(source));
-            if (join == null)
+            if (join is null)
                 throw new ArgumentNullException(nameof(join));
 
             using IEnumerator<T> enumerator = source.GetEnumerator();
@@ -66,7 +66,7 @@ namespace Lucene.Net.Support
         /// <returns>The resulting <see cref="IEnumerable{T}"/>.</returns>
         public static IEnumerable<T> TakeAllButLast<T>(this IEnumerable<T> source)
         {
-            if (source == null)
+            if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
             return TakeAllButLastImpl(source);
@@ -96,7 +96,7 @@ namespace Lucene.Net.Support
         /// <returns>The resulting <see cref="IEnumerable{T}"/>.</returns>
         public static IEnumerable<T> TakeAllButLast<T>(this IEnumerable<T> source, int n)
         {
-            if (source == null)
+            if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
             if (n < 0)

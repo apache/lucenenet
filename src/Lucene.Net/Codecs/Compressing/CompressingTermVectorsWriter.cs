@@ -275,8 +275,8 @@ namespace Lucene.Net.Codecs.Compressing
                 CodecUtil.WriteHeader(vectorsStream, codecNameDat, VERSION_CURRENT);
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(CodecUtil.HeaderLength(codecNameDat) == vectorsStream.GetFilePointer());
-                    Debugging.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer());
+                    Debugging.Assert(CodecUtil.HeaderLength(codecNameDat) == vectorsStream.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                    Debugging.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
 
                 indexWriter = new CompressingStoredFieldsIndexWriter(indexStream);
@@ -399,7 +399,7 @@ namespace Lucene.Net.Codecs.Compressing
             if (Debugging.AssertsEnabled) Debugging.Assert(chunkDocs > 0, "{0}", chunkDocs);
 
             // write the index file
-            indexWriter.WriteIndex(chunkDocs, vectorsStream.GetFilePointer());
+            indexWriter.WriteIndex(chunkDocs, vectorsStream.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
             int docBase = numDocs - chunkDocs;
             vectorsStream.WriteVInt32(docBase);
@@ -799,9 +799,9 @@ namespace Lucene.Net.Codecs.Compressing
             }
             if (numDocs != this.numDocs)
             {
-                throw new Exception("Wrote " + this.numDocs + " docs, finish called with numDocs=" + numDocs);
+                throw RuntimeException.Create("Wrote " + this.numDocs + " docs, finish called with numDocs=" + numDocs);
             }
-            indexWriter.Finish(numDocs, vectorsStream.GetFilePointer());
+            indexWriter.Finish(numDocs, vectorsStream.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             CodecUtil.WriteFooter(vectorsStream);
         }
 
@@ -927,7 +927,7 @@ namespace Lucene.Net.Codecs.Compressing
                         // We make sure to move the checksum input in any case, otherwise the final
                         // integrity check might need to read the whole file a second time
                         long startPointer = index.GetStartPointer(i);
-                        if (startPointer > vectorsStream.GetFilePointer())
+                        if (startPointer > vectorsStream.Position) // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                         {
                             vectorsStream.Seek(startPointer);
                         }
@@ -939,8 +939,8 @@ namespace Lucene.Net.Codecs.Compressing
                             if (docBase + chunkDocs < matchingSegmentReader.MaxDoc && NextDeletedDoc(docBase, liveDocs, docBase + chunkDocs) == docBase + chunkDocs)
                             {
                                 long chunkEnd = index.GetStartPointer(docBase + chunkDocs);
-                                long chunkLength = chunkEnd - vectorsStream.GetFilePointer();
-                                indexWriter.WriteIndex(chunkDocs, this.vectorsStream.GetFilePointer());
+                                long chunkLength = chunkEnd - vectorsStream.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                                indexWriter.WriteIndex(chunkDocs, this.vectorsStream.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                                 this.vectorsStream.WriteVInt32(docCount);
                                 this.vectorsStream.WriteVInt32(chunkDocs);
                                 this.vectorsStream.CopyBytes(vectorsStream, chunkLength);

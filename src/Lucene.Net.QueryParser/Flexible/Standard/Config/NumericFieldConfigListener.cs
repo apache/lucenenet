@@ -41,7 +41,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// <param name="config">the <see cref="QueryConfigHandler"/> it will listen too</param>
         public NumericFieldConfigListener(QueryConfigHandler config)
         {
-            this.config = config ?? throw new ArgumentNullException(nameof(config), "config cannot be null!");
+            this.config = config ?? throw new ArgumentNullException(nameof(config), "config cannot be null!"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         public virtual void BuildFieldConfig(FieldConfig fieldConfig)

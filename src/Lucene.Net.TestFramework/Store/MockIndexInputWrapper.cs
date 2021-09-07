@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Store
@@ -71,7 +71,7 @@ namespace Lucene.Net.Store
         {
             if (closed)
             {
-                throw new Exception("Abusing closed IndexInput!");
+                throw RuntimeException.Create("Abusing closed IndexInput!");
             }
         }
 
@@ -92,17 +92,20 @@ namespace Lucene.Net.Store
                 v = Integer.valueOf(v.intValue()+1);
                 dir.openFiles.put(name, v);
               } else {
-                throw new RuntimeException("BUG: cloned file was not open?");
+                throw RuntimeException.Create("BUG: cloned file was not open?");
               }
             }
             */
             return clone;
         }
 
-        public override long GetFilePointer()
+        public override long Position // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         {
-            EnsureOpen();
-            return @delegate.GetFilePointer();
+            get
+            {
+                EnsureOpen();
+                return @delegate.Position;
+            }
         }
 
         public override void Seek(long pos)

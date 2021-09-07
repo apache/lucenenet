@@ -1,6 +1,7 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -65,7 +66,7 @@ namespace Lucene.Net.Search
                 this.Sort = sort;
                 this.Query = query;
                 this.NumHitsPaged = numHitsPaged;
-                SearchTimeNanos = Time.NanoTime();
+                SearchTimeNanos = J2N.Time.NanoTime();
             }
         }
 
@@ -89,7 +90,7 @@ namespace Lucene.Net.Search
 
             List<PreviousSearchState> priorSearches = new List<PreviousSearchState>();
             List<BytesRef> terms = null;
-            while (Time.NanoTime() < endTimeNanos)
+            while (J2N.Time.NanoTime() < endTimeNanos)
             {
                 bool doFollowon = priorSearches.Count > 0 && Random.Next(7) == 1;
 
@@ -107,7 +108,7 @@ namespace Lucene.Net.Search
 
                     if (Verbose)
                     {
-                        Console.WriteLine("\nTEST: follow-on query age=" + ((Time.NanoTime() - prevSearchState.SearchTimeNanos) / 1000000000.0));
+                        Console.WriteLine("\nTEST: follow-on query age=" + ((J2N.Time.NanoTime() - prevSearchState.SearchTimeNanos) / 1000000000.0));
                     }
 
                     try
@@ -326,7 +327,7 @@ namespace Lucene.Net.Search
                     if (priorSearches.Count > 200)
                     {
                         priorSearches.Shuffle(Random);
-                        priorSearches.SubList(100, priorSearches.Count).Clear();
+                        priorSearches.RemoveRange(100, priorSearches.Count - 100); // LUCENENET: Converted end index to length
                     }
                 }
             }

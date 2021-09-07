@@ -5,6 +5,7 @@ using Lucene.Net.Util.Automaton;
 using System;
 using System.IO;
 using Lucene.Net.TestFramework;
+using RandomizedTesting.Generators;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;

@@ -1,16 +1,14 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
-using Lucene.Net.Search;
 using Lucene.Net.Search.Grouping;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Lucene.Net.Join
+namespace Lucene.Net.Search.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -115,7 +113,7 @@ namespace Lucene.Net.Join
             this.trackMaxScore = trackMaxScore;
             if (trackMaxScore)
             {
-                maxScore = float.MinValue;
+                maxScore = float.Epsilon; // LUCENENET: Epsilon in .NET is the same as MIN_VALUE in Java
             }
             //System.out.println("numParentHits=" + numParentHits);
             this.trackScores = trackScores;

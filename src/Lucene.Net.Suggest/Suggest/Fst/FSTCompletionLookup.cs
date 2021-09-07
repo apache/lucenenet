@@ -139,6 +139,10 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         public override void Build(IInputEnumerator enumerator)
         {
+            // LUCENENET: Added guard clause for null
+            if (enumerator is null)
+                throw new ArgumentNullException(nameof(enumerator));
+
             if (enumerator.HasPayloads)
             {
                 throw new ArgumentException("this suggester doesn't support payloads");
@@ -247,13 +251,17 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             if (value < int.MinValue || value > int.MaxValue)
             {
-                throw new NotSupportedException("cannot encode value: " + value);
+                throw UnsupportedOperationException.Create("cannot encode value: " + value);
             }
             return (int)value;
         }
 
         public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool higherWeightsFirst, int num)
         {
+            // LUCENENET: Added guard clause for null
+            if (key is null)
+                throw new ArgumentNullException(nameof(key));
+
             if (contexts != null)
             {
                 throw new ArgumentException("this suggester doesn't support contexts");

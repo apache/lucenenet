@@ -54,16 +54,16 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             IndexWriter w = runData.IndexWriter;
             if (w == null)
             {
-                throw new Exception("please open the writer before invoking NearRealtimeReader");
+                throw RuntimeException.Create("please open the writer before invoking NearRealtimeReader");
             }
 
             if (runData.GetIndexReader() != null)
             {
-                throw new Exception("please close the existing reader before invoking NearRealtimeReader");
+                throw RuntimeException.Create("please close the existing reader before invoking NearRealtimeReader");
             }
 
 
-            long t = J2N.Time.CurrentTimeMilliseconds();
+            long t = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             DirectoryReader r = DirectoryReader.Open(w, true);
             runData.SetIndexReader(r);
             // Transfer our reference to runData
@@ -76,18 +76,18 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             reopenCount = 0;
             while (!Stop)
             {
-                long waitForMsec = (pauseMSec - (J2N.Time.CurrentTimeMilliseconds() - t));
+                long waitForMsec = (pauseMSec - ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - t)); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 if (waitForMsec > 0)
                 {
                     Thread.Sleep((int)waitForMsec);
                     //System.out.println("NRT wait: " + waitForMsec + " msec");
                 }
 
-                t = J2N.Time.CurrentTimeMilliseconds();
+                t = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 DirectoryReader newReader = DirectoryReader.OpenIfChanged(r);
                 if (newReader != null)
                 {
-                    int delay = (int)(J2N.Time.CurrentTimeMilliseconds() - t);
+                    int delay = (int)((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - t); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     if (reopenTimes.Length == reopenCount)
                     {
                         reopenTimes = ArrayUtil.Grow(reopenTimes, 1 + reopenCount);

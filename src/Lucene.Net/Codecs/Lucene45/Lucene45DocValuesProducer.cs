@@ -1,5 +1,6 @@
 ﻿using J2N.Numerics;
 using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
@@ -122,7 +123,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 int version2 = CodecUtil.CheckHeader(data, dataCodec, Lucene45DocValuesFormat.VERSION_START, Lucene45DocValuesFormat.VERSION_CURRENT);
                 if (version != version2)
                 {
-                    throw new Exception("Format versions mismatch");
+                    throw new CorruptIndexException("Format versions mismatch");
                 }
 
                 success = true;
@@ -143,22 +144,22 @@ namespace Lucene.Net.Codecs.Lucene45
             // sorted = binary + numeric
             if (meta.ReadVInt32() != fieldNumber)
             {
-                throw new Exception("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             if (meta.ReadByte() != Lucene45DocValuesFormat.BINARY)
             {
-                throw new Exception("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             BinaryEntry b = ReadBinaryEntry(meta);
             binaries[fieldNumber] = b;
 
             if (meta.ReadVInt32() != fieldNumber)
             {
-                throw new Exception("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             if (meta.ReadByte() != Lucene45DocValuesFormat.NUMERIC)
             {
-                throw new Exception("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             NumericEntry n = ReadNumericEntry(meta);
             ords[fieldNumber] = n;
@@ -169,33 +170,33 @@ namespace Lucene.Net.Codecs.Lucene45
             // sortedset = binary + numeric (addresses) + ordIndex
             if (meta.ReadVInt32() != fieldNumber)
             {
-                throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             if (meta.ReadByte() != Lucene45DocValuesFormat.BINARY)
             {
-                throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             BinaryEntry b = ReadBinaryEntry(meta);
             binaries[fieldNumber] = b;
 
             if (meta.ReadVInt32() != fieldNumber)
             {
-                throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             if (meta.ReadByte() != Lucene45DocValuesFormat.NUMERIC)
             {
-                throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             NumericEntry n1 = ReadNumericEntry(meta);
             ords[fieldNumber] = n1;
 
             if (meta.ReadVInt32() != fieldNumber)
             {
-                throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             if (meta.ReadByte() != Lucene45DocValuesFormat.NUMERIC)
             {
-                throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                throw new CorruptIndexException("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             NumericEntry n2 = ReadNumericEntry(meta);
             ordIndexes[fieldNumber] = n2;
@@ -212,7 +213,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 {
                     // trickier to validate more: because we re-use for norms, because we use multiple entries
                     // for "composite" types like sortedset, etc.
-                    throw new Exception("Invalid field number: " + fieldNumber + " (resource=" + meta + ")");
+                    throw new CorruptIndexException("Invalid field number: " + fieldNumber + " (resource=" + meta + ")");
                 }
                 byte type = meta.ReadByte();
                 if (type == Lucene45DocValuesFormat.NUMERIC)
@@ -240,22 +241,22 @@ namespace Lucene.Net.Codecs.Lucene45
                     {
                         if (meta.ReadVInt32() != fieldNumber)
                         {
-                            throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                            throw new CorruptIndexException("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
                         }
                         if (meta.ReadByte() != Lucene45DocValuesFormat.SORTED)
                         {
-                            throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
+                            throw new CorruptIndexException("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
                         }
                         ReadSortedField(fieldNumber, meta/*, infos // LUCENENET: Never read */);
                     }
                     else
                     {
-                        throw new Exception();
+                        throw AssertionError.Create();
                     }
                 }
                 else
                 {
-                    throw new Exception("invalid type: " + type + ", resource=" + meta);
+                    throw new CorruptIndexException("invalid type: " + type + ", resource=" + meta);
                 }
                 fieldNumber = meta.ReadVInt32();
             }
@@ -280,12 +281,12 @@ namespace Lucene.Net.Codecs.Lucene45
                 case Lucene45DocValuesConsumer.TABLE_COMPRESSED:
                     if (entry.Count > int.MaxValue)
                     {
-                        throw new Exception("Cannot use TABLE_COMPRESSED with more than MAX_VALUE values, input=" + meta);
+                        throw new CorruptIndexException("Cannot use TABLE_COMPRESSED with more than MAX_VALUE values, input=" + meta);
                     }
                     int uniqueValues = meta.ReadVInt32();
                     if (uniqueValues > 256)
                     {
-                        throw new Exception("TABLE_COMPRESSED cannot have more than 256 distinct values, input=" + meta);
+                        throw new CorruptIndexException("TABLE_COMPRESSED cannot have more than 256 distinct values, input=" + meta);
                     }
                     entry.table = new long[uniqueValues];
                     for (int i = 0; i < uniqueValues; ++i)
@@ -298,7 +299,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     break;
 
                 default:
-                    throw new Exception("Unknown format: " + entry.format + ", input=" + meta);
+                    throw new CorruptIndexException("Unknown format: " + entry.format + ", input=" + meta);
             }
             return entry;
         }
@@ -331,7 +332,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     break;
 
                 default:
-                    throw new Exception("Unknown format: " + entry.format + ", input=" + meta);
+                    throw new CorruptIndexException("Unknown format: " + entry.format + ", input=" + meta);
             }
             return entry;
         }
@@ -349,7 +350,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
             if (entry.Format != Lucene45DocValuesConsumer.SORTED_SET_SINGLE_VALUED_SORTED && entry.Format != Lucene45DocValuesConsumer.SORTED_SET_WITH_ADDRESSES)
             {
-                throw new Exception("Unknown format: " + entry.Format + ", input=" + meta);
+                throw new CorruptIndexException("Unknown format: " + entry.Format + ", input=" + meta);
             }
             return entry;
         }
@@ -397,7 +398,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     return new Int64ValuesAnonymousClass2(table, ords);
 
                 default:
-                    throw new Exception();
+                    throw AssertionError.Create();
             }
         }
 
@@ -454,7 +455,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     return GetCompressedBinary(field, bytes);
 
                 default:
-                    throw new Exception();
+                    throw AssertionError.Create();
             }
         }
 
@@ -491,9 +492,9 @@ namespace Lucene.Net.Codecs.Lucene45
                     result.Offset = 0;
                     result.Length = buffer.Length;
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -559,9 +560,9 @@ namespace Lucene.Net.Codecs.Lucene45
                     result.Offset = 0;
                     result.Length = length;
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -706,7 +707,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
             else if (ss.Format != Lucene45DocValuesConsumer.SORTED_SET_WITH_ADDRESSES)
             {
-                throw new Exception();
+                throw AssertionError.Create();
             }
 
             IndexInput data = (IndexInput)this.data.Clone();
@@ -801,11 +802,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 return ordinals.Get(startOffset + index);
             }
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public override int Cardinality()
-            {
-                return (int)(endOffset - startOffset);
-            }
+            public override int Cardinality => (int)(endOffset - startOffset);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -843,9 +840,9 @@ namespace Lucene.Net.Codecs.Lucene45
                     @in.Seek(offset + (index >> 3));
                     return (@in.ReadByte() & (1 << (index & 7))) != 0;
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 
@@ -871,7 +868,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     return GetMissingBits(ne.missingOffset);
 
                 default:
-                    throw new InvalidOperationException();
+                    throw AssertionError.Create();
             }
         }
 
@@ -1023,9 +1020,9 @@ namespace Lucene.Net.Codecs.Lucene45
                     result.Offset = term.Offset;
                     result.Length = term.Length;
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 
@@ -1047,9 +1044,9 @@ namespace Lucene.Net.Codecs.Lucene45
                         return -termsEnum.Ord - 1;
                     }
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
-                    throw new Exception(bogus.ToString(), bogus);
+                    throw RuntimeException.Create(bogus);
                 }
             }
 
@@ -1060,9 +1057,9 @@ namespace Lucene.Net.Codecs.Lucene45
                 {
                     return GetTermsEnum((IndexInput)data.Clone());
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
 
@@ -1221,18 +1218,18 @@ namespace Lucene.Net.Codecs.Lucene45
 
                 public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-                public override int DocFreq => throw new NotSupportedException();
+                public override int DocFreq => throw UnsupportedOperationException.Create();
 
                 public override long TotalTermFreq => -1;
 
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
 
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
             }
         }

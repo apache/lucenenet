@@ -3,6 +3,7 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -464,10 +465,9 @@ namespace Lucene.Net.Search
                     writer.DeleteDocuments(new TermQuery(new Term("foo", "barista")));
                     manager.MaybeRefresh(); // kick off another reopen so we inc. the internal gen
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    Console.WriteLine(e.ToString());
-                    Console.Write(e.StackTrace);
+                    e.printStackTrace();
                 }
                 finally
                 {
@@ -498,10 +498,10 @@ namespace Lucene.Net.Search
                 {
                     thread.WaitForGeneration(lastGen);
                 }
-                catch (ThreadInterruptedException ie)
+                catch (Exception ie) when (ie.IsInterruptedException())
                 {
                     Thread.CurrentThread.Interrupt();
-                    throw new Exception(ie.Message, ie);
+                    throw RuntimeException.Create(ie);
                 }
                 finished.Value = true;
             }
@@ -554,9 +554,7 @@ namespace Lucene.Net.Search
                 new SearcherManager(w.IndexWriter, false, theEvilOne);
                 fail("didn't hit expected exception");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException ise)
-#pragma warning restore 168
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }
@@ -679,10 +677,10 @@ namespace Lucene.Net.Search
                 Document d = new Document();
                 d.Add(new TextField("count", i + "", Field.Store.NO));
                 d.Add(new TextField("content", content, Field.Store.YES));
-                long start = Environment.TickCount;
+                long start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 long l = tiw.AddDocument(d);
                 controlledRealTimeReopenThread.WaitForGeneration(l);
-                long wait = Environment.TickCount - start;
+                long wait = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - start; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 assertTrue("waited too long for generation " + wait, wait < (maxStaleSecs * 1000));
                 IndexSearcher searcher = sm.Acquire();
                 TopDocs td = searcher.Search(new TermQuery(new Term("count", i + "")), 10);
@@ -730,9 +728,9 @@ namespace Lucene.Net.Search
                         assertTrue(SlowFileExists(dir, name));
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.toString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }

@@ -107,7 +107,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         /// <seealso cref="ISyntaxParser"/>
         public virtual void SetSyntaxParser(ISyntaxParser syntaxParser)
         {
-            this.syntaxParser = syntaxParser ?? throw new ArgumentNullException(nameof(syntaxParser), "textParser should not be null!");
+            this.syntaxParser = syntaxParser ?? throw new ArgumentNullException(nameof(syntaxParser), "textParser should not be null!"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         /// <seealso cref="IQueryBuilder{TQuery}"/>
         public virtual void SetQueryBuilder(IQueryBuilder<TQuery> queryBuilder)
         {
-            this.builder = queryBuilder ?? throw new ArgumentNullException(nameof(queryBuilder), "queryBuilder should not be null!");
+            this.builder = queryBuilder ?? throw new ArgumentNullException(nameof(queryBuilder), "queryBuilder should not be null!"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>

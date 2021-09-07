@@ -1,5 +1,6 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -51,7 +52,7 @@ namespace Lucene.Net.Index
 
             DirectoryReader r = DirectoryReader.Open(m_writer, true);
 
-            while (Environment.TickCount < stopTime && !m_failed)
+            while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTime && !m_failed) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             {
                 if (Random.NextBoolean())
                 {
@@ -98,7 +99,7 @@ namespace Lucene.Net.Index
                 {
                     fixedSearcher = new IndexSearcher(r, es);
                     SmokeTestSearcher(fixedSearcher);
-                    RunSearchThreads(Environment.TickCount + 500);
+                    RunSearchThreads((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + 500); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 }
             }
             r.Dispose();

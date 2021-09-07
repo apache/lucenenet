@@ -775,7 +775,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
             public void Reset()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             #endregion

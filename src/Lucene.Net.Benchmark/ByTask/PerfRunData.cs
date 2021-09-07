@@ -231,7 +231,7 @@ namespace Lucene.Net.Benchmarks.ByTask
 
         public virtual long SetStartTimeMillis()
         {
-            startTimeMillis = J2N.Time.CurrentTimeMilliseconds();
+            startTimeMillis = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond;
             return startTimeMillis;
         }
 
@@ -454,9 +454,9 @@ namespace Lucene.Net.Benchmarks.ByTask
                         qm = (IQueryMaker)Activator.CreateInstance(qmkrClass);
                         qm.SetConfig(config);
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsException())
                     {
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
                     readTaskQueryMaker[readTaskClass] = qm;
                 }

@@ -1,7 +1,8 @@
-using J2N;
+﻿using J2N;
 using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using Lucene.Net.Support.IO;
+using RandomizedTesting.Generators;
 using System;
 using System.Globalization;
 using System.IO;
@@ -326,12 +327,12 @@ namespace Lucene.Net.Util
             int spot = line.IndexOf(SEP);
             if (spot == -1)
             {
-                throw new Exception("line: [" + line + "] is in an invalid format !");
+                throw RuntimeException.Create("line: [" + line + "] is in an invalid format !");
             }
             int spot2 = line.IndexOf(SEP, 1 + spot);
             if (spot2 == -1)
             {
-                throw new Exception("line: [" + line + "] is in an invalid format !");
+                throw RuntimeException.Create("line: [" + line + "] is in an invalid format !");
             }
 
             docState.Body.SetStringValue(line.Substring(1 + spot2, line.Length - (1 + spot2)));

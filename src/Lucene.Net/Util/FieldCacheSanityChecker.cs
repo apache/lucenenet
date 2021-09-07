@@ -1,4 +1,4 @@
-using Lucene.Net.Search;
+﻿using Lucene.Net.Search;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -296,7 +296,7 @@ namespace Lucene.Net.Util
         /// </summary>
         private static IList<object> GetAllDescendantReaderKeys(object seed) // LUCENENET: CA1822: Mark members as static
         {
-            var all = new List<object>(17) {seed}; // will grow as we iter
+            var all = new JCG.List<object>(17) { seed }; // will grow as we iter
             for (var i = 0; i < all.Count; i++)
             {
                 var obj = all[i];
@@ -315,14 +315,14 @@ namespace Lucene.Net.Util
                             }
                         }
                     }
-                    catch (ObjectDisposedException)
+                    catch (Exception ace) when (ace.IsAlreadyClosedException())
                     {
                         // ignore this reader
                     }
                 }
             }
             // need to skip the first, because it was the seed
-            return all.GetRange(1, all.Count - 1);
+            return all.GetView(1, all.Count - 1); // LUCENENET: Converted end index to length
         }
 
         /// <summary>
@@ -377,7 +377,8 @@ namespace Lucene.Net.Util
 
             public Insanity(InsanityType type, string msg, params FieldCache.CacheEntry[] entries)
             {
-                // LUCENENET specific - rearranged order to take advantage of throw expressions
+                // LUCENENET specific - rearranged order to take advantage of throw expressions and
+                // changed from IllegalArgumentException to ArgumentNullException (.NET convention)
                 this.type = type ?? throw new ArgumentNullException(nameof(type), "Insanity requires non-null InsanityType");
                 this.entries = entries ?? throw new ArgumentNullException(nameof(entries), "Insanity requires non-null CacheEntry[]");
                 if (0 == entries.Length)

@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using RandomizedTesting.Generators;
 
 namespace Lucene.Net.Index
 {
@@ -141,7 +142,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine("TEST: iter=" + iter + ": success");
                     }
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     if (Verbose)
                     {

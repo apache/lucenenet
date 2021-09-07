@@ -1,6 +1,7 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -144,9 +145,7 @@ namespace Lucene.Net.Index
                 pr.Document(0);
                 Assert.Fail("ParallelAtomicReader should be already closed because inner reader was closed!");
             }
-#pragma warning disable 168
-            catch (ObjectDisposedException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsAlreadyClosedException())
             {
                 // pass
             }
@@ -179,9 +178,7 @@ namespace Lucene.Net.Index
                 new ParallelAtomicReader(ir1, ir2);
                 Assert.Fail("didn't get exptected exception: indexes don't have same number of documents");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected exception
             }
@@ -191,9 +188,7 @@ namespace Lucene.Net.Index
                 new ParallelAtomicReader(Random.NextBoolean(), new AtomicReader[] { ir1, ir2 }, new AtomicReader[] { ir1, ir2 });
                 Assert.Fail("didn't get expected exception: indexes don't have same number of documents");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected exception
             }
@@ -259,9 +254,7 @@ namespace Lucene.Net.Index
                 new ParallelAtomicReader(true, new AtomicReader[0], new AtomicReader[] { ir1 });
                 Assert.Fail("didn't get expected exception: need a non-empty main-reader array");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // pass
             }

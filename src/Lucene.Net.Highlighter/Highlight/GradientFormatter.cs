@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Integer = J2N.Numerics.Int32;
 
 namespace Lucene.Net.Search.Highlight
 {
@@ -73,13 +74,13 @@ namespace Lucene.Net.Search.Highlight
                     throw new ArgumentException("minForegroundColor is not 7 bytes long eg a hex " 
                         + "RGB value such as #FFFFFF");
                 }
-                m_fgRMin = HexToInt32(minForegroundColor.Substring(1, 3 - 1));
-                m_fgGMin = HexToInt32(minForegroundColor.Substring(3, 5 - 3));
-                m_fgBMin = HexToInt32(minForegroundColor.Substring(5, 7 - 5));
+                m_fgRMin = HexToInt32(minForegroundColor, 1, 3 - 1);
+                m_fgGMin = HexToInt32(minForegroundColor, 3, 5 - 3);
+                m_fgBMin = HexToInt32(minForegroundColor, 5, 7 - 5);
 
-                m_fgRMax = HexToInt32(maxForegroundColor.Substring(1, 3 - 1));
-                m_fgGMax = HexToInt32(maxForegroundColor.Substring(3, 5 - 3));
-                m_fgBMax = HexToInt32(maxForegroundColor.Substring(5, 7 - 5));
+                m_fgRMax = HexToInt32(maxForegroundColor, 1, 3 - 1);
+                m_fgGMax = HexToInt32(maxForegroundColor, 3, 5 - 3);
+                m_fgBMax = HexToInt32(maxForegroundColor, 5, 7 - 5);
             }
 
             m_highlightBackground = (minBackgroundColor != null) 
@@ -96,13 +97,13 @@ namespace Lucene.Net.Search.Highlight
                     throw new ArgumentException("minBackgroundColor is not 7 bytes long eg a hex " 
                         + "RGB value such as #FFFFFF");
                 }
-                m_bgRMin = HexToInt32(minBackgroundColor.Substring(1, 3 - 1));
-                m_bgGMin = HexToInt32(minBackgroundColor.Substring(3, 5 - 3));
-                m_bgBMin = HexToInt32(minBackgroundColor.Substring(5, 7 - 5));
+                m_bgRMin = HexToInt32(minBackgroundColor, 1, 3 - 1);
+                m_bgGMin = HexToInt32(minBackgroundColor, 3, 5 - 3);
+                m_bgBMin = HexToInt32(minBackgroundColor, 5, 7 - 5);
 
-                m_bgRMax = HexToInt32(maxBackgroundColor.Substring(1, 3 - 1));
-                m_bgGMax = HexToInt32(maxBackgroundColor.Substring(3, 5 - 3));
-                m_bgBMax = HexToInt32(maxBackgroundColor.Substring(5, 7 - 5));
+                m_bgRMax = HexToInt32(maxBackgroundColor, 1, 3 - 1);
+                m_bgGMax = HexToInt32(maxBackgroundColor, 3, 5 - 3);
+                m_bgBMax = HexToInt32(maxBackgroundColor, 5, 7 - 5);
             }
             //        this.corpusReader = corpusReader;
             this.maxScore = maxScore;
@@ -202,23 +203,44 @@ namespace Lucene.Net.Search.Highlight
         /// character is not in the set [0-9a-fA-f]</exception>
         public static int HexToInt32(string hex)
         {
-            int len = hex.Length;
-            if (len > 16)
-                throw new FormatException();
+            if ((hex.Length > 16) || !Integer.TryParse(hex, radix: 16, out int result))
+            {
+                throw NumberFormatException.Create();
+            }
 
-            try
+            return result;
+        }
+
+        /// <summary> 
+        /// Converts a hex string at the specified index and length of <paramref name="hex"/>
+        /// into an <see cref="int"/>.
+        /// <para/>
+        /// NOTE: This was hexToInt() in Lucene
+        /// </summary>
+        /// <param name="hex">
+        /// A string in capital or lower case hex, of no more then 16
+        /// characters.
+        /// </param>
+        /// <param name="startIndex">The index of the first character to begin parsing.</param>
+        /// <param name="length">The number of characters to parse.</param>
+        /// <exception cref="FormatException">if the string is more than 16 characters long, or if any
+        /// character is not in the set [0-9a-fA-f]</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="startIndex"/> or <paramref name="length"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> and <paramref name="length"/> refer to a location outside of <paramref name="hex"/>.
+        /// </exception>
+        // LUCENENET specific overload
+        public static int HexToInt32(string hex, int startIndex, int length)
+        {
+            if ((length > 16) || !Integer.TryParse(hex, startIndex, length, radix: 16, out int result))
             {
-                // LUCENENET NOTE: Convert.ToInt32(string, int) throws a
-                // FormatException if the character does not fall in
-                // the correct range, which is the behavior we are expecting.
-                // But throws an ArgumentException if passed a negative number.
-                // So we need to convert to FormatException to provide the correct behavior.
-                return Convert.ToInt32(hex, 16);
+                throw NumberFormatException.Create();
             }
-            catch (ArgumentException e)
-            {
-                throw new FormatException(e.Message, e);
-            }
+
+            return result;
         }
     }
 }

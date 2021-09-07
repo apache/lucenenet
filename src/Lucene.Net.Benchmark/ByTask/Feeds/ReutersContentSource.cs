@@ -53,7 +53,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             CollectFiles(dataDir, inputFiles);
             if (inputFiles.Count == 0)
             {
-                throw new Exception("No txt files in dataDir: " + dataDir.FullName);
+                throw RuntimeException.Create("No txt files in dataDir: " + dataDir.FullName);
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Globalization;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -119,7 +120,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 var _ = ltr.Count;
                 fail("An ObjectDisposedException should have been thrown here");
             }
-            catch (ObjectDisposedException)
+            catch (Exception ace) when (ace.IsAlreadyClosedException())
             {
                 // good!
             }

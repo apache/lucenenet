@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -95,17 +95,17 @@ namespace Lucene.Net.Util
             int minRadix = 2, maxRadix = 36;
             if (chars == null || radix < minRadix || radix > maxRadix)
             {
-                throw new FormatException();
+                throw NumberFormatException.Create();
             }
             int i = 0;
             if (len == 0)
             {
-                throw new FormatException("chars length is 0");
+                throw NumberFormatException.Create("chars length is 0");
             }
             bool negative = chars[offset + i] == '-';
             if (negative && ++i == len)
             {
-                throw new FormatException("can't convert to an int");
+                throw NumberFormatException.Create("can't convert to an int");
             }
             if (negative == true)
             {
@@ -124,16 +124,16 @@ namespace Lucene.Net.Util
                 int digit = (int)char.GetNumericValue(chars[i + offset]);
                 if (digit == -1)
                 {
-                    throw new FormatException("Unable to parse");
+                    throw NumberFormatException.Create("Unable to parse");
                 }
                 if (max > result)
                 {
-                    throw new FormatException("Unable to parse");
+                    throw NumberFormatException.Create("Unable to parse");
                 }
                 int next = result * radix - digit;
                 if (next > result)
                 {
-                    throw new FormatException("Unable to parse");
+                    throw NumberFormatException.Create("Unable to parse");
                 }
                 result = next;
             }
@@ -144,7 +144,7 @@ namespace Lucene.Net.Util
                 result = -result;
                 if (result < 0)
                 {
-                    throw new FormatException("Unable to parse");
+                    throw NumberFormatException.Create("Unable to parse");
                 }
             }
             return result;
@@ -177,7 +177,7 @@ namespace Lucene.Net.Util
             if (minTargetSize < 0)
             {
                 // catch usage that accidentally overflows int
-                throw new ArgumentException("invalid array size " + minTargetSize);
+                throw new ArgumentOutOfRangeException(nameof(minTargetSize), "invalid array size " + minTargetSize + ", may not be < 0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             if (minTargetSize == 0)
@@ -772,9 +772,12 @@ namespace Lucene.Net.Util
             return false;
         }
 
+        // LUCENENET: The toIntArray() method was only here to convert Integer[] to int[] in Java, but is not necessary when dealing with 
+
         /// <summary>
         /// NOTE: This was toIntArray() in Lucene
         /// </summary>
+        [Obsolete("This API was only to address a compatibility problem with the port and is no longer necessary. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public static int[] ToInt32Array(ICollection<int?> ints)
         {
             int[] result = new int[ints.Count];

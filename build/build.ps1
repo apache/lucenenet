@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------------------
+﻿# -----------------------------------------------------------------------------------
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -27,7 +27,7 @@ properties {
     [string]$publish_directory = "$release_directory/Publish"
     [string]$solutionFile = "$base_directory/Lucene.Net.sln"
     [string]$sdkPath = "$env:programfiles/dotnet/sdk"
-    [string]$sdkVersion = "5.0.100"
+    [string]$sdkVersion = "5.0.400"
     [bool]$skipSdkInstallation = $false
     [string]$globalJsonFile = "$base_directory/global.json"
     [string]$versionPropsFile = "$base_directory/Version.props"
@@ -324,7 +324,7 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
 
             $testProjectPath = $testProject.FullName
             $testExpression = "dotnet.exe test $testProjectPath --configuration $configuration --framework $framework --no-build"
-            $testExpression = "$testExpression --no-restore --blame --results-directory $testResultDirectory"
+            $testExpression = "$testExpression --no-restore --blame  --blame-hang --blame-hang-dump-type mini --blame-hang-timeout 15minutes --results-directory $testResultDirectory"
 
             # Breaking change: We need to explicitly set the logger for it to work with TeamCity.
             # See: https://github.com/microsoft/vstest/issues/1590#issuecomment-393460921

@@ -35,9 +35,9 @@ namespace Lucene.Net.Support.Text
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool ContainsAny(this string input, char[] charsToCompare)
         {
-            if (input == null)
+            if (input is null)
                 throw new ArgumentNullException(nameof(input));
-            if (charsToCompare == null)
+            if (charsToCompare is null)
                 throw new ArgumentNullException(nameof(charsToCompare));
 
             // Ensure the strings passed don't contain invalid characters

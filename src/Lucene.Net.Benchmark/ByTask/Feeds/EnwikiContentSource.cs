@@ -77,14 +77,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 {
                     while (tuple == null && nmde == null && !threadDone && !stopped)
                     {
-                        //try
-                        //{
-                            Monitor.Wait(this);
-                        //}
-                        //catch (ThreadInterruptedException ie)
-                        //{
-                        //    throw new ThreadInterruptedException(ie.ToString(), ie);
-                        //}
+                        Monitor.Wait(this);
+                        // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException. Note that it could be thrown above on lock (this).
                     }
                     if (tuple != null)
                     {
@@ -148,14 +142,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                             {
                                 while (tuple != null && !stopped)
                                 {
-                                    //try
-                                    //{
-                                        Monitor.Wait(this); //wait();
-                                    //}
-                                    //catch (ThreadInterruptedException ie)
-                                    //{
-                                    //    throw new ThreadInterruptedException(ie.ToString(), ie);
-                                    //}
+                                    Monitor.Wait(this);
+                                    // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException. Note that it could be thrown above on lock (this).
                                 }
                                 tuple = tmpTuple;
                                 Monitor.Pulse(this); //notify();
@@ -209,7 +197,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                                 // To work around a bug in XERCES (XERCESJ-1257), we assume the XML is always UTF8, so we simply provide reader.
                                 reader.Parse(new InputSource(IOUtils.GetDecodingReader(localFileIS, Encoding.UTF8)));
                             }
-                            catch (IOException /*ioe*/)
+                            catch (Exception ioe) when (ioe.IsIOException())
                             {
                                 lock (outerInstance)
                                 {
@@ -241,11 +229,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
                 catch (SAXException sae)
                 {
-                    throw new Exception(sae.ToString(), sae);
+                    throw RuntimeException.Create(sae);
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
                 finally
                 {

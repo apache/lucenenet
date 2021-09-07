@@ -88,7 +88,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (m_finished)
             {
-                throw new InvalidOperationException("Already finished");
+                throw IllegalStateException.Create("Already finished");
             }
         }
 
@@ -111,7 +111,7 @@ namespace Lucene.Net.Util.Packed
             CheckNotFinished();
             if (m_off != 0 && m_off != m_values.Length)
             {
-                throw new InvalidOperationException("" + m_off);
+                throw IllegalStateException.Create("" + m_off);
             }
             if (m_off == m_values.Length)
             {

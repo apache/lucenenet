@@ -132,7 +132,7 @@ namespace Lucene.Net.Codecs.IntBlock
                 else if (upto == blockSize)
                 {
                     // Load new block
-                    lastBlockFP = input.GetFilePointer();
+                    lastBlockFP = input.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     blockReader.ReadBlock();
                     upto = 0;
                 }

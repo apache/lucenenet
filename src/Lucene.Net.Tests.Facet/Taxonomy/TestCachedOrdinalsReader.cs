@@ -104,9 +104,9 @@ namespace Lucene.Net.Facet.Taxonomy
                     {
                         ordsReader.GetReader(context);
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
                 }
             }

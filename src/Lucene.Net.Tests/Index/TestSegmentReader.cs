@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -177,7 +177,7 @@ namespace Lucene.Net.Index
                   byte [] norms = reader.norms(DocHelper.TEXT_FIELD_1_KEY);
                   System.out.println("Norms: " + norms);
                   Assert.IsTrue(norms != null);
-                } catch (IOException e) {
+                } catch (Exception e) when (e.IsIOException()) {
                   e.printStackTrace();
                   Assert.IsTrue(false);
                 }
@@ -235,9 +235,7 @@ namespace Lucene.Net.Index
                 reader.Document(-1);
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (IndexOutOfRangeException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIndexOutOfBoundsException())
             {
             }
 
@@ -246,9 +244,7 @@ namespace Lucene.Net.Index
                 reader.GetTermVectors(-1);
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (IndexOutOfRangeException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIndexOutOfBoundsException())
             {
             }
 
@@ -257,9 +253,7 @@ namespace Lucene.Net.Index
                 reader.Document(numDocs);
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (IndexOutOfRangeException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIndexOutOfBoundsException())
             {
             }
 
@@ -268,9 +262,7 @@ namespace Lucene.Net.Index
                 reader.GetTermVectors(numDocs);
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (IndexOutOfRangeException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIndexOutOfBoundsException())
             {
             }
         }

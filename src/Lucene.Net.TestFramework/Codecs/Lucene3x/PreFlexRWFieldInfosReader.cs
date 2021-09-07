@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Store;
 using System.Collections.Generic;
 
@@ -111,9 +111,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                                             null);
                 }
 
-                if (input.GetFilePointer() != input.Length)
+                if (input.Position != input.Length) // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 {
-                    throw new CorruptIndexException("did not read all bytes from file \"" + fileName + "\": read " + input.GetFilePointer() + " vs size " + input.Length + " (resource: " + input + ")");
+                    throw new CorruptIndexException("did not read all bytes from file \"" + fileName + "\": read " + input.Position + " vs size " + input.Length + " (resource: " + input + ")");
                 }
                 return new FieldInfos(infos);
             }

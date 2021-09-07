@@ -1,12 +1,13 @@
 ﻿// Lucene version compatibility level 4.8.1
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Index;
-using Lucene.Net.Support;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -99,16 +100,16 @@ namespace Lucene.Net.Facet.Taxonomy
             // category is not added twice.
             int numFacetsA = random.Next(3) + 1; // 1-3
             int numFacetsB = random.Next(2) + 1; // 1-2
-            List<FacetField> categories_a = new List<FacetField>();
+            JCG.List<FacetField> categories_a = new JCG.List<FacetField>();
             categories_a.AddRange(CATEGORIES_A);
-            List<FacetField> categories_b = new List<FacetField>();
+            JCG.List<FacetField> categories_b = new JCG.List<FacetField>();
             categories_b.AddRange(CATEGORIES_B);
             categories_a.Shuffle(Random);
             categories_b.Shuffle(Random);
 
             List<FacetField> categories = new List<FacetField>();
-            categories.AddRange(categories_a.SubList(0, numFacetsA));
-            categories.AddRange(categories_b.SubList(0, numFacetsB));
+            categories.AddRange(categories_a.GetView(0, numFacetsA)); // LUCENENET: Checked length for correctness
+            categories.AddRange(categories_b.GetView(0, numFacetsB)); // LUCENENET: Checked length for correctness
 
             // add the NO_PARENT categories
             categories.Add(CATEGORIES_C[Util.LuceneTestCase.Random.Next(NUM_CHILDREN_CP_C)]);
@@ -119,7 +120,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         private static void AddField(Document doc)
         {
-            doc.Add(new StringField(A.Field, A.Text(), Store.NO));
+            doc.Add(new StringField(A.Field, A.Text, Store.NO));
         }
 
         private static void AddFacets(Document doc, FacetsConfig config, bool updateTermExpectedCounts)

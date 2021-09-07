@@ -623,7 +623,7 @@ namespace Lucene.Net.Index.Sorter
                             offsets = Arrays.CopyOf(offsets, newLength);
                         }
                         docs[i] = docMap.OldToNew(doc);
-                        offsets[i] = @out.GetFilePointer();
+                        offsets[i] = @out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                         AddPositions(@in, @out);
                         i++;
                     }

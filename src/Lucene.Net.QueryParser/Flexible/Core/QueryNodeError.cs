@@ -1,9 +1,8 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Messages;
-using System;
+﻿using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 #endif
+#nullable enable
 
 namespace Lucene.Net.QueryParsers.Flexible.Core
 {
@@ -25,56 +24,80 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
      */
 
     /// <summary>
-    /// Error class with NLS support
+    /// A query node error.
     /// </summary>
-    /// <seealso cref="NLS"/>
-    /// <seealso cref="IMessage"/>
     // LUCENENET: It is no longer good practice to use binary serialization. 
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    public class QueryNodeError : Exception, INLSException
+    // LUCENENET specific: Added IError for identification of the Java superclass in .NET.
+    // LUCENENET specific: Subclassed ArgumentException, since in all cases, we are validating arguments. However, this exception is also filtered using the IsException() extension method in catch blocks.
+    // LUCENENET specific: Refactored constructors to be more like a .NET type and eliminated IMessage/NLS support.
+    public class QueryNodeError : ArgumentException, IError
     {
-        private readonly IMessage message; // LUCENENET: marked readonly
-
         /// <summary>
-        /// 
+        /// Initializes a new instance of <see cref="QueryNodeError"/>
+        /// with the specified <paramref name="message"/> and <paramref name="paramName"/>.
         /// </summary>
-        /// <param name="message">NLS Message Object</param>
-        public QueryNodeError(IMessage message)
-            : base(message.Key)
-        {
-            this.message = message;
-
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="throwable">An exception instance to wrap</param>
-        public QueryNodeError(Exception throwable)
-            : base(throwable.Message, throwable)
+        /// <param name="paramName">The name of the parameter that caused the current error.</param>
+        /// <param name="message">The message that describes the error.</param>
+        public QueryNodeError(string? message, string? paramName)
+            : base(message, paramName)
         {
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of <see cref="QueryNodeError"/>
+        /// with the specified <paramref name="message"/>, <paramref name="paramName"/> and <paramref name="innerException"/>.
         /// </summary>
-        /// <param name="message">NLS Message Object</param>
-        /// <param name="throwable">An exception instance to wrap</param>
-        public QueryNodeError(IMessage message, Exception throwable)
-            : base(message.Key, throwable)
+        /// <param name="paramName">The name of the parameter that caused the current error.</param>
+        /// <param name="message">The message that describes the error.</param>
+        /// <param name="innerException">The exception that is the cause of the current exception.
+        /// If the <paramref name="innerException"/> parameter is not a <c>null</c> reference, the
+        /// current exception is raised in a catch block that handles the inner exception.</param>
+        public QueryNodeError(string? message, string? paramName, Exception? innerException)
+            : base(message, paramName, innerException)
         {
-            this.message = message;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="QueryNodeError"/>
+        /// with the specified <paramref name="message"/>.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        public QueryNodeError(string? message)
+            : base(message)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="QueryNodeError"/>
+        /// with a specified inner exception that is the cause of this exception.
+        /// </summary>
+        /// <param name="innerException">The exception that is the cause of the current exception.
+        /// If the <paramref name="innerException"/> parameter is not a <c>null</c> reference, the
+        /// current exception is raised in a catch block that handles the inner exception.</param>
+        public QueryNodeError(Exception? innerException)
+            : base(innerException?.Message, innerException)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="QueryNodeError"/>
+        /// with a specified error message and a reference to the inner exception
+        /// that is the cause of this exception.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        /// <param name="innerException">The exception that is the cause of the current exception.
+        /// If the <paramref name="innerException"/> parameter is not a <c>null</c> reference, the
+        /// current exception is raised in a catch block that handles the inner exception.</param>
+        public QueryNodeError(string? message, Exception? innerException)
+            : base(message, innerException)
+        {
         }
 
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
-        // For testing
-        public QueryNodeError(string message)
-            : base(message)
-        { }
-
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -83,20 +106,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         protected QueryNodeError(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            message = (IMessage)info.GetValue("message", typeof(IMessage));
-        }
-
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-            info.AddValue("message", message, typeof(IMessage));
         }
 #endif
-
-        /// <summary>
-        /// <see cref="INLSException.MessageObject"/> 
-        /// </summary>
-        public virtual IMessage MessageObject => this.message;
     }
 }

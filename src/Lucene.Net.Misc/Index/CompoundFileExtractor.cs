@@ -125,9 +125,9 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
-                Console.WriteLine(ioe.ToString());
+                Console.Error.WriteLine(ioe.ToString());
                 //Console.Write(ioe.StackTrace);
             }
             finally
@@ -143,9 +143,9 @@ namespace Lucene.Net.Index
                         cfr.Dispose();
                     }
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    Console.WriteLine(ioe.ToString());
+                    Console.Error.WriteLine(ioe.ToString());
                     //Console.Write(ioe.StackTrace);
                 }
             }

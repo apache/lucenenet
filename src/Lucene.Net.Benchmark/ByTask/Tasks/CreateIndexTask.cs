@@ -70,7 +70,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             Type deletionPolicyType = Type.GetType(deletionPolicyName);
             if (deletionPolicyType == null)
             {
-                throw new Exception("Unrecognized deletion policy type '" + deletionPolicyName + "'");
+                throw RuntimeException.Create("Unrecognized deletion policy type '" + deletionPolicyName + "'"); // LUCENENET: In .NET we don't get an error here, so throwing one for compatibility
             }
             else if (deletionPolicyType.Equals(typeof(NoDeletionPolicy)))
             {
@@ -82,9 +82,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     return (IndexDeletionPolicy)Activator.CreateInstance(deletionPolicyType);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception("unable to instantiate class '" + deletionPolicyName + "' as IndexDeletionPolicy", e);
+                    throw RuntimeException.Create("unable to instantiate class '" + deletionPolicyName + "' as IndexDeletionPolicy", e);
                 }
             }
         }
@@ -115,7 +115,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             Type mergeSchedulerType = Type.GetType(mergeScheduler);
             if (mergeSchedulerType == null)
             {
-                throw new Exception("Unrecognized merge scheduler type '" + mergeScheduler + "'");
+                throw RuntimeException.Create("Unrecognized merge scheduler type '" + mergeScheduler + "'"); // LUCENENET: We don't get an exception in this case, so throwing one for compatibility
             }
             else if (mergeSchedulerType.Equals(typeof(NoMergeScheduler)))
             {
@@ -127,9 +127,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     iwConf.MergeScheduler = (IMergeScheduler)Activator.CreateInstance(mergeSchedulerType);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception("unable to instantiate class '" + mergeScheduler + "' as merge scheduler", e);
+                    throw RuntimeException.Create("unable to instantiate class '" + mergeScheduler + "' as merge scheduler", e);
                 }
 
                 if (mergeScheduler.Equals("Lucene.Net.Index.ConcurrentMergeScheduler", StringComparison.Ordinal))
@@ -149,9 +149,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     Type clazz = Type.GetType(defaultCodec);
                     iwConf.Codec = (Codec)Activator.CreateInstance(clazz);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception("Couldn't instantiate Codec: " + defaultCodec, e);
+                    throw RuntimeException.Create("Couldn't instantiate Codec: " + defaultCodec, e);
                 }
             }
 
@@ -161,7 +161,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             Type mergePolicyType = Type.GetType(mergePolicy);
             if (mergePolicyType == null)
             {
-                throw new Exception("Unrecognized merge policy type '" + mergePolicy + "'");
+                throw RuntimeException.Create("Unrecognized merge policy type '" + mergePolicy + "'"); // LUCENENET: We don't get an exception in this case, so throwing one for compatibility
             }
             else if (mergePolicyType.Equals(typeof(NoMergePolicy)))
             {
@@ -173,9 +173,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     iwConf.MergePolicy = (MergePolicy)Activator.CreateInstance(mergePolicyType);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception("unable to instantiate class '" + mergePolicy + "' as merge policy", e);
+                    throw RuntimeException.Create("unable to instantiate class '" + mergePolicy + "' as merge policy", e);
                 }
                 iwConf.MergePolicy.NoCFSRatio = isCompound ? 1.0 : 0.0;
                 if (iwConf.MergePolicy is LogMergePolicy logMergePolicy)

@@ -214,7 +214,7 @@ namespace Lucene.Net.Codecs.Compressing
         {
             if (numDocs != totalDocs)
             {
-                throw new InvalidOperationException("Expected " + numDocs + " docs, but got " + totalDocs);
+                throw IllegalStateException.Create("Expected " + numDocs + " docs, but got " + totalDocs);
             }
             if (blockChunks > 0)
             {

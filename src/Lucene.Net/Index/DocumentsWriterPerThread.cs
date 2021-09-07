@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
                 {
                     consumer.Abort();
                 }
-                catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                catch (Exception t) when (t.IsThrowable())
                 {
                     // ignore
                 }

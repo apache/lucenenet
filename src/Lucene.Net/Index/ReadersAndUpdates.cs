@@ -1,4 +1,4 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using System;
@@ -440,7 +440,7 @@ namespace Lucene.Net.Index
                             {
                                 dir.DeleteFile(fileName);
                             }
-                            catch (Exception)
+                            catch (Exception t) when (t.IsThrowable())
                             {
                                 // Ignore so we throw only the first exc
                             }
@@ -512,7 +512,7 @@ namespace Lucene.Net.Index
                         // create new fields or update existing ones to have BinaryDV type
                         foreach (string f in dvUpdates.binaryDVUpdates.Keys)
                         {
-                            builder.AddOrUpdate(f, BinaryDocValuesField.fType);
+                            builder.AddOrUpdate(f, BinaryDocValuesField.TYPE);
                         }
 
                         fieldInfos = builder.Finish();
@@ -593,7 +593,7 @@ namespace Lucene.Net.Index
                             {
                                 dir.DeleteFile(fileName);
                             }
-                            catch (Exception)
+                            catch (Exception t) when (t.IsThrowable())
                             {
                                 // Ignore so we throw only the first exc
                             }

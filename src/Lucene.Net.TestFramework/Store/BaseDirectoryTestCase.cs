@@ -3,7 +3,6 @@
 using J2N.Threading;
 using Lucene.Net.Index;
 using Lucene.Net.MockFile;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -11,6 +10,7 @@ using System.IO;
 using System.Threading;
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Assert = Lucene.Net.TestFramework.Assert;
+using RandomizedTesting.Generators;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -153,10 +153,15 @@ namespace Lucene.Net.Store
             dir.DeleteFile("foo.txt");
             Assert.IsFalse(ContainsFile(dir, file));
 
-            Assert.ThrowsAnyOf<DirectoryNotFoundException, FileNotFoundException>(() =>
+            try
             {
                 dir.DeleteFile("foo.txt");
-            });
+                fail();
+            }
+            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
+            {
+                // expected
+            }
         }
 
         [Test]
@@ -276,7 +281,7 @@ namespace Lucene.Net.Store
         //                ints[i] = (Random.nextBoolean() ? -1 : 1) * Random.nextInt(1024);
         //                break;
         //            default:
-        //                throw new AssertionError();
+        //                throw AssertionError.Create();
         //        }
         //    }
 
@@ -296,7 +301,7 @@ namespace Lucene.Net.Store
         //            {
         //                assertEquals(i, input.ReadZInt32());
         //            }
-        //            assertEquals(input.Length, input.GetFilePointer());
+        //            assertEquals(input.Length, input.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //        } // input.close();
         //    }
         //}
@@ -321,7 +326,7 @@ namespace Lucene.Net.Store
         //                longs[i] = (Random.nextBoolean() ? -1 : 1) * Random.nextInt(1024);
         //                break;
         //            default:
-        //                throw new AssertionError();
+        //                throw AssertionError.Create();
         //        }
         //    }
 
@@ -341,7 +346,7 @@ namespace Lucene.Net.Store
         //            {
         //                assertEquals(l, input.ReadZInt64());
         //            }
-        //            assertEquals(input.Length, input.GetFilePointer());
+        //            assertEquals(input.Length, input.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //        } // input.close();
         //    }
         //}
@@ -383,7 +388,7 @@ namespace Lucene.Net.Store
         //                set3.Add("bogus");
         //            });
 
-        //            assertEquals(input.Length, input.GetFilePointer());
+        //            assertEquals(input.Length, input.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //        } // input.close();
         //    }
         //}
@@ -430,7 +435,7 @@ namespace Lucene.Net.Store
         //                map3["bogus1"] = "bogus2";
         //            });
 
-        //            assertEquals(input.Length, input.GetFilePointer());
+        //            assertEquals(input.Length, input.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //        } // input.close();
         //    }
         //}
@@ -505,7 +510,7 @@ namespace Lucene.Net.Store
         //                        assertTrue(SlowFileExists(this.dir, fileName));
         //                    }
         //                }
-        //                //catch (IOException e)
+        //                //catch (Exception e) when (e.IsIOException())
         //                //{
         //                //    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
         //                //}
@@ -551,12 +556,12 @@ namespace Lucene.Net.Store
 
         //                                    // Just open, nothing else.
         //                                }
-        //                                catch (UnauthorizedAccessException e)
+        //                                catch (Exception e) when (e.IsAccessDeniedException())
         //                                {
         //                                    // Access denied is allowed for files for which the output is still open (MockDirectoryWriter enforces
         //                                    // this, for example). Since we don't synchronize with the writer thread, just ignore it.
         //                                }
-        //                                catch (IOException e)
+        //                                catch (Exception e) when (e.IsIOException())
         //                                {
         //                                    throw new IOException("Something went wrong when opening: " + file, e);
         //                                }
@@ -564,7 +569,7 @@ namespace Lucene.Net.Store
         //                        }
         //                    }
         //                }
-        //                catch (IOException e)
+        //                catch (Exception e) when (e.IsIOException())
         //                {
         //                    //throw new UncheckedIOException(e);
         //                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
@@ -718,10 +723,15 @@ namespace Lucene.Net.Store
             tempDir.Delete();
             //IOUtils.rm(tempDir);
             using Directory dir = GetDirectory(tempDir);
-            Assert.ThrowsAnyOf<FileNotFoundException, IndexNotFoundException, DirectoryNotFoundException>(() =>
+            try
             {
                 DirectoryReader.Open(dir);
-            });
+                fail();
+            }
+            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
+            {
+                // expected
+            }
         }
 
         [Test]
@@ -746,7 +756,7 @@ namespace Lucene.Net.Store
                 }
 
                 @out.WriteBytes(bytes, 0, byteUpto);
-                assertEquals(size, @out.GetFilePointer());
+                assertEquals(size, @out.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             } // @out.close();
             assertEquals(size, dir.FileLength("test"));
 
@@ -818,9 +828,9 @@ namespace Lucene.Net.Store
 
             public CopyBytesThread(Barrier start, IndexInput input, Directory d, int i)
             {
-                this.start = start ?? throw new ArgumentNullException(nameof(start));
+                this.start = start ?? throw new ArgumentNullException(nameof(start)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
                 this.src = (IndexInput)input.Clone();
-                this.d = d ?? throw new ArgumentNullException(nameof(d));
+                this.d = d ?? throw new ArgumentNullException(nameof(d)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
                 this.i = i;
             }
 
@@ -832,9 +842,9 @@ namespace Lucene.Net.Store
                     using IndexOutput dst = d.CreateOutput("copy" + i, IOContext.DEFAULT);
                     dst.CopyBytes(src, src.Length - 100);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -912,10 +922,15 @@ namespace Lucene.Net.Store
             int fileCount = fsdir.ListAll().Length;
 
             // fsync it
-            Assert.ThrowsAnyOf<FileNotFoundException, DirectoryNotFoundException>(() =>
+            try
             {
                 fsdir.Sync(new string[] { "afile" });
-            });
+                fail();
+            }
+            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
+            {
+                // expected
+            }
 
             // no new files created
             assertEquals(fileCount, fsdir.ListAll().Length);
@@ -1207,7 +1222,7 @@ namespace Lucene.Net.Store
         //            for (int i = 0; i < num; i += 16)
         //            {
         //                IndexInput slice1 = input.Slice("slice1", i, num - i);
-        //                assertEquals(0, slice1.GetFilePointer());
+        //                assertEquals(0, slice1.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //                assertEquals(num - i, slice1.Length);
 
         //                // seek to a random spot shouldnt impact slicing.
@@ -1215,7 +1230,7 @@ namespace Lucene.Net.Store
         //                for (int j = 0; j < slice1.Length; j += 16)
         //                {
         //                    IndexInput slice2 = slice1.Slice("slice2", j, num - i - j);
-        //                    assertEquals(0, slice2.GetFilePointer());
+        //                    assertEquals(0, slice2.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //                    assertEquals(num - i - j, slice2.Length);
         //                    byte[] data = new byte[num];
         //                    System.Array.Copy(bytes, 0, data, 0, i + j);
@@ -1254,10 +1269,10 @@ namespace Lucene.Net.Store
             byte[] largeBuf = new byte[2048];
             Random.NextBytes(largeBuf);
 
-            long currentPos = os.GetFilePointer();
+            long currentPos = os.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             os.WriteBytes(largeBuf, largeBuf.Length);
 
-            assertEquals(currentPos + largeBuf.Length, os.GetFilePointer());
+            assertEquals(currentPos + largeBuf.Length, os.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         }
 
         // LUCENENET: This test compiles, but is not compatible with 4.8.0 (tested in Java Lucene), as it was ported from 8.2.0
@@ -1374,9 +1389,9 @@ namespace Lucene.Net.Store
             }
             using IndexInput @in = dir.OpenInput("a", IOContext.DEFAULT);
             @in.Seek(100);
-            assertEquals(100, @in.GetFilePointer());
+            assertEquals(100, @in.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             @in.Seek(1024);
-            assertEquals(1024, @in.GetFilePointer());
+            assertEquals(1024, @in.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         }
 
         // LUCENENET: This test compiles, but is not compatible with 4.8.0 (tested in Java Lucene), as it was ported from 8.2.0
@@ -1395,7 +1410,7 @@ namespace Lucene.Net.Store
         //        using (IndexInput @in = dir.OpenInput("a", IOContext.DEFAULT))
         //        {
         //            @in.Seek(100);
-        //            assertEquals(100, @in.GetFilePointer());
+        //            assertEquals(100, @in.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //            Assert.Throws<EndOfStreamException>(() => {
         //                @in.Seek(1025);
         //            });
@@ -1421,7 +1436,7 @@ namespace Lucene.Net.Store
         //            string candidate = IndexFileNames.SegmentFileName(TestUtil.RandomSimpleString(Random, 1, 6), TestUtil.RandomSimpleString(Random), "test");
         //            using (IndexOutput @out = dir.CreateOutput(candidate, IOContext.DEFAULT))
         //            {
-        //                @out.GetFilePointer(); // just fake access to prevent compiler warning
+        //                @out.Position; // just fake access to prevent compiler warning // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //            }
         //            fsDir.DeleteFile(candidate);
         //            if (fsDir.GetPendingDeletions().Count > 0)
@@ -1436,22 +1451,22 @@ namespace Lucene.Net.Store
         //        Assert.IsFalse(ContainsFile(fsDir, fileName));
 
         //        // Make sure fileLength claims it's deleted:
-        //        Assert.Throws<FileNotFoundException>(() => {
+        //        Assert.Throws<FileNotFoundException>(() => { // LUCENENET: If this is ever uncommented, we need to use e.IsNoSuchFileExceptionOrFileNotFoundException()
         //            fsDir.FileLength(fileName);
         //        });
 
         //        // Make sure rename fails:
-        //        Assert.Throws<FileNotFoundException>(() => {
+        //        Assert.Throws<FileNotFoundException>(() => { // LUCENENET: If this is ever uncommented, we need to use e.IsNoSuchFileExceptionOrFileNotFoundException()
         //            fsDir.Rename(fileName, "file2");
         //        });
 
         //        // Make sure delete fails:
-        //        Assert.Throws<FileNotFoundException>(() => {
+        //        Assert.Throws<FileNotFoundException>(() => { // LUCENENET: If this is ever uncommented, we need to use e.IsNoSuchFileExceptionOrFileNotFoundException()
         //            fsDir.DeleteFile(fileName);
         //        });
 
         //        // Make sure we cannot open it for reading:
-        //        Assert.Throws<FileNotFoundException>(() => {
+        //        Assert.Throws<FileNotFoundException>(() => { // LUCENENET: If this is ever uncommented, we need to use e.IsNoSuchFileExceptionOrFileNotFoundException()
         //            fsDir.OpenInput(fileName, IOContext.DEFAULT);
         //        });
         //    }

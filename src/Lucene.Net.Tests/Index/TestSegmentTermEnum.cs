@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -97,9 +97,7 @@ namespace Lucene.Net.Index
             {
                 ordB = terms.Ord;
             }
-#pragma warning disable 168
-            catch (NotSupportedException uoe)
-#pragma warning restore 168
+            catch (Exception uoe) when (uoe.IsUnsupportedOperationException())
             {
                 // ok -- codec is not required to support ord
                 reader.Dispose();

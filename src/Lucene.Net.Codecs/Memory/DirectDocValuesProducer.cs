@@ -271,7 +271,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
 
                 default:
-                    throw new InvalidOperationException();
+                    throw AssertionError.Create();
             }
         }
 
@@ -511,10 +511,7 @@ namespace Lucene.Net.Codecs.Memory
                 return ords.Get(ordStart + index);
             }
 
-            public override int Cardinality()
-            {
-                return ordLimit - ordStart;
-            }
+            public override int Cardinality => ordLimit - ordStart;
 
             // Leave lookupTerm to super's binary search
 
@@ -574,7 +571,7 @@ namespace Lucene.Net.Codecs.Memory
                     NumericEntry ne = numerics[field.Number];
                     return GetMissingBits(field.Number, ne.missingOffset, ne.missingBytes);
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw AssertionError.Create();
             }
         }
 

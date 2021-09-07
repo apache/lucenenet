@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -137,6 +137,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestRandomStrings()
         {
+            // LUCENENET: Removed code dealing with buggy JRE
+
             Analyzer a = new PatternAnalyzer(TEST_VERSION_CURRENT, new Regex(",", RegexOptions.Compiled), true, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 
             CheckRandomData(Random, a, 10000 * RandomMultiplier);

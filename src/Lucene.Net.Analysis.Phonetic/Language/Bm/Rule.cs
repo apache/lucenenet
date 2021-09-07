@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                         {
                             rs[l] = ParseRules(CreateScanner(s, rt, l), CreateResourceName(s, rt, l));
                         }
-                        catch (InvalidOperationException e)
+                        catch (Exception e) when (e.IsIllegalStateException())
                         {
                             throw new InvalidOperationException("Problem processing " + CreateResourceName(s, rt, l), e);
                         }
@@ -507,7 +507,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                                         }
                                         rules.Add(r);
                                     }
-                                    catch (ArgumentException e)
+                                    catch (Exception e) when (e.IsIllegalArgumentException())
                                     {
                                         throw new InvalidOperationException("Problem parsing line '" + currentLine + "' in " +
                                                                         location, e);
@@ -835,7 +835,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         {
             if (i < 0)
             {
-                throw new ArgumentOutOfRangeException("Can not match pattern at negative indexes");
+                throw new ArgumentOutOfRangeException(nameof(i), "Can not match pattern at negative indexes");// LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             int patternLength = this.pattern.Length;
@@ -873,7 +873,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         {
             if (i < 0)
             {
-                throw new ArgumentOutOfRangeException("Can not match pattern at negative indexes");
+                throw new ArgumentOutOfRangeException(nameof(i), "Can not match pattern at negative indexes");// LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             int patternLength = this.pattern.Length;
@@ -911,7 +911,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         {
             if (i < 0)
             {
-                throw new ArgumentOutOfRangeException("Can not match pattern at negative indexes");
+                throw new ArgumentOutOfRangeException(nameof(i), "Can not match pattern at negative indexes");// LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             int patternLength = this.pattern.Length;

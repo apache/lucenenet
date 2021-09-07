@@ -1,4 +1,4 @@
-using Lucene.Net.Codecs.BlockTerms;
+﻿using Lucene.Net.Codecs.BlockTerms;
 using Lucene.Net.Codecs.Lucene41;
 using Lucene.Net.Codecs.Memory;
 using Lucene.Net.Codecs.MockIntBlock;
@@ -9,6 +9,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -49,7 +50,7 @@ namespace Lucene.Net.Codecs.MockRandom
 
             public override int Next(int maxValue)
             {
-                throw new InvalidOperationException("Please use MockRandomPostingsFormat(Random)");
+                throw IllegalStateException.Create("Please use MockRandomPostingsFormat(Random)");
             }
         }
 

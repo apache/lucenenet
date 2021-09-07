@@ -4,18 +4,17 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Join;
-using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
-namespace Lucene.Net.Tests.Join
+namespace Lucene.Net.Search.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -470,7 +469,7 @@ namespace Lucene.Net.Tests.Join
                     // Asserting bit set...
                     if (Verbose)
                     {
-                        Console.WriteLine("expected cardinality:" + expectedResult.Cardinality());
+                        Console.WriteLine("expected cardinality:" + expectedResult.Cardinality);
                         DocIdSetIterator iterator = expectedResult.GetIterator();
                         for (int doc = iterator.NextDoc();
                             doc != DocIdSetIterator.NO_MORE_DOCS;
@@ -478,7 +477,7 @@ namespace Lucene.Net.Tests.Join
                         {
                             Console.WriteLine(string.Format("Expected doc[{0}] with id value {1}", doc, indexSearcher.Doc(doc).Get("id")));
                         }
-                        Console.WriteLine("actual cardinality:" + actualResult.Cardinality());
+                        Console.WriteLine("actual cardinality:" + actualResult.Cardinality);
                         iterator = actualResult.GetIterator();
                         for (int doc = iterator.NextDoc();
                             doc != DocIdSetIterator.NO_MORE_DOCS;

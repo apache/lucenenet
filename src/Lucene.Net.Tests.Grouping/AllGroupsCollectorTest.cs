@@ -8,6 +8,7 @@ using Lucene.Net.Search.Grouping.Function;
 using Lucene.Net.Search.Grouping.Terms;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
+using Lucene.Net.Util.Mutable;
 using NUnit.Framework;
 using System;
 using System.Collections;
@@ -137,7 +138,7 @@ namespace Lucene.Net.Search.Grouping
             else
             {
                 ValueSource vs = new BytesRefFieldSource(groupField);
-                selected = new FunctionAllGroupsCollector(vs, new Hashtable());
+                selected = new FunctionAllGroupsCollector<MutableValue>(vs, new Hashtable());   // LUCENENET Specific type for generic must be specified.
             }
 
             if (Verbose)

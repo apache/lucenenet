@@ -86,7 +86,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     }
                     else
                     {
-                        throw new Exception("You must specify the sort type ie page:int,subject:string");
+                        throw RuntimeException.Create("You must specify the sort type ie page:int,subject:string");
                     }
                     sortField0 = new SortField(fieldName, (SortFieldType)Enum.Parse(typeof(SortFieldType), typeString, true));
                 }
@@ -127,7 +127,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             {
                 if (sort == null)
                 {
-                    throw new InvalidOperationException("No sort field was set");
+                    throw IllegalStateException.Create("No sort field was set");
                 }
                 return sort;
             }

@@ -8,11 +8,11 @@ using Lucene.Net.Facet;
 using Lucene.Net.Facet.Taxonomy;
 using Lucene.Net.Facet.Taxonomy.Directory;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -646,9 +646,7 @@ namespace Lucene.Net.Index
                 writer.UpdateBinaryDocValue(new Term("key", "doc"), "bdv", ToBytes(17L));
                 Assert.Fail("should not have allowed creating new fields through update");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // ok
             }
@@ -658,9 +656,7 @@ namespace Lucene.Net.Index
                 writer.UpdateBinaryDocValue(new Term("key", "doc"), "foo", ToBytes(17L));
                 Assert.Fail("should not have allowed updating an existing field to binary-dv");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // ok
             }
@@ -1181,9 +1177,7 @@ namespace Lucene.Net.Index
                 writer.Dispose();
                 Assert.Fail("should not have succeeded to update a segment written with an old Codec");
             }
-#pragma warning disable 168
-            catch (NotSupportedException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsUnsupportedOperationException())
             {
                 writer.Rollback();
             }
@@ -1385,9 +1379,9 @@ namespace Lucene.Net.Index
                     //            System.out.println("[" + Thread.currentThread().getName() + "] DONE");
                     success = true;
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
                 finally
                 {
@@ -1397,11 +1391,11 @@ namespace Lucene.Net.Index
                         {
                             reader.Dispose();
                         }
-                        catch (IOException e)
+                        catch (Exception e) when (e.IsIOException())
                         {
                             if (success) // suppress this exception only if there was another exception
                             {
-                                throw new Exception(e.ToString(), e);
+                                throw RuntimeException.Create(e);
                             }
                         }
                     }

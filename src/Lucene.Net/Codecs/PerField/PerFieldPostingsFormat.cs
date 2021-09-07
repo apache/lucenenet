@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.PerField
                 PostingsFormat format = outerInstance.GetPostingsFormatForField(field.Name);
                 if (format == null)
                 {
-                    throw new InvalidOperationException("invalid null PostingsFormat for field=\"" + field.Name + "\"");
+                    throw IllegalStateException.Create("invalid null PostingsFormat for field=\"" + field.Name + "\"");
                 }
                 string formatName = format.Name;
 
@@ -192,7 +192,7 @@ namespace Lucene.Net.Codecs.PerField
                 // TODO: support embedding; I think it should work but
                 // we need a test confirm to confirm
                 // return outerSegmentSuffix + "_" + segmentSuffix;
-                throw new InvalidOperationException("cannot embed PerFieldPostingsFormat inside itself (field \"" + fieldName + "\" returned PerFieldPostingsFormat)");
+                throw IllegalStateException.Create("cannot embed PerFieldPostingsFormat inside itself (field \"" + fieldName + "\" returned PerFieldPostingsFormat)");
             }
         }
 

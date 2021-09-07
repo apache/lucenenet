@@ -53,17 +53,17 @@
 
  .PARAMETER DotNet5SDKVersion
     The SDK version of .NET 5.x to install on the build agent to be used for building and
-    testing. This SDK is always installed on the build agent. The default is 5.0.100.
+    testing. This SDK is always installed on the build agent. The default is 5.0.400.
 
  .PARAMETER DotNetCore3SDKVersion
     The SDK version of .NET Core 3.x to install on the build agent to be used for building and
     testing. This SDK is only installed on the build agent when targeting .NET Core 3.x.
-    The default is 3.1.404.
+    The default is 3.1.412.
 
  .PARAMETER DotNetCore2SDKVersion
     The SDK version of .NET Core 2.x to install on the build agent to be used for building and
     testing. This SDK is only installed on the build agent when targeting .NET Core 2.x.
-    The default is 2.1.811.
+    The default is 2.1.817.
 #>
 param(
     [string]$OutputDirectory =  $PSScriptRoot,
@@ -78,11 +78,11 @@ param(
 
     [string[]]$Configurations = @('Release'),
 
-    [string]$DotNet5SDKVersion = '5.0.100',
+    [string]$DotNet5SDKVersion = '5.0.400',
 
-    [string]$DotNetCore3SDKVersion = '3.1.404',
+    [string]$DotNetCore3SDKVersion = '3.1.412',
 
-    [string]$DotNetCore2SDKVersion = '2.1.811'
+    [string]$DotNetCore2SDKVersion = '2.1.817'
 )
 
 
@@ -100,6 +100,9 @@ function Get-ProjectDependencies([string]$ProjectPath, [string]$RelativeRoot, [S
     $rootPath = [System.IO.Path]::GetDirectoryName($resolvedProjectPath)
     [xml]$project = Get-Content $resolvedProjectPath
     foreach ($name in $project.SelectNodes("//Project/ItemGroup/ProjectReference") | ForEach-Object { $_.Include -split ';'}) {
+        #Write-Host "$rootPath"
+        #Write-Host "$name"
+        #Write-Host [System.IO.Path]::Combine($rootPath, $name)
         $dependencyFullPath = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($rootPath, $name))
         Get-ProjectDependencies $dependencyFullPath $RelativeRoot $Result
         $dependency = Resolve-RelativePath $RelativeRoot $dependencyFullPath

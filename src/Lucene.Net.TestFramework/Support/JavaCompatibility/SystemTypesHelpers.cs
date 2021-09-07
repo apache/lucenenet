@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -292,7 +292,12 @@ namespace Lucene.Net
 
         public static void printStackTrace(this Exception e)
         {
-            Console.WriteLine(e.StackTrace);
+            Console.Error.WriteLine(e.StackTrace);
+        }
+
+        public static void printStackTrace(this Exception e, TextWriter destination)
+        {
+            destination.WriteLine(e.StackTrace);
         }
 
         /// <summary>

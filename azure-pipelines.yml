@@ -121,9 +121,9 @@ stages:
       displayName: 'Setup Default Variable Values'
 
     - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk 5.0.100'
+      displayName: 'Use .NET Core sdk 5.0.400'
       inputs:
-        version: 5.0.100
+        version: 5.0.400
 
     - pwsh: |
         Import-Module "$(BuildDirectory)/psake.psm1"
@@ -329,12 +329,12 @@ stages:
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
-          imageName: 'ubuntu-18.04'
+          imageName: 'ubuntu-latest'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
-          imageName: 'macOS-10.15'
+          imageName: 'macOS-latest'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
     displayName: 'Test net5.0,x64 on'
@@ -363,12 +363,12 @@ stages:
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
-          imageName: 'ubuntu-18.04'
+          imageName: 'ubuntu-latest'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
-          imageName: 'macOS-10.15'
+          imageName: 'macOS-latest'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
     displayName: 'Test net5.0,x86 on'
@@ -397,12 +397,12 @@ stages:
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
-          imageName: 'ubuntu-18.04'
+          imageName: 'ubuntu-latest'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
-          imageName: 'macOS-10.15'
+          imageName: 'macOS-latest'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
     displayName: 'Test netcoreapp3.1,x64 on'
@@ -431,12 +431,12 @@ stages:
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
-          imageName: 'ubuntu-18.04'
+          imageName: 'ubuntu-latest'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
-          imageName: 'macOS-10.15'
+          imageName: 'macOS-latest'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
     displayName: 'Test netcoreapp3.1,x86 on'
@@ -465,12 +465,12 @@ stages:
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
-          imageName: 'ubuntu-18.04'
+          imageName: 'ubuntu-latest'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
-          imageName: 'macOS-10.15'
+          imageName: 'macOS-latest'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
     displayName: 'Test netcoreapp2.1,x64 on'
@@ -499,12 +499,12 @@ stages:
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
-          imageName: 'ubuntu-18.04'
+          imageName: 'ubuntu-latest'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
-          imageName: 'macOS-10.15'
+          imageName: 'macOS-latest'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
     displayName: 'Test netcoreapp2.1,x86 on'

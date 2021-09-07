@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
                         visited.Set(de.DocID);
                     }
                 }
-                Assert.AreEqual(visited.Cardinality(), docCount);
+                Assert.AreEqual(visited.Cardinality, docCount);
             }
         }
     }

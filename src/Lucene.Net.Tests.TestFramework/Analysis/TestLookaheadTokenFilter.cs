@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 8.2.0
 using System;
 using Lucene.Net.TestFramework;
+using RandomizedTesting.Generators;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;

@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Util
                 java4.CodePointAt(highSurrogateAt3, 4);
                 fail("string index out of bounds");
             }
-            catch (ArgumentOutOfRangeException)
+            catch (Exception e) when (e.IsIndexOutOfBoundsException())
             {
             }
 
@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Util
                 java5.CodePointAt(highSurrogateAt3, 4);
                 fail("string index out of bounds");
             }
-            catch (ArgumentOutOfRangeException)
+            catch (Exception e) when (e.IsIndexOutOfBoundsException())
             {
             }
 
@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Util
                     var to = java4.OffsetByCodePoints(s, 0, s.Length, index, offset);
                     assertEquals(to, index + offset);
                 }
-                catch (ArgumentOutOfRangeException)
+                catch (Exception e) when (e.IsIndexOutOfBoundsException())
                 {
                     assertTrue((index + offset) < 0 || (index + offset) > s.Length);
                 }
@@ -120,14 +120,14 @@ namespace Lucene.Net.Analysis.Util
                 {
                     o = java5.OffsetByCodePoints(s, 0, s.Length, index, offset);
                 }
-                catch (ArgumentOutOfRangeException)
+                catch (Exception e) when (e.IsIndexOutOfBoundsException())
                 {
                     try
                     {
                         Character.OffsetByCodePoints(s, 0, s.Length, index, offset);
                         fail();
                     }
-                    catch (ArgumentOutOfRangeException)
+                    catch (Exception e2) when (e2.IsIndexOutOfBoundsException())
                     {
                         // OK
                     }
@@ -184,7 +184,7 @@ namespace Lucene.Net.Analysis.Util
                 CharacterUtils.NewCharacterBuffer(1);
                 fail("length must be >= 2");
             }
-            catch (ArgumentException)
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
             }
         }

@@ -38,7 +38,7 @@
     <ICU4NLanguageDataPackageVersion>$(ICU4NPackageVersion)</ICU4NLanguageDataPackageVersion>
     <ICU4NRegionDataPackageVersion>$(ICU4NPackageVersion)</ICU4NRegionDataPackageVersion>
     <ICU4NTransliteratorPackageVersion>$(ICU4NPackageVersion)</ICU4NTransliteratorPackageVersion>
-    <J2NPackageVersion>2.0.0-beta-0012</J2NPackageVersion>
+    <J2NPackageVersion>2.0.0-beta-0016</J2NPackageVersion>
     <LiquidTestReportsMarkdownPackageVersion>1.0.9</LiquidTestReportsMarkdownPackageVersion>
     <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>2.0.0</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
     <MicrosoftAspNetCoreTestHostPackageVersion>2.0.0</MicrosoftAspNetCoreTestHostPackageVersion>
@@ -73,6 +73,7 @@
     <NUnit3TestAdapterPackageVersion>3.17.0</NUnit3TestAdapterPackageVersion>
     <NUnitPackageVersion>3.13.1</NUnitPackageVersion>
     <OpenNLPNETPackageVersion>1.9.1.1</OpenNLPNETPackageVersion>
+    <RandomizedTestingGeneratorsPackageVersion>2.7.8-beta-0001</RandomizedTestingGeneratorsPackageVersion>
     <SharpZipLibPackageVersion>1.1.0</SharpZipLibPackageVersion>
     <Spatial4nCorePackageVersion>0.4.1</Spatial4nCorePackageVersion>
     <Spatial4nCoreNTSPackageVersion>$(Spatial4nCorePackageVersion)</Spatial4nCoreNTSPackageVersion>

@@ -1,11 +1,10 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -86,7 +85,7 @@ namespace Lucene.Net.Analysis.Util
         ///          the offset to the char values in the chars array to be converted
         /// </param>
         /// <returns> the Unicode code point at the given index </returns>
-        /// <exception cref="NullReferenceException">
+        /// <exception cref="ArgumentNullException">
         ///           - if the sequence is null. </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         ///           - if the value offset is negative or not less than the length of
@@ -106,7 +105,7 @@ namespace Lucene.Net.Analysis.Util
         ///          the offset to the char values in the chars array to be converted
         /// </param>
         /// <returns> the Unicode code point at the given index </returns>
-        /// <exception cref="NullReferenceException">
+        /// <exception cref="ArgumentNullException">
         ///           - if the sequence is null. </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         ///           - if the value offset is negative or not less than the length of
@@ -129,7 +128,7 @@ namespace Lucene.Net.Analysis.Util
         ///        codepoint.  
         /// </param>
         /// <returns> the Unicode code point at the given index </returns>
-        /// <exception cref="NullReferenceException">
+        /// <exception cref="ArgumentNullException">
         ///           - if the array is null. </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         ///           - if the value offset is negative or not less than the length of
@@ -163,7 +162,8 @@ namespace Lucene.Net.Analysis.Util
         {
             if (bufferSize < 2)
             {
-                throw new ArgumentException("buffersize must be >= 2");
+                // LUCENENET: Changed from InvalidArgumentException to ArgumentOutOfRangeException
+                throw new ArgumentOutOfRangeException(nameof(bufferSize), "buffersize must be >= 2");
             }
             return new CharacterBuffer(new char[bufferSize], 0, 0);
         }
@@ -244,7 +244,8 @@ namespace Lucene.Net.Analysis.Util
         {
             if (srcLen < 0)
             {
-                throw new ArgumentException("srcLen must be >= 0");
+                // LUCENENET: Changed from InvalidArgumentException to ArgumentOutOfRangeException
+                throw new ArgumentOutOfRangeException(nameof(srcLen), "srcLen must be >= 0");
             }
             int codePointCount = 0;
             for (int i = 0; i < srcLen; )
@@ -264,7 +265,8 @@ namespace Lucene.Net.Analysis.Util
         {
             if (srcLen < 0)
             {
-                throw new ArgumentException("srcLen must be >= 0");
+                // LUCENENET: Changed from InvalidArgumentException to ArgumentOutOfRangeException
+                throw new ArgumentOutOfRangeException(nameof(srcLen), "srcLen must be >= 0");
             }
             int written = 0;
             for (int i = 0; i < srcLen; ++i)
@@ -359,7 +361,8 @@ namespace Lucene.Net.Analysis.Util
                 if (Debugging.AssertsEnabled) Debugging.Assert(buffer.Buffer.Length >= 2);
                 if (numChars < 2 || numChars > buffer.Buffer.Length)
                 {
-                    throw new ArgumentException("numChars must be >= 2 and <= the buffer size");
+                    // LUCENENET: Changed from InvalidArgumentException to ArgumentOutOfRangeException
+                    throw new ArgumentOutOfRangeException(nameof(numChars), "numChars must be >= 2 and <= the buffer size");
                 }
                 char[] charBuffer = buffer.Buffer;
                 buffer.offset = 0;
@@ -398,7 +401,7 @@ namespace Lucene.Net.Analysis.Util
             public override int CodePointCount(string seq)
             {
                 if (seq is null)
-                    throw new ArgumentNullException(nameof(seq));
+                    throw new ArgumentNullException(nameof(seq)); // LUCENENET specific - added null guard clause
 
                 return Character.CodePointCount(seq, 0, seq.Length);
             }
@@ -406,7 +409,7 @@ namespace Lucene.Net.Analysis.Util
             public override int CodePointCount(ICharSequence seq)
             {
                 if (seq is null)
-                    throw new ArgumentNullException(nameof(seq));
+                    throw new ArgumentNullException(nameof(seq)); // LUCENENET specific - added null guard clause
 
                 return Character.CodePointCount(seq, 0, seq.Length);
             }
@@ -414,7 +417,7 @@ namespace Lucene.Net.Analysis.Util
             public override int CodePointCount(char[] seq)
             {
                 if (seq is null)
-                    throw new ArgumentNullException(nameof(seq));
+                    throw new ArgumentNullException(nameof(seq)); // LUCENENET specific - added null guard clause
 
                 return Character.CodePointCount(seq, 0, seq.Length);
             }
@@ -422,7 +425,7 @@ namespace Lucene.Net.Analysis.Util
             public override int CodePointCount(StringBuilder seq)
             {
                 if (seq is null)
-                    throw new ArgumentNullException(nameof(seq));
+                    throw new ArgumentNullException(nameof(seq)); // LUCENENET specific - added null guard clause
 
                 return Character.CodePointCount(seq, 0, seq.Length);
             }
@@ -463,10 +466,10 @@ namespace Lucene.Net.Analysis.Util
             public override int CodePointAt(char[] chars, int offset, int limit)
             {
                 if (chars == null)
-                    throw new ArgumentNullException(nameof(chars)); // LUCENENET specific - added for .NET compatibility
+                    throw new ArgumentNullException(nameof(chars)); // LUCENENET specific - added null guard clause
                 if (offset >= limit)
                 {
-                    throw new ArgumentOutOfRangeException("offset must be less than limit");
+                    throw new ArgumentOutOfRangeException(nameof(offset), "offset must be less than limit");
                 }
                 // LUCENENET specific - added array bound check
                 if (offset < 0  || offset >= chars.Length)
@@ -480,7 +483,8 @@ namespace Lucene.Net.Analysis.Util
                 if (Debugging.AssertsEnabled) Debugging.Assert(buffer.Buffer.Length >= 1);
                 if (numChars < 1 || numChars > buffer.Buffer.Length)
                 {
-                    throw new ArgumentException("numChars must be >= 1 and <= the buffer size");
+                    // LUCENENET: Changed from InvalidArgumentException to ArgumentOutOfRangeException
+                    throw new ArgumentOutOfRangeException(nameof(numChars), "numChars must be >= 1 and <= the buffer size");
                 }
                 buffer.offset = 0;
                 int read = ReadFully(reader, buffer.Buffer, 0, numChars);
@@ -492,7 +496,7 @@ namespace Lucene.Net.Analysis.Util
             public override int CodePointCount(string seq)
             {
                 if (seq is null)
-                    throw new ArgumentNullException(nameof(seq));
+                    throw new ArgumentNullException(nameof(seq)); // LUCENENET specific - added null guard clause
 
                 return seq.Length;
             }
@@ -500,7 +504,7 @@ namespace Lucene.Net.Analysis.Util
             public override int CodePointCount(ICharSequence seq)
             {
                 if (seq is null)
-                    throw new ArgumentNullException(nameof(seq));
+                    throw new ArgumentNullException(nameof(seq)); // LUCENENET specific - added null guard clause
 
                 return seq.Length;
             }
@@ -508,7 +512,7 @@ namespace Lucene.Net.Analysis.Util
             public override int CodePointCount(char[] seq)
             {
                 if (seq is null)
-                    throw new ArgumentNullException(nameof(seq));
+                    throw new ArgumentNullException(nameof(seq)); // LUCENENET specific - added null guard clause
 
                 return seq.Length;
             }
@@ -516,7 +520,7 @@ namespace Lucene.Net.Analysis.Util
             public override int CodePointCount(StringBuilder seq)
             {
                 if (seq is null)
-                    throw new ArgumentNullException(nameof(seq));
+                    throw new ArgumentNullException(nameof(seq)); // LUCENENET specific - added null guard clause
 
                 return seq.Length;
             }
@@ -526,7 +530,7 @@ namespace Lucene.Net.Analysis.Util
                 int result = index + offset;
                 if (result < 0 || result > count)
                 {
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(index) + " + " + nameof(offset), "index + offset must be >= 0 and <= count");
                 }
                 return result;
             }
@@ -540,6 +544,9 @@ namespace Lucene.Net.Analysis.Util
         {
             public override void ToLower(char[] buffer, int offset, int limit)
             {
+                if (buffer is null)
+                    throw new ArgumentNullException(nameof(buffer)); // LUCENENET specific - added null guard clause
+
                 if (Debugging.AssertsEnabled)
                 {
                     Debugging.Assert(buffer.Length >= limit);
@@ -556,6 +563,9 @@ namespace Lucene.Net.Analysis.Util
 
             public override void ToUpper(char[] buffer, int offset, int limit)
             {
+                if (buffer is null)
+                    throw new ArgumentNullException(nameof(buffer)); // LUCENENET specific - added null guard clause
+
                 if (Debugging.AssertsEnabled)
                 {
                     Debugging.Assert(buffer.Length >= limit);

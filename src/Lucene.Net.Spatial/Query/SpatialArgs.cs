@@ -38,10 +38,9 @@ namespace Lucene.Net.Spatial.Queries
 
         public SpatialArgs(SpatialOperation operation, IShape shape)
         {
-            if (operation == null || shape == null)
-                throw new ArgumentException("operation and shape are required");
-            this.Operation = operation;
-            this.Shape = shape;
+            // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+            this.Operation = operation ?? throw new ArgumentNullException(nameof(operation), "operation and shape are required");
+            this.Shape = shape ?? throw new ArgumentNullException(nameof(shape), "operation and shape are required");
         }
 
         /// <summary>
@@ -55,9 +54,13 @@ namespace Lucene.Net.Spatial.Queries
         /// <returns>A distance (in degrees).</returns>
         public static double CalcDistanceFromErrPct(IShape shape, double distErrPct, SpatialContext ctx)
         {
+            // LUCENENET: Added null guard clause
+            if (ctx is null)
+                throw new ArgumentNullException(nameof(ctx));
+
             if (distErrPct < 0 || distErrPct > 0.5)
             {
-                throw new ArgumentException($"distErrPct {distErrPct} must be between [0 to 0.5]", nameof(distErrPct));
+                throw new ArgumentOutOfRangeException(nameof(distErrPct), $"distErrPct {distErrPct} must be between [0 to 0.5]", nameof(distErrPct));// LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (distErrPct == 0 || shape is IPoint)
             {

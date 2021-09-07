@@ -57,6 +57,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// </summary>
         object GetTag(string tagName);
 
+        /// <summary>
+        /// Gets the tag associated with the specified tagName.
+        /// </summary>
+        bool TryGetTag(string tagName, out object tag);
+
         IQueryNode Parent { get; }
 
         /// <summary>
@@ -102,5 +107,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// Removes this query node from its parent.
         /// </summary>
         void RemoveFromParent();
+
+        // LUCENENET: From Lucene 8.8.1, patch to broken RemoveFromParent() behavior
+        /// <summary>
+        /// Remove a child node.
+        /// </summary>
+        /// <param name="childNode">Which child to remove.</param>
+        void RemoveChildren(IQueryNode childNode);
     }
 }

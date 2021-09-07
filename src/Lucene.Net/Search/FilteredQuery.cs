@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -64,7 +64,8 @@ namespace Lucene.Net.Search
         /// <seealso cref="FilterStrategy"/>
         public FilteredQuery(Query query, Filter filter, FilterStrategy strategy)
         {
-            // LUCENENET specific - rearranged order to take advantage of throw expressions
+            // LUCENENET specific - rearranged order to take advantage of throw expressions and
+            // changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             this.query = query ?? throw new ArgumentNullException(nameof(query), "Query cannot be null.");
             this.filter = filter ?? throw new ArgumentNullException(nameof(filter), "filter can not be null");
             this.strategy = strategy ?? throw new ArgumentNullException(nameof(strategy), "FilterStrategy can not be null");

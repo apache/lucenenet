@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 
 using J2N.Runtime.CompilerServices;
 using J2N.Text;
@@ -117,9 +117,9 @@ namespace Lucene.Net.Analysis.Core
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
-                throw new Exception(e.Message, e);
+                throw Error.Create(e);
             }
             try
             {
@@ -145,9 +145,9 @@ namespace Lucene.Net.Analysis.Core
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
-                throw new Exception(e.Message, e);
+                throw Error.Create(e);
             }
 
             allowedTokenizerArgs = new JCG.HashSet<Type>(IdentityEqualityComparer<Type>.Default);
@@ -509,7 +509,7 @@ namespace Lucene.Net.Analysis.Core
                 {
                     return new Dictionary(affixStream, dictStream);
                 }
-                catch (Exception /*ex*/)
+                catch (Exception ex) when (ex.IsException())
                 {
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162
@@ -554,7 +554,7 @@ namespace Lucene.Net.Analysis.Core
                     HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
                     return hyphenator;
                 }
-                catch (Exception /*ex*/)
+                catch (Exception ex) when (ex.IsException())
                 {
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162
@@ -574,7 +574,7 @@ namespace Lucene.Net.Analysis.Core
                     Type clazz = Type.GetType("Lucene.Net.Tartarus.Snowball.Ext." + lang + "Stemmer, Lucene.Net.Analysis.Common");
                     return clazz.GetConstructor(new Type[0]).Invoke(new object[0]);
                 }
-                catch (Exception /*ex*/)
+                catch (Exception ex) when (ex.IsException())
                 {
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162
@@ -680,7 +680,7 @@ namespace Lucene.Net.Analysis.Core
                 {
                     return builder.Build();
                 }
-                catch (Exception /*ex*/)
+                catch (Exception ex) when (ex.IsException())
                 {
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162
@@ -704,7 +704,7 @@ namespace Lucene.Net.Analysis.Core
                 {
                     return b.Build();
                 }
-                catch (Exception /*ex*/)
+                catch (Exception ex) when (ex.IsException())
                 {
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162
@@ -891,7 +891,7 @@ namespace Lucene.Net.Analysis.Core
                     descr.append("(").append(@params).append(")");
                     return instance;
                 }
-                catch (TargetInvocationException ite)
+                catch (Exception ite) when (ite.IsInvocationTargetException())
                 {
                     if (ite.InnerException != null && (ite.InnerException.GetType().Equals(typeof(ArgumentException))
                         || ite.InnerException.GetType().Equals(typeof(ArgumentOutOfRangeException))
@@ -910,13 +910,15 @@ namespace Lucene.Net.Analysis.Core
                         throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
                 }
-                //catch (IllegalAccessException iae)
+                // LUCENENET: These are not necessary because all they do is catch and re-throw as an "unchecked"
+                // exception type, which .NET doesn't care about. Just let them propagate instead of catching.
+                //catch (Exception iae) when (iae.IsIllegalAccessException())
                 //{
-                //    Rethrow.rethrow(iae);
+                //    throw;
                 //}
-                //catch (InstantiationException ie)
+                //catch (Exception ie) when (ie.IsInstantiationException())
                 //{
-                //    Rethrow.rethrow(ie);
+                //    throw;
                 //}
                 return default; // no success
             }
@@ -1135,7 +1137,7 @@ namespace Lucene.Net.Analysis.Core
                     CheckRandomData(random, a, 500 * RandomMultiplier, 20, false,
                                     false /* We already validate our own offsets... */);
                 }
-                catch (Exception /*e*/)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine("Exception from random analyzer: " + a);
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
@@ -1163,7 +1165,7 @@ namespace Lucene.Net.Analysis.Core
                     CheckRandomData(random, a, 50 * RandomMultiplier, 128, false,
                                     false /* We already validate our own offsets... */);
                 }
-                catch (Exception /*e*/)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine("Exception from random analyzer: " + a);
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)

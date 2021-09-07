@@ -243,7 +243,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 Entry e = this.next;
                 if (e == null)
                 {
-                    throw new InvalidOperationException(this.GetType() + " cannot get next entry"); ;
+                    throw IllegalStateException.Create(this.GetType() + " cannot get next entry"); ;
                 }
 
                 Entry n = e.next;
@@ -261,7 +261,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             // LUCENENET specific - .NET doesn't support Remove() anyway, so we can nix this
             //public void Remove()
             //{
-            //    throw new NotSupportedException();
+            //    throw UnsupportedOperationException.Create();
             //}
 
             public void Dispose()

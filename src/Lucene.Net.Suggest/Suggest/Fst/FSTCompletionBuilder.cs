@@ -182,10 +182,10 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             if (buckets < 1 || buckets > 255)
             {
-                throw new ArgumentOutOfRangeException(nameof(buckets), buckets, "Buckets must be >= 1 and <= 255");
+                throw new ArgumentOutOfRangeException(nameof(buckets), buckets, "Buckets must be >= 1 and <= 255"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
-            this.sorter = sorter ?? throw new ArgumentNullException("BytesRefSorter must not be null.");
+            this.sorter = sorter ?? throw new ArgumentNullException(nameof(sorter), "BytesRefSorter must not be null."); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             this.buckets = buckets;
             this.shareMaxTailLength = shareMaxTailLength;
         }
@@ -203,9 +203,13 @@ namespace Lucene.Net.Search.Suggest.Fst
         ///          before suggestions placed in smaller buckets. </param>
         public virtual void Add(BytesRef utf8, int bucket)
         {
+            // LUCENENET: Added guard clause for null
+            if (utf8 is null)
+                throw new ArgumentNullException(nameof(utf8));
+
             if (bucket < 0 || bucket >= buckets)
             {
-                throw new ArgumentException("Bucket outside of the allowed range [0, " + buckets + "): " + bucket);
+                throw new ArgumentOutOfRangeException(nameof(buckets), "Bucket outside of the allowed range [0, " + buckets + "): " + bucket); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             if (scratch.Bytes.Length < utf8.Length + 1)

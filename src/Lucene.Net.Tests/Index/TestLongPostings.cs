@@ -1,8 +1,9 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -58,7 +59,7 @@ namespace Lucene.Net.Index
                 {
                     continue;
                 }
-                IOException priorException = null;
+                Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
                 TokenStream ts = a.GetTokenStream("foo", new StringReader(s));
                 try
                 {
@@ -88,7 +89,7 @@ namespace Lucene.Net.Index
                         return s;
                     }
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
                     priorException = e;
                 }

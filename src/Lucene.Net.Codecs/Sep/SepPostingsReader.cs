@@ -728,7 +728,7 @@ namespace Lucene.Net.Codecs.Sep
 
                 if (pendingPayloadBytes > payloadLength)
                 {
-                    payloadIn.Seek(payloadIn.GetFilePointer() + (pendingPayloadBytes - payloadLength));
+                    payloadIn.Seek(payloadIn.Position + (pendingPayloadBytes - payloadLength)); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
 
                 if (payload == null)

@@ -1139,7 +1139,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 if (payloadPending && payloadLength > 0)
                 {
                     // payload of last position was never retrieved -- skip it
-                    proxIn.Seek(proxIn.GetFilePointer() + payloadLength);
+                    proxIn.Seek(proxIn.Position + payloadLength); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     payloadPending = false;
                 }
 
@@ -1170,7 +1170,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
                     if (storePayloads)
                     {
-                        proxIn.Seek(proxIn.GetFilePointer() + payloadLength);
+                        proxIn.Seek(proxIn.Position + payloadLength); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     }
 
                     posPendingCount--;
@@ -1184,7 +1184,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 if (payloadPending && payloadLength > 0)
                 {
                     // payload wasn't retrieved for last position
-                    proxIn.Seek(proxIn.GetFilePointer() + payloadLength);
+                    proxIn.Seek(proxIn.Position + payloadLength); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
 
                 int code_ = proxIn.ReadVInt32();

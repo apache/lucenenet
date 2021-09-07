@@ -374,7 +374,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             public ThreadAnonymousClass(string name, WriteLineDocTask wldt)
                 : base(name)
             {
-                this.IsDebug = true;
                 this.wldt = wldt;
             }
 
@@ -384,9 +383,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     wldt.DoLogic();
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }

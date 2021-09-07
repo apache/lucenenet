@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -87,7 +87,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
             if (IndexOptionsComparer.Default.Compare(field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
             {
-                throw new NotSupportedException("this codec cannot index offsets");
+                throw UnsupportedOperationException.Create("this codec cannot index offsets");
             }
             //System.out.println("w field=" + field.Name + " storePayload=" + field.storePayloads + " number=" + field.number);
             return new PreFlexTermsWriter(this, field);
@@ -227,10 +227,10 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 //System.out.println("  w term=" + text.utf8ToString());
                 outerInstance.skipListWriter.ResetSkip();
-                termInfo.FreqPointer = outerInstance.freqOut.GetFilePointer();
+                termInfo.FreqPointer = outerInstance.freqOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 if (outerInstance.proxOut != null)
                 {
-                    termInfo.ProxPointer = outerInstance.proxOut.GetFilePointer();
+                    termInfo.ProxPointer = outerInstance.proxOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
                 return postingsWriter.Reset();
             }

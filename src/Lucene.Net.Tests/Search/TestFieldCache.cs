@@ -1,10 +1,11 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -587,10 +588,10 @@ namespace Lucene.Net.Search
                         }
                     }
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     failed.Value = true;
-                    throw new Exception(t.Message, t);
+                    throw RuntimeException.Create(t);
                 }
             }
         }
@@ -624,9 +625,7 @@ namespace Lucene.Net.Search
                 FieldCache.DEFAULT.GetInt32s(ar, "binary", false);
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (InvalidOperationException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalStateException())
             {
             }
 
@@ -639,9 +638,7 @@ namespace Lucene.Net.Search
                 FieldCache.DEFAULT.GetTermsIndex(ar, "binary");
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (InvalidOperationException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalStateException())
             {
             }
 
@@ -650,9 +647,7 @@ namespace Lucene.Net.Search
                 FieldCache.DEFAULT.GetDocTermOrds(ar, "binary");
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (InvalidOperationException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalStateException())
             {
             }
 
@@ -661,9 +656,7 @@ namespace Lucene.Net.Search
                 new DocTermOrds(ar, null, "binary");
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (InvalidOperationException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalStateException())
             {
             }
 
@@ -676,9 +669,7 @@ namespace Lucene.Net.Search
                 FieldCache.DEFAULT.GetInt32s(ar, "sorted", false);
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (InvalidOperationException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalStateException())
             {
             }
 
@@ -687,9 +678,7 @@ namespace Lucene.Net.Search
                 new DocTermOrds(ar, null, "sorted");
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (InvalidOperationException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalStateException())
             {
             }
 
@@ -721,9 +710,7 @@ namespace Lucene.Net.Search
                 FieldCache.DEFAULT.GetTerms(ar, "numeric", true);
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (InvalidOperationException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalStateException())
             {
             }
 
@@ -732,9 +719,7 @@ namespace Lucene.Net.Search
                 FieldCache.DEFAULT.GetTermsIndex(ar, "numeric");
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (InvalidOperationException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalStateException())
             {
             }
 
@@ -743,9 +728,7 @@ namespace Lucene.Net.Search
                 FieldCache.DEFAULT.GetDocTermOrds(ar, "numeric");
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (InvalidOperationException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalStateException())
             {
             }
 
@@ -754,9 +737,7 @@ namespace Lucene.Net.Search
                 new DocTermOrds(ar, null, "numeric");
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (InvalidOperationException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalStateException())
             {
             }
 
@@ -771,9 +752,7 @@ namespace Lucene.Net.Search
                     FieldCache.DEFAULT.GetInt32s(ar, "sortedset", false);
                     Assert.Fail();
                 }
-#pragma warning disable 168
-                catch (InvalidOperationException expected)
-#pragma warning restore 168
+                catch (Exception expected) when (expected.IsIllegalStateException())
                 {
                 }
 
@@ -782,9 +761,7 @@ namespace Lucene.Net.Search
                     FieldCache.DEFAULT.GetTerms(ar, "sortedset", true);
                     Assert.Fail();
                 }
-#pragma warning disable 168
-                catch (InvalidOperationException expected)
-#pragma warning restore 168
+                catch (Exception expected) when (expected.IsIllegalStateException())
                 {
                 }
 
@@ -793,9 +770,7 @@ namespace Lucene.Net.Search
                     FieldCache.DEFAULT.GetTermsIndex(ar, "sortedset");
                     Assert.Fail();
                 }
-#pragma warning disable 168
-                catch (InvalidOperationException expected)
-#pragma warning restore 168
+                catch (Exception expected) when (expected.IsIllegalStateException())
                 {
                 }
 
@@ -804,9 +779,7 @@ namespace Lucene.Net.Search
                     new DocTermOrds(ar, null, "sortedset");
                     Assert.Fail();
                 }
-#pragma warning disable 168
-                catch (InvalidOperationException expected)
-#pragma warning restore 168
+                catch (Exception expected) when (expected.IsIllegalStateException())
                 {
                 }
 

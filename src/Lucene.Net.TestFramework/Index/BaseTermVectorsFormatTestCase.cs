@@ -1,10 +1,9 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -16,9 +15,9 @@ using System.Threading;
 using JCG = J2N.Collections.Generic;
 using static Lucene.Net.Index.TermsEnum;
 using Assert = Lucene.Net.TestFramework.Assert;
-using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Attribute = Lucene.Net.Util.Attribute;
 using System.Diagnostics.CodeAnalysis;
+using RandomizedTesting.Generators;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -125,7 +124,7 @@ namespace Lucene.Net.Index
                         break;
 
                     default:
-                        throw new InvalidOperationException("Invalid Options enum type");
+                        throw new ArgumentOutOfRangeException(nameof(opt), "Invalid Options enum type");
                 }
             }
 
@@ -161,15 +160,13 @@ namespace Lucene.Net.Index
 
         protected virtual FieldType FieldType(Options options)
         {
-            var ft = new FieldType(TextField.TYPE_NOT_STORED)
+            return new FieldType(TextField.TYPE_NOT_STORED)
             {
                 StoreTermVectors = true,
                 StoreTermVectorPositions = (new OptionsWrapper(options)).positions,
                 StoreTermVectorOffsets = (new OptionsWrapper(options)).offsets,
                 StoreTermVectorPayloads = (new OptionsWrapper(options)).payloads
-            };
-            ft.Freeze();
-            return ft;
+            }.Freeze();
         }
 
         protected virtual BytesRef RandomPayload()
@@ -630,28 +627,19 @@ namespace Lucene.Net.Index
                                 Assert.IsTrue(foundPayload);
                             }
                         }
-
-                        // LUCENENET specific - In Lucene, there were assertions set up inside TVReaders which throw AssertionError
-                        // (provided assertions are enabled), which in turn signaled this class to skip the check by catching AssertionError.
-                        // In .NET, assertions are not included in the release and cannot be enabled, so there is nothing to catch.
-                        // We have to explicitly exclude the types that rely on this behavior from the check. Otherwise, they would fall
-                        // through to Assert.Fail().
-                        //
-                        // We also have a fake AssertionException for testing mocks. We cannot throw InvalidOperationException in those
-                        // cases because that exception is expected in other contexts.
-                        Assert.ThrowsAnyOf<InvalidOperationException, AssertionError>(() => docsAndPositionsEnum.NextPosition());
-
-//                        try
-//                        {
-//                            docsAndPositionsEnum.NextPosition();
-//                            Assert.Fail();
-//                        }
-//#pragma warning disable 168
-//                        catch (Exception e)
-//#pragma warning restore 168
-//                        {
-//                            // ok
-//                        }
+                        try
+                        {
+                            docsAndPositionsEnum.NextPosition();
+                            Assert.Fail();
+                        }
+                        catch (Exception e) when (e.IsException())
+                        {
+                            // ok
+                        }
+                        catch (Exception e) when (e.IsAssertionError())
+                        {
+                            // ok
+                        }
                     }
                     Assert.AreEqual(DocsEnum.NO_MORE_DOCS, docsAndPositionsEnum.NextDoc());
                 }
@@ -964,7 +952,7 @@ namespace Lucene.Net.Index
                         outerInstance.AssertEquals(docs[idx], reader.GetTermVectors(docID));
                     }
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     this.exception.Value = t;
                 }

@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Stempel
                 new StempelPolishStemFilterFactory(new Dictionary<string, string>() { { "bogusArg", "bogusValue" } });
                 fail();
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

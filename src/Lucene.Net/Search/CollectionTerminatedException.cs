@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
@@ -35,7 +35,7 @@ namespace Lucene.Net.Search
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    public sealed class CollectionTerminatedException : Exception
+    public sealed class CollectionTerminatedException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
     {
         /// <summary>
         /// Sole constructor. </summary>

@@ -80,6 +80,10 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         public override void Build(IInputEnumerator enumerator)
         {
+            // LUCENENET: Added guard clause for null
+            if (enumerator is null)
+                throw new ArgumentNullException(nameof(enumerator));
+
             if (enumerator.HasPayloads)
             {
                 throw new ArgumentException("this suggester doesn't support payloads");
@@ -137,6 +141,9 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
+            // LUCENENET: Added guard clause for null
+            if (key is null)
+                throw new ArgumentNullException(nameof(key));
             if (contexts != null)
             {
                 throw new ArgumentException("this suggester doesn't support contexts");
@@ -163,9 +170,9 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 prefixOutput = LookupPrefix(scratch, arc);
             }
-            catch (IOException bogus)
+            catch (Exception bogus) when (bogus.IsIOException())
             {
-                throw new Exception(bogus.ToString(), bogus);
+                throw RuntimeException.Create(bogus);
             }
 
             if (!prefixOutput.HasValue)
@@ -193,9 +200,9 @@ namespace Lucene.Net.Search.Suggest.Fst
                 completions = Lucene.Net.Util.Fst.Util.ShortestPaths(fst, arc, prefixOutput, weightComparer, num, !exactFirst);
                 if (Debugging.AssertsEnabled) Debugging.Assert(completions.IsComplete);
             }
-            catch (IOException bogus)
+            catch (Exception bogus) when (bogus.IsIOException())
             {
-                throw new Exception(bogus.ToString(), bogus);
+                throw RuntimeException.Create(bogus);
             }
 
             BytesRef suffix = new BytesRef(8);
@@ -254,9 +261,9 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 result = LookupPrefix(new BytesRef(key), arc);
             }
-            catch (IOException bogus)
+            catch (Exception bogus) when (bogus.IsIOException())
             {
-                throw new Exception(bogus.ToString(), bogus);
+                throw RuntimeException.Create(bogus);
             }
             if (!result.HasValue || !arc.IsFinal)
             {
@@ -281,7 +288,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             if (value < 0 || value > int.MaxValue)
             {
-                throw new NotSupportedException("cannot encode value: " + value);
+                throw UnsupportedOperationException.Create("cannot encode value: " + value);
             }
             return int.MaxValue - (int)value;
         }

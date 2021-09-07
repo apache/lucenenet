@@ -402,7 +402,7 @@ namespace Lucene.Net.Search.Grouping
                 for (int shardIDX = 0; shardIDX < shards.Count; shardIDX++)
                 {
                     IEnumerable<ISearchGroup<T>> shard = shards[shardIDX];
-                    if (shard.Any())
+                    if (shard.Any()) // LUCENENET TODO: Change back to .Count if/when IEnumerable<T> is changed to ICollection<T> or IReadOnlyCollection<T>
                     {
                         //System.out.println("  insert shard=" + shardIDX);
                         UpdateNextGroup(maxQueueSize, new ShardIter<T>(shard, shardIDX));

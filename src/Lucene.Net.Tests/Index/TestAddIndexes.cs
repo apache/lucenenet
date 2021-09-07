@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
@@ -310,9 +310,7 @@ namespace Lucene.Net.Index
                 writer.AddIndexes(aux, dir);
                 Assert.IsTrue(false);
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 Assert.AreEqual(100, writer.MaxDoc);
             }
@@ -713,7 +711,7 @@ namespace Lucene.Net.Index
                             outerInstance.DoBody(j++, dirs);
                         }
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         outerInstance.Handle(t);
                     }
@@ -948,9 +946,7 @@ namespace Lucene.Net.Index
                 {
                     report = !didClose;
                 }
-                // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-                // in Lucene, we need to handle it here to be on the safe side.
-                else if (t is FileNotFoundException/* || t is NoSuchFileException*/ || t is DirectoryNotFoundException)
+                else if (t.IsNoSuchFileExceptionOrFileNotFoundException())
                 {
                     report = !didClose;
                 }
@@ -1230,9 +1226,7 @@ namespace Lucene.Net.Index
                     w.AddIndexes(toAdd);
                     Assert.Fail("no such codec");
                 }
-#pragma warning disable 168
-                catch (ArgumentException ex)
-#pragma warning restore 168
+                catch (Exception ex) when (ex.IsIllegalArgumentException())
                 {
                     // expected
                 }
@@ -1249,9 +1243,7 @@ namespace Lucene.Net.Index
                 DirectoryReader.Open(toAdd);
                 Assert.Fail("no such codec");
             }
-#pragma warning disable 168
-            catch (ArgumentException ex)
-#pragma warning restore 168
+            catch (Exception ex) when (ex.IsIllegalArgumentException())
             {
                 // expected
             }

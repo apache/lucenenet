@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    public class SearcherExpiredException : Exception
+    public class SearcherExpiredException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
     {
         public SearcherExpiredException(string message)
             : base(message)
@@ -712,7 +712,7 @@ namespace Lucene.Net.Search
                 {
                     LineFileDocs docs = new LineFileDocs(Random, DefaultCodecSupportsDocValues);
                     int numDocs = 0;
-                    while (Time.NanoTime() < outerInstance.endTimeNanos)
+                    while (J2N.Time.NanoTime() < outerInstance.endTimeNanos)
                     {
                         int what = Random.Next(3);
                         NodeState node = outerInstance.m_nodes[Random.Next(outerInstance.m_nodes.Length)];
@@ -743,11 +743,11 @@ namespace Lucene.Net.Search
                         }
                     }
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     Console.WriteLine("FAILED:");
                     Console.Out.WriteLine(t.StackTrace);
-                    throw new Exception(t.Message, t);
+                    throw RuntimeException.Create(t);
                 }
             }
         }
@@ -759,7 +759,7 @@ namespace Lucene.Net.Search
 
         protected virtual void Start(int numNodes, double runTimeSec, int maxSearcherAgeSeconds)
         {
-            endTimeNanos = Time.NanoTime() + (long)(runTimeSec * 1000000000);
+            endTimeNanos = J2N.Time.NanoTime() + (long)(runTimeSec * 1000000000);
             this.maxSearcherAgeSeconds = maxSearcherAgeSeconds;
 
             m_nodes = new NodeState[numNodes];

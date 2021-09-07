@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ARGUMENT_CANNOT_BE_NULL" xml:space="preserve">
+    <value>Value cannot be null.</value>
+    <comment>LUCENENET: Added to make the message more specific</comment>
+  </data>
+  <data name="COULD_NOT_PARSE_NUMBER" xml:space="preserve">
+    <value>Could not parse text "{0}" using {1}</value>
+  </data>
+  <data name="EMPTY_MESSAGE" xml:space="preserve">
+    <value />
+  </data>
+  <data name="INVALID_SYNTAX" xml:space="preserve">
+    <value>Syntax Error: {0}</value>
+    <comment>&lt;REPLACEMENT arg="{0}" value="detailed_message"/&gt;</comment>
+  </data>
+  <data name="INVALID_SYNTAX_CANNOT_PARSE" xml:space="preserve">
+    <value>Syntax Error, cannot parse {0}: {1}</value>
+    <comment>&lt;REPLACEMENT arg="{0}" value="invalid_query"/&gt;&lt;REPLACEMENT arg="{1}" value="detailed_message"/&gt;</comment>
+  </data>
+  <data name="INVALID_SYNTAX_ESCAPE_CHARACTER" xml:space="preserve">
+    <value>Term can not end with escape character.</value>
+  </data>
+  <data name="INVALID_SYNTAX_ESCAPE_NONE_HEX_UNICODE" xml:space="preserve">
+    <value>Non-hex character in Unicode escape sequence: {0}</value>
+  </data>
+  <data name="INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION" xml:space="preserve">
+    <value>Truncated unicode escape sequence.</value>
+  </data>
+  <data name="INVALID_SYNTAX_FUZZY_EDITS" xml:space="preserve">
+    <value>Fractional edit distances are not allowed.</value>
+  </data>
+  <data name="INVALID_SYNTAX_FUZZY_LIMITS" xml:space="preserve">
+    <value>The similarity value for a fuzzy search must be between 0.0 and 1.0.</value>
+  </data>
+  <data name="LEADING_WILDCARD_NOT_ALLOWED" xml:space="preserve">
+    <value>Leading wildcard is not allowed: {0}</value>
+  </data>
+  <data name="LUCENE_QUERY_CONVERSION_ERROR" xml:space="preserve">
+    <value>Cannot convert query to lucene syntax: {0} error: {1}</value>
+    <comment>&lt;REPLACEMENT arg="{0}" value="query"/&gt;&lt;REPLACEMENT arg="{1}" value="error/class"/&gt;</comment>
+  </data>
+  <data name="NODE_ACTION_NOT_SUPPORTED" xml:space="preserve">
+    <value>This node does not support this action.</value>
+  </data>
+  <data name="NUMBER_CANNOT_BE_NEGATIVE" xml:space="preserve">
+    <value>The parameter must be greater than or equal to zero.</value>
+    <comment>LUCENENET: Added to make the message more specific</comment>
+  </data>
+  <data name="NUMBER_CLASS_NOT_SUPPORTED_BY_NUMERIC_RANGE_QUERY" xml:space="preserve">
+    <value>Number class not supported by NumericRangeQueryNode: {0}</value>
+  </data>
+  <data name="NUMERIC_CANNOT_BE_EMPTY" xml:space="preserve">
+    <value>Field "{0}" is numeric and cannot have an empty value.</value>
+  </data>
+  <data name="PARAMETER_VALUE_NOT_SUPPORTED" xml:space="preserve">
+    <value>Parameter {1} with value {0} not supported.</value>
+  </data>
+  <data name="TOO_MANY_BOOLEAN_CLAUSES" xml:space="preserve">
+    <value>Too many boolean clauses, the maximum supported is {0}: {1}</value>
+  </data>
+  <data name="UNSUPPORTED_NUMERIC_DATA_TYPE" xml:space="preserve">
+    <value>Unsupported NumericField.DataType: {0}</value>
+  </data>
+  <data name="WILDCARD_NOT_SUPPORTED" xml:space="preserve">
+    <value>Wildcard is not supported for query: {0}</value>
+  </data>
+</root>

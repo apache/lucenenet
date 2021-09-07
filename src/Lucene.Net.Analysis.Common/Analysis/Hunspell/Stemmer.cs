@@ -226,9 +226,9 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 stems.AddRange(Stem(word, length, -1, -1, -1, 0, true, true, false, false, caseVariant));
             }
-            catch (IOException bogus)
+            catch (Exception bogus) when (bogus.IsIOException())
             {
-                throw new Exception(bogus.ToString(), bogus);
+                throw RuntimeException.Create(bogus);
             }
             return stems;
         }
@@ -297,9 +297,9 @@ namespace Lucene.Net.Analysis.Hunspell
                 {
                     Dictionary.ApplyMappings(dictionary.oconv, scratchSegment);
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
-                    throw new Exception(bogus.Message, bogus);
+                    throw RuntimeException.Create(bogus);
                 }
                 char[] cleaned = new char[scratchSegment.Length];
                 scratchSegment.CopyTo(0, cleaned, 0, cleaned.Length);

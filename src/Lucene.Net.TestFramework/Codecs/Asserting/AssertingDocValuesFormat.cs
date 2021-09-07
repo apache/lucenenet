@@ -1,4 +1,4 @@
-using Lucene.Net.Codecs.Lucene45;
+﻿using Lucene.Net.Codecs.Lucene45;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
@@ -121,7 +121,7 @@ namespace Lucene.Net.Codecs.Asserting
                 }
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(count == maxDoc);
-                if (Debugging.AssertsEnabled) Debugging.Assert(seenOrds.Cardinality() == valueCount);
+                if (Debugging.AssertsEnabled) Debugging.Assert(seenOrds.Cardinality == valueCount);
                 CheckIterator(values.GetEnumerator(), valueCount, false);
                 CheckIterator(docToOrd.GetEnumerator(), maxDoc, false);
                 @in.AddSortedField(field, values, docToOrd);
@@ -171,7 +171,7 @@ namespace Lucene.Net.Codecs.Asserting
                 if (Debugging.AssertsEnabled) Debugging.Assert(ordIterator.MoveNext() == false);
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(docCount == maxDoc);
-                if (Debugging.AssertsEnabled) Debugging.Assert(seenOrds.Cardinality() == valueCount);
+                if (Debugging.AssertsEnabled) Debugging.Assert(seenOrds.Cardinality == valueCount);
                 CheckIterator(values.GetEnumerator(), valueCount, false);
                 CheckIterator(docToOrdCount.GetEnumerator(), maxDoc, false);
                 CheckIterator(ords.GetEnumerator(), ordCount, false);
@@ -217,17 +217,17 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
             {
-                throw new InvalidOperationException();
+                throw IllegalStateException.Create();
             }
 
             public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
             {
-                throw new InvalidOperationException();
+                throw IllegalStateException.Create();
             }
 
             public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
             {
-                throw new InvalidOperationException();
+                throw IllegalStateException.Create();
             }
         }
 
@@ -242,13 +242,13 @@ namespace Lucene.Net.Codecs.Asserting
                     T v = iterator.Current;
                     if (Debugging.AssertsEnabled) Debugging.Assert(allowNull || v != null);
 
-                    // LUCENE.NET specific. removed call to Reset().
+                    // LUCENENET specific - .NET doesn't support remove
                     //try
                     //{
-                    //    iterator.Reset();
-                    //    throw new InvalidOperationException("broken iterator (supports remove): " + iterator);
+                    //    iterator.remove();
+                    //    throw AssertionError.Create("broken iterator (supports remove): " + iterator);
                     //}
-                    //catch (NotSupportedException)
+                    //catch (Exception expected) when (e.IsUnsupportedOperationException())
                     //{
                     //    // ok
                     //}
@@ -257,7 +257,7 @@ namespace Lucene.Net.Codecs.Asserting
                 /*try
                 {
                   //iterator.next();
-                  throw new InvalidOperationException("broken iterator (allows next() when hasNext==false) " + iterator);
+                  throw AssertionError.Create("broken iterator (allows next() when hasNext==false) " + iterator);
                 }
                 catch (Exception)
                 {

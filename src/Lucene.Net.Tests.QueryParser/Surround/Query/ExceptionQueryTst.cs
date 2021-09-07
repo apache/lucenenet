@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                     Console.WriteLine("Query: " + queryText + "\nParsed as: " + lq.ToString());
                 }
             }
-            catch (ParseException e)
+            catch (Lucene.Net.QueryParsers.Surround.Parser.ParseException e)
             {
                 if (verbose)
                 {

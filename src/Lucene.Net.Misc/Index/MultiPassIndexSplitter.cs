@@ -170,7 +170,7 @@ namespace Lucene.Net.Index
                                 continue;
                             }
                         }
-                        catch (Exception)
+                        catch (Exception e) when (e.IsException())
                         {
                             Console.Error.WriteLine("Invalid input index - skipping: " + file);
                             continue;
@@ -284,7 +284,7 @@ namespace Lucene.Net.Index
                 UndeleteAll(); // initialize main bitset
             }
 
-            public override int NumDocs => liveDocs.Cardinality();
+            public override int NumDocs => liveDocs.Cardinality;
 
             public void UndeleteAll()
             {

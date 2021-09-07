@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -127,15 +127,15 @@ namespace Lucene.Net.Analysis.Miscellaneous
             // original tests did not. Adding them anyway because there is no downside to this.
             if (minWordLength < 0)
             {
-                throw new ArgumentOutOfRangeException("minWordLength must be greater than or equal to zero");
+                throw new ArgumentOutOfRangeException(nameof(minWordLength), "minWordLength must be greater than or equal to zero");
             }
             if (maxWordCount < 1)
             {
-                throw new ArgumentOutOfRangeException("maxWordCount must be greater than zero");
+                throw new ArgumentOutOfRangeException(nameof(maxWordCount), "maxWordCount must be greater than zero");
             }
             if (maxTokenLength < 1)
             {
-                throw new ArgumentOutOfRangeException("maxTokenLength must be greater than zero");
+                throw new ArgumentOutOfRangeException(nameof(maxTokenLength), "maxTokenLength must be greater than zero");
             }
 
             this.onlyFirstWord = onlyFirstWord;

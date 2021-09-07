@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using NUnit.Framework;
 using System;
 using System.Globalization;
@@ -56,11 +56,11 @@ namespace Lucene.Net.Util
                     set.Set(new Integer(Convert.ToInt32(Name.Substring(2), CultureInfo.InvariantCulture)));
                     success = true;
                 }
-                catch (ThreadInterruptedException)
+                catch (Exception e) when (e.IsInterruptedException())
                 {
                     // ignore
                 }
-                catch (Exception)
+                catch (Exception e) when (e.IsRuntimeException())
                 {
                     // TODO: change exception type
                     // expected.

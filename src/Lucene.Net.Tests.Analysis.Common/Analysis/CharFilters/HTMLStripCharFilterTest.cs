@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1 (added fix for SOLR-5983: HTMLStripCharFilter is treating CDATA sections incorrectly)
 using J2N.Text;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -27,7 +27,6 @@ namespace Lucene.Net.Analysis.CharFilters
      * limitations under the License.
      */
 
-    // LUCENENET NOTE: Version compatibility level 4.8.1 (added fix for SOLR-5983: HTMLStripCharFilter is treating CDATA sections incorrectly)
     public class HTMLStripCharFilterTest : BaseTokenStreamTestCase
     {
 
@@ -710,7 +709,7 @@ namespace Lucene.Net.Analysis.CharFilters
                     builder.Append((char)ch);
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 if (gold.Equals(builder.ToString(), StringComparison.Ordinal))
                 {

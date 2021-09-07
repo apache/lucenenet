@@ -1,10 +1,9 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
-using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
 
-namespace Lucene.Net.Join
+namespace Lucene.Net.Search.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

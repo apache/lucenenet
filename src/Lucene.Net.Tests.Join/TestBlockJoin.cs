@@ -5,12 +5,11 @@ using Lucene.Net.Documents;
 using Lucene.Net.Documents.Extensions;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Join;
-using Lucene.Net.Search;
 using Lucene.Net.Search.Grouping;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -18,7 +17,7 @@ using System.Linq;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
 
-namespace Lucene.Net.Tests.Join
+namespace Lucene.Net.Search.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -1599,7 +1598,15 @@ namespace Lucene.Net.Tests.Join
 
             ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(new Sort(new SortField("parentID", SortFieldType.STRING)), 10, true, true);
 
-            Assert.Throws<InvalidOperationException>(() => NewSearcher(r).Search(parentQuery, c));
+            try
+            {
+                NewSearcher(r).Search(parentQuery, c);
+                fail("should have hit exception");
+            }
+            catch (Exception ise) when (ise.IsIllegalStateException())
+            {
+                // expected
+            }
 
             r.Dispose();
             d.Dispose();

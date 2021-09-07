@@ -42,6 +42,7 @@ namespace Lucene.Net.Spatial.Util
 
         public ValueSourceFilter(Filter startingFilter, ValueSource source, double min, double max)
         {
+            // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             this.startingFilter = startingFilter ?? throw new ArgumentNullException(nameof(startingFilter),
                 "Please provide a non-null startingFilter; you can use QueryWrapperFilter(MatchAllDocsQuery) as a no-op filter");
             this.source = source;

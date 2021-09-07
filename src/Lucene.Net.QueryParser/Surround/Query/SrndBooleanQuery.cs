@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Search;
-using System;
+﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Search;
 using System.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Surround.Query
@@ -40,10 +40,10 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         {
             if (queries.Count <= 1)
             {
-                throw new InvalidOperationException("Too few subqueries: " + queries.Count);
+                throw AssertionError.Create("Too few subqueries: " + queries.Count);
             }
             BooleanQuery bq = new BooleanQuery();
-            AddQueriesToBoolean(bq, queries, occur);
+            AddQueriesToBoolean(bq, queries.GetView(0, queries.Count), occur);
             return bq;
         }
     }

@@ -927,7 +927,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 IList<Lookup.LookupResult> r = suggester.DoLookup(TestUtil.StringToCharSequence(prefix, Random).ToString(), false, topN);
 
                 // 2. go thru whole set to find suggestions:
-                List<TermFreq2> matches = new List<TermFreq2>();
+                JCG.List<TermFreq2> matches = new JCG.List<TermFreq2>();
 
                 // "Analyze" the key:
                 string[] tokens = prefix.Split(' ').TrimEnd();
@@ -1006,8 +1006,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 if (matches.size() > topN)
                 {
-                    //matches = new List<TermFreq2>(matches.SubList(0, topN));
-                    matches = matches.GetRange(0, topN);
+                    matches = matches.GetView(0, topN); // LUCENENET: Checked length for correctness
                 }
 
                 if (Verbose)
@@ -1475,7 +1474,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 suggester.DoLookup("а\u001E", false, 3);
                 fail("should throw IllegalArgumentException");
             }
-            catch (ArgumentException /*e*/)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -1484,7 +1483,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 suggester.DoLookup("а\u001F", false, 3);
                 fail("should throw IllegalArgumentException");
             }
-            catch (ArgumentException /*e*/)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -1500,5 +1499,25 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             asList.Shuffle(Random);
             return asList;
         }
+
+        // LUCENENET TODO: This is a test from Lucene 4.8.1 that currently produces a stack overflow
+        //// TODO: we need BaseSuggesterTestCase?
+        //[Test]
+        //public void TestTooLongSuggestion()
+        //{
+        //    Analyzer a = new MockAnalyzer(Random);
+        //    AnalyzingSuggester suggester = new AnalyzingSuggester(a);
+        //    String bigString = TestUtil.RandomSimpleString(Random, 60000, 60000);
+        //    try
+        //    {
+        //        suggester.Build(new InputArrayEnumerator(new Input[] {
+        //            new Input(bigString, 7)}));
+        //        fail("did not hit expected exception");
+        //    }
+        //    catch (Exception iae) when (iae.IsIllegalArgumentException())
+        //    {
+        //        // expected
+        //    }
+        //}
     }
 }

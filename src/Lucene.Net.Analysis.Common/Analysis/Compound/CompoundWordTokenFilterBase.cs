@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
@@ -90,17 +90,17 @@ namespace Lucene.Net.Analysis.Compound
             this.m_tokens = new Queue<CompoundToken>();
             if (minWordSize < 0)
             {
-                throw new ArgumentException("minWordSize cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(minWordSize), "minWordSize cannot be negative"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.m_minWordSize = minWordSize;
             if (minSubwordSize < 0)
             {
-                throw new ArgumentException("minSubwordSize cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(minSubwordSize), "minSubwordSize cannot be negative"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.m_minSubwordSize = minSubwordSize;
             if (maxSubwordSize < 0)
             {
-                throw new ArgumentException("maxSubwordSize cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(maxSubwordSize), "maxSubwordSize cannot be negative"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.m_maxSubwordSize = maxSubwordSize;
             this.m_onlyLongestMatch = onlyLongestMatch;

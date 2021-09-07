@@ -126,7 +126,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                             }
                                         case StreamTokenizer.TokenType_EndOfStream:
                                             {
-                                                throw new Exception("Unexpexted EOF: - " + stok.ToString());
+                                                throw RuntimeException.Create("Unexpexted EOF: - " + stok.ToString());
                                             }
                                         case '"':
                                         case '\'':
@@ -395,7 +395,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 }
             }
             // can only get here if failed to instantiate
-            throw new TypeLoadException(taskName + " not found in packages " + Collections.ToString(taskPackages));
+            throw ClassNotFoundException.Create(taskName + " not found in packages " + Arrays.ToString(taskPackages));
         }
 
         private static Type LoadType(string assemblyName, string typeName) // LUCENENET: CA1822: Mark members as static

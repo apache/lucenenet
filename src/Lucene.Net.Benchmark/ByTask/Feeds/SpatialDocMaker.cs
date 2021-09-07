@@ -58,7 +58,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             if (!spatialStrategyCache.TryGetValue(roundNumber, out SpatialStrategy result) || result == null)
             {
-                throw new InvalidOperationException("Strategy should have been init'ed by SpatialDocMaker by now");
+                throw IllegalStateException.Create("Strategy should have been init'ed by SpatialDocMaker by now");
             }
             return result;
         }
@@ -73,7 +73,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             // LUCENENET: The second argument was ClassLoader in Java, which should be made into
             // Assembly in .NET. However, Spatial4n currently doesn't support it.
-            // In .NET it makes more logical sense to make 2 overloads and throw NullReferenceException
+            // In .NET it makes more logical sense to make 2 overloads and throw ArgumentNullException
             // if the second argument is null, anyway. So no need to change this once support has been added.
             // See: https://github.com/NightOwl888/Spatial4n/issues/1
             SpatialContext ctx = SpatialContextFactory.MakeSpatialContext(configMap /*, assembly: null*/);
@@ -96,7 +96,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             public string this[string key]
             {
                 get => config.Get("spatial." + key, null);
-                set => throw new NotSupportedException();
+                set => throw UnsupportedOperationException.Create();
             }
 
             public bool TryGetValue(string key, out string value)
@@ -114,25 +114,25 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             #region IDictionary<string, string> members
 
-            ICollection<string> IDictionary<string, string>.Keys => throw new NotSupportedException();
+            ICollection<string> IDictionary<string, string>.Keys => throw UnsupportedOperationException.Create();
 
-            ICollection<string> IDictionary<string, string>.Values => throw new NotSupportedException();
+            ICollection<string> IDictionary<string, string>.Values => throw UnsupportedOperationException.Create();
 
-            int ICollection<KeyValuePair<string, string>>.Count => throw new NotSupportedException();
+            int ICollection<KeyValuePair<string, string>>.Count => throw UnsupportedOperationException.Create();
 
             public bool IsReadOnly => true;
 
-            void IDictionary<string, string>.Add(string key, string value) => throw new NotSupportedException();
-            void ICollection<KeyValuePair<string, string>>.Add(KeyValuePair<string, string> item) => throw new NotSupportedException();
-            void ICollection<KeyValuePair<string, string>>.Clear() => throw new NotSupportedException();
-            bool ICollection<KeyValuePair<string, string>>.Contains(KeyValuePair<string, string> item) => throw new NotSupportedException();
+            void IDictionary<string, string>.Add(string key, string value) => throw UnsupportedOperationException.Create();
+            void ICollection<KeyValuePair<string, string>>.Add(KeyValuePair<string, string> item) => throw UnsupportedOperationException.Create();
+            void ICollection<KeyValuePair<string, string>>.Clear() => throw UnsupportedOperationException.Create();
+            bool ICollection<KeyValuePair<string, string>>.Contains(KeyValuePair<string, string> item) => throw UnsupportedOperationException.Create();
             
-            void ICollection<KeyValuePair<string, string>>.CopyTo(KeyValuePair<string, string>[] array, int arrayIndex) => throw new NotSupportedException();
-            IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator() => throw new NotSupportedException();
-            bool IDictionary<string, string>.Remove(string key) => throw new NotSupportedException();
-            bool ICollection<KeyValuePair<string, string>>.Remove(KeyValuePair<string, string> item) => throw new NotSupportedException();
+            void ICollection<KeyValuePair<string, string>>.CopyTo(KeyValuePair<string, string>[] array, int arrayIndex) => throw UnsupportedOperationException.Create();
+            IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator() => throw UnsupportedOperationException.Create();
+            bool IDictionary<string, string>.Remove(string key) => throw UnsupportedOperationException.Create();
+            bool ICollection<KeyValuePair<string, string>>.Remove(KeyValuePair<string, string> item) => throw UnsupportedOperationException.Create();
             
-            IEnumerator IEnumerable.GetEnumerator() => throw new NotSupportedException();
+            IEnumerator IEnumerable.GetEnumerator() => throw UnsupportedOperationException.Create();
 
             #endregion IDictionary<string, string> members
         }
@@ -143,7 +143,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             //A factory for the prefix tree grid
             // LUCENENET: The second argument was ClassLoader in Java, which should be made into
             // Assembly in .NET. However, Spatial4n currently doesn't support it.
-            // In .NET it makes more logical sense to make 2 overloads and throw NullReferenceException
+            // In .NET it makes more logical sense to make 2 overloads and throw ArgumentNullException
             // if the second argument is null, anyway. So no need to change this once support has been added.
             // See: https://github.com/NightOwl888/Spatial4n/issues/1
             SpatialPrefixTree grid = SpatialPrefixTreeFactory.MakeSPT(configMap/*, assembly: null*/, ctx);
@@ -268,7 +268,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 {
                     return strategy.SpatialContext.ReadShapeFromWkt(shapeStr);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {//InvalidShapeException TODO
                     Console.Error.WriteLine("Shape " + name + " wasn't parseable: " + e + "  (skipping it)");
                     return null;
@@ -280,7 +280,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         public override Document MakeDocument(int size)
         {
             //TODO consider abusing the 'size' notion to number of shapes per document
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
     }
 

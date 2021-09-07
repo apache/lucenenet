@@ -180,7 +180,7 @@ namespace Lucene.Net.Codecs.Compressing
         {
             if (docID < 0 || docID >= maxDoc)
             {
-                throw new ArgumentException("docID out of range [0-" + maxDoc + "]: " + docID);
+                throw new ArgumentOutOfRangeException(nameof(docID), "docID out of range [0-" + maxDoc + "]: " + docID); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             int block = Block(docID);
             int relativeChunk = RelativeChunk(block, docID - docBases[block]);

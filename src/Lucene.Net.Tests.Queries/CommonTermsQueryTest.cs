@@ -9,6 +9,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Tests.Queries
@@ -174,9 +175,7 @@ namespace Lucene.Net.Tests.Queries
                 query.Add(null);
                 Assert.Fail(@"null values are not supported");
             }
-#pragma warning disable 168
-            catch (ArgumentException ex)
-#pragma warning restore 168
+            catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
             }
         }
@@ -344,9 +343,7 @@ namespace Lucene.Net.Tests.Queries
                 new CommonTermsQuery(Occur.MUST_NOT, RandomOccur(random), Random.NextSingle());
                 Assert.Fail(@"MUST_NOT is not supproted");
             }
-#pragma warning disable 168
-            catch (ArgumentException ex)
-#pragma warning restore 168
+            catch (Exception ex) when (ex.IsIllegalArgumentException())
             {
             }
 
@@ -355,9 +352,7 @@ namespace Lucene.Net.Tests.Queries
                 new CommonTermsQuery(RandomOccur(random), Occur.MUST_NOT, Random.NextSingle());
                 Assert.Fail(@"MUST_NOT is not supproted");
             }
-#pragma warning disable 168
-            catch (ArgumentException ex)
-#pragma warning restore 168
+            catch (Exception ex) when (ex.IsIllegalArgumentException())
             {
             }
         }
@@ -623,7 +618,7 @@ namespace Lucene.Net.Tests.Queries
             protected override Query NewTermQuery(Term term, TermContext context)
             {
                 Query query = base.NewTermQuery(term, context);
-                if (term.Text().Equals(@"universe", StringComparison.Ordinal))
+                if (term.Text.Equals(@"universe", StringComparison.Ordinal))
                 {
                     query.Boost = 100f;
                 }

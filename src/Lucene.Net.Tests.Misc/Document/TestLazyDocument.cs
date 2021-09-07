@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -44,7 +44,7 @@ namespace Lucene.Net.Documents
         public Directory dir = NewDirectory();
 
         [OneTimeTearDown]
-        public override void AfterClass() // LUCENENET specific - changed from CreateIndex() to ensure calling order vs base class
+        public override void AfterClass() // LUCENENET specific - changed from RemoveIndex() to ensure calling order vs base class
         {
             if (null != dir)
             {
@@ -53,7 +53,7 @@ namespace Lucene.Net.Documents
                     dir.Dispose();
                     dir = null;
                 }
-                catch (Exception /*e*/) { /* NOOP */ }
+                catch (Exception e) when (e.IsException()) { /* NOOP */ }
             }
 
             base.AfterClass();

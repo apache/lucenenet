@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Codecs;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
@@ -12,6 +12,7 @@ using Console = Lucene.Net.Util.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Directory = Lucene.Net.Store.Directory;
 using J2N.Collections.Generic.Extensions;
+using RandomizedTesting.Generators;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -673,7 +674,7 @@ namespace Lucene.Net.Index
                         sumDF += postings.DocFreq;
                     }
 
-                    termsConsumer.Finish(doFreq ? sumTotalTF : -1, sumDF, seenDocs.Cardinality());
+                    termsConsumer.Finish(doFreq ? sumTotalTF : -1, sumDF, seenDocs.Cardinality);
                 }
 
             }
@@ -1135,9 +1136,9 @@ namespace Lucene.Net.Index
                     {
                         testCase.TestTermsOneThread(fieldsSource, options, maxTestOptions, maxIndexOptions, alwaysTestMax);
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
-                        throw new Exception(t.Message, t);
+                        throw RuntimeException.Create(t);
                     }
                 }
                 finally
@@ -1284,11 +1285,11 @@ namespace Lucene.Net.Index
             while (iterator.MoveNext())
             {
                 var _ = iterator.Current;
-                // .NET: Testing for iterator.Remove() isn't applicable
+                // LUCENENET: Testing for iterator.Remove() isn't applicable
             }
             Assert.IsFalse(iterator.MoveNext());
 
-            // .NET: Testing for NoSuchElementException with .NET iterators isn't applicable
+            // LUCENENET: Testing for NoSuchElementException with .NET iterators isn't applicable
         }
 
         /// <summary>
@@ -1412,8 +1413,7 @@ namespace Lucene.Net.Index
                 {
                     continue;
                 }
-                var ft = new FieldType { IndexOptions = opts, IsIndexed = true, OmitNorms = true};
-                ft.Freeze();
+                var ft = new FieldType { IndexOptions = opts, IsIndexed = true, OmitNorms = true}.Freeze();
                 int numFields = Random.Next(5);
                 for (int j = 0; j < numFields; ++j)
                 {

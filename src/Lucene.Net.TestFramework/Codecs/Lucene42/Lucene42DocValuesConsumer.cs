@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -80,7 +80,7 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             meta.WriteVInt32(field.Number);
             meta.WriteByte((byte)Lucene42DocValuesProducer.NUMBER);
-            meta.WriteInt64(data.GetFilePointer());
+            meta.WriteInt64(data.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             long minValue = long.MaxValue;
             long maxValue = long.MinValue;
             long gcd = 0;
@@ -233,7 +233,7 @@ namespace Lucene.Net.Codecs.Lucene42
             meta.WriteByte((byte)Lucene42DocValuesProducer.BYTES);
             int minLength = int.MaxValue;
             int maxLength = int.MinValue;
-            long startFP = data.GetFilePointer();
+            long startFP = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             foreach (BytesRef v in values)
             {
                 int length = v == null ? 0 : v.Length;
@@ -249,7 +249,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 }
             }
             meta.WriteInt64(startFP);
-            meta.WriteInt64(data.GetFilePointer() - startFP);
+            meta.WriteInt64(data.Position - startFP); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             meta.WriteVInt32(minLength);
             meta.WriteVInt32(maxLength);
 
@@ -278,7 +278,7 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             meta.WriteVInt32(field.Number);
             meta.WriteByte((byte)Lucene42DocValuesProducer.FST);
-            meta.WriteInt64(data.GetFilePointer());
+            meta.WriteInt64(data.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
             Builder<long?> builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
             Int32sRef scratch = new Int32sRef();
@@ -407,9 +407,9 @@ namespace Lucene.Net.Codecs.Lucene42
                 {
                     EncodeValues(count);
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
-                    throw new Exception(bogus.ToString(), bogus);
+                    throw RuntimeException.Create(bogus);
                 }
 
                 @ref.Bytes = buffer;

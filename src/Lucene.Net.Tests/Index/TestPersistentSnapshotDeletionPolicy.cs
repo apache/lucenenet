@@ -113,9 +113,7 @@ namespace Lucene.Net.Index
                 new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode.APPEND);
                 Assert.Fail("did not hit expected exception");
             }
-#pragma warning disable 168
-            catch (InvalidOperationException ise)
-#pragma warning restore 168
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }
@@ -136,7 +134,7 @@ namespace Lucene.Net.Index
             {
                 psdp.Snapshot();
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 if (ioe.Message.Equals("now fail on purpose", StringComparison.Ordinal))
                 {

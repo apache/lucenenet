@@ -1,6 +1,7 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
+using RandomizedTesting.Generators;
 using System;
 
 namespace Lucene.Net.Search
@@ -63,9 +64,7 @@ namespace Lucene.Net.Search
                     bool remaining = @in.Score(collector, DocsEnum.NO_MORE_DOCS);
                     if (Debugging.AssertsEnabled) Debugging.Assert(!remaining);
                 }
-#pragma warning disable 168, IDE0059
-                catch (NotSupportedException e)
-#pragma warning restore 168, IDE0059
+                catch (Exception e) when (e.IsUnsupportedOperationException())
                 {
                     @in.Score(collector);
                 }

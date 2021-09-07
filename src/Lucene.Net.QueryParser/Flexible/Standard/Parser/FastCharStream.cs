@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 {
@@ -118,7 +119,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             {
                 input.Dispose();
             }
-            catch (IOException) // LUCENENET: IDE0059: Remove unnecessary value assignment
+            catch (Exception e) when (e.IsIOException())
             {
                 // ignore
             }

@@ -63,7 +63,7 @@ namespace Lucene.Net.Spatial.Util
             // read operation. For the create case, we use Lazy<T> to ensure atomicity.
             return sidx.GetValue(reader, (key) => new Lazy<ShapeFieldCache<T>>(() =>
             {
-                /*long startTime = Runtime.CurrentTimeMillis();
+                /*long startTime = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 log.Fine("Building Cache [" + reader.MaxDoc() + "]");*/
                 ShapeFieldCache<T> idx = new ShapeFieldCache<T>(key.MaxDoc, m_defaultSize);
                 int count = 0;
@@ -89,7 +89,7 @@ namespace Lucene.Net.Spatial.Util
                         }
                     }
                 }
-                /*long elapsed = Runtime.CurrentTimeMillis() - startTime;
+                /*long elapsed = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond - startTime; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 log.Fine("Cached: [" + count + " in " + elapsed + "ms] " + idx);*/
                 return idx;
             })).Value;

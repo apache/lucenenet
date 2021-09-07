@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using Integer = J2N.Numerics.Int32;
 
 namespace Lucene.Net.Analysis.CharFilters
 {
@@ -31136,16 +31137,17 @@ namespace Lucene.Net.Analysis.CharFilters
         private void ZzScanError(int errorCode)
         {
             string message;
-            try
+            // LUCENENET specific: Defensive check so we don't have to catch IndexOutOfRangeException
+            if (errorCode >= 0 && errorCode < ZZ_ERROR_MSG.Length)
             {
                 message = ZZ_ERROR_MSG[errorCode];
             }
-            catch (IndexOutOfRangeException /*e*/)
+            else
             {
                 message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
             }
 
-            throw new Exception(message);
+            throw Error.Create(message);
         }
 
         /// <summary>
@@ -31370,12 +31372,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             if (matchLength <= 7)
                             { // 0x10FFFF = 1114111: max 7 decimal chars
                                 string decimalCharRef = YyText();
-                                int codePoint = 0;
-                                try
-                                {
-                                    codePoint = int.Parse(decimalCharRef, CultureInfo.InvariantCulture);
-                                }
-                                catch (Exception /*e*/)
+                                if (!int.TryParse(decimalCharRef, NumberStyles.Integer, CultureInfo.InvariantCulture, out int codePoint))
                                 {
                                     if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing code point '{0}'", decimalCharRef);
                                 }
@@ -31630,14 +31627,9 @@ namespace Lucene.Net.Analysis.CharFilters
                             { // 10FFFF: max 6 hex chars
                                 string hexCharRef
                                     = new string(zzBuffer, zzStartRead + 1, matchLength - 1);
-                                int codePoint = 0;
-                                try
+                                if (!int.TryParse(hexCharRef, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int codePoint))
                                 {
-                                    codePoint = int.Parse(hexCharRef, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-                                }
-                                catch (Exception e)
-                                {
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing hex code point '{0}'", e);
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing hex code point '{0}'", hexCharRef);
                                 }
                                 if (codePoint <= 0x10FFFF)
                                 {
@@ -31894,22 +31886,25 @@ namespace Lucene.Net.Analysis.CharFilters
                             outputSegment.Clear();
                             string surrogatePair = YyText();
                             char highSurrogate = '\u0000';
-                            try
+                            // LUCENENET: Optimized parse so we don't allocate a substring.
+                            if (Integer.TryParse(surrogatePair, 2, 6 - 2, 16, out int highSurrogateInt32))
                             {
-                                highSurrogate = (char)int.Parse(surrogatePair.Substring(2, 6 - 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+                                highSurrogate = (char)highSurrogateInt32;
                             }
-                            catch (Exception /*e*/)
-                            { // should never happen
+                            else // should never happen
+                            {
                                 if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing high surrogate '{0}'", surrogatePair.Substring(2, 6 - 2));
                             }
                             try
                             {
-                                outputSegment.UnsafeWrite((char)int.Parse(surrogatePair.Substring(10, 14 - 10), NumberStyles.HexNumber, CultureInfo.InvariantCulture));
+                                // LUCENENET: Optimized parse so we don't allocate a substring
+                                outputSegment.UnsafeWrite((char)Integer.Parse(surrogatePair, 10, 14 - 10, 16));
                             }
-                            catch (Exception /*e*/)
+                            catch (Exception e) when (e.IsException())
                             { // should never happen
                                 if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing low surrogate '{0}'", surrogatePair.Substring(10, 14 - 10));
                             }
+
                             // add (previously matched input length) + (this match length) - (substitution length)
                             cumulativeDiff += inputSegment.Length + YyLength - 2;
                             // position the correction at (already output length) + (substitution length)
@@ -31924,19 +31919,21 @@ namespace Lucene.Net.Analysis.CharFilters
                             string surrogatePair = YyText();
                             char highSurrogate = '\u0000';
                             char lowSurrogate = '\u0000';
-                            try
+                            // LUCENENET: Optimized parse so we don't allocate a substring.
+                            if (Integer.TryParse(surrogatePair, 2, 6 - 2, 16, out int highSurrogateInt32))
                             {
-                                highSurrogate = (char)int.Parse(surrogatePair.Substring(2, 6 - 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+                                highSurrogate = (char)highSurrogateInt32;
                             }
-                            catch (Exception /*e*/)
-                            { // should never happen
+                            else // should never happen
+                            {
                                 if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing high surrogate '{0}'", surrogatePair.Substring(2, 6 - 2));
                             }
                             try
                             { // Low surrogates are in decimal range [56320, 57343]
-                                lowSurrogate = (char)int.Parse(surrogatePair.Substring(9, 14 - 9), CultureInfo.InvariantCulture);
+                                // LUCENENET: Optimized parse so we don't allocate a substring
+                                lowSurrogate = (char)Integer.Parse(surrogatePair, 9, 14 - 9, 10);
                             }
-                            catch (Exception /*e*/)
+                            catch (Exception e) when (e.IsException())
                             { // should never happen
                                 if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing low surrogate '{0}'", surrogatePair.Substring(9, 14 - 9));
                             }
@@ -31963,12 +31960,13 @@ namespace Lucene.Net.Analysis.CharFilters
                         { // Handle paired UTF-16 surrogates.
                             string surrogatePair = YyText();
                             char highSurrogate = '\u0000';
-                            try
+                            // LUCENENET: Optimized parse so we don't allocate a substring.
+                            if (Integer.TryParse(surrogatePair, 1, 6 - 1, 10, out int highSurrogateInt32))
                             { // High surrogates are in decimal range [55296, 56319]
-                                highSurrogate = (char)int.Parse(surrogatePair.Substring(1, 6 - 1), CultureInfo.InvariantCulture);
+                                highSurrogate = (char)highSurrogateInt32;
                             }
-                            catch (Exception /*e*/)
-                            { // should never happen
+                            else // should never happen
+                            {
                                 if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing high surrogate '{0}'", surrogatePair.Substring(1, 6 - 1));
                             }
                             if (char.IsHighSurrogate(highSurrogate))
@@ -31977,9 +31975,10 @@ namespace Lucene.Net.Analysis.CharFilters
                                 outputSegment.Clear();
                                 try
                                 {
-                                    outputSegment.UnsafeWrite((char)int.Parse(surrogatePair.Substring(10, 14 - 10), NumberStyles.HexNumber, CultureInfo.InvariantCulture));
+                                    // LUCENENET: Optimized parse so we don't allocate a substring.
+                                    outputSegment.UnsafeWrite((char)Integer.Parse(surrogatePair, 10, 14 - 10, 16));
                                 }
-                                catch (Exception /*e*/)
+                                catch (Exception e) when (e.IsException())
                                 { // should never happen
                                     if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing low surrogate '{0}'", surrogatePair.Substring(10, 14 - 10));
                                 }
@@ -32001,23 +32000,25 @@ namespace Lucene.Net.Analysis.CharFilters
                         { // Handle paired UTF-16 surrogates.
                             string surrogatePair = YyText();
                             char highSurrogate = '\u0000';
-                            try
+                            // LUCENENET: Optimized parse so we don't allocate a substring.
+                            if (Integer.TryParse(surrogatePair, 1, 6 - 1, 10, out int highSurrogateInt32))
                             { // High surrogates are in decimal range [55296, 56319]
-                                highSurrogate = (char)int.Parse(surrogatePair.Substring(1, 6 - 1), CultureInfo.InvariantCulture);
+                                highSurrogate = (char)highSurrogateInt32;
                             }
-                            catch (Exception /*e*/)
-                            { // should never happen
+                            else // should never happen
+                            {
                                 if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing high surrogate '{0}'", surrogatePair.Substring(1, 6 - 1));
                             }
                             if (char.IsHighSurrogate(highSurrogate))
                             {
                                 char lowSurrogate = '\u0000';
-                                try
+                                // LUCENENET: Optimized parse so we don't allocate a substring.
+                                if (Integer.TryParse(surrogatePair, 9, 14 - 9, 10, out int lowSurrogateInt32))
                                 { // Low surrogates are in decimal range [56320, 57343]
-                                    lowSurrogate = (char)int.Parse(surrogatePair.Substring(9, 14 - 9), CultureInfo.InvariantCulture);
+                                    lowSurrogate = (char)lowSurrogateInt32;
                                 }
-                                catch (Exception /*e*/)
-                                { // should never happen
+                                else // should never happen
+                                {
                                     if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing low surrogate '{0}'", surrogatePair.Substring(9, 14 - 9));
                                 }
                                 if (char.IsLowSurrogate(lowSurrogate))

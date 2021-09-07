@@ -29,13 +29,14 @@ namespace Lucene.Net.Search.Grouping.Function
     /// 
     /// @lucene.experimental
     /// </summary>
-    public class FunctionFirstPassGroupingCollector : AbstractFirstPassGroupingCollector<MutableValue>
+    // LUCENENET Specific - Made generic to reduce need for casting.
+    public class FunctionFirstPassGroupingCollector<TMutableValue> : AbstractFirstPassGroupingCollector<TMutableValue> where TMutableValue : MutableValue
     {
         private readonly ValueSource groupByVS;
         private readonly IDictionary /* Map<?, ?> */ vsContext;
 
         private FunctionValues.ValueFiller filler;
-        private MutableValue mval;
+        private TMutableValue mval;
 
         /// <summary>
         /// Creates a first pass collector.
@@ -59,20 +60,20 @@ namespace Lucene.Net.Search.Grouping.Function
             this.vsContext = vsContext;
         }
 
-        protected override MutableValue GetDocGroupValue(int doc)
+        protected override TMutableValue GetDocGroupValue(int doc)
         {
             filler.FillValue(doc);
             return mval;
         }
 
-        protected override MutableValue CopyDocGroupValue(MutableValue groupValue, MutableValue reuse)
+        protected override TMutableValue CopyDocGroupValue(TMutableValue groupValue, TMutableValue reuse)
         {
             if (reuse != null)
             {
                 reuse.Copy(groupValue);
                 return reuse;
             }
-            return groupValue.Duplicate();
+            return (TMutableValue) groupValue.Duplicate();
         }
 
         public override void SetNextReader(AtomicReaderContext context)
@@ -80,7 +81,7 @@ namespace Lucene.Net.Search.Grouping.Function
             base.SetNextReader(context);
             FunctionValues values = groupByVS.GetValues(vsContext, context);
             filler = values.GetValueFiller();
-            mval = filler.Value;
+            mval = (TMutableValue) filler.Value;
         }
     }
 }

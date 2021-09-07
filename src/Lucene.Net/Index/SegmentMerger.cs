@@ -1,6 +1,6 @@
+﻿using J2N;
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
         {
             if (!ShouldMerge)
             {
-                throw new InvalidOperationException("Merge would result in 0 document segment");
+                throw IllegalStateException.Create("Merge would result in 0 document segment");
             }
             // NOTE: it's important to add calls to
             // checkAbort.work(...) if you make any changes to this
@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            throw new InvalidOperationException("type=" + type);
+                            throw AssertionError.Create("type=" + type);
                         }
                     }
                 }

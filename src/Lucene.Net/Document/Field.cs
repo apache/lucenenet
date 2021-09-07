@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
@@ -141,8 +142,8 @@ namespace Lucene.Net.Documents
         ///         is <c>null</c>. </exception>
         protected internal Field(string name, FieldType type)
         {
-            this.m_name = name ?? throw new ArgumentNullException(nameof(name), "name cannot be null");
-            this.m_type = type ?? throw new ArgumentNullException(nameof(type), "type cannot be null");
+            this.m_name = name ?? throw new ArgumentNullException(nameof(name), "name cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+            this.m_type = type ?? throw new ArgumentNullException(nameof(type), "type cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>
@@ -152,13 +153,13 @@ namespace Lucene.Net.Documents
         /// <param name="type"> field type </param>
         /// <exception cref="ArgumentException"> if <see cref="FieldType.IsStored"/> is true, or
         ///         if <see cref="FieldType.IsTokenized"/> is false. </exception>
-        /// <exception cref="ArgumentNullException"> if either the <paramref name="name"/> or <paramref name="type"/>
-        ///         is <c>null</c>, or if the reader is <c>null</c> </exception>
+        /// <exception cref="ArgumentNullException"> if the <paramref name="name"/>, <paramref name="reader"/> or <paramref name="type"/>
+        ///         is <c>null</c></exception>
         public Field(string name, TextReader reader, FieldType type)
         {
             if (type is null)
             {
-                throw new ArgumentNullException(nameof(type), "type cannot be null");
+                throw new ArgumentNullException(nameof(type), "type cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             if (type.IsStored)
             {
@@ -169,8 +170,8 @@ namespace Lucene.Net.Documents
                 throw new ArgumentException("non-tokenized fields must use String values");
             }
 
-            this.m_name = name ?? throw new ArgumentNullException(nameof(name), "name cannot be null");
-            this.FieldsData = reader ?? throw new ArgumentNullException(nameof(reader), "reader cannot be null");
+            this.m_name = name ?? throw new ArgumentNullException(nameof(name), "name cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+            this.FieldsData = reader ?? throw new ArgumentNullException(nameof(reader), "reader cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             this.m_type = type;
         }
 
@@ -181,13 +182,13 @@ namespace Lucene.Net.Documents
         /// <param name="type"> field type </param>
         /// <exception cref="ArgumentException"> if <see cref="FieldType.IsStored"/> is true, or
         ///         if <see cref="FieldType.IsTokenized"/> is false, or if <see cref="FieldType.IsIndexed"/> is false. </exception>
-        /// <exception cref="ArgumentNullException"> if either the <paramref name="name"/> or <paramref name="type"/>
-        ///         is <c>null</c>, or if the <paramref name="tokenStream"/> is <c>null</c> </exception>
+        /// <exception cref="ArgumentNullException"> if the <paramref name="name"/>, <paramref name="tokenStream"/> or <paramref name="type"/>
+        ///         is <c>null</c></exception>
         public Field(string name, TokenStream tokenStream, FieldType type)
         {
             if (type is null)
             {
-                throw new ArgumentNullException(nameof(type), "type cannot be null");
+                throw new ArgumentNullException(nameof(type), "type cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             if (!type.IsIndexed || !type.IsTokenized)
             {
@@ -198,9 +199,9 @@ namespace Lucene.Net.Documents
                 throw new ArgumentException("TokenStream fields cannot be stored");
             }
 
-            this.m_name = name ?? throw new ArgumentNullException(nameof(name), "name cannot be null");
+            this.m_name = name ?? throw new ArgumentNullException(nameof(name), "name cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             this.FieldsData = null;
-            this.m_tokenStream = tokenStream ?? throw new ArgumentNullException(nameof(tokenStream), "tokenStream cannot be null");
+            this.m_tokenStream = tokenStream ?? throw new ArgumentNullException(nameof(tokenStream), "tokenStream cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             this.m_type = type;
         }
 
@@ -254,7 +255,7 @@ namespace Lucene.Net.Documents
         ///         or the <paramref name="type"/> is <c>null</c> </exception>
         public Field(string name, BytesRef bytes, FieldType type)
         {
-            // LUCENENET specific - rearranged order to take advantage of throw expressions
+            // LUCENENET specific - rearranged order to take advantage of throw expressions and changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             this.m_name = name ?? throw new ArgumentNullException(nameof(name), "name cannot be null");
             this.m_type = type ?? throw new ArgumentNullException(nameof(type), "type cannot be null");
             if (type.IsIndexed)
@@ -278,7 +279,7 @@ namespace Lucene.Net.Documents
         {
             if (type is null)
             {
-                throw new ArgumentNullException(nameof(type), "type cannot be null");
+                throw new ArgumentNullException(nameof(type), "type cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             if (!type.IsStored && !type.IsIndexed)
             {
@@ -290,8 +291,8 @@ namespace Lucene.Net.Documents
             }
 
             this.m_type = type;
-            this.m_name = name ?? throw new ArgumentNullException(nameof(name), "name cannot be null");
-            this.FieldsData = value ?? throw new ArgumentNullException(nameof(value), "value cannot be null");
+            this.m_name = name ?? throw new ArgumentNullException(nameof(name), "name cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+            this.FieldsData = value ?? throw new ArgumentNullException(nameof(value), "value cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>
@@ -918,7 +919,7 @@ namespace Lucene.Net.Documents
                         break;
 
                     default:
-                        throw new Exception("Should never get here");
+                        throw AssertionError.Create("Should never get here");
                 }
                 return internalTokenStream;
             }
@@ -930,7 +931,7 @@ namespace Lucene.Net.Documents
 
             if (!IndexableFieldType.IsTokenized)
             {
-                if (stringValue == null)
+                if (stringValue is null)
                 {
                     throw new ArgumentException("Non-Tokenized Fields must have a String value");
                 }

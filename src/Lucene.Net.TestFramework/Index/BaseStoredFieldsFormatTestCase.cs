@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using J2N.Threading;
 using J2N.Threading.Atomic;
@@ -9,18 +9,20 @@ using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Documents;
 using Lucene.Net.Documents.Extensions;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
+using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -514,7 +516,7 @@ namespace Lucene.Net.Index
             } // rd.Dispose();
             if (ex.Value != null)
             {
-                throw ex.Value;
+                ExceptionDispatchInfo.Capture(ex.Value).Throw(); // LUCENENET: Rethrow to preserve stack details from the other thread
             }
         }
 
@@ -553,21 +555,21 @@ namespace Lucene.Net.Index
                         if (topDocs.TotalHits != 1)
                         {
                             Console.WriteLine(query);
-                            throw new InvalidOperationException("Expected 1 hit, got " + topDocs.TotalHits);
+                            throw IllegalStateException.Create("Expected 1 hit, got " + topDocs.TotalHits);
                         }
                         Document sdoc = rd.Document(topDocs.ScoreDocs[0].Doc);
                         if (sdoc == null || sdoc.Get("fld") == null)
                         {
-                            throw new InvalidOperationException("Could not find document " + q);
+                            throw IllegalStateException.Create("Could not find document " + q);
                         }
                         if (!Convert.ToString(q, CultureInfo.InvariantCulture).Equals(sdoc.Get("fld"), StringComparison.Ordinal))
                         {
-                            throw new InvalidOperationException("Expected " + q + ", but got " + sdoc.Get("fld"));
+                            throw IllegalStateException.Create("Expected " + q + ", but got " + sdoc.Get("fld"));
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsException())
                     {
-                        ex.Value = e;
+                        ex.CompareAndSet(null, e);
                     }
                 }
             }

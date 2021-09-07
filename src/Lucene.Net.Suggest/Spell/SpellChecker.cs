@@ -655,7 +655,7 @@ namespace Lucene.Net.Search.Spell
         {
             if (disposed)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "Spellchecker has been disposed.");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "Spellchecker has been disposed.");
             }
         }
 
@@ -703,7 +703,7 @@ namespace Lucene.Net.Search.Spell
                 if (disposed)
                 {
                     indexSearcher.IndexReader.Dispose();
-                    throw new ObjectDisposedException(this.GetType().FullName, "Spellchecker has been disposed.");
+                    throw AlreadyClosedException.Create(this.GetType().FullName, "Spellchecker has been disposed.");
                 }
                 searcher?.IndexReader?.Dispose();
                 // set the spellindex in the sync block - ensure consistency.

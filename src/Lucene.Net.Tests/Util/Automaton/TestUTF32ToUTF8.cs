@@ -1,7 +1,8 @@
-using J2N;
+﻿using J2N;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -270,7 +271,7 @@ namespace Lucene.Net.Util.Automaton
                     {
                         s = UnicodeUtil.NewString(codepoints, 0, codepoints.Length);
                     }
-                    catch (Exception /*e*/)
+                    catch (Exception e) when (e.IsException())
                     {
                         Console.WriteLine(codepoints.Length + " codepoints:");
                         for (int j = 0; j < codepoints.Length; j++)

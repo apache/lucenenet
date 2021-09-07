@@ -87,9 +87,9 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                         }
                         ts.End();
                     }
-                    catch (IOException ioe)
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
-                        throw new ParserException("IoException parsing stop words list in "
+                        throw new ParserException("IOException parsing stop words list in "
                             + GetType().Name + ":" + ioe.Message);
                     }
                     finally

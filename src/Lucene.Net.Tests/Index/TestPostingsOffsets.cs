@@ -1,9 +1,10 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -466,9 +467,7 @@ namespace Lucene.Net.Index
                 CheckTokens(new Token[] { MakeToken("foo", 1, -1, -1) });
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (ArgumentException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 //expected
             }
@@ -482,9 +481,7 @@ namespace Lucene.Net.Index
                 CheckTokens(new Token[] { MakeToken("foo", 1, 1, 0) });
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (ArgumentException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 //expected
             }
@@ -498,9 +495,7 @@ namespace Lucene.Net.Index
                 CheckTokens(new Token[] { MakeToken("foo", 1, 0, 3), MakeToken("foo", 1, 4, 7), MakeToken("foo", 0, 3, 6) });
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (ArgumentException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 // expected
             }

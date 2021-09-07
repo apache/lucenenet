@@ -163,9 +163,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 // a match!
                 return scorer.GetScore();
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
+                throw RuntimeException.Create("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
             }
         }
 
@@ -204,9 +204,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 // a match!
                 return true;
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
+                throw RuntimeException.Create("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
             }
         }
 
@@ -216,9 +216,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return Exists(doc) ? scorer.GetScore() : (float?)null;
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
+                throw RuntimeException.Create("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
             }
         }
 
@@ -268,9 +268,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     mutableValue.Value = scorer.GetScore();
                     mutableValue.Exists = true;
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
+                    throw RuntimeException.Create("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
                 }
             });
         }

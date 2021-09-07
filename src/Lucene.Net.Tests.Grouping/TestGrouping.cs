@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -187,7 +187,7 @@ namespace Lucene.Net.Search.Grouping
             if (Random.nextBoolean())
             {
                 ValueSource vs = new BytesRefFieldSource(groupField);
-                selected = new FunctionFirstPassGroupingCollector(vs, new Hashtable(), groupSort, topDocs);
+                selected = new FunctionFirstPassGroupingCollector<MutableValue>(vs, new Hashtable(), groupSort, topDocs);        // LUCENENET Specific type for generic must be specified.
             }
             else
             {
@@ -205,7 +205,7 @@ namespace Lucene.Net.Search.Grouping
             if (typeof(TermFirstPassGroupingCollector).IsAssignableFrom(firstPassGroupingCollector.GetType()))
             {
                 ValueSource vs = new BytesRefFieldSource(groupField);
-                return new FunctionFirstPassGroupingCollector(vs, new Hashtable(), groupSort, topDocs)
+                return new FunctionFirstPassGroupingCollector<MutableValue>(vs, new Hashtable(), groupSort, topDocs)            // LUCENENET Specific type for generic must be specified.
                     as IAbstractFirstPassGroupingCollector<T>;
             }
             else
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 ValueSource vs = new BytesRefFieldSource(groupField);
                 var searchGroups = firstPassGroupingCollector.GetTopGroups(groupOffset, fillSortFields);
-                return (IAbstractSecondPassGroupingCollector<T>)new FunctionSecondPassGroupingCollector(searchGroups as IEnumerable<ISearchGroup<MutableValue>>, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields, vs, new Hashtable());
+                return (IAbstractSecondPassGroupingCollector<T>)new FunctionSecondPassGroupingCollector<MutableValue>(searchGroups as IEnumerable<ISearchGroup<MutableValue>>, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields, vs, new Hashtable());        // LUCENENET Specific type for generic must be specified.
             }
         }
 
@@ -277,7 +277,7 @@ namespace Lucene.Net.Search.Grouping
                     mvalSearchGroups.Add(sg);
                 }
 
-                return new FunctionSecondPassGroupingCollector(mvalSearchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields, vs, new Hashtable())
+                return new FunctionSecondPassGroupingCollector<MutableValue>(mvalSearchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields, vs, new Hashtable())        // LUCENENET Specific type for generic must be specified.
                     as IAbstractSecondPassGroupingCollector<T>;
             }
         }
@@ -292,7 +292,7 @@ namespace Lucene.Net.Search.Grouping
             else
             {
                 ValueSource vs = new BytesRefFieldSource(groupField);
-                return new FunctionAllGroupsCollector(vs, new Hashtable()) as IAbstractAllGroupsCollector<T>;
+                return new FunctionAllGroupsCollector<MutableValue>(vs, new Hashtable()) as IAbstractAllGroupsCollector<T>;        // LUCENENET Specific type for generic must be specified.
             }
         }
 
@@ -338,11 +338,11 @@ namespace Lucene.Net.Search.Grouping
 
                 return (IEnumerable<ISearchGroup<BytesRef>>)c.GetTopGroups(groupOffset, fillFields);
             }
-            else if (typeof(FunctionFirstPassGroupingCollector).IsAssignableFrom(c.GetType()))
+            else if (typeof(FunctionFirstPassGroupingCollector<MutableValue>).IsAssignableFrom(c.GetType()))        // LUCENENET Specific type for generic must be specified.
             {
                 // LUCENENET NOTE: This is IEnumerable instead of ICollection because it 
                 // needs to be covariant to mimic the wildcard generics in Java
-                IEnumerable<ISearchGroup<MutableValue>> mutableValueGroups = ((FunctionFirstPassGroupingCollector)c).GetTopGroups(groupOffset, fillFields);
+                IEnumerable<ISearchGroup<MutableValue>> mutableValueGroups = ((FunctionFirstPassGroupingCollector<MutableValue>)c).GetTopGroups(groupOffset, fillFields);        // LUCENENET Specific type for generic must be specified.
                 if (mutableValueGroups == null)
                 {
                     return null;
@@ -368,9 +368,9 @@ namespace Lucene.Net.Search.Grouping
             {
                 return ((TermSecondPassGroupingCollector)c).GetTopGroups(withinGroupOffset);
             }
-            else if (c.GetType().IsAssignableFrom(typeof(FunctionSecondPassGroupingCollector)))
+            else if (c.GetType().IsAssignableFrom(typeof(FunctionSecondPassGroupingCollector<MutableValue>)))        // LUCENENET Specific type for generic must be specified.
             {
-                ITopGroups<MutableValue> mvalTopGroups = ((FunctionSecondPassGroupingCollector)c).GetTopGroups(withinGroupOffset);
+                ITopGroups<MutableValue> mvalTopGroups = ((FunctionSecondPassGroupingCollector<MutableValue>)c).GetTopGroups(withinGroupOffset);        // LUCENENET Specific type for generic must be specified.
                 List<GroupDocs<BytesRef>> groups = new List<GroupDocs<BytesRef>>(mvalTopGroups.Groups.Length);
                 foreach (GroupDocs<MutableValue> mvalGd in mvalTopGroups.Groups)
                 {

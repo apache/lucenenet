@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -64,11 +64,9 @@ namespace Lucene.Net.Util
                 assertEquals("TEST-IO-EXCEPTION-1", e1.GetSuppressed()[0].Message);
                 assertEquals("TEST-IO-EXCEPTION-2", e1.GetSuppressed()[1].Message);
             }
-#pragma warning disable 168
-            catch (Exception e2)
-#pragma warning restore 168
+            catch (Exception e2) when (e2.IsIOException())
             {
-                Assert.Fail("Exception should not be thrown here");
+                Assert.Fail("IOException should not be thrown here");
             }
 
             // test without prior exception
@@ -82,7 +80,7 @@ namespace Lucene.Net.Util
             {
                 fail("TestException should not be thrown here");
             }
-            catch (IOException e2)
+            catch (Exception e2) when (e2.IsIOException())
             {
                 assertEquals("TEST-IO-EXCEPTION-1", e2.Message);
                 assertEquals(1, e2.GetSuppressed().Length);

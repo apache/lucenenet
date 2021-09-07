@@ -163,7 +163,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             {
                 if (b_off != 0 || b_len != bytes.Length)
                 {
-                    throw new InvalidOperationException("Not supported if byte[] needs to be recreated.");
+                    throw IllegalStateException.Create("Not supported if byte[] needs to be recreated.");
                 }
             }
             else

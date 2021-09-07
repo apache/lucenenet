@@ -2,6 +2,7 @@
 using J2N.Text;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -94,9 +95,7 @@ namespace Lucene.Net.Util
                     NumericUtils.PrefixCodedToInt32(prefixVals[i]);
                     Assert.Fail("decoding a prefix coded long value as int should fail");
                 }
-#pragma warning disable 168
-                catch (FormatException e)
-#pragma warning restore 168
+                catch (Exception e) when (e.IsNumberFormatException())
                 {
                     // worked
                 }
@@ -142,9 +141,7 @@ namespace Lucene.Net.Util
                     NumericUtils.PrefixCodedToInt64(prefixVals[i]);
                     Assert.Fail("decoding a prefix coded int value as long should fail");
                 }
-#pragma warning disable 168
-                catch (FormatException e)
-#pragma warning restore 168
+                catch (Exception e) when (e.IsNumberFormatException())
                 {
                     // worked
                 }
@@ -275,7 +272,7 @@ namespace Lucene.Net.Util
             {
                 // after flipping all bits in the range, the cardinality should be zero
                 bits.Flip(0, upper - lower + 1);
-                Assert.AreEqual(0, bits.Cardinality(), "The sub-range concenated should match the whole range");
+                Assert.AreEqual(0, bits.Cardinality, "The sub-range concenated should match the whole range");
             }
         }
 
@@ -468,7 +465,7 @@ namespace Lucene.Net.Util
             {
                 // after flipping all bits in the range, the cardinality should be zero
                 bits.Flip(0, upper - lower + 1);
-                Assert.AreEqual(0, bits.Cardinality(), "The sub-range concenated should match the whole range");
+                Assert.AreEqual(0, bits.Cardinality, "The sub-range concenated should match the whole range");
             }
         }
 

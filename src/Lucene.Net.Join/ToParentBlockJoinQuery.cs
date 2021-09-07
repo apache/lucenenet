@@ -1,12 +1,11 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
-using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 
-namespace Lucene.Net.Join
+namespace Lucene.Net.Search.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -174,7 +173,7 @@ namespace Lucene.Net.Join
                 }
                 if (!(parents is FixedBitSet))
                 {
-                    throw new InvalidOperationException("parentFilter must return FixedBitSet; got " + parents);
+                    throw IllegalStateException.Create("parentFilter must return FixedBitSet; got " + parents);
                 }
 
                 return new BlockJoinScorer(this, childScorer, (FixedBitSet)parents, firstChildDoc, scoreMode, acceptDocs);
@@ -245,7 +244,7 @@ namespace Lucene.Net.Join
             {
                 if (_scoreMode == ScoreMode.None)
                 {
-                    throw new InvalidOperationException("ScoreMode is None; you must pass trackScores=false to ToParentBlockJoinCollector");
+                    throw IllegalStateException.Create("ScoreMode is None; you must pass trackScores=false to ToParentBlockJoinCollector");
                 }
                 float[] ret = _pendingChildScores;
                 if (other == null)
@@ -280,7 +279,7 @@ namespace Lucene.Net.Join
                     // orthogonal:
                     if (_nextChildDoc == _parentDoc)
                     {
-                        throw new InvalidOperationException("child query must only match non-parent docs, but parent docID=" + _nextChildDoc + " matched childScorer=" + _childScorer.GetType());
+                        throw IllegalStateException.Create("child query must only match non-parent docs, but parent docID=" + _nextChildDoc + " matched childScorer=" + _childScorer.GetType());
                     }
 
                     //System.out.println("  parentDoc=" + parentDoc);
@@ -300,7 +299,7 @@ namespace Lucene.Net.Join
                         // orthogonal:
                         if (_nextChildDoc == _parentDoc)
                         {
-                            throw new InvalidOperationException("child query must only match non-parent docs, but parent docID=" + _nextChildDoc + " matched childScorer=" + _childScorer.GetType());
+                            throw IllegalStateException.Create("child query must only match non-parent docs, but parent docID=" + _nextChildDoc + " matched childScorer=" + _childScorer.GetType());
                         }
 
                         continue;
@@ -347,7 +346,7 @@ namespace Lucene.Net.Join
                     // orthogonal:
                     if (_nextChildDoc == _parentDoc)
                     {
-                        throw new InvalidOperationException("child query must only match non-parent docs, but parent docID=" + _nextChildDoc + " matched childScorer=" + _childScorer.GetType());
+                        throw IllegalStateException.Create("child query must only match non-parent docs, but parent docID=" + _nextChildDoc + " matched childScorer=" + _childScorer.GetType());
                     }
 
                     switch (_scoreMode)
@@ -414,7 +413,7 @@ namespace Lucene.Net.Join
                 // Parent & child docs are supposed to be orthogonal:
                 if (_nextChildDoc == _prevParentDoc)
                 {
-                    throw new InvalidOperationException("child query must only match non-parent docs, but parent docID=" + _nextChildDoc + " matched childScorer=" + _childScorer.GetType());
+                    throw IllegalStateException.Create("child query must only match non-parent docs, but parent docID=" + _nextChildDoc + " matched childScorer=" + _childScorer.GetType());
                 }
 
                 int nd = NextDoc();

@@ -28,6 +28,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
     {
         [Test]
         [Slow]
+        [Nightly] // LUCENENET: Since this is more of a benchmark than a test, moving to Nightly to keep us from buring testing time on it
         public void Test()
         {
             int times = 10000000;

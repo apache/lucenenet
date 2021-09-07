@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -152,11 +152,11 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override void StartTerm()
         {
-            freqStart = freqOut.GetFilePointer();
+            freqStart = freqOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             //if (DEBUG) System.out.println("SPW: startTerm freqOut.fp=" + freqStart);
             if (proxOut != null)
             {
-                proxStart = proxOut.GetFilePointer();
+                proxStart = proxOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
             // force first payload to write its length
             lastPayloadLength = -1;

@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Index;
 using NUnit.Framework;
 using System;
+using System.Globalization;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search.VectorHighlight
@@ -41,9 +42,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 sflb.CreateFieldFragList(fpl(new TermQuery(new Term(F, "a")), "b c d"), sflb.minFragCharSize - 1);
                 fail("IllegalArgumentException must be thrown");
             }
-#pragma warning disable 168
-            catch (ArgumentException expected)
-#pragma warning restore 168
+            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             {
             }
         }
@@ -54,7 +53,7 @@ namespace Lucene.Net.Search.VectorHighlight
             SimpleFragListBuilder sflb = new SimpleFragListBuilder();
             FieldFragList ffl = sflb.CreateFieldFragList(fpl(new TermQuery(new Term(F, "abcdefghijklmnopqrs")), "abcdefghijklmnopqrs"), sflb.minFragCharSize);
             assertEquals(1, ffl.FragInfos.size());
-            assertEquals("subInfos=(abcdefghijklmnopqrs((0,19)))/1.0(0,19)", ffl.FragInfos[0].toString());
+            assertEquals("subInfos=(abcdefghijklmnopqrs((0,19)))/1.0(0,19)", ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -68,8 +67,8 @@ namespace Lucene.Net.Search.VectorHighlight
 
             FieldFragList ffl = sflb.CreateFieldFragList(fpl(phraseQuery, "abcdefgh   jklmnopqrs"), sflb.minFragCharSize);
             assertEquals(1, ffl.FragInfos.size());
-            if (Verbose) Console.WriteLine(ffl.FragInfos[0].toString());
-            assertEquals("subInfos=(abcdefghjklmnopqrs((0,21)))/1.0(0,21)", ffl.FragInfos[0].toString());
+            if (Verbose) Console.WriteLine(ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
+            assertEquals("subInfos=(abcdefghjklmnopqrs((0,21)))/1.0(0,21)", ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -78,7 +77,7 @@ namespace Lucene.Net.Search.VectorHighlight
             SimpleFragListBuilder sflb = new SimpleFragListBuilder();
             FieldFragList ffl = sflb.CreateFieldFragList(fpl(new TermQuery(new Term(F, "a")), "a"), 100);
             assertEquals(1, ffl.FragInfos.size());
-            assertEquals("subInfos=(a((0,1)))/1.0(0,100)", ffl.FragInfos[0].toString());
+            assertEquals("subInfos=(a((0,1)))/1.0(0,100)", ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -87,15 +86,15 @@ namespace Lucene.Net.Search.VectorHighlight
             SimpleFragListBuilder sflb = new SimpleFragListBuilder();
             FieldFragList ffl = sflb.CreateFieldFragList(fpl(new TermQuery(new Term(F, "a")), "a a"), 100);
             assertEquals(1, ffl.FragInfos.size());
-            assertEquals("subInfos=(a((0,1))a((2,3)))/2.0(0,100)", ffl.FragInfos[0].toString());
+            assertEquals("subInfos=(a((0,1))a((2,3)))/2.0(0,100)", ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
 
             ffl = sflb.CreateFieldFragList(fpl(new TermQuery(new Term(F, "a")), "a b b b b b b b b a"), 20);
             assertEquals(1, ffl.FragInfos.size());
-            assertEquals("subInfos=(a((0,1))a((18,19)))/2.0(0,20)", ffl.FragInfos[0].toString());
+            assertEquals("subInfos=(a((0,1))a((18,19)))/2.0(0,20)", ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
 
             ffl = sflb.CreateFieldFragList(fpl(new TermQuery(new Term(F, "a")), "b b b b a b b b b a"), 20);
             assertEquals(1, ffl.FragInfos.size());
-            assertEquals("subInfos=(a((8,9))a((18,19)))/2.0(4,24)", ffl.FragInfos[0].toString());
+            assertEquals("subInfos=(a((8,9))a((18,19)))/2.0(4,24)", ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -104,18 +103,18 @@ namespace Lucene.Net.Search.VectorHighlight
             SimpleFragListBuilder sflb = new SimpleFragListBuilder();
             FieldFragList ffl = sflb.CreateFieldFragList(fpl(new TermQuery(new Term(F, "a")), "a b b b b b b b b b b b b b a"), 20);
             assertEquals(2, ffl.FragInfos.size());
-            assertEquals("subInfos=(a((0,1)))/1.0(0,20)", ffl.FragInfos[0].toString());
-            assertEquals("subInfos=(a((28,29)))/1.0(20,40)", ffl.FragInfos[1].toString());
+            assertEquals("subInfos=(a((0,1)))/1.0(0,20)", ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
+            assertEquals("subInfos=(a((28,29)))/1.0(20,40)", ffl.FragInfos[1].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
 
             ffl = sflb.CreateFieldFragList(fpl(new TermQuery(new Term(F, "a")), "a b b b b b b b b b b b b a"), 20);
             assertEquals(2, ffl.FragInfos.size());
-            assertEquals("subInfos=(a((0,1)))/1.0(0,20)", ffl.FragInfos[0].toString());
-            assertEquals("subInfos=(a((26,27)))/1.0(20,40)", ffl.FragInfos[1].toString());
+            assertEquals("subInfos=(a((0,1)))/1.0(0,20)", ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
+            assertEquals("subInfos=(a((26,27)))/1.0(20,40)", ffl.FragInfos[1].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
 
             ffl = sflb.CreateFieldFragList(fpl(new TermQuery(new Term(F, "a")), "a b b b b b b b b b a"), 20);
             assertEquals(2, ffl.FragInfos.size());
-            assertEquals("subInfos=(a((0,1)))/1.0(0,20)", ffl.FragInfos[0].toString());
-            assertEquals("subInfos=(a((20,21)))/1.0(20,40)", ffl.FragInfos[1].toString());
+            assertEquals("subInfos=(a((0,1)))/1.0(0,20)", ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
+            assertEquals("subInfos=(a((20,21)))/1.0(20,40)", ffl.FragInfos[1].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -132,11 +131,11 @@ namespace Lucene.Net.Search.VectorHighlight
 
             ffl = sflb.CreateFieldFragList(fpl(booleanQuery, "d b c"), 20);
             assertEquals(1, ffl.FragInfos.size());
-            assertEquals("subInfos=(b((2,3)))/1.0(0,20)", ffl.FragInfos[0].toString());
+            assertEquals("subInfos=(b((2,3)))/1.0(0,20)", ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
 
             ffl = sflb.CreateFieldFragList(fpl(booleanQuery, "a b c"), 20);
             assertEquals(1, ffl.FragInfos.size());
-            assertEquals("subInfos=(a((0,1))b((2,3)))/2.0(0,20)", ffl.FragInfos[0].toString());
+            assertEquals("subInfos=(a((0,1))b((2,3)))/2.0(0,20)", ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -156,7 +155,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
             ffl = sflb.CreateFieldFragList(fpl(phraseQuery, "a b c"), 20);
             assertEquals(1, ffl.FragInfos.size());
-            assertEquals("subInfos=(ab((0,3)))/1.0(0,20)", ffl.FragInfos[0].toString());
+            assertEquals("subInfos=(ab((0,3)))/1.0(0,20)", ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -171,7 +170,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
             FieldFragList ffl = sflb.CreateFieldFragList(fpl(phraseQuery, "a c b"), 20);
             assertEquals(1, ffl.FragInfos.size());
-            assertEquals("subInfos=(ab((0,1)(4,5)))/1.0(0,20)", ffl.FragInfos[0].toString());
+            assertEquals("subInfos=(ab((0,1)(4,5)))/1.0(0,20)", ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         private FieldPhraseList fpl(Query query, String indexValue)
@@ -193,7 +192,7 @@ namespace Lucene.Net.Search.VectorHighlight
             SimpleFragListBuilder sflb = new SimpleFragListBuilder();
             FieldFragList ffl = sflb.CreateFieldFragList(fpl, 100);
             assertEquals(1, ffl.FragInfos.size());
-            assertEquals("subInfos=(d((9,10)))/1.0(0,100)", ffl.FragInfos[0].toString());
+            assertEquals("subInfos=(d((9,10)))/1.0(0,100)", ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -207,7 +206,7 @@ namespace Lucene.Net.Search.VectorHighlight
             SimpleFragListBuilder sflb = new SimpleFragListBuilder();
             FieldFragList ffl = sflb.CreateFieldFragList(fpl, 100);
             assertEquals(1, ffl.FragInfos.size());
-            assertEquals("subInfos=(searchengines((102,116))searchengines((157,171)))/2.0(87,187)", ffl.FragInfos[0].toString());
+            assertEquals("subInfos=(searchengines((102,116))searchengines((157,171)))/2.0(87,187)", ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
         [Test]
@@ -221,7 +220,7 @@ namespace Lucene.Net.Search.VectorHighlight
             SimpleFragListBuilder sflb = new SimpleFragListBuilder();
             FieldFragList ffl = sflb.CreateFieldFragList(fpl, 100);
             assertEquals(1, ffl.FragInfos.size());
-            assertEquals("subInfos=(sppeeeed((88,93)))/1.0(41,141)", ffl.FragInfos[0].toString());
+            assertEquals("subInfos=(sppeeeed((88,93)))/1.0(41,141)", ffl.FragInfos[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
     }
 }

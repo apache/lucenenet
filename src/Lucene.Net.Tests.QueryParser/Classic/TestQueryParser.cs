@@ -181,7 +181,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     {
                         fms = float.Parse(fuzzySlop.Image.Substring(1, fuzzySlop.Image.Length - 2), CultureInfo.InvariantCulture);
                     }
-                    catch (Exception /*ignored*/) { }
+                    catch (Exception /*ignored*/) { } // LUCENENET: No need to call the IsException() extension method here because we are dealing only with a .NET platform method
                     float value = float.Parse(termImage, CultureInfo.InvariantCulture);
                     return GetRangeQuery(qfield, (value - fms / 2.0f).ToString(CultureInfo.InvariantCulture), (value + fms / 2.0f).ToString(CultureInfo.InvariantCulture), true, true);
                 }
@@ -233,37 +233,37 @@ namespace Lucene.Net.QueryParsers.Classic
             TermQuery tq;
 
             tq = (TermQuery)qp.Parse("foo:zoo*");
-            assertEquals("zoo", tq.Term.Text());
+            assertEquals("zoo", tq.Term.Text);
             assertEquals(2, qp.type[0]);
 
             tq = (TermQuery)qp.Parse("foo:zoo*^2");
-            assertEquals("zoo", tq.Term.Text());
+            assertEquals("zoo", tq.Term.Text);
             assertEquals(2, qp.type[0]);
             assertEquals(tq.Boost, 2, 0);
 
             tq = (TermQuery)qp.Parse("foo:*");
-            assertEquals("*", tq.Term.Text());
+            assertEquals("*", tq.Term.Text);
             assertEquals(1, qp.type[0]); // could be a valid prefix query in the future too
 
             tq = (TermQuery)qp.Parse("foo:*^2");
-            assertEquals("*", tq.Term.Text());
+            assertEquals("*", tq.Term.Text);
             assertEquals(1, qp.type[0]);
             assertEquals(tq.Boost, 2, 0);
 
             tq = (TermQuery)qp.Parse("*:foo");
             assertEquals("*", tq.Term.Field);
-            assertEquals("foo", tq.Term.Text());
+            assertEquals("foo", tq.Term.Text);
             assertEquals(3, qp.type[0]);
 
             tq = (TermQuery)qp.Parse("*:*");
             assertEquals("*", tq.Term.Field);
-            assertEquals("*", tq.Term.Text());
+            assertEquals("*", tq.Term.Text);
             assertEquals(1, qp.type[0]); // could be handled as a prefix query in the
             // future
 
             tq = (TermQuery)qp.Parse("(*:*)");
             assertEquals("*", tq.Term.Field);
-            assertEquals("*", tq.Term.Text());
+            assertEquals("*", tq.Term.Text);
             assertEquals(1, qp.type[0]);
         }
 
@@ -276,7 +276,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     MockTokenizer.WHITESPACE, false)).Parse("a?t");
                 fail("Wildcard queries should not be allowed");
             }
-            catch (ParseException /*expected*/)
+            catch (Lucene.Net.QueryParsers.Classic.ParseException /*expected*/) // LUCENENET: Classic QueryParser has its own ParseException that is different than the one in Support
             {
                 // expected exception
             }
@@ -291,7 +291,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     MockTokenizer.WHITESPACE, false)).Parse("xunit~");
                 fail("Fuzzy queries should not be allowed");
             }
-            catch (ParseException /*expected*/)
+            catch (Lucene.Net.QueryParsers.Classic.ParseException /*expected*/) // LUCENENET: Classic QueryParser has its own ParseException that is different than the one in Support
             {
                 // expected exception
             }

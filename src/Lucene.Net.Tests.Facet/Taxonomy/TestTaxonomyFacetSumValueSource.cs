@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -254,7 +255,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 facets.GetSpecificValue("a");
                 fail("should have hit exc");
             }
-            catch (ArgumentException)
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -264,7 +265,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 facets.GetTopChildren(10, "a");
                 fail("should have hit exc");
             }
-            catch (ArgumentException)
+            catch (Exception iae) when (iae.IsIllegalArgumentException())
             {
                 // expected
             }
@@ -410,9 +411,9 @@ namespace Lucene.Net.Facet.Taxonomy
                     {
                         return scorer.GetScore();
                     }
-                    catch (IOException exception)
+                    catch (Exception exception) when (exception.IsIOException())
                     {
-                        throw new Exception(exception.ToString(), exception);
+                        throw RuntimeException.Create(exception);
                     }
                 }
             }

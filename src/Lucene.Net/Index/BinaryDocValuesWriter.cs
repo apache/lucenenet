@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -73,11 +73,11 @@ namespace Lucene.Net.Index
         {
             if (docID < addedValues)
             {
-                throw new ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
+                throw new ArgumentOutOfRangeException(nameof(docID), "DocValuesField \"" + fieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
-            if (value == null)
+            if (value is null)
             {
-                throw new ArgumentException("field=\"" + fieldInfo.Name + "\": null value not allowed");
+                throw new ArgumentNullException("field=\"" + fieldInfo.Name + "\": null value not allowed"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             if (value.Length > MAX_LENGTH)
             {
@@ -96,10 +96,10 @@ namespace Lucene.Net.Index
             {
                 bytesOut.WriteBytes(value.Bytes, value.Offset, value.Length);
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 // Should never happen!
-                throw new Exception(ioe.ToString(), ioe);
+                throw RuntimeException.Create(ioe);
             }
             docsWithField = FixedBitSet.EnsureCapacity(docsWithField, docID);
             docsWithField.Set(docID);
@@ -158,10 +158,10 @@ namespace Lucene.Net.Index
                     {
                         bytesIterator.ReadBytes(value.Bytes, value.Offset, value.Length);
                     }
-                    catch (IOException ioe)
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
                         // Should never happen!
-                        throw new Exception(ioe.ToString(), ioe);
+                        throw RuntimeException.Create(ioe);
                     }
 
                     if (docsWithField.Get(upto))

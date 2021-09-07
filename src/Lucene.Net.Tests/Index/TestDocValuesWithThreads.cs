@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
@@ -10,6 +10,7 @@ using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using RandomizedTesting.Generators;
 
 namespace Lucene.Net.Index
 {
@@ -173,9 +174,9 @@ namespace Lucene.Net.Index
                         Assert.AreEqual(sorted[docID], scratch2);
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception(e.Message, e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -249,7 +250,7 @@ namespace Lucene.Net.Index
 
             AtomicReader sr = GetOnlySegmentReader(r);
 
-            long END_TIME = Environment.TickCount + (TestNightly ? 30 : 1);
+            long END_TIME = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + (TestNightly ? 30 : 1); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             int NUM_THREADS = TestUtil.NextInt32(LuceneTestCase.Random, 1, 10);
             ThreadJob[] threads = new ThreadJob[NUM_THREADS];
@@ -293,11 +294,11 @@ namespace Lucene.Net.Index
                     docIDToID = sr.GetNumericDocValues("id");
                     Assert.IsNotNull(stringDVDirect);
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw RuntimeException.Create(ioe);
                 }
-                while (Environment.TickCount < endTime)
+                while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < endTime) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 {
                     SortedDocValues source;
                     source = stringDVDirect;

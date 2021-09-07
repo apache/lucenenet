@@ -69,9 +69,9 @@ namespace Lucene.Net.Spatial.Serialized
                 //this is a hack to avoid redundant byte array copying by byteStream.toByteArray()
                 byteStream.WriteTo(new OutputStreamAnonymousClass(bytesRef));
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
             this.indexLastBufSize = bytesRef.Length;//cache heuristic
             return new Field[] { new BinaryDocValuesField(FieldName, bytesRef) };
@@ -102,7 +102,7 @@ namespace Lucene.Net.Spatial.Serialized
 
         public override ConstantScoreQuery MakeQuery(SpatialArgs args)
         {
-            throw new NotSupportedException("This strategy can't return a query that operates" +
+            throw UnsupportedOperationException.Create("This strategy can't return a query that operates" +
                 " efficiently. Instead try a Filter or ValueSource.");
         }
 
@@ -162,7 +162,7 @@ namespace Lucene.Net.Spatial.Serialized
 
                 public override DocIdSetIterator GetIterator()
                 {
-                    throw new NotSupportedException(
+                    throw UnsupportedOperationException.Create(
                         "Iteration is too slow; instead try FilteredQuery.QUERY_FIRST_FILTER_STRATEGY");
                         //Note that if you're truly bent on doing this, then see FunctionValues.getRangeScorer
                 }
@@ -298,9 +298,9 @@ namespace Lucene.Net.Spatial.Serialized
                     {
                         return outerInstance.binaryCodec.ReadShape(dataInput);
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
                 }
 

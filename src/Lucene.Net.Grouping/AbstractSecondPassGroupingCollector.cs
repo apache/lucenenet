@@ -54,9 +54,9 @@ namespace Lucene.Net.Search.Grouping
         {
 
             //System.out.println("SP init");
-            if (groups.Count() == 0)
+            if (!groups.Any()) // LUCENENET TODO: Change back to .Count if/when IEnumerable<T> is changed to ICollection<T> or IReadOnlyCollection<T>
             {
-                throw new ArgumentException("no groups to collect (groups.size() is 0)");
+                throw new ArgumentException("no groups to collect (groups.Count is 0)");
             }
 
             this.groupSort = groupSort;
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search.Grouping
             GroupDocs<TGroupValue>[] groupDocsResult = new GroupDocs<TGroupValue>[groups.Count()];
 
             int groupIDX = 0;
-            float maxScore = float.MinValue;
+            float maxScore = float.Epsilon; // LUCENENET: Epsilon in .NET is the same as MIN_VALUE in Java
             foreach (var group in groups)
             {
                 AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> groupDocs = m_groupMap[group.GroupValue];

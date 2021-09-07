@@ -270,7 +270,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 bool overlap = true;
                 for (int j = i; j < src.Length; j++)
                 {
-                    if ((j - i) < dest.Length && !src[j].Text().Equals(dest[j - i].Text(), StringComparison.Ordinal))
+                    if ((j - i) < dest.Length && !src[j].Text.Equals(dest[j - i].Text, StringComparison.Ordinal))
                     {
                         overlap = false;
                         break;
@@ -283,7 +283,7 @@ namespace Lucene.Net.Search.VectorHighlight
                         pq.Add(srcTerm);
                     for (int k = src.Length - i; k < dest.Length; k++)
                     {
-                        pq.Add(new Term(src[0].Field, dest[k].Text()));
+                        pq.Add(new Term(src[0].Field, dest[k].Text));
                     }
                     pq.Slop = slop;
                     pq.Boost = boost;
@@ -323,7 +323,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 return multiTermQuery.Field;
             }
             else
-                throw new Exception("query \"" + query.ToString() + "\" must be flatten first.");
+                throw RuntimeException.Create("query \"" + query.ToString() + "\" must be flatten first.");
         }
 
         /// <summary>
@@ -354,22 +354,22 @@ namespace Lucene.Net.Search.VectorHighlight
             {
                 ISet<string> termSet = GetTermSet(query);
                 if (query is TermQuery termQuery)
-                    termSet.Add(termQuery.Term.Text());
+                    termSet.Add(termQuery.Term.Text);
                 else if (query is PhraseQuery phraseQuery)
                 {
                     foreach (Term term in phraseQuery.GetTerms())
-                        termSet.Add(term.Text());
+                        termSet.Add(term.Text);
                 }
                 else if (query is MultiTermQuery && reader != null)
                 {
                     BooleanQuery mtqTerms = (BooleanQuery)query.Rewrite(reader);
                     foreach (BooleanClause clause in mtqTerms.GetClauses())
                     {
-                        termSet.Add(((TermQuery)clause.Query).Term.Text());
+                        termSet.Add(((TermQuery)clause.Query).Term.Text);
                     }
                 }
                 else
-                    throw new Exception("query \"" + query.ToString() + "\" must be flatten first.");
+                    throw RuntimeException.Create("query \"" + query.ToString() + "\" must be flatten first.");
             }
         }
 
@@ -438,7 +438,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
             internal void AddTerm(Term term, float boost)
             {
-                QueryPhraseMap map = GetOrNewMap(subMap, term.Text());
+                QueryPhraseMap map = GetOrNewMap(subMap, term.Text);
                 map.MarkTerminal(boost);
             }
 
@@ -465,13 +465,13 @@ namespace Lucene.Net.Search.VectorHighlight
                     QueryPhraseMap qpm = null;
                     foreach (Term term in terms)
                     {
-                        qpm = GetOrNewMap(map, term.Text());
+                        qpm = GetOrNewMap(map, term.Text);
                         map = qpm.subMap;
                     }
                     qpm.MarkTerminal(pq.Slop, pq.Boost);
                 }
                 else
-                    throw new Exception("query \"" + query.ToString() + "\" must be flatten first.");
+                    throw RuntimeException.Create("query \"" + query.ToString() + "\" must be flatten first.");
             }
 
             public virtual QueryPhraseMap GetTermMap(string term)

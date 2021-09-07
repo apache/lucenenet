@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
@@ -213,9 +213,9 @@ namespace Lucene.Net.Codecs
             {
                 throw new IOException("checksum failed (hardware problem?) : expected=" + expectedChecksum.ToString("x") + " actual=" + actualChecksum.ToString("x") + " (resource=" + @in + ")");
             }
-            if (@in.GetFilePointer() != @in.Length)
+            if (@in.Position != @in.Length) // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             {
-                throw new IOException("did not read all bytes from file: read " + @in.GetFilePointer() + " vs size " + @in.Length + " (resource: " + @in + ")");
+                throw new IOException("did not read all bytes from file: read " + @in.Position + " vs size " + @in.Length + " (resource: " + @in + ")"); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
             return actualChecksum;
         }
@@ -253,9 +253,9 @@ namespace Lucene.Net.Codecs
         [Obsolete("Use CheckFooter(ChecksumIndexInput) instead, this should only used for files without checksums.")]
         public static void CheckEOF(IndexInput @in)
         {
-            if (@in.GetFilePointer() != @in.Length)
+            if (@in.Position != @in.Length) // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             {
-                throw new IOException("did not read all bytes from file: read " + @in.GetFilePointer() + " vs size " + @in.Length + " (resource: " + @in + ")");
+                throw new IOException("did not read all bytes from file: read " + @in.Position + " vs size " + @in.Length + " (resource: " + @in + ")");
             }
         }
 
@@ -270,7 +270,7 @@ namespace Lucene.Net.Codecs
             IndexInput clone = (IndexInput)input.Clone();
             clone.Seek(0);
             ChecksumIndexInput @in = new BufferedChecksumIndexInput(clone);
-            if (Debugging.AssertsEnabled) Debugging.Assert(@in.GetFilePointer() == 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(@in.Position == 0); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             @in.Seek(@in.Length - FooterLength());
             return CheckFooter(@in);
         }

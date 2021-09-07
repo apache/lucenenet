@@ -65,7 +65,7 @@ namespace Lucene.Net.Search.Highlight
                     var idf = (float)(Math.Log((float)totalNumDocs / (double)(docFreq + 1)) + 1.0);
                     t.Weight *= idf;
                 }
-                catch (IOException)
+                catch (Exception e) when (e.IsIOException())
                 {
                     //ignore 
                 }
@@ -117,12 +117,12 @@ namespace Lucene.Net.Search.Highlight
                     {
                         if ((fieldName == null) || (term.Field.Equals(fieldName, StringComparison.Ordinal)))
                         {
-                            terms.Add(new WeightedTerm(query.Boost, term.Text()));
+                            terms.Add(new WeightedTerm(query.Boost, term.Text));
                         }
                     }
                 }
             }
-            catch (NotSupportedException) // LUCENENET: IDE0059: Remove unnecessary value assignment
+            catch (Exception ignore) when (ignore.IsUnsupportedOperationException())
             {
                 //this is non-fatal for our purposes
             }

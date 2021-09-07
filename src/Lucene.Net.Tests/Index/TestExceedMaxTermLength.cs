@@ -1,6 +1,8 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
+using System.Globalization;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
@@ -89,9 +91,9 @@ namespace Lucene.Net.Index
                     w.AddDocument(doc);
                     Assert.Fail("Did not get an exception from adding a monster term");
                 }
-                catch (ArgumentException e)
+                catch (Exception e) when (e.IsIllegalArgumentException())
                 {
-                    string maxLengthMsg = Convert.ToString(IndexWriter.MAX_TERM_LENGTH);
+                    string maxLengthMsg = Convert.ToString(IndexWriter.MAX_TERM_LENGTH, CultureInfo.InvariantCulture);
                     string msg = e.Message;
                     Assert.IsTrue(msg.Contains("immense term"), "IllegalArgumentException didn't mention 'immense term': " + msg);
                     Assert.IsTrue(msg.Contains(maxLengthMsg), "IllegalArgumentException didn't mention max length (" + maxLengthMsg + "): " + msg);

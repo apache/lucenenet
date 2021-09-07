@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Icu
                 });
                 fail();
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

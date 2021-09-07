@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -141,7 +141,7 @@ namespace Lucene.Net.Store
                         files.Add(f);
                     }
                 }
-                catch (DirectoryNotFoundException /*ex*/)
+                catch (Exception ex) when (ex.IsNoSuchDirectoryException())
                 {
                     // however, if there are no cached files, then the directory truly
                     // does not "exist"
@@ -231,7 +231,7 @@ namespace Lucene.Net.Store
                 {
                     @delegate.DeleteFile(name);
                 }
-                catch (IOException) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     // this is fine: file may not exist
                 }
@@ -243,7 +243,7 @@ namespace Lucene.Net.Store
                 {
                     cache.DeleteFile(name);
                 }
-                catch (IOException) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     // this is fine: file may not exist
                 }

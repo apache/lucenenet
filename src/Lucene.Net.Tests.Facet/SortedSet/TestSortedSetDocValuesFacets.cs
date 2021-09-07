@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -141,7 +142,7 @@ namespace Lucene.Net.Facet.SortedSet
                 _ = new SortedSetDocValuesFacetCounts(state, c);
                 fail("did not hit expected exception");
             }
-            catch (InvalidOperationException)
+            catch (Exception ise) when (ise.IsIllegalStateException())
             {
                 // expected
             }

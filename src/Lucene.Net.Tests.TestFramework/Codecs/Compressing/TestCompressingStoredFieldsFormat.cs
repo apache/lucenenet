@@ -122,7 +122,7 @@
 //        +0.0f,
 //        float.NegativeInfinity,
 //        float.PositiveInfinity,
-//        float.MinValue,
+//        float.Epsilon, // LUCENENET: Epsilon in .NET is the same as MIN_VALUE in Java
 //        float.MaxValue,
 //        float.NaN,
 //    };
@@ -180,11 +180,11 @@
 //            double[] special = {
 //        -0.0d,
 //        +0.0d,
-//        Double.NegativeInfinity,
-//        Double.PositiveInfinity,
-//        Double.MinValue,
-//        Double.MaxValue,
-//        Double.NaN
+//        double.NegativeInfinity,
+//        double.PositiveInfinity,
+//        double.Epsilon, // LUCENENET: Epsilon in .NET is the same as MIN_VALUE in Java
+//        double.MaxValue,
+//        double.NaN
 //    };
 
 //            foreach (double x in special)

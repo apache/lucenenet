@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-                long stopTime = Environment.TickCount + (long)(RUN_TIME_MSEC);
+                long stopTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + (long)(RUN_TIME_MSEC);
 
                 try
                 {
@@ -88,9 +88,9 @@ namespace Lucene.Net.Index
                             break;
                         }
                         DoWork();
-                    } while (Environment.TickCount < stopTime);
+                    } while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTime);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine(Thread.CurrentThread + ": exc");
                     Console.Error.WriteLine(e.StackTrace);
@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
                         {
                             writer1.PrepareCommit();
                         }
-                        catch (Exception)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                             writer1.Rollback();
                             writer2.Rollback();
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
                         {
                             writer2.PrepareCommit();
                         }
-                        catch (Exception)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                             writer1.Rollback();
                             writer2.Rollback();
@@ -246,7 +246,7 @@ namespace Lucene.Net.Index
                         r1 = DirectoryReader.Open(dir1);
                         r2 = DirectoryReader.Open(dir2);
                     }
-                    catch (IOException e)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         if (!e.Message.Contains("on purpose"))
                         {
@@ -265,7 +265,7 @@ namespace Lucene.Net.Index
                 }
                 if (r1.NumDocs != r2.NumDocs)
                 {
-                    throw new Exception("doc counts differ: r1=" + r1.NumDocs + " r2=" + r2.NumDocs);
+                    throw RuntimeException.Create("doc counts differ: r1=" + r1.NumDocs + " r2=" + r2.NumDocs);
                 }
                 r1.Dispose();
                 r2.Dispose();

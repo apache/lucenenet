@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
 
  Licensed to the Apache Software Foundation (ASF) under one
@@ -58,6 +58,7 @@
   <ItemGroup>
     <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
     <PackageReference Include="NUnit" Version="$(NUnitPackageVersion)" />
+    <PackageReference Include="RandomizedTesting.Generators" Version="$(RandomizedTestingGeneratorsPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
@@ -102,6 +103,8 @@
     <InternalsVisibleTo Include="Lucene.Net.Tests._I-J" />
     <InternalsVisibleTo Include="Lucene.Net.Tests._J-S" />
     <InternalsVisibleTo Include="Lucene.Net.Tests._T-Z" />
+
+    <InternalsVisibleTo Include="Lucene.Net.Tests.AllProjects" />
     
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Common" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Kuromoji" />

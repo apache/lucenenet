@@ -439,7 +439,7 @@ namespace Lucene.Net.Search
             }
             if (after != null && after.Doc >= limit)
             {
-                throw new ArgumentException("after.doc exceeds the number of documents in the reader: after.doc=" + after.Doc + " limit=" + limit);
+                throw new ArgumentException("after.Doc exceeds the number of documents in the reader: after.Doc=" + after.Doc + " limit=" + limit);
             }
             nDocs = Math.Min(nDocs, limit);
 
@@ -525,9 +525,9 @@ namespace Lucene.Net.Search
         /// </summary>
         protected virtual TopFieldDocs Search(Weight weight, FieldDoc after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
         {
-            if (sort == null)
+            if (sort is null)
             {
-                throw new ArgumentNullException("Sort must not be null");
+                throw new ArgumentNullException("Sort must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             int limit = reader.MaxDoc;
@@ -863,7 +863,7 @@ namespace Lucene.Net.Search
 
             public void Reset()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public bool MoveNext()
@@ -878,16 +878,14 @@ namespace Lucene.Net.Search
 
                         return true;
                     }
-                    catch (ThreadInterruptedException /*e*/)
+                    catch (Exception e) when (e.IsInterruptedException())
                     {
-                        //throw new ThreadInterruptedException(e.ToString(), e);
+                        // LUCENENET: Throwing as same type, no need to wrap here
                         throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
                     catch (Exception e)
                     {
-                        // LUCENENET NOTE: We need to re-throw this as Exception to 
-                        // ensure it is not caught in the wrong place
-                        throw new Exception(e.ToString(), e);
+                        throw RuntimeException.Create(e);
                     }
                     finally
                     {

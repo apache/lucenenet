@@ -99,7 +99,7 @@ namespace Lucene.Net.Store
                 // end of file reached, no more buffers left
                 if (enforceEOF)
                 {
-                    throw new EndOfStreamException("read past EOF: " + this);
+                    throw EOFException.Create("read past EOF: " + this);
                 }
                 else
                 {
@@ -117,10 +117,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override long GetFilePointer()
-        {
-            return currentBufferIndex < 0 ? 0 : bufferStart + bufferPosition;
-        }
+        public override long Position => currentBufferIndex < 0 ? 0 : bufferStart + bufferPosition; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
         public override void Seek(long pos)
         {

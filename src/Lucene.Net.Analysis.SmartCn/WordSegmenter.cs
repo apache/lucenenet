@@ -1,4 +1,5 @@
 ﻿// lucene version compatibility level: 4.8.1
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis.Cn.Smart.Hhmm;
 using Lucene.Net.Support;
 using System.Collections.Generic;
@@ -47,7 +48,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
             IList<SegToken> result = Collections.EmptyList<SegToken>();
 
             if (segTokenList.Count > 2) // if its not an empty sentence
-                result = segTokenList.SubList(1, segTokenList.Count - 1);
+                result = segTokenList.GetView(1, segTokenList.Count - 2); // LUCENENET: Converted end index to length
 
             foreach (SegToken st in result)
             {

@@ -299,9 +299,9 @@ namespace Lucene.Net.Index.Sorter
                     }
                     return docID1.CompareTo(docID2); // docid order tiebreak
                 }
-                catch (IOException e)
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
             }
         }
@@ -332,25 +332,25 @@ namespace Lucene.Net.Index.Sorter
 
             public override float GetScore()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
-            public override int Freq => throw new NotSupportedException();
+            public override int Freq => throw UnsupportedOperationException.Create();
 
-            public override int DocID => throw new NotSupportedException();
+            public override int DocID => throw UnsupportedOperationException.Create();
 
             public override int NextDoc()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public override int Advance(int target)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
             public override long GetCost()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
     }

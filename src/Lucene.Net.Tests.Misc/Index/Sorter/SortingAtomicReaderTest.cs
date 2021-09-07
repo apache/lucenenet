@@ -76,7 +76,7 @@ namespace Lucene.Net.Index.Sorter
                 SortingAtomicReader.Wrap(reader, Sort.RELEVANCE);
                 fail("Didn't get expected exception");
             }
-            catch (ArgumentException e)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 assertEquals("Cannot sort an index with a Sort that refers to the relevance score", e.Message);
             }

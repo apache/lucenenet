@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -60,7 +61,7 @@ namespace Lucene.Net.Index
         {
             internal readonly int tokensPerDoc;
             internal int tokenCount;
-            public readonly IList<BytesRef> savedTerms = new List<BytesRef>();
+            public readonly IList<BytesRef> savedTerms = new JCG.List<BytesRef>();
             internal int nextSave;
             internal long termCounter;
             internal readonly Random random;
@@ -133,7 +134,7 @@ namespace Lucene.Net.Index
 
                 public override object Clone()
                 {
-                    throw new NotSupportedException();
+                    throw UnsupportedOperationException.Create();
                 }
             }
 
@@ -168,7 +169,7 @@ namespace Lucene.Net.Index
         {
             if ("Lucene3x".Equals(Codec.Default.Name, StringComparison.Ordinal))
             {
-                throw new Exception("this test cannot run with PreFlex codec");
+                throw RuntimeException.Create("this test cannot run with PreFlex codec");
             }
             Console.WriteLine("Starting Test2B");
             long TERM_COUNT = ((long)int.MaxValue) + 100000000;
@@ -217,9 +218,9 @@ namespace Lucene.Net.Index
 
                 for (int i = 0; i < numDocs; i++)
                 {
-                    long t0 = Environment.TickCount;
+                    long t0 = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     w.AddDocument(doc);
-                    Console.WriteLine(i + " of " + numDocs + " " + (Environment.TickCount - t0) + " msec");
+                    Console.WriteLine(i + " of " + numDocs + " " + ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - t0) + " msec"); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 }
                 savedTerms = ts.savedTerms;
 
@@ -236,7 +237,7 @@ namespace Lucene.Net.Index
                 savedTerms = FindTerms(r);
             }
             int numSavedTerms = savedTerms.Count;
-            IList<BytesRef> bigOrdTerms = new List<BytesRef>(savedTerms.SubList(numSavedTerms - 10, numSavedTerms));
+            IList<BytesRef> bigOrdTerms = new List<BytesRef>(savedTerms.GetView(numSavedTerms - 10, 10)); // LUCENENET: Converted end index to length
             Console.WriteLine("TEST: test big ord terms...");
             TestSavedTerms(r, bigOrdTerms);
             Console.WriteLine("TEST: test all saved terms...");
@@ -283,14 +284,14 @@ namespace Lucene.Net.Index
             {
                 BytesRef term = terms[Random.Next(terms.Count)];
                 Console.WriteLine("TEST: search " + term);
-                long t0 = Environment.TickCount;
+                long t0 = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 int count = s.Search(new TermQuery(new Term("field", term)), 1).TotalHits;
                 if (count <= 0)
                 {
                     Console.WriteLine("  FAILED: count=" + count);
                     failed = true;
                 }
-                long t1 = Environment.TickCount;
+                long t1 = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 Console.WriteLine("  took " + (t1 - t0) + " millis");
 
                 TermsEnum.SeekStatus result = termsEnum.SeekCeil(term);

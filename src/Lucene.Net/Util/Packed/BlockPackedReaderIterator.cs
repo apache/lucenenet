@@ -146,7 +146,7 @@ namespace Lucene.Net.Util.Packed
             if (Debugging.AssertsEnabled) Debugging.Assert(count >= 0);
             if (ord + count > valueCount || ord + count < 0)
             {
-                throw new EndOfStreamException();
+                throw EOFException.Create();
             }
 
             // 1. skip buffered values
@@ -195,7 +195,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (@in is IndexInput input)
             {
-                input.Seek(input.GetFilePointer() + count);
+                input.Seek(input.Position + count); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
             else
             {
@@ -219,7 +219,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (ord == valueCount)
             {
-                throw new EndOfStreamException();
+                throw EOFException.Create();
             }
             if (off == blockSize)
             {
@@ -237,7 +237,7 @@ namespace Lucene.Net.Util.Packed
             if (Debugging.AssertsEnabled) Debugging.Assert(count > 0);
             if (ord == valueCount)
             {
-                throw new EndOfStreamException();
+                throw EOFException.Create();
             }
             if (off == blockSize)
             {

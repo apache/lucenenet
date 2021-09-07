@@ -96,12 +96,12 @@ namespace Lucene.Net.Tests.Queries.Mlt
             foreach (BooleanClause clause in clauses)
             {
                 TermQuery tq = (TermQuery)clause.Query;
-                float? termBoost = originalValues[tq.Term.Text()];
-                assertNotNull("Expected term " + tq.Term.Text(), termBoost);
+                float? termBoost = originalValues[tq.Term.Text];
+                assertNotNull("Expected term " + tq.Term.Text, termBoost);
 
                 float totalBoost = (float) (termBoost * boostFactor);
                 assertEquals("Expected boost of " + totalBoost + " for term '"
-                    + tq.Term.Text() + "' got " + tq.Boost, totalBoost, tq.Boost, 0.0001);
+                    + tq.Term.Text + "' got " + tq.Boost, totalBoost, tq.Boost, 0.0001);
             }
         }
         
@@ -123,7 +123,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
                 foreach (BooleanClause clause in clauses)
                 {
                     TermQuery tq = (TermQuery)clause.Query;
-                    originalValues[tq.Term.Text()] = tq.Boost;
+                    originalValues[tq.Term.Text] = tq.Boost;
                 }
                 return originalValues;
             }

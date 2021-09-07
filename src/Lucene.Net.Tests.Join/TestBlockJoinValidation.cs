@@ -2,16 +2,15 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.Join;
-using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lucene.Net.Tests.Join
+namespace Lucene.Net.Search.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -66,9 +65,16 @@ namespace Lucene.Net.Tests.Join
             Query parentQueryWithRandomChild = CreateChildrenQueryWithOneParent(GetRandomChildNumber(0));
             var blockJoinQuery = new ToParentBlockJoinQuery(parentQueryWithRandomChild, parentsFilter, ScoreMode.None);
 
-            var ex = Assert.Throws<InvalidOperationException>(() => indexSearcher.Search(blockJoinQuery, 1));
-            StringAssert.Contains("child query must only match non-parent docs", ex.Message);
-
+            // LUCENENET: Refactored to allow us to use our IsIllegalStateException() extension method
+            try
+            {
+                indexSearcher.Search(blockJoinQuery, 1);
+                fail();
+            }
+            catch (Exception ise) when (ise.IsIllegalStateException())
+            {
+                assertTrue(ise.Message.Contains("child query must only match non-parent docs"));
+            }
         }
 
         [Test]
@@ -86,8 +92,16 @@ namespace Lucene.Net.Tests.Join
             conjunctionQuery.Add(new BooleanClause(childQuery, Occur.MUST));
             conjunctionQuery.Add(new BooleanClause(blockJoinQuery, Occur.MUST));
 
-            var ex = Assert.Throws<InvalidOperationException>(() => indexSearcher.Search(conjunctionQuery, 1));
-            StringAssert.Contains("child query must only match non-parent docs", ex.Message);
+            // LUCENENET: Refactored to allow us to use our IsIllegalStateException() extension method
+            try
+            {
+                indexSearcher.Search(conjunctionQuery, 1);
+                fail();
+            }
+            catch (Exception ise) when (ise.IsIllegalStateException())
+            {
+                assertTrue(ise.Message.Contains("child query must only match non-parent docs"));
+            }
         }
 
         [Test]
@@ -96,8 +110,16 @@ namespace Lucene.Net.Tests.Join
             Query parentQueryWithRandomChild = CreateParentsQueryWithOneChild(GetRandomChildNumber(0));
             var blockJoinQuery = new ToChildBlockJoinQuery(parentQueryWithRandomChild, parentsFilter, false);
 
-            var ex = Assert.Throws<InvalidOperationException>(() => indexSearcher.Search(blockJoinQuery, 1));
-            StringAssert.Contains(ToChildBlockJoinQuery.INVALID_QUERY_MESSAGE, ex.Message);
+            // LUCENENET: Refactored to allow us to use our IsIllegalStateException() extension method
+            try
+            {
+                indexSearcher.Search(blockJoinQuery, 1);
+                fail();
+            }
+            catch (Exception ise) when (ise.IsIllegalStateException())
+            {
+                assertTrue(ise.Message.Contains(ToChildBlockJoinQuery.INVALID_QUERY_MESSAGE));
+            }
         }
         
         [Test]
@@ -115,8 +137,16 @@ namespace Lucene.Net.Tests.Join
             conjunctionQuery.Add(new BooleanClause(childQuery, Occur.MUST));
             conjunctionQuery.Add(new BooleanClause(blockJoinQuery, Occur.MUST));
             
-            var ex = Assert.Throws<InvalidOperationException>(() => indexSearcher.Search(conjunctionQuery, 1));
-            StringAssert.Contains(ToChildBlockJoinQuery.INVALID_QUERY_MESSAGE, ex.Message);
+            // LUCENENET: Refactored to allow us to use our IsIllegalStateException() extension method
+            try
+            {
+                indexSearcher.Search(conjunctionQuery, 1);
+                fail();
+            }
+            catch (Exception ise) when (ise.IsIllegalStateException())
+            {
+                assertTrue(ise.Message.Contains(ToChildBlockJoinQuery.INVALID_QUERY_MESSAGE));
+            }
         }
 
         [TearDown]

@@ -379,9 +379,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                     Assert.AreEqual("\u00c9000", this.StringEncoder.Encode("\u00e9"));
                     Assert.Fail("Expected IllegalArgumentException not thrown");
                 }
-#pragma warning disable 168
-                catch (ArgumentException e)
-#pragma warning restore 168
+                catch (Exception e) when (e.IsIllegalArgumentException())
                 {
                     // expected
                 }
@@ -409,9 +407,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                     Assert.AreEqual("\u00d6000", this.StringEncoder.Encode("\u00f6"));
                     Assert.Fail("Expected IllegalArgumentException not thrown");
                 }
-#pragma warning disable 168
-                catch (ArgumentException e)
-#pragma warning restore 168
+                catch (Exception e) when (e.IsIllegalArgumentException())
                 {
                     // expected
                 }

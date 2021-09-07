@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -378,7 +378,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 {
                     if (indexEnum == null)
                     {
-                        throw new InvalidOperationException("terms index was not loaded");
+                        throw IllegalStateException.Create("terms index was not loaded");
                     }
 
                     //System.out.println("BTR.seek seg=" + segment + " target=" + fieldInfo.name + ":" + target.utf8ToString() + " " + target + " current=" + term().utf8ToString() + " " + term() + " indexIsCurrent=" + indexIsCurrent + " didIndexNext=" + didIndexNext + " seekPending=" + seekPending + " divisor=" + indexReader.getDivisor() + " this="  + this);
@@ -827,7 +827,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     //System.out.println("BTR.seek by ord ord=" + ord);
                     if (indexEnum == null)
                     {
-                        throw new InvalidOperationException("terms index was not loaded");
+                        throw IllegalStateException.Create("terms index was not loaded");
                     }
 
                     if (Debugging.AssertsEnabled) Debugging.Assert(ord < outerInstance.numTerms);
@@ -867,7 +867,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     {
                         if (!doOrd)
                         {
-                            throw new NotSupportedException();
+                            throw UnsupportedOperationException.Create();
                         }
                         return state.Ord;
                     }
@@ -891,7 +891,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     // bsearch w/in the block...
 
                     //System.out.println("BTR.nextBlock() fp=" + in.getFilePointer() + " this=" + this);
-                    state.BlockFilePointer = input.GetFilePointer();
+                    state.BlockFilePointer = input.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     blockTermCount = input.ReadVInt32();
                     //System.out.println("  blockTermCount=" + blockTermCount);
                     if (blockTermCount == 0)

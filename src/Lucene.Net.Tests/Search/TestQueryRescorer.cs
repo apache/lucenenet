@@ -1,6 +1,7 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -396,24 +397,31 @@ namespace Lucene.Net.Search
             Array.Sort(expected,
                 Comparer<int>.Create((a, b) =>
                 {
-                    int av = idToNum[Convert.ToInt32(r.Document(a).Get("id"))];
-                    int bv = idToNum[Convert.ToInt32(r.Document(b).Get("id"))];
-                    if (av < bv)
+                    try
                     {
-                        return -reverseInt;
+                        int av = idToNum[Convert.ToInt32(r.Document(a).Get("id"))];
+                        int bv = idToNum[Convert.ToInt32(r.Document(b).Get("id"))];
+                        if (av < bv)
+                        {
+                            return -reverseInt;
+                        }
+                        else if (bv < av)
+                        {
+                            return reverseInt;
+                        }
+                        else
+                        {
+                            // Tie break by docID, ascending
+                            return a - b;
+                        }
                     }
-                    else if (bv < av)
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
-                        return reverseInt;
-                    }
-                    else
-                    {
-                        // Tie break by docID, ascending
-                        return a - b;
+                        throw RuntimeException.Create(ioe);
                     }
                 })
             );
-                        
+
             bool fail = false;
             for (int i = 0; i < numHits; i++)
             {

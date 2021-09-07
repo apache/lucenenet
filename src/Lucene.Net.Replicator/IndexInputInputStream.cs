@@ -38,7 +38,7 @@ namespace Lucene.Net.Replicator
 
         public override void Flush()
         {
-            throw new InvalidOperationException("Cannot flush a readonly stream.");
+            throw IllegalStateException.Create("Cannot flush a readonly stream."); // LUCENENET TODO: Change to NotSupportedException ?
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -60,12 +60,12 @@ namespace Lucene.Net.Replicator
 
         public override void SetLength(long value)
         {
-            throw new InvalidOperationException("Cannot change length of a readonly stream.");
+            throw IllegalStateException.Create("Cannot change length of a readonly stream."); // LUCENENET TODO: Change to NotSupportedException ?
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            int remaining = (int) (input.Length - input.GetFilePointer());
+            int remaining = (int) (input.Length - input.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             int readCount = Math.Min(remaining, count);
             input.ReadBytes(buffer, offset, readCount);
             return readCount;
@@ -73,7 +73,7 @@ namespace Lucene.Net.Replicator
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            throw new InvalidCastException("Cannot write to a readonly stream.");
+            throw new InvalidCastException("Cannot write to a readonly stream."); // LUCENENET TODO: Change to NotSupportedException ?
         }
 
         public override bool CanRead => true;
@@ -83,7 +83,7 @@ namespace Lucene.Net.Replicator
 
         public override long Position
         {
-            get => input.GetFilePointer();
+            get => input.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             set => input.Seek(value);
         }
 

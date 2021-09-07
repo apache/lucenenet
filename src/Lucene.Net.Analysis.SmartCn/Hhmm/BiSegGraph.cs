@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 {
@@ -181,7 +182,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         {
             int current;
             int nodeCount = ToCount;
-            IList<PathNode> path = new List<PathNode>();
+            IList<PathNode> path = new JCG.List<PathNode>();
             PathNode zeroPath = new PathNode();
             zeroPath.Weight = 0;
             zeroPath.PreNode = 0;
@@ -213,8 +214,8 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             int preNode, lastNode;
             lastNode = path.Count - 1;
             current = lastNode;
-            IList<int> rpath = new List<int>();
-            IList<SegToken> resultPath = new List<SegToken>();
+            IList<int> rpath = new JCG.List<int>();
+            IList<SegToken> resultPath = new JCG.List<SegToken>();
 
             rpath.Add(current);
             while (current != 0)

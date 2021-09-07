@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
                     string fileName = ((IndexCommit)commits[commits.Count - 1]).SegmentsFileName;
                     if (seen.Contains(fileName))
                     {
-                        throw new Exception("onCommit was called twice on the same commit point: " + fileName);
+                        throw RuntimeException.Create("OnCommit was called twice on the same commit point: " + fileName);
                     }
                     seen.Add(fileName);
                     numOnCommit++;
@@ -273,7 +273,7 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, conf);
             ExpirationTimeDeletionPolicy policy = (ExpirationTimeDeletionPolicy)writer.Config.IndexDeletionPolicy;
             IDictionary<string, string> commitData = new Dictionary<string, string>();
-            commitData["commitTime"] = Convert.ToString(Environment.TickCount);
+            commitData["commitTime"] = Convert.ToString(J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             writer.SetCommitData(commitData);
             writer.Commit();
             writer.Dispose();
@@ -284,7 +284,7 @@ namespace Lucene.Net.Index
             {
                 // Record last time when writer performed deletes of
                 // past commits
-                lastDeleteTime = Environment.TickCount;
+                lastDeleteTime = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetIndexDeletionPolicy(policy);
                 mp = conf.MergePolicy;
                 mp.NoCFSRatio = 1.0;
@@ -295,7 +295,7 @@ namespace Lucene.Net.Index
                     AddDoc(writer);
                 }
                 commitData = new Dictionary<string, string>();
-                commitData["commitTime"] = Convert.ToString(Environment.TickCount);
+                commitData["commitTime"] = Convert.ToString(J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 writer.SetCommitData(commitData);
                 writer.Commit();
                 writer.Dispose();
@@ -333,9 +333,7 @@ namespace Lucene.Net.Index
 
                     Assert.IsTrue(lastDeleteTime - modTime <= leeway, "commit point was older than " + SECONDS + " seconds (" + (lastDeleteTime - modTime) + " msec) but did not get deleted ");
                 }
-#pragma warning disable 168
-                catch (IOException e)
-#pragma warning restore 168
+                catch (Exception e) when (e.IsIOException())
                 {
                     // OK
                     break;
@@ -645,7 +643,7 @@ namespace Lucene.Net.Index
                             Assert.Fail("should have failed on commits prior to last " + N);
                         }
                     }
-                    catch (IOException /*e*/)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         if (i != N)
                         {
@@ -765,7 +763,7 @@ namespace Lucene.Net.Index
                             Assert.Fail("should have failed on commits before last " + N);
                         }
                     }
-                    catch (IOException /*e*/)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         if (i != N)
                         {

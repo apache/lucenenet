@@ -60,7 +60,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             TFIDFSimilarity similarity = IDFValueSource.AsTFIDF(searcher.Similarity, m_field);
             if (similarity == null)
             {
-                throw new NotSupportedException("requires a TFIDFSimilarity (such as DefaultSimilarity)");
+                throw UnsupportedOperationException.Create("requires a TFIDFSimilarity (such as DefaultSimilarity)");
             }
 
             NumericDocValues norms = readerContext.AtomicReader.GetNormValues(m_field);

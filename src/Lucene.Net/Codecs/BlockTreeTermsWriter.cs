@@ -1,4 +1,5 @@
-﻿using J2N.Text;
+﻿using J2N.Collections.Generic.Extensions;
+using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs
 {
@@ -287,11 +289,11 @@ namespace Lucene.Net.Codecs
         {
             if (minItemsInBlock <= 1)
             {
-                throw new ArgumentException("minItemsInBlock must be >= 2; got " + minItemsInBlock);
+                throw new ArgumentOutOfRangeException(nameof(minItemsInBlock), "minItemsInBlock must be >= 2; got " + minItemsInBlock); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (maxItemsInBlock <= 0)
             {
-                throw new ArgumentException("maxItemsInBlock must be >= 1; got " + maxItemsInBlock);
+                throw new ArgumentOutOfRangeException(nameof(maxItemsInBlock), "maxItemsInBlock must be >= 1; got " + maxItemsInBlock); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             if (minItemsInBlock > maxItemsInBlock)
             {
@@ -501,7 +503,7 @@ namespace Lucene.Net.Codecs
                     // it might contain garbage that cannot be converted into text.
                     Debugging.Assert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null), "isFloor={0} floorBlocks={1}", IsFloor, new PendingBlocksFormatter(floorBlocks));
 
-                    Debugging.Assert(scratchBytes.GetFilePointer() == 0);
+                    Debugging.Assert(scratchBytes.Position == 0); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
 
                 // TODO: try writing the leading vLong in MSB order
@@ -525,7 +527,7 @@ namespace Lucene.Net.Codecs
 
                 ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
                 Builder<BytesRef> indexBuilder = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE1, 0, 0, true, false, int.MaxValue, outputs, null, false, PackedInt32s.COMPACT, true, 15);
-                var bytes = new byte[(int)scratchBytes.GetFilePointer()];
+                var bytes = new byte[(int)scratchBytes.Position]; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 if (Debugging.AssertsEnabled) Debugging.Assert(bytes.Length > 0);
                 scratchBytes.WriteTo(bytes, 0);
                 indexBuilder.Add(Util.ToInt32sRef(Prefix, scratchIntsRef), new BytesRef(bytes, 0, bytes.Length));
@@ -608,7 +610,7 @@ namespace Lucene.Net.Codecs
             private readonly Builder<object> blockBuilder;
 
             // PendingTerm or PendingBlock:
-            private readonly IList<PendingEntry> pending = new List<PendingEntry>();
+            private readonly IList<PendingEntry> pending = new JCG.List<PendingEntry>();
 
             // Index into pending of most recently written block
             private int lastBlockIndex = -1;
@@ -730,7 +732,7 @@ namespace Lucene.Net.Codecs
                     // already done this (partitioned these sub-terms
                     // according to their leading prefix byte)
 
-                    IList<PendingEntry> slice = ListExtensions.SubList<PendingEntry>(pending, pending.Count - count, pending.Count);
+                    IList<PendingEntry> slice = pending.GetView(pending.Count - count, count); // LUCENENET: Converted end index to length
                     int lastSuffixLeadLabel = -1;
                     int termCount = 0;
                     int subCount = 0;
@@ -941,7 +943,7 @@ namespace Lucene.Net.Codecs
                 {
                     return b.Utf8ToString() + " " + b;
                 }
-                catch (Exception)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     // If BytesRef isn't actually UTF8, or it's eg a
                     // prefix of UTF8 that ends mid-unicode-char, we
@@ -962,9 +964,9 @@ namespace Lucene.Net.Codecs
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(start >= 0, "pending.Count={0} startBackwards={1} length={2}", pending.Count, startBackwards, length);
 
-                IList<PendingEntry> slice = pending.SubList(start, start + length);
+                IList<PendingEntry> slice = pending.GetView(start, length); // LUCENENET: Converted end index to length
 
-                long startFP = outerInstance.@out.GetFilePointer();
+                long startFP = outerInstance.@out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
                 BytesRef prefix = new BytesRef(indexPrefixLength);
                 for (int m = 0; m < indexPrefixLength; m++)
@@ -1138,17 +1140,17 @@ namespace Lucene.Net.Codecs
                 // search on lookup
 
                 // Write suffixes byte[] blob to terms dict output:
-                outerInstance.@out.WriteVInt32((int)(suffixWriter.GetFilePointer() << 1) | (isLeafBlock ? 1 : 0));
+                outerInstance.@out.WriteVInt32((int)(suffixWriter.Position << 1) | (isLeafBlock ? 1 : 0)); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 suffixWriter.WriteTo(outerInstance.@out);
                 suffixWriter.Reset();
 
                 // Write term stats byte[] blob
-                outerInstance.@out.WriteVInt32((int)statsWriter.GetFilePointer());
+                outerInstance.@out.WriteVInt32((int)statsWriter.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 statsWriter.WriteTo(outerInstance.@out);
                 statsWriter.Reset();
 
                 // Write term meta data byte[] blob
-                outerInstance.@out.WriteVInt32((int)metaWriter.GetFilePointer());
+                outerInstance.@out.WriteVInt32((int)metaWriter.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 metaWriter.WriteTo(outerInstance.@out);
                 metaWriter.Reset();
 
@@ -1245,7 +1247,7 @@ namespace Lucene.Net.Codecs
                     this.docCount = docCount;
 
                     // Write FST to index
-                    indexStartFP = outerInstance.indexOut.GetFilePointer();
+                    indexStartFP = outerInstance.indexOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     root.Index.Save(outerInstance.indexOut);
                     //System.out.println("  write FST " + indexStartFP + " field=" + fieldInfo.name);
 
@@ -1283,11 +1285,11 @@ namespace Lucene.Net.Codecs
         {
             if (disposing)
             {
-                IOException ioe = null;
+                Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
                 try
                 {
-                    long dirStart = @out.GetFilePointer();
-                    long indexDirStart = indexOut.GetFilePointer();
+                    long dirStart = @out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                    long indexDirStart = indexOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
                     @out.WriteVInt32(fields.Count);
 
@@ -1312,7 +1314,7 @@ namespace Lucene.Net.Codecs
                     WriteIndexTrailer(indexOut, indexDirStart);
                     CodecUtil.WriteFooter(indexOut);
                 }
-                catch (IOException ioe2)
+                catch (Exception ioe2) when (ioe2.IsIOException())
                 {
                     ioe = ioe2;
                 }

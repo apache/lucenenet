@@ -1,10 +1,11 @@
-using J2N.Runtime.CompilerServices;
+﻿using J2N.Runtime.CompilerServices;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -12,7 +13,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
@@ -255,7 +255,7 @@ namespace Lucene.Net.Store
                 }
                 else
                 {
-                    unSyncedFiles.RemoveAll(names);
+                    unSyncedFiles.ExceptWith(names);
                 }
             }
         }
@@ -304,9 +304,7 @@ namespace Lucene.Net.Store
                     {
                         f.Dispose();
                     }
-#pragma warning disable 168
-                    catch (Exception ignored)
-#pragma warning restore 168
+                    catch (Exception ignored) when (ignored.IsException())
                     {
                         //Debug.WriteLine("Crash(): f.Dispose() FAILED for {0}:\n{1}", f.ToString(), ignored.ToString());
                     }
@@ -574,7 +572,7 @@ namespace Lucene.Net.Store
                         }
                         else
                         {
-                            throw WithAdditionalErrorInformation(new AssertionError("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
+                            throw WithAdditionalErrorInformation(AssertionError.Create("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
                         }
                     }
                     else
@@ -633,7 +631,7 @@ namespace Lucene.Net.Store
                     }
                     else
                     {
-                        throw new AssertionError("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot overwrite");
+                        throw AssertionError.Create("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot overwrite");
                     }
                 }
 
@@ -716,7 +714,7 @@ namespace Lucene.Net.Store
                     openFiles[name] = 1;
                 }
 
-                openFileHandles[c] = new Exception("unclosed Index" + handle.ToString() + ": " + name);
+                openFileHandles[c] = RuntimeException.Create("unclosed Index" + handle.ToString() + ": " + name);
             }
         }
 
@@ -869,12 +867,12 @@ namespace Lucene.Net.Store
 
                         // RuntimeException instead ofIOException because
                         // super() does not throw IOException currently:
-                        throw new Exception("MockDirectoryWrapper: cannot close: there are still open files: "
+                        throw RuntimeException.Create("MockDirectoryWrapper: cannot close: there are still open files: "
                             + Collections.ToString(openFiles), cause);
                     }
                     if (openLocks.Count > 0)
                     {
-                        throw new Exception("MockDirectoryWrapper: cannot close: there are still open locks: "
+                        throw RuntimeException.Create("MockDirectoryWrapper: cannot close: there are still open locks: "
                             + Collections.ToString(openLocks));
                     }
 
@@ -939,9 +937,7 @@ namespace Lucene.Net.Store
                                         {
                                             sis.Read(m_input, file);
                                         }
-#pragma warning disable 168
-                                        catch (IOException ioe)
-#pragma warning restore 168
+                                        catch (Exception ioe) when (ioe.IsIOException())
                                         {
                                             // OK: likely some of the .si files were deleted
                                         }
@@ -963,7 +959,7 @@ namespace Lucene.Net.Store
                                                 }
                                             }
                                         }
-                                        catch (Exception t)
+                                        catch (Exception t) when (t.IsThrowable())
                                         {
                                             Console.Error.WriteLine("ERROR processing leftover segments file " + file + ":");
                                             Console.WriteLine(t.ToString());

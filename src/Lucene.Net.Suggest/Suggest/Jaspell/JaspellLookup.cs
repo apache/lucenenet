@@ -47,6 +47,10 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
         public override void Build(IInputEnumerator enumerator)
         {
+            // LUCENENET: Added guard clause for null
+            if (enumerator is null)
+                throw new ArgumentNullException(nameof(enumerator));
+
             if (enumerator.HasPayloads)
             {
                 throw new ArgumentException("this suggester doesn't support payloads");

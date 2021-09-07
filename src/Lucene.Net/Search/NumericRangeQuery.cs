@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using System;
 using System.Collections.Generic;
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search
         {
             if (precisionStep < 1)
             {
-                throw new ArgumentException("precisionStep must be >=1");
+                throw new ArgumentOutOfRangeException(nameof(precisionStep), "precisionStep must be >=1"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.precisionStep = precisionStep;
             this.dataType = dataType;

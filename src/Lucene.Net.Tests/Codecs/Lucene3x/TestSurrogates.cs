@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private static string ToHexString(Term t)
         {
-            return t.Field + ":" + UnicodeUtil.ToHexString(t.Text());
+            return t.Field + ":" + UnicodeUtil.ToHexString(t.Text);
         }
 
         private string GetRandomString(Random r)
@@ -148,7 +148,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         if (Verbose)
                         {
                             Console.WriteLine("  got term=" + field + ":" + UnicodeUtil.ToHexString(text.Utf8ToString()));
-                            Console.WriteLine("       exp=" + exp.Field + ":" + UnicodeUtil.ToHexString(exp.Text()));
+                            Console.WriteLine("       exp=" + exp.Field + ":" + UnicodeUtil.ToHexString(exp.Text));
                             Console.WriteLine();
                         }
                         if (lastText == null)
@@ -195,7 +195,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 if (Verbose)
                 {
-                    Console.WriteLine("TEST: exist seek field=" + field + " term=" + UnicodeUtil.ToHexString(term.Text()));
+                    Console.WriteLine("TEST: exist seek field=" + field + " term=" + UnicodeUtil.ToHexString(term.Text));
                 }
 
                 // seek to it
@@ -239,7 +239,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         if (Verbose)
                         {
                             Console.WriteLine("  got term=" + (t == null ? null : UnicodeUtil.ToHexString(t.Utf8ToString())));
-                            Console.WriteLine("       exp=" + UnicodeUtil.ToHexString(term.Text().ToString()));
+                            Console.WriteLine("       exp=" + UnicodeUtil.ToHexString(term.Text.ToString()));
                         }
 
                         Assert.AreEqual(term.Bytes, t);
@@ -271,7 +271,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         if (Verbose)
                         {
-                            Console.WriteLine("TEST: non-exist seek to " + field + ":" + UnicodeUtil.ToHexString(tx.Text()));
+                            Console.WriteLine("TEST: non-exist seek to " + field + ":" + UnicodeUtil.ToHexString(tx.Text));
                         }
 
                         // term does not exist:
@@ -299,7 +299,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                             if (Verbose)
                             {
                                 Console.WriteLine("  got term=" + UnicodeUtil.ToHexString(te.Term.Utf8ToString()));
-                                Console.WriteLine("  exp term=" + UnicodeUtil.ToHexString(fieldTerms[spot].Text()));
+                                Console.WriteLine("  exp term=" + UnicodeUtil.ToHexString(fieldTerms[spot].Text));
                             }
 
                             Assert.AreEqual(fieldTerms[spot].Bytes, te.Term);
@@ -330,7 +330,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                                     if (Verbose)
                                     {
                                         Console.WriteLine("  got term=" + (t == null ? null : UnicodeUtil.ToHexString(t.Utf8ToString())));
-                                        Console.WriteLine("       exp=" + UnicodeUtil.ToHexString(term.Text().ToString()));
+                                        Console.WriteLine("       exp=" + UnicodeUtil.ToHexString(term.Text.ToString()));
                                     }
 
                                     Assert.AreEqual(term.Bytes, t);

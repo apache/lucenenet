@@ -194,7 +194,7 @@ namespace Lucene.Net.Index
             protected override void ReadInternal(byte[] b, int offset, int length)
             {
                 SimOutage();
-                @delegate.Seek(GetFilePointer());
+                @delegate.Seek(Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 @delegate.ReadBytes(b, offset, length);
             }
 
@@ -218,13 +218,11 @@ namespace Lucene.Net.Index
                 // seek the clone to our current position
                 try
                 {
-                    i.Seek(GetFilePointer());
+                    i.Seek(Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
-#pragma warning disable 168
-                catch (IOException e)
-#pragma warning restore 168
+                catch (Exception e) when (e.IsIOException())
                 {
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(e);
                 }
                 return i;
             }
@@ -260,9 +258,7 @@ namespace Lucene.Net.Index
                     {
                         reader.Document(i);
                     }
-#pragma warning disable 168
-                    catch (IOException ioe)
-#pragma warning restore 168
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
                         // expected
                         exc = true;
@@ -271,9 +267,7 @@ namespace Lucene.Net.Index
                     {
                         reader.Document(i);
                     }
-#pragma warning disable 168
-                    catch (IOException ioe)
-#pragma warning restore 168
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
                         // expected
                         exc = true;

@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using J2N.Numerics;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -271,9 +271,9 @@ namespace Lucene.Net.Analysis.Synonym
             this.synonyms = synonyms;
             this.ignoreCase = ignoreCase;
             this.fst = synonyms.Fst;
-            if (fst == null)
+            if (fst is null)
             {
-                throw new ArgumentException("fst must be non-null");
+                throw new ArgumentNullException(nameof(synonyms.Fst), "fst must be non-null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             this.fstReader = fst.GetBytesReader();
 

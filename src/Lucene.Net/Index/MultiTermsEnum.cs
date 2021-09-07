@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
                     IComparer<BytesRef> subTermComp = termsEnumIndex.TermsEnum.Comparer;
                     if (subTermComp != null && !subTermComp.Equals(termComp))
                     {
-                        throw new InvalidOperationException("sub-readers have different BytesRef.Comparers: " + subTermComp + " vs " + termComp + "; cannot merge");
+                        throw IllegalStateException.Create("sub-readers have different BytesRef.Comparers: " + subTermComp + " vs " + termComp + "; cannot merge");
                     }
                 }
 
@@ -318,10 +318,10 @@ namespace Lucene.Net.Index
 
         public override void SeekExact(long ord)
         {
-            throw new NotSupportedException();
+            throw UnsupportedOperationException.Create();
         }
 
-        public override long Ord => throw new NotSupportedException();
+        public override long Ord => throw UnsupportedOperationException.Create();
 
         private void PullTop()
         {

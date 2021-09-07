@@ -1,14 +1,15 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Core;
 using Lucene.Net.QueryParsers.Flexible.Core.Messages;
-using Lucene.Net.QueryParsers.Flexible.Messages;
 using Lucene.Net.Support;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 #endif
 using System.Text;
+#nullable enable
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 {
@@ -43,22 +44,23 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
+    // LUCENENET specific: Refactored constructors to be more like a .NET type and eliminated IMessage/NLS support.
     public class ParseException : QueryNodeParseException
     {
         /// <summary>
-        /// This constructor is used by the method "generateParseException"
+        /// This constructor is used by the method "GenerateParseException"
         /// in the generated parser.  Calling this constructor generates
-        /// a new object of this type with the fields "currentToken",
-        /// "expectedTokenSequences", and "tokenImage" set.
+        /// a new object of this type with the fields <see cref="CurrentToken"/>,
+        /// <see cref="ExpectedTokenSequences"/>, and <see cref="TokenImage"/> set.
         /// </summary>
-        public ParseException(Token currentTokenVal,
-            int[][] expectedTokenSequencesVal, string[] tokenImageVal)
-            : base(new Message(QueryParserMessages.INVALID_SYNTAX, Initialize(
-                currentTokenVal, expectedTokenSequencesVal, tokenImageVal)))
+        public ParseException(Token currentToken,
+            int[][] expectedTokenSequences, string[] tokenImage)
+            : base(string.Format(QueryParserMessages.INVALID_SYNTAX, Initialize(
+                currentToken, expectedTokenSequences, tokenImage)))
         {
-            this.CurrentToken = currentTokenVal;
-            this.ExpectedTokenSequences = expectedTokenSequencesVal;
-            this.TokenImage = tokenImageVal;
+            this.CurrentToken = currentToken;
+            this.ExpectedTokenSequences = expectedTokenSequences;
+            this.TokenImage = tokenImage;
         }
 
         /// <summary>
@@ -71,15 +73,24 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// these constructors.
         /// </summary>
         public ParseException()
-            : base(new Message(QueryParserMessages.INVALID_SYNTAX, "Error"))
+            : base(string.Format(QueryParserMessages.INVALID_SYNTAX, "Error"))
         {
         }
 
         /// <summary>
         /// Constructor with message.
         /// </summary>
-        public ParseException(IMessage message)
+        public ParseException(string? message)
             : base(message)
+        {
+        }
+
+        /// <summary>
+        /// Constructor with message and inner exception.
+        /// </summary>
+        // LUCENENET specific - to allow inner exception to be added to the stack trace.
+        public ParseException(string? message, Exception? innerException)
+            : base(message, innerException)
         {
         }
 
@@ -112,7 +123,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// this object has been created due to a parse error, the token
         /// followng this token will (therefore) be the first error token.
         /// </summary>
-        public Token CurrentToken { get; set; }
+        public Token? CurrentToken { get; private set; }
 
         /// <summary>
         /// Each entry in this array is an array of integers.  Each array
@@ -121,7 +132,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public int[][] ExpectedTokenSequences { get; set; }
+        public int[][]? ExpectedTokenSequences { get; private set; }
 
         /// <summary>
         /// This is a reference to the "tokenImage" array of the generated
@@ -130,7 +141,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public string[] TokenImage { get; set; }
+        public string[]? TokenImage { get; private set; }
 
         /// <summary>
         /// It uses <paramref name="currentToken"/> and <paramref name="expectedTokenSequences"/> to generate a parse
@@ -144,13 +155,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// <param name="tokenImage"></param>
         /// <returns></returns>
         private static string Initialize(Token currentToken,
-                                 int[][] expectedTokenSequences,
+                                 IList<int[]> expectedTokenSequences,
                                  string[] tokenImage)
         {
             string eol = Environment.NewLine;
             StringBuilder expected = new StringBuilder();
             int maxSize = 0;
-            for (int i = 0; i < expectedTokenSequences.Length; i++)
+            for (int i = 0; i < expectedTokenSequences.Count; i++)
             {
                 if (maxSize < expectedTokenSequences[i].Length)
                 {
@@ -184,7 +195,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
             retval += "\" at line " + currentToken.Next.BeginLine + ", column " + currentToken.Next.BeginColumn;
             retval += "." + eol;
-            if (expectedTokenSequences.Length == 1)
+            if (expectedTokenSequences.Count == 1)
             {
                 retval += "Was expecting:" + eol + "    ";
             }
@@ -196,10 +207,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             return retval;
         }
 
-        /// <summary>
-        /// The end of line string for this machine.
-        /// </summary>
-        protected string m_eol = Environment.NewLine;
+        // LUCENENET: Removed eol field, since this is available on Environment.NewLine;
 
         /// <summary>
         /// Used to convert raw characters to their escaped version

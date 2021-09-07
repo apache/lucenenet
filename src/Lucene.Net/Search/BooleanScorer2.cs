@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections.Generic;
 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Search
         {
             if (minNrShouldMatch < 0)
             {
-                throw new ArgumentException("Minimum number of optional scorers should not be negative");
+                throw new ArgumentOutOfRangeException(nameof(minNrShouldMatch), "Minimum number of optional scorers should not be negative"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.minNrShouldMatch = minNrShouldMatch;
 

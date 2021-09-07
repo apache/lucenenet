@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
+using Integer = J2N.Numerics.Int32;
 
 /*
                     Egothor Software License version 1.00
@@ -72,7 +73,8 @@ namespace Egothor.Stemmer
     {
         internal static int Get(int i, string s)
         {
-            if (!int.TryParse(s.Substring(i, 1), NumberStyles.Integer, CultureInfo.InvariantCulture, out int result))
+            // LUCENENET: Optimized so we don't alocate a substring
+            if (!Integer.TryParse(s, i, 1, radix: 10, out int result))
             {
                 return 1;
             }
@@ -122,11 +124,10 @@ namespace Egothor.Stemmer
                 string line;
                 while ((line = input.ReadLine()) != null)
                 {
-                    try
+                    line = line.ToLowerInvariant();
+                    using StringTokenizer st = new StringTokenizer(line);
+                    if (st.MoveNext())
                     {
-                        line = line.ToLowerInvariant();
-                        StringTokenizer st = new StringTokenizer(line);
-                        st.MoveNext();
                         string stem = st.Current;
                         Console.WriteLine(stem + " -a");
                         while (st.MoveNext())
@@ -138,7 +139,7 @@ namespace Egothor.Stemmer
                             }
                         }
                     }
-                    catch (InvalidOperationException)
+                    else // LUCENENET: st.MoveNext() will return false rather than throwing a NoSuchElementException
                     {
                         // no base token (stem) on a line
                     }

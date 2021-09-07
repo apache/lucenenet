@@ -83,27 +83,27 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 return score;
             }
-            public override int Freq => throw new NotSupportedException();
+            public override int Freq => throw UnsupportedOperationException.Create();
 
             public override int DocID => docID;
 
             public override int NextDoc()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
             public override int Advance(int target)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
             public override long GetCost()
             {
                 return 0;
             }
-            public override Weight Weight => throw new NotSupportedException();
+            public override Weight Weight => throw UnsupportedOperationException.Create();
 
             public override ICollection<ChildScorer> GetChildren()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
 
@@ -165,7 +165,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 Scorer scorer = (Scorer)context["scorer"];
                 if (scorer == null)
                 {
-                    throw new ThreadStateException("scores are missing; be sure to pass keepScores=true to FacetsCollector");
+                    throw IllegalStateException.Create("scores are missing; be sure to pass keepScores=true to FacetsCollector");
                 }
                 return new DoubleDocValuesAnonymousClass(this, scorer);
             }
@@ -186,9 +186,9 @@ namespace Lucene.Net.Facet.Taxonomy
                     {
                         return scorer.GetScore();
                     }
-                    catch (IOException exception)
+                    catch (Exception exception) when (exception.IsIOException())
                     {
-                        throw new Exception(exception.ToString(), exception);
+                        throw RuntimeException.Create(exception);
                     }
                 }
             }

@@ -67,7 +67,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         public virtual NumberFormat NumberFormat
         {
             get => format;
-            set => format = value ?? throw new ArgumentException("format cannot be null!");
+            set => format = value ?? throw new ArgumentNullException(nameof(NumberFormat), "format cannot be null!"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
 
         /// <summary>

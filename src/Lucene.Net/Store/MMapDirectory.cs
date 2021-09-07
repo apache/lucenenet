@@ -108,7 +108,7 @@ namespace Lucene.Net.Store
         {
             if (maxChunkSize <= 0)
             {
-                throw new ArgumentException("Maximum chunk size for mmap must be >0");
+                throw new ArgumentOutOfRangeException(nameof(maxChunkSize), "Maximum chunk size for mmap must be > 0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.chunkSizePower = 31 - maxChunkSize.LeadingZeroCount();
             if (Debugging.AssertsEnabled) Debugging.Assert(this.chunkSizePower >= 0 && this.chunkSizePower <= 30);
@@ -234,7 +234,7 @@ namespace Lucene.Net.Store
             internal MMapIndexInput(MMapDirectory outerInstance, string resourceDescription, FileStream fc)
                 : base(resourceDescription, null, fc.Length, outerInstance.chunkSizePower, true)
             {
-                this.fc = fc ?? throw new ArgumentNullException(nameof(fc));
+                this.fc = fc ?? throw new ArgumentNullException(nameof(fc)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
                 this.SetBuffers(outerInstance.Map(this, fc, 0, fc.Length));
             }
 

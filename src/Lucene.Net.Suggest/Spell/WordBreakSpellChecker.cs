@@ -182,7 +182,7 @@ namespace Lucene.Net.Search.Spell
                 {
                     continue;
                 }
-                string leftTermText = terms[i].Text();
+                string leftTermText = terms[i].Text;
                 int leftTermLength = leftTermText.CodePointCount(0, leftTermText.Length);
                 if (leftTermLength > maxCombineWordLength)
                 {
@@ -203,7 +203,7 @@ namespace Lucene.Net.Search.Spell
                     {
                         break;
                     }
-                    string rightTermText = terms[j].Text();
+                    string rightTermText = terms[j].Text;
                     int rightTermLength = rightTermText.CodePointCount(0, rightTermText.Length);
                     combinedTermText += rightTermText;
                     combinedLength += rightTermLength;
@@ -236,7 +236,7 @@ namespace Lucene.Net.Search.Spell
                                 SuggestWord word = new SuggestWord();
                                 word.Freq = combinedTermFreq;
                                 word.Score = origIndexes.Length - 1;
-                                word.String = combinedTerm.Text();
+                                word.String = combinedTerm.Text;
                                 CombineSuggestionWrapper suggestion = new CombineSuggestionWrapper(new CombineSuggestion(word, origIndexes), (origIndexes.Length - 1));
                                 suggestions.Enqueue(suggestion);
                                 if (suggestions.Count > maxSuggestions)
@@ -266,7 +266,7 @@ namespace Lucene.Net.Search.Spell
             SuggestWord[] prefix, JCG.PriorityQueue<SuggestWordArrayWrapper> suggestions, 
             int totalEvaluations, BreakSuggestionSortMethod sortMethod)
         {
-            string termText = term.Text();
+            string termText = term.Text;
             int termLength = termText.CodePointCount(0, termText.Length);
             int useMinBreakWordLength = minBreakWordLength;
             if (useMinBreakWordLength < 1)
@@ -487,11 +487,11 @@ namespace Lucene.Net.Search.Spell
 
             public int FreqSum => freqSum;
 
-            // Required by the PriorityQueue's generic constraint, but we are using
+            // LUCENENET: Required by the PriorityQueue's generic constraint, but we are using
             // IComparer<T> here rather than IComparable<T>
             public int CompareTo(SuggestWordArrayWrapper other)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
 
@@ -510,11 +510,11 @@ namespace Lucene.Net.Search.Spell
 
             public int NumCombinations => numCombinations;
 
-            // Required by the PriorityQueue's generic constraint, but we are using
+            // LUCENENET: Required by the PriorityQueue's generic constraint, but we are using
             // IComparer<T> here rather than IComparable<T>
             public int CompareTo(CombineSuggestionWrapper other)
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
         }
     }

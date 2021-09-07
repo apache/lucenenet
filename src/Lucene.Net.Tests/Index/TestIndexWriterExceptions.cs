@@ -9,6 +9,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -162,8 +163,6 @@ namespace Lucene.Net.Index
 
         private class IndexerThread : ThreadJob
         {
-            private readonly DateTime unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
             private readonly TestIndexWriterExceptions outerInstance;
 
             internal IndexWriter writer;
@@ -206,7 +205,7 @@ namespace Lucene.Net.Index
                 Field idField = NewField(r, "id", "", DocCopyIterator.custom2);
                 doc.Add(idField);
 
-                long stopTime = ((long)(DateTime.UtcNow - unixEpoch).TotalMilliseconds) + 500;
+                long stopTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + 500; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
                 do
                 {
@@ -229,7 +228,8 @@ namespace Lucene.Net.Index
                             writer.UpdateDocument(idTerm, doc);
                         }
                     }
-                    catch (TestPoint1Exception re)
+                    // LUCENENET NOTE: These generally correspond to System.SystemException in .NET except for IOException types.
+                    catch (Exception re) when (re.IsRuntimeException())
                     {
                         if (Verbose)
                         {
@@ -240,7 +240,7 @@ namespace Lucene.Net.Index
                         {
                             TestUtil.CheckIndex(writer.Directory);
                         }
-                        catch (IOException ioe)
+                        catch (Exception ioe) when (ioe.IsIOException())
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": unexpected exception1");
                             Console.WriteLine(ioe.StackTrace);
@@ -248,7 +248,7 @@ namespace Lucene.Net.Index
                             break;
                         }
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": unexpected exception2");
                         Console.WriteLine(t.StackTrace);
@@ -265,14 +265,14 @@ namespace Lucene.Net.Index
                     {
                         writer.UpdateDocument(idTerm, doc);
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": unexpected exception3");
                         Console.WriteLine(t.StackTrace);
                         failure = t;
                         break;
                     }
-                } while (((long)(DateTime.UtcNow - unixEpoch).TotalMilliseconds) < stopTime);
+                } while ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) < stopTime); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
         }
 
@@ -305,12 +305,12 @@ namespace Lucene.Net.Index
                         Console.WriteLine(Thread.CurrentThread.Name + ": NOW FAIL: " + name);
                         Console.WriteLine((new Exception()).StackTrace);
                     }
-                    throw new TestPoint1Exception(Thread.CurrentThread.Name + ": intentionally failing at " + name);
+                    throw new TestPoint1Exception(Thread.CurrentThread.Name + ": intentionally failing at " + name); // LUCENENET TODO: Need to change this to RuntimeException once we add a custom (or flagged) exception that is created by RuntimeException.Create
                 }
             }
         }
 
-        private class TestPoint1Exception : Exception
+        private class TestPoint1Exception : Exception, IRuntimeException
         {
             public TestPoint1Exception(string message) : base(message)
             {
@@ -357,7 +357,7 @@ namespace Lucene.Net.Index
             {
                 writer.Dispose();
             }
-            catch (Exception t)
+            catch (Exception t) when (t.IsThrowable())
             {
                 Console.WriteLine("exception during close:");
                 Console.WriteLine(t.StackTrace);
@@ -416,7 +416,7 @@ namespace Lucene.Net.Index
             {
                 writer.Dispose();
             }
-            catch (Exception t)
+            catch (Exception t) when (t.IsThrowable())
             {
                 Console.WriteLine("exception during close:");
                 Console.WriteLine(t.StackTrace);
@@ -442,7 +442,7 @@ namespace Lucene.Net.Index
             {
                 if (doFail && name.Equals("DocumentsWriterPerThread addDocument start", StringComparison.Ordinal))
                 {
-                    throw new Exception("intentionally failing");
+                    throw RuntimeException.Create("intentionally failing");
                 }
             }
         }
@@ -489,20 +489,15 @@ namespace Lucene.Net.Index
             doc.Add(NewTextField("field", "a field", Field.Store.YES));
             w.AddDocument(doc);
             testPoint.doFail = true;
-
-            // LUCENENET: Don't swallow NUnit's assert exception
-            Assert.Throws<Exception>(() => w.AddDocument(doc), "did not hit exception");
-//            try
-//            {
-//                w.AddDocument(doc);
-//                Assert.Fail("did not hit exception");
-//            }
-//#pragma warning disable 168
-//            catch (Exception re)
-//#pragma warning restore 168
-//            {
-//                // expected
-//            }
+            try
+            {
+                w.AddDocument(doc);
+                Assert.Fail("did not hit exception");
+            }
+            catch (Exception re) when (re.IsRuntimeException())
+            {
+                // expected
+            }
             w.Dispose();
             dir.Dispose();
         }
@@ -531,9 +526,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(crashDoc, analyzer);
                 Assert.Fail("did not hit expected exception");
             }
-#pragma warning disable 168
-            catch (IOException ioe)
-#pragma warning restore 168
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 // expected
             }
@@ -552,7 +545,7 @@ namespace Lucene.Net.Index
                 if (doFail && name.Equals("startMergeInit", StringComparison.Ordinal))
                 {
                     failed = true;
-                    throw new Exception("intentionally failing");
+                    throw RuntimeException.Create("intentionally failing");
                 }
             }
         }
@@ -582,7 +575,7 @@ namespace Lucene.Net.Index
                 {
                     w.AddDocument(doc);
                 }
-                catch (Exception)
+                catch (Exception re) when (re.IsRuntimeException())
                 {
                     break;
                 }
@@ -619,9 +612,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 Assert.Fail("did not hit expected exception");
             }
-#pragma warning disable 168
-            catch (Exception e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsException())
             {
             }
 
@@ -642,7 +633,7 @@ namespace Lucene.Net.Index
 
             // Make sure the doc that hit the exception was marked
             // as deleted:
-            DocsEnum tdocs = TestUtil.Docs(Random, reader, t.Field, new BytesRef(t.Text()), MultiFields.GetLiveDocs(reader), null, 0);
+            DocsEnum tdocs = TestUtil.Docs(Random, reader, t.Field, new BytesRef(t.Text), MultiFields.GetLiveDocs(reader), null, 0);
 
             int count = 0;
             while (tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
@@ -736,9 +727,7 @@ namespace Lucene.Net.Index
                 {
                     writer.AddDocument(doc);
                 }
-#pragma warning disable 168
-                catch (IOException ioe)
-#pragma warning restore 168
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     // only one flush should fail:
                     Assert.IsFalse(hitError);
@@ -788,7 +777,7 @@ namespace Lucene.Net.Index
                     writer.AddDocument(doc);
                     Assert.Fail("did not hit expected exception");
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     if (Verbose)
                     {
@@ -979,9 +968,7 @@ namespace Lucene.Net.Index
                             writer.AddDocument(doc);
                             Assert.Fail("did not hit expected exception");
                         }
-#pragma warning disable 168
-                        catch (IOException ioe)
-#pragma warning restore 168
+                        catch (Exception ioe) when (ioe.IsIOException())
                         {
                         }
 
@@ -994,7 +981,7 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                catch (Exception t)
+                catch (Exception t) when (t.IsThrowable())
                 {
                     lock (this)
                     {
@@ -1068,9 +1055,7 @@ namespace Lucene.Net.Index
                     {
                         writer.Commit();
                     }
-#pragma warning disable 168
-                    catch (IOException ioe)
-#pragma warning restore 168
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
                         // expected
                     }
@@ -1118,7 +1103,7 @@ namespace Lucene.Net.Index
                     if (!isDelete)
                     {
                         failOnCommit = true;
-                        throw new Exception("now fail first");
+                        throw RuntimeException.Create("now fail first");
                     }
                     else
                     {
@@ -1148,15 +1133,11 @@ namespace Lucene.Net.Index
                     w.Dispose();
                     Assert.Fail();
                 }
-#pragma warning disable 168
-                catch (IOException ioe)
-#pragma warning restore 168
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     Assert.Fail("expected only RuntimeException");
                 }
-#pragma warning disable 168
-                catch (Exception re)
-#pragma warning restore 168
+                catch (Exception re) when (re.IsRuntimeException())
                 {
                     // Expected
                 }
@@ -1201,7 +1182,7 @@ namespace Lucene.Net.Index
                 {
                     w.ForceMerge(1);
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     if (ioe.InnerException == null)
                     {
@@ -1228,9 +1209,7 @@ namespace Lucene.Net.Index
                 writer.Dispose();
                 Assert.Fail("OutOfMemoryError expected");
             }
-#pragma warning disable 168
-            catch (OutOfMemoryException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsOutOfMemoryError())
             {
             }
 
@@ -1252,7 +1231,7 @@ namespace Lucene.Net.Index
             {
                 if (message.StartsWith("now flush at close", StringComparison.Ordinal) && thrown.CompareAndSet(false, true))
                 {
-                    throw new OutOfMemoryException("fake OOME at " + message);
+                    throw OutOfMemoryError.Create("fake OOME at " + message);
                 }
             }
 
@@ -1275,7 +1254,7 @@ namespace Lucene.Net.Index
             {
                 if (doFail && name.Equals("rollback before checkpoint", StringComparison.Ordinal))
                 {
-                    throw new Exception("intentionally failing");
+                    throw RuntimeException.Create("intentionally failing");
                 }
             }
         }
@@ -1293,9 +1272,15 @@ namespace Lucene.Net.Index
 
             AddDoc(w);
             testPoint.doFail = true;
-            // LUCENENET: Don't assert in try block
-            Assert.Throws<Exception>(() => w.Rollback(), "did not hit intentional RuntimeException");
-
+            try
+            {
+                w.Rollback();
+                fail("did not hit intentional RuntimeException");
+            }
+            catch (Exception re) when (re.IsRuntimeException())
+            {
+                // expected
+            }
             testPoint.doFail = false;
             w.Rollback();
             dir.Dispose();
@@ -1337,7 +1322,7 @@ namespace Lucene.Net.Index
             {
                 reader = DirectoryReader.Open(dir);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 Console.WriteLine(e.StackTrace);
                 Assert.Fail("segmentInfos failed to retry fallback to correct segments_N file");
@@ -1393,9 +1378,7 @@ namespace Lucene.Net.Index
                 reader = DirectoryReader.Open(dir);
                 Assert.Fail("reader did not hit IOException on opening a corrupt index");
             }
-#pragma warning disable 168
-            catch (Exception e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsException())
             {
             }
             if (reader != null)
@@ -1452,9 +1435,7 @@ namespace Lucene.Net.Index
                 reader = DirectoryReader.Open(dir);
                 Assert.Fail("reader did not hit IOException on opening a corrupt index");
             }
-#pragma warning disable 168
-            catch (Exception e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsException())
             {
             }
             if (reader != null)
@@ -1513,9 +1494,7 @@ namespace Lucene.Net.Index
             {
                 reader = DirectoryReader.Open(dir);
             }
-#pragma warning disable 168
-            catch (Exception e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsException())
             {
                 Assert.Fail("reader failed to open on a crashed index");
             }
@@ -1525,7 +1504,7 @@ namespace Lucene.Net.Index
             {
                 writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE));
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 Console.WriteLine(e.StackTrace);
                 Assert.Fail("writer failed to open on a crashed index");
@@ -1566,7 +1545,7 @@ namespace Lucene.Net.Index
                             w.AddDocument(doc);
                             Assert.IsFalse(field.IndexableFieldType.StoreTermVectors);
                         }
-                        catch (Exception e)
+                        catch (Exception e) when (e.IsRuntimeException())
                         {
                             Assert.IsTrue(e.Message.StartsWith(FailOnTermVectors.EXC_MSG, StringComparison.Ordinal));
                         }
@@ -1591,7 +1570,7 @@ namespace Lucene.Net.Index
                             w.AddDocument(doc);
                             Assert.IsFalse(field.IndexableFieldType.StoreTermVectors);
                         }
-                        catch (Exception e)
+                        catch (Exception e) when (e.IsRuntimeException())
                         {
                             Assert.IsTrue(e.Message.StartsWith(FailOnTermVectors.EXC_MSG, StringComparison.Ordinal));
                         }
@@ -1639,7 +1618,7 @@ namespace Lucene.Net.Index
 
                 if (fail)
                 {
-                    throw new Exception(EXC_MSG);
+                    throw RuntimeException.Create(EXC_MSG);
                 }
             }
         }
@@ -1683,7 +1662,7 @@ namespace Lucene.Net.Index
                 // BUG: CrashingFilter didn't
                 Assert.Fail("did not hit expected exception");
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 // expected
                 Assert.AreEqual(CRASH_FAIL_MESSAGE, ioe.Message);
@@ -1777,7 +1756,7 @@ namespace Lucene.Net.Index
                 // BUG: CrashingFilter didn't
                 Assert.Fail("did not hit expected exception");
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 // expected
                 Assert.AreEqual(CRASH_FAIL_MESSAGE, ioe.Message);
@@ -1820,7 +1799,7 @@ namespace Lucene.Net.Index
                     && name.StartsWith("segments_", StringComparison.Ordinal)
                     && StackTraceHelper.DoesStackTraceContainMethod("Read"))
                 {
-                    throw new NotSupportedException("expected UOE");
+                    throw UnsupportedOperationException.Create("expected UOE");
                 }
 
                 return base.OpenInput(name, context);
@@ -1841,9 +1820,7 @@ namespace Lucene.Net.Index
                 new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, null));
                 Assert.Fail("should have gotten a UOE");
             }
-#pragma warning disable 168
-            catch (NotSupportedException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsUnsupportedOperationException())
             {
             }
 
@@ -1869,9 +1846,7 @@ namespace Lucene.Net.Index
                 iw.AddDocument(doc);
                 Assert.Fail();
             }
-#pragma warning disable 168
-            catch (ArgumentException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 // expected exception
             }
@@ -1920,9 +1895,7 @@ namespace Lucene.Net.Index
                 iw.AddDocument(list);
                 Assert.Fail("didn't get any exception, boost silently discarded");
             }
-#pragma warning disable 168
-            catch (NotSupportedException expected)
-#pragma warning restore 168
+            catch (Exception expected) when (expected.IsUnsupportedOperationException())
             {
                 // expected
             }
@@ -2067,15 +2040,7 @@ namespace Lucene.Net.Index
                     // Exceptions are fine - we are running out of file handlers here
                     continue;
                 }
-#pragma warning disable 168
-                catch (FileNotFoundException/* | NoSuchFileException*/ ex)
-#pragma warning restore 168
-                {
-                    continue;
-                }
-                // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-                // in Lucene, we need to catch it here to be on the safe side.
-                catch (DirectoryNotFoundException)
+                catch (Exception ex) when (ex.IsNoSuchFileExceptionOrFileNotFoundException())
                 {
                     continue;
                 }
@@ -2251,7 +2216,7 @@ namespace Lucene.Net.Index
                         w = null;
                     }
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     // FakeIOException can be thrown from mergeMiddle, in which case IW
                     // registers it before our CMS gets to suppress it. IW.forceMerge later
@@ -2448,7 +2413,7 @@ namespace Lucene.Net.Index
                 iw.Rollback();
                 Assert.Fail();
             }
-            catch (Exception expected)
+            catch (Exception expected) when (expected.IsRuntimeException())
             {
                 Assert.AreEqual("BOOM!", expected.Message);
             }
@@ -2480,7 +2445,7 @@ namespace Lucene.Net.Index
             {
                 if (messageToFailOn.Equals(message, StringComparison.Ordinal))
                 {
-                    throw new Exception("BOOM!");
+                    throw RuntimeException.Create("BOOM!");
                 }
             }
 

@@ -1,5 +1,6 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -65,7 +66,7 @@ namespace Lucene.Net.Store
                 }
 
                 @out.WriteBytes(bytes, 0, byteUpto);
-                Assert.AreEqual(size, @out.GetFilePointer());
+                Assert.AreEqual(size, @out.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 @out.Dispose();
                 Assert.AreEqual(size, dir.FileLength("test"));
 
@@ -191,9 +192,9 @@ namespace Lucene.Net.Store
                     dst.CopyBytes(src, src.Length - 100);
                     dst.Dispose();
                 }
-                catch (IOException ex)
+                catch (Exception ex) when (ex.IsIOException())
                 {
-                    throw new Exception(ex.ToString(), ex);
+                    throw RuntimeException.Create(ex);
                 }
             }
         }

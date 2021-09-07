@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
                     // if the field omits norms, the boost cannot be indexed.
                     if (fieldType.OmitNorms && field.Boost != 1.0f)
                     {
-                        throw new NotSupportedException("You cannot set an index-time boost: norms are omitted for field '" + field.Name + "'");
+                        throw UnsupportedOperationException.Create("You cannot set an index-time boost: norms are omitted for field '" + field.Name + "'");
                     }
 
                     // only bother checking offsets if something will consume them.

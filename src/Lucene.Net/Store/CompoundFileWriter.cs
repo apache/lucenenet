@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using System;
@@ -91,7 +91,8 @@ namespace Lucene.Net.Store
         ///           if <paramref name="dir"/> or <paramref name="name"/> is <c>null</c> </exception>
         internal CompoundFileWriter(Directory dir, string name)
         {
-            // LUCENENET specific - changed order to take advantage of throw expression
+            // LUCENENET specific - changed order to take advantage of throw expression and
+            // changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             directory = dir ?? throw new ArgumentNullException(nameof(directory), $"{nameof(directory)} cannot be null");
             dataFileName = name ?? throw new ArgumentNullException(nameof(name), $"{nameof(name)} cannot be null");
             entryTableName = IndexFileNames.SegmentFileName(IndexFileNames.StripExtension(name), "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);
@@ -142,7 +143,7 @@ namespace Lucene.Net.Store
             {
                 return;
             }
-            IOException priorException = null;
+            Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
             IndexOutput entryTableOut = null;
             // TODO this code should clean up after itself
             // (remove partial .cfs/.cfe)
@@ -150,7 +151,7 @@ namespace Lucene.Net.Store
             {
                 if (pendingEntries.Count > 0 || outputTaken)
                 {
-                    throw new InvalidOperationException("CFS has pending open files");
+                    throw IllegalStateException.Create("CFS has pending open files");
                 }
                 closed = true;
                 // open the compound stream
@@ -158,7 +159,7 @@ namespace Lucene.Net.Store
                 if (Debugging.AssertsEnabled) Debugging.Assert(dataOut != null);
                 CodecUtil.WriteFooter(dataOut);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 priorException = e;
             }
@@ -171,7 +172,7 @@ namespace Lucene.Net.Store
                 entryTableOut = directory.CreateOutput(entryTableName, IOContext.DEFAULT);
                 WriteEntryTable(entries.Values, entryTableOut);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 priorException = e;
             }
@@ -186,7 +187,7 @@ namespace Lucene.Net.Store
         {
             if (closed)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "CFS Directory is already closed");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "CFS Directory is already disposed.");
             }
         }
 
@@ -200,11 +201,11 @@ namespace Lucene.Net.Store
             bool success = false;
             try
             {
-                long startPtr = dataOut.GetFilePointer();
+                long startPtr = dataOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 long length = fileEntry.Length;
                 dataOut.CopyBytes(@is, length);
                 // Verify that the output length diff is equal to original file
-                long endPtr = dataOut.GetFilePointer();
+                long endPtr = dataOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 long diff = endPtr - startPtr;
                 if (diff != length)
                 {
@@ -356,7 +357,7 @@ namespace Lucene.Net.Store
                 this.outerInstance = outerInstance;
                 this.@delegate = @delegate;
                 this.entry = entry;
-                entry.Offset = offset = @delegate.GetFilePointer();
+                entry.Offset = offset = @delegate.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 this.isSeparate = isSeparate;
             }
 
@@ -388,11 +389,7 @@ namespace Lucene.Net.Store
                 }
             }
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public override long GetFilePointer()
-            {
-                return @delegate.GetFilePointer() - offset;
-            }
+            public override long Position => @delegate.Position - offset; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
             [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

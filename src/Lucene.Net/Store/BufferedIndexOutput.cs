@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -58,7 +58,7 @@ namespace Lucene.Net.Store
         {
             if (bufferSize <= 0)
             {
-                throw new ArgumentException("bufferSize must be greater than 0 (got " + bufferSize + ")");
+                throw new ArgumentOutOfRangeException("bufferSize must be greater than 0 (got " + bufferSize + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.bufferSize = bufferSize;
             // LUCENENET: We lazy-load the buffer, so we don't force all subclasses to allocate it
@@ -167,10 +167,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override long GetFilePointer()
-        {
-            return bufferStart + bufferPosition;
-        }
+        public override long Position => bufferStart + bufferPosition; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
         [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
         public override void Seek(long pos)

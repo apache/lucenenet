@@ -77,7 +77,7 @@ namespace Lucene.Net.Util
                         // directly rather than using Activator.CreateInstance()
                         return CreateInstance(attributeType) ?? (Attribute)Activator.CreateInstance(attributeType);
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsInstantiationException() || e.IsIllegalAccessException())
                     {
                         throw new ArgumentException("Could not instantiate implementing class for " + typeof(S).FullName, e);
                     }
@@ -206,9 +206,9 @@ namespace Lucene.Net.Util
         /// </summary>
         public AttributeSource(AttributeSource input)
         {
-            if (input == null)
+            if (input is null)
             {
-                throw new ArgumentException("input AttributeSource must not be null");
+                throw new ArgumentNullException(nameof(input), "input AttributeSource must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             this.attributes = input.attributes;
             this.attributeImpls = input.attributeImpls;
@@ -274,7 +274,7 @@ namespace Lucene.Net.Util
 
             //public virtual void Remove() // LUCENENET specific - not used
             //{
-            //    throw new NotSupportedException();
+            //    throw UnsupportedOperationException.Create();
             //}
 
             public void Dispose()
@@ -296,7 +296,7 @@ namespace Lucene.Net.Util
 
             public void Reset()
             {
-                throw new NotSupportedException();
+                throw UnsupportedOperationException.Create();
             }
 
             public Attribute Current => current;
@@ -494,7 +494,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public void RestoreState(State state)
         {
-            if (state == null)
+            if (state is null)
             {
                 return;
             }
@@ -684,7 +684,7 @@ namespace Lucene.Net.Util
             for (State state = GetCurrentState(); state != null; state = state.next)
             {
                 Attribute targetImpl = target.attributeImpls[state.attribute.GetType()];
-                if (targetImpl == null)
+                if (targetImpl is null)
                 {
                     throw new ArgumentException("this AttributeSource contains Attribute of type " + state.attribute.GetType().Name + " that is not in the target");
                 }

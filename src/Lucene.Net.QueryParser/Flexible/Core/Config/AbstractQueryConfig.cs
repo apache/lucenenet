@@ -46,9 +46,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
         /// <returns>the value held by the given key</returns>
         public virtual T Get<T>(ConfigurationKey<T> key)
         {
-            if (key == null)
+            if (key is null)
             {
-                throw new ArgumentException("key cannot be null!");
+                throw new ArgumentNullException(nameof(key), "key cannot be null!"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             this.configMap.TryGetValue(key, out object result);
             return result == null ? default : (T)result;
@@ -62,9 +62,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
         /// <returns><c>true</c> if there is a value set with the given key, otherwise <c>false</c></returns>
         public virtual bool Has<T>(ConfigurationKey<T> key)
         {
-            if (key == null)
+            if (key is null)
             {
-                throw new ArgumentException("key cannot be null!");
+                throw new ArgumentNullException(nameof(key), "key cannot be null!"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             return this.configMap.ContainsKey(key);
@@ -78,9 +78,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
         /// <param name="value">value to set</param>
         public virtual void Set<T>(ConfigurationKey<T> key, T value)
         {
-            if (key == null)
+            if (key is null)
             {
-                throw new ArgumentException("key cannot be null!");
+                throw new ArgumentNullException(nameof(key), "key cannot be null!"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             if (value == null)
@@ -101,9 +101,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
         /// <returns><c>true</c> if the key and value was set and removed, otherwise <c>false</c></returns>
         public virtual bool Unset<T>(ConfigurationKey<T> key)
         {
-            if (key == null)
+            if (key is null)
             {
-                throw new ArgumentException("key cannot be null!");
+                throw new ArgumentNullException(nameof(key), "key cannot be null!"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             return this.configMap.Remove(key);

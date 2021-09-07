@@ -1,5 +1,6 @@
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Attributes;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 using BitSet = J2N.Collections.BitSet;
@@ -216,7 +217,7 @@ namespace Lucene.Net.Util
 
                 if (b0 != null && b0.Length <= b.Length)
                 {
-                    Assert.AreEqual(a.Cardinality, b.Cardinality());
+                    Assert.AreEqual(a.Cardinality, b.Cardinality);
                     
                     BitSet a_and = (BitSet)a.Clone();
                     a_and.And(a0);
@@ -237,18 +238,18 @@ namespace Lucene.Net.Util
                     FixedBitSet b_andn = b.Clone();
                     b_andn.AndNot(b0);
 
-                    Assert.AreEqual(a0.Cardinality, b0.Cardinality());
-                    Assert.AreEqual(a_or.Cardinality, b_or.Cardinality());
+                    Assert.AreEqual(a0.Cardinality, b0.Cardinality);
+                    Assert.AreEqual(a_or.Cardinality, b_or.Cardinality);
 
                     DoIterate(a_and, b_and, mode);
                     DoIterate(a_or, b_or, mode);
                     DoIterate(a_andn, b_andn, mode);
                     DoIterate(a_xor, b_xor, mode);
 
-                    Assert.AreEqual(a_and.Cardinality, b_and.Cardinality());
-                    Assert.AreEqual(a_or.Cardinality, b_or.Cardinality());
-                    Assert.AreEqual(a_xor.Cardinality, b_xor.Cardinality());
-                    Assert.AreEqual(a_andn.Cardinality, b_andn.Cardinality());
+                    Assert.AreEqual(a_and.Cardinality, b_and.Cardinality);
+                    Assert.AreEqual(a_or.Cardinality, b_or.Cardinality);
+                    Assert.AreEqual(a_xor.Cardinality, b_xor.Cardinality);
+                    Assert.AreEqual(a_andn.Cardinality, b_andn.Cardinality);
                 }
 
                 a0 = a;
@@ -392,13 +393,13 @@ namespace Lucene.Net.Util
                 FixedBitSet b2 = new FixedBitSet(numBits);
                 Assert.IsTrue(b1.Equals(b2));
                 Assert.AreEqual(b1.GetHashCode(), b2.GetHashCode());
-                Assert.AreEqual(0, b1.Cardinality());
+                Assert.AreEqual(0, b1.Cardinality);
                 if (numBits > 0)
                 {
                     b1.Set(0, numBits);
-                    Assert.AreEqual(numBits, b1.Cardinality());
+                    Assert.AreEqual(numBits, b1.Cardinality);
                     b1.Flip(0, numBits);
-                    Assert.AreEqual(0, b1.Cardinality());
+                    Assert.AreEqual(0, b1.Cardinality);
                 }
             }
         }

@@ -1,11 +1,10 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
-using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 
-namespace Lucene.Net.Join
+namespace Lucene.Net.Search.Join
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,7 +22,7 @@ namespace Lucene.Net.Join
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-     
+
     internal class TermsIncludingScoreQuery : Query
     {
         private readonly string _field;

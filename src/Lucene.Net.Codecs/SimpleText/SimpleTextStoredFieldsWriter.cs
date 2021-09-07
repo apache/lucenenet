@@ -192,7 +192,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 Dispose();
             }
-            catch // ignored
+            catch (Exception ignored) when (ignored.IsThrowable())
             {
             }
             IOUtils.DeleteFilesIgnoringExceptions(_directory,
@@ -203,7 +203,7 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             if (_numDocsWritten != numDocs)
             {
-                throw new Exception("mergeFields produced an invalid result: docCount is " + numDocs + " but only saw " +
+                throw RuntimeException.Create("mergeFields produced an invalid result: docCount is " + numDocs + " but only saw " +
                                     _numDocsWritten + " file=" + _output +
                                     "; now aborting this merge to prevent index corruption");
             }

@@ -195,7 +195,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 if (matches.size() > topN)
                 {
                     //matches.SubList(topN, matches.size()).clear();
-                    matches.RemoveRange(topN, matches.size() - topN);
+                    matches.RemoveRange(topN, matches.size() - topN); // LUCENENET: Converted end index to length
                 }
 
                 assertEquals(matches.size(), r.size());

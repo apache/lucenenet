@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
                     TestTermPositionVectors(reader, i);
                 }
             }
-            catch (IOException ioe)
+            catch (Exception ioe) when (ioe.IsIOException())
             {
                 Assert.Fail(ioe.Message);
             }
@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
                         /// close the opened reader </summary>
                         reader.Dispose();
                     }
-                    catch (IOException ioe)
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
                         Console.WriteLine(ioe.ToString());
                         Console.Write(ioe.StackTrace);
@@ -177,7 +177,6 @@ namespace Lucene.Net.Search
             }
         }
 
-        [Test]
         public void Run()
         {
             try
@@ -188,10 +187,9 @@ namespace Lucene.Net.Search
                     TestTermVectors();
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
-                Console.WriteLine(e.ToString());
-                Console.Write(e.StackTrace);
+                e.printStackTrace();
             }
             return;
         }
@@ -203,16 +201,16 @@ namespace Lucene.Net.Search
             long start = 0L;
             for (int docId = 0; docId < numDocs; docId++)
             {
-                start = Environment.TickCount;
+                start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 Fields vectors = reader.GetTermVectors(docId);
-                timeElapsed += Environment.TickCount - start;
+                timeElapsed += (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - start; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
                 // verify vectors result
                 VerifyVectors(vectors, docId);
 
-                start = Environment.TickCount;
+                start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 Terms vector = reader.GetTermVectors(docId).GetTerms("field");
-                timeElapsed += Environment.TickCount - start;
+                timeElapsed += (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - start; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
                 VerifyVector(vector.GetEnumerator(), docId);
             }

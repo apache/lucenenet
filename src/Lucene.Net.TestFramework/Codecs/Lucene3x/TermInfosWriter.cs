@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
@@ -107,9 +107,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         directory.DeleteFile(IndexFileNames.SegmentFileName(segment, "", (isIndex ? Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION : Lucene3xPostingsFormat.TERMS_EXTENSION)));
                     }
-#pragma warning disable 168, IDE0059
-                    catch (IOException ignored)
-#pragma warning restore 168, IDE0059
+                    catch (Exception ignored) when (ignored.IsIOException())
                     {
                     }
                 }
@@ -148,9 +146,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         directory.DeleteFile(IndexFileNames.SegmentFileName(segment, "", (isIndex ? Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION : Lucene3xPostingsFormat.TERMS_EXTENSION)));
                     }
-#pragma warning disable 168, IDE0059
-                    catch (IOException ignored)
-#pragma warning restore 168, IDE0059
+                    catch (Exception ignored) when (ignored.IsIOException())
                     {
                     }
                 }
@@ -272,8 +268,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             if (isIndex)
             {
-                output.WriteVInt64(other.output.GetFilePointer() - lastIndexPointer);
-                lastIndexPointer = other.output.GetFilePointer(); // write pointer
+                output.WriteVInt64(other.output.Position - lastIndexPointer); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                lastIndexPointer = other.output.Position; // write pointer // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
 
             lastFieldNumber = fieldNumber;

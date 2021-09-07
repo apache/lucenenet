@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -80,14 +80,14 @@ namespace Lucene.Net.Analysis.Util
 
                     if (name == null)
                     {
-                        throw new InvalidOperationException("The class name " + service.Name +
+                        throw ServiceConfigurationError.Create("The class name " + service.Name +
                           " has wrong suffix, allowed are: " + Arrays.ToString(suffixes));
                     }
                     // only add the first one for each name, later services will be ignored
                     // this allows to place services before others in classpath to make
                     // them used instead of others
                     //
-                    // LUCENETODO: Should we disallow duplicate names here?
+                    // TODO: Should we disallow duplicate names here?
                     // Allowing it may get confusing on collisions, as different packages
                     // could contain same factory class, which is a naming bug!
                     // When changing this be careful to allow reload()!
@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 return (S)Activator.CreateInstance(service, new object[] { args });
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 throw new ArgumentException("SPI class of type " + clazz.Name + " with name '" + name + "' cannot be instantiated. " +
                     "This is likely due to a missing reference of the .NET Assembly containing the class '" + service.Name + "' in your project or AppDomain: ", e);

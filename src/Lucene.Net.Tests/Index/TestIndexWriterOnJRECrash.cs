@@ -108,7 +108,7 @@
 //                {
 //                    Thread.Sleep(CrashTime);
 //                }
-//                catch (ThreadInterruptedException e)
+//                catch (Exception e) when (e.IsInterruptedException())
 //                {
 //                }
 //                outerInstance.CrashJRE();
@@ -190,7 +190,7 @@
 //                            }
 //                        }
 //                    }
-//                    catch (IOException e)
+//                    catch (Exception e) when (e.IsIOException())
 //                    {
 //                        Console.Error.WriteLine("Couldn't pipe from the forked process: " + e.ToString());
 //                    }

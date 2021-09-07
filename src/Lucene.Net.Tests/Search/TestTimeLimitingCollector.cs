@@ -155,7 +155,7 @@ namespace Lucene.Net.Search
                 Search(tlCollector);
                 totalTLCResults = myHc.HitCount();
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 e.printStackTrace();
                 assertTrue("Unexpected exception: " + e, false); //==fail
@@ -205,7 +205,7 @@ namespace Lucene.Net.Search
             {
                 timoutException = x;
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsException())
             {
                 assertTrue("Unexpected exception: " + e, false); //==fail
             }
@@ -335,7 +335,7 @@ namespace Lucene.Net.Search
             {
                 threadArray[i].Join();
             }
-            assertEquals("some threads failed!", N_THREADS, success.Cardinality());
+            assertEquals("some threads failed!", N_THREADS, success.Cardinality);
         }
 
         private class ThreadAnonymousClass : ThreadJob
@@ -386,7 +386,7 @@ namespace Lucene.Net.Search
 
             public int HitCount()
             {
-                return (int) bits.Cardinality();
+                return (int) bits.Cardinality;
             }
 
             public int LastDocCollected => lastDocCollected;

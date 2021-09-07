@@ -48,7 +48,7 @@ namespace Lucene.Net.Demo.Facet
 
         private readonly Directory indexDir = new RAMDirectory();
         private IndexSearcher searcher;
-        private readonly long nowSec = DateTime.Now.Ticks;
+        private readonly long nowSec = Environment.TickCount;
 
         internal readonly Int64Range PAST_HOUR;
         internal readonly Int64Range PAST_SIX_HOURS;

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
@@ -348,7 +349,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
 
-            long tStart = Environment.TickCount;
+            long tStart = Time.NanoTime() / Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             if (infoStream.IsEnabled("IW"))
             {
@@ -397,9 +398,9 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
-                    catch (OutOfMemoryException oom)
+                    catch (Exception oom) when (oom.IsOutOfMemoryError())
                     {
-                        HandleOOM(oom, "getReader");
+                        HandleOOM(oom, "GetReader");
                         // never reached but javac disagrees:
                         return null;
                     }
@@ -424,7 +425,7 @@ namespace Lucene.Net.Index
                 }
                 if (infoStream.IsEnabled("IW"))
                 {
-                    infoStream.Message("IW", "getReader took " + (Environment.TickCount - tStart) + " msec");
+                    infoStream.Message("IW", "getReader took " + ((Time.NanoTime() / Time.MillisecondsPerNanosecond) - tStart) + " msec"); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 }
                 success2 = true;
             }
@@ -584,7 +585,7 @@ namespace Lucene.Net.Index
                                 outerInstance.CheckpointNoSIS(); // Throws IOException
                             }
                         }
-                        catch (Exception t)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                             if (doSave)
                             {
@@ -611,7 +612,7 @@ namespace Lucene.Net.Index
                         {
                             rld.DropReaders(); // Throws IOException
                         }
-                        catch (Exception t)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                             if (doSave)
                             {
@@ -670,7 +671,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Dir == outerInstance.directory,"info.dir={0} vs {1}", info.Info.Dir, outerInstance.directory);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Dir == outerInstance.directory, "info.dir={0} vs {1}", info.Info.Dir, outerInstance.directory);
 
                     if (!readerMap.TryGetValue(info, out ReadersAndUpdates rld) || rld == null)
                     {
@@ -685,7 +686,7 @@ namespace Lucene.Net.Index
                     else
                     {
                         if (Debugging.AssertsEnabled && !(rld.Info == info))
-                            throw new AssertionException(string.Format("rld.info={0} info={1} isLive?={2} vs {3}", rld.Info, info, InfoIsLive(rld.Info),InfoIsLive(info)));
+                            throw AssertionError.Create(string.Format("rld.info={0} info={1} isLive?={2} vs {3}", rld.Info, info, InfoIsLive(rld.Info), InfoIsLive(info)));
                     }
 
                     if (create)
@@ -748,7 +749,7 @@ namespace Lucene.Net.Index
         {
             if (closed || (failIfDisposing && closing))
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "this IndexWriter is closed");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "this IndexWriter is disposed.");
             }
         }
 
@@ -848,7 +849,7 @@ namespace Lucene.Net.Index
                         segmentInfos.Read(directory);
                         segmentInfos.Clear();
                     }
-                    catch (IOException)
+                    catch (Exception e) when (e.IsIOException())
                     {
                         // Likely this means it's a fresh directory
                         initialIndexExists = false;
@@ -1133,7 +1134,7 @@ namespace Lucene.Net.Index
             {
                 if (pendingCommit != null)
                 {
-                    throw new InvalidOperationException("cannot close: prepareCommit was already called with no corresponding call to commit");
+                    throw IllegalStateException.Create("cannot close: prepareCommit was already called with no corresponding call to commit");
                 }
 
                 if (infoStream.IsEnabled("IW"))
@@ -1171,7 +1172,7 @@ namespace Lucene.Net.Index
                                 // any pending merges are waiting:
                                 mergeScheduler.Merge(this, MergeTrigger.CLOSING, false);
                             }
-                            catch (ThreadInterruptedException)
+                            catch (ThreadInterruptedException) // LUCENENET: In Lucene, they caught their custom ThreadInterruptedException here, so we are leaving this catch block as is
                             {
                                 // ignore any interruption, does not matter
                                 interrupted = true;
@@ -1191,7 +1192,7 @@ namespace Lucene.Net.Index
                                     FinishMerges(waitForMerges && !interrupted);
                                     break;
                                 }
-                                catch (ThreadInterruptedException)
+                                catch (ThreadInterruptedException) // LUCENENET: In Lucene, they caught their custom ThreadInterruptedException here, so we are leaving this catch block as is
                                 {
                                     // by setting the interrupted status, the
                                     // next call to finishMerges will pass false,
@@ -1253,9 +1254,9 @@ namespace Lucene.Net.Index
                     Debugging.Assert(numDeactivatedThreadStates == docWriter.perThreadPool.MaxThreadStates, "{0} {1}", numDeactivatedThreadStates, docWriter.perThreadPool.MaxThreadStates);
                 }
             }
-            catch (OutOfMemoryException oom)
+            catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                HandleOOM(oom, "closeInternal");
+                HandleOOM(oom, "CloseInternal");
             }
             finally
             {
@@ -1550,9 +1551,9 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            catch (OutOfMemoryException oom)
+            catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                HandleOOM(oom, "updateDocuments");
+                HandleOOM(oom, "UpdateDocuments");
             }
         }
 
@@ -1576,9 +1577,9 @@ namespace Lucene.Net.Index
                     ProcessEvents(true, false);
                 }
             }
-            catch (OutOfMemoryException oom)
+            catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                HandleOOM(oom, "deleteDocuments(Term)");
+                HandleOOM(oom, "DeleteDocuments(Term)");
             }
         }
 
@@ -1698,9 +1699,9 @@ namespace Lucene.Net.Index
                     ProcessEvents(true, false);
                 }
             }
-            catch (OutOfMemoryException oom)
+            catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                HandleOOM(oom, "deleteDocuments(Term..)");
+                HandleOOM(oom, "DeleteDocuments(Term..)");
             }
         }
 
@@ -1724,9 +1725,9 @@ namespace Lucene.Net.Index
                     ProcessEvents(true, false);
                 }
             }
-            catch (OutOfMemoryException oom)
+            catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                HandleOOM(oom, "deleteDocuments(Query)");
+                HandleOOM(oom, "DeleteDocuments(Query)");
             }
         }
 
@@ -1752,9 +1753,9 @@ namespace Lucene.Net.Index
                     ProcessEvents(true, false);
                 }
             }
-            catch (OutOfMemoryException oom)
+            catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                HandleOOM(oom, "deleteDocuments(Query..)");
+                HandleOOM(oom, "DeleteDocuments(Query..)");
             }
         }
 
@@ -1822,9 +1823,9 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            catch (OutOfMemoryException oom)
+            catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                HandleOOM(oom, "updateDocument");
+                HandleOOM(oom, "UpdateDocument");
             }
         }
 
@@ -1864,9 +1865,9 @@ namespace Lucene.Net.Index
                     ProcessEvents(true, false);
                 }
             }
-            catch (OutOfMemoryException oom)
+            catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                HandleOOM(oom, "updateNumericDocValue");
+                HandleOOM(oom, "UpdateNumericDocValue");
             }
         }
 
@@ -1910,9 +1911,9 @@ namespace Lucene.Net.Index
                     ProcessEvents(true, false);
                 }
             }
-            catch (OutOfMemoryException oom)
+            catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                HandleOOM(oom, "updateBinaryDocValue");
+                HandleOOM(oom, "UpdateBinaryDocValue");
             }
         }
 
@@ -2081,7 +2082,7 @@ namespace Lucene.Net.Index
 
             if (maxNumSegments < 1)
             {
-                throw new ArgumentException("maxNumSegments must be >= 1; got " + maxNumSegments);
+                throw new ArgumentOutOfRangeException(nameof(maxNumSegments), "maxNumSegments must be >= 1; got " + maxNumSegments); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             if (infoStream.IsEnabled("IW"))
@@ -2127,7 +2128,7 @@ namespace Lucene.Net.Index
                     {
                         if (hitOOM)
                         {
-                            throw new InvalidOperationException("this writer hit an OutOfMemoryError; cannot complete forceMerge");
+                            throw IllegalStateException.Create("this writer hit an OutOfMemoryError; cannot complete forceMerge");
                         }
 
                         if (mergeExceptions.Count > 0)
@@ -2258,7 +2259,7 @@ namespace Lucene.Net.Index
                     {
                         if (hitOOM)
                         {
-                            throw new InvalidOperationException("this writer hit an OutOfMemoryError; cannot complete forceMergeDeletes");
+                            throw IllegalStateException.Create("this writer hit an OutOfMemoryError; cannot complete forceMergeDeletes");
                         }
 
                         // Check each merge that MergePolicy asked us to
@@ -2565,9 +2566,9 @@ namespace Lucene.Net.Index
 
                 success = true;
             }
-            catch (OutOfMemoryException oom)
+            catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                HandleOOM(oom, "rollbackInternal");
+                HandleOOM(oom, "RollbackInternal");
             }
             finally
             {
@@ -2592,7 +2593,7 @@ namespace Lucene.Net.Index
                                 pendingCommit.RollbackCommit(directory);
                                 deleter.DecRef(pendingCommit);
                             }
-                            catch (Exception)
+                            catch (Exception t) when (t.IsThrowable())
                             {
                             }
                         }
@@ -2676,9 +2677,9 @@ namespace Lucene.Net.Index
                             globalFieldNumberMap.Clear();
                             success = true;
                         }
-                        catch (OutOfMemoryException oom)
+                        catch (Exception oom) when (oom.IsOutOfMemoryError())
                         {
-                            HandleOOM(oom, "deleteAll");
+                            HandleOOM(oom, "DeleteAll");
                         }
                         finally
                         {
@@ -3066,7 +3067,7 @@ namespace Lucene.Net.Index
                                 {
                                     directory.DeleteFile(file);
                                 }
-                                catch (Exception)
+                                catch (Exception t) when (t.IsThrowable())
                                 {
                                 }
                             }
@@ -3094,7 +3095,7 @@ namespace Lucene.Net.Index
                                     {
                                         directory.DeleteFile(file);
                                     }
-                                    catch (Exception)
+                                    catch (Exception t) when (t.IsThrowable())
                                     {
                                     }
                                 }
@@ -3107,9 +3108,9 @@ namespace Lucene.Net.Index
 
                 successTop = true;
             }
-            catch (OutOfMemoryException oom)
+            catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                HandleOOM(oom, "addIndexes(Directory...)");
+                HandleOOM(oom, "AddIndexes(Directory...)");
             }
             finally
             {
@@ -3294,9 +3295,9 @@ namespace Lucene.Net.Index
                     Checkpoint();
                 }
             }
-            catch (OutOfMemoryException oom)
+            catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                HandleOOM(oom, "addIndexes(IndexReader...)");
+                HandleOOM(oom, "AddIndexes(IndexReader...)");
             }
         }
 
@@ -3377,7 +3378,7 @@ namespace Lucene.Net.Index
             {
                 currentCodec.SegmentInfoFormat.SegmentInfoWriter.Write(trackingDir, newInfo, fis, context);
             }
-            catch (NotSupportedException /*uoe*/)
+            catch (Exception uoe) when (uoe.IsUnsupportedOperationException())
             {
 #pragma warning disable 612, 618
                 if (currentCodec is Lucene3xCodec)
@@ -3441,7 +3442,7 @@ namespace Lucene.Net.Index
                         {
                             directory.DeleteFile(file);
                         }
-                        catch (Exception)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                         }
                     }
@@ -3506,12 +3507,12 @@ namespace Lucene.Net.Index
 
                 if (hitOOM)
                 {
-                    throw new InvalidOperationException("this writer hit an OutOfMemoryError; cannot commit");
+                    throw IllegalStateException.Create("this writer hit an OutOfMemoryError; cannot commit");
                 }
 
                 if (pendingCommit != null)
                 {
-                    throw new InvalidOperationException("prepareCommit was already called with no corresponding call to commit");
+                    throw IllegalStateException.Create("prepareCommit was already called with no corresponding call to commit");
                 }
 
                 DoBeforeFlush();
@@ -3582,9 +3583,9 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                catch (OutOfMemoryException oom)
+                catch (Exception oom) when (oom.IsOutOfMemoryError())
                 {
-                    HandleOOM(oom, "prepareCommit");
+                    HandleOOM(oom, "PrepareCommit");
                 }
 
                 bool success_ = false;
@@ -3824,7 +3825,7 @@ namespace Lucene.Net.Index
         {
             if (hitOOM)
             {
-                throw new InvalidOperationException("this writer hit an OutOfMemoryError; cannot flush");
+                throw IllegalStateException.Create("this writer hit an OutOfMemoryError; cannot flush");
             }
 
             DoBeforeFlush();
@@ -3867,9 +3868,9 @@ namespace Lucene.Net.Index
                     return anySegmentFlushed;
                 }
             }
-            catch (OutOfMemoryException oom)
+            catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                HandleOOM(oom, "doFlush");
+                HandleOOM(oom, "DoFlush");
                 // never hit
                 return false;
             }
@@ -4305,7 +4306,7 @@ namespace Lucene.Net.Index
 
                 if (hitOOM)
                 {
-                    throw new InvalidOperationException("this writer hit an OutOfMemoryError; cannot complete merge");
+                    throw IllegalStateException.Create("this writer hit an OutOfMemoryError; cannot complete merge");
                 }
 
                 if (infoStream.IsEnabled("IW"))
@@ -4431,7 +4432,7 @@ namespace Lucene.Net.Index
                         {
                             Checkpoint();
                         }
-                        catch (Exception)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                             // Ignore so we keep throwing original exception.
                         }
@@ -4481,7 +4482,7 @@ namespace Lucene.Net.Index
                 // executed.
                 if (merge.isExternal)
                 {
-                    throw t;
+                    ExceptionDispatchInfo.Capture(t).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
                 }
             }
             else
@@ -4501,7 +4502,7 @@ namespace Lucene.Net.Index
         {
             bool success = false;
 
-            long t0 = Environment.TickCount;
+            long t0 = Time.NanoTime() / Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             try
             {
@@ -4523,7 +4524,7 @@ namespace Lucene.Net.Index
                         MergeSuccess(merge);
                         success = true;
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         HandleMergeException(t, merge);
                     }
@@ -4556,15 +4557,15 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            catch (OutOfMemoryException oom)
+            catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                HandleOOM(oom, "merge");
+                HandleOOM(oom, "Merge");
             }
             if (merge.info != null && !merge.IsAborted)
             {
                 if (infoStream.IsEnabled("IW"))
                 {
-                    infoStream.Message("IW", "merge time " + (Environment.TickCount - t0) + " msec for " + merge.info.Info.DocCount + " docs");
+                    infoStream.Message("IW", "merge time " + ((Time.NanoTime() / Time.MillisecondsPerNanosecond) - t0) + " msec for " + merge.info.Info.DocCount + " docs"); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 }
             }
         }
@@ -4734,7 +4735,7 @@ namespace Lucene.Net.Index
 
                 if (hitOOM)
                 {
-                    throw new InvalidOperationException("this writer hit an OutOfMemoryError; cannot merge");
+                    throw IllegalStateException.Create("this writer hit an OutOfMemoryError; cannot merge");
                 }
 
                 if (merge.info != null)
@@ -4892,7 +4893,7 @@ namespace Lucene.Net.Index
                                 readerPool.Drop(rld.Info);
                             }
                         }
-                        catch (Exception t)
+                        catch (Exception t) when (t.IsThrowable())
                         {
                             if (th == null)
                             {
@@ -5090,7 +5091,7 @@ namespace Lucene.Net.Index
                         filesToRemove = CreateCompoundFile(infoStream, directory, checkAbort, merge.info.Info, context);
                         success = true;
                     }
-                    catch (IOException ioe)
+                    catch (Exception ioe) when (ioe.IsIOException())
                     {
                         lock (this)
                         {
@@ -5106,7 +5107,7 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
-                    catch (Exception t)
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         HandleMergeException(t, merge);
                     }
@@ -5404,7 +5405,7 @@ namespace Lucene.Net.Index
 
             if (hitOOM)
             {
-                throw new InvalidOperationException("this writer hit an OutOfMemoryError; cannot commit");
+                throw IllegalStateException.Create("this writer hit an OutOfMemoryError; cannot commit");
             }
 
             try
@@ -5512,9 +5513,9 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            catch (OutOfMemoryException oom)
+            catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
-                HandleOOM(oom, "startCommit");
+                HandleOOM(oom, "StartCommit");
             }
             if (Debugging.AssertsEnabled) Debugging.Assert(TestPoint("finishStartCommit"));
         }
@@ -5574,14 +5575,14 @@ namespace Lucene.Net.Index
             public abstract void Warm(AtomicReader reader);
         }
 
-        private void HandleOOM(OutOfMemoryException oom, string location)
+        private void HandleOOM(/*OutOfMemory*/Exception oom, string location) // LUCENENET: Our handler doesn't cast to OutOfMemoryException, so we need to widen the parameter to accept Exception
         {
             if (infoStream.IsEnabled("IW"))
             {
                 infoStream.Message("IW", "hit OutOfMemoryError inside " + location);
             }
             hitOOM = true;
-            throw oom;
+            ExceptionDispatchInfo.Capture(oom).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
         }
 
         // Used only by assert for testing.  Current points:
@@ -5685,7 +5686,8 @@ namespace Lucene.Net.Index
             // Now merge all added files
             ICollection<string> files = info.GetFiles();
             CompoundFileDirectory cfsDir = new CompoundFileDirectory(directory, fileName, context, true);
-            IOException prior = null;
+            // LUCENENET: Ported changes to this method from 4.8.1
+            bool success = false;
             try
             {
                 foreach (string file in files)
@@ -5693,37 +5695,30 @@ namespace Lucene.Net.Index
                     directory.Copy(cfsDir, file, file, context);
                     checkAbort.Work(directory.FileLength(file));
                 }
-            }
-            catch (IOException ex)
-            {
-                prior = ex;
+                success = true;
             }
             finally
             {
-                bool success = false;
-                try
+                if (success)
                 {
-                    IOUtils.DisposeWhileHandlingException(prior, cfsDir);
-                    success = true;
+                    IOUtils.Dispose(cfsDir);
                 }
-                finally
+                else
                 {
-                    if (!success)
+                    IOUtils.DisposeWhileHandlingException(cfsDir);
+                    try
                     {
-                        try
-                        {
-                            directory.DeleteFile(fileName);
-                        }
-                        catch (Exception)
-                        {
-                        }
-                        try
-                        {
-                            directory.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
-                        }
-                        catch (Exception)
-                        {
-                        }
+                        directory.DeleteFile(fileName);
+                    }
+                    catch (Exception t) when (t.IsThrowable())
+                    {
+                    }
+                    try
+                    {
+                        directory.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
+                    }
+                    catch (Exception t) when (t.IsThrowable())
+                    {
                     }
                 }
             }
@@ -5866,18 +5861,7 @@ namespace Lucene.Net.Index
                 using (var input = dir.OpenInput(fileName, IOContext.DEFAULT)) { }
                 return true;
             }
-            catch (FileNotFoundException)
-            {
-                return false;
-            }
-            // LUCENENET specific - .NET (thankfully) only has one FileNotFoundException, so we don't need this
-            //catch (NoSuchFileException)
-            //{
-            //    return false;
-            //}
-            // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-            // in Lucene, we need to catch it here to be on the safe side.
-            catch (DirectoryNotFoundException)
+            catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
             {
                 return false;
             }

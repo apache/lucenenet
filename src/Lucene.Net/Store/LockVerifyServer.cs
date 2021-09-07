@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Globalization;
@@ -150,7 +150,7 @@ namespace Lucene.Net.Store
                                     if (currentLock != -1)
                                     {
                                         lockedID[0] = -2;
-                                        throw new InvalidOperationException("id " + id + " got lock, but " + currentLock + " already holds the lock");
+                                        throw IllegalStateException.Create("id " + id + " got lock, but " + currentLock + " already holds the lock");
                                     }
                                     lockedID[0] = id;
                                     break;
@@ -160,28 +160,26 @@ namespace Lucene.Net.Store
                                     if (currentLock != id)
                                     {
                                         lockedID[0] = -2;
-                                        throw new InvalidOperationException("id " + id + " released the lock, but " + currentLock + " is the one holding the lock");
+                                        throw IllegalStateException.Create("id " + id + " released the lock, but " + currentLock + " is the one holding the lock");
                                     }
                                     lockedID[0] = -1;
                                     break;
 
                                 default:
-                                    throw new Exception("Unrecognized command: " + command);
+                                    throw RuntimeException.Create("Unrecognized command: " + command);
                             }
                             intWriter.Write((byte)command);
                             stream.Flush();
                         }
                     }
                 }
-                catch (IOException ioe)
+                catch (Exception e) when (e.IsRuntimeException() || e.IsError())
                 {
-                    throw new Exception(ioe.ToString(), ioe);
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                 }
-                catch (Exception e)
+                catch (Exception ioe) when (ioe.IsException())
                 {
-                    // LUCENENET NOTE: We need to throw a new exception
-                    // to ensure this is Exception and not some other type.
-                    throw new Exception(e.ToString(), e);
+                    throw RuntimeException.Create(ioe);
                 }
                 finally
                 {

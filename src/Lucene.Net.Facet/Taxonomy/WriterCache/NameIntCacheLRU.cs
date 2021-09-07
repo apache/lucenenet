@@ -137,8 +137,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         internal NameCacheLru(int limit, Func<FacetLabel, TName> getKey, Func<FacetLabel, int, TName> getKeyWithPrefixLength)
         {
-            this.getKey = getKey ?? throw new ArgumentNullException(nameof(getKey));
-            this.getKeyWithPrefixLength = getKeyWithPrefixLength ?? throw new ArgumentNullException(nameof(getKeyWithPrefixLength));
+            this.getKey = getKey ?? throw new ArgumentNullException(nameof(getKey)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+            this.getKeyWithPrefixLength = getKeyWithPrefixLength ?? throw new ArgumentNullException(nameof(getKeyWithPrefixLength)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             this.maxCacheSize = limit;
             CreateCache(limit);
         }

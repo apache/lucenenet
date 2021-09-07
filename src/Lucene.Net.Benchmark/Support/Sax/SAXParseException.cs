@@ -153,16 +153,16 @@ namespace Sax
             Init(publicId, systemId, lineNumber, columnNumber);
         }
 
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Construct a new exception with no message.
         /// </summary>
-        // LUCENENET specific for serialization
-        public SAXParseException(string message)
+        // LUCENENET: For testing purposes
+        internal SAXParseException(string message)
             : base(message)
         {
         }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

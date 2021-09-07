@@ -139,13 +139,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                         && !argName.Equals("positionIncrementGap", StringComparison.OrdinalIgnoreCase)
                                         && !argName.Equals("offsetGap", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        throw new Exception
+                                        throw RuntimeException.Create
                                             ("Line #" + GetLineNumber(stok) + ": Missing 'name' param to AnalyzerFactory: '" + @params + "'");
                                     }
                                     stok.NextToken();
                                     if (stok.TokenType != ':')
                                     {
-                                        throw new Exception
+                                        throw RuntimeException.Create
                                             ("Line #" + GetLineNumber(stok) + ": Missing ':' after '" + argName + "' param to AnalyzerFactory");
                                     }
 
@@ -172,9 +172,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                                     {
                                                         intArgValue = int.Parse(argValue, CultureInfo.InvariantCulture);
                                                     }
-                                                    catch (FormatException e)
+                                                    catch (Exception e) when (e.IsNumberFormatException())
                                                     {
-                                                        throw new Exception
+                                                        throw RuntimeException.Create
                                                             ("Line #" + GetLineNumber(stok) + ": Exception parsing " + argName + " value '" + argValue + "'", e);
                                                     }
                                                     if (argName.Equals("positionIncrementGap", StringComparison.OrdinalIgnoreCase))
@@ -204,9 +204,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                                     {
                                                         intArgValue = int.Parse(argValue, CultureInfo.InvariantCulture);
                                                     }
-                                                    catch (FormatException e)
+                                                    catch (Exception e) when (e.IsNumberFormatException())
                                                     {
-                                                        throw new Exception
+                                                        throw RuntimeException.Create
                                                             ("Line #" + GetLineNumber(stok) + ": Exception parsing " + argName + " value '" + argValue + "'", e);
                                                     }
                                                     if (argName.Equals("positionIncrementGap", StringComparison.OrdinalIgnoreCase))
@@ -222,11 +222,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                             }
                                         case StreamTokenizer.TokenType_EndOfStream:
                                             {
-                                                throw new Exception("Unexpected EOF: " + stok.ToString());
+                                                throw RuntimeException.Create("Unexpected EOF: " + stok.ToString());
                                             }
                                         default:
                                             {
-                                                throw new Exception
+                                                throw RuntimeException.Create
                                                     ("Line #" + GetLineNumber(stok) + ": Unexpected token: " + stok.ToString());
                                             }
                                     }
@@ -241,7 +241,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                         stok.NextToken();
                                         if (stok.TokenType != ':')
                                         {
-                                            throw new Exception
+                                            throw RuntimeException.Create
                                                 ("Line #" + GetLineNumber(stok) + ": Missing ':' after '" + argName + "' param to AnalyzerFactory");
                                         }
                                         stok.NextToken();
@@ -257,9 +257,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                                     {
                                                         intArgValue = int.Parse(stok.StringValue.Trim(), CultureInfo.InvariantCulture);
                                                     }
-                                                    catch (FormatException e)
+                                                    catch (Exception e) when (e.IsNumberFormatException())
                                                     {
-                                                        throw new Exception
+                                                        throw RuntimeException.Create
                                                             ("Line #" + GetLineNumber(stok) + ": Exception parsing " + argName + " value '" + stok.StringValue + "'", e);
                                                     }
                                                     // Intentional fall-through
@@ -288,11 +288,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                                 }
                                             case StreamTokenizer.TokenType_EndOfStream:
                                                 {
-                                                    throw new Exception("Unexpected EOF: " + stok.ToString());
+                                                    throw RuntimeException.Create("Unexpected EOF: " + stok.ToString());
                                                 }
                                             default:
                                                 {
-                                                    throw new Exception
+                                                    throw RuntimeException.Create
                                                         ("Line #" + GetLineNumber(stok) + ": Unexpected token: " + stok.ToString());
                                                 }
                                         }
@@ -304,7 +304,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                         clazz = LookupAnalysisClass(argName, typeof(CharFilterFactory));
                                         CreateAnalysisPipelineComponent(stok, clazz);
                                     }
-                                    catch (ArgumentException /*e*/)
+                                    catch (Exception e) when (e.IsIllegalArgumentException())
                                     {
                                         try
                                         {
@@ -313,9 +313,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                             CreateAnalysisPipelineComponent(stok, clazz);
                                             expectedArgType = ArgType.TOKENFILTER;
                                         }
-                                        catch (ArgumentException e2)
+                                        catch (Exception e2) when (e2.IsIllegalArgumentException())
                                         {
-                                            throw new Exception("Line #" + GetLineNumber(stok) + ": Can't find class '"
+                                            throw RuntimeException.Create("Line #" + GetLineNumber(stok) + ": Can't find class '"
                                                                        + argName + "' as CharFilterFactory or TokenizerFactory", e2);
                                         }
                                     }
@@ -328,9 +328,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                     {
                                         clazz = LookupAnalysisClass(className, typeof(TokenFilterFactory));
                                     }
-                                    catch (ArgumentException e)
+                                    catch (Exception e) when (e.IsIllegalArgumentException())
                                     {
-                                        throw new Exception
+                                        throw RuntimeException.Create
                                             ("Line #" + GetLineNumber(stok) + ": Can't find class '" + className + "' as TokenFilterFactory", e);
                                     }
                                     CreateAnalysisPipelineComponent(stok, clazz);
@@ -339,12 +339,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                             }
                         default:
                             {
-                                throw new Exception("Line #" + GetLineNumber(stok) + ": Unexpected token: " + stok.ToString());
+                                throw RuntimeException.Create("Line #" + GetLineNumber(stok) + ": Unexpected token: " + stok.ToString());
                             }
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsRuntimeException())
             {
                 if (e.Message.StartsWith("Line #", StringComparison.Ordinal))
                 {
@@ -352,8 +352,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
                 else
                 {
-                    throw new Exception("Line #" + GetLineNumber(stok) + ": ", e);
+                    throw RuntimeException.Create("Line #" + GetLineNumber(stok) + ": ", e);
                 }
+            }
+            catch (Exception t) when (t.IsThrowable())
+            {
+                throw RuntimeException.Create("Line #" + GetLineNumber(stok) + ": ", t);
             }
 
             AnalyzerFactory analyzerFactory = new AnalyzerFactory(charFilterFactories, tokenizerFactory, tokenFilterFactories)
@@ -398,7 +402,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                             {
                                 if (parenthetical)
                                 {
-                                    throw new Exception
+                                    throw RuntimeException.Create
                                         ("Line #" + GetLineNumber(stok) + ": Unexpected opening parenthesis.");
                                 }
                                 parenthetical = true;
@@ -412,7 +416,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                 }
                                 else
                                 {
-                                    throw new Exception
+                                    throw RuntimeException.Create
                                         ("Line #" + GetLineNumber(stok) + ": Unexpected closing parenthesis.");
                                 }
                                 break;
@@ -421,13 +425,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                             {
                                 if (!parenthetical)
                                 {
-                                    throw new Exception("Line #" + GetLineNumber(stok) + ": Unexpected token '" + stok.StringValue + "'");
+                                    throw RuntimeException.Create("Line #" + GetLineNumber(stok) + ": Unexpected token '" + stok.StringValue + "'");
                                 }
                                 string argName = stok.StringValue;
                                 stok.NextToken();
                                 if (stok.TokenType != ':')
                                 {
-                                    throw new Exception
+                                    throw RuntimeException.Create
                                         ("Line #" + GetLineNumber(stok) + ": Missing ':' after '" + argName + "' param to " + clazz.Name);
                                 }
                                 stok.NextToken();
@@ -452,11 +456,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                         }
                                     case StreamTokenizer.TokenType_EndOfStream:
                                         {
-                                            throw new Exception("Unexpected EOF: " + stok.ToString());
+                                            throw RuntimeException.Create("Unexpected EOF: " + stok.ToString());
                                         }
                                     default:
                                         {
-                                            throw new Exception
+                                            throw RuntimeException.Create
                                                 ("Line #" + GetLineNumber(stok) + ": Unexpected token: " + stok.ToString());
                                         }
                                 }
@@ -464,7 +468,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                             }
                     }
                 }
-                WHILE_LOOP_BREAK: { }
+            WHILE_LOOP_BREAK: { }
 
                 if (!argMap.ContainsKey("luceneMatchVersion"))
                 {
@@ -477,9 +481,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     instance = (AbstractAnalysisFactory)Activator.CreateInstance(clazz, argMap);
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
-                    throw new Exception("Line #" + GetLineNumber(stok) + ": ", e);
+                    throw RuntimeException.Create("Line #" + GetLineNumber(stok) + ": ", e);
                 }
                 if (instance is IResourceLoaderAware resourceLoaderAware)
                 {
@@ -499,7 +503,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     tokenFilterFactories.Add((TokenFilterFactory)instance);
                 }
             }
-            catch (Exception e)
+            catch (Exception e) when (e.IsRuntimeException())
             {
                 if (e.Message.StartsWith("Line #", StringComparison.Ordinal))
                 {
@@ -507,8 +511,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
                 else
                 {
-                    throw new Exception("Line #" + GetLineNumber(stok) + ": ", e);
+                    throw RuntimeException.Create("Line #" + GetLineNumber(stok) + ": ", e);
                 }
+            }
+            catch (Exception t) when (t.IsThrowable())
+            {
+                throw RuntimeException.Create("Line #" + GetLineNumber(stok) + ": ", t);
             }
         }
 
@@ -543,7 +551,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
                     if (result == null)
                     {
-                        throw new TypeLoadException("Can't find class '" + className
+                        throw ClassNotFoundException.Create("Can't find class '" + className
                                                  + "' or '" + LUCENE_ANALYSIS_PACKAGE_PREFIX + className + "'");
                     }
                 }
@@ -564,7 +572,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 return TokenFilterFactory.LookupClass(analysisComponentName);
             }
 
-            throw new TypeLoadException("Can't find class '" + className + "'");
+            throw ClassNotFoundException.Create("Can't find class '" + className + "'");
         }
 
         /// <seealso cref="PerfTask.SupportsParams"/>

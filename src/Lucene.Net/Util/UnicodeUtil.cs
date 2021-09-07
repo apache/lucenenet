@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
 using System;
@@ -347,7 +347,7 @@ namespace Lucene.Net.Util
               return false;
             }
             return s1.equals(s2, StringComparison.Ordinal);
-          } catch (UnsupportedEncodingException uee) {
+          } catch (Exception uee) when (uee.IsUnsupportedEncodingException()) {
             return false;
           }
         }
@@ -375,7 +375,7 @@ namespace Lucene.Net.Util
               return false;
             }
             return s1.equals(s2, StringComparison.Ordinal);
-          } catch (UnsupportedEncodingException uee) {
+          } catch (Exception uee) when (uee.IsUnsupportedEncodingException()) {
             return false;
           }
         }
@@ -593,7 +593,7 @@ namespace Lucene.Net.Util
                 }
 
                 // Anything not covered above is invalid UTF8.
-                throw new ArgumentException();
+                throw new ArgumentException("Invalid UTF-8");
             }
 
             // Check if we didn't go over the limit on the last character.
@@ -701,8 +701,9 @@ namespace Lucene.Net.Util
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string NewString(int[] codePoints, int offset, int count)
         {
-            char[] chars = ToCharArray(codePoints, offset, count);
-            return new string(chars);
+            // LUCENENET: Character.ToString() was optimized to use the stack for arrays
+            // of codepoints 256 or less, so it performs better than using ToCharArray().
+            return Character.ToString(codePoints, offset, count);
         }
 
         /// <summary>
@@ -721,7 +722,7 @@ namespace Lucene.Net.Util
         {
             if (count < 0)
             {
-                throw new ArgumentException();
+                throw new ArgumentOutOfRangeException(nameof(count), "count must be >= 0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             int countThreashold = 1024; // If the number of chars exceeds this, we count them instead of allocating count * 2
             // LUCENENET: as a first approximation, assume each codepoint 

@@ -84,9 +84,9 @@ namespace Lucene.Net.Analysis.Ja.Dict
                 {
                     return new UnknownDictionary();
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new Exception("Cannot load UnknownDictionary.", ioe);
+                    throw RuntimeException.Create("Cannot load UnknownDictionary.", ioe);
                 }
             }
         }

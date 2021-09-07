@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -68,9 +68,7 @@ namespace Lucene.Net.Search
                 MultiCollector.Wrap(null, null);
                 Assert.Fail("only null collectors should not be supported");
             }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected
             }

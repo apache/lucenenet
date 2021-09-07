@@ -1,3 +1,4 @@
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -161,7 +162,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 2)
                 {
-                    throw new ArgumentException("mergeFactor cannot be less than 2");
+                    throw new ArgumentOutOfRangeException(nameof(MergeFactor), "mergeFactor cannot be less than 2"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 this.m_mergeFactor = value;
             }
@@ -271,14 +272,14 @@ namespace Lucene.Net.Index
                     {
                         // there is more than 1 segment to the right of
                         // this one, or a mergeable single segment.
-                        spec.Add(new OneMerge(segments.SubList(start + 1, last)));
+                        spec.Add(new OneMerge(segments.GetView(start + 1, last - (start + 1)))); // LUCENENET: Converted end index to length
                     }
                     last = start;
                 }
                 else if (last - start == m_mergeFactor)
                 {
                     // mergeFactor eligible segments were found, add them as a merge.
-                    spec.Add(new OneMerge(segments.SubList(start, last)));
+                    spec.Add(new OneMerge(segments.GetView(start, last - start))); // LUCENENET: Converted end index to length
                     last = start;
                 }
                 --start;
@@ -288,7 +289,7 @@ namespace Lucene.Net.Index
             // already fully merged
             if (last > 0 && (++start + 1 < last || !IsMerged(infos, infos.Info(start))))
             {
-                spec.Add(new OneMerge(segments.SubList(start, last)));
+                spec.Add(new OneMerge(segments.GetView(start, last - start))); // LUCENENET: Converted end index to length
             }
 
             return spec.Merges.Count == 0 ? null : spec;
@@ -308,7 +309,7 @@ namespace Lucene.Net.Index
             // mergeFactor) to potentially be run concurrently:
             while (last - maxNumSegments + 1 >= m_mergeFactor)
             {
-                spec.Add(new OneMerge(segments.SubList(last - m_mergeFactor, last)));
+                spec.Add(new OneMerge(segments.GetView(last - m_mergeFactor, m_mergeFactor))); // LUCENENET: Converted end index to length
                 last -= m_mergeFactor;
             }
 
@@ -322,7 +323,7 @@ namespace Lucene.Net.Index
                     // choice is simple:
                     if (last > 1 || !IsMerged(infos, infos.Info(0)))
                     {
-                        spec.Add(new OneMerge(segments.SubList(0, last)));
+                        spec.Add(new OneMerge(segments.GetView(0, last))); // LUCENENET: Converted end index to length
                     }
                 }
                 else if (last > maxNumSegments)
@@ -356,7 +357,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    spec.Add(new OneMerge(segments.SubList(bestStart, bestStart + finalMergeSize)));
+                    spec.Add(new OneMerge(segments.GetView(bestStart, finalMergeSize))); // LUCENENET: Converted end index to length
                 }
             }
             return spec.Merges.Count == 0 ? null : spec;
@@ -491,7 +492,7 @@ namespace Lucene.Net.Index
                         {
                             Message("  add merge " + firstSegmentWithDeletions + " to " + (i - 1) + " inclusive");
                         }
-                        spec.Add(new OneMerge(segments.SubList(firstSegmentWithDeletions, i)));
+                        spec.Add(new OneMerge(segments.GetView(firstSegmentWithDeletions, i - firstSegmentWithDeletions))); // LUCENENET: Converted end index to length
                         firstSegmentWithDeletions = i;
                     }
                 }
@@ -504,7 +505,7 @@ namespace Lucene.Net.Index
                     {
                         Message("  add merge " + firstSegmentWithDeletions + " to " + (i - 1) + " inclusive");
                     }
-                    spec.Add(new OneMerge(segments.SubList(firstSegmentWithDeletions, i)));
+                    spec.Add(new OneMerge(segments.GetView(firstSegmentWithDeletions, i - firstSegmentWithDeletions))); // LUCENENET: Converted end index to length
                     firstSegmentWithDeletions = -1;
                 }
             }
@@ -515,7 +516,7 @@ namespace Lucene.Net.Index
                 {
                     Message("  add merge " + firstSegmentWithDeletions + " to " + (numSegments - 1) + " inclusive");
                 }
-                spec.Add(new OneMerge(segments.SubList(firstSegmentWithDeletions, numSegments)));
+                spec.Add(new OneMerge(segments.GetView(firstSegmentWithDeletions, numSegments - firstSegmentWithDeletions))); // LUCENENET: Converted end index to length
             }
 
             return spec;

@@ -1,4 +1,4 @@
-using J2N.Threading;
+﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using System.Threading;
@@ -271,6 +271,8 @@ namespace Lucene.Net.Search
                 {
                     queries[i].GetHashCode();
                 }
+                // LUCENENET: The Rethrow.rethrow() method only is for tricking the Java compiler into letting it throw a "checked" exception.
+                // In .NET, it is better just not to catch than deal with such nonsense.
             }
         }
     }

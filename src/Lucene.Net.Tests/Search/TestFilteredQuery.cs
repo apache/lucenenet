@@ -1,7 +1,8 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 using BitSet = J2N.Collections.BitSet;
@@ -417,9 +418,7 @@ namespace Lucene.Net.Search
                 new FilteredQuery(null, null);
                 Assert.Fail("Should throw IllegalArgumentException");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
                 // pass
             }
@@ -428,9 +427,7 @@ namespace Lucene.Net.Search
                 new FilteredQuery(new TermQuery(new Term("field", "one")), null);
                 Assert.Fail("Should throw IllegalArgumentException");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
                 // pass
             }
@@ -439,9 +436,7 @@ namespace Lucene.Net.Search
                 new FilteredQuery(null, new PrefixFilter(new Term("field", "o")));
                 Assert.Fail("Should throw IllegalArgumentException");
             }
-#pragma warning disable 168
-            catch (ArgumentException iae)
-#pragma warning restore 168
+            catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
                 // pass
             }

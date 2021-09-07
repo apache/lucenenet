@@ -39,7 +39,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             if (maxNumSegments == -1)
             {
-                throw new InvalidOperationException("required argument (maxNumSegments) was not specified");
+                throw IllegalStateException.Create("required argument (maxNumSegments) was not specified");
             }
             IndexWriter iw = RunData.IndexWriter;
             iw.ForceMerge(maxNumSegments);

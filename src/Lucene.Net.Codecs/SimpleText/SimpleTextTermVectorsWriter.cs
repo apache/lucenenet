@@ -183,7 +183,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 Dispose();
             }
-            catch // ignored
+            catch (Exception t) when (t.IsThrowable())
             {
             }
             IOUtils.DeleteFilesIgnoringExceptions(_directory,
@@ -194,7 +194,7 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             if (_numDocsWritten != numDocs)
             {
-                throw new Exception("mergeVectors produced an invalid result: mergedDocs is " + numDocs +
+                throw RuntimeException.Create("mergeVectors produced an invalid result: mergedDocs is " + numDocs +
                                     " but vec numDocs is " + _numDocsWritten + " file=" + _output +
                                     "; now aborting this merge to prevent index corruption");
             }

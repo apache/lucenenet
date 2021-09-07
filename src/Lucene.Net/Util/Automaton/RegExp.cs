@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using J2N.Text;
 using System;
 using System.Collections.Generic;
@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Integer = J2N.Numerics.Int32;
 using JCG = J2N.Collections.Generic;
 
 /*
@@ -616,7 +617,7 @@ namespace Lucene.Net.Util.Automaton
                         {
                             aa = automaton_provider.GetAutomaton(s);
                         }
-                        catch (IOException e)
+                        catch (Exception e) when (e.IsIOException())
                         {
                             throw new ArgumentException(e.ToString(), e);
                         }
@@ -1121,7 +1122,8 @@ namespace Lucene.Net.Util.Automaton
                     {
                         throw new ArgumentException("integer expected at position " + pos);
                     }
-                    int n = Convert.ToInt32(b.Substring(start, pos - start), CultureInfo.InvariantCulture);
+                    // LUCENENET: Optimized so we don't allocate a substring during the parse
+                    int n = Integer.Parse(b, start, pos - start, radix: 10);
                     int m = -1;
                     if (Match(','))
                     {
@@ -1132,7 +1134,8 @@ namespace Lucene.Net.Util.Automaton
                         }
                         if (start != pos)
                         {
-                            m = Convert.ToInt32(b.Substring(start, pos - start), CultureInfo.InvariantCulture);
+                            // LUCENENET: Optimized so we don't allocate a substring during the parse
+                            m = Integer.Parse(b, start, pos - start, radix: 10);
                         }
                     }
                     else
@@ -1289,39 +1292,35 @@ namespace Lucene.Net.Util.Automaton
                     {
                         throw new ArgumentException("illegal identifier at position " + (pos - 1));
                     }
-                    try
+
+                    // LUCENENET: Refactored so we don't throw exceptions in the normal flow
+                    if (i == 0 || i == s.Length - 1 || i != s.LastIndexOf('-'))
                     {
-                        if (i == 0 || i == s.Length - 1 || i != s.LastIndexOf('-'))
-                        {
-                            throw new FormatException();
-                        }
-                        string smin = s.Substring(0, i);
-                        string smax = s.Substring(i + 1, s.Length - (i + 1));
-                        int imin = Convert.ToInt32(smin, CultureInfo.InvariantCulture);
-                        int imax = Convert.ToInt32(smax, CultureInfo.InvariantCulture);
-                        int digits;
-                        if (smin.Length == smax.Length)
-                        {
-                            digits = smin.Length;
-                        }
-                        else
-                        {
-                            digits = 0;
-                        }
-                        if (imin > imax)
-                        {
-                            int t = imin;
-                            imin = imax;
-                            imax = t;
-                        }
-                        return MakeInterval(imin, imax, digits);
+                        throw new ArgumentException("interval syntax error at position " + (pos - 1));
                     }
-#pragma warning disable 168
-                    catch (FormatException e)
-#pragma warning restore 168
+                    string smin = s.Substring(0, i);
+                    string smax = s.Substring(i + 1, s.Length - (i + 1));
+
+                    if (!int.TryParse(smin, NumberStyles.Integer, CultureInfo.InvariantCulture, out int imin) ||
+                        !int.TryParse(smax, NumberStyles.Integer, CultureInfo.InvariantCulture, out int imax))
+                        throw new ArgumentException("interval syntax error at position " + (pos - 1));
+
+                    int digits;
+                    if (smin.Length == smax.Length)
                     {
-                        throw new ArgumentException("interval syntax error at position " + (pos - 1), e);
+                        digits = smin.Length;
                     }
+                    else
+                    {
+                        digits = 0;
+                    }
+                    if (imin > imax)
+                    {
+                        int t = imin;
+                        imin = imax;
+                        imax = t;
+                    }
+                    return MakeInterval(imin, imax, digits);
                 }
             }
             else

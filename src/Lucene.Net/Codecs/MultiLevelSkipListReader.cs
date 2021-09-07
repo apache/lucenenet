@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -165,7 +165,7 @@ namespace Lucene.Net.Codecs
                 else
                 {
                     // no more skips on this level, go down one level
-                    if (level > 0 && lastChildPointer > skipStream[level - 1].GetFilePointer())
+                    if (level > 0 && lastChildPointer > skipStream[level - 1].Position) // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     {
                         SeekChild(level - 1);
                     }
@@ -293,7 +293,7 @@ namespace Lucene.Net.Codecs
                 long length = skipStream[0].ReadVInt64();
 
                 // the start pointer of the current level
-                skipPointer[i] = skipStream[0].GetFilePointer();
+                skipPointer[i] = skipStream[0].Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 if (toBuffer > 0)
                 {
                     // buffer this level
@@ -310,12 +310,12 @@ namespace Lucene.Net.Codecs
                     }
 
                     // move base stream beyond the current level
-                    skipStream[0].Seek(skipStream[0].GetFilePointer() + length);
+                    skipStream[0].Seek(skipStream[0].Position + length); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
             }
 
             // use base stream for the lowest level
-            skipPointer[0] = skipStream[0].GetFilePointer();
+            skipPointer[0] = skipStream[0].Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         }
 
         /// <summary>
@@ -346,7 +346,7 @@ namespace Lucene.Net.Codecs
                 : base("SkipBuffer on " + input)
             {
                 data = new byte[length];
-                pointer = input.GetFilePointer();
+                pointer = input.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 input.ReadBytes(data, 0, length);
             }
 
@@ -358,11 +358,7 @@ namespace Lucene.Net.Codecs
                 }
             }
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public override long GetFilePointer()
-            {
-                return pointer + pos;
-            }
+            public override long Position => pointer + pos; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
             public override long Length => data.Length;
 

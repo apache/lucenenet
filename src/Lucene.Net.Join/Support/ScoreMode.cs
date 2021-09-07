@@ -1,0 +1,50 @@
+﻿// Lucene version compatibility level 4.8.1
+
+using System;
+
+namespace Lucene.Net.Join
+{
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
+    /// <summary>
+    /// How to aggregate multiple child hit scores into a single parent score.
+    /// </summary>
+    [Obsolete("Use Lucene.Net.Search.Join.ScoreMode instead. This enum will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    public enum ScoreMode
+    {
+        /// <summary>
+        /// Do no scoring.
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// Parent hit's score is the average of all child scores.
+        /// </summary>
+        Avg,
+
+        /// <summary>
+        /// Parent hit's score is the max of all child scores.
+        /// </summary>
+        Max,
+
+        /// <summary>
+        /// Parent hit's score is the sum of all child scores.
+        /// </summary>
+        Total
+    }
+}

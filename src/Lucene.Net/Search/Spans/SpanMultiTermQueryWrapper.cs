@@ -80,7 +80,7 @@ namespace Lucene.Net.Search.Spans
                 MultiTermQuery.RewriteMethod m = m_query.MultiTermRewriteMethod;
                 if (!(m is SpanRewriteMethod spanRewriteMethod))
                 {
-                    throw new NotSupportedException("You can only use SpanMultiTermQueryWrapper with a suitable SpanRewriteMethod.");
+                    throw UnsupportedOperationException.Create("You can only use SpanMultiTermQueryWrapper with a suitable SpanRewriteMethod.");
                 }
                 return spanRewriteMethod;
             }
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search.Spans
 
         public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
-            throw new NotSupportedException("Query should have been rewritten");
+            throw UnsupportedOperationException.Create("Query should have been rewritten");
         }
 
         public override string Field => m_query.Field;
@@ -117,7 +117,7 @@ namespace Lucene.Net.Search.Spans
             Query q = m_query.Rewrite(reader);
             if (!(q is SpanQuery))
             {
-                throw new NotSupportedException("You can only use SpanMultiTermQueryWrapper with a suitable SpanRewriteMethod.");
+                throw UnsupportedOperationException.Create("You can only use SpanMultiTermQueryWrapper with a suitable SpanRewriteMethod.");
             }
             q.Boost = q.Boost * Boost; // multiply boost
             return q;

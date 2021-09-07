@@ -13,7 +13,7 @@
 // OF ANY KIND, either express or implied; not even the implied warranty
 // of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-
+using Lucene;
 using Sax;
 using Sax.Ext;
 using Sax.Helpers;
@@ -581,7 +581,7 @@ namespace TagSoup
             {
                 Flush();
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new SAXException(e.Message, e);
             }
@@ -1229,7 +1229,7 @@ namespace TagSoup
             {
                 output.Write(c);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new SAXException(e.ToString(), e);
             }
@@ -1249,7 +1249,7 @@ namespace TagSoup
             {
                 output.Write(s);
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 throw new SAXException(e.ToString(), e);
             }

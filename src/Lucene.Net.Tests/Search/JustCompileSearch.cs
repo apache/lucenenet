@@ -43,47 +43,47 @@ namespace Lucene.Net.Search
         {
             public void Collect(int doc)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public void SetNextReader(AtomicReaderContext context)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public void SetScorer(Scorer scorer)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
-            public bool AcceptsDocsOutOfOrder => throw new NotSupportedException(UNSUPPORTED_MSG);
+            public bool AcceptsDocsOutOfOrder => throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
         }
 
         internal sealed class JustCompileDocIdSet : DocIdSet
         {
             public override DocIdSetIterator GetIterator()
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
         }
 
         internal sealed class JustCompileDocIdSetIterator : DocIdSetIterator
         {
-            public override int DocID => throw new NotSupportedException(UNSUPPORTED_MSG);
+            public override int DocID => throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
 
             public override int NextDoc()
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override int Advance(int target)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override long GetCost()
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
         }
 
@@ -94,12 +94,12 @@ namespace Lucene.Net.Search
             /// </summary>
             public long ParseInt64(BytesRef @string)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
         }
 
@@ -107,12 +107,12 @@ namespace Lucene.Net.Search
         {
             public double ParseDouble(BytesRef term)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
         }
 
@@ -120,40 +120,40 @@ namespace Lucene.Net.Search
         {
             public override int Compare(int slot1, int slot2)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override int CompareBottom(int doc)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override void Copy(int slot, int doc)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override void SetBottom(int slot)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override void SetTopValue(object value)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             // LUCENENET NOTE: This was value(int) in Lucene.
-            public override IComparable this[int slot] => throw new NotSupportedException(UNSUPPORTED_MSG);
+            public override IComparable this[int slot] => throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
 
             public override int CompareTop(int doc)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
         }
 
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search
         {
             public override FieldComparer NewComparer(string fieldname, int numHits, int sortPos, bool reversed)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
         }
 
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
 
             protected override bool Match(int docid)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
         }
 
@@ -198,12 +198,12 @@ namespace Lucene.Net.Search
 
             protected override bool Match(int doc)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override long GetCost()
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
         }
 
@@ -211,7 +211,7 @@ namespace Lucene.Net.Search
         {
             public override string ToString(string field)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
         }
 
@@ -224,26 +224,26 @@ namespace Lucene.Net.Search
 
             public override float GetScore()
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
-            public override int Freq => throw new NotSupportedException(UNSUPPORTED_MSG);
+            public override int Freq => throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
 
-            public override int DocID => throw new NotSupportedException(UNSUPPORTED_MSG);
+            public override int DocID => throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
 
             public override int NextDoc()
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override int Advance(int target)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override long GetCost()
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
         }
 
@@ -251,17 +251,17 @@ namespace Lucene.Net.Search
         {
             public override SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override SimScorer GetSimScorer(SimWeight stats, AtomicReaderContext context)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override long ComputeNorm(FieldInvertState state)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
         }
 
@@ -274,34 +274,34 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override void SetNextReader(AtomicReaderContext context)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override void SetScorer(Scorer scorer)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
-            public override bool AcceptsDocsOutOfOrder => throw new NotSupportedException(UNSUPPORTED_MSG);
+            public override bool AcceptsDocsOutOfOrder => throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
 
             public override TopDocs GetTopDocs()
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override TopDocs GetTopDocs(int start)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override TopDocs GetTopDocs(int start, int end)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
         }
 
@@ -309,24 +309,24 @@ namespace Lucene.Net.Search
         {
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
-            public override Query Query => throw new NotSupportedException(UNSUPPORTED_MSG);
+            public override Query Query => throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
 
             public override void Normalize(float norm, float topLevelBoost)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override float GetValueForNormalization()
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
-                throw new NotSupportedException(UNSUPPORTED_MSG);
+                throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
         }
     }

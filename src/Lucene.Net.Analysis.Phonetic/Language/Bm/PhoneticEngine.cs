@@ -214,7 +214,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             public RulesApplication(IDictionary<string, IList<Rule>> finalRules, string input,
                                     PhonemeBuilder phonemeBuilder, int i, int maxPhonemes)
             {
-                this.finalRules = finalRules ?? throw new ArgumentNullException(nameof(finalRules), "The finalRules argument must not be null");
+                this.finalRules = finalRules ?? throw new ArgumentNullException(nameof(finalRules), "The finalRules argument must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
                 this.phonemeBuilder = phonemeBuilder;
                 this.input = input;
                 this.i = i;
@@ -358,7 +358,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         {
             if (finalRules == null)
             {
-                throw new ArgumentNullException("finalRules can not be null");
+                throw new ArgumentNullException("finalRules can not be null");// LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             if (finalRules.Count == 0)
             {
@@ -445,7 +445,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             }
 
             IList<string> words = WHITESPACE.Split(input).TrimEnd();
-            IList<string> words2 = new List<string>();
+            ISet<string> words2 = new JCG.HashSet<string>();
 
             // special-case handling of word prefixes based upon the name type
             switch (this.nameType)
@@ -457,14 +457,14 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                         string lastPart = parts[parts.Length - 1];
                         words2.Add(lastPart);
                     }
-                    words2.RemoveAll(NAME_PREFIXES[this.nameType]);
+                    words2.ExceptWith(NAME_PREFIXES[this.nameType]);
                     break;
                 case NameType.ASHKENAZI:
-                    words2.AddRange(words);
-                    words2.RemoveAll(NAME_PREFIXES[this.nameType]);
+                    words2.UnionWith(words);
+                    words2.ExceptWith(NAME_PREFIXES[this.nameType]);
                     break;
                 case NameType.GENERIC:
-                    words2.AddRange(words);
+                    words2.UnionWith(words);
                     break;
                 default:
                     throw new InvalidOperationException("Unreachable case: " + this.nameType);

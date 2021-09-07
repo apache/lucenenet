@@ -4,9 +4,8 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {
@@ -161,9 +160,9 @@ namespace Lucene.Net.Search.Suggest.Fst
                 // we want highest weights first.
                 return rootArcs.ToArray();
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
         }
 
@@ -204,10 +203,10 @@ namespace Lucene.Net.Search.Suggest.Fst
                     }
                 }
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 // Should never happen, but anyway.
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
 
             // No match.
@@ -225,7 +224,11 @@ namespace Lucene.Net.Search.Suggest.Fst
         ///         (decreasing) and then alphabetically (UTF-8 codepoint order). </returns>
         public virtual IList<Completion> DoLookup(string key, int num)
         {
-            if (key.Length == 0 || automaton == null)
+            // LUCENENET: Added guard clause for null
+            if (key is null)
+                throw new ArgumentNullException(nameof(key));
+
+            if (key.Length == 0 || automaton is null)
             {
                 return EMPTY_RESULT;
             }
@@ -247,10 +250,10 @@ namespace Lucene.Net.Search.Suggest.Fst
                     return LookupSortedByWeight(keyUtf8, num, false);
                 }
             }
-            catch (IOException e)
+            catch (Exception e) when (e.IsIOException())
             {
                 // Should never happen, but anyway.
-                throw new Exception(e.ToString(), e);
+                throw RuntimeException.Create(e);
             }
         }
 
@@ -259,7 +262,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// constant</c>. This is a workaround: in general, use constant weights for
         /// alphabetically sorted result.
         /// </summary>
-        private List<Completion> LookupSortedAlphabetically(BytesRef key, int num)
+        private JCG.List<Completion> LookupSortedAlphabetically(BytesRef key, int num)
         {
             // Greedily get num results from each weight branch.
             var res = LookupSortedByWeight(key, num, true);
@@ -268,7 +271,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             res.Sort();
             if (res.Count > num)
             {
-                res = res.GetRange(0, num - 0);
+                res = res.GetView(0, num - 0); // LUCENENET: Converted end index to length
             }
             return res;
         }
@@ -281,12 +284,12 @@ namespace Lucene.Net.Search.Suggest.Fst
         ///          <paramref name="num"/> suggestions have been collected. If
         ///          <c>false</c>, it will collect suggestions from all weight
         ///          arcs (needed for <see cref="LookupSortedAlphabetically"/>. </param>
-        private List<Completion> LookupSortedByWeight(BytesRef key, int num, bool collectAll)
+        private JCG.List<Completion> LookupSortedByWeight(BytesRef key, int num, bool collectAll)
         {
             // Don't overallocate the results buffers. This also serves the purpose of
             // allowing the user of this class to request all matches using Integer.MAX_VALUE as
             // the number of results.
-            List<Completion> res = new List<Completion>(Math.Min(10, num));
+            JCG.List<Completion> res = new JCG.List<Completion>(Math.Min(10, num));
 
             BytesRef output = BytesRef.DeepCopyOf(key);
             for (int i = 0; i < rootArcs.Length; i++)

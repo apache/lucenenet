@@ -3,7 +3,6 @@ using J2N.Text;
 using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using Lucene.Net.QueryParsers.Flexible.Core.Util;
-using Lucene.Net.QueryParsers.Flexible.Messages;
 using System;
 using System.Globalization;
 using System.Text;
@@ -116,11 +115,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// <param name="escapeChar">the new character to prefix sequence1 in return string.</param>
         /// <param name="locale"></param>
         /// <returns>the new <see cref="ICharSequence"/></returns>
+        /// <exception cref="ArgumentNullException"><paramref name="string"/>, <paramref name="sequence1"/>, or <paramref name="escapeChar"/> is <c>null</c>.</exception>
         private static ICharSequence ReplaceIgnoreCase(ICharSequence @string,
             string sequence1, string escapeChar, CultureInfo locale)
         {
-            if (escapeChar == null || sequence1 == null || @string == null)
-                throw new NullReferenceException(); // LUCNENET TODO: ArgumentException...
+            // LUCENENET specific - changed from NullPointerException to ArgumentNullException (.NET convention)
+            if (escapeChar is null)
+                throw new ArgumentNullException(nameof(escapeChar));
+            if (sequence1 is null)
+                throw new ArgumentNullException(nameof(sequence1));
+            if (@string is null)
+                throw new ArgumentNullException(nameof(@string));
+            if (locale is null)
+                throw new ArgumentNullException(nameof(locale));
 
             // empty string case
             int count = @string.Length;
@@ -315,14 +322,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
             if (codePointMultiplier > 0)
             {
-                throw new ParseException(new Message(
-                    QueryParserMessages.INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION));
+                // LUCENENET: Factored out NLS/Message/IMessage so end users can optionally utilize the built-in .NET localization.
+                throw new ParseException(
+                    QueryParserMessages.INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION);
             }
 
             if (lastCharWasEscapeChar)
             {
-                throw new ParseException(new Message(
-                    QueryParserMessages.INVALID_SYNTAX_ESCAPE_CHARACTER));
+                // LUCENENET: Factored out NLS/Message/IMessage so end users can optionally utilize the built-in .NET localization.
+                throw new ParseException(
+                    QueryParserMessages.INVALID_SYNTAX_ESCAPE_CHARACTER);
             }
 
             return new UnescapedCharSequence(output, wasEscaped, 0, length);
@@ -349,7 +358,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
             else
             {
-                throw new ParseException(new Message(
+                // LUCENENET: Factored out NLS/Message/IMessage so end users can optionally utilize the built-in .NET localization.
+                throw new ParseException(string.Format(
                     QueryParserMessages.INVALID_SYNTAX_ESCAPE_NONE_HEX_UNICODE, c));
             }
         }

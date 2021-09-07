@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 using System;
@@ -319,7 +319,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                     }
                     else
                     {
-                        throw new Exception("unexpected char: " + c);
+                        throw RuntimeException.Create("unexpected char: " + c);
                     }
                 }
                 int len = token.Length;

@@ -224,7 +224,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         Dispose();
                     } // keep our original exception
-                    catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
+                    catch (Exception t) when (t.IsThrowable())
                     {
                         // ignored
                     }
@@ -238,7 +238,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             if (closed)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "this FieldsReader is closed");
+                throw AlreadyClosedException.Create(this.GetType().FullName, "this FieldsReader is disposed.");
             }
         }
 
@@ -363,7 +363,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             else
             {
                 int length = fieldsStream.ReadVInt32();
-                fieldsStream.Seek(fieldsStream.GetFilePointer() + length);
+                fieldsStream.Seek(fieldsStream.Position + length); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             }
         }
 

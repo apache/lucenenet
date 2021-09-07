@@ -1,4 +1,4 @@
-using Spatial4n.Core.Context;
+﻿using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 using Spatial4n.Core.Util;
 using System;
@@ -65,7 +65,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             int Maxp = MaxLevelsPossible;
             if (maxLevels <= 0 || maxLevels > Maxp)
             {
-                throw new ArgumentException("maxLen must be [1-" + Maxp + "] but got " + maxLevels);
+                throw new ArgumentOutOfRangeException(nameof(maxLevels), "maxLen must be [1-" + Maxp + "] but got " + maxLevels); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
         }
 

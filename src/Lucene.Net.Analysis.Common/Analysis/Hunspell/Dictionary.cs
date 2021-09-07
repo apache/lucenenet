@@ -17,6 +17,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using JCG = J2N.Collections.Generic;
+using Integer = J2N.Numerics.Int32;
 
 namespace Lucene.Net.Analysis.Hunspell
 {
@@ -281,9 +282,9 @@ namespace Lucene.Net.Analysis.Hunspell
                     return output;
                 }
             }
-            catch (IOException bogus)
+            catch (Exception bogus) when (bogus.IsIOException())
             {
-                throw new Exception(bogus.Message, bogus);
+                throw RuntimeException.Create(bogus);
             }
         }
 
@@ -352,7 +353,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     string[] parts = whitespacePattern.Split(line).TrimEnd();
                     if (parts.Length != 2)
                     {
-                        throw new FormatException(string.Format("Illegal CIRCUMFIX declaration, line {0}", lineNumber));
+                        throw new ParseException("Illegal CIRCUMFIX declaration", lineNumber);
                     }
                     circumfix = flagParsingStrategy.ParseFlag(parts[1]);
                 }
@@ -361,7 +362,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     string[] parts = whitespacePattern.Split(line).TrimEnd();
                     if (parts.Length != 2)
                     {
-                        throw new FormatException(string.Format("Illegal KEEPCASE declaration, line {0}", lineNumber));
+                        throw new ParseException("Illegal KEEPCASE declaration", lineNumber);
                     }
                     keepcase = flagParsingStrategy.ParseFlag(parts[1]);
                 }
@@ -370,7 +371,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     string[] parts = whitespacePattern.Split(line).TrimEnd();
                     if (parts.Length != 2)
                     {
-                        throw new FormatException(string.Format("Illegal NEEDAFFIX declaration, line {0}", lineNumber));
+                        throw new ParseException("Illegal NEEDAFFIX declaration", lineNumber);
                     }
                     needaffix = flagParsingStrategy.ParseFlag(parts[1]);
                 }
@@ -379,7 +380,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     string[] parts = whitespacePattern.Split(line).TrimEnd();
                     if (parts.Length != 2)
                     {
-                        throw new FormatException(string.Format("Illegal ONLYINCOMPOUND declaration, line {0}", lineNumber));
+                        throw new ParseException("Illegal ONLYINCOMPOUND declaration", lineNumber);
                     }
                     onlyincompound = flagParsingStrategy.ParseFlag(parts[1]);
                 }
@@ -388,7 +389,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     string[] parts = whitespacePattern.Split(line).TrimEnd();
                     if (parts.Length != 2)
                     {
-                        throw new FormatException(string.Format("Illegal IGNORE declaration, line {0}", lineNumber));
+                        throw new ParseException("Illegal IGNORE declaration", lineNumber);
                     }
                     ignore = parts[1].ToCharArray();
                     Array.Sort(ignore);
@@ -400,10 +401,10 @@ namespace Lucene.Net.Analysis.Hunspell
                     string type = parts[0];
                     if (parts.Length != 2)
                     {
-                        throw new FormatException(string.Format("Illegal {0} declaration, line {1}", type, lineNumber));
+                        throw new ParseException(string.Format("Illegal {0} declaration", type), lineNumber);
                     }
-                    int num = int.Parse(parts[1], CultureInfo.InvariantCulture);
-                    FST<CharsRef> res = ParseConversions(reader, num);
+                    int num = Integer.Parse(parts[1], radix: 10); // LUCENENET: specify radix 10 to make this culture invariant
+                    FST<CharsRef> res = ParseConversions(reader, num, lineNumber); // LUCENENET: Pass linenumber so we can throw it
                     if (type.Equals("ICONV", StringComparison.Ordinal))
                     {
                         iconv = res;
@@ -518,7 +519,7 @@ namespace Lucene.Net.Analysis.Hunspell
             bool crossProduct = args[2].Equals("Y", StringComparison.Ordinal);
             bool isSuffix = conditionPattern == SUFFIX_CONDITION_REGEX_PATTERN;
 
-            int numLines = int.Parse(args[3], CultureInfo.InvariantCulture);
+            int numLines = Integer.Parse(args[3], radix: 10); // LUCENENET: specify radix 10 to make this culture invariant
             affixData = ArrayUtil.Grow(affixData, (currentAffix << 3) + (numLines << 3));
             ByteArrayDataOutput affixWriter = new ByteArrayDataOutput(affixData, currentAffix << 3, numLines << 3);
 
@@ -532,7 +533,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 // condition is optional
                 if (ruleArgs.Length < 4)
                 {
-                    throw new FormatException("The affix file contains a rule with less than four elements: " + line /*, reader.LineNumber */);// LUCENENET TODO: LineNumberReader
+                    throw new ParseException("The affix file contains a rule with less than four elements: " + line, 0  /*, reader.LineNumber */);// LUCENENET TODO: LineNumberReader
                 }
 
                 char flag = flagParsingStrategy.ParseFlag(ruleArgs[1]);
@@ -549,7 +550,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
                     if (aliasCount > 0)
                     {
-                        flagPart = GetAliasValue(int.Parse(flagPart, CultureInfo.InvariantCulture));
+                        flagPart = GetAliasValue(Integer.Parse(flagPart, radix: 10)); // LUCENENET: specify radix 10 to make this culture invariant
                     }
 
                     appendFlags = flagParsingStrategy.ParseFlags(flagPart);
@@ -596,7 +597,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     patternIndex = patterns.Count;
                     if (patternIndex > short.MaxValue)
                     {
-                        throw new NotSupportedException("Too many patterns, please report this to dev@lucene.apache.org");
+                        throw UnsupportedOperationException.Create("Too many patterns, please report this to dev@lucene.apache.org");
                     }
                     seenPatterns[regex] = patternIndex;
                     CharacterRunAutomaton pattern = new CharacterRunAutomaton((new RegExp(regex, RegExpSyntax.NONE)).ToAutomaton());
@@ -609,7 +610,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     seenStrips[strip] = stripOrd;
                     if (stripOrd > char.MaxValue)
                     {
-                        throw new NotSupportedException("Too many unique strips, please report this to dev@lucene.apache.org");
+                        throw UnsupportedOperationException.Create("Too many unique strips, please report this to dev@lucene.apache.org");
                     }
                 }
 
@@ -628,7 +629,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 else if (appendFlagsOrd > short.MaxValue)
                 {
                     // this limit is probably flexible, but its a good sanity check too
-                    throw new NotSupportedException("Too many unique append flags, please report this to dev@lucene.apache.org");
+                    throw UnsupportedOperationException.Create("Too many unique append flags, please report this to dev@lucene.apache.org");
                 }
 
                 affixWriter.WriteInt16((short)flag);
@@ -659,7 +660,7 @@ namespace Lucene.Net.Analysis.Hunspell
             }
         }
 
-        private FST<CharsRef> ParseConversions(TextReader reader, int num)
+        private FST<CharsRef> ParseConversions(TextReader reader, int num, int lineNumber)
         {
             IDictionary<string, string> mappings = new JCG.SortedDictionary<string, string>(StringComparer.Ordinal);
 
@@ -669,11 +670,11 @@ namespace Lucene.Net.Analysis.Hunspell
                 string[] parts = whitespacePattern.Split(line).TrimEnd();
                 if (parts.Length != 3)
                 {
-                    throw new FormatException("invalid syntax: " + line /*, reader.LineNumber */); // LUCENENET TODO: LineNumberReader
+                    throw new ParseException("invalid syntax: " + line, lineNumber /*, reader.LineNumber */); // LUCENENET TODO: LineNumberReader
                 }
                 if (mappings.Put(parts[1], parts[2]) != null)
                 {
-                    throw new InvalidOperationException("duplicate mapping specified for: " + parts[1]);
+                    throw IllegalStateException.Create("duplicate mapping specified for: " + parts[1]);
                 }
             }
 
@@ -723,7 +724,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     // this test only at the end as ineffective but would allow lines only containing spaces:
                     if (ch < 0)
                     {
-                        throw new FormatException("Unexpected end of affix file." /*, 0*/);
+                        throw new ParseException("Unexpected end of affix file.", 0);
                     }
                     continue;
                 }
@@ -1063,7 +1064,7 @@ namespace Lucene.Net.Analysis.Hunspell
                         string flagPart = line2.Substring(flagSep + 1, end - (flagSep + 1));
                         if (aliasCount > 0)
                         {
-                            flagPart = GetAliasValue(int.Parse(flagPart, CultureInfo.InvariantCulture));
+                            flagPart = GetAliasValue(Integer.Parse(flagPart, radix: 10)); // LUCENENET: specify radix 10 to make this culture invariant
                         }
 
                         wordForm = flagParsingStrategy.ParseFlags(flagPart);
@@ -1180,7 +1181,7 @@ namespace Lucene.Net.Analysis.Hunspell
             if (aliases == null)
             {
                 //first line should be the aliases count
-                int count = int.Parse(ruleArgs[1], CultureInfo.InvariantCulture);
+                int count = Integer.Parse(ruleArgs[1], radix: 10); // LUCENENET: specify radix 10 to make this culture invariant
                 aliases = new string[count];
             }
             else
@@ -1197,7 +1198,7 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 return aliases[id - 1];
             }
-            catch (IndexOutOfRangeException ex)
+            catch (Exception ex) when (ex.IsIndexOutOfBoundsException())
             {
                 throw new ArgumentException("Bad flag alias number:" + id, ex);
             }
@@ -1213,7 +1214,7 @@ namespace Lucene.Net.Analysis.Hunspell
             if (morphAliases == null)
             {
                 //first line should be the aliases count
-                int count = int.Parse(line.Substring(3), CultureInfo.InvariantCulture);
+                int count = Integer.Parse(line.Substring(3), radix: 10); // LUCENENET: specify radix 10 to make this culture invariant
                 morphAliases = new string[count];
             }
             else
@@ -1312,7 +1313,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     {
                         continue;
                     }
-                    flags[upto++] = (char)int.Parse(replacement, CultureInfo.InvariantCulture);
+                    flags[upto++] = (char)Integer.Parse(replacement, radix: 10); // LUCENENET: specify radix 10 to make this culture invariant
                 }
 
                 if (upto < flags.Length)
@@ -1392,9 +1393,9 @@ namespace Lucene.Net.Analysis.Hunspell
                 {
                     ApplyMappings(iconv, reuse);
                 }
-                catch (IOException bogus)
+                catch (Exception bogus) when (bogus.IsIOException())
                 {
-                    throw new Exception(bogus.Message, bogus);
+                    throw RuntimeException.Create(bogus);
                 }
                 if (ignoreCase)
                 {

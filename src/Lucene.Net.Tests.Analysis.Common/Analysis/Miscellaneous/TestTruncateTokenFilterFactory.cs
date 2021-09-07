@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 TokenFilterFactory("Truncate", TruncateTokenFilterFactory.PREFIX_LENGTH_KEY, "5", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 assertTrue(expected.Message.Contains("Unknown parameter(s):"));
             }
@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 TokenFilterFactory("Truncate", TruncateTokenFilterFactory.PREFIX_LENGTH_KEY, "-5");
                 fail();
             }
-            catch (ArgumentException expected)
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
             {
                 assertTrue(expected.Message.Contains(TruncateTokenFilterFactory.PREFIX_LENGTH_KEY + " parameter must be a positive number: -5"));
             }

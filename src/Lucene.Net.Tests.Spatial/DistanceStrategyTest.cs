@@ -1,10 +1,10 @@
-﻿using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Spatial.Prefix;
+﻿using Lucene.Net.Spatial.Prefix;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Serialized;
 using Lucene.Net.Spatial.Vector;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 using System;
