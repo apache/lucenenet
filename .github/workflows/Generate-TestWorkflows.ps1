@@ -38,7 +38,7 @@
 
  .PARAMETER TestFrameworks
     A string array of Dotnet target framework monikers to run the tests on. The default is
-    @('net5.0','net461','net48').
+    @('net6.0', 'net5.0','net461','net48').
 
  .PARAMETER OperatingSystems
     A string array of Github Actions operating system monikers to run the tests on.
@@ -65,13 +65,15 @@ param(
 
     [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot)),
 
-    [string[]]$TestFrameworks = @('net5.0','net461','net48'), # targets under test: netstanrd2.1, netstanard2.0, net45
+    [string[]]$TestFrameworks = @('net6.0', 'net5.0','net461','net48'), # targets under test: net6.0, netstandard2.1, netstanard2.0, net45
 
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
 
     [string[]]$TestPlatforms = @('x64'),
 
     [string[]]$Configurations = @('Release'),
+
+    [string]$DotNet6SDKVersion = '6.0.100-rc.1.21463.6',
 
     [string]$DotNet5SDKVersion = '5.0.400',
 
@@ -155,6 +157,7 @@ function Write-TestWorkflow(
     [string[]]$TestFrameworks = @('net5.0', 'net48'),
     [string[]]$TestPlatforms = @('x64'),
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest', 'macos-latest'),
+    [string]$DotNet6SDKVersion = $DotNet6SDKVersion,
     [string]$DotNet5SDKVersion = $DotNet5SDKVersion,
     [string]$DotNetCore3SDKVersion = $DotNetCore3SDKVersion) {
 
@@ -263,6 +266,12 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '$DotNet5SDKVersion'
+        if: `${{ startswith(matrix.framework, 'net5.') }}
+
+      - name: Setup .NET 6 SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '$DotNet6SDKVersion'
 
       - run: |
           `$project_name = [System.IO.Path]::GetFileNameWithoutExtension(`$env:project_path)
@@ -307,7 +316,7 @@ try {
     Pop-Location
 }
 
-#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net5.0','netcoreapp3.1') -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion
+#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net5.0','netcoreapp3.1') -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion
 
 #Write-Host $TestProjects
 
@@ -331,5 +340,5 @@ foreach ($testProject in $TestProjects) {
     }
 
     #Write-Host "Project: $projectName"
-    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion
+    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion
 }

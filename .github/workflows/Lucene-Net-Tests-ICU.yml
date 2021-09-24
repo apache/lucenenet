@@ -36,6 +36,7 @@ on:
     - 'src/Lucene.Net.Tests.Analysis.Common/Analysis/Th/**/*.cs'
     - 'src/Lucene.Net.Tests.Analysis.Common/Analysis/Util/TestCharArrayIterator.cs'
     - 'src/Lucene.Net.Tests.Analysis.Common/Analysis/Util/TestSegmentingTokenizerBase.cs'
+    - 'src/Lucene.Net.Tests.Analysis.Common/Analysis/Util/BaseTokenStreamFactoryTestCase.cs'
     - 'src/Lucene.Net.Tests.Analysis.ICU/Analysis/**/*.cs'
     - 'src/Lucene.Net.Tests.Analysis.ICU/Collation/**/*.cs'
     - 'src/Lucene.Net.Tests.Highlighter/PostingsHighlight/**/*.cs'
@@ -48,13 +49,12 @@ on:
     # Dependencies
     - 'src/Lucene.Net/**/*'
     - 'src/Lucene.Net.Analysis.Common/**/*'
+    - 'src/Lucene.Net.Codecs/**/*'
     - 'src/Lucene.Net.Memory/**/*'
     - 'src/Lucene.Net.Queries/**/*'
     - 'src/Lucene.Net.Highlighter/**/*'
     - 'src/dotnet/Lucene.Net.ICU/**/*'
-    - 'src/Lucene.Net.Codecs/**/*'
     - 'src/Lucene.Net.TestFramework/**/*'
-    - 'src/Lucene.Net.Tests.Analysis.Common/**/*'
 
     - '!**/*.md'
 
@@ -66,7 +66,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
-        framework: [net5.0, net461, net48]
+        framework: [net6.0, net5.0, net461, net48]
         platform: [x64]
         configuration: [Release]
         exclude:
@@ -96,6 +96,12 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '5.0.400'
+        if: ${{ startswith(matrix.framework, 'net5.') }}
+
+      - name: Setup .NET 6 SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.100-rc.1.21463.6'
 
       - run: |
           $project_name = [System.IO.Path]::GetFileNameWithoutExtension($env:project_path)
