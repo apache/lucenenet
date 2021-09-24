@@ -83,6 +83,13 @@ steps:
   displayName: 'Use .NET sdk 5.0.400'
   inputs:
     version: 5.0.400
+  condition: and(succeeded(), contains('${{ parameters.framework }}', 'net5.'))
+
+- task: UseDotNet@2
+  displayName: 'Use .NET Core sdk 6.0.100-rc.1'
+  inputs:
+    packageType: 'sdk'
+    version: '6.0.100-rc.1.21463.6'
 
 #- template: 'show-all-files.yml' # Uncomment for debugging
 - pwsh: |

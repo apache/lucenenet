@@ -27,7 +27,7 @@ properties {
     [string]$publish_directory = "$release_directory/Publish"
     [string]$solutionFile = "$base_directory/Lucene.Net.sln"
     [string]$sdkPath = "$env:programfiles/dotnet/sdk"
-    [string]$sdkVersion = "5.0.400"
+    [string]$sdkVersion = "6.0.100-rc.1.21463.6"
     [bool]$skipSdkInstallation = $false
     [string]$globalJsonFile = "$base_directory/global.json"
     [string]$versionPropsFile = "$base_directory/Version.props"
@@ -49,7 +49,7 @@ properties {
     [int]$maximumParalellJobs = 8
     
     #test paramters
-    [string]$frameworks_to_test = "net5.0,netcoreapp3.1,net48,net461"
+    [string]$frameworks_to_test = "net6.0,net5.0,netcoreapp3.1,net48,net461"
     [string]$where = ""
 }
 

@@ -37,12 +37,12 @@ on:
 
     # Dependencies
     - 'src/Lucene.Net/**/*'
+    - 'src/Lucene.Net.Analysis.Common/**/*'
     - 'src/Lucene.Net.Codecs/**/*'
     - 'src/Lucene.Net.Queries/**/*'
     - 'src/Lucene.Net.Grouping/**/*'
     - 'src/Lucene.Net.Join/**/*'
     - 'src/Lucene.Net.Facet/**/*'
-    - 'src/Lucene.Net.Analysis.Common/**/*'
     - 'src/Lucene.Net.Sandbox/**/*'
     - 'src/Lucene.Net.QueryParser/**/*'
     - 'src/Lucene.Net.TestFramework/**/*'
@@ -57,7 +57,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
-        framework: [net5.0, net461, net48]
+        framework: [net6.0, net5.0, net461, net48]
         platform: [x64]
         configuration: [Release]
         exclude:
@@ -87,6 +87,12 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '5.0.400'
+        if: ${{ startswith(matrix.framework, 'net5.') }}
+
+      - name: Setup .NET 6 SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.100-rc.1.21463.6'
 
       - run: |
           $project_name = [System.IO.Path]::GetFileNameWithoutExtension($env:project_path)
