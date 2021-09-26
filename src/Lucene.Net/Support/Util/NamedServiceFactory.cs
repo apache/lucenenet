@@ -168,12 +168,6 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Gets a value that indicates whether the current application domain executes with full trust.
         /// </summary>
-        protected bool IsFullyTrusted =>
-#if FEATURE_APPDOMAIN_ISFULLYTRUSTED
-            AppDomain.CurrentDomain.IsFullyTrusted; // Partial trust support
-#else
-            true; // Partial trust not supported
-#endif
-
+        protected bool IsFullyTrusted => AppDomain.CurrentDomain.IsFullyTrusted; // Partial trust support
     }
 }

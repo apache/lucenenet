@@ -60,7 +60,6 @@
 
     <DefineConstants>$(DefineConstants);FEATURE_APPDOMAIN_BASEDIRECTORY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_APPDOMAIN_GETASSEMBLIES</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_APPDOMAIN_ISFULLYTRUSTED</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_ASSEMBLY_GETCALLINGASSEMBLY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_FILESTREAM_LOCK</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_METHODBASE_GETMETHODBODY</DefineConstants>
