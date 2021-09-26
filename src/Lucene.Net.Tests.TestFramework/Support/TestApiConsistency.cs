@@ -1,4 +1,4 @@
-#if TESTFRAMEWORK_NUNIT
+﻿#if TESTFRAMEWORK_NUNIT
 using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -46,7 +46,7 @@ namespace Lucene.Net.Tests.TestFramework
         [TestCase(typeof(Lucene.Net.RandomExtensions))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]

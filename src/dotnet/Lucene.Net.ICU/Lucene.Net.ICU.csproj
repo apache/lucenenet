@@ -24,7 +24,7 @@
   <Import Project="$(SolutionDir)build/NuGet.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net451</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.ICU</AssemblyTitle>
@@ -34,6 +34,8 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
     <DefineConstants>$(DefineConstants);FEATURE_BREAKITERATOR</DefineConstants>
   </PropertyGroup>
+
+  <Import Project="$(SolutionDir)build/Dependencies.props" />
 
   <ItemGroup>
     <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\**\*.cs" LinkBase="Analysis\Th" />

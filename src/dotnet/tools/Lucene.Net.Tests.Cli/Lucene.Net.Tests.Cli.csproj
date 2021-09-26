@@ -29,6 +29,8 @@
     <IsPublishable Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">true</IsPublishable>
   </PropertyGroup>
 
+  <Import Project="$(SolutionDir)build\Dependencies.props" />
+
   <ItemGroup>
     <Compile Remove="SourceCode\TestInputForParser.cs" />
     <None Remove="Configuration\appsettings.json" />

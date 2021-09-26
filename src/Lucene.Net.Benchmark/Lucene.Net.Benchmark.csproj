@@ -24,7 +24,7 @@
   <Import Project="$(SolutionDir)build/NuGet.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net451</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Benchmark</AssemblyTitle>
@@ -34,8 +34,10 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
+  <Import Project="$(SolutionDir)build/Dependencies.props" />
+
   <ItemGroup>
-  <ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
+    <ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
     <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
     <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj" />
@@ -49,6 +51,10 @@
     <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
     <PackageReference Include="ICU4N.Collation" Version="$(ICU4NCollationPackageVersion)" />
     <PackageReference Include="Spatial4n.Core" Version="$(Spatial4nCorePackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+    <PackageReference Include="SharpZipLib" Version="$(SharpZipLibPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">

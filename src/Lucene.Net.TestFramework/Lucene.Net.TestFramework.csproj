@@ -24,7 +24,7 @@
   <Import Project="$(SolutionDir)build/NuGet.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net451</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.TestFramework</AssemblyTitle>
@@ -39,6 +39,8 @@
 
     <DefineConstants>$(DefineConstants);TESTFRAMEWORK_NUNIT</DefineConstants>
   </PropertyGroup>
+
+  <Import Project="$(SolutionDir)build/Dependencies.props" />
 
   <ItemGroup>
     <Compile Include="..\Lucene.Net.TestFramework.NUnit\Support\TestFramework\Assert.cs" Link="Support\TestFramework\Assert.cs" />
@@ -61,6 +63,15 @@
     <PackageReference Include="RandomizedTesting.Generators" Version="$(RandomizedTestingGeneratorsPackageVersion)" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="$(MicrosoftExtensionsConfigurationCommandLinePackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="$(MicrosoftExtensionsConfigurationXmlPackageVersion)" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationPackageVersion)" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="$(MicrosoftExtensionsConfigurationCommandLinePackageVersion)" />
@@ -79,11 +90,11 @@
   </ItemGroup>
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationPackageVersion_NET4_5_1)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="$(MicrosoftExtensionsConfigurationCommandLinePackageVersion_NET4_5_1)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion_NET4_5_1)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonPackageVersion_NET4_5_1)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="$(MicrosoftExtensionsConfigurationXmlPackageVersion_NET4_5_1)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="$(MicrosoftExtensionsConfigurationCommandLinePackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="$(MicrosoftExtensionsConfigurationXmlPackageVersion)" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonPackageVersion)" />
   </ItemGroup>
 

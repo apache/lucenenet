@@ -35,6 +35,8 @@
     <RootNamespace>Lucene.Net.Analysis.OpenNlp</RootNamespace>
   </PropertyGroup>
 
+  <Import Project="$(SolutionDir)build/Dependencies.props" />
+
   <ItemGroup>
     <ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
     <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />

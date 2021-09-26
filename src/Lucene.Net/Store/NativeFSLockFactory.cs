@@ -116,7 +116,9 @@ namespace Lucene.Net.Store
                 return FileSupport.GetFileIOExceptionHResult(provokeException: (fileName) =>
                 {
                     using var lockStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
+#pragma warning disable CA1416 // Validate platform compatibility
                     lockStream.Lock(0, 1); // Create an exclusive lock
+#pragma warning restore CA1416 // Validate platform compatibility
                     using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Write, FileShare.ReadWrite);
                     // try to find out if the file is locked by writing a byte. Note that we need to flush the stream to find out.
                     stream.WriteByte(0);
@@ -207,7 +209,9 @@ namespace Lucene.Net.Store
             switch (LockingStrategy)
             {
                 case FSLockingStrategy.FileStreamLockViolation:
+#pragma warning disable CA1416 // Validate platform compatibility
                     return new NativeFSLock(m_lockDir, path);
+#pragma warning restore CA1416 // Validate platform compatibility
                 case FSLockingStrategy.FileSharingViolation:
                     return new SharingNativeFSLock(m_lockDir, path);
                 default:
@@ -562,6 +566,9 @@ namespace Lucene.Net.Store
     }
 
     // Uses FileStream locking of file pages.
+#if NET6_0
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+#endif
     internal class NativeFSLock : Lock
     {
 #pragma warning disable CA2213 // Disposable fields should be disposed

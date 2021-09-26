@@ -1,4 +1,4 @@
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -45,7 +45,7 @@ namespace Lucene.Net.Tests.Facet
         [TestCase(typeof(Lucene.Net.Facet.Facets))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly, @"OrdAndValue");
+            base.TestPublicFields(typeFromTargetAssembly, @"OrdAndValue|^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]
