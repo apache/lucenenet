@@ -24,7 +24,7 @@
   <Import Project="$(SolutionDir)build/NuGet.props" />
   
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net45</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net</AssemblyTitle>
@@ -32,6 +32,8 @@
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
+
+  <Import Project="$(SolutionDir)build/Dependencies.props" />
 
   <PropertyGroup Label="NuGet Package File Paths">
     <LuceneNetDotNetDir>$(SolutionDir)src\dotnet\</LuceneNetDotNetDir>
@@ -49,7 +51,11 @@
   <ItemGroup>
     <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
   </ItemGroup>
-    
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
+  </ItemGroup>
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
   </ItemGroup>
@@ -59,7 +65,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion_NET4_5_1)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
   </ItemGroup>
   
   <ItemGroup>

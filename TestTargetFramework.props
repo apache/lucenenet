@@ -69,5 +69,7 @@
     <NoWarn Label="Remove unused parameter">$(NoWarn);IDE0060</NoWarn>
     <NoWarn Label="Naming rule violation">$(NoWarn);IDE1006</NoWarn>
   </PropertyGroup>
+
+  <Import Project="build/Dependencies.props" />
   
 </Project>

@@ -45,7 +45,7 @@ namespace Lucene.Net.Replicator
         [TestCase(typeof(Lucene.Net.Replicator.IReplicator))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]

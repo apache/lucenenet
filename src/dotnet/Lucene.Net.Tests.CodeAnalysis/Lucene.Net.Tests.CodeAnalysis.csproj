@@ -29,6 +29,7 @@
     <IsPublishable Condition=" '$(TargetFramework)' == 'net5.0' ">true</IsPublishable>
   </PropertyGroup>
 
+  <Import Project="$(SolutionDir)build/Dependencies.props" />
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
 
   <ItemGroup>

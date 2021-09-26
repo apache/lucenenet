@@ -1,4 +1,4 @@
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -45,7 +45,7 @@ namespace Lucene.Net.Tests.Spatial
         [TestCase(typeof(Lucene.Net.Spatial.DisjointSpatialFilter))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]
