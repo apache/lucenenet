@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -250,7 +250,6 @@ namespace Lucene.Net.Util
                 "the consumer if the array is not cloned using arr.ToArray().");
         }
 
-#if FEATURE_METHODBASE_GETMETHODBODY
         //[Test, LuceneNetSpecific]
         public virtual void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)
         {
@@ -268,7 +267,6 @@ namespace Lucene.Net.Util
                 "An array should be cloned before returning using arr.ToArray() or if it is intended to be writable, " +
                 "decorate with the WritableArray attribute and consider making it a property for clarity.");
         }
-#endif
 
         //[Test, LuceneNetSpecific]
         public virtual void TestForPublicMembersContainingComparer(Type typeFromTargetAssembly)
@@ -844,7 +842,6 @@ namespace Lucene.Net.Util
             return result.ToArray();
         }
 
-#if FEATURE_METHODBASE_GETMETHODBODY
         private static IEnumerable<string> GetMethodsThatReturnWritableArray(Assembly assembly)
         {
             var result = new List<string>();
@@ -898,7 +895,6 @@ namespace Lucene.Net.Util
 
             return result.ToArray();
         }
-#endif
 
         private static IEnumerable<string> GetPublicNullableEnumMembers(Assembly assembly)
         {

@@ -2459,9 +2459,6 @@ namespace Lucene.Net.Index
             }
         }
 
-#if NETSTANDARD1_X
-        [Slow]
-#endif
         [Test]
         public virtual void TestRandomExceptionDuringRollback()
         {

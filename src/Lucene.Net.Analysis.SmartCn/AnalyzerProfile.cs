@@ -74,11 +74,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
             if (ANALYSIS_DATA_DIR.Length != 0)
                 return;
 
-#if FEATURE_APPDOMAIN_BASEDIRECTORY
             string currentPath = AppDomain.CurrentDomain.BaseDirectory;
-#else
-            string currentPath = System.AppContext.BaseDirectory;
-#endif
 
             string candidatePath = System.IO.Path.Combine(currentPath, dirName);
             if (Directory.Exists(candidatePath))
