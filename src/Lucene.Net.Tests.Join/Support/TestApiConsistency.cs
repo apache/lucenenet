@@ -83,14 +83,12 @@ namespace Lucene.Net.Search.Join
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if FEATURE_METHODBASE_GETMETHODBODY
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Search.Join.FakeScorer))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)
         {
             base.TestForMethodsThatReturnWritableArray(typeFromTargetAssembly);
         }
-#endif
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Search.Join.FakeScorer))]

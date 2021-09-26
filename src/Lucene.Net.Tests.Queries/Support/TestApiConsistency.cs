@@ -1,4 +1,4 @@
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -83,14 +83,12 @@ namespace Lucene.Net.Tests.Queries
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if FEATURE_METHODBASE_GETMETHODBODY
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Queries.BooleanFilter))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)
         {
             base.TestForMethodsThatReturnWritableArray(typeFromTargetAssembly);
         }
-#endif
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Queries.BooleanFilter))]
