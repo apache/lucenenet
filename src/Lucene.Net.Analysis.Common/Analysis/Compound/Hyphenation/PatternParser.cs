@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using System;
 using System.Collections.Generic;
@@ -196,15 +196,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
                 new XmlReaderSettings
                 {
-                    // DTD Processing currently is
-                    // not supported in .NET Standard 1.x but will come back in .NET Standard 2.0.
-                    // https://github.com/dotnet/corefx/issues/4376.
-#if FEATURE_DTD_PROCESSING
                     DtdProcessing = DtdProcessing.Parse,
                     XmlResolver = new DtdResolver()
-#else
-                    DtdProcessing = DtdProcessing.Ignore
-#endif
                 };
         }
 
@@ -377,7 +370,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return il.ToString();
         }
 
-#if FEATURE_DTD_PROCESSING
         /// <summary>
         /// LUCENENET specific helper class to force the DTD file to be read from the embedded resource
         /// rather than from the file system.
@@ -395,7 +387,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 return base.GetEntity(absoluteUri, role, ofObjectToReturn);
             }
         }
-#endif
 
         //
         // ContentHandler methods
