@@ -1,4 +1,4 @@
-﻿# Apache Lucene.NET
+# Apache Lucene.NET
 
 [![Nuget](https://img.shields.io/nuget/dt/Lucene.Net)](https://www.nuget.org/packages/Lucene.Net)
 [![Azure DevOps builds (master)](https://img.shields.io/azure-devops/build/lucene-net/6ba240c9-9598-47e7-a793-0ed8a4ba2f8b/3/master)](https://dev.azure.com/lucene-net/Lucene.NET/_build?definitionId=3&_a=summary)
@@ -20,7 +20,7 @@ The Apache Lucene.NET web site is at:
 
 ### Lucene.NET 4.8.0
 
-
+- [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
 - [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 - [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 - .NET Framework 4.5
@@ -33,7 +33,7 @@ Working toward Lucene.NET 4.8.0 (currently in BETA)
 
 * The beta version is extremely stable
 * Has more than 7800+ passing unit tests
-* Integrates well with .NET 5.0 and .NET Core 2+
+* Integrates well with .NET 6.0, .NET 5.0 and .NET Core 2+
 * Supports .NET Standard 2.1 and .NET Standard 2.0 
 * Supports .NET Framework 4.5+
 * Some developers already use it in production environments
@@ -176,7 +176,7 @@ Building on the Command Line is currently only supported on Windows.
 ##### Prerequisites
 
 1. [Powershell](https://msdn.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell) 3.0 or higher (see [this question](http://stackoverflow.com/questions/1825585/determine-installed-powershell-version) to check your Powershell version)
-2. [.NET 5.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
+2. [.NET 6.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
 3. [.NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/download/visual-studio-sdks)
 
 ##### Execution
@@ -254,8 +254,10 @@ Then all you need to do is choose the `Lucene.Net Local Packages` feed from the 
 #### Prerequisites
 
 1. Visual Studio 2019 or higher
-2. [.NET 5.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
+2. [.NET 6.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
 3. [.NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/download/visual-studio-sdks)
+
+> **NOTE:** Preview versions of .NET SDK may require the "Use previews of the .NET SDK (requires restart)" option to be enabled in Visual Studio under Tools > Options > Environment > Preview Features.
 
 #### Execution
 
