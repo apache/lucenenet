@@ -62,7 +62,6 @@
     <DefineConstants>$(DefineConstants);FEATURE_APPDOMAIN_GETASSEMBLIES</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_APPDOMAIN_ISFULLYTRUSTED</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_ASSEMBLY_GETCALLINGASSEMBLY</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_CULTUREINFO_GETCULTURES</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_DTD_PROCESSING</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_FILESTREAM_LOCK</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_METHODBASE_GETMETHODBODY</DefineConstants>
@@ -80,13 +79,6 @@
 
     <DefineConstants>$(DefineConstants);FEATURE_TEXTWRITER_INITIALIZELIFETIMESERVICE</DefineConstants>
 
-  </PropertyGroup>
-
-  <!-- Features in .NET Standard 1.x and .NET Core 1.x -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard1.')) Or $(TargetFramework.StartsWith('netcoreapp1.')) ">
-    
-    <DefineConstants>$(DefineConstants);NETSTANDARD1_X</DefineConstants>
-    
   </PropertyGroup>
 
   <!-- Features in .NET Framework 4.6.1+ only -->

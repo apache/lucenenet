@@ -61,7 +61,7 @@ namespace Lucene.Net.Support
             float boostZeroNonFractional = 0f;
             float boostZeroFractional = 0.123f;
 
-            var cultures = CultureInfoSupport.GetNeutralAndSpecificCultures();
+            var cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures | CultureTypes.NeutralCultures);
 
             foreach (CultureInfo culture in cultures)
             {
