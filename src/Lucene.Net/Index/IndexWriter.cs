@@ -1161,8 +1161,14 @@ namespace Lucene.Net.Index
                 {
                     try
                     {
+                        // LUCENENET specific - Java calls Thread.interrupted(), which resets and returns the
+                        // initial "interrupted status". .NET has no such method. However, following the logic
+                        // carefully below, we call Thread.CurrentThread.Interrupted() if interrupted is true.
+                        // If the current thread is already in "interrupted status", there is no reason to call
+                        // Thread.CurrentThread.Interrupted() since it is already in that state.
+
                         // clean up merge scheduler in all cases, although flushing may have failed:
-                        interrupted = ThreadJob.Interrupted();
+                        //interrupted = ThreadJob.Interrupted();
 
                         if (waitForMerges)
                         {
