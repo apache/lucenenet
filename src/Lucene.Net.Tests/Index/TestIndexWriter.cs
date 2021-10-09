@@ -1365,20 +1365,29 @@ namespace Lucene.Net.Index
                     {
                         Console.WriteLine("TEST: now rollback");
                     }
+
+                    // LUCENENET specific - .NET has no way to "clear" the "interrupted status", so we
+                    // simply catch and ignore the ThreadInterruptedException on a call to Thread.Sleep(0).
+                    // This would cause undesired side effects if there were competing threads, but since
+                    // this is a standalone cleanup block in a single thread, we can get away with it here.
+                    // Thread.Sleep(0) should never be used in production code to read the "interrupted status",
+                    // always catch ThreadInterruptedException and ignore it instead.
+
                     // clear interrupt state:
-                    ThreadJob.Interrupted();
+                    try
+                    {
+                        Thread.Sleep(0);
+                    }
+                    catch (ThreadInterruptedException)
+                    {
+                        // ignore
+                    }
+
                     if (w != null)
                     {
                         try
                         {
                             w.Rollback();
-                        }
-                        // LUCENENET specific - there is a chance that our thread will be
-                        // interrupted here, so we need to catch and ignore that exception
-                        // when our MockDirectoryWrapper throws it.
-                        catch (Exception e) when (e.IsInterruptedException())
-                        {
-                            // ignore
                         }
                         catch (Exception ioe) when (ioe.IsIOException())
                         {
