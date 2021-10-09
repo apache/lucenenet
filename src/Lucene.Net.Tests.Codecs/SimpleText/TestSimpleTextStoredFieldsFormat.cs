@@ -30,7 +30,6 @@ namespace Lucene.Net.Codecs.SimpleText
         }
 
 
-        [Deadlock][Timeout(600000)]
         public override void TestConcurrentReads()
         {
             base.TestConcurrentReads();
