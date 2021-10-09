@@ -52,7 +52,6 @@ namespace Lucene.Net.Index
     using TopDocs = Lucene.Net.Search.TopDocs;
 
     [TestFixture]
-    [Deadlock][Timeout(600000)]
     public class TestIndexWriterReader : LuceneTestCase
     {
         private readonly int numThreads = TestNightly ? 5 : 3;

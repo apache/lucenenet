@@ -972,7 +972,6 @@ namespace Lucene.Net.Index
         // LUCENE-1335: test simultaneous addIndexes & close
         [Test]
         [Slow]
-        [Deadlock][Timeout(600000)]
         public virtual void TestAddIndexesWithCloseNoWait()
         {
             const int NUM_COPY = 50;
