@@ -3,6 +3,7 @@ using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -160,9 +161,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             {
                 sb.Append(SEP).Append(f);
             }
-            lock (lineFileLock) // LUCENENET specific - lock to ensure writes don't collide for this instance
+            UninterruptableMonitor.Enter(lineFileLock);
+            try // LUCENENET specific - lock to ensure writes don't collide for this instance
             {
                 @out.WriteLine(sb.ToString());
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(lineFileLock);
             }
         }
 
@@ -202,9 +208,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             {
                 sb.Length--; // remove redundant last separator
                 // lineFileOut is a PrintWriter, which synchronizes internally in println.
-                lock (lineFileLock) // LUCENENET specific - lock to ensure writes don't collide for this instance
+                UninterruptableMonitor.Enter(lineFileLock); // LUCENENET specific - lock to ensure writes don't collide for this instance
+                try
                 {
                     LineFileOut(doc).WriteLine(sb.ToString());
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(lineFileLock);
                 }
             }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support.Threading;
+using System;
 using System.Globalization;
 using System.Threading;
 

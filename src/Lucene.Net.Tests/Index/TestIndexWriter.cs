@@ -1338,7 +1338,7 @@ namespace Lucene.Net.Index
                         // Jenkins hits a fail we need to study where the
                         // interrupts struck!
                         Console.WriteLine("TEST: got interrupt");
-                        Console.WriteLine(re.ToString());
+                        Console.WriteLine(GetToStringFrom(re));
 
                         Exception e = re.InnerException;
                         Assert.IsTrue(e is System.Threading.ThreadInterruptedException);
@@ -1355,7 +1355,7 @@ namespace Lucene.Net.Index
                     //    // Jenkins hits a fail we need to study where the
                     //    // interrupts struck!
                     //    Console.WriteLine("TEST: got .NET interrupt");
-                    //    Console.WriteLine(re.ToString());
+                    //    Console.WriteLine(GetToStringFrom(re));
 
                     //    if (finish)
                     //    {
@@ -1365,7 +1365,7 @@ namespace Lucene.Net.Index
                     catch (Exception t) when (t.IsThrowable())
                     {
                         Console.WriteLine("FAILED; unexpected exception");
-                        Console.WriteLine(t.ToString());
+                        Console.WriteLine(GetToStringFrom(t));
                         failed = true;
                         break;
                     }
@@ -1388,7 +1388,6 @@ namespace Lucene.Net.Index
                     // clear interrupt state:
                     try
                     {
-                        UninterruptableMonitor.RestoreInterrupt();
                         Thread.Sleep(0);
                     }
                     catch (Exception ie) when (ie.IsInterruptedException())
@@ -1445,6 +1444,32 @@ namespace Lucene.Net.Index
                 catch (Exception e) when (e.IsIOException())
                 {
                     throw RuntimeException.Create(e);
+                }
+            }
+
+            // LUCENENET specific - since the lock statement can potentially throw System.Threading.ThreadInterruptedException in .NET,
+            // we need to be vigilant about getting stack trace info from the errors during tests and retry if we get an interrupt exception.
+            /// <summary>
+            /// Safely gets the ToString() of an exception while ignoring any System.Threading.ThreadInterruptedException and retrying.
+            /// </summary>
+            private string GetToStringFrom(Exception exception)
+            {
+                // Clear interrupt state:
+                try
+                {
+                    Thread.Sleep(0);
+                }
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    // ignore
+                }
+                try
+                {
+                    return exception.ToString();
+                }
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    return GetToStringFrom(exception);
                 }
             }
         }

@@ -6,6 +6,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -361,9 +362,14 @@ namespace Lucene.Net.Search
                 {
                     outerInstance.DoTestSearch();
                 }
-                lock (success)
+                UninterruptableMonitor.Enter(success);
+                try
                 {
                     success.Set(num);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(success);
                 }
             }
         }

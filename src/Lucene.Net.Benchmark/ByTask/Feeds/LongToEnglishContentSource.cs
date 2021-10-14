@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
 using System;
 using System.Globalization;
 
@@ -38,12 +39,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         //                                                                     RuleBasedNumberFormat.SPELLOUT);
         public override DocData GetNextDocData(DocData docData)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 docData.Clear();
                 // store the current counter to avoid synchronization later on
                 long curCounter;
-                lock (this)
+                UninterruptableMonitor.Enter(this); // LUCENENET TODO: Since the whole method is synchronized, do we need this?
+                try
                 {
                     curCounter = counter;
                     if (counter == long.MaxValue)
@@ -55,12 +58,20 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                         ++counter;
                     }
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
 
                 docData.Body = curCounter.ToWords(); //rnbf.format(curCounter);
                 docData.Name = "doc_" + curCounter.ToString(CultureInfo.InvariantCulture);
                 docData.Title = "title_" + curCounter.ToString(CultureInfo.InvariantCulture);
                 docData.SetDate(new DateTime());
                 return docData;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

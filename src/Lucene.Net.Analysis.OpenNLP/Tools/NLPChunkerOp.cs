@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Support.Threading;
 using opennlp.tools.chunker;
 
 
@@ -36,12 +37,17 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public virtual string[] GetChunks(string[] words, string[] tags, double[] probs)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 string[] chunks = chunker.chunk(words, tags);
                 if (probs != null)
                     chunker.probs(probs);
                 return chunks;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
     }

@@ -6,6 +6,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -306,7 +307,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         {
             if (!initializedReaderManager)
             {
-                lock (syncLock)
+                UninterruptableMonitor.Enter(syncLock);
+                try
                 {
                     // verify that the taxo-writer hasn't been closed on us.
                     EnsureOpen();
@@ -316,6 +318,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         shouldRefreshReaderManager = false;
                         initializedReaderManager = true;
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(syncLock);
                 }
             }
         }
@@ -370,13 +376,18 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         protected virtual void Dispose(bool disposing)
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 if (disposing && !isClosed)
                 {
                     Commit();
                     DoClose();
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
@@ -393,7 +404,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         private void CloseResources() // LUCENENET: Made private, since this has the same purpose as Dispose(bool).
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 if (initializedReaderManager)
                 {
@@ -404,6 +416,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 cache?.Dispose();
                 parentStream.Dispose(); // LUCENENET specific
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         /// <summary>
@@ -413,7 +429,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         protected virtual int FindCategory(FacetLabel categoryPath)
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 // If we can find the category in the cache, or we know the cache is
                 // complete, we can return the response directly from it
@@ -480,6 +497,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
                 return doc;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         public virtual int AddCategory(FacetLabel categoryPath)
@@ -491,7 +512,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             if (res < 0)
             {
                 // the category is not in the cache - following code cannot be executed in parallel.
-                lock (syncLock)
+                UninterruptableMonitor.Enter(syncLock);
+                try
                 {
                     res = FindCategory(categoryPath);
                     if (res < 0)
@@ -504,6 +526,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         // this recursively
                         res = InternalAddCategory(categoryPath);
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(syncLock);
                 }
             }
             return res;
@@ -671,7 +697,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         private void RefreshReaderManager()
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 // this method is synchronized since it cannot happen concurrently with
                 // addCategoryDocument -- when this method returns, we must know that the
@@ -686,11 +713,16 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     shouldRefreshReaderManager = false;
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         public virtual void Commit()
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 EnsureOpen();
                 // LUCENE-4972: if we always call setCommitData, we create empty commits
@@ -701,6 +733,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     indexWriter.SetCommitData(CombinedCommitData(indexWriter.CommitData));
                 }
                 indexWriter.Commit();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
@@ -730,7 +766,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         public virtual void PrepareCommit()
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 EnsureOpen();
                 // LUCENE-4972: if we always call setCommitData, we create empty commits
@@ -741,6 +778,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     indexWriter.SetCommitData(CombinedCommitData(indexWriter.CommitData));
                 }
                 indexWriter.PrepareCommit();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
@@ -784,7 +825,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         // complete or not.
         private void PerhapsFillCache()
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 if (cacheMisses < cacheMissesUntilFill)
                 {
@@ -849,7 +891,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 cacheIsComplete = !aborted;
                 if (cacheIsComplete)
                 {
-                    lock (syncLock)
+                    UninterruptableMonitor.Enter(syncLock); // LUCENENET TODO: Do we need to synchroize again since the whole method is synchronized?
+                    try
                     {
                         // everything is in the cache, so no need to keep readerManager open.
                         // this block is executed in a sync block so that it works well with
@@ -858,7 +901,15 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         readerManager = null;
                         initializedReaderManager = false;
                     }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(syncLock);
+                    }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
@@ -866,7 +917,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         {
             if (taxoArrays is null)
             {
-                lock (syncLock)
+                UninterruptableMonitor.Enter(syncLock);
+                try
                 {
                     if (taxoArrays is null)
                     {
@@ -885,6 +937,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                             readerManager.Release(reader);
                         }
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(syncLock);
                 }
             }
             return taxoArrays;
@@ -1118,7 +1174,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         public virtual void Rollback()
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 EnsureOpen();
                 indexWriter.Rollback();
@@ -1130,6 +1187,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 // subclasses to provide their own dipsosable implementation.
                 Dispose();
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         /// <summary>
@@ -1140,7 +1201,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         public virtual void ReplaceTaxonomy(Directory taxoDir)
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 // replace the taxonomy by doing IW optimized operations
                 indexWriter.DeleteAll();
@@ -1160,6 +1222,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
                 // update indexEpoch as a taxonomy replace is just like it has be recreated
                 ++indexEpoch;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 

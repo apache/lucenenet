@@ -1,9 +1,10 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 #if FEATURE_BREAKITERATOR
 using ICU4N.Text;
 using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -54,14 +55,28 @@ namespace Lucene.Net.Analysis.Th
 
         private static BreakIterator LoadProto()
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
+            {
                 return BreakIterator.GetWordInstance(new CultureInfo("th"));
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         private static BreakIterator LoadSentenceProto()
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
+            {
                 return BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         private readonly ThaiWordBreaker wordBreaker;
@@ -87,45 +102,79 @@ namespace Lucene.Net.Analysis.Th
         {
             // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
 
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
+            {
                 wordBreaker = new ThaiWordBreaker((BreakIterator)proto.Clone());
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         private static BreakIterator CreateSentenceClone()
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
+            {
                 return (BreakIterator)sentenceProto.Clone();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         public override void Reset()
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
+            {
                 base.Reset();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         public override State CaptureState()
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
+            {
                 return base.CaptureState();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         protected override void SetNextSentence(int sentenceStart, int sentenceEnd)
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 this.sentenceStart = sentenceStart;
                 this.sentenceEnd = sentenceEnd;
                 wrapper.SetText(m_buffer, sentenceStart, sentenceEnd - sentenceStart);
                 wordBreaker.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         protected override bool IncrementWord()
         {
             int start, end;
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 start = wordBreaker.Current;
                 if (start == BreakIterator.Done)
@@ -150,6 +199,10 @@ namespace Lucene.Net.Analysis.Th
                 termAtt.CopyBuffer(m_buffer, sentenceStart + start, end - start);
                 offsetAtt.SetOffset(CorrectOffset(m_offset + sentenceStart + start), CorrectOffset(m_offset + sentenceStart + end));
                 return true;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
     }

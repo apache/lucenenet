@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Tasks;
 using Lucene.Net.Benchmarks.ByTask.Utils;
+using Lucene.Net.Support.Threading;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Stats
@@ -59,12 +60,17 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         /// <returns></returns>
         public virtual TaskStats MarkTaskStart(PerfTask task, int round)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 TaskStats stats = new TaskStats(task, NextTaskRunNum(), round);
                 this.currentStats = stats;
                 points.Add(stats);
                 return stats;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -73,9 +79,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         // return next task num
         private int NextTaskRunNum()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 return nextTaskRunNum++;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -84,12 +95,17 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         /// </summary>
         public virtual void MarkTaskEnd(TaskStats stats, int count)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 int numParallelTasks = nextTaskRunNum - 1 - stats.TaskRunNum;
                 // note: if the stats were cleared, might be that this stats object is 
                 // no longer in points, but this is just ok.
                 stats.MarkEnd(numParallelTasks, count);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

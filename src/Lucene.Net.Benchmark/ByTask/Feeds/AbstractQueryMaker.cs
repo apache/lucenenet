@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Search;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Text;
 
@@ -68,11 +69,16 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         // return next qnum
         protected virtual int NextQnum()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 int res = m_qnum;
                 m_qnum = (m_qnum + 1) % m_queries.Length;
                 return res;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

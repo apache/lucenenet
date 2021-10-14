@@ -2,6 +2,7 @@
 
 using J2N.Threading;
 using Lucene.Net.Benchmarks.ByTask.Utils;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using Sax;
 using Sax.Helpers;
@@ -73,13 +74,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     t.Start();
                 }
                 string[] result;
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     while (tuple == null && nmde == null && !threadDone && !stopped)
                     {
                         try
                         {
-                            Monitor.Wait(this);
+                            UninterruptableMonitor.Wait(this);
                         }
                         catch (Exception ie) when (ie.IsInterruptedException())
                         {
@@ -105,6 +107,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     // throw NoMorDataException here to force
                     // benchmark to stop the current alg:
                     throw new NoMoreDataException();
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
 
@@ -144,13 +150,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                             tmpTuple[DATE] = time.Replace('\t', ' ');
                             tmpTuple[BODY] = Regex.Replace(body, "[\t\n]", " ");
                             tmpTuple[ID] = id;
-                            lock (this)
+                            UninterruptableMonitor.Enter(this);
+                            try
                             {
                                 while (tuple != null && !stopped)
                                 {
                                     try
                                     {
-                                        Monitor.Wait(this); //wait();
+                                        UninterruptableMonitor.Wait(this); //wait();
                                     }
                                     catch (System.Threading.ThreadInterruptedException ie)
                                     {
@@ -158,7 +165,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                                     }
                                 }
                                 tuple = tmpTuple;
-                                Monitor.Pulse(this); //notify();
+                                UninterruptableMonitor.Pulse(this); //notify();
+                            }
+                            finally
+                            {
+                                UninterruptableMonitor.Exit(this);
                             }
                         }
                         break;
@@ -211,7 +222,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                             }
                             catch (Exception ioe) when (ioe.IsIOException())
                             {
-                                lock (outerInstance)
+                                UninterruptableMonitor.Enter(outerInstance);
+                                try
                                 {
                                     if (localFileIS != outerInstance.@is)
                                     {
@@ -221,14 +233,19 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                                         // Exception is real
                                         throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                                 }
+                                finally
+                                {
+                                    UninterruptableMonitor.Exit(outerInstance);
+                                }
                             }
                         }
-                        lock (this)
+                        UninterruptableMonitor.Enter(this);
+                        try
                         {
                             if (stopped || !outerInstance.m_forever)
                             {
                                 nmde = new NoMoreDataException();
-                                Monitor.Pulse(this); //notify();
+                                UninterruptableMonitor.Pulse(this); //notify();
                                 return;
                             }
                             else if (localFileIS == outerInstance.@is)
@@ -236,6 +253,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                                 // If file is not already re-opened then re-open it now
                                 outerInstance.@is = outerInstance.OpenInputStream();
                             }
+                        }
+                        finally
+                        {
+                            UninterruptableMonitor.Exit(this);
                         }
                     }
                 }
@@ -249,10 +270,15 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
                 finally
                 {
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
                         threadDone = true;
-                        Monitor.Pulse(this); //Notify();
+                        UninterruptableMonitor.Pulse(this); //Notify();
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                 }
             }
@@ -284,14 +310,19 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             internal void Stop()
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     stopped = true;
                     if (tuple != null)
                     {
                         tuple = null;
-                        Monitor.Pulse(this); //Notify();
+                        UninterruptableMonitor.Pulse(this); //Notify();
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -342,15 +373,19 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             if (disposing)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     parser.Stop();
                     if (@is != null)
                     {
-                        Thread.Sleep(1); // LUCENENET: Allow parser to stop before Dispose() is called
                         @is.Dispose();
                         @is = null;
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }

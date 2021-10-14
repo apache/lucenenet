@@ -1,5 +1,6 @@
 ﻿using J2N.Text;
 using Lucene.Net.Benchmarks.ByTask.Utils;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -261,7 +262,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             // protect reading from the TREC files by multiple threads. The rest of the
             // method, i.e., parsing the content and returning the DocData can run unprotected.
-            lock (@lock)
+            UninterruptableMonitor.Enter(@lock);
+            try
             {
                 if (reader == null)
                 {
@@ -291,6 +293,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 docBuf.Length = 0;
                 Read(docBuf, TERMINATING_DOC, false, true);
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(@lock);
+            }
 
             // count char length of text to be parsed (may be larger than the resulted plain doc body text).
             AddBytes(docBuf.Length);
@@ -305,12 +311,17 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         public override void ResetInputs()
         {
-            lock (@lock)
+            UninterruptableMonitor.Enter(@lock);
+            try
             {
                 base.ResetInputs();
                 DoClose();
                 nextFile = 0;
                 iteration = 0;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(@lock);
             }
         }
 

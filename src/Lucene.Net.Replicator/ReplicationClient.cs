@@ -91,11 +91,16 @@ namespace Lucene.Net.Replicator
             /// </summary>
             public void Start()
             {
-                lock (controlLock)
+                UninterruptableMonitor.Enter(controlLock);
+                try
                 {
                     if (IsAlive)
                         return;
                     IsAlive = true;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(controlLock);
                 }
                 RegisterWait(interval);
             }
@@ -105,11 +110,16 @@ namespace Lucene.Net.Replicator
             /// </summary>
             public void Stop()
             {
-                lock (controlLock)
+                UninterruptableMonitor.Enter(controlLock);
+                try
                 {
                     if (!IsAlive)
                         return;
                     IsAlive = false;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(controlLock);
                 }
                 stopHandle = new AutoResetEvent(false);
 

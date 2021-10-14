@@ -5,6 +5,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -617,19 +618,29 @@ namespace Lucene.Net.Index
 
             internal virtual byte[] Get()
             {
-                lock (this) // TODO use BlockingCollection / BCL datastructures instead
+                UninterruptableMonitor.Enter(this); // TODO use BlockingCollection / BCL datastructures instead
+                try
                 {
                     var retArray = pool[0];
                     pool.RemoveAt(0);
                     return retArray;
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
             }
 
             internal virtual void Release(byte[] b)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     pool.Add(b);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
 
@@ -637,9 +648,14 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
                         return pool.Count;
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                 }
             }

@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Support.Threading;
 using System;
 using System.Threading;
 
@@ -80,7 +81,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
                 // LUCENENET: Use additional lock to ensure our ReaderWriterLockSlim only gets
                 // disposed by the first caller.
-                lock (disposalLock)
+                UninterruptableMonitor.Enter(disposalLock);
+                try
                 {
                     if (isDisposed) return;
                     syncLock.EnterWriteLock();
@@ -94,6 +96,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                         isDisposed = true;
                         syncLock.Dispose();
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(disposalLock);
                 }
             }
         }

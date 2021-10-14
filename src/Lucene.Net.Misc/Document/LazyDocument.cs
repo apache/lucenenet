@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -76,13 +77,18 @@ namespace Lucene.Net.Documents
             LazyField value = new LazyField(this, fieldInfo.Name, fieldInfo.Number);
             values.Add(value);
 
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // edge case: if someone asks this LazyDoc for more LazyFields
                 // after other LazyFields from the same LazyDoc have been
                 // actuallized, we need to force the doc to be re-fetched
                 // so the new LazyFields are also populated.
                 doc = null;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
             return value;
         }
@@ -93,7 +99,8 @@ namespace Lucene.Net.Documents
         /// </summary>
         internal virtual Document GetDocument()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (doc == null)
                 {
@@ -107,6 +114,10 @@ namespace Lucene.Net.Documents
                     }
                 }
                 return doc;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

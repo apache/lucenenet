@@ -17,6 +17,7 @@ using Assert = Lucene.Net.TestFramework.Assert;
 using static Lucene.Net.Index.TermsEnum;
 using J2N.Collections.Generic.Extensions;
 using RandomizedTesting.Generators;
+using Lucene.Net.Support.Threading;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;

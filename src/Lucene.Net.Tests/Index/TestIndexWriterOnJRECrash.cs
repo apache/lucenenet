@@ -106,6 +106,7 @@
 //            {
 //                try
 //                {
+//                    UninterruptableMonitor.RestoreInterrupt();
 //                    Thread.Sleep(CrashTime);
 //                }
 //                catch (Exception e) when (e.IsInterruptedException())

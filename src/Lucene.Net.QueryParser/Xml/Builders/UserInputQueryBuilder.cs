@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System.Xml;
 
@@ -65,9 +66,14 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                 if (unSafeParser != null)
                 {
                     //synchronize on unsafe parser
-                    lock (unSafeParser)
+                    UninterruptableMonitor.Enter(unSafeParser);
+                    try
                     {
                         q = unSafeParser.Parse(text);
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(unSafeParser);
                     }
                 }
                 else

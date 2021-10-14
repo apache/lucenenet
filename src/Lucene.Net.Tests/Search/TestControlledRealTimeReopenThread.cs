@@ -1,6 +1,7 @@
 ﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
@@ -327,9 +328,14 @@ namespace Lucene.Net.Search
 
         private void AddMaxGen(long gen)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 maxGen = Math.Max(gen, maxGen);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

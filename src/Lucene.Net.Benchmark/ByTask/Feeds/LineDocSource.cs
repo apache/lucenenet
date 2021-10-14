@@ -2,6 +2,7 @@
 using Lucene.Net.Benchmarks.ByTask.Tasks;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -85,7 +86,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             int myID;
 
 
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 line = reader.ReadLine();
                 if (line == null)
@@ -108,6 +110,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
                 // increment IDS only once...
                 myID = readCount++;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
 
             // The date String was written in the format of DateTools.dateToString.

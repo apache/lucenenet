@@ -1,6 +1,7 @@
 ﻿// lucene version compatibility level: 4.8.1
 using J2N;
 using J2N.IO;
+using Lucene.Net.Support.Threading;
 using System;
 using System.IO;
 using System.Text;
@@ -58,7 +59,8 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
         public static BigramDictionary GetInstance()
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 if (singleInstance == null)
                 {
@@ -80,6 +82,10 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     }
                 }
                 return singleInstance;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
