@@ -64,12 +64,17 @@ namespace Lucene.Net.Search
 //        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
 //        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
 //        {
-//            lock (initalizationLock)
+//            UninterruptableMonitor.Enter(initializationLock);
+//            try
 //            {
 //                if (!initalizationLock.Contains(context.FullyQualifiedTestClassName))
 //                    initalizationLock.Add(context.FullyQualifiedTestClassName);
 //                else
 //                    return; // Only allow this class to initialize once (MSTest bug)
+//            }
+//            finally
+//            {
+//                UninterruptableMonitor.Exit(initializationLock);
 //            }
 //#else
 #if TESTFRAMEWORK_NUNIT

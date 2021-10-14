@@ -183,7 +183,8 @@ namespace Lucene.Net.Util
 
         public LuceneTestCase()
         {
-            lock (initalizationLock)
+            UninterruptableMonitor.Enter(initializationLock);
+            try
             {
                 var thisType = this.GetType();
                 if (!initalizationLock.Contains(thisType.FullName))
@@ -200,6 +201,10 @@ namespace Lucene.Net.Util
                 _testClassType = thisType;
 
                 BeforeClass();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(initializationLock);
             }
         }
 #else
@@ -1050,7 +1055,8 @@ namespace Lucene.Net.Util
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
-            lock (initalizationLock)
+            UninterruptableMonitor.Enter(initializationLock);
+            try
             {
                 if (!initalizationLock.Contains(context.FullyQualifiedTestClassName))
                     initalizationLock.Add(context.FullyQualifiedTestClassName);
@@ -1066,6 +1072,10 @@ namespace Lucene.Net.Util
 #else
                 _testClassType = Type.GetType(_testClassName);
 #endif
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(initializationLock);
             }
 
             try
@@ -3495,9 +3505,14 @@ namespace Lucene.Net.Util
                 Console.Error.WriteLine("INFO: Will leave temporary file: " + f.FullName);
                 return;
             }
-            lock (cleanupQueueLock)
+            UninterruptableMonitor.Enter(cleanupQueueLock);
+            try
             {
                 cleanupQueue.Push(f);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(cleanupQueueLock);
             }
         }
 
@@ -3513,7 +3528,8 @@ namespace Lucene.Net.Util
             FileSystemInfo[] everything;
             string tempDirBasePath;
 
-            lock (cleanupQueueLock)
+            UninterruptableMonitor.Enter(cleanupQueueLock);
+            try
             {
                 tempDirBasePath = tempDirBase?.FullName;
                 tempDirBase = null;
@@ -3521,6 +3537,10 @@ namespace Lucene.Net.Util
                 // LUCENENET: The stack order is alredy reversed, so no need to do that here as in Lucene
                 everything = cleanupQueue.ToArray();
                 cleanupQueue.Clear();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(cleanupQueueLock);
             }
 
             // LUCENENET specific - If the everything array is empty, there is no reason

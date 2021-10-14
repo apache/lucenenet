@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Threading;
 

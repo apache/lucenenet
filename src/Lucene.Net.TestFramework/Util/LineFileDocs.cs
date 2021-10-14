@@ -2,6 +2,7 @@
 using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Support.Threading;
 using RandomizedTesting.Generators;
 using System;
 using System.Globalization;
@@ -70,7 +71,8 @@ namespace Lucene.Net.Util
 
         private void Close()
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 if (reader != null)
                 {
@@ -82,6 +84,10 @@ namespace Lucene.Net.Util
                     DeleteAsync(tempFilePath);
                     tempFilePath = null;
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
@@ -111,10 +117,15 @@ namespace Lucene.Net.Util
         {
             if (disposing)
             {
-                lock (syncLock)
+                UninterruptableMonitor.Enter(syncLock);
+                try
                 {
                     Close();
                     threadDocs?.Dispose();
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(syncLock);
                 }
             }
         }
@@ -145,7 +156,8 @@ namespace Lucene.Net.Util
 
         private void Open(Random random)
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 Stream @is = null;
                 bool needSkip = true, isExternal = false;
@@ -232,15 +244,24 @@ namespace Lucene.Net.Util
                     reader.ReadLine();
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         public virtual void Reset(Random random)
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 Close();
                 Open(random);
                 id.Value = 0;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
@@ -301,7 +322,8 @@ namespace Lucene.Net.Util
         public virtual Document NextDoc()
         {
             string line;
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 line = reader.ReadLine();
                 if (line == null)
@@ -315,6 +337,10 @@ namespace Lucene.Net.Util
                     Open(null);
                     line = reader.ReadLine();
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
 
             DocState docState = threadDocs.Value;

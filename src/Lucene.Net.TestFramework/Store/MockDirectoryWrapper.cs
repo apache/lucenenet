@@ -4,6 +4,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;
@@ -135,7 +136,8 @@ namespace Lucene.Net.Store
 
         private void Init()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (openFiles == null)
                 {
@@ -151,6 +153,10 @@ namespace Lucene.Net.Store
                 {
                     unSyncedFiles = new JCG.HashSet<string>(StringComparer.Ordinal);
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -234,7 +240,8 @@ namespace Lucene.Net.Store
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Sync(ICollection<string> names)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 MaybeYield();
                 MaybeThrowDeterministicException();
@@ -258,11 +265,16 @@ namespace Lucene.Net.Store
                     unSyncedFiles.ExceptWith(names);
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public long GetSizeInBytes()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (m_input is RAMDirectory ramDirectory)
                 {
@@ -279,6 +291,10 @@ namespace Lucene.Net.Store
                     return size;
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
@@ -287,7 +303,8 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual void Crash()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 crashed = true;
                 openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
@@ -387,14 +404,23 @@ namespace Lucene.Net.Store
                     }
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public virtual void ClearCrash()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 crashed = false;
                 openLocks.Clear();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -494,10 +520,15 @@ namespace Lucene.Net.Store
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override void DeleteFile(string name)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 MaybeYield();
                 DeleteFile(name, false);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -505,7 +536,8 @@ namespace Lucene.Net.Store
         // capture those as inner exceptions
         private Exception WithAdditionalErrorInformation(Exception t, string name, bool input)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 foreach (var ent in openFileHandles)
                 {
@@ -521,6 +553,10 @@ namespace Lucene.Net.Store
                     }
                 }
                 return t;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -541,7 +577,8 @@ namespace Lucene.Net.Store
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void DeleteFile(string name, bool forced)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 MaybeYield();
 
@@ -578,13 +615,22 @@ namespace Lucene.Net.Store
                 }
                 m_input.DeleteFile(name);
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public virtual ICollection<string> GetOpenDeletedFiles()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 return new JCG.HashSet<string>(openFilesDeleted, StringComparer.Ordinal);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -598,7 +644,8 @@ namespace Lucene.Net.Store
 
         public override IndexOutput CreateOutput(string name, IOContext context)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 MaybeThrowDeterministicException();
                 MaybeThrowIOExceptionOnOpen(name);
@@ -612,12 +659,17 @@ namespace Lucene.Net.Store
                     throw new IOException("cannot createOutput after crash");
                 }
                 Init();
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     if (preventDoubleWrite && createdFiles.Contains(name) && !name.Equals("segments.gen", StringComparison.Ordinal))
                     {
                         throw new IOException("file \"" + name + "\" was already written to");
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
                 if ((noDeleteOpenFile || assertNoDeleteOpenFile) && openFiles.ContainsKey(name))
                 {
@@ -683,6 +735,10 @@ namespace Lucene.Net.Store
                     return io;
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         internal enum Handle
@@ -696,7 +752,8 @@ namespace Lucene.Net.Store
         {
             //Trace.TraceInformation("Add {0} {1}", c, name);
 
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (openFiles.TryGetValue(name, out int v))
                 {
@@ -712,6 +769,10 @@ namespace Lucene.Net.Store
 
                 openFileHandles[c] = RuntimeException.Create("unclosed Index" + handle.ToString() + ": " + name);
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         private bool failOnOpenInput = true;
@@ -724,7 +785,8 @@ namespace Lucene.Net.Store
 
         public override IndexInput OpenInput(string name, IOContext context)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 MaybeThrowDeterministicException();
                 MaybeThrowIOExceptionOnOpen(name);
@@ -772,13 +834,18 @@ namespace Lucene.Net.Store
                 AddFileHandle(ii, name, Handle.Input);
                 return ii;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
         /// Provided for testing purposes.  Use <see cref="GetSizeInBytes()"/> instead. </summary>
         public long GetRecomputedSizeInBytes()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (!(m_input is RAMDirectory))
                 {
@@ -791,6 +858,10 @@ namespace Lucene.Net.Store
                 }
                 return size;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
@@ -802,7 +873,8 @@ namespace Lucene.Net.Store
 
         public long GetRecomputedActualSizeInBytes()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (!(m_input is RAMDirectory))
                 {
@@ -814,6 +886,10 @@ namespace Lucene.Net.Store
                     size += file.Length;
                 }
                 return size;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -843,7 +919,8 @@ namespace Lucene.Net.Store
 
         protected override void Dispose(bool disposing)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (disposing)
                 {
@@ -1024,13 +1101,18 @@ namespace Lucene.Net.Store
                     throttledOutput.Dispose(); // LUCENENET specific
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         internal virtual void RemoveOpenFile(IDisposable c, string name)
         {
             //Trace.TraceInformation("Rem {0} {1}", c, name);
 
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (openFiles.TryGetValue(name, out int v))
                 {
@@ -1049,22 +1131,36 @@ namespace Lucene.Net.Store
 
                 openFileHandles.TryRemove(c, out Exception _);
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public virtual void RemoveIndexOutput(IndexOutput @out, string name)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 openFilesForWrite.Remove(name);
                 RemoveOpenFile(@out, name);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
         public virtual void RemoveIndexInput(IndexInput @in, string name)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 RemoveOpenFile(@in, name);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -1078,13 +1174,18 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual void FailOn(Failure fail)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (failures == null)
                 {
                     failures = new List<Failure>();
                 }
                 failures.Add(fail);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -1094,7 +1195,8 @@ namespace Lucene.Net.Store
         /// </summary>
         internal virtual void MaybeThrowDeterministicException()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (failures != null)
                 {
@@ -1104,57 +1206,87 @@ namespace Lucene.Net.Store
                     }
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public override string[] ListAll()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 MaybeYield();
                 return m_input.ListAll();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
         [Obsolete("this method will be removed in 5.0")]
         public override bool FileExists(string name)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 MaybeYield();
                 return m_input.FileExists(name);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
         public override long FileLength(string name)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 MaybeYield();
                 return m_input.FileLength(name);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
         public override Lock MakeLock(string name)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 MaybeYield();
                 return LockFactory.MakeLock(name);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
         public override void ClearLock(string name)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 MaybeYield();
                 LockFactory.ClearLock(name);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
         public override void SetLockFactory(LockFactory lockFactory)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 MaybeYield();
                 // sneaky: we must pass the original this way to the dir, because
@@ -1163,13 +1295,18 @@ namespace Lucene.Net.Store
                 // now set our wrapped factory here
                 this.m_lockFactory = new MockLockFactoryWrapper(this, lockFactory);
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public override LockFactory LockFactory
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     MaybeYield();
                     if (wrapLockFactory)
@@ -1181,25 +1318,39 @@ namespace Lucene.Net.Store
                         return m_input.LockFactory;
                     }
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
             }
         }
 
         public override string GetLockID()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 MaybeYield();
                 return m_input.GetLockID();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
         public override void Copy(Directory to, string src, string dest, IOContext context)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 MaybeYield();
                 // randomize the IOContext here?
                 m_input.Copy(to, src, dest, context);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
