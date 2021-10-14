@@ -7,6 +7,7 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;

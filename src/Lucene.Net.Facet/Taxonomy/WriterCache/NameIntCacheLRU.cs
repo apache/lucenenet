@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using J2N.Collections.Concurrent;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -228,7 +229,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 return false;
             }
 
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 // Double-check that another thread didn't beat us to the operation
                 n = cache.Count - (2 * maxCacheSize) / 3;
@@ -245,6 +247,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                     cache.Remove(it.Current.Key);
                     i++;
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
             return true;
         }

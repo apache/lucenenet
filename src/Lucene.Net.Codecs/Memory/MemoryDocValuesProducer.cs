@@ -2,6 +2,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using Lucene.Net.Util.Packed;
@@ -207,7 +208,8 @@ namespace Lucene.Net.Codecs.Memory
 
         public override NumericDocValues GetNumeric(FieldInfo field)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (!numericInstances.TryGetValue(field.Number, out NumericDocValues instance))
                 {
@@ -215,6 +217,10 @@ namespace Lucene.Net.Codecs.Memory
                     numericInstances[field.Number] = instance;
                 }
                 return instance;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -331,7 +337,8 @@ namespace Lucene.Net.Codecs.Memory
 
         public override BinaryDocValues GetBinary(FieldInfo field)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (!binaryInstances.TryGetValue(field.Number, out BinaryDocValues instance))
                 {
@@ -339,6 +346,10 @@ namespace Lucene.Net.Codecs.Memory
                     binaryInstances[field.Number] = instance;
                 }
                 return instance;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -409,7 +420,8 @@ namespace Lucene.Net.Codecs.Memory
                 return DocValues.EMPTY_SORTED;
             }
             FST<long?> instance;
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (!fstInstances.TryGetValue(field.Number, out instance))
                 {
@@ -418,6 +430,10 @@ namespace Lucene.Net.Codecs.Memory
                     ramBytesUsed.AddAndGet(instance.GetSizeInBytes());
                     fstInstances[field.Number] = instance;
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
             var docToOrd = GetNumeric(field);
             var fst = instance;
@@ -521,7 +537,8 @@ namespace Lucene.Net.Codecs.Memory
                 return DocValues.EMPTY_SORTED_SET; // empty FST!
             }
             FST<long?> instance;
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (!fstInstances.TryGetValue(field.Number, out instance))
                 {
@@ -530,6 +547,10 @@ namespace Lucene.Net.Codecs.Memory
                     ramBytesUsed.AddAndGet(instance.GetSizeInBytes());
                     fstInstances[field.Number] = instance;
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
             var docToOrds = GetBinary(field);
             var fst = instance;
@@ -656,7 +677,8 @@ namespace Lucene.Net.Codecs.Memory
             else
             {
                 IBits instance;
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     if (!docsWithFieldInstances.TryGetValue(fieldNumber, out instance))
                     {
@@ -671,6 +693,10 @@ namespace Lucene.Net.Codecs.Memory
                         instance = new FixedBitSet(bits, maxDoc);
                         docsWithFieldInstances[fieldNumber] = instance;
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
                 return instance;
             }

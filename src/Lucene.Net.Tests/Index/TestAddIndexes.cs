@@ -4,6 +4,7 @@ using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -756,9 +757,14 @@ namespace Lucene.Net.Index
             internal override void Handle(Exception t)
             {
                 t.printStackTrace(Console.Out);
-                lock (failures)
+                UninterruptableMonitor.Enter(failures);
+                try
                 {
                     failures.Add(t);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(failures);
                 }
             }
 
@@ -856,9 +862,14 @@ namespace Lucene.Net.Index
                 if (!t.IsAlreadyClosedException() && !t.IsNullPointerException())
                 {
                     t.printStackTrace(Console.Out);
-                    lock (failures)
+                    UninterruptableMonitor.Enter(failures);
+                    try
                     {
                         failures.Add(t);
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(failures);
                     }
                 }
             }
@@ -961,9 +972,14 @@ namespace Lucene.Net.Index
                 if (report)
                 {
                     t.printStackTrace(Console.Out);
-                    lock (failures)
+                    UninterruptableMonitor.Enter(failures);
+                    try
                     {
                         failures.Add(t);
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(failures);
                     }
                 }
             }

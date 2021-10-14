@@ -5,6 +5,7 @@ using Lucene.Net.Analysis.Icu.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -111,7 +112,8 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
         public override bool IncrementToken()
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 ClearAttributes();
                 if (length == 0)
@@ -124,14 +126,25 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                 }
                 return true;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
 
         public override void Reset()
         {
             base.Reset();
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
+            {
                 breaker.SetText(buffer, 0, 0);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
             length = usableLength = offset = 0;
         }
 
@@ -193,8 +206,15 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                                 */
             }
 
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
+            {
                 breaker.SetText(buffer, 0, Math.Max(0, usableLength));
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         // TODO: refactor to a shared readFully somewhere

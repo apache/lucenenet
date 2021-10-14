@@ -7,6 +7,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
@@ -982,10 +983,15 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception t) when (t.IsThrowable())
                 {
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": ERROR: hit unexpected exception");
                         Console.WriteLine(t.StackTrace);
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                     Assert.Fail();
                 }

@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Support.Threading;
 using opennlp.tools.namefind;
 using opennlp.tools.util;
 
@@ -53,9 +54,14 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public virtual void Reset()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 nameFinder.clearAdaptiveData();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
     }

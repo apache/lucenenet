@@ -2,6 +2,7 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -904,6 +905,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         int lastOrd = tr.ParallelTaxonomyArrays.Parents.Length - 1;
                         Assert.IsNotNull(tr.GetPath(lastOrd), "path of last-ord " + lastOrd + " is not found!");
                         AssertChildrenArrays(tr.ParallelTaxonomyArrays, retry, retrieval[0]++);
+
                         Thread.Sleep(10);// don't starve refresh()'s CPU, which sleeps every 50 bytes for 1 ms
                     }
                 }

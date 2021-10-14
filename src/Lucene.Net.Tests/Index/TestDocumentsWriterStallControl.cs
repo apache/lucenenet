@@ -1,5 +1,6 @@
 ﻿using J2N.Threading;
 using J2N.Threading.Atomic;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
@@ -381,9 +382,6 @@ namespace Lucene.Net.Index
             {
                 thread.Start();
             }
-
-            // LUCENENET: This was not in Lucene, but was once a part of this class. We may need to put this back if this test misbehaves in the future.
-            //Thread.Sleep(1); // let them start
         }
 
         public static void Join(ThreadJob[] toJoin)

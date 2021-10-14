@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Benchmarks.ByTask.Feeds
+﻿using Lucene.Net.Support.Threading;
+
+namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -43,13 +45,18 @@
         // return a new docid
         private int NewDocID()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (docID > 0 && !m_forever)
                 {
                     throw new NoMoreDataException();
                 }
                 return docID++;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -67,10 +74,15 @@
 
         public override void ResetInputs()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 base.ResetInputs();
                 docID = 0;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
     }

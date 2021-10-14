@@ -2,6 +2,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -305,7 +306,8 @@ namespace Lucene.Net.Index
 
             public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     while (true)
                     {
@@ -320,6 +322,10 @@ namespace Lucene.Net.Index
                         }
                         writer.Merge(merge);
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
 

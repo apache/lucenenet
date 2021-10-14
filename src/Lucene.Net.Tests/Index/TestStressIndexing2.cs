@@ -7,6 +7,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
@@ -210,9 +211,14 @@ namespace Lucene.Net.Index
             for (int i = 0; i < threads.Length; i++)
             {
                 IndexingThread th = threads[i];
-                lock (th)
+                UninterruptableMonitor.Enter(th);
+                try
                 {
                     docs.PutAll(th.docs);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(th);
                 }
             }
 
@@ -257,9 +263,14 @@ namespace Lucene.Net.Index
             for (int i = 0; i < threads.Length; i++)
             {
                 IndexingThread th = threads[i];
-                lock (th)
+                UninterruptableMonitor.Enter(th);
+                try
                 {
                     docs.PutAll(th.docs);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(th);
                 }
             }
 
@@ -1043,9 +1054,14 @@ namespace Lucene.Net.Index
                     Assert.Fail(e.ToString());
                 }
 
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     int dummy = docs.Count;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }

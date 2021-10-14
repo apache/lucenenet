@@ -2,6 +2,7 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -162,7 +163,8 @@ namespace Lucene.Net.Index
                 doFail = true;
                 try
                 {
-                    lock (@lock)
+                    UninterruptableMonitor.Enter(@lock);
+                    try
                     {
                         try
                         {
@@ -187,6 +189,10 @@ namespace Lucene.Net.Index
 
                         writer1.Commit();
                         writer2.Commit();
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(@lock);
                     }
                 }
                 finally
@@ -239,7 +245,8 @@ namespace Lucene.Net.Index
             public override void DoWork()
             {
                 IndexReader r1 = null, r2 = null;
-                lock (@lock)
+                UninterruptableMonitor.Enter(@lock);
+                try
                 {
                     try
                     {
@@ -262,6 +269,10 @@ namespace Lucene.Net.Index
                         }
                         return;
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(@lock);
                 }
                 if (r1.NumDocs != r2.NumDocs)
                 {

@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Support.Threading;
 using opennlp.tools.postag;
 
 namespace Lucene.Net.Analysis.OpenNlp.Tools
@@ -35,9 +36,14 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public virtual string[] GetPOSTags(string[] words)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 return tagger.tag(words);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
     }

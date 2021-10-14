@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -181,11 +182,16 @@ namespace Lucene.Net.Facet.Taxonomy
 #pragma warning restore CA1063 // Implement IDisposable Correctly
         {
             if (closed) return;
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 if (closed) return;
                 DecRef();
                 closed = true;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
             Dispose(true);
             GC.SuppressFinalize(this);

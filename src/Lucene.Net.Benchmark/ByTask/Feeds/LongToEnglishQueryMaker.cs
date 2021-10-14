@@ -5,6 +5,7 @@ using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 
@@ -47,22 +48,32 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         public virtual Query MakeQuery()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 //return parser.Parse("" + rnbf.format(GetNextCounter()) + "");
                 return m_parser.Parse(GetNextCounter().ToWords());
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
         private long GetNextCounter()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (counter == long.MaxValue)
                 {
                     counter = long.MinValue + 10;
                 }
                 return counter++;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

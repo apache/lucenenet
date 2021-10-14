@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Store;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -261,22 +262,32 @@ namespace Lucene.Net.Search.Suggest.Tst
 
         public override bool Store(DataOutput output)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 output.WriteVInt64(count);
                 WriteRecursively(output, root);
                 return true;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public override bool Load(DataInput input)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 count = input.ReadVInt64();
                 root = new TernaryTreeNode();
                 ReadRecursively(input, root);
                 return true;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

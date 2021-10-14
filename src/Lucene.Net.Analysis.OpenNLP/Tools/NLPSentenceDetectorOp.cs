@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Support.Threading;
 using opennlp.tools.sentdetect;
 using opennlp.tools.util;
 
@@ -41,7 +42,8 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public virtual Span[] SplitSentences(string line)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (sentenceSplitter != null)
                 {
@@ -53,6 +55,10 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
                     shorty[0] = new Span(0, line.Length);
                     return shorty;
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
     }
