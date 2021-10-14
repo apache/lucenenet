@@ -87,8 +87,9 @@ namespace Lucene.Net.Support.Threading
         protected sealed override void QueueTask(Task task)
         {
             // Add the task to the list of tasks to be processed.  If there aren't enough 
-            // delegates currently queued or running to process tasks, schedule another. 
-            lock (_tasks)
+            // delegates currently queued or running to process tasks, schedule another.
+            UninterruptableMonitor.Enter(_tasks);
+            try
             {
                 _tasks.AddLast(task);
                 if (_delegatesQueuedOrRunning < _maxDegreeOfParallelism)
@@ -96,6 +97,10 @@ namespace Lucene.Net.Support.Threading
                     ++_delegatesQueuedOrRunning;
                     NotifyThreadPoolOfPendingWork();
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(_tasks);
             }
         }
 
@@ -118,7 +123,8 @@ namespace Lucene.Net.Support.Threading
                     while (true)
                     {
                         Task item;
-                        lock (_tasks)
+                        UninterruptableMonitor.Enter(_tasks);
+                        try
                         {
                             // When there are no more items to be processed,
                             // note that we're done processing, and get out.
@@ -131,6 +137,10 @@ namespace Lucene.Net.Support.Threading
                             // Get the next item from the queue
                             item = _tasks.First.Value;
                             _tasks.Remove(item);
+                        }
+                        finally
+                        {
+                            UninterruptableMonitor.Exit(_tasks);
                         }
 
                         // Execute the task we pulled out of the queue
@@ -162,7 +172,15 @@ namespace Lucene.Net.Support.Threading
         // Attempt to remove a previously scheduled task from the scheduler. 
         protected sealed override bool TryDequeue(Task task)
         {
-            lock (_tasks) return _tasks.Remove(task);
+            UninterruptableMonitor.Enter(_tasks);
+            try
+            {
+                return _tasks.Remove(task);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(_tasks);
+            }
         }
 
         // Gets the maximum concurrency level supported by this scheduler. 
@@ -174,13 +192,13 @@ namespace Lucene.Net.Support.Threading
             bool lockTaken = false;
             try
             {
-                Monitor.TryEnter(_tasks, ref lockTaken);
+                UninterruptableMonitor.TryEnter(_tasks, ref lockTaken);
                 if (lockTaken) return _tasks;
                 else throw new NotSupportedException();
             }
             finally
             {
-                if (lockTaken) Monitor.Exit(_tasks);
+                if (lockTaken) UninterruptableMonitor.Exit(_tasks);
             }
         }
     }

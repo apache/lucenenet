@@ -1,4 +1,5 @@
 ﻿using J2N.Threading;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Globalization;
@@ -136,7 +137,8 @@ namespace Lucene.Net.Store
                             return; // closed
                         }
 
-                        lock (localLock)
+                        UninterruptableMonitor.Enter(localLock);
+                        try
                         {
                             int currentLock = lockedID[0];
                             if (currentLock == -2)
@@ -170,6 +172,10 @@ namespace Lucene.Net.Store
                             }
                             intWriter.Write((byte)command);
                             stream.Flush();
+                        }
+                        finally
+                        {
+                            UninterruptableMonitor.Exit(localLock);
                         }
                     }
                 }

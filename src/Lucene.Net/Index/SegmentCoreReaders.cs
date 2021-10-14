@@ -1,8 +1,10 @@
 ﻿using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
@@ -195,7 +197,9 @@ namespace Lucene.Net.Index
 
         private void NotifyCoreClosedListeners(Exception th)
         {
-            lock (coreClosedListeners)
+            object syncRoot = ((ICollection)coreClosedListeners).SyncRoot;
+            UninterruptableMonitor.Enter(syncRoot);
+            try
             {
                 foreach (ICoreDisposedListener listener in coreClosedListeners)
                 {
@@ -218,6 +222,10 @@ namespace Lucene.Net.Index
                     }
                 }
                 IOUtils.ReThrowUnchecked(th);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncRoot);
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Util
 {
@@ -68,19 +69,29 @@ namespace Lucene.Net.Util
         {
             get
             {
-                lock (typeof(InfoStream))
+                UninterruptableMonitor.Enter(typeof(InfoStream));
+                try
                 {
                     return defaultInfoStream;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(typeof(InfoStream));
                 }
             }
             set
             {
-                lock (typeof(InfoStream))
+                UninterruptableMonitor.Enter(typeof(InfoStream));
+                try
                 {
                     defaultInfoStream = value ?? throw new ArgumentNullException(
                         nameof(Default),
                         "Cannot set InfoStream default implementation to null. " +
                         "To disable logging use InfoStream.NO_OUTPUT");
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(typeof(InfoStream));
                 }
             }
         }

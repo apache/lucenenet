@@ -1,5 +1,6 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -171,7 +172,8 @@ namespace Lucene.Net.Search
         {
             // Sync only to pull the current set of values:
             List<DocIdSet> docIdSets;
-            lock (_cache)
+            UninterruptableMonitor.Enter(_cache);
+            try
             {
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                 docIdSets = new List<DocIdSet>();
@@ -180,6 +182,10 @@ namespace Lucene.Net.Search
 #else
                 docIdSets = new List<DocIdSet>(_cache.Values);
 #endif
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(_cache);
             }
 
             long total = 0;

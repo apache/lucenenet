@@ -1,3 +1,4 @@
+﻿using Lucene.Net.Support.Threading;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Store
@@ -50,16 +51,26 @@ namespace Lucene.Net.Store
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     return length;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
             set
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     this.length = value;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -67,10 +78,15 @@ namespace Lucene.Net.Store
         protected internal byte[] AddBuffer(int size)
         {
             byte[] buffer = NewBuffer(size);
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 m_buffers.Add(buffer);
                 m_sizeInBytes += size;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
 
             if (directory != null)
@@ -82,9 +98,14 @@ namespace Lucene.Net.Store
 
         protected internal byte[] GetBuffer(int index)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 return m_buffers[index];
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -92,9 +113,14 @@ namespace Lucene.Net.Store
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     return m_buffers.Count;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -111,9 +137,14 @@ namespace Lucene.Net.Store
 
         public virtual long GetSizeInBytes()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 return m_sizeInBytes;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
     }

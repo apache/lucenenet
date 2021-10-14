@@ -1,5 +1,6 @@
 ﻿using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -74,7 +75,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override NumericDocValues GetNumeric(FieldInfo field)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (!numericInstances.TryGetValue(field.Number, out NumericDocValues instance))
                 {
@@ -137,6 +139,10 @@ namespace Lucene.Net.Codecs.Lucene40
                     numericInstances[field.Number] = instance;
                 }
                 return instance;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -431,7 +437,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override BinaryDocValues GetBinary(FieldInfo field)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (!binaryInstances.TryGetValue(field.Number, out BinaryDocValues instance))
                 {
@@ -460,6 +467,10 @@ namespace Lucene.Net.Codecs.Lucene40
                     binaryInstances[field.Number] = instance;
                 }
                 return instance;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -699,7 +710,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override SortedDocValues GetSorted(FieldInfo field)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (!sortedInstances.TryGetValue(field.Number, out SortedDocValues instance))
                 {
@@ -746,6 +758,10 @@ namespace Lucene.Net.Codecs.Lucene40
                     sortedInstances[field.Number] = instance;
                 }
                 return instance;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

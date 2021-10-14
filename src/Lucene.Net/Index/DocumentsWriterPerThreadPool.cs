@@ -239,7 +239,8 @@ namespace Lucene.Net.Index
 
         private bool AssertUnreleasedThreadStatesInactive()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 for (int i = numThreadStatesActive; i < threadStates.Length; i++)
                 {
@@ -255,6 +256,10 @@ namespace Lucene.Net.Index
                 }
                 return true;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
@@ -262,7 +267,8 @@ namespace Lucene.Net.Index
         /// </summary>
         internal void DeactivateUnreleasedStates()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 for (int i = numThreadStatesActive; i < threadStates.Length; i++)
                 {
@@ -277,6 +283,10 @@ namespace Lucene.Net.Index
                         threadState.Unlock();
                     }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -306,7 +316,8 @@ namespace Lucene.Net.Index
         public ThreadState GetAndLock(/* Thread requestingThread, DocumentsWriter documentsWriter // LUCENENET: Not referenced */)
         {
             ThreadState threadState = null;
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 for (;;)
                 {
@@ -352,7 +363,7 @@ namespace Lucene.Net.Index
                         // Wait until a thread state frees up:
                         try
                         {
-                            Monitor.Wait(this);
+                            UninterruptableMonitor.Wait(this);
                         }
                         catch (Exception ie) when (ie.IsInterruptedException())
                         {
@@ -360,6 +371,10 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
 
             // This could take time, e.g. if the threadState is [briefly] checked for flushing:
@@ -371,13 +386,18 @@ namespace Lucene.Net.Index
         public void Release(ThreadState state)
         {
             state.Unlock();
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 Debug.Assert(freeCount < freeList.Length);
                 freeList[freeCount++] = state;
                 // In case any thread is waiting, wake one of them up since we just released a thread state; notify() should be sufficient but we do
                 // notifyAll defensively:
-                Monitor.PulseAll(this);
+                UninterruptableMonitor.PulseAll(this);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

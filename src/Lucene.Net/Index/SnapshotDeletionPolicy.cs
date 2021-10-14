@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 
@@ -75,16 +76,22 @@ namespace Lucene.Net.Index
 
         public override void OnCommit<T>(IList<T> commits)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 primary.OnCommit(WrapCommits(commits));
                 m_lastCommit = commits[commits.Count - 1];
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
         public override void OnInit<T>(IList<T> commits)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 initCalled = true;
                 primary.OnInit(WrapCommits(commits));
@@ -100,6 +107,10 @@ namespace Lucene.Net.Index
                     m_lastCommit = commits[commits.Count - 1];
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
@@ -109,10 +120,15 @@ namespace Lucene.Net.Index
         ///          the commit previously returned by <see cref="Snapshot()"/> </param>
         public virtual void Release(IndexCommit commit)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 long gen = commit.Generation;
                 ReleaseGen(gen);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -147,7 +163,8 @@ namespace Lucene.Net.Index
         /// Increments the refCount for this <see cref="IndexCommit"/>. </summary>
         protected internal virtual void IncRef(IndexCommit ic)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 long gen = ic.Generation;
                 int refCountInt;
@@ -161,6 +178,10 @@ namespace Lucene.Net.Index
                     refCountInt = refCount;
                 }
                 m_refCounts[gen] = refCountInt + 1;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -182,7 +203,8 @@ namespace Lucene.Net.Index
         /// <returns> the <see cref="IndexCommit"/> that was snapshotted. </returns>
         public virtual IndexCommit Snapshot()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (!initCalled)
                 {
@@ -198,15 +220,24 @@ namespace Lucene.Net.Index
 
                 return m_lastCommit;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
         /// Returns all <see cref="IndexCommit"/>s held by at least one snapshot. </summary>
         public virtual IList<IndexCommit> GetSnapshots()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 return new List<IndexCommit>(m_indexCommits.Values);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -216,7 +247,8 @@ namespace Lucene.Net.Index
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     int total = 0;
                     foreach (var refCount in m_refCounts.Values)
@@ -225,6 +257,10 @@ namespace Lucene.Net.Index
                     }
 
                     return total;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -236,15 +272,21 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual IndexCommit GetIndexCommit(long gen)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 return m_indexCommits[gen];
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
         public override object Clone()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 SnapshotDeletionPolicy other = (SnapshotDeletionPolicy)base.Clone();
                 other.primary = (IndexDeletionPolicy)this.primary.Clone();
@@ -252,6 +294,10 @@ namespace Lucene.Net.Index
                 other.m_refCounts = new Dictionary<long, int>(m_refCounts);
                 other.m_indexCommits = new Dictionary<long?, IndexCommit>(m_indexCommits);
                 return other;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -299,7 +345,8 @@ namespace Lucene.Net.Index
 
             public override void Delete()
             {
-                lock (outerInstance)
+                UninterruptableMonitor.Enter(outerInstance);
+                try
                 {
                     // Suppress the delete request if this commit point is
                     // currently snapshotted.
@@ -307,6 +354,10 @@ namespace Lucene.Net.Index
                     {
                         m_cp.Delete();
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(outerInstance);
                 }
             }
 

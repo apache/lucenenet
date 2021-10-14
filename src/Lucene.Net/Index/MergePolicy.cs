@@ -1,5 +1,6 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -229,16 +230,26 @@ namespace Lucene.Net.Index
             {
                 set
                 {
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
                         this.error = value;
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                 }
                 get
                 {
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
                         return error;
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                 }
             }
@@ -251,10 +262,15 @@ namespace Lucene.Net.Index
             [MethodImpl(MethodImplOptions.NoInlining)]
             internal virtual void Abort()
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     aborted = true;
-                    Monitor.PulseAll(this);
+                    UninterruptableMonitor.PulseAll(this);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
 
@@ -264,9 +280,14 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
                         return aborted;
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                 }
             }
@@ -277,7 +298,8 @@ namespace Lucene.Net.Index
             /// </summary>
             public virtual void CheckAborted(Directory dir)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     if (aborted)
                     {
@@ -290,7 +312,7 @@ namespace Lucene.Net.Index
                         {
                             //In theory we could wait() indefinitely, but we
                             // do 1000 msec, defensively
-                            Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
+                            UninterruptableMonitor.Wait(this, TimeSpan.FromMilliseconds(1000));
                         }
                         catch (Exception ie) when (ie.IsInterruptedException())
                         {
@@ -303,6 +325,10 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
             }
 
             /// <summary>
@@ -312,14 +338,19 @@ namespace Lucene.Net.Index
             /// </summary>
             internal virtual void SetPause(bool paused)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     this.paused = paused;
                     if (!paused)
                     {
                         // Wakeup merge thread, if it's waiting
-                        Monitor.PulseAll(this);
+                        UninterruptableMonitor.PulseAll(this);
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
 
@@ -331,9 +362,14 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
                         return paused;
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                 }
             }

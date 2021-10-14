@@ -1,4 +1,5 @@
 ﻿using J2N;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -127,9 +128,14 @@ namespace Lucene.Net.Search
 
             public void Dispose()
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     Searcher.IndexReader.DecRef();
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -264,7 +270,8 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual void Prune(IPruner pruner)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // Cannot just pass searchers.values() to ArrayList ctor
                 // (not thread-safe since the values can change while
@@ -299,6 +306,10 @@ namespace Lucene.Net.Search
                     lastRecordTimeSec = tracker.RecordTimeSec;
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
@@ -330,7 +341,8 @@ namespace Lucene.Net.Search
         {
             if (disposing)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     _closed = true;
                     IList<SearcherTracker> toClose = new List<SearcherTracker>(_searchers.Values.Select(item => item.Value));
@@ -349,6 +361,10 @@ namespace Lucene.Net.Search
                     {
                         throw IllegalStateException.Create("another thread called record while this SearcherLifetimeManager instance was being disposed; not all searchers were disposed");
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }

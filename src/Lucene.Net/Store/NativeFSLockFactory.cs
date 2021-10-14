@@ -3,6 +3,7 @@ using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Collections.Generic;
+using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Store
 {
@@ -197,9 +198,16 @@ namespace Lucene.Net.Store
         {
             var path = GetCanonicalPathOfLockFile(lockName);
             Lock l;
-            lock (_locks)
+            UninterruptableMonitor.Enter(_locks);
+            try
+            {
                 if (!_locks.TryGetValue(path, out l))
                     _locks.Add(path, l = NewLock(path));
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(_locks);
+            }
             return l;
         }
 
@@ -225,12 +233,19 @@ namespace Lucene.Net.Store
             var path = GetCanonicalPathOfLockFile(lockName);
             // this is the reason why we can't use ConcurrentDictionary: we need the removal and disposal of the lock to be atomic
             // otherwise it may clash with MakeLock making a lock and ClearLock disposing of it in another thread.
-            lock (_locks)
+            UninterruptableMonitor.Enter(_locks);
+            try
+            {
                 if (_locks.TryGetValue(path, out Lock l))
                 {
                     _locks.Remove(path);
                     l.Dispose();
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(_locks);
+            }
         }
     }
 
@@ -259,7 +274,8 @@ namespace Lucene.Net.Store
 
         public override bool Obtain()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 FailureReason = null;
 
@@ -317,20 +333,32 @@ namespace Lucene.Net.Store
 
                 return channel != null;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     // whether or not we have created a file, we need to remove
                     // the lock instance from the dictionary that tracks them.
                     try
                     {
-                        lock (NativeFSLockFactory._locks)
+                        UninterruptableMonitor.Enter(NativeFSLockFactory._locks);
+                        try
+                        {
                             NativeFSLockFactory._locks.Remove(path);
+                        }
+                        finally
+                        {
+                            UninterruptableMonitor.Exit(NativeFSLockFactory._locks);
+                        }
                     }
                     finally
                     {
@@ -361,12 +389,17 @@ namespace Lucene.Net.Store
                         }
                     }
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
             }
         }
 
         public override bool IsLocked()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // The test for is isLocked is not directly possible with native file locks:
 
@@ -399,6 +432,10 @@ namespace Lucene.Net.Store
                 {
                     return false;
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -465,7 +502,8 @@ namespace Lucene.Net.Store
 
         public override bool Obtain()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 FailureReason = null;
 
@@ -497,20 +535,32 @@ namespace Lucene.Net.Store
                 }
                 return channel != null;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     // whether or not we have created a file, we need to remove
                     // the lock instance from the dictionary that tracks them.
                     try
                     {
-                        lock (NativeFSLockFactory._locks)
+                        UninterruptableMonitor.Enter(NativeFSLockFactory._locks);
+                        try
+                        {
                             NativeFSLockFactory._locks.Remove(path);
+                        }
+                        finally
+                        {
+                            UninterruptableMonitor.Exit(NativeFSLockFactory._locks);
+                        }
                     }
                     finally
                     {
@@ -527,12 +577,17 @@ namespace Lucene.Net.Store
                         }
                     }
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
             }
         }
 
         public override bool IsLocked()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // First a shortcut, if a lock reference in this instance is available
                 if (channel != null)
@@ -556,6 +611,10 @@ namespace Lucene.Net.Store
                     // if the file doesn't exists, there can be no lock active
                     return false;
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -617,7 +676,8 @@ namespace Lucene.Net.Store
 
         public override bool Obtain()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 FailureReason = null;
 
@@ -662,20 +722,32 @@ namespace Lucene.Net.Store
                 }
                 return channel != null;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     // whether or not we have created a file, we need to remove
                     // the lock instance from the dictionary that tracks them.
                     try
                     {
-                        lock (NativeFSLockFactory._locks)
+                        UninterruptableMonitor.Enter(NativeFSLockFactory._locks);
+                        try
+                        {
                             NativeFSLockFactory._locks.Remove(path);
+                        }
+                        finally
+                        {
+                            UninterruptableMonitor.Exit(NativeFSLockFactory._locks);
+                        }
                     }
                     finally
                     {
@@ -700,12 +772,17 @@ namespace Lucene.Net.Store
                         }
                     }
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
             }
         }
 
         public override bool IsLocked()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // First a shortcut, if a lock reference in this instance is available
                 if (channel != null)
@@ -733,6 +810,10 @@ namespace Lucene.Net.Store
                     // if the file doesn't exists, there can be no lock active
                     return false;
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

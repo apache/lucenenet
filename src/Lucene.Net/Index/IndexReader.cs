@@ -1,6 +1,7 @@
 ﻿using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
@@ -145,17 +146,26 @@ namespace Lucene.Net.Index
             EnsureOpen();
             // LUCENENET specific - since neither WeakDictionary nor ConditionalWeakTable synchronize
             // on the enumerator, we need to do external synchronization to make them threadsafe.
-            lock (parentReadersLock)
+            UninterruptableMonitor.Enter(parentReadersLock);
+            try
+            {
                 // LUCENENET: Since there is a set Add operation (unique) in Lucene, the equivalent
                 // operation in .NET is AddOrUpdate, which effectively does nothing if the key exists.
                 // Null is passed as a value, since it is not used anyway and .NET doesn't have a boolean
                 // reference type.
                 parentReaders.AddOrUpdate(key: reader, value: null);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(parentReadersLock);
+            }
         }
 
         private void NotifyReaderClosedListeners(Exception th)
         {
-            lock (((ICollection)readerClosedListeners).SyncRoot) // LUCENENET: Ensure we sync on the SyncRoot of ConcurrentSet<T>
+            object syncRoot = ((ICollection)readerClosedListeners).SyncRoot;
+            UninterruptableMonitor.Enter(syncRoot); // LUCENENET: Ensure we sync on the SyncRoot of ConcurrentSet<T>
+            try
             {
                 foreach (IReaderClosedListener listener in readerClosedListeners)
                 {
@@ -177,13 +187,18 @@ namespace Lucene.Net.Index
                 }
                 IOUtils.ReThrowUnchecked(th);
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncRoot);
+            }
         }
 
         private void ReportCloseToParentReaders()
         {
             // LUCENENET specific - since neither WeakDictionary nor ConditionalWeakTable synchronize
             // on the enumerator, we need to do external synchronization to make them threadsafe.
-            lock (parentReadersLock)
+            UninterruptableMonitor.Enter(parentReadersLock);
+            try
             {
                 foreach (var kvp in parentReaders)
                 {
@@ -200,6 +215,10 @@ namespace Lucene.Net.Index
                         target.ReportCloseToParentReaders();
                     }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(parentReadersLock);
             }
         }
 
@@ -568,13 +587,18 @@ namespace Lucene.Net.Index
         {
             if (disposing)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     if (!closed)
                     {
                         DecRef();
                         closed = true;
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }

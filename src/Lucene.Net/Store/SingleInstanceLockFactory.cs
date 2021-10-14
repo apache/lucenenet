@@ -1,3 +1,4 @@
+﻿using Lucene.Net.Support.Threading;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
@@ -43,12 +44,17 @@ namespace Lucene.Net.Store
 
         public override void ClearLock(string lockName)
         {
-            lock (locks)
+            UninterruptableMonitor.Enter(locks);
+            try
             {
                 if (locks.Contains(lockName))
                 {
                     locks.Remove(lockName);
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(locks);
             }
         }
     }
@@ -66,9 +72,14 @@ namespace Lucene.Net.Store
 
         public override bool Obtain()
         {
-            lock (locks)
+            UninterruptableMonitor.Enter(locks);
+            try
             {
                 return locks.Add(lockName);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(locks);
             }
         }
 
@@ -76,18 +87,28 @@ namespace Lucene.Net.Store
         {
             if (disposing)
             {
-                lock (locks)
+                UninterruptableMonitor.Enter(locks);
+                try
                 {
                     locks.Remove(lockName);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(locks);
                 }
             }
         }
 
         public override bool IsLocked()
         {
-            lock (locks)
+            UninterruptableMonitor.Enter(locks);
+            try
             {
                 return locks.Contains(lockName);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(locks);
             }
         }
 

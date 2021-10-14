@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -95,10 +96,15 @@ namespace Lucene.Net.Index
         /// </summary>
         protected internal virtual void Init(LiveIndexWriterConfig indexWriterConfig)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 this.m_indexWriterConfig = indexWriterConfig;
                 m_infoStream = indexWriterConfig.InfoStream;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

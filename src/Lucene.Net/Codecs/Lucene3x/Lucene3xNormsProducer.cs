@@ -1,6 +1,7 @@
 ﻿using J2N.Runtime.CompilerServices;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -217,16 +218,22 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 get
                 {
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
                         if (instance == null)
                         {
                             var bytes = new byte[outerInstance.maxdoc];
                             // some norms share fds
-                            lock (file)
+                            UninterruptableMonitor.Enter(file);
+                            try
                             {
                                 file.Seek(offset);
                                 file.ReadBytes(bytes, 0, bytes.Length, false);
+                            }
+                            finally
+                            {
+                                UninterruptableMonitor.Exit(file);
                             }
                             // we are done with this file
                             if (file != outerInstance.singleNormStream)
@@ -238,6 +245,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                             instance = new NumericDocValuesAnonymousClass(bytes);
                         }
                         return instance;
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                 }
             }
