@@ -1,3 +1,4 @@
+﻿using Lucene.Net.Support.Threading;
 using System;
 using System.IO;
 
@@ -66,7 +67,8 @@ namespace Lucene.Net.Store
 
             public override bool Obtain()
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     bool obtained = @lock.Obtain();
                     if (obtained)
@@ -75,13 +77,22 @@ namespace Lucene.Net.Store
                     }
                     return obtained;
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
             }
 
             public override bool IsLocked()
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     return @lock.IsLocked();
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
 
@@ -89,13 +100,18 @@ namespace Lucene.Net.Store
             {
                 if (disposing)
                 {
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
                         if (IsLocked())
                         {
                             Verify((byte)0);
                             @lock.Dispose();
                         }
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                 }
             }
@@ -114,17 +130,27 @@ namespace Lucene.Net.Store
 
         public override Lock MakeLock(string lockName)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 return new CheckedLock(this, lf.MakeLock(lockName));
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
         public override void ClearLock(string lockName)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 lf.ClearLock(lockName);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
     }

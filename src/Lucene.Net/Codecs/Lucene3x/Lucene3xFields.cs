@@ -1,6 +1,7 @@
 ﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -176,7 +177,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     if (Tis != null)
                     {
@@ -186,6 +188,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         return TisNoIndex;
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }

@@ -68,12 +68,17 @@ namespace Lucene.Net.Search
 
         private void SwapReference(G newReference)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 EnsureOpen();
                 G oldReference = current;
                 current = newReference;
                 Release(oldReference);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -173,7 +178,8 @@ namespace Lucene.Net.Search
         {
             if (disposing)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     if (current != null)
                     {
@@ -182,6 +188,10 @@ namespace Lucene.Net.Search
                         // if this is already closed then invoking this method has no effect.
                         SwapReference(null);
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }

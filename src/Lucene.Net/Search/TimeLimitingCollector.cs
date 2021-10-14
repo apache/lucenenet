@@ -1,4 +1,5 @@
 ﻿using J2N.Threading;
+using Lucene.Net.Support.Threading;
 using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;

@@ -1,5 +1,6 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -211,7 +212,8 @@ namespace Lucene.Net.Index
             /// </summary>
             internal int AddOrGet(string fieldName, int preferredFieldNumber, DocValuesType dvType)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     if (dvType != DocValuesType.NONE)
                     {
@@ -249,12 +251,17 @@ namespace Lucene.Net.Index
 
                     return (int)fieldNumber;
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
             }
 
             // used by assert
             internal bool ContainsConsistent(int? number, string name, DocValuesType dvType)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     numberToName.TryGetValue(number, out string numberToNameStr);
                     nameToNumber.TryGetValue(name, out int? nameToNumberVal);
@@ -264,6 +271,10 @@ namespace Lucene.Net.Index
                         && number.Equals(nameToNumber[name]) && 
                         (dvType == DocValuesType.NONE || docValuesType == DocValuesType.NONE || dvType == docValuesType);
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
             }
 
             /// <summary>
@@ -272,7 +283,8 @@ namespace Lucene.Net.Index
             /// </summary>
             internal bool Contains(string fieldName, DocValuesType dvType)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     // used by IndexWriter.updateNumericDocValue
                     if (!nameToNumber.ContainsKey(fieldName))
@@ -286,24 +298,38 @@ namespace Lucene.Net.Index
                         return dvType == dvCand;
                     }
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
             }
 
             internal void Clear()
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     numberToName.Clear();
                     nameToNumber.Clear();
                     docValuesType.Clear();
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
             }
 
             internal void SetDocValuesType(int number, string name, DocValuesType dvType)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(ContainsConsistent(number, name, dvType));
                     docValuesType[name] = dvType;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }

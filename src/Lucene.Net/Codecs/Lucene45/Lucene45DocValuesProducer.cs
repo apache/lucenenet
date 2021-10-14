@@ -2,6 +2,7 @@
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -507,7 +508,8 @@ namespace Lucene.Net.Codecs.Lucene45
         protected virtual MonotonicBlockPackedReader GetAddressInstance(IndexInput data, FieldInfo field, BinaryEntry bytes)
         {
             MonotonicBlockPackedReader addresses;
-            lock (addressInstances)
+            UninterruptableMonitor.Enter(addressInstances);
+            try
             {
                 if (!addressInstances.TryGetValue(field.Number, out MonotonicBlockPackedReader addrInstance) || addrInstance == null)
                 {
@@ -517,6 +519,10 @@ namespace Lucene.Net.Codecs.Lucene45
                     ramBytesUsed.AddAndGet(addrInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT32);
                 }
                 addresses = addrInstance;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(addressInstances);
             }
             return addresses;
         }
@@ -576,7 +582,8 @@ namespace Lucene.Net.Codecs.Lucene45
         {
             MonotonicBlockPackedReader addresses;
             long interval = bytes.AddressInterval;
-            lock (addressInstances)
+            UninterruptableMonitor.Enter(addressInstances);
+            try
             {
                 if (!addressInstances.TryGetValue(field.Number, out MonotonicBlockPackedReader addrInstance))
                 {
@@ -595,6 +602,10 @@ namespace Lucene.Net.Codecs.Lucene45
                     ramBytesUsed.AddAndGet(addrInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT32);
                 }
                 addresses = addrInstance;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(addressInstances);
             }
             return addresses;
         }
@@ -683,7 +694,8 @@ namespace Lucene.Net.Codecs.Lucene45
         protected virtual MonotonicBlockPackedReader GetOrdIndexInstance(IndexInput data, FieldInfo field, NumericEntry entry)
         {
             MonotonicBlockPackedReader ordIndex;
-            lock (ordIndexInstances)
+            UninterruptableMonitor.Enter(ordIndexInstances);
+            try
             {
                 if (!ordIndexInstances.TryGetValue(field.Number, out MonotonicBlockPackedReader ordIndexInstance))
                 {
@@ -693,6 +705,10 @@ namespace Lucene.Net.Codecs.Lucene45
                     ramBytesUsed.AddAndGet(ordIndexInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT32);
                 }
                 ordIndex = ordIndexInstance;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(ordIndexInstances);
             }
             return ordIndex;
         }

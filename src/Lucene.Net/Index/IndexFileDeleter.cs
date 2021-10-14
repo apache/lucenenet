@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -118,7 +119,7 @@ namespace Lucene.Net.Index
 
         // called only from assert
         private bool IsLocked =>
-            writer == null || Monitor.IsEntered(writer);
+            writer == null || UninterruptableMonitor.IsEntered(writer);
 
         /// <summary>
         /// Initialize the deleter: find all previous commits in
@@ -496,7 +497,7 @@ namespace Lucene.Net.Index
             {
                 Debugging.Assert(IsLocked);
 
-                Debugging.Assert(Monitor.IsEntered(writer));
+                Debugging.Assert(UninterruptableMonitor.IsEntered(writer));
             }
             long t0 = 0;
             if (infoStream.IsEnabled("IFD"))

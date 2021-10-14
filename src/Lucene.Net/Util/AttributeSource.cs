@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -111,7 +112,8 @@ namespace Lucene.Net.Util
 
                     // LUCENENET: If the weakreference is dead, we need to explicitly update its key.
                     // We synchronize on attClassImplMapLock to make the operation atomic.
-                    lock (attClassImplMapLock)
+                    UninterruptableMonitor.Enter(attClassImplMapLock);
+                    try
                     {
                         if (!attClassImplMap.TryGetValue(attClass, out var @ref) || !@ref.TryGetTarget(out clazz))
                         {
@@ -122,6 +124,10 @@ namespace Lucene.Net.Util
                             attClassImplMap.Add(attClass, CreateAttributeWeakReference(attClass, out clazz));
 #endif
                         }
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(attClassImplMapLock);
                     }
 
                     return clazz;

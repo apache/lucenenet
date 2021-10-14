@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -214,9 +215,14 @@ namespace Lucene.Net.Codecs
         private void PutDocValuesFormatTypeImpl(Type docValuesFormat)
         {
             string name = GetServiceName(docValuesFormat);
-            lock (m_initializationLock)
+            UninterruptableMonitor.Enter(m_initializationLock);
+            try
             {
                 docValuesFormatNameToTypeMap[name] = docValuesFormat;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(m_initializationLock);
             }
         }
 
@@ -228,10 +234,15 @@ namespace Lucene.Net.Codecs
         public virtual DocValuesFormat GetDocValuesFormat(string name)
         {
             EnsureInitialized(); // Safety in case a subclass doesn't call it
-            lock (m_initializationLock)
+            UninterruptableMonitor.Enter(m_initializationLock);
+            try
             {
                 Type codecType = GetDocValuesFormatType(name);
                 return GetDocValuesFormat(codecType);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(m_initializationLock);
             }
         }
 
@@ -246,13 +257,18 @@ namespace Lucene.Net.Codecs
                 throw new ArgumentNullException(nameof(type));
             if (!docValuesFormatInstanceCache.TryGetValue(type, out DocValuesFormat instance))
             {
-                lock (m_initializationLock)
+                UninterruptableMonitor.Enter(m_initializationLock);
+                try
                 {
                     if (!docValuesFormatInstanceCache.TryGetValue(type, out instance))
                     {
                         instance = NewDocValuesFormat(type);
                         docValuesFormatInstanceCache[type] = instance;
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(m_initializationLock);
                 }
             }
 

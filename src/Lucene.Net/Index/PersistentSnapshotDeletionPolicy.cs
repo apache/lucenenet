@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -124,7 +125,8 @@ namespace Lucene.Net.Index
         /// <seealso cref="SnapshotDeletionPolicy.Snapshot()"/>
         public override IndexCommit Snapshot()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 IndexCommit ic = base.Snapshot();
                 bool success = false;
@@ -149,6 +151,10 @@ namespace Lucene.Net.Index
                 }
                 return ic;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
@@ -158,7 +164,8 @@ namespace Lucene.Net.Index
         /// <seealso cref="SnapshotDeletionPolicy.Release(IndexCommit)"/>
         public override void Release(IndexCommit commit)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 base.Release(commit);
                 bool success = false;
@@ -182,6 +189,10 @@ namespace Lucene.Net.Index
                     }
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
@@ -192,17 +203,23 @@ namespace Lucene.Net.Index
         /// <seealso cref="SnapshotDeletionPolicy.Release(IndexCommit)"/>
         public virtual void Release(long gen)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 base.ReleaseGen(gen);
                 Persist();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal void Persist()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 string fileName = SNAPSHOTS_PREFIX + nextWriteGen;
                 IndexOutput @out = dir.CreateOutput(fileName, IOContext.DEFAULT);
@@ -255,11 +272,16 @@ namespace Lucene.Net.Index
 
                 nextWriteGen++;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         private void ClearPriorSnapshots()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 foreach (string file in dir.ListAll())
                 {
@@ -268,6 +290,10 @@ namespace Lucene.Net.Index
                         dir.DeleteFile(file);
                     }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -298,7 +324,8 @@ namespace Lucene.Net.Index
         /// </summary>
         private void LoadPriorSnapshots()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 long genLoaded = -1;
                 Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
@@ -370,6 +397,10 @@ namespace Lucene.Net.Index
                     }
                     nextWriteGen = 1 + genLoaded;
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
     }

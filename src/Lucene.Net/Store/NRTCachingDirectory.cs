@@ -1,4 +1,5 @@
 ﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -120,7 +121,8 @@ namespace Lucene.Net.Store
 
         public override string[] ListAll()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 ISet<string> files = new JCG.HashSet<string>();
                 foreach (string f in cache.ListAll())
@@ -152,6 +154,10 @@ namespace Lucene.Net.Store
                 }
                 return files.ToArray();
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
@@ -166,15 +172,21 @@ namespace Lucene.Net.Store
         [Obsolete("this method will be removed in 5.0")]
         public override bool FileExists(string name)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 return cache.FileExists(name) || @delegate.FileExists(name);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
         public override void DeleteFile(string name)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (VERBOSE)
                 {
@@ -191,11 +203,16 @@ namespace Lucene.Net.Store
                     @delegate.DeleteFile(name);
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public override long FileLength(string name)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
 #pragma warning disable 612, 618
                 if (cache.FileExists(name))
@@ -207,6 +224,10 @@ namespace Lucene.Net.Store
                 {
                     return @delegate.FileLength(name);
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -266,7 +287,8 @@ namespace Lucene.Net.Store
 
         public override IndexInput OpenInput(string name, IOContext context)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (VERBOSE)
                 {
@@ -287,11 +309,16 @@ namespace Lucene.Net.Store
                     return @delegate.OpenInput(name, context);
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 EnsureOpen();
                 if (VERBOSE)
@@ -312,6 +339,10 @@ namespace Lucene.Net.Store
                 {
                     return @delegate.CreateSlicer(name, context);
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -364,7 +395,8 @@ namespace Lucene.Net.Store
         {
             // Only let one thread uncache at a time; this only
             // happens during commit() or close():
-            lock (uncacheLock)
+            UninterruptableMonitor.Enter(uncacheLock);
+            try
             {
                 if (VERBOSE)
                 {
@@ -391,12 +423,21 @@ namespace Lucene.Net.Store
                 }
 
                 // Lock order: uncacheLock -> this
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     // Must sync here because other sync methods have
                     // if (cache.fileExists(name)) { ... } else { ... }:
                     cache.DeleteFile(fileName);
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(uncacheLock);
             }
         }
     }

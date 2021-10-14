@@ -1,6 +1,7 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -100,7 +101,8 @@ namespace Lucene.Net.Store
 
         private IndexOutput GetOutput()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (dataOut == null)
                 {
@@ -120,6 +122,10 @@ namespace Lucene.Net.Store
                     }
                 }
                 return dataOut;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

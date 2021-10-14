@@ -1,6 +1,7 @@
 ﻿using J2N.Runtime.CompilerServices;
 using J2N.Threading;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -58,14 +59,19 @@ namespace Lucene.Net.Index
         /// </summary>
         internal void UpdateStalled(bool stalled)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 this.stalled = stalled;
                 if (stalled)
                 {
                     wasStalled = true;
                 }
-                Monitor.PulseAll(this);
+                UninterruptableMonitor.PulseAll(this);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -77,7 +83,8 @@ namespace Lucene.Net.Index
         {
             if (stalled)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     if (stalled) // react on the first wakeup call!
                     {
@@ -88,7 +95,7 @@ namespace Lucene.Net.Index
                             // disabled in production
                             var result = IncWaiters();
                             if (Debugging.AssertsEnabled) Debugging.Assert(result);
-                            Monitor.Wait(this);
+                            UninterruptableMonitor.Wait(this);
                             result = DecrWaiters();
                             if (Debugging.AssertsEnabled) Debugging.Assert(result);
                         }
@@ -97,6 +104,10 @@ namespace Lucene.Net.Index
                             throw new Util.ThreadInterruptedException(ie);
                         }
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -128,9 +139,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     return numWaiting > 0;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -139,9 +155,14 @@ namespace Lucene.Net.Index
 
         internal bool IsThreadQueued(ThreadJob t) // for tests
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 return waiting.ContainsKey(t);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -149,9 +170,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     return wasStalled;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }

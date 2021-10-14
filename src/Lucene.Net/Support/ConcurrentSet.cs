@@ -1,4 +1,5 @@
 ﻿using J2N.Text;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,92 +43,197 @@ namespace Lucene.Net.Support
 
         public bool Add(T item)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 return set.Add(item);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         public void ExceptWith(IEnumerable<T> other)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 set.ExceptWith(other);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         public void IntersectWith(IEnumerable<T> other)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 set.IntersectWith(other);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         public bool IsProperSubsetOf(IEnumerable<T> other)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 return set.IsProperSubsetOf(other);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         public bool IsProperSupersetOf(IEnumerable<T> other)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 return set.IsProperSupersetOf(other);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         public bool IsSubsetOf(IEnumerable<T> other)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 return set.IsSubsetOf(other);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         public bool IsSupersetOf(IEnumerable<T> other)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 return set.IsSupersetOf(other);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         public bool Overlaps(IEnumerable<T> other)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 return set.Overlaps(other);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         public bool SetEquals(IEnumerable<T> other)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 return set.SetEquals(other);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         public void SymmetricExceptWith(IEnumerable<T> other)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 set.SymmetricExceptWith(other);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         public void UnionWith(IEnumerable<T> other)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 set.UnionWith(other);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         void ICollection<T>.Add(T item)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 set.Add(item);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         public void Clear()
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 set.Clear();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         public bool Contains(T item)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 return set.Contains(item);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 set.CopyTo(array, arrayIndex);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         void ICollection.CopyTo(Array array, int index)
@@ -167,10 +273,15 @@ namespace Lucene.Net.Support
 
                 try
                 {
-                    lock (SyncRoot)
+                    UninterruptableMonitor.Enter(SyncRoot);
+                    try
                     {
                         foreach (var item in set)
                             objects[index++] = item;
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(SyncRoot);
                     }
                 }
                 catch (ArrayTypeMismatchException)
@@ -185,8 +296,15 @@ namespace Lucene.Net.Support
         {
             get
             {
-                lock (SyncRoot)
+                UninterruptableMonitor.Enter(SyncRoot);
+                try
+                {
                     return set.Count;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(SyncRoot);
+                }
             }
         }
 
@@ -210,17 +328,29 @@ namespace Lucene.Net.Support
 
         public bool Remove(T item)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 return set.Remove(item);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         public IEnumerator<T> GetEnumerator()
         {
             // Make a copy of the contents since enumeration is lazy and not thread-safe
             T[] array = new T[set.Count];
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
             {
                 set.CopyTo(array, 0);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
             }
             return ((IEnumerable<T>)array).GetEnumerator();
         }
@@ -244,8 +374,15 @@ namespace Lucene.Net.Support
         /// <exception cref="ArgumentNullException">If <paramref name="comparer"/> is <c>null</c>.</exception>
         public bool Equals(object? other, IEqualityComparer comparer)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 return JCG.SetEqualityComparer<T>.Equals(set, other, comparer);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         /// <summary>
@@ -257,8 +394,15 @@ namespace Lucene.Net.Support
         /// <returns>A hash code representing the current set.</returns>
         public int GetHashCode(IEqualityComparer comparer)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
+            {
                 return JCG.SetEqualityComparer<T>.GetHashCode(set, comparer);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
+            }
         }
 
         /// <summary>
@@ -301,12 +445,17 @@ namespace Lucene.Net.Support
         /// </exception>
         public string ToString(string? format, IFormatProvider? formatProvider)
         {
-            lock (SyncRoot)
+            UninterruptableMonitor.Enter(SyncRoot);
+            try
             {
                 if (set is IFormattable formattable)
                     return formattable.ToString(format ?? "{0}", formatProvider);
 
                 return string.Format(formatProvider, format ?? "{0}", set);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(SyncRoot);
             }
         }
 
