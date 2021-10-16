@@ -406,7 +406,7 @@ namespace Lucene.Net.Index
                             perThread.Unlock();
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsThrowable())
                     {
                         if (infoStream.IsEnabled("DW"))
                         {
