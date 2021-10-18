@@ -70,7 +70,7 @@ namespace Egothor.Stemmer
         internal static char EOM = '*';
         internal static string EOM_NODE = "" + EOM;
 
-        protected List<Trie> m_tries = new List<Trie>();
+        protected IList<Trie> m_tries = new List<Trie>();
 
         private readonly int BY = 1; // LUCENENET: marked readonly
 
