@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Tst
 {
@@ -130,7 +131,7 @@ namespace Lucene.Net.Search.Suggest.Tst
         {
 
             TernaryTreeNode p = root;
-            List<TernaryTreeNode> suggest = new List<TernaryTreeNode>();
+            JCG.List<TernaryTreeNode> suggest = new JCG.List<TernaryTreeNode>();
 
             while (p != null)
             {

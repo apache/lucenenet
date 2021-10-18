@@ -9,6 +9,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Phonetic.Language
 {
@@ -358,7 +359,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                                 char patternKey = r.Pattern[0];
                                 if (!ruleMapping.TryGetValue(patternKey, out IList<Rule> rules) || rules == null)
                                 {
-                                    rules = new List<Rule>();
+                                    rules = new JCG.List<Rule>();
                                     ruleMapping[patternKey] = rules;
                                 }
                                 rules.Add(r);
@@ -509,7 +510,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             string input = Cleanup(source);
 
             // LinkedHashSet preserves input order. In .NET we can use List for that purpose.
-            IList<Branch> currentBranches = new List<Branch>
+            IList<Branch> currentBranches = new JCG.List<Branch>
             {
                 new Branch()
             };
@@ -532,7 +533,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 }
 
                 // use an EMPTY_LIST to avoid false positive warnings wrt potential null pointer access
-                IList<Branch> nextBranches = branching ? new List<Branch>() : Collections.EmptyList<Branch>() as IList<Branch>;
+                IList<Branch> nextBranches = branching ? new JCG.List<Branch>() : Collections.EmptyList<Branch>() as IList<Branch>;
 
                 foreach (Rule rule in rules)
                 {

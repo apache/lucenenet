@@ -420,7 +420,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             sug.Build(new TestRandomInputEnumerator(docs));
 
             // Build inefficient but hopefully correct model:
-            List<IDictionary<string, int?>> gramCounts = new List<IDictionary<string, int?>>(grams);
+            IList<IDictionary<string, int?>> gramCounts = new JCG.List<IDictionary<string, int?>>(grams);
             for (int gram = 0; gram < grams; gram++)
             {
                 if (Verbose)
@@ -498,7 +498,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
 
                 // Expected:
-                List<Lookup.LookupResult> expected = new List<Lookup.LookupResult>();
+                JCG.List<Lookup.LookupResult> expected = new JCG.List<Lookup.LookupResult>();
                 double backoff = 1.0;
                 seen = new JCG.HashSet<string>();
 
@@ -581,7 +581,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         Console.WriteLine("      find terms w/ prefix=" + tokens[tokens.Length - 1]);
                     }
-                    List<Lookup.LookupResult> tmp = new List<Lookup.LookupResult>();
+                    JCG.List<Lookup.LookupResult> tmp = new JCG.List<Lookup.LookupResult>();
                     foreach (string term in terms)
                     {
                         if (term.StartsWith(tokens[tokens.Length - 1], StringComparison.Ordinal))

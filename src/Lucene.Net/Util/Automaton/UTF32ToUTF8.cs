@@ -1,9 +1,10 @@
-using J2N;
+﻿using J2N;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Automaton
 {
@@ -330,7 +331,7 @@ namespace Lucene.Net.Util.Automaton
             }
 
             State[] map = new State[utf32.GetNumberedStates().Length];
-            List<State> pending = new List<State>();
+            JCG.List<State> pending = new JCG.List<State>();
             State utf32State = utf32.GetInitialState();
             pending.Add(utf32State);
             Automaton utf8 = new Automaton();

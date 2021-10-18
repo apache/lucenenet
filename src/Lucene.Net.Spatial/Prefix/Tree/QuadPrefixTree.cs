@@ -1,11 +1,10 @@
 ﻿using Lucene.Net.Diagnostics;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
@@ -146,7 +145,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         protected internal override Cell GetCell(IPoint p, int level)
         {
-            IList<Cell> cells = new List<Cell>(1);
+            IList<Cell> cells = new JCG.List<Cell>(1);
             Build(xmid, ymid, 0, cells, new StringBuilder(), m_ctx.MakePoint(p.X, p.Y), level);
             return cells[0];
         }
@@ -261,7 +260,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             protected internal override ICollection<Cell> GetSubCells()
             {
                 QuadPrefixTree outerInstance = (QuadPrefixTree)this.m_outerInstance;
-                return new List<Cell>(4)
+                return new JCG.List<Cell>(4)
                 {
                     new QuadCell(outerInstance, TokenString + "A"),
                     new QuadCell(outerInstance, TokenString + "B"),

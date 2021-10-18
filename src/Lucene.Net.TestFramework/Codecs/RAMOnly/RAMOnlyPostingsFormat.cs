@@ -188,7 +188,7 @@ namespace Lucene.Net.Codecs.RAMOnly
         {
             internal readonly string term;
             internal long totalTermFreq;
-            internal readonly IList<RAMDoc> docs = new List<RAMDoc>();
+            internal readonly IList<RAMDoc> docs = new JCG.List<RAMDoc>();
 
             public RAMTerm(string term)
             {

@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -79,8 +79,8 @@ namespace Lucene.Net.Index
 
                 w.ForceMerge(1);
 
-                IList<int> aDocIDs = new List<int>();
-                IList<int> bDocIDs = new List<int>();
+                IList<int> aDocIDs = new JCG.List<int>();
+                IList<int> bDocIDs = new JCG.List<int>();
 
                 DirectoryReader r = w.GetReader();
                 int[] idToDocID = new int[r.MaxDoc];

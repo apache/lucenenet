@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Util
 {
@@ -66,7 +66,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
             switch (op)
             {
                 case ANDOperation.NONE:
-                    List<IQueryNode> children = new List<IQueryNode>
+                    IList<IQueryNode> children = new JCG.List<IQueryNode>
                     {
                         q1.CloneTree(),
                         q2.CloneTree()

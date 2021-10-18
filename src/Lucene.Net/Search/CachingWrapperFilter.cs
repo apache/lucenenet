@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -171,16 +172,16 @@ namespace Lucene.Net.Search
         public virtual long GetSizeInBytes()
         {
             // Sync only to pull the current set of values:
-            List<DocIdSet> docIdSets;
+            IList<DocIdSet> docIdSets;
             UninterruptableMonitor.Enter(_cache);
             try
             {
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-                docIdSets = new List<DocIdSet>();
+                docIdSets = new JCG.List<DocIdSet>();
                 foreach (var pair in _cache)
                     docIdSets.Add(pair.Value);
 #else
-                docIdSets = new List<DocIdSet>(_cache.Values);
+                docIdSets = new JCG.List<DocIdSet>(_cache.Values);
 #endif
             }
             finally

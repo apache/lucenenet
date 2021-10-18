@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Support;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 /*
                     Egothor Software License version 1.00
@@ -77,12 +78,12 @@ namespace Egothor.Stemmer
         public virtual Trie Optimize(Trie orig)
         {
             IList<string> cmds = orig.cmds;
-            IList<Row> rows = new List<Row>();
+            IList<Row> rows = new JCG.List<Row>();
             IList<Row> orows = orig.rows;
             int[] remap = new int[orows.Count];
 
             Arrays.Fill(remap, -1);
-            rows = RemoveGaps(orig.root, rows, new List<Row>(), remap);
+            rows = RemoveGaps(orig.root, rows, new JCG.List<Row>(), remap);
 
             return new Trie(orig.forward, remap[orig.root], cmds, rows);
         }

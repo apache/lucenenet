@@ -6,6 +6,7 @@ using Lucene.Net.Spatial;
 using Lucene.Net.Spatial.Queries;
 using Spatial4n.Core.Shapes;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -64,7 +65,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             srcConfig.Set("line.parser", m_config.Get("query.file.line.parser", null));
             srcConfig.Set("content.source.forever", "false");
 
-            List<Query> queries = new List<Query>();
+            JCG.List<Query> queries = new JCG.List<Query>();
             LineDocSource src = new LineDocSource();
             try
             {

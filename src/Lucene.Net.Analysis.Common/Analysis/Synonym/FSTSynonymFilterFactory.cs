@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -58,7 +59,7 @@ namespace Lucene.Net.Analysis.Synonym
                 AssureMatchVersion();
                 tokArgs["luceneMatchVersion"] = LuceneMatchVersion.ToString();
 
-                var keys = new List<string>(args.Keys);
+                var keys = new JCG.List<string>(args.Keys);
                 foreach (string key in keys)
                 {
                     tokArgs[Holder.TOKENIZER_FACTORY_REPLACEMENT_PATTERN.Replace(key, "")] = args[key];

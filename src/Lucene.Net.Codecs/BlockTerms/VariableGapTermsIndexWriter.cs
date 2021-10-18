@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.BlockTerms
 {
@@ -47,7 +48,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         internal const int VERSION_CHECKSUM = 2;
         internal const int VERSION_CURRENT = VERSION_CHECKSUM;
 
-        private readonly IList<FSTFieldWriter> fields = new List<FSTFieldWriter>();
+        private readonly IList<FSTFieldWriter> fields = new JCG.List<FSTFieldWriter>();
 
         //private readonly FieldInfos fieldInfos; // unread  // LUCENENET: Not used
         private readonly IndexTermSelector policy;

@@ -2,14 +2,13 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -593,7 +592,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 // find expected children by looking at all expectedCategories
                 // for children
-                List<int?> expectedChildren = new List<int?>();
+                JCG.List<int?> expectedChildren = new JCG.List<int?>();
                 for (int j = ExpectedCategories.Length - 1; j >= 0; j--)
                 {
                     if (ExpectedCategories[j].Length != ExpectedCategories[i].Length + 1)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Float = J2N.Numerics.Single;
+using JCG = J2N.Collections.Generic;
 using Toffs = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo.Toffs;
 using WeightedPhraseInfo = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo;
 
@@ -30,7 +31,7 @@ namespace Lucene.Net.Search.VectorHighlight
     /// </summary>
     public abstract class FieldFragList
     {
-        private readonly List<WeightedFragInfo> fragInfos = new List<WeightedFragInfo>();
+        private readonly IList<WeightedFragInfo> fragInfos = new JCG.List<WeightedFragInfo>();
 
         /// <summary>
         /// a constructor.

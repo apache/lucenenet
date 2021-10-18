@@ -1046,7 +1046,7 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
                 termAtt = AddAttribute<ICharTermAttribute>();
                 posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
-                terms = new List<string> { "a", "b", "c" }.GetEnumerator();
+                terms = new JCG.List<string> { "a", "b", "c" }.GetEnumerator();
                 first = true;
             }
 
@@ -1707,7 +1707,7 @@ namespace Lucene.Net.Index
                     r = DirectoryReader.Open(dir);
                 }
 
-                IList<string> files = new List<string>(dir.ListAll());
+                IList<string> files = new JCG.List<string>(dir.ListAll());
 
                 // RAMDir won't have a write.lock, but fs dirs will:
                 files.Remove("write.lock");
@@ -1867,7 +1867,7 @@ namespace Lucene.Net.Index
             int computedExtraFileCount = 0;
             foreach (string file in dir.ListAll())
             {
-                if (file.LastIndexOf('.') < 0 || !new List<string> { "fdx", "fdt", "tvx", "tvd", "tvf" }.Contains(file.Substring(file.LastIndexOf('.') + 1)))
+                if (file.LastIndexOf('.') < 0 || !new JCG.List<string> { "fdx", "fdt", "tvx", "tvd", "tvf" }.Contains(file.Substring(file.LastIndexOf('.') + 1)))
                 // don't count stored fields and term vectors in
                 {
                     ++computedExtraFileCount;
@@ -2247,7 +2247,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
-            IList<Document> docs = new List<Document>();
+            IList<Document> docs = new JCG.List<Document>();
             docs.Add(new Document());
             w.UpdateDocuments(new Term("foo", "bar"), docs);
             w.Dispose();
@@ -2608,7 +2608,7 @@ namespace Lucene.Net.Index
             ISet<string> liveIds = new JCG.HashSet<string>();
             for (int i = 0; i < iters; i++)
             {
-                IList<IEnumerable<IIndexableField>> docs = new List<IEnumerable<IIndexableField>>();
+                IList<IEnumerable<IIndexableField>> docs = new JCG.List<IEnumerable<IIndexableField>>();
                 FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
                 FieldType idFt = new FieldType(TextField.TYPE_STORED);
 

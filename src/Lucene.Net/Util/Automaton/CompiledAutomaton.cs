@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Automaton
 {
@@ -328,7 +329,7 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
-            IList<int> stack = new List<int>();
+            IList<int> stack = new JCG.List<int>();
 
             int idx = 0;
             while (true)

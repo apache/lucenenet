@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index.Sorter
 {
@@ -86,7 +87,7 @@ namespace Lucene.Net.Index.Sorter
                     sortedView = SortingAtomicReader.Wrap(atomicView, docMap);
                 }
                 // a null doc map means that the readers are already sorted
-                return docMap == null ? unsortedReaders : new List<AtomicReader>(new AtomicReader[] { sortedView });
+                return docMap == null ? unsortedReaders : new JCG.List<AtomicReader>(new AtomicReader[] { sortedView });
             }
 
             public override SegmentCommitInfo Info

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Directory = Lucene.Net.Store.Directory;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.VectorHighlight
 {
@@ -168,9 +169,9 @@ namespace Lucene.Net.Search.VectorHighlight
             }
         }
 
-        protected List<BytesRef> analyze(String text, String field, Analyzer analyzer)
+        protected IList<BytesRef> analyze(String text, String field, Analyzer analyzer)
         {
-            List<BytesRef> bytesRefs = new List<BytesRef>();
+            IList<BytesRef> bytesRefs = new JCG.List<BytesRef>();
 
             TokenStream tokenStream = analyzer.GetTokenStream(field, text);
             try
@@ -197,7 +198,7 @@ namespace Lucene.Net.Search.VectorHighlight
             return bytesRefs;
         }
 
-        protected PhraseQuery toPhraseQuery(List<BytesRef> bytesRefs, String field)
+        protected PhraseQuery toPhraseQuery(IList<BytesRef> bytesRefs, String field)
         {
             PhraseQuery phraseQuery = new PhraseQuery();
             foreach (BytesRef bytesRef in bytesRefs)

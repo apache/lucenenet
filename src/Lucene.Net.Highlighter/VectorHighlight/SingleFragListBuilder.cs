@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using WeightedPhraseInfo = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo;
 
 namespace Lucene.Net.Search.VectorHighlight
@@ -37,7 +38,7 @@ namespace Lucene.Net.Search.VectorHighlight
         {
             FieldFragList ffl = new SimpleFieldFragList(fragCharSize);
 
-            List<WeightedPhraseInfo> wpil = new List<WeightedPhraseInfo>();
+            IList<WeightedPhraseInfo> wpil = new JCG.List<WeightedPhraseInfo>();
             using IEnumerator<WeightedPhraseInfo> ite = fieldPhraseList.PhraseList.GetEnumerator();
             WeightedPhraseInfo phraseInfo = null;
             while (true)

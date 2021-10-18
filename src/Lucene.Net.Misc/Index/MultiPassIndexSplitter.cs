@@ -4,10 +4,10 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
                 //Console.Error.WriteLine("\t-seq\tsequential docid-range split (default is round-robin)");
                 //Environment.Exit(-1);
             }
-            List<IndexReader> indexes = new List<IndexReader>();
+            IList<IndexReader> indexes = new JCG.List<IndexReader>();
             try
             {
                 string outDir = null;

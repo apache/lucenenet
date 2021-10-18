@@ -1,6 +1,7 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -34,13 +35,13 @@ namespace Lucene.Net.Util
             IEnumerator<int> merged = new MergedEnumerator<int>();
             Assert.IsFalse(merged.MoveNext());
 
-            merged = new MergedEnumerator<int>((new List<int>()).GetEnumerator());
+            merged = new MergedEnumerator<int>((new JCG.List<int>()).GetEnumerator());
             Assert.IsFalse(merged.MoveNext());
 
             IEnumerator<int>[] itrs = new IEnumerator<int>[Random.Next(100)];
             for (int i = 0; i < itrs.Length; i++)
             {
-                itrs[i] = (new List<int>()).GetEnumerator();
+                itrs[i] = (new JCG.List<int>()).GetEnumerator();
             }
             merged = new MergedEnumerator<int>(itrs);
             Assert.IsFalse(merged.MoveNext());
@@ -121,13 +122,13 @@ namespace Lucene.Net.Util
         private void TestCase(int itrsWithVal, int specifiedValsOnItr, bool removeDups)
         {
             // Build a random number of lists
-            IList<int?> expected = new List<int?>();
+            IList<int?> expected = new JCG.List<int?>();
             Random random = new Random(Random.Next());
             int numLists = itrsWithVal + random.Next(1000 - itrsWithVal);
             IList<int>[] lists = new IList<int>[numLists];
             for (int i = 0; i < numLists; i++)
             {
-                lists[i] = new List<int>();
+                lists[i] = new JCG.List<int>();
             }
             int start = random.Next(1000000);
             int end = start + VALS_TO_MERGE / itrsWithVal / Math.Abs(specifiedValsOnItr);
@@ -190,13 +191,13 @@ namespace Lucene.Net.Util
             IEnumerator<int> merged = new MergedIterator<int>();
             Assert.IsFalse(merged.MoveNext());
 
-            merged = new MergedIterator<int>((new List<int>()).GetEnumerator());
+            merged = new MergedIterator<int>((new JCG.List<int>()).GetEnumerator());
             Assert.IsFalse(merged.MoveNext());
 
             IEnumerator<int>[] itrs = new IEnumerator<int>[Random.Next(100)];
             for (int i = 0; i < itrs.Length; i++)
             {
-                itrs[i] = (new List<int>()).GetEnumerator();
+                itrs[i] = (new JCG.List<int>()).GetEnumerator();
             }
             merged = new MergedIterator<int>(itrs);
             Assert.IsFalse(merged.MoveNext());
@@ -290,13 +291,13 @@ namespace Lucene.Net.Util
         private void TestCaseIterator(int itrsWithVal, int specifiedValsOnItr, bool removeDups)
         {
             // Build a random number of lists
-            IList<int?> expected = new List<int?>();
+            IList<int?> expected = new JCG.List<int?>();
             Random random = new Random(Random.Next());
             int numLists = itrsWithVal + random.Next(1000 - itrsWithVal);
             IList<int>[] lists = new IList<int>[numLists];
             for (int i = 0; i < numLists; i++)
             {
-                lists[i] = new List<int>();
+                lists[i] = new JCG.List<int>();
             }
             int start = random.Next(1000000);
             int end = start + VALS_TO_MERGE / itrsWithVal / Math.Abs(specifiedValsOnItr);

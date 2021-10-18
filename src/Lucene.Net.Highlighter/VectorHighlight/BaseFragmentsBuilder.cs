@@ -149,7 +149,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
             fragInfos = GetWeightedFragInfoList(fragInfos);
             int limitFragments = maxNumFragments < fragInfos.Count ? maxNumFragments : fragInfos.Count;
-            List<string> fragments = new List<string>(limitFragments);
+            JCG.List<string> fragments = new JCG.List<string>(limitFragments);
 
             StringBuilder buffer = new StringBuilder();
             int[] nextValueIndex = { 0 };
@@ -164,7 +164,7 @@ namespace Lucene.Net.Search.VectorHighlight
         protected virtual Field[] GetFields(IndexReader reader, int docId, string fieldName)
         {
             // according to javadoc, doc.getFields(fieldName) cannot be used with lazy loaded field???
-            List<Field> fields = new List<Field>();
+            JCG.List<Field> fields = new JCG.List<Field>();
             reader.Document(docId, new GetFieldsStoredFieldsVisitorAnonymousClass(fields, fieldName));
 
             return fields.ToArray(/*new Field[fields.size()]*/);
@@ -251,10 +251,10 @@ namespace Lucene.Net.Search.VectorHighlight
 
         protected virtual IList<WeightedFragInfo> DiscreteMultiValueHighlighting(IList<WeightedFragInfo> fragInfos, Field[] fields)
         {
-            IDictionary<string, List<WeightedFragInfo>> fieldNameToFragInfos = new Dictionary<string, List<WeightedFragInfo>>();
+            IDictionary<string, IList<WeightedFragInfo>> fieldNameToFragInfos = new Dictionary<string, IList<WeightedFragInfo>>();
             foreach (Field field in fields)
             {
-                fieldNameToFragInfos[field.Name] = new List<WeightedFragInfo>();
+                fieldNameToFragInfos[field.Name] = new JCG.List<WeightedFragInfo>();
             }
 
             foreach (WeightedFragInfo fragInfo in fragInfos)
@@ -342,8 +342,8 @@ namespace Lucene.Net.Search.VectorHighlight
             fragInfos_continue: { }
             }
 
-            List<WeightedFragInfo> result = new List<WeightedFragInfo>();
-            foreach (List<WeightedFragInfo> weightedFragInfos in fieldNameToFragInfos.Values)
+            JCG.List<WeightedFragInfo> result = new JCG.List<WeightedFragInfo>();
+            foreach (IList<WeightedFragInfo> weightedFragInfos in fieldNameToFragInfos.Values)
             {
                 result.AddRange(weightedFragInfos);
             }

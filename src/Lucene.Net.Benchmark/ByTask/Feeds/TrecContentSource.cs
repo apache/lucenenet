@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -87,7 +88,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         private readonly DisposableThreadLocal<StringBuilder> trecDocBuffer = new DisposableThreadLocal<StringBuilder>();
         private DirectoryInfo dataDir = null;
-        private readonly List<FileInfo> inputFiles = new List<FileInfo>();
+        private readonly IList<FileInfo> inputFiles = new JCG.List<FileInfo>();
         private int nextFile = 0;
         // Use to synchronize threads on reading from the TREC documents.
         private readonly object @lock = new object(); // LUCENENET: marked readonly

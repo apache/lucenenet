@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Queries
 {
@@ -370,7 +371,7 @@ namespace Lucene.Net.Queries
 
             public override ICollection<ChildScorer> GetChildren()
             {
-                return new List<ChildScorer> { new ChildScorer(subQueryScorer, "CUSTOM") };
+                return new JCG.List<ChildScorer> { new ChildScorer(subQueryScorer, "CUSTOM") };
             }
 
             public override int Advance(int target)

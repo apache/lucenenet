@@ -833,7 +833,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 Facets facets = GetTaxonomyFacetCounts(tr, config, fc);
 
                 // Slow, yet hopefully bug-free, faceting:
-                var expectedCounts = new List<Dictionary<string, int?>>();
+                var expectedCounts = new JCG.List<Dictionary<string, int?>>();
                 for (int i = 0; i < numDims; i++)
                 {
                     expectedCounts.Add(new Dictionary<string, int?>());
@@ -860,10 +860,10 @@ namespace Lucene.Net.Facet.Taxonomy
                     }
                 }
 
-                List<FacetResult> expected = new List<FacetResult>();
+                JCG.List<FacetResult> expected = new JCG.List<FacetResult>();
                 for (int i = 0; i < numDims; i++)
                 {
-                    List<LabelAndValue> labelValues = new List<LabelAndValue>();
+                    JCG.List<LabelAndValue> labelValues = new JCG.List<LabelAndValue>();
                     int totCount = 0;
                     foreach (KeyValuePair<string, int?> ent in expectedCounts[i])
                     {

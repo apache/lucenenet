@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial.Queries
 {
@@ -39,7 +40,7 @@ namespace Lucene.Net.Spatial.Queries
     {
         // Private registry
         private static readonly IDictionary<string, SpatialOperation> registry = new Dictionary<string, SpatialOperation>();
-        private static readonly IList<SpatialOperation> list = new List<SpatialOperation>();
+        private static readonly IList<SpatialOperation> list = new JCG.List<SpatialOperation>();
 
         // Geometry Operations
 

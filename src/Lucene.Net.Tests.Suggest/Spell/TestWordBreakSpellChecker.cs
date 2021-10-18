@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell
 {
@@ -295,8 +296,8 @@ namespace Lucene.Net.Search.Spell
                     Random, dir, new MockAnalyzer(Random,
                     MockTokenizer.WHITESPACE, false));
                 int maxLength = TestUtil.NextInt32(Random, 5, 50);
-                List<string> originals = new List<string>(numDocs);
-                List<string[]> breaks = new List<string[]>(numDocs);
+                IList<string> originals = new JCG.List<string>(numDocs);
+                IList<string[]> breaks = new JCG.List<string[]>(numDocs);
                 for (int i = 0; i < numDocs; i++)
                 {
                     string orig = "";

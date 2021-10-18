@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -1113,7 +1114,7 @@ namespace Lucene.Net.Index
 #endif
                 Random, dir);
             int NUM_DOCS = AtLeast(1000);
-            IList<int?> ids = new List<int?>(NUM_DOCS);
+            IList<int?> ids = new JCG.List<int?>(NUM_DOCS);
             for (int id = 0; id < NUM_DOCS; id++)
             {
                 ids.Add(id);

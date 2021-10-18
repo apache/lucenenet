@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
@@ -71,7 +72,7 @@ namespace Lucene.Net.Search
 
         private SearcherManager mgr;
         private SearcherLifetimeManager lifetimeMGR;
-        private readonly IList<long> pastSearchers = new List<long>();
+        private readonly IList<long> pastSearchers = new JCG.List<long>();
         private bool isNRT;
 
         protected override void DoAfterWriter(TaskScheduler es)

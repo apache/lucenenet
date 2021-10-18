@@ -5,6 +5,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -74,7 +75,7 @@ namespace Lucene.Net.Search
             // after the class is setup - a field is way to early to execute this.
             bool supportsDocValues = Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal) == false;
 
-            allSortFields = new List<SortField> {
+            allSortFields = new JCG.List<SortField> {
 #pragma warning disable 612,618
                 new SortField("byte", SortFieldType.BYTE, false),
                 new SortField("short", SortFieldType.INT16, false),
@@ -170,7 +171,7 @@ namespace Lucene.Net.Search
             int numDocs = AtLeast(200);
             for (int i = 0; i < numDocs; i++)
             {
-                IList<Field> fields = new List<Field>();
+                IList<Field> fields = new JCG.List<Field>();
                 fields.Add(NewTextField("english", English.Int32ToEnglish(i), Field.Store.NO));
                 fields.Add(NewTextField("oddeven", (i % 2 == 0) ? "even" : "odd", Field.Store.NO));
                 fields.Add(NewStringField("byte", "" + ((sbyte)Random.Next()).ToString(CultureInfo.InvariantCulture), Field.Store.NO));

@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -609,7 +610,7 @@ namespace Lucene.Net.Index
 
             internal ByteArrayPool(int capacity, int size)
             {
-                pool = new List<byte[]>();
+                pool = new JCG.List<byte[]>();
                 for (int i = 0; i < capacity; i++)
                 {
                     pool.Add(new byte[size]);

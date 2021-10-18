@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
@@ -77,7 +78,7 @@ namespace Lucene.Net.Index
             Int32BlockPool pool = new Int32BlockPool(new ByteTrackingAllocator(bytesUsed));
             for (int j = 0; j < 2; j++)
             {
-                IList<StartEndAndValues> holders = new List<StartEndAndValues>();
+                IList<StartEndAndValues> holders = new JCG.List<StartEndAndValues>();
                 int num = AtLeast(4);
                 for (int i = 0; i < num; i++)
                 {

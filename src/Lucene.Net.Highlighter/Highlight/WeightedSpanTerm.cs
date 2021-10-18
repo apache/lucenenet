@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Highlight
 {
@@ -25,7 +26,7 @@ namespace Lucene.Net.Search.Highlight
     public class WeightedSpanTerm : WeightedTerm
     {
         private bool _positionSensitive;
-        private readonly List<PositionSpan> _positionSpans = new List<PositionSpan>();
+        private readonly JCG.List<PositionSpan> _positionSpans = new JCG.List<PositionSpan>();
 
         public WeightedSpanTerm(float weight, string term)
             : base(weight, term)

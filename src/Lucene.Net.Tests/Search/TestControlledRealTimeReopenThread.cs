@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -672,7 +673,7 @@ namespace Lucene.Net.Search
             controlledRealTimeReopenThread.IsBackground = (true);
             controlledRealTimeReopenThread.Start();
 
-            IList<ThreadJob> commitThreads = new List<ThreadJob>();
+            IList<ThreadJob> commitThreads = new JCG.List<ThreadJob>();
 
             for (int i = 0; i < 500; i++)
             {

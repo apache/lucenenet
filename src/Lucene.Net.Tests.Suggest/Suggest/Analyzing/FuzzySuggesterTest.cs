@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         [Test]
         public void TestRandomEdits()
         {
-            List<Input> keys = new List<Input>();
+            IList<Input> keys = new JCG.List<Input>();
             int numTerms = AtLeast(100);
             for (int i = 0; i < numTerms; i++)
             {
@@ -65,7 +65,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         [Test]
         public void TestNonLatinRandomEdits()
         {
-            List<Input> keys = new List<Input>();
+            IList<Input> keys = new JCG.List<Input>();
             int numTerms = AtLeast(100);
             for (int i = 0; i < numTerms; i++)
             {
@@ -723,7 +723,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             int numQueries = AtLeast(100);
 
-            List<TermFreqPayload2> slowCompletor = new List<TermFreqPayload2>();
+            IList<TermFreqPayload2> slowCompletor = new JCG.List<TermFreqPayload2>();
             JCG.SortedSet<string> allPrefixes = new JCG.SortedSet<string>(StringComparer.Ordinal);
             ISet<string> seen = new JCG.HashSet<string>();
 
@@ -817,7 +817,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 // Don't just sort original list, to avoid VERBOSE
                 // altering the test:
-                List<TermFreqPayload2> sorted = new List<TermFreqPayload2>(slowCompletor);
+                IList<TermFreqPayload2> sorted = new JCG.List<TermFreqPayload2>(slowCompletor);
                 // LUCENENET NOTE: Must use TimSort because comparer is not expecting ties
                 CollectionUtil.TimSort(sorted);
                 foreach (TermFreqPayload2 ent in sorted)
@@ -1118,7 +1118,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public void TestRandom2()
         {
             int NUM = AtLeast(200);
-            List<Input> answers = new List<Input>();
+            IList<Input> answers = new JCG.List<Input>();
             ISet<string> seen = new JCG.HashSet<string>();
             for (int i = 0; i < NUM; i++)
             {
@@ -1165,7 +1165,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     Console.WriteLine("\nTEST: iter frag=" + frag);
                 }
-                List<Lookup.LookupResult> expected = SlowFuzzyMatch(prefixLen, maxEdits, transpositions, answers, frag);
+                IList<Lookup.LookupResult> expected = SlowFuzzyMatch(prefixLen, maxEdits, transpositions, answers, frag);
                 if (Verbose)
                 {
                     Console.WriteLine("  expected: " + expected.size());
@@ -1174,7 +1174,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         Console.WriteLine("    " + c);
                     }
                 }
-                List<Lookup.LookupResult> actual = new List<Lookup.LookupResult>(suggest.DoLookup(frag, false, NUM));
+                JCG.List<Lookup.LookupResult> actual = new JCG.List<Lookup.LookupResult>(suggest.DoLookup(frag, false, NUM));
                 if (Verbose)
                 {
                     Console.WriteLine("  actual: " + actual.size());
@@ -1201,9 +1201,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private List<Lookup.LookupResult> SlowFuzzyMatch(int prefixLen, int maxEdits, bool allowTransposition, List<Input> answers, string frag)
+        private IList<Lookup.LookupResult> SlowFuzzyMatch(int prefixLen, int maxEdits, bool allowTransposition, IList<Input> answers, string frag)
         {
-            List<Lookup.LookupResult> results = new List<Lookup.LookupResult>();
+            IList<Lookup.LookupResult> results = new JCG.List<Lookup.LookupResult>();
             int fragLen = frag.Length;
             foreach (Input tf in answers)
             {

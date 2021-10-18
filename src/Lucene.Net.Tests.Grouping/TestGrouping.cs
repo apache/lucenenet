@@ -258,7 +258,7 @@ namespace Lucene.Net.Search.Grouping
             else
             {
                 ValueSource vs = new BytesRefFieldSource(groupField);
-                List<SearchGroup<MutableValue>> mvalSearchGroups = new List<SearchGroup<MutableValue>>(searchGroups.size());
+                JCG.List<SearchGroup<MutableValue>> mvalSearchGroups = new JCG.List<SearchGroup<MutableValue>>(searchGroups.size());
                 foreach (SearchGroup<BytesRef> mergedTopGroup in searchGroups)
                 {
                     SearchGroup<MutableValue> sg = new SearchGroup<MutableValue>();
@@ -348,7 +348,7 @@ namespace Lucene.Net.Search.Grouping
                     return null;
                 }
 
-                List<SearchGroup<BytesRef>> groups = new List<SearchGroup<BytesRef>>(mutableValueGroups.Count());
+                JCG.List<SearchGroup<BytesRef>> groups = new JCG.List<SearchGroup<BytesRef>>(mutableValueGroups.Count());
                 foreach (var mutableValueGroup in mutableValueGroups)
                 {
                     SearchGroup<BytesRef> sg = new SearchGroup<BytesRef>();
@@ -371,7 +371,7 @@ namespace Lucene.Net.Search.Grouping
             else if (c.GetType().IsAssignableFrom(typeof(FunctionSecondPassGroupingCollector<MutableValue>)))        // LUCENENET Specific type for generic must be specified.
             {
                 ITopGroups<MutableValue> mvalTopGroups = ((FunctionSecondPassGroupingCollector<MutableValue>)c).GetTopGroups(withinGroupOffset);        // LUCENENET Specific type for generic must be specified.
-                List<GroupDocs<BytesRef>> groups = new List<GroupDocs<BytesRef>>(mvalTopGroups.Groups.Length);
+                JCG.List<GroupDocs<BytesRef>> groups = new JCG.List<GroupDocs<BytesRef>>(mvalTopGroups.Groups.Length);
                 foreach (GroupDocs<MutableValue> mvalGd in mvalTopGroups.Groups)
                 {
                     BytesRef groupValue = mvalGd.GroupValue.Exists ? ((MutableValueStr)mvalGd.GroupValue).Value : null;
@@ -406,7 +406,7 @@ namespace Lucene.Net.Search.Grouping
 
         private Sort GetRandomSort()
         {
-            List<SortField> sortFields = new List<SortField>();
+            JCG.List<SortField> sortFields = new JCG.List<SortField>();
             if (Random.nextInt(7) == 2)
             {
                 sortFields.Add(SortField.FIELD_SCORE);
@@ -550,9 +550,9 @@ namespace Lucene.Net.Search.Grouping
             //Arrays.Sort(groupDocs, groupSortComp);
             ArrayUtil.TimSort(groupDocs, groupSortComp);
             
-            IDictionary<BytesRef, List<GroupDoc>> groups = new JCG.Dictionary<BytesRef, List<GroupDoc>>();
-            List<BytesRef> sortedGroups = new List<BytesRef>();
-            List<IComparable[]> sortedGroupFields = new List<IComparable[]>();
+            IDictionary<BytesRef, IList<GroupDoc>> groups = new JCG.Dictionary<BytesRef, IList<GroupDoc>>();
+            IList<BytesRef> sortedGroups = new JCG.List<BytesRef>();
+            IList<IComparable[]> sortedGroupFields = new JCG.List<IComparable[]>();
 
             int totalHitCount = 0;
             ISet<BytesRef> knownGroups = new JCG.HashSet<BytesRef>();
@@ -577,7 +577,7 @@ namespace Lucene.Net.Search.Grouping
                     }
                 }
 
-                if (!groups.TryGetValue(d.group, out List<GroupDoc> l) || l == null)
+                if (!groups.TryGetValue(d.group, out IList<GroupDoc> l) || l == null)
                 {
                     //Console.WriteLine("    add sortedGroup=" + groupToString(d.group));
                     sortedGroups.Add(d.group);
@@ -585,7 +585,7 @@ namespace Lucene.Net.Search.Grouping
                     {
                         sortedGroupFields.Add(FillFields(d, groupSort));
                     }
-                    l = new List<GroupDoc>();
+                    l = new JCG.List<GroupDoc>();
                     groups.Put(d.group, l);
                 }
                 l.Add(d);
@@ -606,7 +606,7 @@ namespace Lucene.Net.Search.Grouping
             for (int idx = groupOffset; idx < limit; idx++)
             {
                 BytesRef group = sortedGroups[idx];
-                List<GroupDoc> docs = groups[group];
+                IList<GroupDoc> docs = groups[group];
                 totalGroupedHitCount += docs.size();
 
                 // LUCENENET specific: The original API Collections.Sort does not currently exist.
@@ -668,15 +668,15 @@ namespace Lucene.Net.Search.Grouping
         {
             // Coalesce by group, but in random order:
             groupDocs.Shuffle(Random);
-            IDictionary<BytesRef, List<GroupDoc>> groupMap = new JCG.Dictionary<BytesRef, List<GroupDoc>>();
-            List<BytesRef> groupValues = new List<BytesRef>();
+            IDictionary<BytesRef, IList<GroupDoc>> groupMap = new JCG.Dictionary<BytesRef, IList<GroupDoc>>();
+            IList<BytesRef> groupValues = new JCG.List<BytesRef>();
 
             foreach (GroupDoc groupDoc in groupDocs)
             {
-                if (!groupMap.TryGetValue(groupDoc.group, out List<GroupDoc> docs))
+                if (!groupMap.TryGetValue(groupDoc.group, out IList<GroupDoc> docs))
                 {
                     groupValues.Add(groupDoc.group);
-                    groupMap[groupDoc.group] = docs = new List<GroupDoc>();
+                    groupMap[groupDoc.group] = docs = new JCG.List<GroupDoc>();
                 }
                 docs.Add(groupDoc);
             }
@@ -687,7 +687,7 @@ namespace Lucene.Net.Search.Grouping
                                                         NewIndexWriterConfig(TEST_VERSION_CURRENT,
                                                                              new MockAnalyzer(Random)));
 
-            List<List<Document>> updateDocs = new List<List<Document>>();
+            IList<IList<Document>> updateDocs = new JCG.List<IList<Document>>();
 
             FieldType groupEndType = new FieldType(StringField.TYPE_NOT_STORED);
             groupEndType.IndexOptions = (IndexOptions.DOCS_ONLY);
@@ -696,7 +696,7 @@ namespace Lucene.Net.Search.Grouping
             //Console.WriteLine("TEST: index groups");
             foreach (BytesRef group in groupValues)
             {
-                List<Document> docs = new List<Document>();
+                IList<Document> docs = new JCG.List<Document>();
                 //Console.WriteLine("TEST:   group=" + (group == null ? "null" : group.utf8ToString()));
                 foreach (GroupDoc groupValue in groupMap[group])
                 {
@@ -723,7 +723,7 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
 
-            foreach (List<Document> docs in updateDocs)
+            foreach (IList<Document> docs in updateDocs)
             {
                 // Just replaces docs w/ same docs:
                 w.UpdateDocuments(new Index.Term("group", docs[0].Get("group")), docs);
@@ -782,7 +782,7 @@ namespace Lucene.Net.Search.Grouping
                     Console.WriteLine("TEST: numDocs=" + numDocs + " numGroups=" + numGroups);
                 }
 
-                List<BytesRef> groups = new List<BytesRef>();
+                IList<BytesRef> groups = new JCG.List<BytesRef>();
                 for (int i = 0; i < numGroups; i++)
                 {
                     string randomValue;
@@ -1451,8 +1451,8 @@ namespace Lucene.Net.Search.Grouping
             }
             // Run 1st pass collector to get top groups per shard
             Weight w = topSearcher.CreateNormalizedWeight(query);
-            List<IEnumerable<ISearchGroup<BytesRef>>> shardGroups = new List<IEnumerable<ISearchGroup<BytesRef>>>();
-            List<IAbstractFirstPassGroupingCollector<object>> firstPassGroupingCollectors = new List<IAbstractFirstPassGroupingCollector<object>>();
+            IList<IEnumerable<ISearchGroup<BytesRef>>> shardGroups = new JCG.List<IEnumerable<ISearchGroup<BytesRef>>>();
+            IList<IAbstractFirstPassGroupingCollector<object>> firstPassGroupingCollectors = new JCG.List<IAbstractFirstPassGroupingCollector<object>>();
             IAbstractFirstPassGroupingCollector<object> firstPassCollector = null;
             bool shardsCanUseIDV;
             if (canUseIDV)
@@ -1650,12 +1650,12 @@ namespace Lucene.Net.Search.Grouping
 
         internal class ShardSearcher : IndexSearcher
         {
-            private readonly List<AtomicReaderContext> ctx;
+            private readonly IList<AtomicReaderContext> ctx;
 
             public ShardSearcher(AtomicReaderContext ctx, IndexReaderContext parent)
                             : base(parent)
             {
-                this.ctx = new List<AtomicReaderContext>(new AtomicReaderContext[] { ctx });
+                this.ctx = new JCG.List<AtomicReaderContext>(new AtomicReaderContext[] { ctx });
             }
 
             public void Search(Weight weight, ICollector collector)

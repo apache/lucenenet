@@ -3,6 +3,7 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
@@ -46,7 +47,7 @@ namespace Lucene.Net.Index
                 bool throwOnClose = !Rarely();
                 AtomicReader wrap = SlowCompositeReaderWrapper.Wrap(open);
                 FilterAtomicReader reader = new FilterAtomicReaderAnonymousClass(this, wrap, throwOnClose);
-                IList<IndexReader.IReaderClosedListener> listeners = new List<IndexReader.IReaderClosedListener>();
+                IList<IndexReader.IReaderClosedListener> listeners = new JCG.List<IndexReader.IReaderClosedListener>();
                 int listenerCount = Random.Next(20);
                 AtomicInt32 count = new AtomicInt32();
                 bool faultySet = false;

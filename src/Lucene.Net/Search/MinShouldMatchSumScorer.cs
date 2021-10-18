@@ -3,6 +3,7 @@ using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -130,7 +131,7 @@ namespace Lucene.Net.Search
 
         public override sealed ICollection<ChildScorer> GetChildren()
         {
-            List<ChildScorer> children = new List<ChildScorer>(numScorers);
+            IList<ChildScorer> children = new JCG.List<ChildScorer>(numScorers);
             for (int i = 0; i < numScorers; i++)
             {
                 children.Add(new ChildScorer(subScorers[i], "SHOULD"));

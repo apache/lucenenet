@@ -253,7 +253,7 @@ namespace Lucene.Net.Replicator
                     Directory directory = factory.GetDirectory(session.Id, source);
 
                     sourceDirectory.Add(source, directory);
-                    List<string> cpFiles = new List<string>();
+                    IList<string> cpFiles = new JCG.List<string>();
                     copiedFiles.Add(source, cpFiles);
                     foreach (RevisionFile file in pair.Value)
                     {
@@ -380,7 +380,7 @@ namespace Lucene.Net.Replicator
                 }
 
                 // make sure to preserve revisionFiles order
-                List<RevisionFile> res = new List<RevisionFile>();
+                IList<RevisionFile> res = new JCG.List<RevisionFile>();
                 string source = e.Key;
                 if (Debugging.AssertsEnabled) Debugging.Assert(newRevisionFiles.ContainsKey(source), "source not found in newRevisionFiles: {0}", newRevisionFiles);
                 foreach (RevisionFile file in newRevisionFiles[source])

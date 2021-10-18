@@ -620,7 +620,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // TODO: maybe just stored fields?  they compress...
             BinaryDocValues payloadsDV = MultiDocValues.GetBinaryValues(searcher.IndexReader, "payloads");
             IList<AtomicReaderContext> leaves = searcher.IndexReader.Leaves;
-            List<LookupResult> results = new List<LookupResult>();
+            IList<LookupResult> results = new JCG.List<LookupResult>();
             BytesRef scratch = new BytesRef();
             for (int i = 0; i < hits.ScoreDocs.Length; i++)
             {

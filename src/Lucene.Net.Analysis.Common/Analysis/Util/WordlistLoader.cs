@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Text;
 using Lucene.Net.Util;
 using System;
@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -227,7 +228,7 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static IList<string> GetLines(Stream stream, Encoding encoding)
         {
-            List<string> lines = new List<string>();
+            IList<string> lines = new JCG.List<string>();
 
             using (StreamReader reader = new StreamReader(stream, encoding))
             {

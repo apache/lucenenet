@@ -1321,7 +1321,7 @@ namespace Lucene.Net.Store
         //{
         //    using (Directory dir = GetDirectory(CreateTempDir()))
         //    {
-        //        IList<string> names = new List<string>();
+        //        IList<string> names = new JCG.List<string>();
         //        int iters = AtLeast(50);
         //        for (int iter = 0; iter < iters; iter++)
         //        {
@@ -1343,7 +1343,7 @@ namespace Lucene.Net.Store
         //            .Where(file => !ExtraFS.IsExtra(file)) // remove any ExtrasFS stuff.
         //            .ToList();
 
-        //        assertEquals(new List<string>(names), files);
+        //        assertEquals(new JCG.List<string>(names), files);
         //    }
         //}
 

@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
 
                 IDictionary<BytesRef, IList<int?>> docs = new Dictionary<BytesRef, IList<int?>>();
                 ISet<int?> deleted = new JCG.HashSet<int?>();
-                IList<BytesRef> terms = new List<BytesRef>();
+                IList<BytesRef> terms = new JCG.List<BytesRef>();
 
                 int numDocs = TestUtil.NextInt32(Random, 1, 100 * RandomMultiplier);
                 Documents.Document doc = new Documents.Document();
@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
                         BytesRef term = new BytesRef(s);
                         if (!docs.TryGetValue(term, out IList<int?> docsTerm))
                         {
-                            docs[term] = docsTerm = new List<int?>();
+                            docs[term] = docsTerm = new JCG.List<int?>();
                         }
                         docsTerm.Add(i);
                         terms.Add(term);
@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
 
                 if (Verbose)
                 {
-                    List<BytesRef> termsList = new List<BytesRef>(uniqueTerms);
+                    IList<BytesRef> termsList = new JCG.List<BytesRef>(uniqueTerms);
 #pragma warning disable 612, 618
                     termsList.Sort(BytesRef.UTF8SortedAsUTF16Comparer);
 #pragma warning restore 612, 618
@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
         }
 
         /*
-        private void verify(IndexReader r, String term, List<Integer> expected) throws Exception {
+        private void verify(IndexReader r, String term, IList<Integer> expected) throws Exception {
           DocsEnum docs = TestUtil.Docs(random, r,
                                          "field",
                                          new BytesRef(term),

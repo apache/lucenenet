@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index.Sorter
@@ -42,7 +43,7 @@ namespace Lucene.Net.Index.Sorter
             // only read the values of the undeleted documents, since after addIndexes,
             // the deleted ones will be dropped from the index.
             IBits liveDocs = reader.LiveDocs;
-            List<int> values = new List<int>();
+            JCG.List<int> values = new JCG.List<int>();
             for (int i = 0; i < reader.MaxDoc; i++)
             {
                 if (liveDocs == null || liveDocs.Get(i))

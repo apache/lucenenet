@@ -5,6 +5,7 @@ using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using Lucene.Net.QueryParsers.Flexible.Standard.Nodes;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Operator = Lucene.Net.QueryParsers.Flexible.Standard.Config.StandardQueryConfigHandler.Operator;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
@@ -42,7 +43,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     [Obsolete("Use BooleanQuery2ModifierNodeProcessor instead")]
     public class GroupQueryNodeProcessor : IQueryNodeProcessor
     {
-        private List<IQueryNode> queryNodeList;
+        private IList<IQueryNode> queryNodeList;
 
         private bool latestNodeVerified;
 
@@ -72,11 +73,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 queryTree = groupQueryNode.GetChild();
             }
 
-            this.queryNodeList = new List<IQueryNode>();
+            this.queryNodeList = new JCG.List<IQueryNode>();
             this.latestNodeVerified = false;
             ReadTree(queryTree);
 
-            List<IQueryNode> actualQueryNodeList = this.queryNodeList;
+            IList<IQueryNode> actualQueryNodeList = this.queryNodeList;
 
             for (int i = 0; i < actualQueryNodeList.Count; i++)
             {

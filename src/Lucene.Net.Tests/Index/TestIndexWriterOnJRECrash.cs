@@ -120,7 +120,7 @@
 //        /// fork ourselves in a new jvm. sets -Dtests.crashmode=true </summary>
 //        public virtual void ForkTest()
 //        {
-//            IList<string> cmd = new List<string>();
+//            IList<string> cmd = new JCG.List<string>();
 //            cmd.Add(System.getProperty("java.home") + System.getProperty("file.separator") + "bin" + System.getProperty("file.separator") + "java");
 //            cmd.Add("-Xmx512m");
 //            cmd.Add("-Dtests.crashmode=true");

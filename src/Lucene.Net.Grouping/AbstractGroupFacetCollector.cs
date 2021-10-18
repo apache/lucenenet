@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Grouping
             this.m_groupField = groupField;
             this.m_facetField = facetField;
             this.m_facetPrefix = facetPrefix;
-            m_segmentResults = new List<AbstractSegmentResult>();
+            m_segmentResults = new JCG.List<AbstractSegmentResult>();
         }
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace Lucene.Net.Search.Grouping
             /// <returns>a list of facet entries to be rendered based on the specified offset and limit</returns>
             public virtual IList<FacetEntry> GetFacetEntries(int offset, int limit)
             {
-                List<FacetEntry> entries = new List<FacetEntry>();
+                IList<FacetEntry> entries = new JCG.List<FacetEntry>();
 
                 int skipped = 0;
                 int included = 0;

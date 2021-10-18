@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -78,9 +78,9 @@ namespace Lucene.Net.Util.Automaton
             int[] sigma = a.GetStartPoints();
             State[] states = a.GetNumberedStates();
             int sigmaLen = sigma.Length, statesLen = states.Length;
-            List<State>[,] reverse = new List<State>[statesLen, sigmaLen];
+            JCG.List<State>[,] reverse = new JCG.List<State>[statesLen, sigmaLen];
             ISet<State>[] partition = new JCG.HashSet<State>[statesLen];
-            List<State>[] splitblock = new List<State>[statesLen];
+            JCG.List<State>[] splitblock = new JCG.List<State>[statesLen];
             int[] block = new int[statesLen];
             StateList[,] active = new StateList[statesLen, sigmaLen];
             StateListNode[,] active2 = new StateListNode[statesLen, sigmaLen];
@@ -90,7 +90,7 @@ namespace Lucene.Net.Util.Automaton
                 refine = new OpenBitSet(statesLen), refine2 = new OpenBitSet(statesLen);
             for (int q = 0; q < statesLen; q++)
             {
-                splitblock[q] = new List<State>();
+                splitblock[q] = new JCG.List<State>();
                 partition[q] = new JCG.HashSet<State>();
                 for (int x = 0; x < sigmaLen; x++)
                 {
@@ -106,11 +106,11 @@ namespace Lucene.Net.Util.Automaton
                 block[q] = j;
                 for (int x = 0; x < sigmaLen; x++)
                 {
-                    //List<State>[] r = reverse[qq.Step(sigma[x]).number];
+                    //JCG.List<State>[] r = reverse[qq.Step(sigma[x]).number];
                     var r = qq.Step(sigma[x]).number;
                     if (reverse[r, x] == null)
                     {
-                        reverse[r, x] = new List<State>();
+                        reverse[r, x] = new JCG.List<State>();
                     }
                     reverse[r, x].Add(qq);
                 }
@@ -147,7 +147,7 @@ namespace Lucene.Net.Util.Automaton
                 // find states that need to be split off their blocks
                 for (StateListNode m = active[p, x].First; m != null; m = m.Next)
                 {
-                    List<State> r = reverse[m.Q.number, x];
+                    JCG.List<State> r = reverse[m.Q.number, x];
                     if (r != null)
                     {
                         foreach (State s in r)
@@ -170,7 +170,7 @@ namespace Lucene.Net.Util.Automaton
                 // refine blocks
                 for (int j = refine.NextSetBit(0); j >= 0; j = refine.NextSetBit(j + 1))
                 {
-                    List<State> sb = splitblock[j];
+                    JCG.List<State> sb = splitblock[j];
                     if (sb.Count < partition[j].Count)
                     {
                         ISet<State> b1 = partition[j];

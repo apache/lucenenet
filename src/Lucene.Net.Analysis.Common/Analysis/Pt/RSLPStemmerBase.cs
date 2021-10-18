@@ -10,6 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Pt
 {
@@ -324,7 +325,7 @@ namespace Lucene.Net.Analysis.Pt
 
         private static Rule[] ParseRules(TextReader r, int type)
         {
-            IList<Rule> rules = new List<Rule>();
+            IList<Rule> rules = new JCG.List<Rule>();
             string line;
             while ((line = ReadLine(r)) != null)
             {

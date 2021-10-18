@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index.Sorter
 {
@@ -167,7 +168,7 @@ namespace Lucene.Net.Index.Sorter
         /** Creates an index for sorting. */
         public void CreateIndex(Directory dir, int numDocs, Random random)
         {
-            IList<int> ids = new List<int>();
+            IList<int> ids = new JCG.List<int>();
             for (int i = 0; i < numDocs; i++)
             {
                 ids.Add(i * 10);

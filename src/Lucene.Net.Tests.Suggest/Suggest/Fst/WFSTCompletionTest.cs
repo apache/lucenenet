@@ -178,7 +178,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 IList<Lookup.LookupResult> r = suggester.DoLookup(TestUtil.StringToCharSequence(prefix, random).ToString(), false, topN);
 
                 // 2. go thru whole treemap (slowCompletor) and check its actually the best suggestion
-                List<Lookup.LookupResult> matches = new List<Lookup.LookupResult>();
+                JCG.List<Lookup.LookupResult> matches = new JCG.List<Lookup.LookupResult>();
 
                 // TODO: could be faster... but its slowCompletor for a reason
                 foreach (KeyValuePair<string, long> e in slowCompletor)

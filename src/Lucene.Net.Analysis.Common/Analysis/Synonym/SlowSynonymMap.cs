@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -143,7 +144,7 @@ namespace Lucene.Net.Analysis.Synonym
         /// </summary>
         public static IList<Token> MakeTokens(IList<string> strings)
         {
-            IList<Token> ret = new List<Token>(strings.Count);
+            IList<Token> ret = new JCG.List<Token>(strings.Count);
             foreach (string str in strings)
             {
                 //Token newTok = new Token(str,0,0,"SYNONYM");
@@ -163,7 +164,7 @@ namespace Lucene.Net.Analysis.Synonym
         /// </summary>
         public static IList<Token> MergeTokens(IList<Token> lst1, IList<Token> lst2)
         {
-            var result = new List<Token>();
+            var result = new JCG.List<Token>();
             if (lst1 == null || lst2 == null)
             {
                 if (lst2 != null)

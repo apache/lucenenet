@@ -9,6 +9,7 @@ using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial
 {
@@ -40,7 +41,7 @@ namespace Lucene.Net.Spatial
             SpatialPrefixTree gridQuad = new QuadPrefixTree(ctx, 10);
             SpatialPrefixTree gridGeohash = new GeohashPrefixTree(ctx, 10);
 
-            List<SpatialStrategy> strategies = new List<SpatialStrategy>();
+            IList<SpatialStrategy> strategies = new JCG.List<SpatialStrategy>();
             strategies.Add(new RecursivePrefixTreeStrategy(gridGeohash, "recursive_geohash"));
             strategies.Add(new TermQueryPrefixTreeStrategy(gridQuad, "termquery_quad"));
             strategies.Add(new PointVectorStrategy(ctx, "pointvector"));

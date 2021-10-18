@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net
 {
@@ -257,7 +258,7 @@ namespace Lucene.Net
             }
             else
             {
-                List<T> toRemove = new List<T>();
+                JCG.List<T> toRemove = new JCG.List<T>();
 
                 foreach (var item in s)
                 {

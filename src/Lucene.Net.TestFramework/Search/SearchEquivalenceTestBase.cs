@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
         protected static string m_stopword; // we always pick a character as a stopword
 
 //#if TESTFRAMEWORK_MSTEST
-//        private static readonly IList<string> initalizationLock = new List<string>();
+//        private static readonly IList<string> initalizationLock = new JCG.List<string>();
 
 //        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
 //        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]

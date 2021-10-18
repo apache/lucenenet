@@ -1,4 +1,4 @@
-#if TESTFRAMEWORK
+﻿#if TESTFRAMEWORK
 // LUCENENET NOTE: This is incomplete
 using System;
 using System.Collections.Generic;
@@ -100,7 +100,7 @@ namespace Lucene.Net.Util
       /// </summary>
       private static IList<Exception> ExpandFromMultiple(Exception t)
       {
-        return ExpandFromMultiple(t, new List<Exception>());
+        return ExpandFromMultiple(t, new JCG.List<Exception>());
       }
 
       /// <summary>

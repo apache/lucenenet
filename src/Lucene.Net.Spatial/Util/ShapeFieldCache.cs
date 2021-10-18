@@ -1,5 +1,6 @@
 ﻿using Spatial4n.Core.Shapes;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial.Util
 {
@@ -46,7 +47,7 @@ namespace Lucene.Net.Spatial.Util
             IList<T> list = cache[docid];
             if (list == null)
             {
-                list = cache[docid] = new List<T>(DefaultLength);
+                list = cache[docid] = new JCG.List<T>(DefaultLength);
             }
             list.Add(s);
         }

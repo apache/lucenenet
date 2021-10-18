@@ -1,12 +1,11 @@
 ﻿using J2N.Text;
 using Lucene.Net.Util;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
 using Integer = J2N.Numerics.Int32;
+using JCG = J2N.Collections.Generic;
 
 /*
                     Egothor Software License version 1.00
@@ -99,7 +98,7 @@ namespace Egothor.Stemmer
             int nop = Get(3, args[0]);
             // LUCENENET specific - reformatted with : and changed "charset" to "encoding"
             string charset = SystemProperties.GetProperty("egothor:stemmer:encoding", "UTF-8");
-            var stemmerTables = new List<string>();
+            var stemmerTables = new JCG.List<string>();
 
             // LUCENENET specific
             // command line argument overrides environment variable or default, if supplied

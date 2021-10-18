@@ -1,11 +1,11 @@
 ﻿using J2N.Collections.Generic.Extensions;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -88,8 +88,8 @@ namespace Lucene.Net.Search
 
             Start(numNodes, runTimeSec, maxSearcherAgeSeconds);
 
-            List<PreviousSearchState> priorSearches = new List<PreviousSearchState>();
-            List<BytesRef> terms = null;
+            JCG.List<PreviousSearchState> priorSearches = new JCG.List<PreviousSearchState>();
+            IList<BytesRef> terms = null;
             while (J2N.Time.NanoTime() < endTimeNanos)
             {
                 bool doFollowon = priorSearches.Count > 0 && Random.Next(7) == 1;
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search
                             // TODO: try to "focus" on high freq terms sometimes too
                             // TODO: maybe also periodically reset the terms...?
                             TermsEnum termsEnum = MultiFields.GetTerms(mockReader, "body").GetEnumerator();
-                            terms = new List<BytesRef>();
+                            terms = new JCG.List<BytesRef>();
                             while (termsEnum.MoveNext())
                             {
                                 terms.Add(BytesRef.DeepCopyOf(termsEnum.Term));

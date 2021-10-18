@@ -365,7 +365,7 @@ namespace Lucene.Net.Index
         }
 
 //#if TESTFRAMEWORK_MSTEST
-//        private static readonly IList<string> initalizationLock = new List<string>();
+//        private static readonly IList<string> initalizationLock = new JCG.List<string>();
 
 //        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
 //        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
@@ -500,7 +500,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            allTerms = new List<FieldAndTerm>();
+            allTerms = new JCG.List<FieldAndTerm>();
             foreach (KeyValuePair<string, JCG.SortedDictionary<BytesRef, long>> fieldEnt in fields)
             {
                 string field = fieldEnt.Key;
@@ -1187,8 +1187,8 @@ namespace Lucene.Net.Index
             ThreadState threadState = new ThreadState();
 
             // Test random terms/fields:
-            IList<TermState> termStates = new List<TermState>();
-            IList<FieldAndTerm> termStateTerms = new List<FieldAndTerm>();
+            IList<TermState> termStates = new JCG.List<TermState>();
+            IList<FieldAndTerm> termStateTerms = new JCG.List<FieldAndTerm>();
 
             allTerms.Shuffle(Random);
             int upto = 0;

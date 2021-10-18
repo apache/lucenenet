@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -27,6 +27,7 @@ using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index.Sorter
 {
@@ -68,7 +69,7 @@ namespace Lucene.Net.Index.Sorter
                 parentDoc.Add(parent);
                 for (int i = 0; i < numParents; ++i)
                 {
-                    List<Document> documents = new List<Document>();
+                    IList<Document> documents = new JCG.List<Document>();
                     int numChildren = Random.nextInt(10);
                     for (int j = 0; j < numChildren; ++j)
                     {

@@ -2,7 +2,7 @@
 using J2N.Numerics;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet
 {
@@ -180,7 +180,7 @@ namespace Lucene.Net.Facet
         /// </summary>
         private IList<MatchingDocs> CreateSampledDocs(ICollection<MatchingDocs> matchingDocsList)
         {
-            List<MatchingDocs> sampledDocsList = new List<MatchingDocs>(matchingDocsList.Count);
+            IList<MatchingDocs> sampledDocsList = new JCG.List<MatchingDocs>(matchingDocsList.Count);
             foreach (MatchingDocs docs in matchingDocsList)
             {
                 sampledDocsList.Add(CreateSample(docs));

@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -24,7 +24,6 @@ namespace Lucene.Net.Codecs.Memory
 
     using BytesRef = Util.BytesRef;
     using FieldInfo = Index.FieldInfo;
-    using FieldInfos = Index.FieldInfos;
     using FST = FST;
     using IndexFileNames = Index.IndexFileNames;
     using IndexOptions = Index.IndexOptions;
@@ -149,7 +148,7 @@ namespace Lucene.Net.Codecs.Memory
 
         private readonly PostingsWriterBase postingsWriter;
         //private readonly FieldInfos fieldInfos; // LUCENENET: Never read
-        private readonly IList<FieldMetaData> _fields = new List<FieldMetaData>();
+        private readonly IList<FieldMetaData> _fields = new JCG.List<FieldMetaData>();
 #pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexOutput blockOut = null;
         private readonly IndexOutput indexOut = null; // LUCENENET: marked readonly

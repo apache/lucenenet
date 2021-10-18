@@ -1,10 +1,11 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
@@ -45,7 +46,7 @@ namespace Lucene.Net.Index
         private Directory dir;
         private IndexReader reader;
         /* expected maxTermFrequency values for our documents */
-        private readonly List<int?> expected = new List<int?>();
+        private readonly IList<int?> expected = new JCG.List<int?>();
 
         [SetUp]
         public override void SetUp()
@@ -93,7 +94,7 @@ namespace Lucene.Net.Index
         /// </summary>
         private string AddValue()
         {
-            IList<string> terms = new List<string>();
+            IList<string> terms = new JCG.List<string>();
             int maxCeiling = TestUtil.NextInt32(Random, 0, 255);
             int max = 0;
             for (char ch = 'a'; ch <= 'z'; ch++)

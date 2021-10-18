@@ -145,7 +145,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             LineFileDocs lineFile = new LineFileDocs(Random);
             IDictionary<string, long> mapping = new JCG.Dictionary<string, long>();
-            List<Input> keys = new List<Input>();
+            IList<Input> keys = new JCG.List<Input>();
 
             int howMany = AtLeast(100); // this might bring up duplicates
             for (int i = 0; i < howMany; i++)
@@ -164,7 +164,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             bool doPayloads = Random.nextBoolean();
             if (doPayloads)
             {
-                List<Input> keysAndPayloads = new List<Input>();
+                IList<Input> keysAndPayloads = new JCG.List<Input>();
                 foreach (Input termFreq in keys)
                 {
                     keysAndPayloads.Add(new Input(termFreq.term, termFreq.v, new BytesRef(termFreq.v.ToString())));
@@ -778,7 +778,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             int numQueries = AtLeast(1000);
 
-            List<TermFreq2> slowCompletor = new List<TermFreq2>();
+            IList<TermFreq2> slowCompletor = new JCG.List<TermFreq2>();
             ISet<string> allPrefixes = new JCG.SortedSet<string>(StringComparer.Ordinal);
             ISet<string> seen = new JCG.HashSet<string>();
 
@@ -894,7 +894,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 // Don't just sort original list, to avoid VERBOSE
                 // altering the test:
-                List<TermFreq2> sorted = new List<TermFreq2>(slowCompletor);
+                IList<TermFreq2> sorted = new JCG.List<TermFreq2>(slowCompletor);
                 // LUCENENET NOTE: Must use TimSort because comparer is not expecting ties
                 CollectionUtil.TimSort(sorted);
                 foreach (TermFreq2 ent in sorted)
@@ -1491,7 +1491,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         internal static IEnumerable<Input> Shuffle(params Input[] values)
         {
-            IList<Input> asList = new List<Input>(values.Length);
+            IList<Input> asList = new JCG.List<Input>(values.Length);
             foreach (Input value in values)
             {
                 asList.Add(value);

@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -126,7 +127,7 @@ namespace Lucene.Net.Search
                 : base(other, maxRAMMB, true)
             {
                 cachedScorer = new CachedScorer();
-                cachedScores = new List<float[]>();
+                cachedScores = new JCG.List<float[]>();
                 curScores = new float[INITIAL_ARRAY_SIZE];
                 cachedScores.Add(curScores);
             }
@@ -135,7 +136,7 @@ namespace Lucene.Net.Search
                 : base(other, maxDocsToCache)
             {
                 cachedScorer = new CachedScorer();
-                cachedScores = new List<float[]>();
+                cachedScores = new JCG.List<float[]>();
                 curScores = new float[INITIAL_ARRAY_SIZE];
                 cachedScores.Add(curScores);
             }
@@ -356,7 +357,7 @@ namespace Lucene.Net.Search
         protected readonly ICollector m_other;
 
         protected readonly int m_maxDocsToCache;
-        private readonly IList<SegStart> m_cachedSegs = new List<SegStart>();
+        private readonly IList<SegStart> m_cachedSegs = new JCG.List<SegStart>();
         protected readonly IList<int[]> m_cachedDocs;
 
         private AtomicReaderContext lastReaderContext;
@@ -443,7 +444,7 @@ namespace Lucene.Net.Search
         {
             this.m_other = other;
 
-            m_cachedDocs = new List<int[]>();
+            m_cachedDocs = new JCG.List<int[]>();
             m_curDocs = new int[INITIAL_ARRAY_SIZE];
             m_cachedDocs.Add(m_curDocs);
 
@@ -459,7 +460,7 @@ namespace Lucene.Net.Search
         {
             this.m_other = other;
 
-            m_cachedDocs = new List<int[]>();
+            m_cachedDocs = new JCG.List<int[]>();
             m_curDocs = new int[INITIAL_ARRAY_SIZE];
             m_cachedDocs.Add(m_curDocs);
             this.m_maxDocsToCache = maxDocsToCache;

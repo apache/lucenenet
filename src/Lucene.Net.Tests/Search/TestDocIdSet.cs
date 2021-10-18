@@ -1,8 +1,9 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -46,7 +47,7 @@ namespace Lucene.Net.Search
             DocIdSet filteredSet = new FilteredDocIdSetAnonymousClass(this, innerSet);
 
             DocIdSetIterator iter = filteredSet.GetIterator();
-            List<int?> list = new List<int?>();
+            IList<int?> list = new JCG.List<int?>();
             int doc = iter.Advance(3);
             if (doc != DocIdSetIterator.NO_MORE_DOCS)
             {

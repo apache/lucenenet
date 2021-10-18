@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
@@ -107,7 +108,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         internal CharBlockArray(int blockSize)
         {
-            this.blocks = new List<Block>();
+            this.blocks = new JCG.List<Block>();
             this.blockSize = blockSize;
             AddBlock();
         }
@@ -294,7 +295,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             {
                 case serialVersionUID:
                     var blocksCount = reader.ReadInt32();
-                    this.blocks = new List<Block>(blocksCount);
+                    this.blocks = new JCG.List<Block>(blocksCount);
                     for (int i = 0; i < blocksCount; i++)
                     {
                         blocks.Add(new Block(reader));

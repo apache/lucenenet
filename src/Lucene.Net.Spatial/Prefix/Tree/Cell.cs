@@ -1,10 +1,10 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
@@ -207,7 +207,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 return cells;
             }
             //TODO change API to return a filtering iterator
-            IList<Cell> copy = new List<Cell>(cells.Count);
+            IList<Cell> copy = new JCG.List<Cell>(cells.Count);
             foreach (Cell cell in cells)
             {
                 SpatialRelation rel = cell.Shape.Relate(shapeFilter);

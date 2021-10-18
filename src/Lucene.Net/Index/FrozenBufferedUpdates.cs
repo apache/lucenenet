@@ -1,8 +1,9 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -103,7 +104,7 @@ namespace Lucene.Net.Index
             // so that it maps to all fields it affects, sorted by their docUpto, and traverse
             // that Term only once, applying the update to all fields that still need to be
             // updated.
-            IList<NumericDocValuesUpdate> allNumericUpdates = new List<NumericDocValuesUpdate>();
+            IList<NumericDocValuesUpdate> allNumericUpdates = new JCG.List<NumericDocValuesUpdate>();
             int numericUpdatesSize = 0;
             foreach (var numericUpdates in deletes.numericUpdates.Values)
             {
@@ -119,7 +120,7 @@ namespace Lucene.Net.Index
             // so that it maps to all fields it affects, sorted by their docUpto, and traverse
             // that Term only once, applying the update to all fields that still need to be
             // updated.
-            IList<BinaryDocValuesUpdate> allBinaryUpdates = new List<BinaryDocValuesUpdate>();
+            IList<BinaryDocValuesUpdate> allBinaryUpdates = new JCG.List<BinaryDocValuesUpdate>();
             int binaryUpdatesSize = 0;
             foreach (var binaryUpdates in deletes.binaryUpdates.Values)
             {

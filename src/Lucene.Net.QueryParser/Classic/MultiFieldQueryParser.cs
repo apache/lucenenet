@@ -3,6 +3,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Classic
 {
@@ -109,7 +110,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (field == null)
             {
-                IList<BooleanClause> clauses = new List<BooleanClause>();
+                IList<BooleanClause> clauses = new JCG.List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
                 {
                     Query q = base.GetFieldQuery(m_fields[i], queryText, true);
@@ -152,7 +153,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (field == null)
             {
-                IList<BooleanClause> clauses = new List<BooleanClause>();
+                IList<BooleanClause> clauses = new JCG.List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
                 {
                     Query q = base.GetFieldQuery(m_fields[i], queryText, quoted);
@@ -180,7 +181,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (field == null)
             {
-                IList<BooleanClause> clauses = new List<BooleanClause>();
+                IList<BooleanClause> clauses = new JCG.List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
                 {
                     clauses.Add(new BooleanClause(GetFuzzyQuery(m_fields[i], termStr, minSimilarity), Occur.SHOULD));
@@ -194,7 +195,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (field == null)
             {
-                IList<BooleanClause> clauses = new List<BooleanClause>();
+                IList<BooleanClause> clauses = new JCG.List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
                 {
                     clauses.Add(new BooleanClause(GetPrefixQuery(m_fields[i], termStr), Occur.SHOULD));
@@ -208,7 +209,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (field == null)
             {
-                IList<BooleanClause> clauses = new List<BooleanClause>();
+                IList<BooleanClause> clauses = new JCG.List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
                 {
                     clauses.Add(new BooleanClause(GetWildcardQuery(m_fields[i], termStr), Occur.SHOULD));
@@ -223,7 +224,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (field == null)
             {
-                IList<BooleanClause> clauses = new List<BooleanClause>();
+                IList<BooleanClause> clauses = new JCG.List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
                 {
                     clauses.Add(new BooleanClause(GetRangeQuery(m_fields[i], part1, part2, startInclusive, endInclusive), Occur.SHOULD));
@@ -237,7 +238,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (field == null)
             {
-                IList<BooleanClause> clauses = new List<BooleanClause>();
+                IList<BooleanClause> clauses = new JCG.List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
                 {
                     clauses.Add(new BooleanClause(GetRegexpQuery(m_fields[i], termStr),

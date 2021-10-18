@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -187,8 +188,8 @@ namespace Lucene.Net.Index
                     {
                         if (type == DocValuesType.NUMERIC)
                         {
-                            IList<NumericDocValues> toMerge = new List<NumericDocValues>();
-                            IList<IBits> docsWithField = new List<IBits>();
+                            IList<NumericDocValues> toMerge = new JCG.List<NumericDocValues>();
+                            IList<IBits> docsWithField = new JCG.List<IBits>();
                             foreach (AtomicReader reader in mergeState.Readers)
                             {
                                 NumericDocValues values = reader.GetNumericDocValues(field.Name);
@@ -205,8 +206,8 @@ namespace Lucene.Net.Index
                         }
                         else if (type == DocValuesType.BINARY)
                         {
-                            IList<BinaryDocValues> toMerge = new List<BinaryDocValues>();
-                            IList<IBits> docsWithField = new List<IBits>();
+                            IList<BinaryDocValues> toMerge = new JCG.List<BinaryDocValues>();
+                            IList<IBits> docsWithField = new JCG.List<IBits>();
                             foreach (AtomicReader reader in mergeState.Readers)
                             {
                                 BinaryDocValues values = reader.GetBinaryDocValues(field.Name);
@@ -223,7 +224,7 @@ namespace Lucene.Net.Index
                         }
                         else if (type == DocValuesType.SORTED)
                         {
-                            IList<SortedDocValues> toMerge = new List<SortedDocValues>();
+                            IList<SortedDocValues> toMerge = new JCG.List<SortedDocValues>();
                             foreach (AtomicReader reader in mergeState.Readers)
                             {
                                 SortedDocValues values = reader.GetSortedDocValues(field.Name);
@@ -237,7 +238,7 @@ namespace Lucene.Net.Index
                         }
                         else if (type == DocValuesType.SORTED_SET)
                         {
-                            IList<SortedSetDocValues> toMerge = new List<SortedSetDocValues>();
+                            IList<SortedSetDocValues> toMerge = new JCG.List<SortedSetDocValues>();
                             foreach (AtomicReader reader in mergeState.Readers)
                             {
                                 SortedSetDocValues values = reader.GetSortedSetDocValues(field.Name);
@@ -280,8 +281,8 @@ namespace Lucene.Net.Index
                 {
                     if (field.HasNorms)
                     {
-                        IList<NumericDocValues> toMerge = new List<NumericDocValues>();
-                        IList<IBits> docsWithField = new List<IBits>();
+                        IList<NumericDocValues> toMerge = new JCG.List<NumericDocValues>();
+                        IList<IBits> docsWithField = new JCG.List<IBits>();
                         foreach (AtomicReader reader in mergeState.Readers)
                         {
                             NumericDocValues norms = reader.GetNormValues(field.Name);
@@ -439,8 +440,8 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void MergeTerms(SegmentWriteState segmentWriteState)
         {
-            IList<Fields> fields = new List<Fields>();
-            IList<ReaderSlice> slices = new List<ReaderSlice>();
+            IList<Fields> fields = new JCG.List<Fields>();
+            IList<ReaderSlice> slices = new JCG.List<ReaderSlice>();
 
             int docBase = 0;
 

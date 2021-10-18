@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -82,9 +82,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         private string factoryName = null;
         private int? positionIncrementGap = null;
         private int? offsetGap = null;
-        private readonly IList<CharFilterFactory> charFilterFactories = new List<CharFilterFactory>();
+        private readonly IList<CharFilterFactory> charFilterFactories = new JCG.List<CharFilterFactory>();
         private TokenizerFactory tokenizerFactory = null;
-        private readonly IList<TokenFilterFactory> tokenFilterFactories = new List<TokenFilterFactory>();
+        private readonly IList<TokenFilterFactory> tokenFilterFactories = new JCG.List<TokenFilterFactory>();
 
         public AnalyzerFactoryTask(PerfRunData runData)
             : base(runData)

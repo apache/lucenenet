@@ -38,7 +38,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         protected virtual void Recompose(IList<SrndQuery> queries)
         {
             if (queries.Count < 2) throw AssertionError.Create("Too few subqueries");
-            this.m_queries = new List<SrndQuery>(queries);
+            this.m_queries = new JCG.List<SrndQuery>(queries);
         }
 
         protected string m_opName;

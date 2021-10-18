@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -262,7 +263,7 @@ namespace Lucene.Net.Search
                 {
                     Console.WriteLine("iter=" + iter);
                 }
-                IList<string> terms = new List<string> { "a", "b", "c", "d", "e", "f" };
+                IList<string> terms = new JCG.List<string> { "a", "b", "c", "d", "e", "f" };
                 int numTerms = TestUtil.NextInt32(Random, 1, terms.Count);
                 while (terms.Count > numTerms)
                 {
@@ -285,7 +286,7 @@ namespace Lucene.Net.Search
                 Scorer scorer = weight.GetScorer(s.m_leafContexts[0], null);
 
                 // First pass: just use .NextDoc() to gather all hits
-                IList<ScoreDoc> hits = new List<ScoreDoc>();
+                IList<ScoreDoc> hits = new JCG.List<ScoreDoc>();
                 while (scorer.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                 {
                     hits.Add(new ScoreDoc(scorer.DocID, scorer.GetScore()));

@@ -1,6 +1,7 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -302,7 +303,7 @@ namespace Lucene.Net.Search
         {
             if (optionalScorers.Count == minNrShouldMatch) // all optional scorers also required.
             {
-                List<Scorer> allReq = new List<Scorer>(requiredScorers);
+                JCG.List<Scorer> allReq = new JCG.List<Scorer>(requiredScorers);
                 allReq.AddRange(optionalScorers);
                 return AddProhibitedScorers(CountingConjunctionSumScorer(/* disableCoord, // LUCENENET: Not Referenced */ allReq));
             } // optionalScorers.size() > minNrShouldMatch, and at least one required scorer
@@ -359,7 +360,7 @@ namespace Lucene.Net.Search
 
         public override ICollection<ChildScorer> GetChildren()
         {
-            List<ChildScorer> children = new List<ChildScorer>();
+            IList<ChildScorer> children = new JCG.List<ChildScorer>();
             foreach (Scorer s in optionalScorers)
             {
                 children.Add(new ChildScorer(s, "SHOULD"));

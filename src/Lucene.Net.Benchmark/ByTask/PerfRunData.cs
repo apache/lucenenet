@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask
 {
@@ -148,7 +149,7 @@ namespace Lucene.Net.Benchmarks.ByTask
                           docMaker, facetSource, contentSource);
 
                 // close all perf objects that are closeable.
-                List<IDisposable> perfObjectsToClose = new List<IDisposable>();
+                IList<IDisposable> perfObjectsToClose = new JCG.List<IDisposable>();
                 foreach (object obj in perfObjects.Values)
                 {
                     if (obj is IDisposable disposable)

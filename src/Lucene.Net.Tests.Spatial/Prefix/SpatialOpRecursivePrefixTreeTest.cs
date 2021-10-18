@@ -185,13 +185,13 @@ namespace Lucene.Net.Spatial.Prefix
                 IList<IShape> shapes;
                 if (shape is ShapePair)
                 {
-                    shapes = new List<IShape>(2);
+                    shapes = new JCG.List<IShape>(2);
                     shapes.Add(((ShapePair)shape).shape1);
                     shapes.Add(((ShapePair)shape).shape2);
                 }
                 else
                 {
-                    shapes = new List<IShape>(new IShape[] { shape });//Collections.Singleton(shape);
+                    shapes = new JCG.List<IShape>(new IShape[] { shape });//Collections.Singleton(shape);
                 }
                 foreach (IShape shapei in shapes)
                 {
@@ -414,7 +414,7 @@ namespace Lucene.Net.Spatial.Prefix
             IList<Cell> cells = grid.GetCells(snapMe, detailLevel, false, true);
 
             //calc bounding box of cells.
-            List<IShape> cellShapes = new List<IShape>(cells.size());
+            IList<IShape> cellShapes = new JCG.List<IShape>(cells.size());
             foreach (Cell cell in cells)
             {
                 cellShapes.Add(cell.Shape);
@@ -437,7 +437,7 @@ namespace Lucene.Net.Spatial.Prefix
             internal bool biasContainsThenWithin;//a hack
 
             public ShapePair(IShape shape1, IShape shape2, bool containsThenWithin, SpatialContext ctx)
-                        : base(new List<IShape> { shape1, shape2 }, ctx)
+                        : base(new JCG.List<IShape> { shape1, shape2 }, ctx)
             {
                 this.ctx = ctx;
 

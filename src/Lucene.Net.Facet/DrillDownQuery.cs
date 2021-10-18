@@ -293,8 +293,8 @@ namespace Lucene.Net.Facet
                 return new MatchAllDocsQuery();
             }
 
-            IList<Filter> filters = new List<Filter>();
-            IList<Query> queries = new List<Query>();
+            IList<Filter> filters = new JCG.List<Filter>();
+            IList<Query> queries = new JCG.List<Query>();
             IList<BooleanClause> clauses = query.Clauses;
             Query baseQuery;
             int startIndex;

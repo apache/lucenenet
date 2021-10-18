@@ -191,7 +191,7 @@ namespace Lucene.Net.Search
                 IndexReaderContext context = searcher.TopReaderContext;
 
                 // compute idf
-                var allTermStats = new List<TermStatistics>();
+                var allTermStats = new JCG.List<TermStatistics>();
                 foreach (Term[] terms in outerInstance.termArrays)
                 {
                     foreach (Term term in terms)

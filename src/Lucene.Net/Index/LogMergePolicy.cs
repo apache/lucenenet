@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -561,7 +562,7 @@ namespace Lucene.Net.Index
 
             // Compute levels, which is just log (base mergeFactor)
             // of the size of each segment
-            IList<SegmentInfoAndLevel> levels = new List<SegmentInfoAndLevel>();
+            IList<SegmentInfoAndLevel> levels = new JCG.List<SegmentInfoAndLevel>();
             var norm = (float)Math.Log(m_mergeFactor);
 
             ICollection<SegmentCommitInfo> mergingSegments = m_writer.Get().MergingSegments;
@@ -688,7 +689,7 @@ namespace Lucene.Net.Index
                         {
                             spec = new MergeSpecification();
                         }
-                        IList<SegmentCommitInfo> mergeInfos = new List<SegmentCommitInfo>();
+                        IList<SegmentCommitInfo> mergeInfos = new JCG.List<SegmentCommitInfo>();
                         for (int i = start; i < end; i++)
                         {
                             mergeInfos.Add(levels[i].info);

@@ -3,7 +3,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using Lucene.Net.Util.Fst;
 using System.Collections.Generic;
-using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -70,8 +70,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public static IList<Path<T>> IntersectPrefixPaths<T>(Automaton a, FST<T> fst)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(a.IsDeterministic);
-            IList<Path<T>> queue = new List<Path<T>>();
-            List<Path<T>> endNodes = new List<Path<T>>();
+            IList<Path<T>> queue = new JCG.List<Path<T>>();
+            IList<Path<T>> endNodes = new JCG.List<Path<T>>();
             queue.Add(new Path<T>(a.GetInitialState(), fst.GetFirstArc(new FST.Arc<T>()), fst.Outputs.NoOutput, new Int32sRef()));
 
             FST.Arc<T> scratchArc = new FST.Arc<T>();

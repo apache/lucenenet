@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -136,7 +137,7 @@ namespace Lucene.Net.Index
             base.BeforeClass();
 
             assertFalse("test infra is broken!", OldFormatImpersonationIsActive);
-            List<string> names = new List<string>(oldNames.Length + oldSingleSegmentNames.Length);
+            JCG.List<string> names = new JCG.List<string>(oldNames.Length + oldSingleSegmentNames.Length);
             names.AddRange(oldNames);
             names.AddRange(oldSingleSegmentNames);
             oldIndexDirs = new Dictionary<string, Directory>();
@@ -890,7 +891,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestUpgradeOldIndex()
         {
-            List<string> names = new List<string>(oldNames.Length + oldSingleSegmentNames.Length);
+            JCG.List<string> names = new JCG.List<string>(oldNames.Length + oldSingleSegmentNames.Length);
             names.AddRange(oldNames);
             names.AddRange(oldSingleSegmentNames);
             foreach (string name in names)

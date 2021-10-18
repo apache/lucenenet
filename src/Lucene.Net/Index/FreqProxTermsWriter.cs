@@ -1,6 +1,7 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -42,7 +43,7 @@ namespace Lucene.Net.Index
         {
             // Gather all FieldData's that have postings, across all
             // ThreadStates
-            IList<FreqProxTermsWriterPerField> allFields = new List<FreqProxTermsWriterPerField>();
+            IList<FreqProxTermsWriterPerField> allFields = new JCG.List<FreqProxTermsWriterPerField>();
 
             foreach (TermsHashConsumerPerField f in fieldsToFlush.Values)
             {

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Float = J2N.Numerics.Single;
+using JCG = J2N.Collections.Generic;
 using QueryPhraseMap = Lucene.Net.Search.VectorHighlight.FieldQuery.QueryPhraseMap;
 using TermInfo = Lucene.Net.Search.VectorHighlight.FieldTermStack.TermInfo;
 
@@ -35,7 +36,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <summary>
         /// List of non-overlapping <see cref="WeightedPhraseInfo"/> objects.
         /// </summary>
-        internal List<WeightedPhraseInfo> phraseList = new List<WeightedPhraseInfo>();
+        internal IList<WeightedPhraseInfo> phraseList = new JCG.List<WeightedPhraseInfo>();
 
         /// <summary>
         /// create a <see cref="FieldPhraseList"/> that has no limit on the number of phrases to analyze
@@ -62,7 +63,7 @@ namespace Lucene.Net.Search.VectorHighlight
         {
             string field = fieldTermStack.FieldName;
 
-            List<TermInfo> phraseCandidate = new List<TermInfo>();
+            IList<TermInfo> phraseCandidate = new JCG.List<TermInfo>();
             QueryPhraseMap currMap; // LUCENENET: IDE0059: Remove unnecessary value assignment
             QueryPhraseMap nextMap; // LUCENENET: IDE0059: Remove unnecessary value assignment
             while (!fieldTermStack.IsEmpty && (phraseList.Count < phraseLimit))
@@ -156,12 +157,12 @@ namespace Lucene.Net.Search.VectorHighlight
                 }
                 using MergedEnumerator<WeightedPhraseInfo> itr = new MergedEnumerator<WeightedPhraseInfo>(false, allInfos);
                 // Step 2.  Walk the sorted list merging infos that overlap
-                phraseList = new List<WeightedPhraseInfo>();
+                phraseList = new JCG.List<WeightedPhraseInfo>();
                 if (!itr.MoveNext())
                 {
                     return;
                 }
-                List<WeightedPhraseInfo> work = new List<WeightedPhraseInfo>();
+                IList<WeightedPhraseInfo> work = new JCG.List<WeightedPhraseInfo>();
                 WeightedPhraseInfo first = itr.Current;
                 work.Add(first);
                 int workEndOffset = first.EndOffset;
@@ -225,12 +226,12 @@ namespace Lucene.Net.Search.VectorHighlight
         /// </summary>
         public class WeightedPhraseInfo : IComparable<WeightedPhraseInfo>, IFormattable // LUCENENET specific - implemented IFormattable for floating point representations
         {
-            private readonly List<Toffs> termsOffsets;   // usually termsOffsets.size() == 1, // LUCENENET: marked readonly
+            private readonly IList<Toffs> termsOffsets;   // usually termsOffsets.size() == 1, // LUCENENET: marked readonly
                                                          // but if position-gap > 1 and slop > 0 then size() could be greater than 1
             private readonly float boost;  // query boost // LUCENENET: marked readonly
             private readonly int seqnum; // LUCENENET: marked readonly
 
-            private readonly List<TermInfo> termsInfos; // LUCENENET: marked readonly
+            private readonly JCG.List<TermInfo> termsInfos; // LUCENENET: marked readonly
 
             /// <summary>
             /// Text of the match, calculated on the fly.  Use for debugging only.
@@ -272,9 +273,9 @@ namespace Lucene.Net.Search.VectorHighlight
                 this.seqnum = seqnum;
 
                 // We keep TermInfos for further operations
-                termsInfos = new List<TermInfo>(terms);
+                termsInfos = new JCG.List<TermInfo>(terms);
 
-                termsOffsets = new List<Toffs>(terms.Count);
+                termsOffsets = new JCG.List<Toffs>(terms.Count);
                 TermInfo ti = terms[0];
                 termsOffsets.Add(new Toffs(ti.StartOffset, ti.EndOffset));
                 if (terms.Count == 1)
@@ -317,7 +318,7 @@ namespace Lucene.Net.Search.VectorHighlight
                     }
                     WeightedPhraseInfo first = toMergeItr.Current;
 
-                    termsInfos = new List<TermInfo>();
+                    termsInfos = new JCG.List<TermInfo>();
                     seqnum = first.seqnum;
                     boost = first.boost;
                     allToffs[0] = first.termsOffsets.GetEnumerator();
@@ -332,7 +333,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
                     // Step 2.  Walk the sorted list merging overlaps
                     using MergedEnumerator<Toffs> itr = new MergedEnumerator<Toffs>(false, allToffs);
-                    termsOffsets = new List<Toffs>();
+                    termsOffsets = new JCG.List<Toffs>();
                     if (!itr.MoveNext())
                     {
                         return;

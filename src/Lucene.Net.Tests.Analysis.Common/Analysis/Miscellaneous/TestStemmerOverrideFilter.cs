@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using J2N.Collections.Generic.Extensions;
 using J2N.Text;
@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -100,7 +101,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(Random.nextBoolean());
             IDictionary<string, string> entrySet = map;
             StringBuilder input = new StringBuilder();
-            IList<string> output = new List<string>();
+            IList<string> output = new JCG.List<string>();
             foreach (KeyValuePair<string, string> entry in entrySet)
             {
                 builder.Add(entry.Key, entry.Value);

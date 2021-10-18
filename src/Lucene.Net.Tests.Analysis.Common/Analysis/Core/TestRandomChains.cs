@@ -60,9 +60,9 @@ namespace Lucene.Net.Analysis.Core
     public class TestRandomChains : BaseTokenStreamTestCase
     {
 
-        internal static List<ConstructorInfo> tokenizers;
-        internal static List<ConstructorInfo> tokenfilters;
-        internal static List<ConstructorInfo> charfilters;
+        internal static IList<ConstructorInfo> tokenizers;
+        internal static IList<ConstructorInfo> tokenfilters;
+        internal static IList<ConstructorInfo> charfilters;
 
         private interface IPredicate<T>
         {
@@ -207,9 +207,9 @@ namespace Lucene.Net.Analysis.Core
                         && (typeInfo.IsSubclassOf(typeof(Tokenizer)) || typeInfo.IsSubclassOf(typeof(TokenFilter)) || typeInfo.IsSubclassOf(typeof(CharFilter)));
                 })
                 .ToArray();
-            tokenizers = new List<ConstructorInfo>();
-            tokenfilters = new List<ConstructorInfo>();
-            charfilters = new List<ConstructorInfo>();
+            tokenizers = new JCG.List<ConstructorInfo>();
+            tokenfilters = new JCG.List<ConstructorInfo>();
+            charfilters = new JCG.List<ConstructorInfo>();
             foreach (Type c in analysisClasses)
             {
                 foreach (ConstructorInfo ctor in c.GetConstructors())
@@ -447,7 +447,7 @@ namespace Lucene.Net.Analysis.Core
             public object Create(Random random)
             {
                 // CapitalizationFilter
-                ICollection<char[]> col = new List<char[]>();
+                ICollection<char[]> col = new JCG.List<char[]>();
                 int num = random.nextInt(5);
                 for (int i = 0; i < num; i++)
                 {

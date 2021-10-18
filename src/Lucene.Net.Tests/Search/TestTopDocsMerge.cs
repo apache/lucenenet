@@ -4,6 +4,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -51,7 +52,7 @@ namespace Lucene.Net.Search
             public ShardSearcher(AtomicReaderContext ctx, IndexReaderContext parent)
                 : base(parent)
             {
-                this.ctx = new List<AtomicReaderContext> { ctx };
+                this.ctx = new JCG.List<AtomicReaderContext> { ctx };
             }
 
             public virtual void Search(Weight weight, ICollector collector)
@@ -202,7 +203,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            IList<SortField> sortFields = new List<SortField>();
+            IList<SortField> sortFields = new JCG.List<SortField>();
             sortFields.Add(new SortField("string", SortFieldType.STRING, true));
             sortFields.Add(new SortField("string", SortFieldType.STRING, false));
             sortFields.Add(new SortField("int", SortFieldType.INT32, true));

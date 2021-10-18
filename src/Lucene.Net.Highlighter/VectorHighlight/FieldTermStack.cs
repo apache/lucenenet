@@ -3,9 +3,9 @@ using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.VectorHighlight
 {
@@ -33,7 +33,7 @@ namespace Lucene.Net.Search.VectorHighlight
     public class FieldTermStack
     {
         private readonly string fieldName;
-        internal List<TermInfo> termList = new List<TermInfo>();
+        internal IList<TermInfo> termList = new JCG.List<TermInfo>();
 
         //public static void main( string[] args ) throws Exception {
         //  Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_CURRENT);

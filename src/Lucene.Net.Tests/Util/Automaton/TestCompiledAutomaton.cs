@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -31,7 +31,7 @@ namespace Lucene.Net.Util.Automaton
     {
         private CompiledAutomaton Build(params string[] strings)
         {
-            List<BytesRef> terms = new List<BytesRef>();
+            IList<BytesRef> terms = new JCG.List<BytesRef>();
             foreach (string s in strings)
             {
                 terms.Add(new BytesRef(s));

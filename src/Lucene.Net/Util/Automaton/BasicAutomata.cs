@@ -1,9 +1,10 @@
-using J2N;
+﻿using J2N;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 /*
  * dk.brics.automaton
@@ -282,11 +283,11 @@ namespace Lucene.Net.Util.Automaton
             }
             by.Append(y);
             y = by.ToString();
-            ICollection<State> initials = new List<State>();
+            ICollection<State> initials = new JCG.List<State>();
             a.initial = Between(x, y, 0, initials, digits <= 0);
             if (digits <= 0)
             {
-                List<StatePair> pairs = new List<StatePair>();
+                JCG.List<StatePair> pairs = new JCG.List<StatePair>();
                 foreach (State p in initials)
                 {
                     if (a.initial != p)

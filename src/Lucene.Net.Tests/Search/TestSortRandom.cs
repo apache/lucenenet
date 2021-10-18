@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
             }
 
             int numDocs = 0;
-            IList<BytesRef> docValues = new List<BytesRef>();
+            IList<BytesRef> docValues = new JCG.List<BytesRef>();
             // TODO: deletions
             while (numDocs < NUM_DOCS)
             {

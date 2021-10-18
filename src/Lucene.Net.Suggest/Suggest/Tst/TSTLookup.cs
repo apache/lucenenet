@@ -3,6 +3,7 @@ using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Tst
 {
@@ -69,8 +70,8 @@ namespace Lucene.Net.Search.Suggest.Tst
             }
 #pragma warning restore 612, 618
 
-            List<string> tokens = new List<string>();
-            List<object> vals = new List<object>();
+            JCG.List<string> tokens = new JCG.List<string>();
+            JCG.List<object> vals = new JCG.List<object>();
             BytesRef spare;
             CharsRef charsSpare = new CharsRef();
             while (enumerator.MoveNext())
@@ -143,7 +144,7 @@ namespace Lucene.Net.Search.Suggest.Tst
                 throw new ArgumentException("this suggester doesn't support contexts");
             }
             IList<TernaryTreeNode> list = autocomplete.PrefixCompletion(root, key, 0);
-            List<LookupResult> res = new List<LookupResult>();
+            IList<LookupResult> res = new JCG.List<LookupResult>();
             if (list == null || list.Count == 0)
             {
                 return res;

@@ -452,7 +452,7 @@ namespace Lucene.Net.Util.Automaton
                     Transition t = s.TransitionsArray[i];
                     if (!allArriving.TryGetValue(t.to, out IList<ArrivingTransition> tl) || tl == null)
                     {
-                        tl = new List<ArrivingTransition>();
+                        tl = new JCG.List<ArrivingTransition>();
                         allArriving[t.to] = tl;
                     }
                     tl.Add(new ArrivingTransition(s, t));
@@ -487,7 +487,7 @@ namespace Lucene.Net.Util.Automaton
 
         public int[] GetRandomAcceptedString(Random r)
         {
-            List<int> soFar = new List<int>();
+            JCG.List<int> soFar = new JCG.List<int>();
             if (a.IsSingleton)
             {
                 // accepts only one
@@ -535,7 +535,7 @@ namespace Lucene.Net.Util.Automaton
                     {
                         // pick a transition that we know is the fastest
                         // path to an accept state
-                        IList<Transition> toAccept = new List<Transition>();
+                        IList<Transition> toAccept = new JCG.List<Transition>();
                         for (int i = 0; i < s.numTransitions; i++)
                         {
                             Transition t0 = s.TransitionsArray[i];

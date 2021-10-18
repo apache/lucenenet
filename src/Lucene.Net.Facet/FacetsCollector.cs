@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet
 {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Facet
         private int totalHits;
         private float[] scores;
         private readonly bool keepScores;
-        private readonly List<MatchingDocs> matchingDocs = new List<MatchingDocs>();
+        private readonly IList<MatchingDocs> matchingDocs = new JCG.List<MatchingDocs>();
         private Docs docs;
 
         /// <summary>

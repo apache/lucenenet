@@ -8,6 +8,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.IO;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -500,7 +501,7 @@ namespace Lucene.Net.Store
         private static void Search(Index.IndexReader r, int times)
         {
             var searcher = new Search.IndexSearcher(r);
-            var docs = new System.Collections.Generic.List<Documents.Document>(10000);
+            var docs = new JCG.List<Documents.Document>(10000);
             for (int i = 0; i < times; i++)
             {
                 var q = new Search.TermQuery(new Index.Term("title", "volume"));

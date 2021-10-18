@@ -126,7 +126,7 @@ namespace Lucene.Net.Search.Grouping
                 BuildSortedSet();
             }
 
-            ICollection<ISearchGroup<TGroupValue>> result = new List<ISearchGroup<TGroupValue>>();
+            ICollection<ISearchGroup<TGroupValue>> result = new JCG.List<ISearchGroup<TGroupValue>>();
             int upto = 0;
             int sortFieldCount = groupSort.GetSort().Length;
             foreach (CollectedSearchGroup<TGroupValue> group in m_orderedGroups)

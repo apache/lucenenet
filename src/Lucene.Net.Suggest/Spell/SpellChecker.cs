@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using Directory = Lucene.Net.Store.Directory;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell
 {
@@ -504,7 +505,7 @@ namespace Lucene.Net.Search.Spell
                 using (var writer = new IndexWriter(dir, config))
                 {
                     IndexSearcher indexSearcher = ObtainSearcher();
-                    IList<TermsEnum> termsEnums = new List<TermsEnum>();
+                    IList<TermsEnum> termsEnums = new JCG.List<TermsEnum>();
 
                     IndexReader reader = searcher.IndexReader;
                     if (reader.MaxDoc > 0)

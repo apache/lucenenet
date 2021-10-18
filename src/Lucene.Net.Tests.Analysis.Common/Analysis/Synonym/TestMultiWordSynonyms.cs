@@ -1,9 +1,10 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -35,7 +36,7 @@ namespace Lucene.Net.Analysis.Synonym
         [Obsolete("Remove this test in 5.0")]
         public virtual void TestMultiWordSynonymsOld()
         {
-            IList<string> rules = new List<string>();
+            IList<string> rules = new JCG.List<string>();
             rules.Add("a b c,d");
             SlowSynonymMap synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);

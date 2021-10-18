@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 using WeightedPhraseInfo = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo;
 
 namespace Lucene.Net.Search.VectorHighlight
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.VectorHighlight
             if (fragCharSize < minFragCharSize)
                 throw new ArgumentOutOfRangeException(nameof(fragCharSize), "fragCharSize(" + fragCharSize + ") is too small. It must be " + minFragCharSize + " or higher."); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
 
-            List<WeightedPhraseInfo> wpil = new List<WeightedPhraseInfo>();
+            JCG.List<WeightedPhraseInfo> wpil = new JCG.List<WeightedPhraseInfo>();
             using (IteratorQueue<WeightedPhraseInfo> queue = new IteratorQueue<WeightedPhraseInfo>(fieldPhraseList.PhraseList.GetEnumerator()))
             {
                 WeightedPhraseInfo phraseInfo = null;

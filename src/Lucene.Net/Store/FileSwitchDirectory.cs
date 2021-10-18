@@ -176,8 +176,8 @@ namespace Lucene.Net.Store
 
         public override void Sync(ICollection<string> names)
         {
-            IList<string> primaryNames = new List<string>();
-            IList<string> secondaryNames = new List<string>();
+            IList<string> primaryNames = new JCG.List<string>();
+            IList<string> secondaryNames = new JCG.List<string>();
 
             foreach (string name in names)
             {

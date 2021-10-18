@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -246,7 +247,7 @@ namespace Lucene.Net.Util
 
             output.Delete();
 
-            var merges = new List<FileInfo>();
+            var merges = new JCG.List<FileInfo>();
             bool success2 = false;
             try
             {

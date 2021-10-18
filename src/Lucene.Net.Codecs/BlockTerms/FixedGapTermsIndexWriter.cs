@@ -5,7 +5,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.BlockTerms
 {
@@ -51,7 +51,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private readonly int termIndexInterval;
 
-        private readonly IList<SimpleFieldWriter> fields = new List<SimpleFieldWriter>();
+        private readonly IList<SimpleFieldWriter> fields = new JCG.List<SimpleFieldWriter>();
 
         //private readonly FieldInfos fieldInfos; // unread  // LUCENENET: Not used
 

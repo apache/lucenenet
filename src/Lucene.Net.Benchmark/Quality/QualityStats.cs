@@ -2,9 +2,9 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.Quality
 {
@@ -74,7 +74,7 @@ namespace Lucene.Net.Benchmarks.Quality
         {
             this.maxGoodPoints = maxGoodPoints;
             this.searchTime = searchTime;
-            this.recallPoints = new List<RecallPoint>();
+            this.recallPoints = new JCG.List<RecallPoint>();
             pAt = new double[MAX_POINTS + 1]; // pAt[0] unused. 
         }
 

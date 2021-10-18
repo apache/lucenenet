@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -71,7 +72,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static Automaton ToAutomaton(Term wildcardquery)
         {
-            IList<Automaton> automata = new List<Automaton>();
+            IList<Automaton> automata = new JCG.List<Automaton>();
 
             string wildcardText = wildcardquery.Text;
 

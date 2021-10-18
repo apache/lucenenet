@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -554,7 +555,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 Facets facets = new TaxonomyFacetSumValueSource(tr, config, fc, values);
 
                 // Slow, yet hopefully bug-free, faceting:
-                var expectedValues = new List<Dictionary<string, float?>>(numDims);
+                var expectedValues = new JCG.List<Dictionary<string, float?>>(numDims);
                 for (int i = 0; i < numDims; i++)
                 {
                     expectedValues.Add(new Dictionary<string, float?>());
@@ -581,10 +582,10 @@ namespace Lucene.Net.Facet.Taxonomy
                     }
                 }
 
-                List<FacetResult> expected = new List<FacetResult>();
+                JCG.List<FacetResult> expected = new JCG.List<FacetResult>();
                 for (int i = 0; i < numDims; i++)
                 {
-                    List<LabelAndValue> labelValues = new List<LabelAndValue>();
+                    JCG.List<LabelAndValue> labelValues = new JCG.List<LabelAndValue>();
                     float totValue = 0;
                     foreach (KeyValuePair<string, float?> ent in expectedValues[i])
                     {

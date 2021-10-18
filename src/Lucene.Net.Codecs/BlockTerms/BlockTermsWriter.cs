@@ -5,6 +5,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.BlockTerms
 {
@@ -84,7 +85,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             }
         }
 
-        private readonly IList<FieldMetaData> fields = new List<FieldMetaData>();
+        private readonly IList<FieldMetaData> fields = new JCG.List<FieldMetaData>();
 
         // private final String segment;
 

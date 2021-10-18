@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Facet;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -81,7 +82,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             if (config != null)
             {
-                List<FacetField> facets = new List<FacetField>();
+                IList<FacetField> facets = new JCG.List<FacetField>();
                 RunData.FacetSource.GetNextFacets(facets);
                 foreach (FacetField ff in facets)
                 {

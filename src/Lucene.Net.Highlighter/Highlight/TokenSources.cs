@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Highlight
 {
@@ -213,7 +214,7 @@ namespace Lucene.Net.Search.Highlight
                 totalTokens += (int)termsEnum.TotalTermFreq;
             }
             Token[] tokensInOriginalOrder = new Token[totalTokens];
-            List<Token> unsortedTokens = null;
+            JCG.List<Token> unsortedTokens = null;
             termsEnum = tpv.GetEnumerator();
             DocsAndPositionsEnum dpEnum = null;
             while (termsEnum.MoveNext())
@@ -263,7 +264,7 @@ namespace Lucene.Net.Search.Highlight
                         // add to list and sort later
                         if (unsortedTokens == null)
                         {
-                            unsortedTokens = new List<Token>();
+                            unsortedTokens = new JCG.List<Token>();
                         }
                         unsortedTokens.Add(token);
                     }

@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis.Morfologik
 
             this.input = input;
             this.stemmer = new DictionaryLookup(dict);
-            this.lemmaList = new List<WordData>();
+            this.lemmaList = new JCG.List<WordData>();
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace Lucene.Net.Analysis.Morfologik
         public override void Reset()
         {
             lemmaListIndex = 0;
-            lemmaList = new List<WordData>();
+            lemmaList = new JCG.List<WordData>();
             tagsList.Clear();
             base.Reset();
         }

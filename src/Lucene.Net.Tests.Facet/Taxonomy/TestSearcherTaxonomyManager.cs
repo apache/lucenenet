@@ -71,7 +71,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 try
                 {
                     var seen = new JCG.HashSet<string>();
-                    IList<string> paths = new List<string>();
+                    IList<string> paths = new JCG.List<string>();
                     while (true)
                     {
                         Document doc = new Document();

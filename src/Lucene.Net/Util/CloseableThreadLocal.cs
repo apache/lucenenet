@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -203,7 +204,7 @@ namespace Lucene.Net.Util
 
             private void RemoveDisposedParents()
             {
-                var toRemove = new List<WeakReferenceCompareValue<DisposableThreadLocal<T>>>();
+                var toRemove = new JCG.List<WeakReferenceCompareValue<DisposableThreadLocal<T>>>();
                 foreach (var local in _parents)
                 {
                     if (local.TryGetTarget(out var target) == false || target._disposed)

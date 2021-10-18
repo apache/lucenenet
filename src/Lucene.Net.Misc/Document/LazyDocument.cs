@@ -70,7 +70,7 @@ namespace Lucene.Net.Documents
             fieldNames.Add(fieldInfo.Name);
             if (!fields.TryGetValue(fieldInfo.Number, out IList<LazyField> values) || null == values)
             {
-                values = new List<LazyField>();
+                values = new JCG.List<LazyField>();
                 fields[fieldInfo.Number] = values;
             }
 

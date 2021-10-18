@@ -7,6 +7,7 @@ using System.IO;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Classic
 {
@@ -212,7 +213,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         public Query Query(string field)
         {
-            List<BooleanClause> clauses = new List<BooleanClause>();
+            IList<BooleanClause> clauses = new JCG.List<BooleanClause>();
             Query q, firstQuery = null;
             int conj, mods;
             mods = Modifiers();
@@ -802,7 +803,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 return (jj_ntk = Jj_nt.Kind);
         }
 
-        private readonly List<int[]> jj_expentries = new List<int[]>(); // LUCENENET: marked readonly
+        private readonly IList<int[]> jj_expentries = new JCG.List<int[]>(); // LUCENENET: marked readonly
         private int[] jj_expentry;
         private int jj_kind = -1;
         private readonly int[] jj_lasttokens = new int[100]; // LUCENENET: marked readonly

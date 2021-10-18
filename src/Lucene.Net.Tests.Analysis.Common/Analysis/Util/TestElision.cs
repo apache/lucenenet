@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Fr;
 using Lucene.Net.Analysis.Standard;
@@ -6,6 +6,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -44,7 +45,7 @@ namespace Lucene.Net.Analysis.Util
 
         private IList<string> Filter(TokenFilter filter)
         {
-            IList<string> tas = new List<string>();
+            IList<string> tas = new JCG.List<string>();
             ICharTermAttribute termAtt = filter.GetAttribute<ICharTermAttribute>();
             filter.Reset();
             while (filter.IncrementToken())

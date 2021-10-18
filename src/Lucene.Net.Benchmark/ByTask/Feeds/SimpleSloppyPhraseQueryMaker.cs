@@ -1,7 +1,7 @@
 ﻿using J2N.Text;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -32,7 +32,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             // extract some 100 words from doc text to an array
             string[] words;
-            List<string> w = new List<string>();
+            JCG.List<string> w = new JCG.List<string>();
             StringTokenizer st = new StringTokenizer(SingleDocSource.DOC_TEXT);
             while (st.MoveNext() && w.Count < 100)
             {
@@ -41,7 +41,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             words = w.ToArray();
 
             // create queries (that would find stuff) with varying slops
-            List<Query> queries = new List<Query>();
+            JCG.List<Query> queries = new JCG.List<Query>();
             for (int slop = 0; slop < 8; slop++)
             {
                 for (int qlen = 2; qlen < 6; qlen++)

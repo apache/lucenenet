@@ -1,7 +1,6 @@
 ﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
-using Lucene.Net.Attributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -17,6 +16,7 @@ using System.IO;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -1645,7 +1645,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
             }
 
-            IList<Document> docs = new List<Document>();
+            IList<Document> docs = new JCG.List<Document>();
             for (int docCount = 0; docCount < 7; docCount++)
             {
                 Document doc = new Document();
@@ -1716,7 +1716,7 @@ namespace Lucene.Net.Index
             }
 
             // Use addDocs (no exception) to get docs in the index:
-            IList<Document> docs = new List<Document>();
+            IList<Document> docs = new JCG.List<Document>();
             int numDocs2 = Random.Next(25);
             for (int docCount = 0; docCount < numDocs2; docCount++)
             {
@@ -1895,7 +1895,7 @@ namespace Lucene.Net.Index
             {
                 doc = new Document();
                 // try to boost with norms omitted
-                IList<IIndexableField> list = new List<IIndexableField>();
+                IList<IIndexableField> list = new JCG.List<IIndexableField>();
                 list.Add(new IndexableFieldAnonymousClass());
                 iw.AddDocument(list);
                 Assert.Fail("didn't get any exception, boost silently discarded");

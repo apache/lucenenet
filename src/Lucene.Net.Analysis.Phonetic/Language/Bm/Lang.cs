@@ -146,7 +146,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         /// <returns>A Lang encapsulating the loaded language-guessing rules.</returns>
         public static Lang LoadFromResource(string languageRulesResourceName, Languages languages)
         {
-            IList<LangRule> rules = new List<LangRule>();
+            IList<LangRule> rules = new JCG.List<LangRule>();
             Stream lRulesIS = typeof(Lang).FindAndGetManifestResourceStream(languageRulesResourceName);
 
             if (lRulesIS == null)
@@ -249,7 +249,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 {
                     if (rule.acceptOnMatch)
                     {
-                        List<string> toRemove = new List<string>();
+                        IList<string> toRemove = new JCG.List<string>();
                         foreach (var item in langs)
                         {
                             if (!rule.languages.Contains(item))

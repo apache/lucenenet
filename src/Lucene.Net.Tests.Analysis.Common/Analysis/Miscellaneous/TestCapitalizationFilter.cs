@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -60,7 +61,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             AssertCapitalizesTo("McKinley", new string[] { "Mckinley" }, true, keep, true, null, 0, CapitalizationFilter.DEFAULT_MAX_WORD_COUNT, CapitalizationFilter.DEFAULT_MAX_TOKEN_LENGTH);
 
             // Now try some prefixes
-            IList<char[]> okPrefix = new List<char[]>();
+            IList<char[]> okPrefix = new JCG.List<char[]>();
             okPrefix.Add("McK".ToCharArray());
 
             AssertCapitalizesTo("McKinley", new string[] { "McKinley" }, true, keep, true, okPrefix, 0, CapitalizationFilter.DEFAULT_MAX_WORD_COUNT, CapitalizationFilter.DEFAULT_MAX_TOKEN_LENGTH);

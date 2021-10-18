@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -90,7 +90,7 @@ namespace Lucene.Net.Util
                 var array = allocated.ToArray();
                 int begin = Random.Next(array.Length);
                 int end = begin + Random.Next(array.Length - begin);
-                var selected = new List<byte[]>();
+                var selected = new JCG.List<byte[]>();
                 for (int j = begin; j < end; j++)
                 {
                     selected.Add(array[j]);

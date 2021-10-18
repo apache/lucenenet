@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial
 {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Spatial
          */
         public static IEnumerator<SpatialTestData> GetTestData(Stream @in, SpatialContext ctx)
         {
-            List<SpatialTestData> results = new List<SpatialTestData>();
+            IList<SpatialTestData> results = new JCG.List<SpatialTestData>();
             TextReader bufInput = new StreamReader(@in, Encoding.UTF8);
             try
             {

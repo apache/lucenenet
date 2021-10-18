@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet
 {
@@ -69,7 +70,7 @@ namespace Lucene.Net.Facet
 
         public override IList<FacetResult> GetAllDims(int topN)
         {
-            List<FacetResult> results = new List<FacetResult>();
+            IList<FacetResult> results = new JCG.List<FacetResult>();
 
             // First add the specific dim's facets:
             foreach (KeyValuePair<string, Facets> ent in dimToFacets)

@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -24,7 +24,6 @@ namespace Lucene.Net.Codecs.Memory
 
     using BytesRef = Util.BytesRef;
     using FieldInfo = Index.FieldInfo;
-    using FieldInfos = Index.FieldInfos;
     using FST = Util.Fst.FST;
     using IndexFileNames = Index.IndexFileNames;
     using IndexOptions = Index.IndexOptions;
@@ -126,7 +125,7 @@ namespace Lucene.Net.Codecs.Memory
 #pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexOutput _output;
 #pragma warning restore CA2213 // Disposable fields should be disposed
-        private readonly IList<FieldMetaData> _fields = new List<FieldMetaData>();
+        private readonly IList<FieldMetaData> _fields = new JCG.List<FieldMetaData>();
 
         public FSTTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter)
         {

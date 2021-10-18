@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -105,7 +106,7 @@ namespace Lucene.Net.Util
 
         private byte[][] GenerateRandom(int howMuchData)
         {
-            List<byte[]> data = new List<byte[]>();
+            JCG.List<byte[]> data = new JCG.List<byte[]>();
             while (howMuchData > 0)
             {
                 byte[] current = new byte[Random.Next(256)];
