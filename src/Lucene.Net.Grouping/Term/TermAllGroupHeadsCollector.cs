@@ -269,7 +269,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             : base(groupField, sortWithinGroup.GetSort().Length)
         {
             ordSet = new SentinelInt32Set(initialSize, -2);
-            collectedGroups = new List<GroupHead>(initialSize);
+            collectedGroups = new JCG.List<GroupHead>(initialSize);
 
             SortField[] sortFields = sortWithinGroup.GetSort();
             fields = new SortField[sortFields.Length];
@@ -493,7 +493,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                     : base(groupField, sortWithinGroup.GetSort().Length)
         {
             ordSet = new SentinelInt32Set(initialSize, -2);
-            collectedGroups = new List<GroupHead>(initialSize);
+            collectedGroups = new JCG.List<GroupHead>(initialSize);
 
             SortField[] sortFields = sortWithinGroup.GetSort();
             fields = new SortField[sortFields.Length];
@@ -675,7 +675,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                     : base(groupField, sortWithinGroup.GetSort().Length)
         {
             ordSet = new SentinelInt32Set(initialSize, -2);
-            collectedGroups = new List<GroupHead>(initialSize);
+            collectedGroups = new JCG.List<GroupHead>(initialSize);
 
             SortField[] sortFields = sortWithinGroup.GetSort();
             fields = new SortField[sortFields.Length];

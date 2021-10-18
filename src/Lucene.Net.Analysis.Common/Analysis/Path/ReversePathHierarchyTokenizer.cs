@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Path
 {
@@ -112,7 +113,7 @@ namespace Lucene.Net.Analysis.Path
             this.skip = skip;
             resultToken = new StringBuilder(bufferSize);
             resultTokenBuffer = new char[bufferSize];
-            delimiterPositions = new List<int>(bufferSize / 10);
+            delimiterPositions = new JCG.List<int>(bufferSize / 10);
         }
 
         private const int DEFAULT_BUFFER_SIZE = 1024;

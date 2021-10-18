@@ -40,10 +40,10 @@ namespace Lucene.Net.Search.Suggest
         internal const string CONTEXT_FIELD_NAME = "c1";
 
         /** Returns Pair(list of invalid document terms, Map of document term -> document) */
-        private KeyValuePair<List<string>, IDictionary<string, Document>> GenerateIndexDocuments(int ndocs, bool requiresPayload, bool requiresContexts)
+        private KeyValuePair<IList<string>, IDictionary<string, Document>> GenerateIndexDocuments(int ndocs, bool requiresPayload, bool requiresContexts)
         {
             IDictionary<string, Document> docs = new JCG.Dictionary<string, Document>();
-            List<string> invalidDocTerms = new List<string>();
+            IList<string> invalidDocTerms = new JCG.List<string>();
             for (int i = 0; i < ndocs; i++)
             {
                 Document doc = new Document();
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search.Suggest
 
                 docs.Put(term, doc);
             }
-            return new KeyValuePair<List<string>, IDictionary<string, Document>>(invalidDocTerms, docs);
+            return new KeyValuePair<IList<string>, IDictionary<string, Document>>(invalidDocTerms, docs);
         }
 
         [Test]
@@ -141,9 +141,9 @@ namespace Lucene.Net.Search.Suggest
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
-            KeyValuePair<List<string>, IDictionary<string, Document>> res = GenerateIndexDocuments(AtLeast(1000), true, false);
+            KeyValuePair<IList<string>, IDictionary<string, Document>> res = GenerateIndexDocuments(AtLeast(1000), true, false);
             IDictionary<string, Document> docs = res.Value;
-            List<String> invalidDocTerms = res.Key;
+            IList<String> invalidDocTerms = res.Key;
             foreach (Document doc in docs.Values)
             {
                 writer.AddDocument(doc);
@@ -184,9 +184,9 @@ namespace Lucene.Net.Search.Suggest
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
-            KeyValuePair<List<string>, IDictionary<string, Document>> res = GenerateIndexDocuments(AtLeast(1000), false, false);
+            KeyValuePair<IList<string>, IDictionary<string, Document>> res = GenerateIndexDocuments(AtLeast(1000), false, false);
             IDictionary<string, Document> docs = res.Value;
-            List<string> invalidDocTerms = res.Key;
+            IList<string> invalidDocTerms = res.Key;
             foreach (Document doc in docs.Values)
             {
                 writer.AddDocument(doc);
@@ -228,9 +228,9 @@ namespace Lucene.Net.Search.Suggest
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
-            KeyValuePair<List<string>, IDictionary<string, Document>> res = GenerateIndexDocuments(AtLeast(1000), true, true);
+            KeyValuePair<IList<string>, IDictionary<string, Document>> res = GenerateIndexDocuments(AtLeast(1000), true, true);
             IDictionary<string, Document> docs = res.Value;
-            List<string> invalidDocTerms = res.Key;
+            IList<string> invalidDocTerms = res.Key;
             foreach (Document doc in docs.Values)
             {
                 writer.AddDocument(doc);
@@ -278,11 +278,11 @@ namespace Lucene.Net.Search.Suggest
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
-            KeyValuePair<List<string>, IDictionary<string, Document>> res = GenerateIndexDocuments(AtLeast(1000), false, false);
+            KeyValuePair<IList<string>, IDictionary<string, Document>> res = GenerateIndexDocuments(AtLeast(1000), false, false);
             IDictionary<string, Document> docs = res.Value;
-            List<String> invalidDocTerms = res.Key;
+            IList<String> invalidDocTerms = res.Key;
             Random rand = Random;
-            List<string> termsToDel = new List<string>();
+            IList<string> termsToDel = new JCG.List<string>();
             foreach (Document doc in docs.Values)
             {
                 IIndexableField f2 = doc.GetField(FIELD_NAME);

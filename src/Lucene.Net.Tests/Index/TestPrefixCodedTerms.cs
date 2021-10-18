@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
                 pb[i] = b.Finish();
             }
 
-            List<IEnumerator<Term>> subs = new List<IEnumerator<Term>>();
+            JCG.List<IEnumerator<Term>> subs = new JCG.List<IEnumerator<Term>>();
             for (int i = 0; i < pb.Length; i++)
             {
                 subs.Add(pb[i].GetEnumerator());

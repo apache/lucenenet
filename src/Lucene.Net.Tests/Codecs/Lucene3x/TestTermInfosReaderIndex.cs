@@ -1,10 +1,11 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -167,7 +168,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private static IList<Term> Sample(Random random, IndexReader reader, int size)
         {
-            IList<Term> sample = new List<Term>();
+            IList<Term> sample = new JCG.List<Term>();
             Fields fields = MultiFields.GetFields(reader);
             foreach (string field in fields)
             {

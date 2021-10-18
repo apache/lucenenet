@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Queries.Function
 {
@@ -173,7 +174,7 @@ namespace Lucene.Net.Queries.Function
 
             public override ICollection<ChildScorer> GetChildren()
             {
-                return new List<ChildScorer> { new ChildScorer(scorer, "CUSTOM") };
+                return new JCG.List<ChildScorer> { new ChildScorer(scorer, "CUSTOM") };
             }
 
             public Explanation Explain(int doc)

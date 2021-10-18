@@ -1045,7 +1045,7 @@ namespace Lucene.Net.Store
 
                                 if (!Arrays.Equals(startFiles, endFiles))
                                 {
-                                    IList<string> removed = new List<string>();
+                                    IList<string> removed = new JCG.List<string>();
                                     foreach (string fileName in startFiles)
                                     {
                                         if (!endSet.Contains(fileName))
@@ -1054,7 +1054,7 @@ namespace Lucene.Net.Store
                                         }
                                     }
 
-                                    IList<string> added = new List<string>();
+                                    IList<string> added = new JCG.List<string>();
                                     foreach (string fileName in endFiles)
                                     {
                                         if (!startSet.Contains(fileName))
@@ -1166,7 +1166,7 @@ namespace Lucene.Net.Store
 
         // LUCENENET specific - de-nested Failure
 
-        internal List<Failure> failures;
+        internal JCG.List<Failure> failures;
 
         /// <summary>
         /// Add a <see cref="Failure"/> object to the list of objects to be evaluated
@@ -1179,7 +1179,7 @@ namespace Lucene.Net.Store
             {
                 if (failures == null)
                 {
-                    failures = new List<Failure>();
+                    failures = new JCG.List<Failure>();
                 }
                 failures.Add(fail);
             }

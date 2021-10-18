@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Wikipedia
 {
@@ -231,7 +232,7 @@ namespace Lucene.Net.Analysis.Wikipedia
             int lastPos = theStart + numAdded;
             int tmpTokType;
             int numSeen = 0;
-            IList<AttributeSource.State> tmp = new List<AttributeSource.State>();
+            IList<AttributeSource.State> tmp = new JCG.List<AttributeSource.State>();
             SetupSavedToken(0, type);
             tmp.Add(CaptureState());
             //while we can get a token and that token is the same type and we have not transitioned to a new wiki-item of the same type

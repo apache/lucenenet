@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.OpenNlp
 {
@@ -28,7 +29,7 @@ namespace Lucene.Net.Analysis.OpenNlp
     /// </summary>
     public sealed class OpenNLPPOSFilter : TokenFilter
     {
-        private readonly IList<AttributeSource> sentenceTokenAttrs = new List<AttributeSource>();
+        private readonly IList<AttributeSource> sentenceTokenAttrs = new JCG.List<AttributeSource>();
         private string[] tags = null;
         private int tokenNum = 0;
         private bool moreTokensAvailable = true;
@@ -73,7 +74,7 @@ namespace Lucene.Net.Analysis.OpenNlp
 
         private string[] NextSentence()
         {
-            var termList = new List<string>();
+            var termList = new JCG.List<string>();
             sentenceTokenAttrs.Clear();
             bool endOfSentence = false;
             while (!endOfSentence && (moreTokensAvailable = m_input.IncrementToken()))

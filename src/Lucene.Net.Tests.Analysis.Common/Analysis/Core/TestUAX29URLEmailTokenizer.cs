@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -310,7 +311,7 @@ namespace Lucene.Net.Analysis.Core
             string[] urls;
             try
             {
-                IList<string> urlList = new List<string>();
+                IList<string> urlList = new JCG.List<string>();
                 bufferedReader = new StreamReader(this.GetType().getResourceAsStream("LuceneResourcesWikiPageURLs.txt"), Encoding.UTF8);
                 string line;
                 while (null != (line = bufferedReader.ReadLine()))
@@ -365,7 +366,7 @@ namespace Lucene.Net.Analysis.Core
             string[] emails;
             try
             {
-                IList<string> emailList = new List<string>();
+                IList<string> emailList = new JCG.List<string>();
                 bufferedReader = new System.IO.StreamReader(this.GetType().getResourceAsStream("email.addresses.from.random.text.with.email.addresses.txt"), Encoding.UTF8);
                 string line;
                 while (null != (line = bufferedReader.ReadLine()))
@@ -429,7 +430,7 @@ namespace Lucene.Net.Analysis.Core
             string[] urls;
             try
             {
-                IList<string> urlList = new List<string>();
+                IList<string> urlList = new JCG.List<string>();
                 bufferedReader = new System.IO.StreamReader(this.GetType().getResourceAsStream("urls.from.random.text.with.urls.txt"), Encoding.UTF8);
                 string line;
                 while (null != (line = bufferedReader.ReadLine()))

@@ -3,9 +3,9 @@ using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
-using System.Collections.Generic;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -26,13 +26,13 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
+    using IBits = Lucene.Net.Util.IBits;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TestUtil = Lucene.Net.Util.TestUtil;
@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
-                List<int?> positions = new List<int?>();
+                JCG.List<int?> positions = new JCG.List<int?>();
                 StringBuilder builder = new StringBuilder();
                 int num = AtLeast(131);
                 for (int j = 0; j < num; j++)

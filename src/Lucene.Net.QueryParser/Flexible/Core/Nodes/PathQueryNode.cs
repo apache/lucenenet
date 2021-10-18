@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 {
@@ -156,7 +157,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <returns>a List QueryText element from position <paramref name="startIndex"/></returns>
         public virtual IList<QueryText> GetPathElements(int startIndex)
         {
-            List<PathQueryNode.QueryText> rValues = new List<PathQueryNode.QueryText>();
+            IList<PathQueryNode.QueryText> rValues = new JCG.List<PathQueryNode.QueryText>();
             for (int i = startIndex; i < this.values.Count; i++)
             {
                 rValues.Add((QueryText)this.values[i].Clone());
@@ -205,7 +206,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             // copy children
             if (this.values != null)
             {
-                List<QueryText> localValues = new List<QueryText>();
+                IList<QueryText> localValues = new JCG.List<QueryText>();
                 foreach (QueryText value in this.values)
                 {
                     localValues.Add((QueryText)value.Clone());

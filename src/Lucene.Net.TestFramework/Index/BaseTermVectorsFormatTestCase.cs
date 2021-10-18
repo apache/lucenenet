@@ -155,7 +155,7 @@ namespace Lucene.Net.Index
 
         protected virtual Options RandomOptions()
         {
-            return RandomPicks.RandomFrom(Random, new List<Options>(ValidOptions()));
+            return RandomPicks.RandomFrom(Random, new JCG.List<Options>(ValidOptions()));
         }
 
         protected virtual FieldType FieldType(Options options)

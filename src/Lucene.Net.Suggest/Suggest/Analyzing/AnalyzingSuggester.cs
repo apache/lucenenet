@@ -267,7 +267,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             for (int stateNumber = states.Length - 1; stateNumber >= 0; stateNumber--)
             {
                 State state = states[stateNumber];
-                IList<Transition> newTransitions = new List<Transition>();
+                IList<Transition> newTransitions = new JCG.List<Transition>();
                 foreach (Transition t in state.GetTransitions())
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(t.Min == t.Max);
@@ -769,7 +769,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 var scratchArc = new FST.Arc<PairOutputs<long?, BytesRef>.Pair>();
 
-                IList<LookupResult> results = new List<LookupResult>();
+                IList<LookupResult> results = new JCG.List<LookupResult>();
 
                 IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths =
                     FSTUtil.IntersectPrefixPaths(ConvertAutomaton(lookupAutomaton), fst);

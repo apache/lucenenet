@@ -1,6 +1,7 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ar
 {
@@ -52,7 +53,7 @@ namespace Lucene.Net.Analysis.Ar
 
         private static IList<char[]> InitializePrefix()
         {
-            return new List<char[]>(){ ("" + ALEF + LAM).ToCharArray(),
+            return new JCG.List<char[]>(){ ("" + ALEF + LAM).ToCharArray(),
             ("" + WAW + ALEF + LAM).ToCharArray(),
             ("" + BEH + ALEF + LAM).ToCharArray(),
             ("" + KAF + ALEF + LAM).ToCharArray(),
@@ -62,7 +63,7 @@ namespace Lucene.Net.Analysis.Ar
         }
         private static IList<char[]> InitializeSuffix()
         {
-            return new List<char[]>(){ ("" + HEH + ALEF).ToCharArray(),
+            return new JCG.List<char[]>(){ ("" + HEH + ALEF).ToCharArray(),
             ("" + ALEF + NOON).ToCharArray(),
             ("" + ALEF + TEH).ToCharArray(),
             ("" + WAW + NOON).ToCharArray(),

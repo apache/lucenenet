@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -40,7 +41,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         // LUCENENET specific: DateFormatInfo not used
 
         private DirectoryInfo dataDir = null;
-        private readonly List<FileInfo> inputFiles = new List<FileInfo>(); // LUCENENET: marked readonly
+        private readonly IList<FileInfo> inputFiles = new JCG.List<FileInfo>(); // LUCENENET: marked readonly
         private int nextFile = 0;
         private int iteration = 0;
 

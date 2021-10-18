@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.Quality.Trec
 {
@@ -65,7 +66,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
         /// <exception cref="IOException">if cannot read the queries.</exception>
         public virtual QualityQuery[] ReadQueries(TextReader reader)
         {
-            IList<QualityQuery> res = new List<QualityQuery>();
+            IList<QualityQuery> res = new JCG.List<QualityQuery>();
             StringBuilder sb;
             try
             {

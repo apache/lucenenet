@@ -73,7 +73,7 @@ namespace Lucene.Net.Queries
          * rewrite to dismax rather than boolean. Yet, this can already be subclassed
          * to do so.
          */
-        protected readonly IList<Term> m_terms = new List<Term>();
+        protected readonly IList<Term> m_terms = new JCG.List<Term>();
         protected readonly bool m_disableCoord;
         protected readonly float m_maxTermFrequency;
         protected readonly Occur m_lowFreqOccur;

@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -36,7 +37,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public NewAnalyzerTask(PerfRunData runData)
             : base(runData)
         {
-            analyzerNames = new List<string>();
+            analyzerNames = new JCG.List<string>();
         }
 
         public static Analyzer CreateAnalyzer(string className)

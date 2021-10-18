@@ -1,6 +1,7 @@
-using J2N.IO;
+﻿using J2N.IO;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Replicator
 {
@@ -67,7 +68,7 @@ namespace Lucene.Net.Replicator
                 string source = reader.ReadUTF();
                 int numFiles = reader.ReadInt32();
 
-                List<RevisionFile> files = new List<RevisionFile>(numFiles);
+                IList<RevisionFile> files = new JCG.List<RevisionFile>(numFiles);
                 for (int i = 0; i < numFiles; i++)
                 {
                     files.Add(new RevisionFile(reader.ReadUTF(), reader.ReadInt64()));

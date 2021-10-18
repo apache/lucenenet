@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -34,7 +35,7 @@ namespace Lucene.Net.Util
             bool reuseFirst = Random.NextBoolean();
             for (int j = 0; j < 2; j++)
             {
-                IList<BytesRef> list = new List<BytesRef>();
+                IList<BytesRef> list = new JCG.List<BytesRef>();
                 int maxLength = AtLeast(500);
                 int numValues = AtLeast(100);
                 BytesRef @ref = new BytesRef();

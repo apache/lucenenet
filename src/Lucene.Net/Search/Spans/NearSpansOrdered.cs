@@ -73,7 +73,7 @@ namespace Lucene.Net.Search.Spans
         private int matchDoc = -1;
         private int matchStart = -1;
         private int matchEnd = -1;
-        private readonly List<byte[]> matchPayload; // LUCENENET: marked readonly
+        private readonly JCG.List<byte[]> matchPayload; // LUCENENET: marked readonly
 
         private readonly Spans[] subSpansByDoc;
 
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search.Spans
             allowedSlop = spanNearQuery.Slop;
             SpanQuery[] clauses = spanNearQuery.GetClauses();
             subSpans = new Spans[clauses.Length];
-            matchPayload = new List<byte[]>();
+            matchPayload = new JCG.List<byte[]>();
             subSpansByDoc = new Spans[clauses.Length];
             for (int i = 0; i < clauses.Length; i++)
             {
@@ -370,7 +370,7 @@ namespace Lucene.Net.Search.Spans
                 Spans prevSpans = subSpans[i];
                 if (collectPayloads && prevSpans.IsPayloadAvailable)
                 {
-                    possiblePayload = new List<byte[]>(prevSpans.GetPayload()); // LUCENENET specific - using copy constructor instead of AddRange()
+                    possiblePayload = new JCG.List<byte[]>(prevSpans.GetPayload()); // LUCENENET specific - using copy constructor instead of AddRange()
                 }
 
                 int prevStart = prevSpans.Start;
@@ -402,7 +402,7 @@ namespace Lucene.Net.Search.Spans
                             prevEnd = ppEnd;
                             if (collectPayloads && prevSpans.IsPayloadAvailable)
                             {
-                                possiblePayload = new List<byte[]>(prevSpans.GetPayload()); // LUCENENET specific - using copy constructor instead of AddRange()
+                                possiblePayload = new JCG.List<byte[]>(prevSpans.GetPayload()); // LUCENENET specific - using copy constructor instead of AddRange()
                             }
                         }
                     }

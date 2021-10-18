@@ -2,6 +2,7 @@
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Support.Threading;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Stats
 {
@@ -30,7 +31,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         // stat points ordered by their start time. 
         // for now we collect points as TaskStats objects.
         // later might optimize to collect only native data.
-        private readonly List<TaskStats> points = new List<TaskStats>(); // LUCENENET: marked readonly
+        private readonly IList<TaskStats> points = new JCG.List<TaskStats>(); // LUCENENET: marked readonly
 
         private int nextTaskRunNum = 0;
 

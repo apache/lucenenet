@@ -507,12 +507,12 @@ namespace Lucene.Net.Search.Grouping
                 Console.WriteLine("TEST: numDocs=" + numDocs + " numGroups=" + numGroups);
             }
 
-            List<string> groups = new List<string>();
+            JCG.List<string> groups = new JCG.List<string>();
             for (int i = 0; i < numGroups; i++)
             {
                 groups.Add(GenerateRandomNonEmptyString());
             }
-            List<string> facetValues = new List<string>();
+            JCG.List<string> facetValues = new JCG.List<string>();
             for (int i = 0; i < numFacets; i++)
             {
                 facetValues.Add(GenerateRandomNonEmptyString());
@@ -633,7 +633,7 @@ namespace Lucene.Net.Search.Grouping
                     searchTermToFacetToGroups[contentStr] = facetToGroups = new JCG.Dictionary<string, ISet<string>>();
                 }
 
-                List<string> facetVals = new List<string>();
+                JCG.List<string> facetVals = new JCG.List<string>();
                 if (useDv || random.nextInt(24) != 18)
                 {
                     if (useDv)

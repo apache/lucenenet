@@ -33,7 +33,7 @@ namespace Lucene.Net.Index.Sorter
     public class TestEarlyTermination : LuceneTestCase
     {
         private int numDocs;
-        private List<string> terms;
+        private IList<string> terms;
         private Directory dir;
         private Sort sort;
         private RandomIndexWriter iw;
@@ -64,7 +64,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 randomTerms.add(TestUtil.RandomSimpleString(Random));
             }
-            terms = new List<string>(randomTerms);
+            terms = new JCG.List<string>(randomTerms);
             int seed = Random.Next();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(new Random(seed)));
             iwc.SetMergePolicy(TestSortingMergePolicy.NewSortingMergePolicy(sort));

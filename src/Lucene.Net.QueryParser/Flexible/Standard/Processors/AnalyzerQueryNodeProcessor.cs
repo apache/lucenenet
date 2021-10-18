@@ -10,8 +10,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+using JCG = J2N.Collections.Generic;
 using Operator = Lucene.Net.QueryParsers.Flexible.Standard.Config.StandardQueryConfigHandler.Operator;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
@@ -201,7 +200,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         if (positionCount == 1)
                         {
                             // simple case: only one position, with synonyms
-                            List<IQueryNode> children = new List<IQueryNode>();
+                            IList<IQueryNode> children = new JCG.List<IQueryNode>();
 
                             for (int i = 0; i < numTokens; i++)
                             {
@@ -288,7 +287,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         // phrase query:
                         MultiPhraseQueryNode mpq = new MultiPhraseQueryNode();
 
-                        List<FieldQueryNode> multiTerms = new List<FieldQueryNode>();
+                        IList<FieldQueryNode> multiTerms = new JCG.List<FieldQueryNode>();
                         int position = -1;
                         int i = 0;
                         int termGroupCount = 0;

@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// The <see cref="Weight"/>s for our subqueries, in 1-1 correspondence with disjuncts </summary>
-            protected IList<Weight> m_weights = new List<Weight>(); // The Weight's for our subqueries, in 1-1 correspondence with disjuncts
+            protected IList<Weight> m_weights = new JCG.List<Weight>(); // The Weight's for our subqueries, in 1-1 correspondence with disjuncts
 
             /// <summary>
             /// Construct the <see cref="Weight"/> for this <see cref="Search.Query"/> searched by <paramref name="searcher"/>.  Recursively construct subquery weights. </summary>
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
             /// Create the scorer used to score our associated <see cref="DisjunctionMaxQuery"/> </summary>
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
-                IList<Scorer> scorers = new List<Scorer>();
+                IList<Scorer> scorers = new JCG.List<Scorer>();
                 foreach (Weight w in m_weights)
                 {
                     // we will advance() subscorers

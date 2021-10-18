@@ -2,6 +2,7 @@
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
 {
@@ -67,7 +68,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
     /// <seealso cref="IQueryNodeProcessor"/>
     public abstract class QueryNodeProcessor : IQueryNodeProcessor
     {
-        private readonly List<ChildrenList> childrenListPool = new List<ChildrenList>(); // LUCENENET: marked readonly
+        private readonly IList<ChildrenList> childrenListPool = new JCG.List<ChildrenList>(); // LUCENENET: marked readonly
 
         private QueryConfigHandler queryConfig;
 
@@ -212,7 +213,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         /// <exception cref="QueryNodeException">if something goes wrong during the query node processing</exception>
         protected abstract IList<IQueryNode> SetChildrenOrder(IList<IQueryNode> children);
 
-        private class ChildrenList : List<IQueryNode>
+        private class ChildrenList : JCG.List<IQueryNode>
         {
             internal bool beingUsed;
         }

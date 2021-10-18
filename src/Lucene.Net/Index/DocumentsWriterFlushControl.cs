@@ -776,7 +776,7 @@ namespace Lucene.Net.Index
             return true;
         }
 
-        private readonly IList<DocumentsWriterPerThread> fullFlushBuffer = new List<DocumentsWriterPerThread>();
+        private readonly IList<DocumentsWriterPerThread> fullFlushBuffer = new JCG.List<DocumentsWriterPerThread>();
 
         internal void AddFlushableState(ThreadState perThread)
         {

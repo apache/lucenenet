@@ -1,6 +1,7 @@
 ﻿using J2N.IO;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 /*
                     Egothor Software License version 1.00
@@ -70,8 +71,8 @@ namespace Egothor.Stemmer
     /// </summary>
     public class Trie
     {
-        internal IList<Row> rows = new List<Row>();
-        internal IList<string> cmds = new List<string>();
+        internal IList<Row> rows = new JCG.List<Row>();
+        internal IList<string> cmds = new JCG.List<string>();
         internal int root;
 
         internal bool forward = false;

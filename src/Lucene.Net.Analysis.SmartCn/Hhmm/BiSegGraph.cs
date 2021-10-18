@@ -154,7 +154,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             int to = tokenPair.To;
             if (!IsToExist(to))
             {
-                List<SegTokenPair> newlist = new List<SegTokenPair>
+                IList<SegTokenPair> newlist = new JCG.List<SegTokenPair>
                 {
                     tokenPair
                 };

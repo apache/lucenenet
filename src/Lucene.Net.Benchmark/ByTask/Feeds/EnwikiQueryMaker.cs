@@ -10,6 +10,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -93,7 +94,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
                 DocMaker.BODY_FIELD, a);
-            IList<Query> queries = new List<Query>();
+            IList<Query> queries = new JCG.List<Query>();
             for (int i = 0; i < qs.Count; i++)
             {
                 try
@@ -134,7 +135,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             // analyzer (default is standard analyzer)
             Analyzer anlzr = NewAnalyzerTask.CreateAnalyzer(m_config.Get("analyzer", typeof(StandardAnalyzer).AssemblyQualifiedName));
 
-            List<object> queryList = new List<object>(20);
+            JCG.List<object> queryList = new JCG.List<object>(20);
             queryList.AddRange(STANDARD_QUERIES);
             if (!m_config.Get("enwikiQueryMaker.disableSpanQueries", false))
                 queryList.AddRange(GetPrebuiltQueries(DocMaker.BODY_FIELD));

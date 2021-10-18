@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -65,7 +66,7 @@ namespace Lucene.Net.Search
             }
 
             CountdownEvent startingGun = new CountdownEvent(1);
-            IList<ThreadJob> threads = new List<ThreadJob>();
+            IList<ThreadJob> threads = new JCG.List<ThreadJob>();
 
             int iters = AtLeast(1000);
             int idCount = TestUtil.NextInt32(Random, 100, 10000);

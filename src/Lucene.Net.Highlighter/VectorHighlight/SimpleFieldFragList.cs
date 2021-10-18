@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using SubInfo = Lucene.Net.Search.VectorHighlight.FieldFragList.WeightedFragInfo.SubInfo;
 using WeightedPhraseInfo = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo;
 
@@ -41,7 +42,7 @@ namespace Lucene.Net.Search.VectorHighlight
         public override void Add(int startOffset, int endOffset, IList<WeightedPhraseInfo> phraseInfoList)
         {
             float totalBoost = 0;
-            List<SubInfo> subInfos = new List<SubInfo>();
+            IList<SubInfo> subInfos = new JCG.List<SubInfo>();
             foreach (WeightedPhraseInfo phraseInfo in phraseInfoList)
             {
                 subInfos.Add(new SubInfo(phraseInfo.GetText(), phraseInfo.TermsOffsets, phraseInfo.Seqnum, phraseInfo.Boost));

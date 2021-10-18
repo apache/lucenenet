@@ -1,13 +1,13 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using Directory = Lucene.Net.Store.Directory;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Replicator
 {
@@ -66,7 +66,7 @@ namespace Lucene.Net.Replicator
         public static IDictionary<string, IList<RevisionFile>> RevisionFiles(IndexCommit commit)
         {
             ICollection<string> commitFiles = commit.FileNames;
-            List<RevisionFile> revisionFiles = new List<RevisionFile>(commitFiles.Count);
+            IList<RevisionFile> revisionFiles = new JCG.List<RevisionFile>(commitFiles.Count);
             string segmentsFile = commit.SegmentsFileName;
             Directory dir = commit.Directory;
 

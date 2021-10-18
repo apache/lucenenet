@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void Test()
         {
-            IList<string> postingsList = new List<string>();
+            IList<string> postingsList = new JCG.List<string>();
             int numTerms = AtLeast(300);
             int maxTermsPerDoc = TestUtil.NextInt32(Random, 10, 20);
 

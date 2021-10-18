@@ -2,6 +2,7 @@
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
 {
@@ -76,10 +77,10 @@ namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
 
         public override void CopyTo(IAttribute target)
         {
-            List<StringBuilder> cloned = null;
+            IList<StringBuilder> cloned = null;
             if (tags != null)
             {
-                cloned = new List<StringBuilder>(tags.Count);
+                cloned = new JCG.List<StringBuilder>(tags.Count);
                 foreach (StringBuilder b in tags)
                 {
                     cloned.Add(new StringBuilder(b.ToString()));

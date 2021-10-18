@@ -1,6 +1,7 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
@@ -80,7 +81,7 @@ namespace Lucene.Net.Analysis
 
         private void PeekSentence()
         {
-            IList<string> facts = new List<string>();
+            IList<string> facts = new JCG.List<string>();
             bool haveSentence = false;
             do
             {

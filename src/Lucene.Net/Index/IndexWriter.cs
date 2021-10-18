@@ -259,7 +259,7 @@ namespace Lucene.Net.Index
         private readonly IMergeScheduler mergeScheduler;
         private readonly Queue<MergePolicy.OneMerge> pendingMerges = new Queue<MergePolicy.OneMerge>();
         private readonly JCG.HashSet<MergePolicy.OneMerge> runningMerges = new JCG.HashSet<MergePolicy.OneMerge>();
-        private IList<MergePolicy.OneMerge> mergeExceptions = new List<MergePolicy.OneMerge>();
+        private IList<MergePolicy.OneMerge> mergeExceptions = new JCG.List<MergePolicy.OneMerge>();
         private long mergeGen;
         private bool stopMerges;
 
@@ -3168,7 +3168,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                mergeExceptions = new List<MergePolicy.OneMerge>();
+                mergeExceptions = new JCG.List<MergePolicy.OneMerge>();
                 mergeGen++;
             }
             finally
@@ -3201,7 +3201,7 @@ namespace Lucene.Net.Index
         /// </summary>
         private IEnumerable<Lock> AcquireWriteLocks(params Directory[] dirs)
         {
-            IList<Lock> locks = new List<Lock>();
+            IList<Lock> locks = new JCG.List<Lock>();
             for (int i = 0; i < dirs.Length; i++)
             {
                 bool success = false;
@@ -3287,7 +3287,7 @@ namespace Lucene.Net.Index
 
                 Flush(false, true);
 
-                IList<SegmentCommitInfo> infos = new List<SegmentCommitInfo>();
+                IList<SegmentCommitInfo> infos = new JCG.List<SegmentCommitInfo>();
                 bool success = false;
                 try
                 {
@@ -3451,7 +3451,7 @@ namespace Lucene.Net.Index
                 Flush(false, true);
 
                 string mergedName = NewSegmentName();
-                IList<AtomicReader> mergeReaders = new List<AtomicReader>();
+                IList<AtomicReader> mergeReaders = new JCG.List<AtomicReader>();
                 foreach (IndexReader indexReader in readers)
                 {
                     numDocs += indexReader.NumDocs;
@@ -5344,7 +5344,7 @@ namespace Lucene.Net.Index
                 infoStream.Message("IW", "merging " + SegString(merge.Segments));
             }
 
-            merge.readers = new List<SegmentReader>();
+            merge.readers = new JCG.List<SegmentReader>();
 
             // this is try/finally to make sure merger's readers are
             // closed:
@@ -5449,7 +5449,7 @@ namespace Lucene.Net.Index
                     if (!merger.ShouldMerge)
                     {
                         // would result in a 0 document segment: nothing to merge!
-                        mergeState = new MergeState(new List<AtomicReader>(), merge.info.Info, infoStream, checkAbort);
+                        mergeState = new MergeState(new JCG.List<AtomicReader>(), merge.info.Info, infoStream, checkAbort);
                     }
                     else
                     {

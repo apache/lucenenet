@@ -7,6 +7,7 @@ using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {
@@ -277,7 +278,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 completions = normalCompletion.DoLookup(key, num);
             }
 
-            List<LookupResult> results = new List<LookupResult>(completions.Count);
+            IList<LookupResult> results = new JCG.List<LookupResult>(completions.Count);
             CharsRef spare = new CharsRef();
             foreach (FSTCompletion.Completion c in completions)
             {

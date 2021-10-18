@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
         {
             string line = null;
             int wordId = CUSTOM_DICTIONARY_WORD_ID_OFFSET;
-            List<string[]> featureEntries = new List<string[]>();
+            JCG.List<string[]> featureEntries = new JCG.List<string[]>();
 
             // text, segmentation, readings, POS
             while ((line = reader.ReadLine()) != null)
@@ -80,8 +80,8 @@ namespace Lucene.Net.Analysis.Ja.Dict
             // the old treemap didn't support this either, and i'm not sure if its needed/useful?
             featureEntries.Sort(Comparer<string[]>.Create((left, right) => left[0].CompareToOrdinal(right[0])));
 
-            List<string> data = new List<string>(featureEntries.Count);
-            List<int[]> segmentations = new List<int[]>(featureEntries.Count);
+            JCG.List<string> data = new JCG.List<string>(featureEntries.Count);
+            JCG.List<int[]> segmentations = new JCG.List<int[]>(featureEntries.Count);
 
             PositiveInt32Outputs fstOutput = PositiveInt32Outputs.Singleton;
             Builder<long?> fstBuilder = new Builder<long?>(Lucene.Net.Util.Fst.FST.INPUT_TYPE.BYTE2, fstOutput);
@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
         /// <returns>Array of {wordId, index, length}.</returns>
         private static int[][] ToIndexArray(IDictionary<int, int[]> input) // LUCENENET: CA1822: Mark members as static
         {
-            List<int[]> result = new List<int[]>();
+            JCG.List<int[]> result = new JCG.List<int[]>();
             foreach (int i in input.Keys)
             {
                 int[] wordIdAndLength = input[i];

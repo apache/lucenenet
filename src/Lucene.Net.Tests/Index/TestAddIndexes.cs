@@ -1,5 +1,4 @@
 ﻿using J2N.Threading;
-using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -8,11 +7,11 @@ using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -637,7 +636,7 @@ namespace Lucene.Net.Index
             internal Directory dir, dir2;
             internal const int NUM_INIT_DOCS = 17;
             internal IndexWriter writer2;
-            internal readonly IList<Exception> failures = new List<Exception>();
+            internal readonly IList<Exception> failures = new JCG.List<Exception>();
             internal volatile bool didClose;
             internal readonly IndexReader[] readers;
             internal readonly int NUM_COPY;

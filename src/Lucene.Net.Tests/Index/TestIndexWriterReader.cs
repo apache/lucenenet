@@ -11,6 +11,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -471,7 +472,7 @@ namespace Lucene.Net.Index
             internal int numDirs;
             internal ThreadJob[] threads;
             internal IndexWriter mainWriter;
-            internal readonly IList<Exception> failures = new List<Exception>();
+            internal readonly IList<Exception> failures = new JCG.List<Exception>();
             internal IndexReader[] readers;
             internal bool didClose = false;
             internal AtomicInt32 count = new AtomicInt32(0);

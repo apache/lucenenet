@@ -2,6 +2,7 @@
 using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -233,7 +234,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                return new List<IndexCommit>(m_indexCommits.Values);
+                return new JCG.List<IndexCommit>(m_indexCommits.Values);
             }
             finally
             {
@@ -308,7 +309,7 @@ namespace Lucene.Net.Index
         private IList<IndexCommit> WrapCommits<T>(IList<T> commits)
             where T : IndexCommit
         {
-            IList<IndexCommit> wrappedCommits = new List<IndexCommit>(commits.Count);
+            IList<IndexCommit> wrappedCommits = new JCG.List<IndexCommit>(commits.Count);
             foreach (IndexCommit ic in commits)
             {
                 wrappedCommits.Add(new SnapshotCommitPoint(this, ic));

@@ -2,6 +2,7 @@
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Jaspell
 {
@@ -117,7 +118,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             {
                 throw new ArgumentException("this suggester doesn't support contexts");
             }
-            List<LookupResult> res = new List<LookupResult>();
+            IList<LookupResult> res = new JCG.List<LookupResult>();
             IList<string> list;
             int count = onlyMorePopular ? num * 2 : num;
             if (usePrefix)

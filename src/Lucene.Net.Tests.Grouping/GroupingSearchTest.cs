@@ -10,8 +10,7 @@ using Lucene.Net.Util.Mutable;
 using NUnit.Framework;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -51,7 +50,7 @@ namespace Lucene.Net.Search.Grouping
                 NewIndexWriterConfig(TEST_VERSION_CURRENT,
                     new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
             bool canUseIDV = !"Lucene3x".Equals(w.IndexWriter.Config.Codec.Name, StringComparison.Ordinal);
-            List<Document> documents = new List<Document>();
+            JCG.List<Document> documents = new JCG.List<Document>();
             // 0
             Document doc = new Document();
             AddGroupField(doc, groupField, "author1", canUseIDV);

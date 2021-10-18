@@ -18,6 +18,7 @@ using Attribute = Lucene.Net.Util.Attribute;
 using AttributeFactory = Lucene.Net.Util.AttributeSource.AttributeFactory;
 using Console = Lucene.Net.Util.SystemConsole;
 using Directory = Lucene.Net.Store.Directory;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
@@ -1023,12 +1024,12 @@ namespace Lucene.Net.Analysis
             IPositionLengthAttribute posLengthAtt;
             ITypeAttribute typeAtt;
 
-            IList<string> tokens = new List<string>();
-            IList<string> types = new List<string>();
-            IList<int> positions = new List<int>();
-            IList<int> positionLengths = new List<int>();
-            IList<int> startOffsets = new List<int>();
-            IList<int> endOffsets = new List<int>();
+            IList<string> tokens = new JCG.List<string>();
+            IList<string> types = new JCG.List<string>();
+            IList<int> positions = new JCG.List<int>();
+            IList<int> positionLengths = new JCG.List<int>();
+            IList<int> startOffsets = new JCG.List<int>();
+            IList<int> endOffsets = new JCG.List<int>();
 
             int remainder = random.Next(10);
             TextReader reader = new StringReader(text);

@@ -4,7 +4,7 @@ using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
@@ -193,7 +193,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             {
                 return GetCells(point, detailLevel, inclParents);
             }
-            IList<Cell> cells = new List<Cell>(inclParents ? 4096 : 2048);
+            IList<Cell> cells = new JCG.List<Cell>(inclParents ? 4096 : 2048);
             RecursiveGetCells(WorldCell, shape, detailLevel, inclParents, simplify, cells);
             return cells;
         }
@@ -270,7 +270,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
             string endToken = cell.TokenString;
             if (Debugging.AssertsEnabled) Debugging.Assert(endToken.Length == detailLevel);
-            IList<Cell> cells = new List<Cell>(detailLevel);
+            IList<Cell> cells = new JCG.List<Cell>(detailLevel);
             for (int i = 1; i < detailLevel; i++)
             {
                 cells.Add(GetCell(endToken.Substring(0, i - 0)));
@@ -283,7 +283,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         [Obsolete("TODO remove; not used and not interesting, don't need collection in & out")]
         public static IList<string> CellsToTokenStrings(ICollection<Cell> cells)
         {
-            IList<string> tokens = new List<string>((cells.Count));
+            IList<string> tokens = new JCG.List<string>((cells.Count));
             foreach (Cell cell in cells)
             {
                 string token = cell.TokenString;

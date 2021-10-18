@@ -159,7 +159,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            List<Insanity> insanity = new List<Insanity>(valMismatchKeys.Count * 3);
+            JCG.List<Insanity> insanity = new JCG.List<Insanity>(valMismatchKeys.Count * 3);
 
             insanity.AddRange(CheckValueMismatch(valIdToItems, readerFieldToValIds, valMismatchKeys));
             insanity.AddRange(CheckSubreaders(valIdToItems, readerFieldToValIds));
@@ -178,7 +178,7 @@ namespace Lucene.Net.Util
             MapOfSets<ReaderField, int> readerFieldToValIds,
             ISet<ReaderField> valMismatchKeys)
         {
-            List<Insanity> insanity = new List<Insanity>(valMismatchKeys.Count * 3);
+            JCG.List<Insanity> insanity = new JCG.List<Insanity>(valMismatchKeys.Count * 3);
 
             if (valMismatchKeys.Count != 0)
             {
@@ -188,7 +188,7 @@ namespace Lucene.Net.Util
                 IDictionary<int, ISet<FieldCache.CacheEntry>> valMap = valIdToItems.Map;
                 foreach (ReaderField rf in valMismatchKeys)
                 {
-                    IList<FieldCache.CacheEntry> badEntries = new List<FieldCache.CacheEntry>(valMismatchKeys.Count * 2);
+                    IList<FieldCache.CacheEntry> badEntries = new JCG.List<FieldCache.CacheEntry>(valMismatchKeys.Count * 2);
                     foreach (int value in rfMap[rf])
                     {
                         foreach (FieldCache.CacheEntry cacheEntry in valMap[value])
@@ -215,7 +215,7 @@ namespace Lucene.Net.Util
         /// <seealso cref="InsanityType.SUBREADER"/>
         private static ICollection<Insanity> CheckSubreaders(MapOfSets<int, FieldCache.CacheEntry> valIdToItems, MapOfSets<ReaderField, int> readerFieldToValIds) // LUCENENET: CA1822: Mark members as static
         {
-            List<Insanity> insanity = new List<Insanity>(23);
+            JCG.List<Insanity> insanity = new JCG.List<Insanity>(23);
 
             Dictionary<ReaderField, ISet<ReaderField>> badChildren = new Dictionary<ReaderField, ISet<ReaderField>>(17);
             MapOfSets<ReaderField, ReaderField> badKids = new MapOfSets<ReaderField, ReaderField>(badChildren); // wrapper
@@ -262,7 +262,7 @@ namespace Lucene.Net.Util
             {
                 ISet<ReaderField> kids = badChildren[parent];
 
-                List<FieldCache.CacheEntry> badEntries = new List<FieldCache.CacheEntry>(kids.Count * 2);
+                JCG.List<FieldCache.CacheEntry> badEntries = new JCG.List<FieldCache.CacheEntry>(kids.Count * 2);
 
                 // put parent entr(ies) in first
                 {

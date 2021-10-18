@@ -1,10 +1,11 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support.IO;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -102,7 +103,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(18, seg.TermVectorStatus.TotVectors);
 
             Assert.IsTrue(seg.Diagnostics.Count > 0);
-            IList<string> onlySegments = new List<string>();
+            IList<string> onlySegments = new JCG.List<string>();
             onlySegments.Add("_0");
 
             Assert.IsTrue(checker.DoCheckIndex(onlySegments).Clean == true);

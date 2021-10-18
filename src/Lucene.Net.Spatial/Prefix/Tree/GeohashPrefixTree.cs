@@ -3,6 +3,7 @@ using Spatial4n.Core.Shapes;
 using Spatial4n.Core.Util;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
@@ -122,7 +123,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             protected internal override ICollection<Cell> GetSubCells()
             {
                 string[] hashes = GeohashUtils.GetSubGeohashes(Geohash);//sorted
-                IList<Cell> cells = new List<Cell>(hashes.Length);
+                IList<Cell> cells = new JCG.List<Cell>(hashes.Length);
                 foreach (string hash in hashes)
                 {
                     cells.Add(new GhCell((GeohashPrefixTree)m_outerInstance, hash));

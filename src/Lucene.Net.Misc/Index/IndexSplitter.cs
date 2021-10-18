@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -72,7 +73,7 @@ namespace Lucene.Net.Index
             }
             else if (args[1].Equals("-d", StringComparison.Ordinal))
             {
-                IList<string> segs = new List<string>();
+                IList<string> segs = new JCG.List<string>();
                 for (int x = 2; x < args.Length; x++)
                 {
                     segs.Add(args[x]);
@@ -82,7 +83,7 @@ namespace Lucene.Net.Index
             else
             {
                 DirectoryInfo targetDir = new DirectoryInfo(args[1]);
-                IList<string> segs = new List<string>();
+                IList<string> segs = new JCG.List<string>();
                 for (int x = 2; x < args.Length; x++)
                 {
                     segs.Add(args[x]);

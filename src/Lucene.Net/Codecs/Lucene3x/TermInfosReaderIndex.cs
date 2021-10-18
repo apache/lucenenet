@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -78,7 +79,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             GrowableWriter indexToTerms = new GrowableWriter(bitEstimate, indexSize, PackedInt32s.DEFAULT);
 
             string currentField = null;
-            IList<string> fieldStrs = new List<string>();
+            IList<string> fieldStrs = new JCG.List<string>();
             int fieldCounter = -1;
             for (int i = 0; indexEnum.Next(); i++)
             {

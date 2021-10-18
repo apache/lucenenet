@@ -217,7 +217,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 BoundedTreeAdd(results, result, actualNum);
             }
 
-            return new List<LookupResult>(results.Reverse());
+            return new JCG.List<LookupResult>(results.Reverse());
         }
 
         /// <summary>

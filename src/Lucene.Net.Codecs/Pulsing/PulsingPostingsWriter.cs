@@ -3,7 +3,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System.Collections.Generic;
-using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Pulsing
 {
@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
         private readonly SegmentWriteState _segmentState;
         //private IndexOutput _termsOut; // LUCENENET: Never read
-        private readonly List<FieldMetaData> _fields;
+        private readonly IList<FieldMetaData> _fields;
         private IndexOptions _indexOptions;
         private bool _storePayloads;
 
@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs.Pulsing
             {
                 _pending[i] = new Position();
             }
-            _fields = new List<FieldMetaData>();
+            _fields = new JCG.List<FieldMetaData>();
 
             // We simply wrap another postings writer, but only call
             // on it when tot positions is >= the cutoff:

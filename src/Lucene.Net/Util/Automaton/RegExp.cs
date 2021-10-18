@@ -536,7 +536,7 @@ namespace Lucene.Net.Util.Automaton
             switch (kind)
             {
                 case Kind.REGEXP_UNION:
-                    list = new List<Automaton>();
+                    list = new JCG.List<Automaton>();
                     FindLeaves(exp1, Kind.REGEXP_UNION, list, automata, automaton_provider);
                     FindLeaves(exp2, Kind.REGEXP_UNION, list, automata, automaton_provider);
                     a = BasicOperations.Union(list);
@@ -544,7 +544,7 @@ namespace Lucene.Net.Util.Automaton
                     break;
 
                 case Kind.REGEXP_CONCATENATION:
-                    list = new List<Automaton>();
+                    list = new JCG.List<Automaton>();
                     FindLeaves(exp1, Kind.REGEXP_CONCATENATION, list, automata, automaton_provider);
                     FindLeaves(exp2, Kind.REGEXP_CONCATENATION, list, automata, automaton_provider);
                     a = BasicOperations.Concatenate(list);

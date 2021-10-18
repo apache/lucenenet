@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -244,7 +244,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return Repeat(a);
             }
-            IList<Automaton> @as = new List<Automaton>();
+            IList<Automaton> @as = new JCG.List<Automaton>();
             while (min-- > 0)
             {
                 @as.Add(a);
@@ -280,7 +280,7 @@ namespace Lucene.Net.Util.Automaton
             }
             else
             {
-                IList<Automaton> @as = new List<Automaton>();
+                IList<Automaton> @as = new JCG.List<Automaton>();
                 while (min-- > 0)
                 {
                     @as.Add(a);
@@ -1081,7 +1081,7 @@ namespace Lucene.Net.Util.Automaton
                 OpenBitSet bb = new OpenBitSet(states.Length);
                 OpenBitSet bb_other = new OpenBitSet(states.Length);
                 pp.AddLast(a.initial);
-                List<State> dest = new List<State>();
+                JCG.List<State> dest = new JCG.List<State>();
                 bool accept = a.initial.accept;
                 int c; // LUCENENET: Removed unnecessary assignment
                 for (int i = 0; i < s.Length; i += Character.CharCount(c))

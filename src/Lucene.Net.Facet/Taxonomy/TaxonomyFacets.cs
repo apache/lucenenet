@@ -2,6 +2,7 @@
 using J2N.Text;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -103,7 +104,7 @@ namespace Lucene.Net.Facet.Taxonomy
         public override IList<FacetResult> GetAllDims(int topN)
         {
             int ord = m_children[TaxonomyReader.ROOT_ORDINAL];
-            List<FacetResult> results = new List<FacetResult>();
+            JCG.List<FacetResult> results = new JCG.List<FacetResult>();
             while (ord != TaxonomyReader.INVALID_ORDINAL)
             {
                 string dim = m_taxoReader.GetPath(ord).Components[0];

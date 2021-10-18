@@ -11,6 +11,7 @@ using System.Runtime.Serialization;
 #endif
 using System.Text;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -158,7 +159,7 @@ namespace Lucene.Net.Index
                     throw RuntimeException.Create("segments must include at least one segment");
                 }
                 // clone the list, as the in list may be based off original SegmentInfos and may be modified
-                this.Segments = new List<SegmentCommitInfo>(segments);
+                this.Segments = new JCG.List<SegmentCommitInfo>(segments);
                 int count = 0;
                 foreach (SegmentCommitInfo info in segments)
                 {
@@ -181,7 +182,7 @@ namespace Lucene.Net.Index
                 {
                     throw IllegalStateException.Create("IndexWriter has not initialized readers from the segment infos yet");
                 }
-                IList<AtomicReader> readers = new List<AtomicReader>(this.readers.Count);
+                IList<AtomicReader> readers = new JCG.List<AtomicReader>(this.readers.Count);
                 foreach (AtomicReader reader in this.readers)
                 {
                     if (reader.NumDocs > 0)
@@ -454,7 +455,7 @@ namespace Lucene.Net.Index
             /// </summary>
             public MergeSpecification()
             {
-                Merges = new List<OneMerge>();
+                Merges = new JCG.List<OneMerge>();
             }
 
             /// <summary>

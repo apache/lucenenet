@@ -2,6 +2,7 @@
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping.Terms
 {
@@ -61,7 +62,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         public TermAllGroupsCollector(string groupField, int initialSize)
         {
             ordSet = new SentinelInt32Set(initialSize, -2);
-            groups = new List<BytesRef>(initialSize);
+            groups = new JCG.List<BytesRef>(initialSize);
             this.groupField = groupField;
         }
 

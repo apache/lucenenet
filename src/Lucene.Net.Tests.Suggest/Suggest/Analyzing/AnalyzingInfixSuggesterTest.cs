@@ -157,7 +157,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     ICharTermAttribute termAtt = ts.AddAttribute<ICharTermAttribute>();
                     IOffsetAttribute offsetAtt = ts.AddAttribute<IOffsetAttribute>();
                     ts.Reset();
-                    List<LookupHighlightFragment> fragments = new List<LookupHighlightFragment>();
+                    IList<LookupHighlightFragment> fragments = new JCG.List<LookupHighlightFragment>();
                     int upto = 0;
                     while (ts.IncrementToken())
                     {
@@ -219,7 +219,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
             assertEquals(1, results.size());
-            assertEquals("a penny saved is a penny <b>ear</b>ned", ToString((List<LookupHighlightFragment>)results[0].HighlightKey));
+            assertEquals("a penny saved is a penny <b>ear</b>ned", ToString((IList<LookupHighlightFragment>)results[0].HighlightKey));
             assertEquals(10, results[0].Value);
             assertEquals(new BytesRef("foobaz"), results[0].Payload);
         }
@@ -611,8 +611,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 ISet<long> usedWeights = new JCG.HashSet<long>();
                 ISet<string> usedKeys = new JCG.HashSet<string>();
 
-                List<Input> inputs = new List<Input>();
-                List<Update> pendingUpdates = new List<Update>();
+                IList<Input> inputs = new JCG.List<Input>();
+                IList<Update> pendingUpdates = new JCG.List<Update>();
 
                 for (int iter = 0; iter < iters; iter++)
                 {
@@ -725,7 +725,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         }
 
                         // Stupid slow but hopefully correct matching:
-                        List<Input> expected = new List<Input>();
+                        IList<Input> expected = new JCG.List<Input>();
                         for (int i = 0; i < visibleUpto; i++)
                         {
                             Input input = inputs[i];

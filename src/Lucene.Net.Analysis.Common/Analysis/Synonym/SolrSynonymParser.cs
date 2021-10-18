@@ -2,9 +2,9 @@
 using J2N.Text;
 using Lucene.Net.Util;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -149,7 +149,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         private static string[] Split(string s, string separator)
         {
-            List<string> list = new List<string>(2);
+            JCG.List<string> list = new JCG.List<string>(2);
             StringBuilder sb = new StringBuilder();
             int pos = 0, end = s.Length;
             while (pos < end)

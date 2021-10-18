@@ -91,7 +91,7 @@ namespace Lucene.Net.Search.Suggest
          */
         public static IList<Input> ReadTop50KWiki()
         {
-            List<Input> input = new List<Input>();
+            IList<Input> input = new JCG.List<Input>();
 
             var resource = typeof(LookupBenchmarkTest).FindAndGetManifestResourceStream("Top50KWiki.utf8");
             if (Debugging.AssertsEnabled) Debugging.Assert(resource != null, "Resource missing: Top50KWiki.utf8");
@@ -241,7 +241,7 @@ namespace Lucene.Net.Search.Suggest
             {
                 Lookup lookup = BuildLookup(cls, dictionaryInput);
 
-                List<string> input = new List<string>(benchmarkInput.size());
+                IList<string> input = new JCG.List<string>(benchmarkInput.size());
                 foreach (Input tf in benchmarkInput)
                 {
                     string s = tf.term.Utf8ToString();

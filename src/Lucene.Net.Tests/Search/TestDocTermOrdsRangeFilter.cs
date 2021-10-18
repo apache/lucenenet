@@ -4,6 +4,7 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
@@ -58,7 +59,7 @@ namespace Lucene.Net.Search
             dir = NewDirectory();
             fieldName = Random.NextBoolean() ? "field" : ""; // sometimes use an empty string as field name
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
-            List<string> terms = new List<string>();
+            JCG.List<string> terms = new JCG.List<string>();
             int num = AtLeast(200);
             for (int i = 0; i < num; i++)
             {

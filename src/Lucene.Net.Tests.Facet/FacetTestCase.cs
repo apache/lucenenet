@@ -5,6 +5,7 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -101,7 +102,7 @@ namespace Lucene.Net.Facet
 
         protected internal virtual IList<TestDoc> GetRandomDocs(string[] tokens, int count, int numDims)
         {
-            IList<TestDoc> docs = new List<TestDoc>();
+            IList<TestDoc> docs = new JCG.List<TestDoc>();
             for (int i = 0; i < count; i++)
             {
                 TestDoc doc = new TestDoc();
@@ -170,7 +171,7 @@ namespace Lucene.Net.Facet
             }
         }
         
-        protected internal virtual void SortLabelValues(List<LabelAndValue> labelValues)
+        protected internal virtual void SortLabelValues(JCG.List<LabelAndValue> labelValues)
         {
             labelValues.Sort(Comparer<LabelAndValue>.Create((a,b) => {
                 if ((double)a.Value > (double)b.Value)
@@ -189,7 +190,7 @@ namespace Lucene.Net.Facet
         }
 
        
-        protected internal virtual void SortFacetResults(List<FacetResult> results)
+        protected internal virtual void SortFacetResults(JCG.List<FacetResult> results)
         {
             results.Sort(Comparer<FacetResult>.Create((a, b) =>
             {

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ja.Util
 {
@@ -36,7 +37,7 @@ namespace Lucene.Net.Analysis.Ja.Util
         private int targetMapEndOffset = 0, lastWordId = -1, lastSourceId = -1;
         private int[] targetMap = new int[8192];
         private int[] targetMapOffsets = new int[8192];
-        private readonly List<string> posDict = new List<string>();
+        private readonly IList<string> posDict = new JCG.List<string>();
 
         protected BinaryDictionaryWriter(Type implClazz, int size) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {

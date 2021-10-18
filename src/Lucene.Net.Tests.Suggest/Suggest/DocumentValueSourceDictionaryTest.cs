@@ -224,7 +224,7 @@ namespace Lucene.Net.Search.Suggest
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
             IDictionary<string, Document> docs = GenerateIndexDocuments(AtLeast(100));
             Random rand = Random;
-            List<string> termsToDel = new List<string>();
+            IList<string> termsToDel = new JCG.List<string>();
             foreach (Document doc in docs.Values)
             {
                 if (rand.nextBoolean() && termsToDel.size() < docs.size() - 1)

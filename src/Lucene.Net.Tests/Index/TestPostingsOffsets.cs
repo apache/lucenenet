@@ -8,6 +8,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
@@ -265,7 +266,7 @@ namespace Lucene.Net.Index
             {
                 Document doc = new Document();
                 doc.Add(new Int32Field("id", docCount, Field.Store.NO));
-                IList<Token> tokens = new List<Token>();
+                IList<Token> tokens = new JCG.List<Token>();
                 int numTokens = AtLeast(100);
                 //final int numTokens = AtLeast(20);
                 int pos = -1;
@@ -306,7 +307,7 @@ namespace Lucene.Net.Index
                     }
                     if (!postingsByDoc.TryGetValue(docCount, out IList<Token> postings))
                     {
-                        postingsByDoc[docCount] = postings = new List<Token>();
+                        postingsByDoc[docCount] = postings = new JCG.List<Token>();
                     }
                     postings.Add(token);
                     tokens.Add(token);

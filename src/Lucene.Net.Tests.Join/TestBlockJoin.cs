@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search.Join
@@ -76,7 +77,7 @@ namespace Lucene.Net.Search.Join
             // we don't want to merge - since we rely on certain segment setup
             IndexWriter w = new IndexWriter(dir, config);
 
-            IList<Document> docs = new List<Document>();
+            IList<Document> docs = new JCG.List<Document>();
 
             docs.Add(MakeJob("java", 2007));
             docs.Add(MakeJob("python", 2010));
@@ -139,7 +140,7 @@ namespace Lucene.Net.Search.Join
 #endif
                 Random, dir);
 
-            IList<Document> docs = new List<Document>();
+            IList<Document> docs = new JCG.List<Document>();
 
             docs.Add(MakeJob("java", 2007));
             docs.Add(MakeJob("python", 2010));
@@ -233,7 +234,7 @@ namespace Lucene.Net.Search.Join
 #endif
                 Random, dir);
 
-            IList<Document> docs = new List<Document>();
+            IList<Document> docs = new JCG.List<Document>();
 
             for (int i = 0; i < 10; i++)
             {
@@ -294,13 +295,13 @@ namespace Lucene.Net.Search.Join
 #endif
                 Random, dir);
 
-            IList<Document> docs = new List<Document>();
+            IList<Document> docs = new JCG.List<Document>();
             docs.Add(MakeJob("java", 2007));
             docs.Add(MakeJob("python", 2010));
             docs.Shuffle(Random);
             docs.Add(MakeResume("Lisa", "United Kingdom"));
 
-            IList<Document> docs2 = new List<Document>();
+            IList<Document> docs2 = new JCG.List<Document>();
             docs2.Add(MakeJob("ruby", 2005));
             docs2.Add(MakeJob("java", 2006));
             docs2.Shuffle(Random);
@@ -424,7 +425,7 @@ namespace Lucene.Net.Search.Join
             // Cannot assert this since we use NoMergePolicy:
             w.DoRandomForceMergeAssert = false;
 
-            IList<Document> docs = new List<Document>();
+            IList<Document> docs = new JCG.List<Document>();
             docs.Add(MakeJob("java", 2007));
             docs.Add(MakeJob("python", 2010));
             docs.Add(MakeResume("Lisa", "United Kingdom"));
@@ -507,7 +508,7 @@ namespace Lucene.Net.Search.Join
 
         private Sort GetRandomSort(string prefix, int numFields)
         {
-            List<SortField> sortFields = new List<SortField>();
+            JCG.List<SortField> sortFields = new JCG.List<SortField>();
             // TODO: sometimes sort by score; problem is scores are
             // not comparable across the two indices
             // sortFields.Add(SortField.FIELD_SCORE);
@@ -544,7 +545,7 @@ namespace Lucene.Net.Search.Join
             string[][] childFields = GetRandomFields(numParentDocs);
 
             bool doDeletes = Random.NextBoolean();
-            IList<int> toDelete = new List<int>();
+            IList<int> toDelete = new JCG.List<int>();
 
             // TODO: parallel star join, nested join cases too!
             RandomIndexWriter w = new RandomIndexWriter(
@@ -581,7 +582,7 @@ namespace Lucene.Net.Search.Join
                     parentJoinDoc.Add(NewStringField("blockID", "" + parentDocID, Field.Store.NO));
                 }
 
-                IList<Document> joinDocs = new List<Document>();
+                IList<Document> joinDocs = new JCG.List<Document>();
 
                 if (Verbose)
                 {
@@ -811,7 +812,7 @@ namespace Lucene.Net.Search.Join
                 }
 
                 // Merge both sorts:
-                List<SortField> sortFields = new List<SortField>(parentSort.GetSort());
+                IList<SortField> sortFields = new JCG.List<SortField>(parentSort.GetSort());
                 sortFields.AddRange(childSort.GetSort());
                 Sort parentAndChildSort = new Sort(sortFields.ToArray());
 
@@ -1169,7 +1170,7 @@ namespace Lucene.Net.Search.Join
 #endif
                 Random, dir);
 
-            IList<Document> docs = new List<Document>();
+            IList<Document> docs = new JCG.List<Document>();
 
             docs.Add(MakeJob("java", 2007));
             docs.Add(MakeJob("python", 2010));
@@ -1322,7 +1323,7 @@ namespace Lucene.Net.Search.Join
 #endif
                 Random, dir);
 
-            IList<Document> docs = new List<Document>();
+            IList<Document> docs = new JCG.List<Document>();
             docs.Add(MakeJob("ruby", 2005));
             docs.Add(MakeJob("java", 2006));
             docs.Add(MakeJob("java", 2010));
@@ -1424,7 +1425,7 @@ namespace Lucene.Net.Search.Join
             parent.Add(NewTextField("parentText", "text", Field.Store.NO));
             parent.Add(NewStringField("isParent", "yes", Field.Store.NO));
 
-            IList<Document> docs = new List<Document>();
+            IList<Document> docs = new JCG.List<Document>();
 
             Document child = new Document();
             docs.Add(child);
@@ -1493,7 +1494,7 @@ namespace Lucene.Net.Search.Join
             parent.Add(NewTextField("parentText", "text", Field.Store.NO));
             parent.Add(NewStringField("isParent", "yes", Field.Store.NO));
 
-            IList<Document> docs = new List<Document>();
+            IList<Document> docs = new JCG.List<Document>();
 
             Document child = new Document();
             docs.Add(child);
@@ -1563,7 +1564,7 @@ namespace Lucene.Net.Search.Join
             parent.Add(NewTextField("parentText", "text", Field.Store.NO));
             parent.Add(NewStringField("isParent", "yes", Field.Store.NO));
 
-            IList<Document> docs = new List<Document>();
+            IList<Document> docs = new JCG.List<Document>();
 
             Document child = new Document();
             docs.Add(child);

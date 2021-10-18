@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -349,7 +350,7 @@ namespace Lucene.Net.Util
                         // phrase query:
                         MultiPhraseQuery mpq = NewMultiPhraseQuery();
                         mpq.Slop = phraseSlop;
-                        IList<Term> multiTerms = new List<Term>();
+                        IList<Term> multiTerms = new JCG.List<Term>();
                         int position = -1;
                         for (int i = 0; i < numTokens; i++)
                         {

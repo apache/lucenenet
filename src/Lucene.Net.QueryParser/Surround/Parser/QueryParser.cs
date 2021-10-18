@@ -6,6 +6,7 @@ using System.IO;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Surround.Parser
 {
@@ -228,7 +229,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 Jj_consume_token(RegexpToken.COLON);
                 if (fieldNames == null)
                 {
-                    fieldNames = new List<string>();
+                    fieldNames = new JCG.List<string>();
                 }
                 fieldNames.Add(fieldName.Image);
             }
@@ -259,7 +260,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 /* keep only last used operator */
                 if (queries == null)
                 {
-                    queries = new List<SrndQuery>();
+                    queries = new JCG.List<SrndQuery>();
                     queries.Add(q);
                 }
                 q = AndQuery();
@@ -292,7 +293,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 /* keep only last used operator */
                 if (queries == null)
                 {
-                    queries = new List<SrndQuery>();
+                    queries = new JCG.List<SrndQuery>();
                     queries.Add(q);
                 }
                 q = NotQuery();
@@ -325,7 +326,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 /* keep only last used operator */
                 if (queries == null)
                 {
-                    queries = new List<SrndQuery>();
+                    queries = new JCG.List<SrndQuery>();
                     queries.Add(q);
                 }
                 q = NQuery();
@@ -355,7 +356,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                         goto label_5;
                 }
                 dt = Jj_consume_token(RegexpToken.N);
-                queries = new List<SrndQuery>();
+                queries = new JCG.List<SrndQuery>();
                 queries.Add(q); /* left associative */
 
                 q = WQuery();
@@ -386,7 +387,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                         goto label_6;
                 }
                 wt = Jj_consume_token(RegexpToken.W);
-                queries = new List<SrndQuery>();
+                queries = new JCG.List<SrndQuery>();
                 queries.Add(q); /* left associative */
 
                 q = PrimaryQuery();
@@ -473,7 +474,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         public IList<SrndQuery> FieldsQueryList()
         {
             SrndQuery q;
-            IList<SrndQuery> queries = new List<SrndQuery>();
+            IList<SrndQuery> queries = new JCG.List<SrndQuery>();
             Jj_consume_token(RegexpToken.LPAREN);
             q = FieldsQuery();
             queries.Add(q);
@@ -783,7 +784,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 return (jj_ntk = Jj_nt.Kind);
         }
 
-        private readonly IList<int[]> jj_expentries = new List<int[]>(); // LUCENENET: marked readonly
+        private readonly IList<int[]> jj_expentries = new JCG.List<int[]>(); // LUCENENET: marked readonly
         private int[] jj_expentry;
         private int jj_kind = -1;
         private readonly int[] jj_lasttokens = new int[100]; // LUCENENET: marked readonly

@@ -418,7 +418,7 @@ namespace Lucene.Net.Analysis.Util
             CharArraySet setCaseSensitive = new CharArraySet(TEST_VERSION_CURRENT, 10, false);
 
             IList<string> stopwords = TEST_STOP_WORDS;
-            IList<string> stopwordsUpper = new List<string>();
+            IList<string> stopwordsUpper = new JCG.List<string>();
             foreach (string @string in stopwords)
             {
                 stopwordsUpper.Add(@string.ToUpperInvariant());
@@ -442,7 +442,7 @@ namespace Lucene.Net.Analysis.Util
                 assertFalse(copyCaseSens.contains(@string));
             }
             // test adding terms to the copy
-            IList<string> newWords = new List<string>();
+            IList<string> newWords = new JCG.List<string>();
             foreach (string @string in stopwords)
             {
                 newWords.Add(@string + "_1");
@@ -471,7 +471,7 @@ namespace Lucene.Net.Analysis.Util
             CharArraySet setCaseSensitive = new CharArraySet(TEST_VERSION_CURRENT, 10, false);
 
             IList<string> stopwords = TEST_STOP_WORDS;
-            IList<string> stopwordsUpper = new List<string>();
+            IList<string> stopwordsUpper = new JCG.List<string>();
             foreach (string @string in stopwords)
             {
                 stopwordsUpper.Add(@string.ToUpperInvariant());
@@ -495,7 +495,7 @@ namespace Lucene.Net.Analysis.Util
                 assertFalse(copyCaseSens.contains(@string));
             }
             // test adding terms to the copy
-            IList<string> newWords = new List<string>();
+            IList<string> newWords = new JCG.List<string>();
             foreach (string @string in stopwords)
             {
                 newWords.Add(@string + "_1");
@@ -522,7 +522,7 @@ namespace Lucene.Net.Analysis.Util
             ISet<string> set = new JCG.HashSet<string>();
 
             IList<string> stopwords = TEST_STOP_WORDS;
-            IList<string> stopwordsUpper = new List<string>();
+            IList<string> stopwordsUpper = new JCG.List<string>();
             foreach (string @string in stopwords)
             {
                 stopwordsUpper.Add(@string.ToUpperInvariant());
@@ -540,7 +540,7 @@ namespace Lucene.Net.Analysis.Util
                 assertFalse(copy.contains(@string));
             }
 
-            IList<string> newWords = new List<string>();
+            IList<string> newWords = new JCG.List<string>();
             foreach (string @string in stopwords)
             {
                 newWords.Add(@string + "_1");
@@ -649,7 +649,7 @@ namespace Lucene.Net.Analysis.Util
         [Test, LuceneNetSpecific]
         public virtual void TestEquality()
         {
-            var values = new List<string> { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            var values = new JCG.List<string> { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             var charArraySet = new CharArraySet(TEST_VERSION_CURRENT, values, false);
             var charArraySetCopy = new CharArraySet(TEST_VERSION_CURRENT, values, false);
             values.Reverse();
@@ -663,7 +663,7 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(charArraySet.GetHashCode().Equals(equatableSetReverse.GetHashCode()));
             assertTrue(charArraySet.Equals(equatableSetReverse));
 
-            values = new List<string> { "sally", "seashells", "by", "the", "sea", "shore" };
+            values = new JCG.List<string> { "sally", "seashells", "by", "the", "sea", "shore" };
             charArraySet.Clear();
             charArraySet.UnionWith(values);
 
@@ -684,8 +684,8 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var existingValuesAsObject = new List<object> { "seashells", "sea", "shore" };
-            var mixedExistingNonExistingValuesAsObject = new List<object> { "true", "set", "of", "unique", "values", "except", "sells" };
+            var existingValuesAsObject = new JCG.List<object> { "seashells", "sea", "shore" };
+            var mixedExistingNonExistingValuesAsObject = new JCG.List<object> { "true", "set", "of", "unique", "values", "except", "sells" };
             var nonExistingMixedTypes = new object[] { true, (byte)55, (short)44, (int)33, (sbyte)22, (long)11, (char)'\n', "hurray", (uint)99, (ulong)89, (ushort)79, new char[] { 't', 'w', 'o' }, new StringCharSequence("testing") };
 
             // Add existing values
@@ -727,8 +727,8 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var existingValues = new List<char[]> { "seashells".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
-            var mixedExistingNonExistingValues = new List<char[]> { "true".ToCharArray(), "set".ToCharArray(), "of".ToCharArray(), "unique".ToCharArray(), "values".ToCharArray(), "except".ToCharArray(), "sells".ToCharArray() };
+            var existingValues = new JCG.List<char[]> { "seashells".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var mixedExistingNonExistingValues = new JCG.List<char[]> { "true".ToCharArray(), "set".ToCharArray(), "of".ToCharArray(), "unique".ToCharArray(), "values".ToCharArray(), "except".ToCharArray(), "sells".ToCharArray() };
 
             // Add existing values
             assertFalse(target.UnionWith(existingValues));
@@ -747,8 +747,8 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var existingValues = new List<string> { "seashells", "sea", "shore" };
-            var mixedExistingNonExistingValues = new List<string> { "true", "set", "of", "unique", "values", "except", "sells" };
+            var existingValues = new JCG.List<string> { "seashells", "sea", "shore" };
+            var mixedExistingNonExistingValues = new JCG.List<string> { "true", "set", "of", "unique", "values", "except", "sells" };
 
             // Add existing values
             //assertFalse(target.UnionWith(existingValues));
@@ -769,8 +769,8 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var existingValues = new List<ICharSequence> { new StringCharSequence("seashells"), new StringCharSequence("sea"), new StringCharSequence("shore") };
-            var mixedExistingNonExistingValues = new List<ICharSequence> { new StringCharSequence("true"), new StringCharSequence("set"), new StringCharSequence("of"), new StringCharSequence("unique"), new StringCharSequence("values"), new StringCharSequence("except"), new StringCharSequence("sells") };
+            var existingValues = new JCG.List<ICharSequence> { new StringCharSequence("seashells"), new StringCharSequence("sea"), new StringCharSequence("shore") };
+            var mixedExistingNonExistingValues = new JCG.List<ICharSequence> { new StringCharSequence("true"), new StringCharSequence("set"), new StringCharSequence("of"), new StringCharSequence("unique"), new StringCharSequence("values"), new StringCharSequence("except"), new StringCharSequence("sells") };
 
             // Add existing values
             assertFalse(target.UnionWith(existingValues));
@@ -789,8 +789,8 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var subset = new List<string> { "seashells", "sea", "shore" };
-            var superset = new List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var subset = new JCG.List<string> { "seashells", "sea", "shore" };
+            var superset = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
 
             assertFalse(target.IsSubsetOf(subset));
             assertTrue(target.IsSubsetOf(superset));
@@ -802,8 +802,8 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var subset = new List<object> { "seashells", "sea", "shore" };
-            var superset = new List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var subset = new JCG.List<object> { "seashells", "sea", "shore" };
+            var superset = new JCG.List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
 
             assertFalse(target.IsSubsetOf(subset));
             assertTrue(target.IsSubsetOf(superset));
@@ -815,8 +815,8 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var subset = new List<string> { "seashells", "sea", "shore" };
-            var superset = new List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var subset = new JCG.List<string> { "seashells", "sea", "shore" };
+            var superset = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
 
             assertFalse(target.IsProperSubsetOf(subset));
             assertTrue(target.IsProperSubsetOf(superset));
@@ -828,8 +828,8 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var subset = new List<object> { "seashells", "sea", "shore" };
-            var superset = new List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var subset = new JCG.List<object> { "seashells", "sea", "shore" };
+            var superset = new JCG.List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
 
             assertFalse(target.IsProperSubsetOf(subset));
             assertTrue(target.IsProperSubsetOf(superset));
@@ -841,8 +841,8 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var subset = new List<string> { "seashells", "sea", "shore" };
-            var superset = new List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var subset = new JCG.List<string> { "seashells", "sea", "shore" };
+            var superset = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
 
             assertTrue(target.IsSupersetOf(subset));
             assertFalse(target.IsSupersetOf(superset));
@@ -854,8 +854,8 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var subset = new List<object> { "seashells", "sea", "shore" };
-            var superset = new List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var subset = new JCG.List<object> { "seashells", "sea", "shore" };
+            var superset = new JCG.List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
 
             assertTrue(target.IsSupersetOf(subset));
             assertFalse(target.IsSupersetOf(superset));
@@ -867,8 +867,8 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var subset = new List<string> { "seashells", "sea", "shore" };
-            var superset = new List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var subset = new JCG.List<string> { "seashells", "sea", "shore" };
+            var superset = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
 
             assertTrue(target.IsProperSupersetOf(subset));
             assertFalse(target.IsProperSupersetOf(superset));
@@ -880,8 +880,8 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var subset = new List<object> { "seashells", "sea", "shore" };
-            var superset = new List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var subset = new JCG.List<object> { "seashells", "sea", "shore" };
+            var superset = new JCG.List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
 
             assertTrue(target.IsProperSupersetOf(subset));
             assertFalse(target.IsProperSupersetOf(superset));
@@ -893,8 +893,8 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var nonOverlapping = new List<string> { "peter", "piper", "picks", "a", "pack", "of", "pickled", "peppers" };
-            var overlapping = new List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var nonOverlapping = new JCG.List<string> { "peter", "piper", "picks", "a", "pack", "of", "pickled", "peppers" };
+            var overlapping = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
 
             assertFalse(target.Overlaps(nonOverlapping));
             assertTrue(target.Overlaps(overlapping));
@@ -906,8 +906,8 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var nonOverlapping = new List<object> { "peter", "piper", "picks", "a", "pack", "of", "pickled", "peppers" };
-            var overlapping = new List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var nonOverlapping = new JCG.List<object> { "peter", "piper", "picks", "a", "pack", "of", "pickled", "peppers" };
+            var overlapping = new JCG.List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
 
             assertFalse(target.Overlaps(nonOverlapping));
             assertTrue(target.Overlaps(overlapping));

@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ja.Util
 {
@@ -53,7 +54,7 @@ namespace Lucene.Net.Analysis.Ja.Util
         {
             UnknownDictionaryWriter dictionary = new UnknownDictionaryWriter(5 * 1024 * 1024);
 
-            List<string[]> lines = new List<string[]>();
+            JCG.List<string[]> lines = new JCG.List<string[]>();
             Encoding decoder = Encoding.GetEncoding(encoding);
             using (Stream inputStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
             using (TextReader reader = new StreamReader(inputStream, decoder))

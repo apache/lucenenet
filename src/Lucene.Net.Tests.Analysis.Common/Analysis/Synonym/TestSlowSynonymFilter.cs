@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -278,7 +279,7 @@ namespace Lucene.Net.Analysis.Synonym
         private IList<Token> Tokens(string str)
         {
             string[] arr = str.Split(' ').TrimEnd();
-            IList<Token> result = new List<Token>();
+            IList<Token> result = new JCG.List<Token>();
             for (int i = 0; i < arr.Length; i++)
             {
                 string[] toks = arr[i].Split('/').TrimEnd();

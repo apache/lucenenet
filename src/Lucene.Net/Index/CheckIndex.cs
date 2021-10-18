@@ -1,17 +1,16 @@
 ﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
 using Integer = J2N.Numerics.Int32;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -32,7 +31,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using IBits = Lucene.Net.Util.IBits;
     using BlockTreeTermsReader = Lucene.Net.Codecs.BlockTreeTermsReader;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
@@ -41,9 +39,10 @@ namespace Lucene.Net.Index
     using Document = Documents.Document;
     using DocValuesStatus = Lucene.Net.Index.CheckIndex.Status.DocValuesStatus;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexInput = Lucene.Net.Store.IndexInput;
-    using IOContext = Lucene.Net.Store.IOContext;
     using Int64BitSet = Lucene.Net.Util.Int64BitSet;
+    using IOContext = Lucene.Net.Store.IOContext;
     using Lucene3xSegmentInfoFormat = Lucene.Net.Codecs.Lucene3x.Lucene3xSegmentInfoFormat;
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
     using StringHelper = Lucene.Net.Util.StringHelper;
@@ -77,8 +76,8 @@ namespace Lucene.Net.Index
             internal Status()
             {
                 // Set property defaults
-                SegmentsChecked = new List<string>();
-                SegmentInfos = new List<SegmentInfoStatus>();
+                SegmentsChecked = new JCG.List<string>();
+                SegmentInfos = new JCG.List<SegmentInfoStatus>();
             }
 
             /// <summary>
@@ -2412,7 +2411,7 @@ namespace Lucene.Net.Index
             bool doFix = false;
             bool doCrossCheckTermVectors = false;
             bool verbose = false;
-            IList<string> onlySegments = new List<string>();
+            IList<string> onlySegments = new JCG.List<string>();
             string indexPath = null;
             string dirImpl = null;
             int i = 0;

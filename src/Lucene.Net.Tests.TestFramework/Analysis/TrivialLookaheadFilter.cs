@@ -2,7 +2,7 @@
 
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
-using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
@@ -29,10 +29,10 @@ namespace Lucene.Net.Analysis
     public sealed class TrivialLookaheadFilter : LookaheadTokenFilter<TestPosition>
     {
         private ICharTermAttribute termAtt;
-  private IPositionIncrementAttribute posIncAtt;
-  private IOffsetAttribute offsetAtt;
+        private IPositionIncrementAttribute posIncAtt;
+        private IOffsetAttribute offsetAtt;
 
-  private int insertUpto;
+        private int insertUpto;
 
         public TrivialLookaheadFilter(TokenStream input)
             : base(input)
@@ -42,67 +42,75 @@ namespace Lucene.Net.Analysis
             offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
-  protected override TestPosition NewPosition()
+        protected override TestPosition NewPosition()
         {
             return new TestPosition();
         }
 
-  public override bool IncrementToken() 
+        public override bool IncrementToken()
         {
-    // At the outset, getMaxPos is -1. So we'll peek. When we reach the end of the sentence and go to the
-    // first token of the next sentence, maxPos will be the prev sentence's end token, and we'll go again.
-    if (m_positions.MaxPos < m_outputPos) {
-      peekSentence();
-    }
+            // At the outset, getMaxPos is -1. So we'll peek. When we reach the end of the sentence and go to the
+            // first token of the next sentence, maxPos will be the prev sentence's end token, and we'll go again.
+            if (m_positions.MaxPos < m_outputPos)
+            {
+                PeekSentence();
+            }
 
-    return NextToken();
-}
-
-  public override void Reset() 
-{
-    base.Reset();
-    insertUpto = -1;
-}
-
-  protected override void AfterPosition() 
-{
-    if (insertUpto < m_outputPos) {
-        InsertToken();
-        // replace term with 'improved' term.
-        ClearAttributes();
-        termAtt.SetEmpty();
-        posIncAtt.PositionIncrement=(0);
-        termAtt.Append(m_positions.Get(m_outputPos).Fact);
-        offsetAtt.SetOffset(m_positions.Get(m_outputPos).StartOffset,
-                            m_positions.Get(m_outputPos + 1).EndOffset);
-        insertUpto = m_outputPos;
-    }
-}
-
-private void peekSentence() 
-{
-    var facts = new List<string>();
-    bool haveSentence = false;
-    do {
-      if (PeekToken()) {
-
-        String term = new String(termAtt.Buffer, 0, termAtt.Length);
-facts.Add(term + "-huh?");
-        if (".".equals(term)) {
-          haveSentence = true;
+            return NextToken();
         }
 
-      } else {
-        haveSentence = true;
-      }
+        public override void Reset()
+        {
+            base.Reset();
+            insertUpto = -1;
+        }
 
-    } while (!haveSentence);
+        protected override void AfterPosition()
+        {
+            if (insertUpto < m_outputPos)
+            {
+                InsertToken();
+                // replace term with 'improved' term.
+                ClearAttributes();
+                termAtt.SetEmpty();
+                posIncAtt.PositionIncrement = (0);
+                termAtt.Append(m_positions.Get(m_outputPos).Fact);
+                offsetAtt.SetOffset(m_positions.Get(m_outputPos).StartOffset,
+                                    m_positions.Get(m_outputPos + 1).EndOffset);
+                insertUpto = m_outputPos;
+            }
+        }
 
-    // attach the (now disambiguated) analyzed tokens to the positions.
-    for (int x = 0; x<facts.size(); x++) {
+        private void PeekSentence()
+        {
+            var facts = new JCG.List<string>();
+            bool haveSentence = false;
+            do
+            {
+                if (PeekToken())
+                {
+
+                    String term = new String(termAtt.Buffer, 0, termAtt.Length);
+                    facts.Add(term + "-huh?");
+                    if (".".equals(term))
+                    {
+                        haveSentence = true;
+                    }
+
+                }
+                else
+                {
+                    haveSentence = true;
+                }
+
+            } while (!haveSentence);
+
+            // attach the (now disambiguated) analyzed tokens to the positions.
+            for (int x = 0; x < facts.size(); x++)
+            {
                 // sentenceTokens is just relative to sentence, positions is absolute.
-                m_positions.Get(m_outputPos + x).Fact=(facts[x]);
-    }
-  }
+                m_positions.Get(m_outputPos + x).Fact = (facts[x]);
+            }
+        }
     }
 }

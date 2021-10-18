@@ -406,7 +406,7 @@ namespace Lucene.Net.Codecs.Bloom
                 {
                     _delegateFieldsConsumer.Dispose();
                     // Now we are done accumulating values for these fields
-                    var nonSaturatedBlooms = new List<KeyValuePair<FieldInfo, FuzzySet>>();
+                    var nonSaturatedBlooms = new JCG.List<KeyValuePair<FieldInfo, FuzzySet>>();
 
                     foreach (var entry in _bloomFilters)
                     {

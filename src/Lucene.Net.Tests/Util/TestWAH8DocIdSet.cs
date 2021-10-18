@@ -4,6 +4,7 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using BitSet = J2N.Collections.BitSet;
 
@@ -68,12 +69,12 @@ namespace Lucene.Net.Util
         {
             int numBits = TestUtil.NextInt32(Random, 100, 1 << 20);
             int numDocIdSets = TestUtil.NextInt32(Random, 0, 4);
-            IList<BitSet> fixedSets = new List<BitSet>(numDocIdSets);
+            IList<BitSet> fixedSets = new JCG.List<BitSet>(numDocIdSets);
             for (int i = 0; i < numDocIdSets; ++i)
             {
                 fixedSets.Add(RandomSet(numBits, Random.NextSingle() / 16));
             }
-            IList<WAH8DocIdSet> compressedSets = new List<WAH8DocIdSet>(numDocIdSets);
+            IList<WAH8DocIdSet> compressedSets = new JCG.List<WAH8DocIdSet>(numDocIdSets);
             foreach (BitSet set in fixedSets)
             {
                 compressedSets.Add(CopyOf(set, numBits));
@@ -215,12 +216,12 @@ namespace Lucene.Net.Util
         {
             int numBits = TestUtil.NextInt32(Random, 100, 1 << 20);
             int numDocIdSets = TestUtil.NextInt32(Random, 1, 4);
-            IList<OpenBitSet> fixedSets = new List<OpenBitSet>(numDocIdSets);
+            IList<OpenBitSet> fixedSets = new JCG.List<OpenBitSet>(numDocIdSets);
             for (int i = 0; i < numDocIdSets; ++i)
             {
                 fixedSets.Add(RandomOpenSet(numBits, Random.NextSingle()));
             }
-            IList<WAH8DocIdSet> compressedSets = new List<WAH8DocIdSet>(numDocIdSets);
+            IList<WAH8DocIdSet> compressedSets = new JCG.List<WAH8DocIdSet>(numDocIdSets);
             foreach (OpenBitSet set in fixedSets)
             {
                 compressedSets.Add(CopyOf(set, numBits));

@@ -1,8 +1,9 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
@@ -52,7 +53,7 @@ namespace Lucene.Net.Analysis
         public class Position : RollingBuffer.IResettable
         {
             // Buffered input tokens at this position:
-            public IList<AttributeSource.State> InputTokens { get; private set; } = new List<AttributeSource.State>();
+            public IList<AttributeSource.State> InputTokens { get; private set; } = new JCG.List<AttributeSource.State>();
 
             // Next buffered token to be returned to consumer:
             public int NextRead { get; set; }

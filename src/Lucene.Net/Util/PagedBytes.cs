@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -39,10 +40,10 @@ namespace Lucene.Net.Util
     // other "shift/mask big arrays". there are too many of these classes!
     public sealed class PagedBytes
     {
-        private readonly IList<byte[]> blocks = new List<byte[]>();
+        private readonly IList<byte[]> blocks = new JCG.List<byte[]>();
 
         // TODO: these are unused?
-        private readonly IList<int> blockEnd = new List<int>();
+        private readonly IList<int> blockEnd = new JCG.List<int>();
 
         private readonly int blockSize;
         private readonly int blockBits;

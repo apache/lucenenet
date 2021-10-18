@@ -4,7 +4,7 @@ using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
-using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
             Document doc = new Document();
             Field field = NewStringField(fieldName, "", Field.Store.NO);
             doc.Add(field);
-            List<string> terms = new List<string>();
+            JCG.List<string> terms = new JCG.List<string>();
             int num = AtLeast(200);
             for (int i = 0; i < num; i++)
             {

@@ -9,6 +9,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Join
 {
@@ -158,12 +159,12 @@ namespace Lucene.Net.Search.Join
 
         private IList<Document> CreateDocsForSegment(int segmentNumber)
         {
-            IList<IList<Document>> blocks = new List<IList<Document>>(AMOUNT_OF_PARENT_DOCS);
+            IList<IList<Document>> blocks = new JCG.List<IList<Document>>(AMOUNT_OF_PARENT_DOCS);
             for (int i = 0; i < AMOUNT_OF_PARENT_DOCS; i++)
             {
                 blocks.Add(CreateParentDocWithChildren(segmentNumber, i));
             }
-            IList<Document> result = new List<Document>(AMOUNT_OF_DOCS_IN_SEGMENT);
+            IList<Document> result = new JCG.List<Document>(AMOUNT_OF_DOCS_IN_SEGMENT);
             foreach (IList<Document> block in blocks)
             {
                 result.AddRange(block);
@@ -173,7 +174,7 @@ namespace Lucene.Net.Search.Join
 
         private IList<Document> CreateParentDocWithChildren(int segmentNumber, int parentNumber)
         {
-            IList<Document> result = new List<Document>(AMOUNT_OF_CHILD_DOCS + 1);
+            IList<Document> result = new JCG.List<Document>(AMOUNT_OF_CHILD_DOCS + 1);
             for (int i = 0; i < AMOUNT_OF_CHILD_DOCS; i++)
             {
                 result.Add(CreateChildDoc(segmentNumber, parentNumber, i));

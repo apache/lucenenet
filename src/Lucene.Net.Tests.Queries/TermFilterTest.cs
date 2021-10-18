@@ -86,7 +86,7 @@ namespace Lucene.Net.Tests.Queries
 #endif
                 Random, dir);
             int num = AtLeast(100);
-            var terms = new List<Term>();
+            var terms = new JCG.List<Term>();
             for (int i = 0; i < num; i++)
             {
                 string field = @"field" + i;

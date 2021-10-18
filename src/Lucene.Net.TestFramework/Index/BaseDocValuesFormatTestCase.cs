@@ -2419,7 +2419,7 @@ namespace Lucene.Net.Index
                     }
 
                     // add in any order to the dv field
-                    IList<string> unordered = new List<string>(values);
+                    IList<string> unordered = new JCG.List<string>(values);
                     unordered.Shuffle(Random);
                     foreach (string v in unordered)
                     {
@@ -2662,14 +2662,14 @@ namespace Lucene.Net.Index
                 }
                 int numValues = Random.Next(17);
                 // create a random list of strings
-                IList<string> values = new List<string>();
+                IList<string> values = new JCG.List<string>();
                 for (int v = 0; v < numValues; v++)
                 {
                     values.Add(TestUtil.RandomSimpleString(Random, length));
                 }
 
                 // add in any order to the indexed field
-                IList<string> unordered = new List<string>(values);
+                IList<string> unordered = new JCG.List<string>(values);
                 unordered.Shuffle(Random);
                 foreach (string v in unordered)
                 {
@@ -2677,7 +2677,7 @@ namespace Lucene.Net.Index
                 }
 
                 // add in any order to the dv field
-                IList<string> unordered2 = new List<string>(values);
+                IList<string> unordered2 = new JCG.List<string>(values);
                 unordered2.Shuffle(Random);
                 foreach (string v in unordered2)
                 {
@@ -3034,7 +3034,7 @@ namespace Lucene.Net.Index
                 {
                     numDocs = TestUtil.NextInt32(Random, 100, 200);
                 }
-                var docBytes = new List<byte[]>();
+                var docBytes = new JCG.List<byte[]>();
                 DirectoryReader r = null;
                 try
                 {
@@ -3178,7 +3178,7 @@ namespace Lucene.Net.Index
             {
                 numDocs = TestUtil.NextInt32(Random, 100, 200);
             }
-            var docBytes = new List<byte[]>();
+            var docBytes = new JCG.List<byte[]>();
             DirectoryReader r = null;
             try
             {

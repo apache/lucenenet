@@ -291,22 +291,20 @@ namespace Lucene.Net.Sandbox.Queries
             //create BooleanQueries to hold the variants for each token/field pair and ensure it
             // has no coord factor
             //Step 1: sort the termqueries by term/field
-            IDictionary<Term, List<ScoreTerm>> variantQueries = new Dictionary<Term, List<ScoreTerm>>();
+            IDictionary<Term, IList<ScoreTerm>> variantQueries = new Dictionary<Term, IList<ScoreTerm>>();
             int size = q.Count;
             for (int i = 0; i < size; i++)
             {
                 ScoreTerm st = q.Pop();
-                //List<ScoreTerm> l = variantQueries.get(st.fuzziedSourceTerm);
-                //          if(l==null)
-                if (!variantQueries.TryGetValue(st.FuzziedSourceTerm, out List<ScoreTerm> l) || l == null)
+                if (!variantQueries.TryGetValue(st.FuzziedSourceTerm, out IList<ScoreTerm> l) || l == null)
                 {
-                    l = new List<ScoreTerm>();
+                    l = new JCG.List<ScoreTerm>();
                     variantQueries[st.FuzziedSourceTerm] = l;
                 }
                 l.Add(st);
             }
             //Step 2: Organize the sorted termqueries into zero-coord scoring boolean queries
-            foreach (List<ScoreTerm> variants in variantQueries.Values)
+            foreach (IList<ScoreTerm> variants in variantQueries.Values)
             {
                 if (variants.Count == 1)
                 {

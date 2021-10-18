@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet
 {
@@ -39,7 +40,7 @@ namespace Lucene.Net.Facet
         public virtual void SetScorer(Scorer scorer)
         {
             // Gathers all scorers, including value and "under":
-            allScorers = new List<Scorer>();
+            allScorers = new JCG.List<Scorer>();
             allScorers.Add(scorer);
             int upto = 0;
             while (upto < allScorers.Count)

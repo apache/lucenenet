@@ -287,7 +287,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                                      LanguageSet langs)
         {
             IDictionary<string, IList<Rule>> ruleMap = GetInstanceMap(nameType, rt, langs);
-            IList<Rule> allRules = new List<Rule>();
+            IList<Rule> allRules = new JCG.List<Rule>();
             foreach (IList<Rule> rules in ruleMap.Values)
             {
                 allRules.AddRange(rules);
@@ -379,7 +379,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                     throw new ArgumentException("Phoneme starts with '(' so must end with ')'");
                 }
 
-                IList<Phoneme> phs = new List<Phoneme>();
+                IList<Phoneme> phs = new JCG.List<Phoneme>();
                 string body = ph.Substring(1, (ph.Length - 1) - 1);
                 foreach (string part in PIPE.Split(body).TrimEnd())
                 {
@@ -502,7 +502,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                                         string patternKey = r.pattern.Substring(0, 1 - 0);
                                         if (!lines.TryGetValue(patternKey, out IList<Rule> rules) || rules == null)
                                         {
-                                            rules = new List<Rule>();
+                                            rules = new JCG.List<Rule>();
                                             lines[patternKey] = rules;
                                         }
                                         rules.Add(r);

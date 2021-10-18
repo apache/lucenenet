@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using Integer = J2N.Numerics.Int32;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.CharFilters
 {
@@ -63,12 +64,12 @@ namespace Lucene.Net.Analysis.CharFilters
                 IList<string> wlist;
                 if (File.Exists(mapping))
                 {
-                    wlist = new List<string>(GetLines(loader, mapping));
+                    wlist = new JCG.List<string>(GetLines(loader, mapping));
                 }
                 else
                 {
                     var files = SplitFileNames(mapping);
-                    wlist = new List<string>();
+                    wlist = new JCG.List<string>();
                     foreach (string file in files)
                     {
                         var lines = GetLines(loader, file.Trim());

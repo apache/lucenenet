@@ -8,6 +8,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Join
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.Search.Join
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT,
                 new MockAnalyzer(Random)).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
 
-            IList<Document> docs = new List<Document>();
+            IList<Document> docs = new JCG.List<Document>();
             Document document = new Document();
             document.Add(new StringField("field2", "a", Field.Store.NO));
             document.Add(new StringField("filter_1", "T", Field.Store.NO));

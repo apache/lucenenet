@@ -1,8 +1,9 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util.Automaton
@@ -31,8 +32,8 @@ namespace Lucene.Net.Util.Automaton
     [TestFixture]
     public class TestDeterminizeLexicon : LuceneTestCase
     {
-        private IList<Automaton> automata = new List<Automaton>();
-        private IList<string> terms = new List<string>();
+        private IList<Automaton> automata = new JCG.List<Automaton>();
+        private IList<string> terms = new JCG.List<string>();
 
         [Test]
         public void TestLexicon()

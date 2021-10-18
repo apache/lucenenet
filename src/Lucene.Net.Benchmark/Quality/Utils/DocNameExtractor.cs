@@ -3,6 +3,7 @@ using Lucene.Net.Search;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.Quality.Utils
 {
@@ -48,7 +49,7 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
         /// <exception cref="IOException">if cannot extract the doc name from the index.</exception>
         public virtual string DocName(IndexSearcher searcher, int docid)
         {
-            IList<string> name = new List<string>();
+            IList<string> name = new JCG.List<string>();
             searcher.IndexReader.Document(docid, new StoredFieldVisitorAnonymousClass(this, name));
 
             return name.Count > 0 ? name[0] : null;

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -275,7 +276,7 @@ namespace Lucene.Net.Index
         {
             string[] files = dir.ListAll();
 
-            List<IndexCommit> commits = new List<IndexCommit>();
+            JCG.List<IndexCommit> commits = new JCG.List<IndexCommit>();
 
             SegmentInfos latest = new SegmentInfos();
             latest.Read(dir);

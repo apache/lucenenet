@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Security;
 using System.Text;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -53,7 +54,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// List of currently active <see cref="MergeThread"/>s. </summary>
-        protected internal IList<MergeThread> m_mergeThreads = new List<MergeThread>();
+        protected internal IList<MergeThread> m_mergeThreads = new JCG.List<MergeThread>();
 
         /// <summary>
         /// Default <see cref="MaxThreadCount"/>.
@@ -215,7 +216,7 @@ namespace Lucene.Net.Index
             {
                 // Only look at threads that are alive & not in the
                 // process of stopping (ie have an active merge):
-                IList<MergeThread> activeMerges = new List<MergeThread>();
+                IList<MergeThread> activeMerges = new JCG.List<MergeThread>();
 
                 int threadIdx = 0;
                 while (threadIdx < m_mergeThreads.Count)
@@ -809,7 +810,7 @@ namespace Lucene.Net.Index
             ConcurrentMergeScheduler clone = (ConcurrentMergeScheduler)base.Clone();
             clone.m_writer = null;
             clone.m_dir = null;
-            clone.m_mergeThreads = new List<MergeThread>();
+            clone.m_mergeThreads = new JCG.List<MergeThread>();
             return clone;
         }
     }

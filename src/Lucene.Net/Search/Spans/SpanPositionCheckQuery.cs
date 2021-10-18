@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -176,10 +177,10 @@ namespace Lucene.Net.Search.Spans
 
             public override ICollection<byte[]> GetPayload()
             {
-                List<byte[]> result = null;
+                JCG.List<byte[]> result = null;
                 if (spans.IsPayloadAvailable)
                 {
-                    result = new List<byte[]>(spans.GetPayload());
+                    result = new JCG.List<byte[]>(spans.GetPayload());
                 }
                 return result; //TODO: any way to avoid the new construction?
             }

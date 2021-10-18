@@ -1,13 +1,13 @@
 ﻿using J2N.Threading;
 using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Benchmarks.ByTask.Stats;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -61,7 +61,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             SetSequenceName();
             this.parent = parent;
             this.parallel = parallel;
-            tasks = new List<PerfTask>();
+            tasks = new JCG.List<PerfTask>();
             logByTimeMsec = runData.Config.Get("report.time.step.msec", 0);
         }
 
@@ -188,7 +188,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             int count = 0;
 
             long runTime = (long)(runTimeSec * 1000);
-            List<RunBackgroundTask> bgTasks = null;
+            IList<RunBackgroundTask> bgTasks = null;
 
             long t0 = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             for (int k = 0; fixedTime || (repetitions == REPEAT_EXHAUST && !exhausted) || k < repetitions; k++)
@@ -204,7 +204,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     {
                         if (bgTasks == null)
                         {
-                            bgTasks = new List<RunBackgroundTask>();
+                            bgTasks = new JCG.List<RunBackgroundTask>();
                         }
                         RunBackgroundTask bgTask = new RunBackgroundTask(task, letChildReport);
                         bgTask.Priority = (task.BackgroundDeltaPriority + Thread.CurrentThread.Priority);
@@ -617,7 +617,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public override object Clone()
         {
             TaskSequence res = (TaskSequence)base.Clone();
-            res.tasks = new List<PerfTask>();
+            res.tasks = new JCG.List<PerfTask>();
             for (int i = 0; i < tasks.Count; i++)
             {
                 res.tasks.Add((PerfTask)tasks[i].Clone());

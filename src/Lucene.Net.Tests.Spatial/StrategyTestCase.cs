@@ -66,19 +66,19 @@ namespace Lucene.Net.Spatial
 
         protected virtual void getAddAndVerifyIndexedDocuments(String testDataFile)
         {
-            List<Document> testDocuments = getDocuments(testDataFile);
+            IList<Document> testDocuments = getDocuments(testDataFile);
             addDocumentsAndCommit(testDocuments);
             VerifyDocumentsIndexed(testDocuments.size());
         }
 
-        protected virtual List<Document> getDocuments(String testDataFile)
+        protected virtual IList<Document> getDocuments(String testDataFile)
         {
             return getDocuments(getSampleData(testDataFile));
         }
 
-        protected virtual List<Document> getDocuments(IEnumerator<SpatialTestData> sampleData)
+        protected virtual IList<Document> getDocuments(IEnumerator<SpatialTestData> sampleData)
         {
-            List<Document> documents = new List<Document>();
+            IList<Document> documents = new JCG.List<Document>();
             while (sampleData.MoveNext())
             {
                 SpatialTestData data = sampleData.Current;
@@ -182,7 +182,7 @@ namespace Lucene.Net.Spatial
                 }
                 else
                 {
-                    List<string> found = new List<string>();
+                    IList<string> found = new JCG.List<string>();
                     foreach (SearchResult r in got.results)
                     {
                         found.Add(r.document.Get("id"));
@@ -191,7 +191,7 @@ namespace Lucene.Net.Spatial
                     // sort both so that the order is not important
                     CollectionUtil.TimSort(q.ids);
                     CollectionUtil.TimSort(found);
-                    assertEquals(msg, q.ids.toString(), found.toString());
+                    assertEquals(msg, q.ids.ToString(), found.ToString());
                 }
             }
         }
@@ -268,7 +268,7 @@ namespace Lucene.Net.Spatial
 
             SpatialTestQuery testQuery = new SpatialTestQuery();
             testQuery.args = new SpatialArgs(operation, queryShape);
-            testQuery.ids = new List<string>(expectedIds);
+            testQuery.ids = new JCG.List<string>(expectedIds);
             runTestQuery(SpatialMatchConcern.FILTER, testQuery);
         }
     }

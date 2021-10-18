@@ -6,6 +6,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -47,7 +48,7 @@ namespace Lucene.Net.Search
             perFieldSeed = random.Next();
             coordType = random.Next(3);
             shouldQueryNorm = random.NextBoolean();
-            knownSims = new List<Similarity>(allSims);
+            knownSims = new JCG.List<Similarity>(allSims);
             knownSims.Shuffle(random);
         }
 
@@ -113,7 +114,7 @@ namespace Lucene.Net.Search
 
         private static IList<Similarity> LoadAllSims() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            var allSims = new List<Similarity>();
+            var allSims = new JCG.List<Similarity>();
             allSims.Add(new DefaultSimilarity());
             allSims.Add(new BM25Similarity());
             foreach (BasicModel basicModel in BASIC_MODELS)

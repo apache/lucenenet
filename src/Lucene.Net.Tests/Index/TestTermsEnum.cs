@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
             IndexReader r = w.GetReader();
             w.Dispose();
 
-            List<BytesRef> terms = new List<BytesRef>();
+            JCG.List<BytesRef> terms = new JCG.List<BytesRef>();
             TermsEnum termsEnum = MultiFields.GetTerms(r, "body").GetEnumerator();
             while (termsEnum.MoveNext())
             {
@@ -247,7 +247,7 @@ namespace Lucene.Net.Index
             //final int numTerms = 50;
 
             ISet<string> terms = new JCG.HashSet<string>();
-            ICollection<string> pendingTerms = new List<string>();
+            ICollection<string> pendingTerms = new JCG.List<string>();
             IDictionary<BytesRef, int?> termToID = new Dictionary<BytesRef, int?>();
             int id = 0;
             while (terms.Count != numTerms)
@@ -738,7 +738,7 @@ namespace Lucene.Net.Index
 
             int END_LOC = -validTerms.Length - 1;
 
-            IList<TermAndState> termStates = new List<TermAndState>();
+            IList<TermAndState> termStates = new JCG.List<TermAndState>();
 
             for (int iter = 0; iter < 100 * RandomMultiplier; iter++)
             {

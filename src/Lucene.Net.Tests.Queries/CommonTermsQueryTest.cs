@@ -473,8 +473,8 @@ namespace Lucene.Net.Tests.Queries
                 int lowFreq = lowFreqQueue.Top.freq;
                 int highFreq = highFreqQueue.Top.freq;
                 AssumeTrue(@"unlucky index", highFreq - 1 > lowFreq);
-                List<TermAndFreq> highTerms = QueueToList(highFreqQueue);
-                List<TermAndFreq> lowTerms = QueueToList(lowFreqQueue);
+                IList<TermAndFreq> highTerms = QueueToList(highFreqQueue);
+                IList<TermAndFreq> lowTerms = QueueToList(lowFreqQueue);
 
                 IndexSearcher searcher = NewSearcher(reader);
                 Occur lowFreqOccur = RandomOccur(Random);
@@ -559,9 +559,9 @@ namespace Lucene.Net.Tests.Queries
             }
         }
 
-        private static List<TermAndFreq> QueueToList(Util.PriorityQueue<TermAndFreq> queue)
+        private static IList<TermAndFreq> QueueToList(Util.PriorityQueue<TermAndFreq> queue)
         {
-            var terms = new List<TermAndFreq>();
+            var terms = new JCG.List<TermAndFreq>();
             while (queue.Count > 0)
             {
                 terms.Add(queue.Pop());

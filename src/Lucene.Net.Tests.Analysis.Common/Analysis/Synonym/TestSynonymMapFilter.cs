@@ -449,7 +449,7 @@ namespace Lucene.Net.Analysis.Synonym
             //final int numSyn = 2;
 
             IDictionary<string, OneSyn> synMap = new Dictionary<string, OneSyn>();
-            IList<OneSyn> syns = new List<OneSyn>();
+            IList<OneSyn> syns = new JCG.List<OneSyn>();
             bool dedup = Random.nextBoolean();
             if (Verbose)
             {
@@ -464,7 +464,7 @@ namespace Lucene.Net.Analysis.Synonym
                     s = new OneSyn();
                     s.@in = synIn;
                     syns.Add(s);
-                    s.@out = new List<string>();
+                    s.@out = new JCG.List<string>();
                     synMap[synIn] = s;
                     s.keepOrig = Random.nextBoolean();
                 }

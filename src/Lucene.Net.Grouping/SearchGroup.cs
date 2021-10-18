@@ -142,7 +142,7 @@ namespace Lucene.Net.Search.Grouping
             private object[] topValues;
 
             public IList<ShardIter<T>> Shards => shards;
-            private readonly List<ShardIter<T>> shards = new List<ShardIter<T>>();
+            private readonly IList<ShardIter<T>> shards = new JCG.List<ShardIter<T>>();
 
             public int MinShardIndex
             {
@@ -410,7 +410,7 @@ namespace Lucene.Net.Search.Grouping
                 }
 
                 // Pull merged topN groups:
-                List<SearchGroup<T>> newTopGroups = new List<SearchGroup<T>>();
+                IList<SearchGroup<T>> newTopGroups = new JCG.List<SearchGroup<T>>();
 
                 int count = 0;
 

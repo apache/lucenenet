@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
@@ -1708,7 +1709,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestCustomIntParser()
         {
-            IList<string> letters = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
+            IList<string> letters = new JCG.List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
             letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
@@ -1773,7 +1774,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestCustomByteParser()
         {
-            IList<string> letters = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
+            IList<string> letters = new JCG.List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
             letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
@@ -1837,7 +1838,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestCustomShortParser()
         {
-            IList<string> letters = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
+            IList<string> letters = new JCG.List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
             letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
@@ -1904,7 +1905,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestCustomLongParser()
         {
-            IList<string> letters = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
+            IList<string> letters = new JCG.List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
             letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
@@ -1969,7 +1970,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestCustomFloatParser()
         {
-            IList<string> letters = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
+            IList<string> letters = new JCG.List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
             letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
@@ -2034,7 +2035,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestCustomDoubleParser()
         {
-            IList<string> letters = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
+            IList<string> letters = new JCG.List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
             letters.Shuffle(Random);
 
             Directory dir = NewDirectory();

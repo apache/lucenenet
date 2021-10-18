@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -411,7 +412,7 @@ namespace Lucene.Net.Index
                     ((LogMergePolicy)writer.Config.MergePolicy).MergeFactor = 2;
 
                     IndexWriter finalWriter = writer;
-                    List<Exception> failure = new List<Exception>();
+                    IList<Exception> failure = new JCG.List<Exception>();
                     ThreadJob t1 = new ThreadAnonymousClass(this, doc, finalWriter, failure);
 
                     if (failure.Count > 0)
@@ -443,9 +444,9 @@ namespace Lucene.Net.Index
 
             private Document doc;
             private IndexWriter finalWriter;
-            private List<Exception> failure;
+            private IList<Exception> failure;
 
-            public ThreadAnonymousClass(TestIndexWriterMerging outerInstance, Document doc, IndexWriter finalWriter, List<Exception> failure)
+            public ThreadAnonymousClass(TestIndexWriterMerging outerInstance, Document doc, IndexWriter finalWriter, IList<Exception> failure)
             {
                 this.outerInstance = outerInstance;
                 this.doc = doc;

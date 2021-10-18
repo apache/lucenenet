@@ -3,6 +3,7 @@ using Lucene.Net.QueryParsers.Flexible.Core.Processors;
 using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 {
@@ -87,7 +88,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         }
                         else
                         {
-                            List<IQueryNode> children = new List<IQueryNode>
+                            IList<IQueryNode> children = new JCG.List<IQueryNode>
                             {
                                 fieldNode
                             };

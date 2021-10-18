@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 /*
                     Egothor Software License version 1.00
@@ -70,7 +71,7 @@ namespace Egothor.Stemmer
         internal static char EOM = '*';
         internal static string EOM_NODE = "" + EOM;
 
-        protected IList<Trie> m_tries = new List<Trie>();
+        protected IList<Trie> m_tries = new JCG.List<Trie>();
 
         private readonly int BY = 1; // LUCENENET: marked readonly
 
@@ -189,7 +190,7 @@ namespace Egothor.Stemmer
         /// <returns>the newly reduced Trie</returns>
         public override Trie Reduce(Reduce by)
         {
-            List<Trie> h = new List<Trie>();
+            IList<Trie> h = new JCG.List<Trie>();
             foreach (Trie trie in m_tries)
                 h.Add(trie.Reduce(by));
 

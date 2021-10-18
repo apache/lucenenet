@@ -51,9 +51,9 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
 
-            IList<long?> numbers = new List<long?>();
-            IList<BytesRef> binary = new List<BytesRef>();
-            IList<BytesRef> sorted = new List<BytesRef>();
+            IList<long?> numbers = new JCG.List<long?>();
+            IList<BytesRef> binary = new JCG.List<BytesRef>();
+            IList<BytesRef> sorted = new JCG.List<BytesRef>();
             int numDocs = AtLeast(100);
             for (int i = 0; i < numDocs; i++)
             {
@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
             AtomicReader ar = (AtomicReader)r.Leaves[0].Reader;
 
             int numThreads = TestUtil.NextInt32(Random, 2, 5);
-            IList<ThreadJob> threads = new List<ThreadJob>();
+            IList<ThreadJob> threads = new JCG.List<ThreadJob>();
             CountdownEvent startingGun = new CountdownEvent(1);
             for (int t = 0; t < numThreads; t++)
             {
@@ -200,7 +200,7 @@ namespace Lucene.Net.Index
                 Console.WriteLine("TEST: NUM_DOCS=" + NUM_DOCS + " allowDups=" + allowDups);
             }
             int numDocs = 0;
-            IList<BytesRef> docValues = new List<BytesRef>();
+            IList<BytesRef> docValues = new JCG.List<BytesRef>();
 
             // TODO: deletions
             while (numDocs < NUM_DOCS)

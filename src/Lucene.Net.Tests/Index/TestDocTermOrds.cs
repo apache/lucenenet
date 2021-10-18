@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
@@ -296,7 +296,7 @@ namespace Lucene.Net.Index
                 for (int id = 0; id < NUM_DOCS; id++)
                 {
                     int[] docOrds = idToOrds[id];
-                    IList<int?> newOrds = new List<int?>();
+                    IList<int?> newOrds = new JCG.List<int?>();
                     foreach (int ord in idToOrds[id])
                     {
                         if (StringHelper.StartsWith(termsArray[ord], prefixRef))

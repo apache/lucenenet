@@ -1,11 +1,11 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -26,11 +26,10 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using IBits = Lucene.Net.Util.IBits;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
@@ -260,7 +259,7 @@ namespace Lucene.Net.Index
 
         public static int[] ToArray(DocsEnum docsEnum)
         {
-            List<int> docs = new List<int>();
+            IList<int> docs = new JCG.List<int>();
             while (docsEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
             {
                 int docID = docsEnum.DocID;

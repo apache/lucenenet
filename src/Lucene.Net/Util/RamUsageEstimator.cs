@@ -616,7 +616,7 @@ namespace Lucene.Net.Util
         {
             ClassCache cachedInfo;
             long shallowInstanceSize = NUM_BYTES_OBJECT_HEADER;
-            List<FieldInfo> referenceFields = new List<FieldInfo>(32);
+            JCG.List<FieldInfo> referenceFields = new JCG.List<FieldInfo>(32);
             for (Type c = clazz; c != null; c = c.BaseType)
             {
                 FieldInfo[] fields = c.GetFields(

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -60,7 +61,7 @@ namespace Lucene.Net.Store
                 Console.WriteLine("TEST: numDocs=" + numDocs);
             }
 
-            IList<BytesRef> ids = new List<BytesRef>();
+            IList<BytesRef> ids = new JCG.List<BytesRef>();
             DirectoryReader r = null;
             for (int docCount = 0; docCount < numDocs; docCount++)
             {

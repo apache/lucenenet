@@ -132,7 +132,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
         public virtual bool ValidateData(QualityQuery[] qq, TextWriter logger)
         {
             IDictionary<string, QRelJudgement> missingQueries = new Dictionary<string, QRelJudgement>(judgements);
-            IList<string> missingJudgements = new List<string>();
+            IList<string> missingJudgements = new JCG.List<string>();
             for (int i = 0; i < qq.Length; i++)
             {
                 string id = qq[i].QueryID;

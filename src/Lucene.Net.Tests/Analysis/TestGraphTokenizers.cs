@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -139,7 +140,7 @@ namespace Lucene.Net.Analysis
 
                 string[] parts = sb.ToString().Split(' ').TrimEnd();
 
-                tokens = new List<Token>();
+                tokens = new JCG.List<Token>();
                 int pos = 0;
                 int maxPos = -1;
                 int offset = 0;
@@ -500,7 +501,7 @@ namespace Lucene.Net.Analysis
 
         private Automaton Join(params string[] strings)
         {
-            IList<Automaton> @as = new List<Automaton>();
+            IList<Automaton> @as = new JCG.List<Automaton>();
             foreach (string s in strings)
             {
                 @as.Add(BasicAutomata.MakeString(s));

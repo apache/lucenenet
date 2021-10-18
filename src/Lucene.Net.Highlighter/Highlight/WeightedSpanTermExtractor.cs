@@ -164,16 +164,16 @@ namespace Lucene.Net.Search.Highlight
                         }
                     }
 
-                    var disjunctLists = new List<SpanQuery>[maxPosition + 1];
+                    var disjunctLists = new JCG.List<SpanQuery>[maxPosition + 1];
                     int distinctPositions = 0;
 
                     for (int i = 0; i < termArrays.Count; ++i)
                     {
                         Term[] termArray = termArrays[i];
-                        List<SpanQuery> disjuncts = disjunctLists[positions[i]];
+                        JCG.List<SpanQuery> disjuncts = disjunctLists[positions[i]];
                         if (disjuncts == null)
                         {
-                            disjuncts = (disjunctLists[positions[i]] = new List<SpanQuery>(termArray.Length));
+                            disjuncts = (disjunctLists[positions[i]] = new JCG.List<SpanQuery>(termArray.Length));
                             ++distinctPositions;
                         }
                         foreach (var term in termArray)
@@ -282,7 +282,7 @@ namespace Lucene.Net.Search.Highlight
                 spanQuery.ExtractTerms(nonWeightedTerms);
             }
 
-            List<PositionSpan> spanPositions = new List<PositionSpan>();
+            IList<PositionSpan> spanPositions = new JCG.List<PositionSpan>();
 
             foreach (string field in fieldNames)
             {
@@ -414,7 +414,7 @@ namespace Lucene.Net.Search.Highlight
 
                 public override IEnumerator<string> GetEnumerator()
                 {
-                    var list = new List<string> { DelegatingAtomicReader.FIELD_NAME };
+                    var list = new JCG.List<string> { DelegatingAtomicReader.FIELD_NAME };
                     return list.GetEnumerator();
                 }
 

@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Support.Threading;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
@@ -27,7 +28,7 @@ namespace Lucene.Net.Store
     /// </summary>
     public class RAMFile
     {
-        protected List<byte[]> m_buffers = new List<byte[]>();
+        protected IList<byte[]> m_buffers = new JCG.List<byte[]>();
         internal long length;
         internal RAMDirectory directory;
         protected internal long m_sizeInBytes;
@@ -96,7 +97,7 @@ namespace Lucene.Net.Store
             return buffer;
         }
 
-        protected internal byte[] GetBuffer(int index)
+        protected internal byte[] GetBuffer(int index) // LUCENENET TODO: API - change to indexer property
         {
             UninterruptableMonitor.Enter(this);
             try

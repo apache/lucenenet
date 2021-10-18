@@ -6,6 +6,7 @@ using Lucene.Net.Store;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -390,8 +391,8 @@ namespace Lucene.Net.Index
 
             public override void OnDelete(DocumentsWriterFlushControl control, ThreadState state)
             {
-                List<ThreadState> pending = new List<ThreadState>();
-                List<ThreadState> notPending = new List<ThreadState>();
+                IList<ThreadState> pending = new JCG.List<ThreadState>();
+                IList<ThreadState> notPending = new JCG.List<ThreadState>();
                 FindPending(control, pending, notPending);
                 bool flushCurrent = state.IsFlushPending;
                 ThreadState toFlush;
@@ -430,8 +431,8 @@ namespace Lucene.Net.Index
 
             public override void OnInsert(DocumentsWriterFlushControl control, ThreadState state)
             {
-                List<ThreadState> pending = new List<ThreadState>();
-                List<ThreadState> notPending = new List<ThreadState>();
+                IList<ThreadState> pending = new JCG.List<ThreadState>();
+                IList<ThreadState> notPending = new JCG.List<ThreadState>();
                 FindPending(control, pending, notPending);
                 bool flushCurrent = state.IsFlushPending;
                 long activeBytes = control.ActiveBytes;
@@ -480,7 +481,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal static void FindPending(DocumentsWriterFlushControl flushControl, List<ThreadState> pending, List<ThreadState> notPending)
+        internal static void FindPending(DocumentsWriterFlushControl flushControl, IList<ThreadState> pending, IList<ThreadState> notPending)
         {
             IEnumerator<ThreadState> allActiveThreads = flushControl.AllActiveThreadStates();
             while (allActiveThreads.MoveNext())

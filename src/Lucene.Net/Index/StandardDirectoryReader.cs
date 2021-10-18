@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -99,7 +100,7 @@ namespace Lucene.Net.Index
             // no need to process segments in reverse order
             int numSegments = infos.Count;
 
-            IList<SegmentReader> readers = new List<SegmentReader>();
+            IList<SegmentReader> readers = new JCG.List<SegmentReader>();
             Directory dir = writer.Directory;
 
             SegmentInfos segmentInfos = (SegmentInfos)infos.Clone();

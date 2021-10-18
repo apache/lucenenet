@@ -4,6 +4,7 @@ using Lucene.Net.QueryParsers.Flexible.Core.Util;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 {
@@ -140,7 +141,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
                 this.lowerInclusive = lowerInclusive;
                 this.upperInclusive = upperInclusive;
 
-                List<IQueryNode> children = new List<IQueryNode>(2)
+                IList<IQueryNode> children = new JCG.List<IQueryNode>(2)
                 {
                     lower,
                     upper

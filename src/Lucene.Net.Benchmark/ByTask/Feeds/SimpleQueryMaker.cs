@@ -5,7 +5,7 @@ using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
-using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -49,7 +49,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
                 DocMaker.BODY_FIELD, anlzr);
-            List<Query> qq = new List<Query>();
+            JCG.List<Query> qq = new JCG.List<Query>();
             Query q1 = new TermQuery(new Term(DocMaker.ID_FIELD, "doc2"));
             qq.Add(q1);
             Query q2 = new TermQuery(new Term(DocMaker.BODY_FIELD, "simple"));

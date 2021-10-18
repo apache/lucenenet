@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
         Directory dir;
         IndexReader reader;
         /* expected uniqueTermCount values for our documents */
-        List<int> expected = new List<int>();
+        IList<int> expected = new JCG.List<int>();
 
         public override void SetUp()
         {

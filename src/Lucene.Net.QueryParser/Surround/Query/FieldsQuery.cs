@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Surround.Query
 {
@@ -40,7 +41,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         public FieldsQuery(SrndQuery q, string fieldName, char fieldOp)
         {
             this.q = q;
-            var fieldNameList = new List<string>
+            var fieldNameList = new JCG.List<string>
             {
                 fieldName
             };
@@ -58,7 +59,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             }
             else
             { /* OR query over the fields */
-                List<SrndQuery> queries = new List<SrndQuery>();
+                IList<SrndQuery> queries = new JCG.List<SrndQuery>();
                 foreach (var fieldName in fieldNames)
                 {
                     var qc = (SrndQuery)q.Clone();

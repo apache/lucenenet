@@ -13,6 +13,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.MockRandom
 {
@@ -73,7 +74,7 @@ namespace Lucene.Net.Codecs.MockRandom
         private class MockInt32StreamFactory : Int32StreamFactory
         {
             private readonly int salt;
-            private readonly IList<Int32StreamFactory> delegates = new List<Int32StreamFactory>();
+            private readonly IList<Int32StreamFactory> delegates = new JCG.List<Int32StreamFactory>();
 
             public MockInt32StreamFactory(Random random)
             {

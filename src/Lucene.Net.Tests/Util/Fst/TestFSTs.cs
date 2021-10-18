@@ -122,7 +122,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     Outputs<object> outputs = NoOutputs.Singleton;
                     object NO_OUTPUT = outputs.NoOutput;
-                    List<InputOutput<object>> pairs = new List<InputOutput<object>>(terms2.Length);
+                    IList<InputOutput<object>> pairs = new JCG.List<InputOutput<object>>(terms2.Length);
                     foreach (Int32sRef term in terms2)
                     {
                         pairs.Add(new InputOutput<object>(term, NO_OUTPUT));
@@ -136,7 +136,7 @@ namespace Lucene.Net.Util.Fst
                 // FST ord pos int
                 {
                     PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
-                    List<InputOutput<long?>> pairs = new List<InputOutput<long?>>(terms2.Length);
+                    IList<InputOutput<long?>> pairs = new JCG.List<InputOutput<long?>>(terms2.Length);
                     for (int idx = 0; idx < terms2.Length; idx++)
                     {
                         pairs.Add(new InputOutput<long?>(terms2[idx], (long?)idx));
@@ -151,7 +151,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
                     BytesRef NO_OUTPUT = outputs.NoOutput;
-                    List<InputOutput<BytesRef>> pairs = new List<InputOutput<BytesRef>>(terms2.Length);
+                    IList<InputOutput<BytesRef>> pairs = new JCG.List<InputOutput<BytesRef>>(terms2.Length);
                     for (int idx = 0; idx < terms2.Length; idx++)
                     {
                         BytesRef output = Random.Next(30) == 17 ? NO_OUTPUT : new BytesRef(Convert.ToString(idx));
@@ -174,7 +174,7 @@ namespace Lucene.Net.Util.Fst
             {
                 Outputs<object> outputs = NoOutputs.Singleton;
                 object NO_OUTPUT = outputs.NoOutput;
-                List<InputOutput<object>> pairs = new List<InputOutput<object>>(terms.Length);
+                IList<InputOutput<object>> pairs = new JCG.List<InputOutput<object>>(terms.Length);
                 foreach (Int32sRef term in terms)
                 {
                     pairs.Add(new InputOutput<object>(term, NO_OUTPUT));
@@ -185,7 +185,7 @@ namespace Lucene.Net.Util.Fst
             // PositiveIntOutput (ord)
             {
                 PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
-                List<InputOutput<long?>> pairs = new List<InputOutput<long?>>(terms.Length);
+                IList<InputOutput<long?>> pairs = new JCG.List<InputOutput<long?>>(terms.Length);
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
                     pairs.Add(new InputOutput<long?>(terms[idx], (long?)idx));
@@ -196,7 +196,7 @@ namespace Lucene.Net.Util.Fst
             // PositiveIntOutput (random monotonically increasing positive number)
             {
                 PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
-                List<InputOutput<long?>> pairs = new List<InputOutput<long?>>(terms.Length);
+                IList<InputOutput<long?>> pairs = new JCG.List<InputOutput<long?>>(terms.Length);
                 long lastOutput = 0;
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
@@ -210,7 +210,7 @@ namespace Lucene.Net.Util.Fst
             // PositiveIntOutput (random positive number)
             {
                 PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
-                List<InputOutput<long?>> pairs = new List<InputOutput<long?>>(terms.Length);
+                IList<InputOutput<long?>> pairs = new JCG.List<InputOutput<long?>>(terms.Length);
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
                     pairs.Add(new InputOutput<long?>(terms[idx], TestUtil.NextInt64(Random, 0, long.MaxValue)));
@@ -223,7 +223,7 @@ namespace Lucene.Net.Util.Fst
                 PositiveInt32Outputs o1 = PositiveInt32Outputs.Singleton;
                 PositiveInt32Outputs o2 = PositiveInt32Outputs.Singleton;
                 PairOutputs<long?, long?> outputs = new PairOutputs<long?, long?>(o1, o2);
-                List<InputOutput<Pair>> pairs = new List<InputOutput<Pair>>(terms.Length);
+                IList<InputOutput<Pair>> pairs = new JCG.List<InputOutput<Pair>>(terms.Length);
                 long lastOutput = 0;
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
@@ -238,7 +238,7 @@ namespace Lucene.Net.Util.Fst
             {
                 ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
                 BytesRef NO_OUTPUT = outputs.NoOutput;
-                List<InputOutput<BytesRef>> pairs = new List<InputOutput<BytesRef>>(terms.Length);
+                IList<InputOutput<BytesRef>> pairs = new JCG.List<InputOutput<BytesRef>>(terms.Length);
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
                     BytesRef output = Random.Next(30) == 17 ? NO_OUTPUT : new BytesRef(Convert.ToString(idx));
@@ -250,7 +250,7 @@ namespace Lucene.Net.Util.Fst
             // Sequence-of-ints
             {
                 Int32SequenceOutputs outputs = Int32SequenceOutputs.Singleton;
-                List<InputOutput<Int32sRef>> pairs = new List<InputOutput<Int32sRef>>(terms.Length);
+                IList<InputOutput<Int32sRef>> pairs = new JCG.List<InputOutput<Int32sRef>>(terms.Length);
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
                     string s = Convert.ToString(idx);
@@ -1066,8 +1066,8 @@ namespace Lucene.Net.Util.Fst
                 IndexSearcher idxS = NewSearcher(r);
                 w.Dispose();
 
-                IList<string> allIDsList = new List<string>(allIDs);
-                IList<string> sortedAllIDsList = new List<string>(allIDsList);
+                IList<string> allIDsList = new JCG.List<string>(allIDs);
+                IList<string> sortedAllIDsList = new JCG.List<string>(allIDsList);
                 CollectionUtil.TimSort(sortedAllIDsList);
 
                 // Sprinkle in some non-existent PKs:
@@ -1224,7 +1224,7 @@ namespace Lucene.Net.Util.Fst
             IndexSearcher s = NewSearcher(r);
             w.Dispose();
 
-            IList<string> allTermsList = new List<string>(allTerms);
+            IList<string> allTermsList = new JCG.List<string>(allTerms);
             allTermsList.Shuffle(Random);
 
             // verify exact lookup
@@ -1256,7 +1256,7 @@ namespace Lucene.Net.Util.Fst
 
             SyntheticData s = new SyntheticData();
 
-            List<string> @out = new List<string>();
+            IList<string> @out = new JCG.List<string>();
             StringBuilder b = new StringBuilder();
             s.Generate(@out, b, 'a', 'i', 10);
             string[] input = @out.ToArray();
@@ -1664,7 +1664,7 @@ namespace Lucene.Net.Util.Fst
                 Assert.IsTrue(r.IsComplete);
 
                 // 2. go thru whole treemap (slowCompletor) and check its actually the best suggestion
-                List<Util.Result<long?>> matches = new List<Util.Result<long?>>();
+                JCG.List<Util.Result<long?>> matches = new JCG.List<Util.Result<long?>>();
 
                 // TODO: could be faster... but its slowCompletor for a reason
                 foreach (KeyValuePair<string, long> e in slowCompletor)
@@ -1803,7 +1803,7 @@ namespace Lucene.Net.Util.Fst
                 Util.TopResults<Pair> r = Util.ShortestPaths(fst, arc, fst.Outputs.NoOutput, minPairWeightComparer, topN, true);
                 Assert.IsTrue(r.IsComplete);
                 // 2. go thru whole treemap (slowCompletor) and check its actually the best suggestion
-                List<Util.Result<Pair>> matches = new List<Util.Result<Pair>>();
+                JCG.List<Util.Result<Pair>> matches = new JCG.List<Util.Result<Pair>>();
 
                 // TODO: could be faster... but its slowCompletor for a reason
                 foreach (KeyValuePair<string, TwoLongs> e in slowCompletor)

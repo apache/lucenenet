@@ -5,8 +5,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {
@@ -180,7 +179,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 return Collections.EmptyList<LookupResult>();
             }
 
-            List<LookupResult> results = new List<LookupResult>(num);
+            IList<LookupResult> results = new JCG.List<LookupResult>(num);
             CharsRef spare = new CharsRef();
             if (exactFirst && arc.IsFinal)
             {

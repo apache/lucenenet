@@ -2,6 +2,7 @@
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -31,7 +32,7 @@ namespace Lucene.Net.Util
         {
             Random random = Random;
             BytesRefArray list = new BytesRefArray(Util.Counter.NewCounter());
-            IList<string> stringList = new List<string>();
+            IList<string> stringList = new JCG.List<string>();
             for (int j = 0; j < 2; j++)
             {
                 if (j > 0 && random.NextBoolean())
@@ -80,7 +81,7 @@ namespace Lucene.Net.Util
         {
             Random random = Random;
             BytesRefArray list = new BytesRefArray(Util.Counter.NewCounter());
-            IList<string> stringList = new List<string>();
+            IList<string> stringList = new JCG.List<string>();
             for (int j = 0; j < 2; j++)
             {
                 if (j > 0 && random.NextBoolean())
@@ -128,7 +129,7 @@ namespace Lucene.Net.Util
         {
             Random random = Random;
             BytesRefArray list = new BytesRefArray(Util.Counter.NewCounter());
-            List<string> stringList = new List<string>();
+            IList<string> stringList = new JCG.List<string>();
 
             for (int j = 0; j < 2; j++)
             {
@@ -172,7 +173,7 @@ namespace Lucene.Net.Util
         {
             Random random = Random;
             BytesRefArray list = new BytesRefArray(Util.Counter.NewCounter());
-            List<string> stringList = new List<string>();
+            IList<string> stringList = new JCG.List<string>();
 
             for (int j = 0; j < 2; j++)
             {

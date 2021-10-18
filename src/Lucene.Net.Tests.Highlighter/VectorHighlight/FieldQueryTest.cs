@@ -884,7 +884,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldQuery fq = new FieldQuery(query, true, true);
 
             // "a"
-            List<TermInfo> phraseCandidate = new List<TermInfo>();
+            IList<TermInfo> phraseCandidate = new JCG.List<TermInfo>();
             phraseCandidate.Add(new TermInfo("a", 0, 1, 0, 1));
             assertNull(fq.SearchPhrase(F, phraseCandidate));
             // "a b"
@@ -928,7 +928,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldQuery fq = new FieldQuery(query, true, true);
 
             // "a b c" w/ position-gap = 2
-            List<TermInfo> phraseCandidate = new List<TermInfo>();
+            IList<TermInfo> phraseCandidate = new JCG.List<TermInfo>();
             phraseCandidate.Add(new TermInfo("a", 0, 1, 0, 1));
             phraseCandidate.Add(new TermInfo("b", 2, 3, 2, 1));
             phraseCandidate.Add(new TermInfo("c", 4, 5, 4, 1));
@@ -986,7 +986,7 @@ namespace Lucene.Net.Search.VectorHighlight
             QueryPhraseMap qpm = fq.GetFieldTermMap(F, "defg");
             assertNotNull(qpm);
             assertNull(fq.GetFieldTermMap(F, "dog"));
-            List<TermInfo> phraseCandidate = new List<TermInfo>();
+            IList<TermInfo> phraseCandidate = new JCG.List<TermInfo>();
             phraseCandidate.Add(new TermInfo("defg", 0, 12, 0, 1));
             assertNotNull(fq.SearchPhrase(F, phraseCandidate));
         }

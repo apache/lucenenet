@@ -1,5 +1,6 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -101,7 +102,7 @@ namespace Lucene.Net.Search
 
         public override ICollection<ChildScorer> GetChildren()
         {
-            return new List<ChildScorer>(2)
+            return new JCG.List<ChildScorer>(2)
             {
                 new ChildScorer(reqScorer, "MUST"),
                 new ChildScorer(optScorer, "SHOULD")

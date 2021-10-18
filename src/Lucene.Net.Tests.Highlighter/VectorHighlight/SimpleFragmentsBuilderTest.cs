@@ -265,8 +265,8 @@ namespace Lucene.Net.Search.VectorHighlight
             int numDocs = randomValues.Length * 5;
             int numFields = 2 + Random.nextInt(5);
             int numTerms = 2 + Random.nextInt(3);
-            List<Doc> docs = new List<Doc>(numDocs);
-            List<Document> documents = new List<Document>(numDocs);
+            IList<Doc> docs = new JCG.List<Doc>(numDocs);
+            IList<Document> documents = new JCG.List<Document>(numDocs);
             IDictionary<String, ISet<int>> valueToDocId = new JCG.Dictionary<String, ISet<int>>();
             for (int i = 0; i < numDocs; i++)
             {
@@ -301,7 +301,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
                     String queryTerm = randomValues[Random.nextInt(randomValues.Length)];
                     int randomHit = valueToDocId[queryTerm].First();
-                    List<StringBuilder> builders = new List<StringBuilder>();
+                    IList<StringBuilder> builders = new JCG.List<StringBuilder>();
                     foreach (String[] fieldValues in docs[randomHit].fieldValues)
                     {
                         StringBuilder builder = new StringBuilder();

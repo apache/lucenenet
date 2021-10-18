@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -134,7 +135,7 @@ namespace Lucene.Net.Search
         public virtual FieldCache.CacheEntry[] GetCacheEntries()
         {
             // LUCENENET specific - instantiate/ToArray() outside of lock to improve performance
-            IList<FieldCache.CacheEntry> result = new List<FieldCache.CacheEntry>(17);
+            IList<FieldCache.CacheEntry> result = new JCG.List<FieldCache.CacheEntry>(17);
             UninterruptableMonitor.Enter(this);
             try
             {

@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -7,6 +7,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 using Occur = Lucene.Net.Search.Occur;
@@ -168,7 +169,7 @@ namespace Lucene.Net
 
         private IList<Query> BuildQueries()
         {
-            IList<Query> queries = new List<Query>();
+            IList<Query> queries = new JCG.List<Query>();
 
             BooleanQuery booleanAB = new BooleanQuery();
             booleanAB.Add(new TermQuery(new Term("contents", "a")), Occur.SHOULD);

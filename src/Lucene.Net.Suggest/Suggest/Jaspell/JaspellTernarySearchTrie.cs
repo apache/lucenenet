@@ -33,6 +33,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Jaspell
 {
@@ -698,7 +699,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <returns> A <see cref="IList{String}"/> with the results </returns>
         public virtual IList<string> MatchAlmost(string key, int numReturnValues)
         {
-            return MatchAlmostRecursion(rootNode, 0, matchAlmostDiff, key, ((numReturnValues < 0) ? -1 : numReturnValues), new List<string>(), false);
+            return MatchAlmostRecursion(rootNode, 0, matchAlmostDiff, key, ((numReturnValues < 0) ? -1 : numReturnValues), new JCG.List<string>(), false);
         }
 
         /// <summary>
@@ -774,7 +775,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <returns> A <see cref="IList{String}"/> with the results </returns>
         public virtual IList<string> MatchPrefix(string prefix, int numReturnValues)
         {
-            List<string> sortKeysResult = new List<string>();
+            IList<string> sortKeysResult = new JCG.List<string>();
             TSTNode startNode = GetNode(prefix);
             if (startNode == null)
             {
@@ -939,7 +940,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <returns> A <see cref="IList{String}"/> with the results. </returns>
         protected virtual IList<string> SortKeys(TSTNode startNode, int numReturnValues)
         {
-            return SortKeysRecursion(startNode, ((numReturnValues < 0) ? -1 : numReturnValues), new List<string>());
+            return SortKeysRecursion(startNode, ((numReturnValues < 0) ? -1 : numReturnValues), new JCG.List<string>());
         }
 
         /// <summary>

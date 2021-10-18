@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -293,7 +294,7 @@ namespace Lucene.Net.Index
             while (iter.MoveNext())
             {
                 Document d = iter.Current;
-                List<IIndexableField> fields = new List<IIndexableField>();
+                IList<IIndexableField> fields = new JCG.List<IIndexableField>();
                 fields.AddRange(d.Fields);
                 // put fields in same order each time
                 fields.Sort(fieldNameComparer);
@@ -919,7 +920,7 @@ namespace Lucene.Net.Index
                 customType1.IsTokenized = false;
                 customType1.OmitNorms = true;
 
-                List<Field> fields = new List<Field>();
+                IList<Field> fields = new JCG.List<Field>();
                 string idString = IdString;
                 Field idField = NewField("id", idString, customType1);
                 fields.Add(idField);

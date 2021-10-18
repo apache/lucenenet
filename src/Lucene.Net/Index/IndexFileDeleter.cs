@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -88,18 +89,18 @@ namespace Lucene.Net.Index
         /// Other policies may leave commit points live for longer
         /// in which case this list would be longer than 1:
         /// </summary>
-        private readonly IList<CommitPoint> commits = new List<CommitPoint>(); // LUCENENET: marked readonly
+        private readonly IList<CommitPoint> commits = new JCG.List<CommitPoint>(); // LUCENENET: marked readonly
 
         /// <summary>
         /// Holds files we had incref'd from the previous
         /// non-commit checkpoint:
         /// </summary>
-        private readonly List<string> lastFiles = new List<string>();
+        private readonly JCG.List<string> lastFiles = new JCG.List<string>();
 
         /// <summary>
         /// Commits that the IndexDeletionPolicy have decided to delete:
         /// </summary>
-        private readonly IList<CommitPoint> commitsToDelete = new List<CommitPoint>(); // LUCENENET: marked readonly
+        private readonly IList<CommitPoint> commitsToDelete = new JCG.List<CommitPoint>(); // LUCENENET: marked readonly
 
         private readonly InfoStream infoStream;
         private readonly Directory directory; // LUCENENET: marked readonly
@@ -697,7 +698,7 @@ namespace Lucene.Net.Index
                 }
                 if (deletable == null)
                 {
-                    deletable = new List<string>();
+                    deletable = new JCG.List<string>();
                 }
                 deletable.Add(fileName); // add to deletable
             }

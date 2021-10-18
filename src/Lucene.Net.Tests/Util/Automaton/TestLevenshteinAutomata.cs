@@ -1,8 +1,9 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util.Automaton
@@ -163,7 +164,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         private Automaton InsertionsOf(string s)
         {
-            IList<Automaton> list = new List<Automaton>();
+            IList<Automaton> list = new JCG.List<Automaton>();
 
             for (int i = 0; i <= s.Length; i++)
             {
@@ -184,7 +185,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         private Automaton DeletionsOf(string s)
         {
-            IList<Automaton> list = new List<Automaton>();
+            IList<Automaton> list = new JCG.List<Automaton>();
 
             for (int i = 0; i < s.Length; i++)
             {
@@ -205,7 +206,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         private Automaton SubstitutionsOf(string s)
         {
-            IList<Automaton> list = new List<Automaton>();
+            IList<Automaton> list = new JCG.List<Automaton>();
 
             for (int i = 0; i < s.Length; i++)
             {
@@ -230,7 +231,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return BasicAutomata.MakeEmpty();
             }
-            IList<Automaton> list = new List<Automaton>();
+            IList<Automaton> list = new JCG.List<Automaton>();
             for (int i = 0; i < s.Length - 1; i++)
             {
                 StringBuilder sb = new StringBuilder();

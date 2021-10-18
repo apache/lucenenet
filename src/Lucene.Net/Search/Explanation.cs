@@ -1,5 +1,5 @@
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
     {
         private float val; // the value of this node
         private string description; // what it represents
-        private List<Explanation> details; // sub-explanations
+        private JCG.List<Explanation> details; // sub-explanations
 
         public Explanation()
         {
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
         {
             if (details == null)
             {
-                details = new List<Explanation>();
+                details = new JCG.List<Explanation>();
             }
             details.Add(detail);
         }

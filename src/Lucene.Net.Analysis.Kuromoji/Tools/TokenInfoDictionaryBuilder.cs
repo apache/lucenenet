@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ja.Util
 {
@@ -50,7 +51,7 @@ namespace Lucene.Net.Analysis.Ja.Util
 
         public virtual TokenInfoDictionaryWriter Build(string dirname)
         {
-            List<string> csvFiles = new List<string>();
+            JCG.List<string> csvFiles = new JCG.List<string>();
             foreach (FileInfo file in new DirectoryInfo(dirname).EnumerateFiles("*.csv"))
             {
                 csvFiles.Add(file.FullName);
@@ -65,7 +66,7 @@ namespace Lucene.Net.Analysis.Ja.Util
 
             // all lines in the file
             Console.WriteLine("  parse...");
-            List<string[]> lines = new List<string[]>(400000);
+            JCG.List<string[]> lines = new JCG.List<string[]>(400000);
             foreach (string file in csvFiles)
             {
                 using Stream inputStream = new FileStream(file, FileMode.Open, FileAccess.Read);

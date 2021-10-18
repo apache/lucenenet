@@ -237,7 +237,7 @@ namespace Lucene.Net.Index
                 savedTerms = FindTerms(r);
             }
             int numSavedTerms = savedTerms.Count;
-            IList<BytesRef> bigOrdTerms = new List<BytesRef>(savedTerms.GetView(numSavedTerms - 10, 10)); // LUCENENET: Converted end index to length
+            IList<BytesRef> bigOrdTerms = new JCG.List<BytesRef>(savedTerms.GetView(numSavedTerms - 10, 10)); // LUCENENET: Converted end index to length
             Console.WriteLine("TEST: test big ord terms...");
             TestSavedTerms(r, bigOrdTerms);
             Console.WriteLine("TEST: test all saved terms...");
@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
         {
             Console.WriteLine("TEST: findTerms");
             TermsEnum termsEnum = MultiFields.GetTerms(r, "field").GetEnumerator();
-            IList<BytesRef> savedTerms = new List<BytesRef>();
+            IList<BytesRef> savedTerms = new JCG.List<BytesRef>();
             int nextSave = TestUtil.NextInt32(Random, 500000, 1000000);
             BytesRef term;
             while (termsEnum.MoveNext())

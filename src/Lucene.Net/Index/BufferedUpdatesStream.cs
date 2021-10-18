@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
 
                 long gen = nextGen++;
 
-                List<SegmentCommitInfo> infos2 = new List<SegmentCommitInfo>();
+                JCG.List<SegmentCommitInfo> infos2 = new JCG.List<SegmentCommitInfo>();
                 infos2.AddRange(infos);
                 infos2.Sort(sortSegInfoByDelGen);
 
@@ -296,7 +296,7 @@ namespace Lucene.Net.Index
                         {
                             if (allDeleted == null)
                             {
-                                allDeleted = new List<SegmentCommitInfo>();
+                                allDeleted = new JCG.List<SegmentCommitInfo>();
                             }
                             allDeleted.Add(info);
                         }
@@ -358,7 +358,7 @@ namespace Lucene.Net.Index
                             {
                                 if (allDeleted == null)
                                 {
-                                    allDeleted = new List<SegmentCommitInfo>();
+                                    allDeleted = new JCG.List<SegmentCommitInfo>();
                                 }
                                 allDeleted.Add(info);
                             }

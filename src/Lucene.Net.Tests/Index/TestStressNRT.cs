@@ -10,6 +10,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -113,7 +114,7 @@ namespace Lucene.Net.Index
 
             AtomicInt32 numCommitting = new AtomicInt32();
 
-            IList<ThreadJob> threads = new List<ThreadJob>();
+            IList<ThreadJob> threads = new JCG.List<ThreadJob>();
 
             Directory dir = NewDirectory();
 

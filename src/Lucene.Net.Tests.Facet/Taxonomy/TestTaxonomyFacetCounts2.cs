@@ -107,7 +107,7 @@ namespace Lucene.Net.Facet.Taxonomy
             categories_a.Shuffle(Random);
             categories_b.Shuffle(Random);
 
-            List<FacetField> categories = new List<FacetField>();
+            JCG.List<FacetField> categories = new JCG.List<FacetField>();
             categories.AddRange(categories_a.GetView(0, numFacetsA)); // LUCENENET: Checked length for correctness
             categories.AddRange(categories_b.GetView(0, numFacetsB)); // LUCENENET: Checked length for correctness
 

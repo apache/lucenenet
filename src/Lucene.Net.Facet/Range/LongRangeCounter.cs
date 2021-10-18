@@ -3,6 +3,7 @@ using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Range
 {
@@ -75,11 +76,11 @@ namespace Lucene.Net.Facet.Range
                 }
             }
 
-            var endsList = new List<long?>(endsMap.Keys);
+            var endsList = new JCG.List<long?>(endsMap.Keys);
             endsList.Sort();
 
             // Build elementaryIntervals (a 1D Venn diagram):
-            IList<InclusiveRange> elementaryIntervals = new List<InclusiveRange>();
+            IList<InclusiveRange> elementaryIntervals = new JCG.List<InclusiveRange>();
             int upto0 = 1;
             long v = endsList[0] ?? 0;
             long prev;
@@ -344,7 +345,7 @@ namespace Lucene.Net.Facet.Range
                     // range; add to our output list:
                     if (outputs == null)
                     {
-                        outputs = new List<int?>();
+                        outputs = new JCG.List<int?>();
                     }
                     outputs.Add(index);
                 }

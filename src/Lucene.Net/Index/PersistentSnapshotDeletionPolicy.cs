@@ -2,10 +2,9 @@
 using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
+using JCG = J2N.Collections.Generic;
 using Long = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Index
@@ -329,7 +328,7 @@ namespace Lucene.Net.Index
             {
                 long genLoaded = -1;
                 Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
-                IList<string> snapshotFiles = new List<string>();
+                IList<string> snapshotFiles = new JCG.List<string>();
                 foreach (string file in dir.ListAll())
                 {
                     if (file.StartsWith(SNAPSHOTS_PREFIX, StringComparison.Ordinal))

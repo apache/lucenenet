@@ -1,7 +1,7 @@
-using Lucene.Net.Util;
-using System;
+﻿using Lucene.Net.Util;
 using System.Collections;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -31,9 +31,9 @@ namespace Lucene.Net.Index
     internal class CoalescedUpdates
     {
         internal readonly IDictionary<Query, int> queries = new Dictionary<Query, int>();
-        internal readonly IList<IEnumerable<Term>> iterables = new List<IEnumerable<Term>>();
-        internal readonly IList<NumericDocValuesUpdate> numericDVUpdates = new List<NumericDocValuesUpdate>();
-        internal readonly IList<BinaryDocValuesUpdate> binaryDVUpdates = new List<BinaryDocValuesUpdate>();
+        internal readonly IList<IEnumerable<Term>> iterables = new JCG.List<IEnumerable<Term>>();
+        internal readonly IList<NumericDocValuesUpdate> numericDVUpdates = new JCG.List<NumericDocValuesUpdate>();
+        internal readonly IList<BinaryDocValuesUpdate> binaryDVUpdates = new JCG.List<BinaryDocValuesUpdate>();
 
         public override string ToString()
         {

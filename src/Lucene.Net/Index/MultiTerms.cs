@@ -1,7 +1,7 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
-using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
 
         public override TermsEnum Intersect(CompiledAutomaton compiled, BytesRef startTerm)
         {
-            IList<MultiTermsEnum.TermsEnumIndex> termsEnums = new List<MultiTermsEnum.TermsEnumIndex>();
+            IList<MultiTermsEnum.TermsEnumIndex> termsEnums = new JCG.List<MultiTermsEnum.TermsEnumIndex>();
             for (int i = 0; i < subs.Length; i++)
             {
                 TermsEnum termsEnum = subs[i].Intersect(compiled, startTerm);
@@ -112,7 +112,7 @@ namespace Lucene.Net.Index
 
         public override TermsEnum GetEnumerator()
         {
-            IList<MultiTermsEnum.TermsEnumIndex> termsEnums = new List<MultiTermsEnum.TermsEnumIndex>();
+            IList<MultiTermsEnum.TermsEnumIndex> termsEnums = new JCG.List<MultiTermsEnum.TermsEnumIndex>();
             for (int i = 0; i < subs.Length; i++)
             {
                 TermsEnum termsEnum = subs[i].GetEnumerator();

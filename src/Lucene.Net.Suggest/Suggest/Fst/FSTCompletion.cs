@@ -79,7 +79,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// An empty result. Keep this an <see cref="List{T}"/> to keep all the returned
         /// lists of single type (monomorphic calls).
         /// </summary>
-        private static readonly List<Completion> EMPTY_RESULT = new List<Completion>();
+        private static readonly IList<Completion> EMPTY_RESULT = new JCG.List<Completion>();
 
         /// <summary>
         /// Finite state automaton encoding all the lookup terms. See class notes for

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -345,7 +346,7 @@ namespace Lucene.Net.Search
                 try
                 {
                     _closed = true;
-                    IList<SearcherTracker> toClose = new List<SearcherTracker>(_searchers.Values.Select(item => item.Value));
+                    IList<SearcherTracker> toClose = new JCG.List<SearcherTracker>(_searchers.Values.Select(item => item.Value));
 
                     // Remove up front in case exc below, so we don't
                     // over-decRef on double-close:

@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System.Collections.Generic;
 using RandomizedTesting.Generators;
+using JCG = J2N.Collections.Generic;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -65,7 +66,7 @@ namespace Lucene.Net.Index
             using Directory dir = new RAMDirectory();
             using IndexWriter iwriter = new IndexWriter(dir, iwc);
             int uniqueValueCount = TestUtil.NextInt32(Random, 1, 256);
-            IList<long> values = new List<long>();
+            IList<long> values = new JCG.List<long>();
 
             Document doc = new Document();
             NumericDocValuesField dvf = new NumericDocValuesField("dv", 0);

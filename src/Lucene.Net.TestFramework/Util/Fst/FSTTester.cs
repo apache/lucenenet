@@ -266,7 +266,7 @@ namespace Lucene.Net.Util.Fst
         {
             FST.Arc<T> arc = fst.GetFirstArc(new FST.Arc<T>());
 
-            IList<FST.Arc<T>> arcs = new List<FST.Arc<T>>();
+            IList<FST.Arc<T>> arcs = new JCG.List<FST.Arc<T>>();
             @in.Length = 0;
             @in.Offset = 0;
             T NO_OUTPUT = fst.Outputs.NoOutput;

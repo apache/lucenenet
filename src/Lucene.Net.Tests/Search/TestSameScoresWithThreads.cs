@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
@@ -136,7 +137,7 @@ namespace Lucene.Net.Search
                     startingGun.Wait();
                     for (int i = 0; i < 20; i++)
                     {
-                        IList<KeyValuePair<BytesRef, TopDocs>> shuffled = new List<KeyValuePair<BytesRef, TopDocs>>(answers);
+                        IList<KeyValuePair<BytesRef, TopDocs>> shuffled = new JCG.List<KeyValuePair<BytesRef, TopDocs>>(answers);
                         shuffled.Shuffle(Random);
                         foreach (KeyValuePair<BytesRef, TopDocs> ent in shuffled)
                         {

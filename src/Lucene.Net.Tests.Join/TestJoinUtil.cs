@@ -603,11 +603,11 @@ namespace Lucene.Net.Search.Join
                     {
                         if (!context.FromDocuments.TryGetValue(linkValue, out IList<RandomDoc> fromDocs))
                         {
-                            context.FromDocuments[linkValue] = fromDocs = new List<RandomDoc>();
+                            context.FromDocuments[linkValue] = fromDocs = new JCG.List<RandomDoc>();
                         }
                         if (!context.RandomValueFromDocs.TryGetValue(value, out IList<RandomDoc> randomValueFromDocs))
                         {
-                            context.RandomValueFromDocs[value] = randomValueFromDocs = new List<RandomDoc>();
+                            context.RandomValueFromDocs[value] = randomValueFromDocs = new JCG.List<RandomDoc>();
                         }
 
                         fromDocs.Add(docs[i]);
@@ -618,11 +618,11 @@ namespace Lucene.Net.Search.Join
                     {
                         if (!context.ToDocuments.TryGetValue(linkValue, out IList<RandomDoc> toDocuments))
                         {
-                            context.ToDocuments[linkValue] = toDocuments = new List<RandomDoc>();
+                            context.ToDocuments[linkValue] = toDocuments = new JCG.List<RandomDoc>();
                         }
                         if (!context.RandomValueToDocs.TryGetValue(value, out IList<RandomDoc> randomValueToDocs))
                         {
-                            context.RandomValueToDocs[value] = randomValueToDocs = new List<RandomDoc>();
+                            context.RandomValueToDocs[value] = randomValueToDocs = new JCG.List<RandomDoc>();
                         }
 
                         toDocuments.Add(docs[i]);
@@ -943,7 +943,7 @@ namespace Lucene.Net.Search.Join
                 ? context.FromHitsToJoinScore[queryValue]
                 : context.ToHitsToJoinScore[queryValue];
 
-            var hits = new List<KeyValuePair<int, JoinScore>>(hitsToJoinScores);
+            var hits = new JCG.List<KeyValuePair<int, JoinScore>>(hitsToJoinScores);
             hits.Sort(Comparer< KeyValuePair<int, JoinScore>>.Create( (hit1, hit2) =>
             {
                 float score1 = hit1.Value.Score(scoreMode);
@@ -1041,7 +1041,7 @@ namespace Lucene.Net.Search.Join
             {
                 this.id = id;
                 this.@from = from;
-                linkValues = new List<string>(numberOfLinkValues);
+                linkValues = new JCG.List<string>(numberOfLinkValues);
                 this.value = value;
             }
         }

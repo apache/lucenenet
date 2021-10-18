@@ -20,6 +20,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Console = Lucene.Net.Util.SystemConsole;
 using Directory = Lucene.Net.Store.Directory;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -174,8 +175,8 @@ namespace Lucene.Net.Index
             public override void Run()
             {
                 // TODO: would be better if this were cross thread, so that we make sure one thread deleting anothers added docs works:
-                IList<string> toDeleteIDs = new List<string>();
-                IList<SubDocs> toDeleteSubDocs = new List<SubDocs>();
+                IList<string> toDeleteIDs = new JCG.List<string>();
+                IList<SubDocs> toDeleteSubDocs = new JCG.List<SubDocs>();
                 while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTime && !outerInstance.m_failed) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 {
                     try
@@ -245,9 +246,9 @@ namespace Lucene.Net.Index
                                 }
 
                                 Field packIDField = NewStringField("packID", packID, Field.Store.YES);
-                                IList<string> docIDs = new List<string>();
+                                IList<string> docIDs = new JCG.List<string>();
                                 SubDocs subDocs = new SubDocs(packID, docIDs);
-                                IList<Document> docsList = new List<Document>();
+                                IList<Document> docsList = new JCG.List<Document>();
 
                                 allSubDocs.Enqueue(subDocs);
                                 doc.Add(packIDField);

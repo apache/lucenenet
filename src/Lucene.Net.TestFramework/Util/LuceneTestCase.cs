@@ -756,7 +756,7 @@ namespace Lucene.Net.Util
 
         private static IList<string> LoadCoreDirectories()
         {
-            return new List<string>(FS_DIRECTORIES)
+            return new JCG.List<string>(FS_DIRECTORIES)
             {
                 "RAMDirectory"
             };
@@ -1036,7 +1036,7 @@ namespace Lucene.Net.Util
         }
 
 #if TESTFRAMEWORK_MSTEST
-        private static readonly IList<string> initalizationLock = new List<string>();
+        private static readonly IList<string> initalizationLock = new JCG.List<string>();
         private static string _testClassName = string.Empty;
         private static string _testName = string.Empty;
         private static Type _testClassType;
@@ -2979,7 +2979,7 @@ namespace Lucene.Net.Util
 
             rightEnum = rightTerms.GetEnumerator(rightEnum);
 
-            IList<BytesRef> shuffledTests = new List<BytesRef>(tests);
+            IList<BytesRef> shuffledTests = new JCG.List<BytesRef>(tests);
             shuffledTests.Shuffle(Random);
 
             foreach (BytesRef b in shuffledTests)

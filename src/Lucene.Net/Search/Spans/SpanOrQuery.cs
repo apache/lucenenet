@@ -307,11 +307,11 @@ namespace Lucene.Net.Search.Spans
 
             public override ICollection<byte[]> GetPayload()
             {
-                List<byte[]> result = null;
+                JCG.List<byte[]> result = null;
                 Spans theTop = Top;
                 if (theTop != null && theTop.IsPayloadAvailable)
                 {
-                    result = new List<byte[]>(theTop.GetPayload());
+                    result = new JCG.List<byte[]>(theTop.GetPayload());
                 }
                 return result;
             }
