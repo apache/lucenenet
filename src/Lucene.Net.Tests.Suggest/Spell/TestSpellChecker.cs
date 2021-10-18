@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search.Spell
 {
@@ -450,7 +452,11 @@ namespace Lucene.Net.Search.Spell
          * when the spellchecker is concurrently accessed and closed.
          */
         [Test]
-        public void TestConcurrentAccess()
+        // LUCENENET: In Java, awaitTermination kills all of the threads forcefully after 60 seconds, which would cause a failure.
+        // We attempt to cancel the tasks gracefully after 60 seconds, but if they don't respond within 300 seconds it is a failure.
+        // This prevents us from hanging during testing, but still effectively gives us the same result.
+        [Timeout(300000)]
+        public async Task TestConcurrentAccess()
         {
             assertEquals(1, searchers.Count);
             using IndexReader r = DirectoryReader.Open(userindex);
@@ -464,14 +470,20 @@ namespace Lucene.Net.Search.Spell
             int num_field2 = this.NumDoc();
             assertEquals(num_field2, num_field1 + 1);
             int numThreads = 5 + Random.nextInt(5);
+            var tasks = new ConcurrentBag<Task>();
             SpellCheckWorker[] workers = new SpellCheckWorker[numThreads];
+            var executor = new LimitedConcurrencyLevelTaskScheduler(numThreads); // LUCENENET NOTE: Not sure why in Java they decided to pass the max concurrent threads as all of the threads, but this demonstrates how to use a custom TaskScheduler in .NET.
+            using var shutdown = new CancellationTokenSource();
+            var cancellationToken = shutdown.Token;
             var stop = new AtomicBoolean(false);
+            var taskFactory = new TaskFactory(executor);
             for (int i = 0; i < numThreads; i++)
             {
-                SpellCheckWorker spellCheckWorker = new SpellCheckWorker(this, r, stop);
+                SpellCheckWorker spellCheckWorker = new SpellCheckWorker(this, r, stop, cancellationToken, taskNum: i);
                 workers[i] = spellCheckWorker;
-                spellCheckWorker.Start();
+                tasks.Add(taskFactory.StartNew(() => spellCheckWorker.Run(), cancellationToken));
             }
+
             int iterations = 5 + Random.nextInt(5);
             for (int i = 0; i < iterations; i++)
             {
@@ -482,14 +494,23 @@ namespace Lucene.Net.Search.Spell
                 // showSearchersOpen();
             }
 
-            spellChecker.Dispose();
             stop.Value = true;
-
-            // wait for 60 seconds - usually this is very fast but coverage runs could take quite long
-            //executor.awaitTermination(60L, TimeUnit.SECONDS);
-            foreach (SpellCheckWorker worker in workers)
+            executor.Shutdown(); // Stop allowing tasks to queue
+            try
             {
-                worker.Join((long)TimeSpan.FromSeconds(60).TotalMilliseconds);
+                // wait for 60 seconds - usually this is very fast but coverage runs could take quite long
+                shutdown.CancelAfter(TimeSpan.FromSeconds(60));
+                await Task.WhenAll(tasks.ToArray());
+            }
+            catch (OperationCanceledException)
+            {
+                if (Verbose)
+                    Console.WriteLine($"\n{nameof(OperationCanceledException)} thrown\n(safe shutdown after timeout)");
+            }
+            finally
+            {
+                shutdown.Dispose();
+                spellChecker.Dispose(); // In Lucene, this was the line that did "stop" and the running task responded to the AlreadyClosedException to break out of the loop, but we are using AtomicBoolean to signal instead.
             }
 
             for (int i = 0; i < workers.Length; i++)
@@ -542,46 +563,63 @@ namespace Lucene.Net.Search.Spell
         //    System.out.println(count);
         //  }
 
-        private class SpellCheckWorker : ThreadJob
+        private class SpellCheckWorker
         {
             private readonly TestSpellChecker outerInstance;
 
             private readonly IndexReader reader;
             private readonly AtomicBoolean stop;
+            private readonly CancellationToken cancellationToken;
+            private readonly int taskNum;
             private volatile Exception error;
             internal volatile bool terminated = false;
 
-            public SpellCheckWorker(TestSpellChecker outerInstance, IndexReader reader, AtomicBoolean stop)
+            public SpellCheckWorker(TestSpellChecker outerInstance, IndexReader reader, AtomicBoolean stop, CancellationToken cancellationToken, int taskNum)
             {
                 this.outerInstance = outerInstance;
                 this.reader = reader;
+                
                 this.stop = stop;
+                this.cancellationToken = cancellationToken;
+                this.taskNum = taskNum;
             }
 
             public Exception Error => error;
 
-            public override void Run()
+            public void Run()
             {
-                Priority += 1;
                 try
                 {
+                    // Was cancellation already requested?
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        if (Verbose)
+                            Console.WriteLine("Task {0} was cancelled before it got started.",
+                                          taskNum);
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
+
                     while (!stop)
                     {
                         try
                         {
                             outerInstance.CheckCommonSuggestions(reader);
-
-                            Thread.Sleep(10);// don't starve refresh()'s CPU, which sleeps every 50 bytes for 1 ms
                         }
                         catch (Exception e) when (e.IsAlreadyClosedException())
                         {
-                            return;
+                            return; // LUCENENET: In Java, this was the "safe" shutdown signal, however in .NET we are shutting down proactively using AtomicBoolean stop
                         }
                         catch (Exception e) when (e.IsThrowable())
                         {
                             e.printStackTrace();
                             error = e;
                             return;
+                        }
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            if (Verbose)
+                                Console.WriteLine("Task {0} cancelled", taskNum);
+                            cancellationToken.ThrowIfCancellationRequested();
                         }
                     }
                 }
