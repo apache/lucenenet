@@ -605,7 +605,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                                 // LUCENENET NOTE: We need to calculate this as decimal because when using double it can sometimes 
                                 // return numbers that are greater than long.MaxValue, which results in a negative long number.
                                 // This is also the way it is being done in the FreeTextSuggester to work around the issue.
-                                Lookup.LookupResult lr = new Lookup.LookupResult(ngram, (long)(long.MaxValue * ((decimal)backoff * (decimal)count / contextCount)));
+
+                                // LUCENENET NOTE: The order of parentheses in the Java test didn't match the production code. This apparently doesn't affect the
+                                // result in Java, but does in .NET, so we changed the test to match the production code.
+                                //Lookup.LookupResult lr = new Lookup.LookupResult(ngram, (long)(long.MaxValue * ((decimal)backoff * (decimal)count / contextCount)));
+                                Lookup.LookupResult lr = new Lookup.LookupResult(ngram, (long)(long.MaxValue * (decimal)backoff * ((decimal)count) / contextCount));
                                 tmp.Add(lr);
                                 if (Verbose)
                                 {
