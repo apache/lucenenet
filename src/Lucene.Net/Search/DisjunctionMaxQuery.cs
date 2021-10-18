@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// The <see cref="Weight"/>s for our subqueries, in 1-1 correspondence with disjuncts </summary>
-            protected List<Weight> m_weights = new List<Weight>(); // The Weight's for our subqueries, in 1-1 correspondence with disjuncts
+            protected IList<Weight> m_weights = new List<Weight>(); // The Weight's for our subqueries, in 1-1 correspondence with disjuncts
 
             /// <summary>
             /// Construct the <see cref="Weight"/> for this <see cref="Search.Query"/> searched by <paramref name="searcher"/>.  Recursively construct subquery weights. </summary>
