@@ -238,7 +238,7 @@ namespace Lucene.Net.Search
             /// The <see cref="Similarities.Similarity"/> implementation. </summary>
             protected Similarity m_similarity;
 
-            protected List<Weight> m_weights;
+            protected IList<Weight> m_weights;
             protected int m_maxCoord; // num optional + num required
             private readonly bool disableCoord;
 
