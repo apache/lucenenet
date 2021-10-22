@@ -213,9 +213,6 @@ namespace Lucene.Net.Search
         }
 
         [Test]
-#if NETFRAMEWORK
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test fails on x86 on .NET Framework in Release mode only
-#endif
         public virtual void TestBS2DisjunctionNextVsAdvance()
         {
             Directory d = NewDirectory();
@@ -337,8 +334,10 @@ namespace Lucene.Net.Search
                         {
                             ScoreDoc hit = hits[nextUpto];
                             Assert.AreEqual(hit.Doc, nextDoc);
+
+                            // LUCENENET: For some weird reason, on x86 in .NET Framework (optimizations enabled), using == (as they did in Lucene) doesn't work with optimizations enabled, but using AreEqual with epsilon of 0f does.
                             // Test for precise float equality:
-                            Assert.IsTrue(hit.Score == scorer.GetScore(), "doc " + hit.Doc + " has wrong score: expected=" + hit.Score + " actual=" + scorer.GetScore());
+                            Assert.AreEqual(hit.Score, scorer.GetScore(), 0f, "doc " + hit.Doc + " has wrong score: expected=" + hit.Score + " actual=" + scorer.GetScore());
                         }
                         upto = nextUpto;
                     }
