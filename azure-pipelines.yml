@@ -334,17 +334,17 @@ stages:
           osName: 'Windows'
           imageName: 'windows-2019'
           maximumParallelJobs: 8
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
           imageName: 'ubuntu-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
           imageName: 'macOS-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
     displayName: 'Test net6.0,x64 on'
     pool:
       vmImage: $(imageName)
@@ -368,17 +368,17 @@ stages:
           osName: 'Windows'
           imageName: 'windows-2019'
           maximumParallelJobs: 8
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
           imageName: 'ubuntu-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
           imageName: 'macOS-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
     displayName: 'Test net6.0,x86 on'
     pool:
       vmImage: $(imageName)
@@ -402,17 +402,17 @@ stages:
           osName: 'Windows'
           imageName: 'windows-2019'
           maximumParallelJobs: 8
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
           imageName: 'ubuntu-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
           imageName: 'macOS-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
     displayName: 'Test net5.0,x64 on'
     pool:
       vmImage: $(imageName)
@@ -436,17 +436,17 @@ stages:
           osName: 'Windows'
           imageName: 'windows-2019'
           maximumParallelJobs: 8
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
           imageName: 'ubuntu-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
           imageName: 'macOS-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
     displayName: 'Test net5.0,x86 on'
     pool:
       vmImage: $(imageName)
@@ -470,17 +470,17 @@ stages:
           osName: 'Windows'
           imageName: 'windows-2019'
           maximumParallelJobs: 8
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
           imageName: 'ubuntu-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
           imageName: 'macOS-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
     displayName: 'Test netcoreapp3.1,x64 on'
     pool:
       vmImage: $(imageName)
@@ -504,17 +504,17 @@ stages:
           osName: 'Windows'
           imageName: 'windows-2019'
           maximumParallelJobs: 8
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
           imageName: 'ubuntu-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
           imageName: 'macOS-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
     displayName: 'Test netcoreapp3.1,x86 on'
     pool:
       vmImage: $(imageName)
@@ -562,7 +562,7 @@ stages:
           osName: 'Windows'
           imageName: 'windows-2019'
           maximumParallelJobs: 8
-          maximumAllowedFailures: 9 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
     displayName: 'Test net461,x86 on'
     pool:
       vmImage: $(imageName)
@@ -610,7 +610,7 @@ stages:
         nugetArtifactName: '$(NuGetArtifactName)'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: 8
-        maximumAllowedFailures: 5 # Maximum allowed failures for a successful build
+        maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
 
 
 - stage: Publish_Stage
