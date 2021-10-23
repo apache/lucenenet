@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Similarities;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -362,15 +363,13 @@ namespace Lucene.Net.Sandbox.Queries
             /// (non-Javadoc)
             /// <see cref="Util.PriorityQueue{T}.LessThan(T, T)"/>
             /// </summary>
-#if NETFRAMEWORK
-            [MethodImpl(MethodImplOptions.NoOptimization)] // LUCENENET specific: comparing score equality fails in x86 on .NET Framework with optimizations enabled
-#endif
             protected internal override bool LessThan(ScoreTerm termA, ScoreTerm termB)
             {
-                if (termA.Score == termB.Score)
+                // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                if (NumericUtils.SingleToSortableInt32(termA.Score) == NumericUtils.SingleToSortableInt32(termB.Score))
                     return termA.Term.CompareTo(termB.Term) > 0;
                 else
-                    return termA.Score < termB.Score;
+                    return NumericUtils.SingleToSortableInt32(termA.Score) < NumericUtils.SingleToSortableInt32(termB.Score);
             }
 
         }
