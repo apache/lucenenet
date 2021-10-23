@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Search
 {
@@ -47,9 +47,6 @@ namespace Lucene.Net.Search
             {
             }
 
-#if NETFRAMEWORK
-            [MethodImpl(MethodImplOptions.NoOptimization)] // LUCENENET specific: comparing float equality fails in x86 on .NET Framework with optimizations enabled
-#endif
             public override void Collect(int doc)
             {
                 float score = scorer.GetScore();
@@ -62,7 +59,8 @@ namespace Lucene.Net.Search
                 }
 
                 m_totalHits++;
-                if (score <= pqTop.Score)
+                // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                if (NumericUtils.SingleToSortableInt32(score) <= NumericUtils.SingleToSortableInt32(pqTop.Score))
                 {
                     // Since docs are returned in-order (i.e., increasing doc Id), a document
                     // with equal score to pqTop.score cannot compete since HitQueue favors
@@ -93,9 +91,6 @@ namespace Lucene.Net.Search
                 this.after = after;
             }
 
-#if NETFRAMEWORK
-            [MethodImpl(MethodImplOptions.NoOptimization)] // LUCENENET specific: comparing float equality fails in x86 on .NET Framework with optimizations enabled
-#endif
             public override void Collect(int doc)
             {
                 float score = scorer.GetScore();
@@ -109,13 +104,17 @@ namespace Lucene.Net.Search
 
                 m_totalHits++;
 
-                if (score > after.Score || (score == after.Score && doc <= afterDoc))
+                // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                int scoreBits = NumericUtils.SingleToSortableInt32(score);
+                int afterBits = NumericUtils.SingleToSortableInt32(after.Score);
+
+                if (scoreBits > afterBits || (scoreBits == afterBits && doc <= afterDoc))
                 {
                     // hit was collected on a previous page
                     return;
                 }
 
-                if (score <= pqTop.Score)
+                if (scoreBits <= NumericUtils.SingleToSortableInt32(pqTop.Score))
                 {
                     // Since docs are returned in-order (i.e., increasing doc Id), a document
                     // with equal score to pqTop.score cannot compete since HitQueue favors
@@ -153,9 +152,6 @@ namespace Lucene.Net.Search
             {
             }
 
-#if NETFRAMEWORK
-            [MethodImpl(MethodImplOptions.NoOptimization)] // LUCENENET specific: comparing float equality fails in x86 on .NET Framework with optimizations enabled
-#endif
             public override void Collect(int doc)
             {
                 float score = scorer.GetScore();
@@ -164,13 +160,17 @@ namespace Lucene.Net.Search
                 if (Debugging.AssertsEnabled) Debugging.Assert(!float.IsNaN(score));
 
                 m_totalHits++;
-                if (score < pqTop.Score)
+
+                // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                int scoreBits = NumericUtils.SingleToSortableInt32(score);
+                int pqTopBits = NumericUtils.SingleToSortableInt32(pqTop.Score);
+                if (scoreBits < pqTopBits)
                 {
                     // Doesn't compete w/ bottom entry in queue
                     return;
                 }
                 doc += docBase;
-                if (score == pqTop.Score && doc > pqTop.Doc)
+                if (scoreBits == pqTopBits && doc > pqTop.Doc)
                 {
                     // Break tie in score by doc ID:
                     return;
@@ -199,9 +199,6 @@ namespace Lucene.Net.Search
                 this.after = after;
             }
 
-#if NETFRAMEWORK
-            [MethodImpl(MethodImplOptions.NoOptimization)] // LUCENENET specific: comparing float equality fails in x86 on .NET Framework with optimizations enabled
-#endif
             public override void Collect(int doc)
             {
                 float score = scorer.GetScore();
@@ -210,18 +207,22 @@ namespace Lucene.Net.Search
                 if (Debugging.AssertsEnabled) Debugging.Assert(!float.IsNaN(score));
 
                 m_totalHits++;
-                if (score > after.Score || (score == after.Score && doc <= afterDoc))
+                // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                int scoreBits = NumericUtils.SingleToSortableInt32(score);
+                int afterBits = NumericUtils.SingleToSortableInt32(after.Score);
+                if (scoreBits > afterBits || (scoreBits == afterBits && doc <= afterDoc))
                 {
                     // hit was collected on a previous page
                     return;
                 }
-                if (score < pqTop.Score)
+                int pqTopBits = NumericUtils.SingleToSortableInt32(pqTop.Score);
+                if (scoreBits < pqTopBits)
                 {
                     // Doesn't compete w/ bottom entry in queue
                     return;
                 }
                 doc += docBase;
-                if (score == pqTop.Score && doc > pqTop.Doc)
+                if (scoreBits == pqTopBits && doc > pqTop.Doc)
                 {
                     // Break tie in score by doc ID:
                     return;
