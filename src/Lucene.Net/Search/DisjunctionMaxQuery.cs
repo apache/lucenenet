@@ -357,8 +357,9 @@ namespace Lucene.Net.Search
                 return false;
             }
             DisjunctionMaxQuery other = (DisjunctionMaxQuery)o;
-            return this.Boost == other.Boost 
-                && this.tieBreakerMultiplier == other.tieBreakerMultiplier 
+            // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+            return NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost)
+                && NumericUtils.SingleToSortableInt32(this.tieBreakerMultiplier) == NumericUtils.SingleToSortableInt32(other.tieBreakerMultiplier)
                 && this.disjuncts.Equals(other.disjuncts);
         }
 

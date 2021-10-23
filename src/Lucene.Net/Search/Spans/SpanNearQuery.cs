@@ -1,5 +1,6 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using J2N.Numerics;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -209,7 +210,8 @@ namespace Lucene.Net.Search.Spans
                 return false;
             }
 
-            return Boost == spanNearQuery.Boost;
+            // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+            return NumericUtils.SingleToSortableInt32(Boost) == NumericUtils.SingleToSortableInt32(spanNearQuery.Boost);
         }
 
         public override int GetHashCode()

@@ -26,6 +26,7 @@ namespace Lucene.Net.Search
      */
 
     using J2N.Collections.Generic.Extensions;
+    using Lucene.Net.Util;
     using System.Collections;
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
@@ -444,9 +445,10 @@ namespace Lucene.Net.Search
                 return false;
             }
             MultiPhraseQuery other = (MultiPhraseQuery)o;
-            return this.Boost == other.Boost 
-                && this.slop == other.slop 
-                && TermArraysEquals(this.termArrays, other.termArrays) 
+            // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+            return NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost)
+                && this.slop == other.slop
+                && TermArraysEquals(this.termArrays, other.termArrays)
                 && this.positions.Equals(other.positions);
         }
 

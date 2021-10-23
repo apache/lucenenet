@@ -1,3 +1,4 @@
+using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.Text;
 
@@ -155,7 +156,8 @@ namespace Lucene.Net.Search
                 return false;
             }
             MatchAllDocsQuery other = (MatchAllDocsQuery)o;
-            return this.Boost == other.Boost;
+            // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+            return NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost);
         }
 
         public override int GetHashCode()

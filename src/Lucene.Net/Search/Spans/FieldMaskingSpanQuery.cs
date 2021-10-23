@@ -1,3 +1,4 @@
+﻿using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -144,7 +145,10 @@ namespace Lucene.Net.Search.Spans
                 return false;
             }
             FieldMaskingSpanQuery other = (FieldMaskingSpanQuery)o;
-            return (this.Field.Equals(other.Field, StringComparison.Ordinal) && (this.Boost == other.Boost) && this.MaskedQuery.Equals(other.MaskedQuery));
+            // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+            return (this.Field.Equals(other.Field, StringComparison.Ordinal)
+                && (NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost))
+                && this.MaskedQuery.Equals(other.MaskedQuery));
         }
 
         public override int GetHashCode()
