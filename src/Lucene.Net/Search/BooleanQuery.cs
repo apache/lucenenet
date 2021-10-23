@@ -1,5 +1,6 @@
 ﻿using J2N;
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -681,7 +682,8 @@ namespace Lucene.Net.Search
                 return false;
             }
             BooleanQuery other = (BooleanQuery)o;
-            return this.Boost == other.Boost
+            // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+            return NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost)
                 && this.clauses.Equals(other.clauses)
                 && this.MinimumNumberShouldMatch == other.MinimumNumberShouldMatch
                 && this.disableCoord == other.disableCoord;

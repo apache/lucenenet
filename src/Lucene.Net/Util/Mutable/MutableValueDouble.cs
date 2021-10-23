@@ -56,7 +56,9 @@ namespace Lucene.Net.Util.Mutable
         public override bool EqualsSameType(object other)
         {
             MutableValueDouble b = (MutableValueDouble)other;
-            return Value == b.Value && Exists == b.Exists;
+            // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+            return NumericUtils.DoubleToSortableInt64(Value) == NumericUtils.DoubleToSortableInt64(b.Value)
+                && Exists == b.Exists;
         }
 
         public override int CompareSameType(object other)

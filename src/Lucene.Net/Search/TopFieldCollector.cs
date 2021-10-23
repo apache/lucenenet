@@ -299,7 +299,8 @@ namespace Lucene.Net.Search
             public override void Collect(int doc)
             {
                 float score = scorer.GetScore();
-                if (score > maxScore)
+                // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                if (NumericUtils.SingleToSortableInt32(score) > NumericUtils.SingleToSortableInt32(maxScore))
                 {
                     maxScore = score;
                 }
@@ -355,7 +356,8 @@ namespace Lucene.Net.Search
             public override void Collect(int doc)
             {
                 float score = scorer.GetScore();
-                if (score > maxScore)
+                // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                if (NumericUtils.SingleToSortableInt32(score) > NumericUtils.SingleToSortableInt32(maxScore))
                 {
                     maxScore = score;
                 }
@@ -600,7 +602,8 @@ namespace Lucene.Net.Search
             public override void Collect(int doc)
             {
                 float score = scorer.GetScore();
-                if (score > maxScore)
+                // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                if (NumericUtils.SingleToSortableInt32(score) > NumericUtils.SingleToSortableInt32(maxScore))
                 {
                     maxScore = score;
                 }
@@ -685,7 +688,8 @@ namespace Lucene.Net.Search
             public override void Collect(int doc)
             {
                 float score = scorer.GetScore();
-                if (score > maxScore)
+                // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                if (NumericUtils.SingleToSortableInt32(score) > NumericUtils.SingleToSortableInt32(maxScore))
                 {
                     maxScore = score;
                 }
@@ -990,7 +994,8 @@ namespace Lucene.Net.Search
                 if (trackMaxScore)
                 {
                     score = scorer.GetScore();
-                    if (score > maxScore)
+                    // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                    if (NumericUtils.SingleToSortableInt32(score) > NumericUtils.SingleToSortableInt32(maxScore))
                     {
                         maxScore = score;
                     }

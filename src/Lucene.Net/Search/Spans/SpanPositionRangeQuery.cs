@@ -1,5 +1,6 @@
 ﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Util;
 using System.Text;
 
 namespace Lucene.Net.Search.Spans
@@ -93,7 +94,10 @@ namespace Lucene.Net.Search.Spans
             }
 
             SpanPositionRangeQuery other = (SpanPositionRangeQuery)o;
-            return this.m_end == other.m_end && this.m_start == other.m_start && this.m_match.Equals(other.m_match) && this.Boost == other.Boost;
+            // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+            return this.m_end == other.m_end
+                && this.m_start == other.m_start
+                && this.m_match.Equals(other.m_match) && NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost);
         }
 
         public override int GetHashCode()

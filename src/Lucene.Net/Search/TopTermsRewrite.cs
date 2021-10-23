@@ -1,5 +1,6 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -161,11 +162,13 @@ namespace Lucene.Net.Search
                 if (stQueue.Count == maxSize)
                 {
                     ScoreTerm t = stQueue.Peek();
-                    if (boost < t.Boost)
+                    // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                    if (NumericUtils.SingleToSortableInt32(boost) < NumericUtils.SingleToSortableInt32(t.Boost))
                     {
                         return true;
                     }
-                    if (boost == t.Boost && termComp.Compare(bytes, t.Bytes) > 0)
+                    // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                    if (NumericUtils.SingleToSortableInt32(boost) == NumericUtils.SingleToSortableInt32(t.Boost) && termComp.Compare(bytes, t.Bytes) > 0)
                     {
                         return true;
                     }
@@ -175,7 +178,8 @@ namespace Lucene.Net.Search
                 if (visitedTerms.TryGetValue(bytes, out ScoreTerm t2))
                 {
                     // if the term is already in the PQ, only update docFreq of term in PQ
-                    if (Debugging.AssertsEnabled) Debugging.Assert(t2.Boost == boost, "boost should be equal in all segment TermsEnums");
+                    // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                    if (Debugging.AssertsEnabled) Debugging.Assert(NumericUtils.SingleToSortableInt32(t2.Boost) == NumericUtils.SingleToSortableInt32(boost), "boost should be equal in all segment TermsEnums");
                     t2.TermState.Register(state, m_readerContext.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                 }
                 else
@@ -264,7 +268,8 @@ namespace Lucene.Net.Search
 
             public int CompareTo(ScoreTerm other)
             {
-                if (this.Boost == other.Boost)
+                // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                if (NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost))
                 {
                     return TermComp.Compare(other.Bytes, this.Bytes);
                 }

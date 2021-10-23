@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -818,7 +819,8 @@ namespace Lucene.Net.Search
                     }
 
                     // Carry over maxScore from sub:
-                    if (doMaxScore && docs.MaxScore > hq.maxScore)
+                    // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                    if (doMaxScore && NumericUtils.SingleToSortableInt32(docs.MaxScore) > NumericUtils.SingleToSortableInt32(hq.maxScore))
                     {
                         hq.maxScore = docs.MaxScore;
                     }

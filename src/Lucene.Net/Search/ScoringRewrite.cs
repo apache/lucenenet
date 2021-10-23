@@ -1,4 +1,5 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Util;
 using System;
 
 namespace Lucene.Net.Search
@@ -174,7 +175,8 @@ namespace Lucene.Net.Search
                     // duplicate term: update docFreq
                     int pos = (-e) - 1;
                     array.termState[pos].Register(state, m_readerContext.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(array.boost[pos] == boostAtt.Boost, "boost should be equal in all segment TermsEnums");
+                    // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                    if (Debugging.AssertsEnabled) Debugging.Assert(NumericUtils.SingleToSortableInt32(array.boost[pos]) == NumericUtils.SingleToSortableInt32(boostAtt.Boost), "boost should be equal in all segment TermsEnums");
                 }
                 else
                 {

@@ -1,4 +1,5 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 
@@ -114,11 +115,12 @@ namespace Lucene.Net.Search
             Array.Sort(hits, Comparer<ScoreDoc>.Create((a, b) =>
             {
                 // Sort by score descending, then docID ascending:
-                if (a.Score > b.Score)
+                // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                if (NumericUtils.SingleToSortableInt32(a.Score) > NumericUtils.SingleToSortableInt32(b.Score))
                 {
                     return -1;
                 }
-                else if (a.Score < b.Score)
+                else if (NumericUtils.SingleToSortableInt32(a.Score) < NumericUtils.SingleToSortableInt32(b.Score))
                 {
                     return 1;
                 }

@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -233,7 +234,9 @@ namespace Lucene.Net.Search
                 return false;
             }
             TermQuery other = (TermQuery)o;
-            return (this.Boost == other.Boost) && this.term.Equals(other.term);
+            // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+            return (NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost))
+                && this.term.Equals(other.term);
         }
 
         /// <summary>
