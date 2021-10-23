@@ -334,9 +334,6 @@ namespace Lucene.Net.Sandbox.Queries
          * is not implemented correctly, there will be problems!
          */
         [Test]
-#if NETFRAMEWORK
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test fails on x86 on .NET Framework in Release mode only
-#endif
         public void TestTieBreaker()
         {
             Directory directory = NewDirectory();
