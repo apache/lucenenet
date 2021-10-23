@@ -3,7 +3,6 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Sandbox.Queries
 {
@@ -121,9 +120,6 @@ namespace Lucene.Net.Sandbox.Queries
             /// where distance is the Levenshtein distance for the two words.
             /// </para>
             /// </summary>
-#if NETFRAMEWORK
-            [MethodImpl(MethodImplOptions.NoOptimization)] // LUCENENET specific: comparing float equality fails in x86 on .NET Framework with optimizations enabled. Fixes TestTokenLengthOpt.
-#endif
             protected override sealed AcceptStatus Accept(BytesRef term)
             {
                 if (StringHelper.StartsWith(term, prefixBytesRef))
@@ -146,7 +142,7 @@ namespace Lucene.Net.Sandbox.Queries
                     //if raw is true, then distance must also be <= maxEdits by now
                     //given the previous if statement
                     if (outerInstance.m_raw == true ||
-                          (outerInstance.m_raw == false && similarity > outerInstance.MinSimilarity))
+                          (outerInstance.m_raw == false && NumericUtils.SingleToSortableInt32(similarity) > NumericUtils.SingleToSortableInt32(outerInstance.MinSimilarity)))
                     {
                         boostAtt.Boost = (similarity - outerInstance.MinSimilarity) * outerInstance.m_scaleFactor;
                         return AcceptStatus.YES;
