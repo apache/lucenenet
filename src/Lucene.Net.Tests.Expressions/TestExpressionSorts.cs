@@ -86,9 +86,6 @@ namespace Lucene.Net.Expressions
         }
 
         [Test]
-#if NETFRAMEWORK
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test fails on x86 on .NET Framework in Release mode only
-#endif
         public virtual void TestQueries()
         {
             int n = AtLeast(4);
