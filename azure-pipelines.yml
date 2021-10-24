@@ -54,6 +54,8 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 variables:
 - name: BuildCounter
   value: $[counter(variables['VersionSuffix'],coalesce(variables['BuildCounterSeed'], 1250))]
+- name: BuildSDKVersion
+  value: '6.0.100-rc.2.21505.57'
 - name: DocumentationArtifactName
   value: 'docs'
 - name: DocumentationArtifactZipFileName
@@ -121,10 +123,10 @@ stages:
       displayName: 'Setup Default Variable Values'
 
     - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk 6.0.100-rc.1'
+      displayName: 'Use .NET Core sdk $(BuildSDKVersion)'
       inputs:
         packageType: 'sdk'
-        version: '6.0.100-rc.1.21463.6'
+        version: '$(BuildSDKVersion)'
 
     - pwsh: |
         Import-Module "$(BuildDirectory)/psake.psm1"
