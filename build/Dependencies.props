@@ -49,7 +49,6 @@
     <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>$(MicrosoftCodeAnalysisVisualBasicPackageVersion)</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
     <MicrosoftExtensionsConfigurationPackageVersion>2.0.0</MicrosoftExtensionsConfigurationPackageVersion>
     <MicrosoftExtensionsConfigurationPackageVersion Condition=" $(TargetFramework.StartsWith('net45')) ">1.1.2</MicrosoftExtensionsConfigurationPackageVersion>
-    <MicrosoftExtensionsConfigurationPackageVersion Condition=" $(TargetFramework.StartsWith('net6.')) ">6.0.0-rc.1.21451.13</MicrosoftExtensionsConfigurationPackageVersion>
     <MicrosoftExtensionsConfigurationAbstractionsPackageVersion>$(MicrosoftExtensionsConfigurationPackageVersion)</MicrosoftExtensionsConfigurationAbstractionsPackageVersion>
     <MicrosoftExtensionsConfigurationCommandLinePackageVersion>$(MicrosoftExtensionsConfigurationPackageVersion)</MicrosoftExtensionsConfigurationCommandLinePackageVersion>
     <MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion>$(MicrosoftExtensionsConfigurationPackageVersion)</MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion>
