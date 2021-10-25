@@ -293,8 +293,8 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
                 continue
             }
             
-            # Special case - OpenNLP.NET only supports .NET Framework
-            if ($testName.Contains("Tests.Analysis.OpenNLP") -and (!$framework.StartsWith("net4"))) {
+            # Special case - OpenNLP.NET is only tested on .NET Framework 4.8
+            if ($testName.Contains("Tests.Analysis.OpenNLP") -and (!$framework.StartsWith("net48"))) {
                 $totalProjects--
                 $remainingProjects--
                 continue
