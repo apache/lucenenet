@@ -181,6 +181,8 @@ Building on the Command Line is currently only supported on Windows.
 
 ##### Execution
 
+> **NOTE:** If the project is open in Visual Studio, its background restore may interfere with these commands. It is recommended to close all instances of Visual Studio that have `Lucene.Net.sln` open before executing.
+
 To build the source, clone or download and unzip the repository. From the repository root, execute the `build.bat` file from a command prompt and include the desired options from the build options table below:
 
 ```
