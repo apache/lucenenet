@@ -300,6 +300,13 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
                 continue
             }
 
+            # Special case - Code analysis is only tested on .NET 5
+            if ($testName.Contains("Tests.CodeAnalysis") -and (!$framework.StartsWith("net5."))) {
+                $totalProjects--
+                $remainingProjects--
+                continue
+            }
+
             Write-Host "  Next Project in Queue: $testName, Framework: $framework" -ForegroundColor Yellow
 
             # Pause if we have queued too many parallel jobs
