@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------------------
+﻿# -----------------------------------------------------------------------------------
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -38,7 +38,7 @@
 
  .PARAMETER TestFrameworks
     A string array of Dotnet target framework monikers to run the tests on. The default is
-    @('net5.0','netcoreapp2.1','net48').
+    @('net6.0', 'net5.0','net461','net48').
 
  .PARAMETER OperatingSystems
     A string array of Github Actions operating system monikers to run the tests on.
@@ -59,18 +59,13 @@
     The SDK version of .NET Core 3.x to install on the build agent to be used for building and
     testing. This SDK is only installed on the build agent when targeting .NET Core 3.x.
     The default is 3.1.412.
-
- .PARAMETER DotNetCore2SDKVersion
-    The SDK version of .NET Core 2.x to install on the build agent to be used for building and
-    testing. This SDK is only installed on the build agent when targeting .NET Core 2.x.
-    The default is 2.1.817.
 #>
 param(
     [string]$OutputDirectory =  $PSScriptRoot,
 
     [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot)),
 
-    [string[]]$TestFrameworks = @('net5.0','netcoreapp2.1','net48'),
+    [string[]]$TestFrameworks = @('net6.0', 'net5.0','net461','net48'), # targets under test: net6.0, netstandard2.1, netstanard2.0, net45
 
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
 
@@ -78,11 +73,11 @@ param(
 
     [string[]]$Configurations = @('Release'),
 
+    [string]$DotNet6SDKVersion = '6.0.100-rc.1.21463.6',
+
     [string]$DotNet5SDKVersion = '5.0.400',
 
-    [string]$DotNetCore3SDKVersion = '3.1.412',
-
-    [string]$DotNetCore2SDKVersion = '2.1.817'
+    [string]$DotNetCore3SDKVersion = '3.1.412'
 )
 
 
@@ -99,13 +94,32 @@ function Get-ProjectDependencies([string]$ProjectPath, [string]$RelativeRoot, [S
     $resolvedProjectPath = $ProjectPath
     $rootPath = [System.IO.Path]::GetDirectoryName($resolvedProjectPath)
     [xml]$project = Get-Content $resolvedProjectPath
-    foreach ($name in $project.SelectNodes("//Project/ItemGroup/ProjectReference") | ForEach-Object { $_.Include -split ';'}) {
-        #Write-Host "$rootPath"
-        #Write-Host "$name"
-        #Write-Host [System.IO.Path]::Combine($rootPath, $name)
+    foreach ($name in $project.SelectNodes("//Project/ItemGroup/ProjectReference") | Where-Object { $_.Include -notmatch '^$' } | ForEach-Object { $_.Include -split ';'}) {
         $dependencyFullPath = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($rootPath, $name))
         Get-ProjectDependencies $dependencyFullPath $RelativeRoot $Result
         $dependency = Resolve-RelativePath $RelativeRoot $dependencyFullPath
+        $result.Add($dependency) | Out-Null
+    }
+}
+
+function Get-ProjectExternalPaths([string]$ProjectPath, [string]$RelativeRoot, [System.Collections.Generic.HashSet[string]]$Result) {
+    $resolvedProjectPath = $ProjectPath
+    $rootPath = [System.IO.Path]::GetDirectoryName($resolvedProjectPath)
+    [xml]$project = Get-Content $resolvedProjectPath
+    foreach ($name in $project.SelectNodes("//Project/ItemGroup/Compile") | Where-Object { $_.Include -notmatch '^$' } | ForEach-Object { $_.Include -split ';'}) {
+        # Temporarily override wildcard patterns so we can resolve the path and then put them back.
+        $name = $name -replace '\\\*\*\\\*', 'Wildcard1' -replace '\*', 'Wildcard2'
+        $dependencyFullPath = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($rootPath, $name)) -replace 'Wildcard1', '\**\*' -replace 'Wildcard2', '*'
+        # Make the path relative to the repo root.
+        $dependency = $($($dependencyFullPath.Replace($RelativeRoot, '.')) -replace '\\', '/').TrimStart('./')
+        $result.Add($dependency) | Out-Null
+    }
+    foreach ($name in $project.SelectNodes("//Project/ItemGroup/EmbeddedResource") | Where-Object { $_.Include -notmatch '^$' } | ForEach-Object { $_.Include -split ';'}) {
+        # Temporarily override wildcard patterns so we can resolve the path and then put them back.
+        $name = $name -replace '\\\*\*\\\*', 'Wildcard1' -replace '\*', 'Wildcard2'
+        $dependencyFullPath = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($rootPath, $name)) -replace 'Wildcard1', '\**\*' -replace 'Wildcard2', '*'
+        # Make the path relative to the repo root.
+        $dependency = $($($dependencyFullPath.Replace($RelativeRoot, '.')) -replace '\\', '/').TrimStart('./')
         $result.Add($dependency) | Out-Null
     }
 }
@@ -143,9 +157,9 @@ function Write-TestWorkflow(
     [string[]]$TestFrameworks = @('net5.0', 'net48'),
     [string[]]$TestPlatforms = @('x64'),
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest', 'macos-latest'),
+    [string]$DotNet6SDKVersion = $DotNet6SDKVersion,
     [string]$DotNet5SDKVersion = $DotNet5SDKVersion,
-    [string]$DotNetCore3SDKVersion = $DotNetCore3SDKVersion,
-    [string]$DotNetCore2SDKVersion = $DotNetCore2SDKVersion) {
+    [string]$DotNetCore3SDKVersion = $DotNetCore3SDKVersion) {
 
     $dependencies = New-Object System.Collections.Generic.HashSet[string]
     Get-ProjectDependencies $ProjectPath $RelativeRoot $dependencies
@@ -171,6 +185,13 @@ function Write-TestWorkflow(
     foreach ($directory in $directories) {
         $relativeDirectory = ([System.IO.Path]::Combine($directory, 'Directory.Build.*') -replace '\\', '/').TrimStart('./')
         $directoryBuildPaths += "    - '$relativeDirectory'" + [System.Environment]::NewLine
+    }
+
+    $paths = New-Object System.Collections.Generic.HashSet[string]
+    Get-ProjectExternalPaths $ProjectPath $RelativeRoot $paths
+
+    foreach ($path in $paths) {
+        $directoryBuildPaths += "    - '$path'" + [System.Environment]::NewLine
     }
 
     $fileText = "####################################################################################
@@ -221,8 +242,12 @@ jobs:
         exclude:
           - os: ubuntu-latest
             framework: net48
+          - os: ubuntu-latest
+            framework: net461
           - os: macos-latest
             framework: net48
+          - os: macos-latest
+            framework: net461
     env:
       project_path: '$projectRelativePath'
       trx_file_name: 'TestResults.trx'
@@ -237,16 +262,16 @@ jobs:
           dotnet-version: '$DotNetCore3SDKVersion'
         if: `${{ startswith(matrix.framework, 'netcoreapp3.') }}
 
-      - name: Setup .NET 2.1 SDK
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '$DotNetCore2SDKVersion'
-        if: `${{ startswith(matrix.framework, 'netcoreapp2.') }}
-
       - name: Setup .NET 5 SDK
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '$DotNet5SDKVersion'
+        if: `${{ startswith(matrix.framework, 'net5.') }}
+
+      - name: Setup .NET 6 SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '$DotNet6SDKVersion'
 
       - run: |
           `$project_name = [System.IO.Path]::GetFileNameWithoutExtension(`$env:project_path)
@@ -291,8 +316,7 @@ try {
     Pop-Location
 }
 
-
-#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net5.0','netcoreapp3.1') -TestPlatforms $TestPlatforms
+#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net5.0','netcoreapp3.1') -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion
 
 #Write-Host $TestProjects
 
@@ -300,9 +324,9 @@ foreach ($testProject in $TestProjects) {
     $projectName = [System.IO.Path]::GetFileNameWithoutExtension($testProject)
     [string[]]$frameworks = $TestFrameworks
 
-    # Special case - CodeAnalysis only supports .NET Core 2.1 for testing
+    # Special case - CodeAnalysis only supports .NET 5.0 for testing
     if ($projectName.Contains("Tests.CodeAnalysis")) {
-        $frameworks = @('netcoreapp2.1')
+        $frameworks = @('net5.0')
     }
 
     # Special case - our CLI tool only supports .NET Core 3.1
@@ -316,5 +340,5 @@ foreach ($testProject in $TestProjects) {
     }
 
     #Write-Host "Project: $projectName"
-    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion -DotNetCore2SDKVersion $DotNetCore2SDKVersion
+    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion
 }

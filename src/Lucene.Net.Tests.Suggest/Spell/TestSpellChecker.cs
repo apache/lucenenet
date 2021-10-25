@@ -5,6 +5,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -561,9 +562,7 @@ namespace Lucene.Net.Search.Spell
 
             public override void Run()
             {
-#if FEATURE_THREAD_PRIORITY
                 Priority += 1;
-#endif
                 try
                 {
                     while (!stop)

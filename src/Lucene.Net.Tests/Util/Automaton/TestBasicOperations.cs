@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
@@ -34,7 +35,7 @@ namespace Lucene.Net.Util.Automaton
         [Test]
         public virtual void TestStringUnion()
         {
-            List<BytesRef> strings = new List<BytesRef>();
+            IList<BytesRef> strings = new JCG.List<BytesRef>();
             for (int i = RandomInts.RandomInt32Between(Random, 0, 1000); --i >= 0; )
             {
                 strings.Add(new BytesRef(TestUtil.RandomUnicodeString(Random)));

@@ -1,11 +1,13 @@
 ﻿using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {
@@ -276,7 +278,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 completions = normalCompletion.DoLookup(key, num);
             }
 
-            List<LookupResult> results = new List<LookupResult>(completions.Count);
+            IList<LookupResult> results = new JCG.List<LookupResult>(completions.Count);
             CharsRef spare = new CharsRef();
             foreach (FSTCompletion.Completion c in completions)
             {
@@ -299,7 +301,8 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         public override bool Store(DataOutput output)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 output.WriteVInt64(count);
                 if (this.normalCompletion == null || normalCompletion.FST == null)
@@ -309,16 +312,25 @@ namespace Lucene.Net.Search.Suggest.Fst
                 normalCompletion.FST.Save(output);
                 return true;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public override bool Load(DataInput input)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 count = input.ReadVInt64();
                 this.higherWeightsCompletion = new FSTCompletion(new FST<object>(input, NoOutputs.Singleton));
                 this.normalCompletion = new FSTCompletion(higherWeightsCompletion.FST, false, exactMatchFirst);
                 return true;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

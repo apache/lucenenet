@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Queries.Mlt
 {
@@ -672,7 +673,7 @@ namespace Lucene.Net.Queries.Mlt
         /// <seealso cref="RetrieveInterestingTerms(TextReader, string)"/>
         public string[] RetrieveInterestingTerms(int docNum)
         {
-            var al = new List<string>(MaxQueryTerms);
+            var al = new JCG.List<string>(MaxQueryTerms);
             var pq = RetrieveTerms(docNum);
             ScoreTerm scoreTerm;
             int lim = MaxQueryTerms; // have to be careful, retrieveTerms returns all words but that's probably not useful to our caller...
@@ -696,7 +697,7 @@ namespace Lucene.Net.Queries.Mlt
         // LUCENENET: Factored out the object[] to avoid boxing
         public string[] RetrieveInterestingTerms(TextReader r, string fieldName)
         {
-            var al = new List<string>(MaxQueryTerms);
+            var al = new JCG.List<string>(MaxQueryTerms);
             PriorityQueue<ScoreTerm> pq = RetrieveTerms(r, fieldName);
             ScoreTerm scoreTerm;
             int lim = MaxQueryTerms; // have to be careful, retrieveTerms returns all words but that's probably not useful to our caller...

@@ -220,6 +220,7 @@ namespace Lucene.Net.Search
         /// Fired when the max non-competitive boost has changed. This is the hook to
         /// swap in a smarter actualEnum
         /// </summary>
+
         private void BottomChanged(BytesRef lastTerm, bool init)
         {
             int oldMaxEdits = m_maxEdits;
@@ -229,7 +230,11 @@ namespace Lucene.Net.Search
 
             // as long as the max non-competitive boost is >= the max boost
             // for some edit distance, keep dropping the max edit distance.
-            while (m_maxEdits > 0 && (termAfter ? bottom >= CalculateMaxBoost(m_maxEdits) : bottom > CalculateMaxBoost(m_maxEdits)))
+
+            // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+            while (m_maxEdits > 0 && (termAfter ?
+                NumericUtils.SingleToSortableInt32(bottom) >= NumericUtils.SingleToSortableInt32(CalculateMaxBoost(m_maxEdits)) :
+                NumericUtils.SingleToSortableInt32(bottom) > NumericUtils.SingleToSortableInt32(CalculateMaxBoost(m_maxEdits))))
             {
                 m_maxEdits--;
             }
@@ -380,9 +385,6 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// Finds the smallest Lev(n) DFA that accepts the term. </summary>
-#if NETFRAMEWORK
-            [MethodImpl(MethodImplOptions.NoOptimization)] // LUCENENET specific: comparing float equality fails in x86 on .NET Framework with optimizations enabled, and is causing the TestTokenLengthOpt test to fail
-#endif
             protected override AcceptStatus Accept(BytesRef term)
             {
                 //System.out.println("AFTE.accept term=" + term);
@@ -415,7 +417,9 @@ namespace Lucene.Net.Search
                 {
                     int codePointCount = UnicodeUtil.CodePointCount(term);
                     float similarity = 1.0f - ((float)ed / (float)(Math.Min(codePointCount, outerInstance.m_termLength)));
-                    if (similarity > outerInstance.m_minSimilarity)
+
+                    // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                    if (NumericUtils.SingleToSortableInt32(similarity) > NumericUtils.SingleToSortableInt32(outerInstance.m_minSimilarity))
                     {
                         boostAtt.Boost = (similarity - outerInstance.m_minSimilarity) * outerInstance.m_scaleFactor;
                         //System.out.println("  yes");

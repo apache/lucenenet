@@ -1,7 +1,8 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
@@ -84,7 +85,7 @@ namespace Lucene.Net.Search
             BulkScorer ts = weight.GetBulkScorer(context, true, (context.AtomicReader).LiveDocs);
             // we have 2 documents with the term all in them, one document for all the
             // other values
-            IList<TestHit> docs = new List<TestHit>();
+            IList<TestHit> docs = new JCG.List<TestHit>();
             // must call next first
 
             ts.Score(new CollectorAnonymousClass(this, context, docs));

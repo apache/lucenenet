@@ -2,7 +2,7 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -416,7 +416,7 @@ namespace Lucene.Net.Index
                     {
                         // Reader cannot provide ord support, so we wrap
                         // our own support by creating our own terms index:
-                        indexedTerms = new List<BytesRef>();
+                        indexedTerms = new JCG.List<BytesRef>();
                         indexedTermsBytes = new PagedBytes(15);
                         //System.out.println("NO ORDS");
                     }

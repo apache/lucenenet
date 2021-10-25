@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -131,7 +132,7 @@ namespace Lucene.Net.Index
                 {
                     Message("findForcedMerges: " + m_base.GetType().Name + " does not want to merge all old segments, merge remaining ones into new segment: " + oldSegments);
                 }
-                IList<SegmentCommitInfo> newInfos = new List<SegmentCommitInfo>();
+                IList<SegmentCommitInfo> newInfos = new JCG.List<SegmentCommitInfo>();
                 foreach (SegmentCommitInfo si in segmentInfos.Segments)
                 {
                     if (oldSegments.ContainsKey(si))

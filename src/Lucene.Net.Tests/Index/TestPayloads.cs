@@ -5,12 +5,14 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -608,7 +610,7 @@ namespace Lucene.Net.Index
 
             internal ByteArrayPool(int capacity, int size)
             {
-                pool = new List<byte[]>();
+                pool = new JCG.List<byte[]>();
                 for (int i = 0; i < capacity; i++)
                 {
                     pool.Add(new byte[size]);
@@ -617,19 +619,29 @@ namespace Lucene.Net.Index
 
             internal virtual byte[] Get()
             {
-                lock (this) // TODO use BlockingCollection / BCL datastructures instead
+                UninterruptableMonitor.Enter(this); // TODO use BlockingCollection / BCL datastructures instead
+                try
                 {
                     var retArray = pool[0];
                     pool.RemoveAt(0);
                     return retArray;
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
             }
 
             internal virtual void Release(byte[] b)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     pool.Add(b);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
 
@@ -637,9 +649,14 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
                         return pool.Count;
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                 }
             }

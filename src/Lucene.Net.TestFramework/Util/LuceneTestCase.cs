@@ -183,7 +183,8 @@ namespace Lucene.Net.Util
 
         public LuceneTestCase()
         {
-            lock (initalizationLock)
+            UninterruptableMonitor.Enter(initializationLock);
+            try
             {
                 var thisType = this.GetType();
                 if (!initalizationLock.Contains(thisType.FullName))
@@ -200,6 +201,10 @@ namespace Lucene.Net.Util
                 _testClassType = thisType;
 
                 BeforeClass();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(initializationLock);
             }
         }
 #else
@@ -751,7 +756,7 @@ namespace Lucene.Net.Util
 
         private static IList<string> LoadCoreDirectories()
         {
-            return new List<string>(FS_DIRECTORIES)
+            return new JCG.List<string>(FS_DIRECTORIES)
             {
                 "RAMDirectory"
             };
@@ -1031,7 +1036,7 @@ namespace Lucene.Net.Util
         }
 
 #if TESTFRAMEWORK_MSTEST
-        private static readonly IList<string> initalizationLock = new List<string>();
+        private static readonly IList<string> initalizationLock = new JCG.List<string>();
         private static string _testClassName = string.Empty;
         private static string _testName = string.Empty;
         private static Type _testClassType;
@@ -1050,7 +1055,8 @@ namespace Lucene.Net.Util
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
-            lock (initalizationLock)
+            UninterruptableMonitor.Enter(initializationLock);
+            try
             {
                 if (!initalizationLock.Contains(context.FullyQualifiedTestClassName))
                     initalizationLock.Add(context.FullyQualifiedTestClassName);
@@ -1066,6 +1072,10 @@ namespace Lucene.Net.Util
 #else
                 _testClassType = Type.GetType(_testClassName);
 #endif
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(initializationLock);
             }
 
             try
@@ -2081,14 +2091,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static CultureInfo RandomCulture(Random random) // LUCENENET specific renamed from RandomLocale
         {
-            ICollection<CultureInfo> systemCultures = CultureInfoSupport.GetNeutralAndSpecificCultures();
-#if NETSTANDARD1_X
-            // .NET Core 1.0 on macOS seems to be flakey here and not return results occasionally, so compensate by
-            // returning CultureInfo.InvariantCulture when it happens.
-            if (systemCultures.Count == 0)
-                return CultureInfo.InvariantCulture;
-#endif
-            return RandomPicks.RandomFrom(random, systemCultures);
+            return RandomPicks.RandomFrom(random, CultureInfo.GetCultures(CultureTypes.SpecificCultures | CultureTypes.NeutralCultures));
         }
 
         /// <summary>
@@ -2098,14 +2101,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static TimeZoneInfo RandomTimeZone(Random random)
         {
-            var systemTimeZones = TimeZoneInfo.GetSystemTimeZones();
-#if NETSTANDARD1_X
-            // .NET Core 1.0 on macOS seems to be flakey here and not return results occasionally, so compensate by
-            // returning TimeZoneInfo.Local when it happens.
-            if (systemTimeZones.Count == 0)
-                return TimeZoneInfo.Local;
-#endif
-            return RandomPicks.RandomFrom(random, systemTimeZones);
+            return RandomPicks.RandomFrom(random, TimeZoneInfo.GetSystemTimeZones());
         }
 
         /// <summary>
@@ -2983,7 +2979,7 @@ namespace Lucene.Net.Util
 
             rightEnum = rightTerms.GetEnumerator(rightEnum);
 
-            IList<BytesRef> shuffledTests = new List<BytesRef>(tests);
+            IList<BytesRef> shuffledTests = new JCG.List<BytesRef>(tests);
             shuffledTests.Shuffle(Random);
 
             foreach (BytesRef b in shuffledTests)
@@ -3509,9 +3505,14 @@ namespace Lucene.Net.Util
                 Console.Error.WriteLine("INFO: Will leave temporary file: " + f.FullName);
                 return;
             }
-            lock (cleanupQueueLock)
+            UninterruptableMonitor.Enter(cleanupQueueLock);
+            try
             {
                 cleanupQueue.Push(f);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(cleanupQueueLock);
             }
         }
 
@@ -3527,7 +3528,8 @@ namespace Lucene.Net.Util
             FileSystemInfo[] everything;
             string tempDirBasePath;
 
-            lock (cleanupQueueLock)
+            UninterruptableMonitor.Enter(cleanupQueueLock);
+            try
             {
                 tempDirBasePath = tempDirBase?.FullName;
                 tempDirBase = null;
@@ -3535,6 +3537,10 @@ namespace Lucene.Net.Util
                 // LUCENENET: The stack order is alredy reversed, so no need to do that here as in Lucene
                 everything = cleanupQueue.ToArray();
                 cleanupQueue.Clear();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(cleanupQueueLock);
             }
 
             // LUCENENET specific - If the everything array is empty, there is no reason

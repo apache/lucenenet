@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.CharFilters;
 using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Pattern
 {
@@ -73,7 +74,7 @@ namespace Lucene.Net.Analysis.Pattern
             const string INPUT = "G&uuml;nther G&uuml;nther is here";
 
             // create MappingCharFilter
-            IList<string> mappingRules = new List<string>();
+            IList<string> mappingRules = new JCG.List<string>();
             mappingRules.Add("\"&uuml;\" => \"ü\"");
             NormalizeCharMap.Builder builder = new NormalizeCharMap.Builder();
             builder.Add("&uuml;", "ü");

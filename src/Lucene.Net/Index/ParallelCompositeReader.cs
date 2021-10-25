@@ -1,6 +1,7 @@
 ﻿using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -222,7 +223,8 @@ namespace Lucene.Net.Index
 
         protected internal override void DoClose()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
                 foreach (IndexReader reader in completeReaderSet)
@@ -251,6 +253,10 @@ namespace Lucene.Net.Index
                 {
                     ExceptionDispatchInfo.Capture(ioe).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
     }

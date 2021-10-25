@@ -178,7 +178,7 @@ namespace Lucene.Net.Search.Grouping
                     Console.WriteLine("TEST: numDocs=" + numDocs + " numGroups=" + numGroups);
                 }
 
-                List<BytesRef> groups = new List<BytesRef>();
+                JCG.List<BytesRef> groups = new JCG.List<BytesRef>();
                 for (int i = 0; i < numGroups; i++)
                 {
                     string randomValue;
@@ -480,7 +480,7 @@ namespace Lucene.Net.Search.Grouping
 
         private int[] CreateExpectedGroupHeads(string searchTerm, GroupDoc[] groupDocs, Sort docSort, bool sortByScoreOnly, int[] fieldIdToDocID)
         {
-            IDictionary<BytesRef, List<GroupDoc>> groupHeads = new JCG.Dictionary<BytesRef, List<GroupDoc>>();
+            IDictionary<BytesRef, JCG.List<GroupDoc>> groupHeads = new JCG.Dictionary<BytesRef, JCG.List<GroupDoc>>();
             foreach (GroupDoc groupDoc in groupDocs)
             {
                 if (!groupDoc.content.StartsWith(searchTerm, StringComparison.Ordinal))
@@ -488,9 +488,9 @@ namespace Lucene.Net.Search.Grouping
                     continue;
                 }
 
-                if (!groupHeads.TryGetValue(groupDoc.group, out List<GroupDoc> grouphead))
+                if (!groupHeads.TryGetValue(groupDoc.group, out JCG.List<GroupDoc> grouphead))
                 {
-                    List<GroupDoc> list = new List<GroupDoc>();
+                    JCG.List<GroupDoc> list = new JCG.List<GroupDoc>();
                     list.Add(groupDoc);
                     groupHeads[groupDoc.group] = list;
                     continue;
@@ -502,7 +502,7 @@ namespace Lucene.Net.Search.Grouping
             int i = 0;
             foreach (BytesRef groupValue in groupHeads.Keys)
             {
-                List<GroupDoc> docs = groupHeads[groupValue];
+                JCG.List<GroupDoc> docs = groupHeads[groupValue];
                 // LUCENENET TODO: The original API Collections.Sort does not currently exist.
                 // This call ultimately results in calling TimSort, which is why this line was replaced
                 // with CollectionUtil.TimSort(IList<T>, IComparer<T>).
@@ -520,7 +520,7 @@ namespace Lucene.Net.Search.Grouping
 
         private Sort GetRandomSort(bool scoreOnly)
         {
-            List<SortField> sortFields = new List<SortField>();
+            JCG.List<SortField> sortFields = new JCG.List<SortField>();
             if (Random.nextInt(7) == 2 || scoreOnly)
             {
                 sortFields.Add(SortField.FIELD_SCORE);

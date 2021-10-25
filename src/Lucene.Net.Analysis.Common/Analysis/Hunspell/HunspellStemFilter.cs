@@ -2,6 +2,7 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Hunspell
 {
@@ -46,7 +47,7 @@ namespace Lucene.Net.Analysis.Hunspell
         private readonly IKeywordAttribute keywordAtt;
         private readonly Stemmer stemmer;
 
-        private List<CharsRef> buffer;
+        private JCG.List<CharsRef> buffer;
         private State savedState;
 
         private readonly bool dedup;
@@ -109,7 +110,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 return true;
             }
 
-            buffer = new List<CharsRef>(dedup ? stemmer.UniqueStems(termAtt.Buffer, termAtt.Length) : stemmer.Stem(termAtt.Buffer, termAtt.Length));
+            buffer = new JCG.List<CharsRef>(dedup ? stemmer.UniqueStems(termAtt.Buffer, termAtt.Length) : stemmer.Stem(termAtt.Buffer, termAtt.Length));
 
             if (buffer.Count == 0) // we do not know this word, return it unchanged
             {

@@ -10,6 +10,7 @@ using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -287,9 +288,14 @@ namespace Lucene.Net.Index
                 threads[i].Start();
             }
 
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
-                Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
+                UninterruptableMonitor.Wait(this, TimeSpan.FromMilliseconds(1000));
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
 
             for (int i = 0; i < n; i++)
@@ -418,9 +424,14 @@ namespace Lucene.Net.Index
                             refreshed.Dispose();
                         }
                     }
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
-                        Monitor.Wait(this, TimeSpan.FromMilliseconds(TestUtil.NextInt32(Random, 1, 100)));
+                        UninterruptableMonitor.Wait(this, TimeSpan.FromMilliseconds(TestUtil.NextInt32(Random, 1, 100)));
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                 }
             }
@@ -450,9 +461,14 @@ namespace Lucene.Net.Index
                         TestDirectoryReader.AssertIndexEquals(c.newReader, c.refreshedReader);
                     }
 
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
-                        Monitor.Wait(this, TimeSpan.FromMilliseconds(TestUtil.NextInt32(Random, 1, 100)));
+                        UninterruptableMonitor.Wait(this, TimeSpan.FromMilliseconds(TestUtil.NextInt32(Random, 1, 100)));
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                 }
             }
@@ -520,7 +536,8 @@ namespace Lucene.Net.Index
 
         internal virtual ReaderCouple RefreshReader(DirectoryReader reader, TestReopen test, int modify, bool hasChanges)
         {
-            lock (createReaderMutex)
+            UninterruptableMonitor.Enter(createReaderMutex);
+            try
             {
                 DirectoryReader r = null;
                 if (test != null)
@@ -563,6 +580,10 @@ namespace Lucene.Net.Index
                 }
 
                 return new ReaderCouple(r, refreshed);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(createReaderMutex);
             }
         }
 

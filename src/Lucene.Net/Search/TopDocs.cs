@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -111,11 +112,12 @@ namespace Lucene.Net.Search
                 float firstScore = shardHits[first.ShardIndex][first.HitIndex].Score;
                 float secondScore = shardHits[second.ShardIndex][second.HitIndex].Score;
 
-                if (firstScore < secondScore)
+                // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                if (NumericUtils.SingleToSortableInt32(firstScore) < NumericUtils.SingleToSortableInt32(secondScore))
                 {
                     return false;
                 }
-                else if (firstScore > secondScore)
+                else if (NumericUtils.SingleToSortableInt32(firstScore) > NumericUtils.SingleToSortableInt32(secondScore))
                 {
                     return true;
                 }

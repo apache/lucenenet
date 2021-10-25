@@ -1,6 +1,6 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
-using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
@@ -61,17 +61,17 @@ namespace Lucene.Net.Search
             ScoreDoc[] results;
             MatchAllDocsQuery q = new MatchAllDocsQuery();
 
-            List<string> terms = new List<string>();
+            JCG.List<string> terms = new JCG.List<string>();
             terms.Add("5");
             results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, terms.ToArray()), numDocs).ScoreDocs;
             Assert.AreEqual(0, results.Length, "Must match nothing");
 
-            terms = new List<string>();
+            terms = new JCG.List<string>();
             terms.Add("10");
             results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, terms.ToArray()), numDocs).ScoreDocs;
             Assert.AreEqual(1, results.Length, "Must match 1");
 
-            terms = new List<string>();
+            terms = new JCG.List<string>();
             terms.Add("10");
             terms.Add("20");
             results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, terms.ToArray()), numDocs).ScoreDocs;

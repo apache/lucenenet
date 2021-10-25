@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Support.Threading;
 using System;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
@@ -90,18 +91,28 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         {
             get
             {
-                lock (syncLock)
+                UninterruptableMonitor.Enter(syncLock);
+                try
                 {
                     return cache.Count == cache.Limit;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(syncLock);
                 }
             }
         }
 
         public virtual void Clear()
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 cache.Clear();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
@@ -116,7 +127,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             if (disposing)
             {
                 if (isDisposed) return;
-                lock (syncLock)
+                UninterruptableMonitor.Enter(syncLock);
+                try
                 {
                     if (isDisposed) return;
                     if (cache != null)
@@ -126,20 +138,30 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                     }
                     isDisposed = true;
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(syncLock);
+                }
             }
         }
 
         public virtual int Get(FacetLabel categoryPath)
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 return cache.TryGetValue(categoryPath, out int result) ? result : -1;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
         public virtual bool Put(FacetLabel categoryPath, int ordinal)
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 bool ret = cache.Put(categoryPath, ordinal);
                 // If the cache is full, we need to clear one or more old entries
@@ -154,6 +176,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                     cache.MakeRoomLRU();
                 }
                 return ret;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
     }

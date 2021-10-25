@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.OpenNlp
 {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Analysis.OpenNlp
         private readonly ITypeAttribute typeAtt;
         private readonly IKeywordAttribute keywordAtt;
         private readonly IFlagsAttribute flagsAtt;
-        private readonly IList<AttributeSource> sentenceTokenAttrs = new List<AttributeSource>(); // LUCENENET: marked readonly
+        private readonly IList<AttributeSource> sentenceTokenAttrs = new JCG.List<AttributeSource>(); // LUCENENET: marked readonly
         private IEnumerator<AttributeSource> sentenceTokenAttrsIter = null;
         private bool moreTokensAvailable = true;
         private string[] sentenceTokens = null;     // non-keyword tokens
@@ -91,8 +92,8 @@ namespace Lucene.Net.Analysis.OpenNlp
 
         private void NextSentence()
         {
-            var tokenList = new List<string>();
-            var typeList = new List<string>();
+            var tokenList = new JCG.List<string>();
+            var typeList = new JCG.List<string>();
             sentenceTokenAttrs.Clear();
             bool endOfSentence = false;
             while (!endOfSentence && (moreTokensAvailable = m_input.IncrementToken()))

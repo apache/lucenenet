@@ -35,10 +35,10 @@ on:
 
     # Dependencies
     - 'src/Lucene.Net/**/*'
-    - 'src/Lucene.Net.Queries/**/*'
-    - 'src/Lucene.Net.Grouping/**/*'
     - 'src/Lucene.Net.Analysis.Common/**/*'
     - 'src/Lucene.Net.Codecs/**/*'
+    - 'src/Lucene.Net.Queries/**/*'
+    - 'src/Lucene.Net.Grouping/**/*'
     - 'src/Lucene.Net.TestFramework/**/*'
 
     - '!**/*.md'
@@ -51,14 +51,18 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
-        framework: [net5.0, netcoreapp2.1, net48]
+        framework: [net6.0, net5.0, net461, net48]
         platform: [x64]
         configuration: [Release]
         exclude:
           - os: ubuntu-latest
             framework: net48
+          - os: ubuntu-latest
+            framework: net461
           - os: macos-latest
             framework: net48
+          - os: macos-latest
+            framework: net461
     env:
       project_path: './src/Lucene.Net.Tests.Grouping/Lucene.Net.Tests.Grouping.csproj'
       trx_file_name: 'TestResults.trx'
@@ -73,16 +77,16 @@ jobs:
           dotnet-version: '3.1.412'
         if: ${{ startswith(matrix.framework, 'netcoreapp3.') }}
 
-      - name: Setup .NET 2.1 SDK
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '2.1.817'
-        if: ${{ startswith(matrix.framework, 'netcoreapp2.') }}
-
       - name: Setup .NET 5 SDK
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '5.0.400'
+        if: ${{ startswith(matrix.framework, 'net5.') }}
+
+      - name: Setup .NET 6 SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.100-rc.1.21463.6'
 
       - run: |
           $project_name = [System.IO.Path]::GetFileNameWithoutExtension($env:project_path)

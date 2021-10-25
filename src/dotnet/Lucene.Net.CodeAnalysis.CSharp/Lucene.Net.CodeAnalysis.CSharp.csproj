@@ -26,6 +26,7 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
 
+  <Import Project="$(SolutionDir)build/Dependencies.props" />
   <Import Project="..\Lucene.Net.CodeAnalysis\Version.props" />
 
   <ItemGroup>

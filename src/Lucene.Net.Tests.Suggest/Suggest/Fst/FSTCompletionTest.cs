@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {
@@ -182,7 +183,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             FSTCompletionLookup lookup = new FSTCompletionLookup(10, true);
 
             Random r = Random;
-            List<Input> keys = new List<Input>();
+            IList<Input> keys = new JCG.List<Input>();
             for (int i = 0; i < 5000; i++)
             {
                 keys.Add(new Input(TestUtil.RandomSimpleString(r), -1));
@@ -234,7 +235,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         [Test]
         public void TestRandom()
         {
-            List<Input> freqs = new List<Input>();
+            JCG.List<Input> freqs = new JCG.List<Input>();
             Random rnd = Random;
             for (int i = 0; i < 2500 + rnd.nextInt(2500); i++)
             {

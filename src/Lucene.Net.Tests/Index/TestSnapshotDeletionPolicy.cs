@@ -1,10 +1,12 @@
 ﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -111,7 +113,7 @@ namespace Lucene.Net.Index
         {
             base.SetUp();
 
-            this.snapshots = new List<IndexCommit>();
+            this.snapshots = new JCG.List<IndexCommit>();
         }
 
         [Test]
@@ -226,9 +228,14 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    Thread.Sleep(1);
-                    // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
-
+                    try
+                    {
+                        Thread.Sleep(1);
+                    }
+                    catch (Exception ie) when (ie.IsInterruptedException())
+                    {
+                        throw new Util.ThreadInterruptedException(ie);
+                    }
                 } while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTime); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             }
         }

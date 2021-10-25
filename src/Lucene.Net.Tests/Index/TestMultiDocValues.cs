@@ -3,6 +3,7 @@ using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
@@ -279,7 +280,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < numDocs; i++)
                 {
                     single.SetDocument(i);
-                    List<long> expectedList = new List<long>();
+                    IList<long> expectedList = new JCG.List<long>();
                     long ord;
                     while ((ord = single.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                     {
@@ -356,7 +357,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < numDocs; i++)
                 {
                     single.SetDocument(i);
-                    List<long?> expectedList = new List<long?>();
+                    IList<long?> expectedList = new JCG.List<long?>();
                     long ord;
                     while ((ord = single.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                     {

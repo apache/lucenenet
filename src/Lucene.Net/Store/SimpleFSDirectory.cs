@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 using System;
 using System.IO;
 
@@ -205,7 +206,8 @@ namespace Lucene.Net.Store
             /// <see cref="IndexInput"/> methods </summary>
             protected override void ReadInternal(byte[] b, int offset, int len)
             {
-                lock (m_file)
+                UninterruptableMonitor.Enter(m_file);
+                try
                 {
                     long position = m_off + Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                     m_file.Seek(position, SeekOrigin.Begin);
@@ -241,6 +243,10 @@ namespace Lucene.Net.Store
                     {
                         throw new IOException(ioe.Message + ": " + this, ioe);
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(m_file);
                 }
             }
 

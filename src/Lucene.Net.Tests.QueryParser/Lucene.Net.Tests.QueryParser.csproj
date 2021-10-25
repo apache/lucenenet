@@ -36,20 +36,36 @@
   <ItemGroup>
     <!-- For testing whether we can get an image from a localized resource -->
     <EmbeddedResource Include="Support\Flexible\Core\Messages\lucene-net-icon-32x32.png" />
-    <EmbeddedResource Include="Xml\albumBooleanQuery.xsl;Xml\albumFilteredQuery.xsl;Xml\albumLuceneClassicQuery.xsl;Xml\BooleanFilter.xml;Xml\BooleanQuery.xml;Xml\BoostingQuery.xml;Xml\BoostingTermQuery.xml;Xml\CachedFilter.xml;Xml\ConstantScoreQuery.xml;Xml\DisjunctionMaxQuery.xml;Xml\DuplicateFilterQuery.xml;Xml\FuzzyLikeThisQuery.xml;Xml\LikeThisQuery.xml;Xml\MatchAllDocsQuery.xml;Xml\NestedBooleanQuery.xml;Xml\NumericRangeFilterQuery.xml;Xml\NumericRangeQueryQuery.xml;Xml\RangeFilterQuery.xml;Xml\reuters21578.txt;Xml\SpanQuery.xml;Xml\TermQuery.xml;Xml\TermsFilterQuery.xml;Xml\TermsQuery.xml;Xml\UserInputQuery.xml;Xml\UserInputQueryCustomField.xml" />
+    <EmbeddedResource Include="**/*.xml" Exclude="bin/**/*;obj/**/*" Label="XML Test Data" />
+    <EmbeddedResource Include="**/*.xsl" Exclude="bin/**/*;obj/**/*" Label="XSL Test Data" />
+    <EmbeddedResource Include="**/*.txt" Exclude="bin/**/*;obj/**/*" Label="Text Test Data" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
-    <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj" />
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Sandbox\Lucene.Net.Sandbox.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
   </ItemGroup>
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)" />
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Update="Support\Flexible\Core\Messages\MessagesTest.Designer.cs">

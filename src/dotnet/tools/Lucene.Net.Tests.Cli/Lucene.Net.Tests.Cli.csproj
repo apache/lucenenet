@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
 
  Licensed to the Apache Software Foundation (ASF) under one
@@ -29,6 +29,8 @@
     <IsPublishable Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">true</IsPublishable>
   </PropertyGroup>
 
+  <Import Project="$(SolutionDir)build\Dependencies.props" />
+
   <ItemGroup>
     <Compile Remove="SourceCode\TestInputForParser.cs" />
     <None Remove="Configuration\appsettings.json" />
@@ -43,7 +45,6 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationPackageVersion)" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion)" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonPackageVersion)" />

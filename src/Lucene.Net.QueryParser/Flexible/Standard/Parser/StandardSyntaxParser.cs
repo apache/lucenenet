@@ -11,6 +11,7 @@ using System.IO;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 {
@@ -172,7 +173,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         //      Clause ::= [ Modifier ] ... 
         public IQueryNode Query(string field)
         {
-            List<IQueryNode> clauses = null;
+            IList<IQueryNode> clauses = null;
             IQueryNode c, first = null;
             first = DisjQuery(field);
             
@@ -199,7 +200,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 c = DisjQuery(field);
                 if (clauses == null)
                 {
-                    clauses = new List<IQueryNode>();
+                    clauses = new JCG.List<IQueryNode>();
                     clauses.Add(first);
                 }
                 clauses.Add(c);
@@ -219,7 +220,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         public IQueryNode DisjQuery(string field)
         {
             IQueryNode first, c;
-            List<IQueryNode> clauses = null;
+            IList<IQueryNode> clauses = null;
             first = ConjQuery(field);
             
             while (true)
@@ -237,7 +238,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 c = ConjQuery(field);
                 if (clauses == null)
                 {
-                    clauses = new List<IQueryNode>();
+                    clauses = new JCG.List<IQueryNode>();
                     clauses.Add(first);
                 }
                 clauses.Add(c);
@@ -257,7 +258,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         public IQueryNode ConjQuery(string field)
         {
             IQueryNode first, c;
-            List<IQueryNode> clauses = null;
+            IList<IQueryNode> clauses = null;
             first = ModClause(field);
             
             while (true)
@@ -275,7 +276,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 c = ModClause(field);
                 if (clauses == null)
                 {
-                    clauses = new List<IQueryNode>();
+                    clauses = new JCG.List<IQueryNode>();
                     clauses.Add(first);
                 }
                 clauses.Add(c);
@@ -1155,7 +1156,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 return (jj_ntk = Jj_nt.Kind);
         }
 
-        private readonly List<int[]> jj_expentries = new List<int[]>(); // LUCENENET: marked readonly
+        private readonly IList<int[]> jj_expentries = new JCG.List<int[]>(); // LUCENENET: marked readonly
         private int[] jj_expentry;
         private int jj_kind = -1;
         private readonly int[] jj_lasttokens = new int[100]; // LUCENENET: marked readonly

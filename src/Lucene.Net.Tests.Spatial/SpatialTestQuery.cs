@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial
 {
@@ -34,7 +35,7 @@ namespace Lucene.Net.Spatial
         public string line;
         public int lineNumber = -1;
         public SpatialArgs args;
-        public List<string> ids = new List<string>();
+        public IList<string> ids = new JCG.List<string>();
 
         /**
          * Get Test Queries.  The InputStream is closed.
@@ -46,7 +47,7 @@ namespace Lucene.Net.Spatial
             Stream @in)
         {
 
-            List<SpatialTestQuery> results = new List<SpatialTestQuery>();
+            IList<SpatialTestQuery> results = new JCG.List<SpatialTestQuery>();
 
             TextReader bufInput = new StreamReader(@in, Encoding.UTF8);
             try

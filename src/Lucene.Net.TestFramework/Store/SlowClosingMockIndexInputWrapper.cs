@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using Lucene.Net.Support.Threading;
+using System;
+using System.Threading;
 
 namespace Lucene.Net.Store
 {
@@ -40,7 +42,10 @@ namespace Lucene.Net.Store
                 {
                     Thread.Sleep(50);
                 }
-                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    throw new Util.ThreadInterruptedException(ie);
+                }
                 finally
                 {
                     base.Dispose(disposing);

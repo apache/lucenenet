@@ -112,7 +112,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
         public virtual SpanQuery MakeSpanClause()
         {
-            List<SpanQuery> spanQueries = new List<SpanQuery>();
+            JCG.List<SpanQuery> spanQueries = new JCG.List<SpanQuery>();
             foreach (var wsq in weightBySpanQuery)
             {
                 wsq.Key.Boost = wsq.Value;

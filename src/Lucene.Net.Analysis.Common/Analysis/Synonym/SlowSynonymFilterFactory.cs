@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -66,7 +67,7 @@ namespace Lucene.Net.Analysis.Synonym
                 AssureMatchVersion();
                 tokArgs["luceneMatchVersion"] = LuceneMatchVersion.ToString();
 
-                var keys = new List<string>(args.Keys);
+                var keys = new JCG.List<string>(args.Keys);
                 foreach (string key in keys)
                 {
                     tokArgs[Holder.TOKENIZER_FACTORY_REPLACEMENT_PATTERN.Replace(key, "")] = args[key];
@@ -96,15 +97,15 @@ namespace Lucene.Net.Analysis.Synonym
         /// <returns> a list of all rules </returns>
         private IEnumerable<string> LoadRules(string synonyms, IResourceLoader loader)
         {
-            List<string> wlist = null;
+            JCG.List<string> wlist = null;
             if (File.Exists(synonyms))
             {
-                wlist = new List<string>(GetLines(loader, synonyms));
+                wlist = new JCG.List<string>(GetLines(loader, synonyms));
             }
             else
             {
                 IList<string> files = SplitFileNames(synonyms);
-                wlist = new List<string>();
+                wlist = new JCG.List<string>();
                 foreach (string file in files)
                 {
                     IList<string> lines = GetLines(loader, file.Trim());
@@ -151,7 +152,7 @@ namespace Lucene.Net.Analysis.Synonym
                     else
                     {
                         // reduce to first argument
-                        target = new List<IList<string>>(1)
+                        target = new JCG.List<IList<string>>(1)
                         {
                             source[0]
                         };
@@ -175,7 +176,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             IList<string> strList = SplitSmart(str, separator, false);
             // now split on whitespace to get a list of token strings
-            IList<IList<string>> synList = new List<IList<string>>();
+            IList<IList<string>> synList = new JCG.List<IList<string>>();
             foreach (string toks in strList)
             {
                 IList<string> tokList = tokFactory == null ? SplitWS(toks, true) : SplitByTokenizer(toks, tokFactory);
@@ -188,7 +189,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             StringReader reader = new StringReader(source);
             TokenStream ts = LoadTokenizer(tokFactory, reader);
-            IList<string> tokList = new List<string>();
+            IList<string> tokList = new JCG.List<string>();
             try
             {
                 ICharTermAttribute termAtt = ts.AddAttribute<ICharTermAttribute>();
@@ -241,7 +242,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         public static IList<string> SplitWS(string s, bool decode)
         {
-            List<string> lst = new List<string>(2);
+            IList<string> lst = new JCG.List<string>(2);
             StringBuilder sb = new StringBuilder();
             int pos = 0, end = s.Length;
             while (pos < end)
@@ -314,7 +315,7 @@ namespace Lucene.Net.Analysis.Synonym
         /// <param name="decode"> decode backslash escaping </param>
         public static IList<string> SplitSmart(string s, string separator, bool decode)
         {
-            List<string> lst = new List<string>(2);
+            IList<string> lst = new JCG.List<string>(2);
             StringBuilder sb = new StringBuilder();
             int pos = 0, end = s.Length;
             while (pos < end)

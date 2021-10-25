@@ -1,10 +1,12 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Search.Similarities;
+using Lucene.Net.Support.Threading;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -46,7 +48,7 @@ namespace Lucene.Net.Search
             perFieldSeed = random.Next();
             coordType = random.Next(3);
             shouldQueryNorm = random.NextBoolean();
-            knownSims = new List<Similarity>(allSims);
+            knownSims = new JCG.List<Similarity>(allSims);
             knownSims.Shuffle(random);
         }
 
@@ -70,7 +72,8 @@ namespace Lucene.Net.Search
 
         public override Similarity Get(string field)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
                 if (!previousMappings.TryGetValue(field, out Similarity sim) || sim == null)
@@ -79,6 +82,10 @@ namespace Lucene.Net.Search
                     previousMappings[field] = sim;
                 }
                 return sim;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -107,7 +114,7 @@ namespace Lucene.Net.Search
 
         private static IList<Similarity> LoadAllSims() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            var allSims = new List<Similarity>();
+            var allSims = new JCG.List<Similarity>();
             allSims.Add(new DefaultSimilarity());
             allSims.Add(new BM25Similarity());
             foreach (BasicModel basicModel in BASIC_MODELS)
@@ -139,7 +146,8 @@ namespace Lucene.Net.Search
 
         public override string ToString()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // LUCENENET: Use StringBuilder for better efficiency
                 var sb = new StringBuilder();
@@ -156,6 +164,10 @@ namespace Lucene.Net.Search
                 sb.Append("): ");
                 sb.AppendFormat(J2N.Text.StringFormatter.InvariantCulture, "{0}", previousMappings);
                 return sb.ToString();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
     }

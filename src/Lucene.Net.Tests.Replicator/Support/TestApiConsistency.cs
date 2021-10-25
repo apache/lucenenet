@@ -45,7 +45,7 @@ namespace Lucene.Net.Replicator
         [TestCase(typeof(Lucene.Net.Replicator.IReplicator))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]
@@ -83,14 +83,12 @@ namespace Lucene.Net.Replicator
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if FEATURE_METHODBASE_GETMETHODBODY
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Replicator.IReplicator))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)
         {
             base.TestForMethodsThatReturnWritableArray(typeFromTargetAssembly);
         }
-#endif
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Replicator.IReplicator))]

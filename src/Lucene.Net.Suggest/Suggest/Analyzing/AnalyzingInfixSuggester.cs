@@ -13,6 +13,7 @@ using System.IO;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
+using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -328,7 +329,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             if (writer != null)
                 return;
 
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 if (writer == null)
                 {
@@ -340,6 +342,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
                     m_searcherMgr = new SearcherManager(writer, true, null);
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
@@ -614,7 +620,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // TODO: maybe just stored fields?  they compress...
             BinaryDocValues payloadsDV = MultiDocValues.GetBinaryValues(searcher.IndexReader, "payloads");
             IList<AtomicReaderContext> leaves = searcher.IndexReader.Leaves;
-            List<LookupResult> results = new List<LookupResult>();
+            IList<LookupResult> results = new JCG.List<LookupResult>();
             BytesRef scratch = new BytesRef();
             for (int i = 0; i < hits.ScoreDocs.Length; i++)
             {

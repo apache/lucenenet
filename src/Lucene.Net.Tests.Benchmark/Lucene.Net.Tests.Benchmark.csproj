@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
 
  Licensed to the Apache Software Foundation (ASF) under one
@@ -28,15 +28,57 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="ByTask\Feeds\trecdocs.zip;ByTask\conf.zip;ByTask\reuters.first20.lines.txt;ByTask\test-mapping-ISOLatin1Accent-partial.txt;Quality\reuters.578.lines.txt.bz2;Quality\trecQRels.txt;Quality\trecTopics.txt" />
+    <EmbeddedResource Include="**/*.zip" Exclude="bin/**/*;obj/**/*" Label="Zip Test Data" />
+    <EmbeddedResource Include="**/*.txt" Exclude="bin/**/*;obj/**/*" Label="Text Test Data" />
+    <EmbeddedResource Include="**/*.bz2" Exclude="bin/**/*;obj/**/*" Label="BZ2 Test Data" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Benchmark\Lucene.Net.Benchmark.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj" />
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Benchmark\Lucene.Net.Benchmark.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Grouping\Lucene.Net.Grouping.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Join\Lucene.Net.Join.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Memory\Lucene.Net.Memory.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Sandbox\Lucene.Net.Sandbox.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Spatial\Lucene.Net.Spatial.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
   </ItemGroup>
   
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
@@ -45,11 +87,12 @@
     <PackageReference Include="ICU4N" Version="$(ICU4NPackageVersion)" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)"/>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion)"/>
+    <PackageReference Include="Microsoft.Extensions.Options" Version="$(MicrosoftExtensionsOptionsPackageVersion)"/>
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion)"/>
     <PackageReference Include="Microsoft.Extensions.Options" Version="$(MicrosoftExtensionsOptionsPackageVersion)"/>
   </ItemGroup>

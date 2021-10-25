@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Support.Threading;
 using RandomizedTesting.Generators;
 using System;
 using System.Threading;
@@ -69,7 +70,7 @@ namespace Lucene.Net.Facet
             return base.OpenInput(name, context);
         }
 
-        internal virtual void doSleep(Random random, int length)
+        internal virtual void DoSleep(Random random, int length)
         {
             int sTime = length < 10 ? sleepMillis : (int)(sleepMillis * Math.Log(length));
             if (random != null)
@@ -77,13 +78,19 @@ namespace Lucene.Net.Facet
                 sTime = random.Next(sTime);
             }
 
-            Thread.Sleep(sTime);
-            // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
+            try
+            {
+                Thread.Sleep(sTime);
+            }
+            catch (Exception ie) when (ie.IsInterruptedException())
+            {
+                throw new Util.ThreadInterruptedException(ie);
+            }
         }
 
         /// <summary>
         /// Make a private random. </summary>
-        internal virtual Random forkRandom()
+        internal virtual Random ForkRandom()
         {
             if (random == null)
             {
@@ -108,7 +115,7 @@ namespace Lucene.Net.Facet
                 : base("SlowIndexInput(" + ii + ")")
             {
                 this.outerInstance = outerInstance;
-                this.rand = outerInstance.forkRandom();
+                this.rand = outerInstance.ForkRandom();
                 this.ii = ii;
             }
 
@@ -116,7 +123,7 @@ namespace Lucene.Net.Facet
             {
                 if (numRead >= IO_SLEEP_THRESHOLD)
                 {
-                    outerInstance.doSleep(rand, 0);
+                    outerInstance.DoSleep(rand, 0);
                     numRead = 0;
                 }
                 ++numRead;
@@ -127,7 +134,7 @@ namespace Lucene.Net.Facet
             {
                 if (numRead >= IO_SLEEP_THRESHOLD)
                 {
-                    outerInstance.doSleep(rand, len);
+                    outerInstance.DoSleep(rand, len);
                     numRead = 0;
                 }
                 numRead += len;
@@ -186,14 +193,14 @@ namespace Lucene.Net.Facet
             {
                 this.outerInstance = outerInstance;
                 this.io = io;
-                this.rand = outerInstance.forkRandom();
+                this.rand = outerInstance.ForkRandom();
             }
 
             public override void WriteByte(byte b)
             {
                 if (numWrote >= IO_SLEEP_THRESHOLD)
                 {
-                    outerInstance.doSleep(rand, 0);
+                    outerInstance.DoSleep(rand, 0);
                     numWrote = 0;
                 }
                 ++numWrote;
@@ -204,7 +211,7 @@ namespace Lucene.Net.Facet
             {
                 if (numWrote >= IO_SLEEP_THRESHOLD)
                 {
-                    outerInstance.doSleep(rand, length);
+                    outerInstance.DoSleep(rand, length);
                     numWrote = 0;
                 }
                 numWrote += length;

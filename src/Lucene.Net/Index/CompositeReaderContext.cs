@@ -1,8 +1,7 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -82,7 +81,7 @@ namespace Lucene.Net.Index
         public sealed class Builder
         {
             private readonly CompositeReader reader;
-            private readonly IList<AtomicReaderContext> leaves = new List<AtomicReaderContext>();
+            private readonly IList<AtomicReaderContext> leaves = new JCG.List<AtomicReaderContext>();
             private int leafDocBase = 0;
 
             public Builder(CompositeReader reader)

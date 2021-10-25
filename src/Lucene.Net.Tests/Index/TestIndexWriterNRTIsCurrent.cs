@@ -1,5 +1,6 @@
 ﻿using J2N.Threading;
 using Lucene.Net.Documents;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;

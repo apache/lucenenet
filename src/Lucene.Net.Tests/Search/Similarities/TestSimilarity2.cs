@@ -1,7 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using NUnit.Framework;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search.Similarities
@@ -47,7 +48,7 @@ namespace Lucene.Net.Search.Similarities
         public override void SetUp()
         {
             base.SetUp();
-            sims = new List<Similarity>();
+            sims = new JCG.List<Similarity>();
             sims.Add(new DefaultSimilarity());
             sims.Add(new BM25Similarity());
             // TODO: not great that we dup this all with TestSimilarityBase

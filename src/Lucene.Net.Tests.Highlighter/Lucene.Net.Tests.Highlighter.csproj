@@ -32,15 +32,29 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Memory\Lucene.Net.Memory.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
   </ItemGroup>
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)"/>
-  </ItemGroup>
 
 </Project>

@@ -1,10 +1,11 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Documents
 {
@@ -40,7 +41,7 @@ namespace Lucene.Net.Documents
     /// </summary>
     public sealed class Document : IEnumerable<IIndexableField>, IFormattable
     {
-        private readonly List<IIndexableField> fields = new List<IIndexableField>();
+        private readonly IList<IIndexableField> fields = new JCG.List<IIndexableField>();
 
         /// <summary>
         /// Constructs a new document with no fields. </summary>
@@ -129,7 +130,7 @@ namespace Lucene.Net.Documents
         /// <returns> a <see cref="T:BytesRef[]"/> of binary field values </returns>
         public BytesRef[] GetBinaryValues(string name)
         {
-            var result = new List<BytesRef>();
+            var result = new JCG.List<BytesRef>();
 
             foreach (IIndexableField field in fields)
             {
@@ -197,7 +198,7 @@ namespace Lucene.Net.Documents
         /// <returns> a <see cref="T:IndexableField[]"/> array </returns>
         public IIndexableField[] GetFields(string name)
         {
-            var result = new List<IIndexableField>();
+            var result = new JCG.List<IIndexableField>();
             foreach (IIndexableField field in fields)
             {
                 if (field.Name.Equals(name, StringComparison.Ordinal))
@@ -232,7 +233,7 @@ namespace Lucene.Net.Documents
         /// <returns> a <see cref="T:string[]"/> of field values </returns>
         public string[] GetValues(string name)
         {
-            var result = new List<string>();
+            var result = new JCG.List<string>();
             foreach (IIndexableField field in fields)
             {
                 string fieldStringValue;
@@ -263,7 +264,7 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - method added for better .NET compatibility
         public string[] GetValues(string name, string format)
         {
-            var result = new List<string>();
+            var result = new JCG.List<string>();
             foreach (IIndexableField field in fields)
             {
                 string fieldStringValue;
@@ -294,7 +295,7 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - method added for better .NET compatibility
         public string[] GetValues(string name, IFormatProvider provider)
         {
-            var result = new List<string>();
+            var result = new JCG.List<string>();
             foreach (IIndexableField field in fields)
             {
                 string fieldStringValue;
@@ -326,7 +327,7 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - method added for better .NET compatibility
         public string[] GetValues(string name, string format, IFormatProvider provider)
         {
-            var result = new List<string>();
+            var result = new JCG.List<string>();
             foreach (IIndexableField field in fields)
             {
                 string fieldStringValue;

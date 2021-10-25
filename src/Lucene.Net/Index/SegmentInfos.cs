@@ -1371,7 +1371,7 @@ namespace Lucene.Net.Index
 
         internal IList<SegmentCommitInfo> CreateBackupSegmentInfos()
         {
-            var list = new List<SegmentCommitInfo>(Count);
+            var list = new JCG.List<SegmentCommitInfo>(Count);
             foreach (var info in segments)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Codec != null);

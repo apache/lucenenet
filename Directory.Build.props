@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,8 +19,6 @@
 
 -->
 <Project>
-  <Import Project="build\Dependencies.props" />
-
   <PropertyGroup>
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>

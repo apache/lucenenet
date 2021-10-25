@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using JCG = J2N.Collections.Generic;
 using TermInfo = Lucene.Net.Search.VectorHighlight.FieldTermStack.TermInfo;
 using Toffs = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo.Toffs;
 using WeightedPhraseInfo = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo;
@@ -300,7 +301,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
         private WeightedPhraseInfo newInfo(int startOffset, int endOffset, float boost)
         {
-            List<TermInfo> infos = new List<TermInfo>();
+            IList<TermInfo> infos = new JCG.List<TermInfo>();
             infos.Add(new TermInfo(TestUtil.RandomUnicodeString(Random), startOffset, endOffset, 0, 0));
             return new WeightedPhraseInfo(infos, boost);
         }

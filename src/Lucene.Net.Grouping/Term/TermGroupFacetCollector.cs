@@ -2,7 +2,7 @@
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System.Collections.Generic;
-using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping.Terms
 {
@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Grouping.Terms
     /// </summary>
     public abstract class TermGroupFacetCollector : AbstractGroupFacetCollector
     {
-        internal readonly List<GroupedFacetHit> groupedFacetHits;
+        internal readonly IList<GroupedFacetHit> groupedFacetHits;
         internal readonly SentinelInt32Set segmentGroupedFacetHits;
 
         internal SortedDocValues groupFieldTermsIndex;
@@ -69,7 +69,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         internal TermGroupFacetCollector(string groupField, string facetField, BytesRef facetPrefix, int initialSize)
             : base(groupField, facetField, facetPrefix)
         {
-            groupedFacetHits = new List<GroupedFacetHit>(initialSize);
+            groupedFacetHits = new JCG.List<GroupedFacetHit>(initialSize);
             segmentGroupedFacetHits = new SentinelInt32Set(initialSize, int.MinValue);
         }
 

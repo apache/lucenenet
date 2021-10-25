@@ -44,6 +44,8 @@ namespace Lucene.Net.Replicator
     /// </remarks>
     public class ReplicationClient : IDisposable
     {
+        // LUCENENET TODO: Check to ensure ThreadInterruptException is being passed from the background worker to the current thread, as it is required by IndexWriter
+
         //Note: LUCENENET specific, .NET does not work with Threads in the same way as Java does, so we mimic the same behavior using the ThreadPool instead.
         private class ReplicationThread
         {
@@ -89,11 +91,16 @@ namespace Lucene.Net.Replicator
             /// </summary>
             public void Start()
             {
-                lock (controlLock)
+                UninterruptableMonitor.Enter(controlLock);
+                try
                 {
                     if (IsAlive)
                         return;
                     IsAlive = true;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(controlLock);
                 }
                 RegisterWait(interval);
             }
@@ -103,11 +110,16 @@ namespace Lucene.Net.Replicator
             /// </summary>
             public void Stop()
             {
-                lock (controlLock)
+                UninterruptableMonitor.Enter(controlLock);
+                try
                 {
                     if (!IsAlive)
                         return;
                     IsAlive = false;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(controlLock);
                 }
                 stopHandle = new AutoResetEvent(false);
 
@@ -241,7 +253,7 @@ namespace Lucene.Net.Replicator
                     Directory directory = factory.GetDirectory(session.Id, source);
 
                     sourceDirectory.Add(source, directory);
-                    List<string> cpFiles = new List<string>();
+                    IList<string> cpFiles = new JCG.List<string>();
                     copiedFiles.Add(source, cpFiles);
                     foreach (RevisionFile file in pair.Value)
                     {
@@ -368,7 +380,7 @@ namespace Lucene.Net.Replicator
                 }
 
                 // make sure to preserve revisionFiles order
-                List<RevisionFile> res = new List<RevisionFile>();
+                IList<RevisionFile> res = new JCG.List<RevisionFile>();
                 string source = e.Key;
                 if (Debugging.AssertsEnabled) Debugging.Assert(newRevisionFiles.ContainsKey(source), "source not found in newRevisionFiles: {0}", newRevisionFiles);
                 foreach (RevisionFile file in newRevisionFiles[source])
@@ -430,7 +442,16 @@ namespace Lucene.Net.Replicator
             // otherwise, if it's in the middle of replication, we wait for it to
             // stop.
             if (updateThread != null)
-                updateThread.Stop();
+            {
+                try
+                {
+                    updateThread.Stop();
+                }
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    throw new Util.ThreadInterruptedException(ie);
+                }
+            }
             updateThread = null;
         }
 

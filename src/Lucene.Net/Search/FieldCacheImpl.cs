@@ -3,10 +3,12 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -96,15 +98,21 @@ namespace Lucene.Net.Search
 
         public virtual void PurgeAllCaches()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 Init();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
         public virtual void PurgeByCacheKey(object coreCacheKey)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // LUCENENET specific - removed unnecessary Dictionary and loop
                 caches_typeof_sbyte.PurgeByCacheKey(coreCacheKey);
@@ -118,13 +126,18 @@ namespace Lucene.Net.Search
                 caches_typeof_DocTermOrds.PurgeByCacheKey(coreCacheKey);
                 caches_typeof_DocsWithFieldCache.PurgeByCacheKey(coreCacheKey);
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public virtual FieldCache.CacheEntry[] GetCacheEntries()
         {
             // LUCENENET specific - instantiate/ToArray() outside of lock to improve performance
-            IList<FieldCache.CacheEntry> result = new List<FieldCache.CacheEntry>(17);
-            lock (this)
+            IList<FieldCache.CacheEntry> result = new JCG.List<FieldCache.CacheEntry>(17);
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // LUCENENET specific - refactored to use generic CacheKey to reduce casting and removed unnecessary Dictionary/loop
                 AddCacheEntries(result, typeof(sbyte), caches_typeof_sbyte);
@@ -138,12 +151,17 @@ namespace Lucene.Net.Search
                 AddCacheEntries(result, typeof(DocTermOrds), caches_typeof_DocTermOrds);
                 AddCacheEntries(result, typeof(DocsWithFieldCache), caches_typeof_DocsWithFieldCache);
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
             return result.ToArray();
         }
 
         private void AddCacheEntries<TKey, TValue>(IList<FieldCache.CacheEntry> result, Type cacheType, Cache<TKey, TValue> cache) where TKey : CacheKey
         {
-            lock (cache.readerCache)
+            UninterruptableMonitor.Enter(cache.readerCache);
+            try
             {
                 foreach (var readerCacheEntry in cache.readerCache)
                 {
@@ -159,6 +177,10 @@ namespace Lucene.Net.Search
                         result.Add(new FieldCache.CacheEntry(readerKey, entry.field, cacheType, entry.Custom, mapEntry.Value));
                     }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(cache.readerCache);
             }
         }
 
@@ -245,8 +267,15 @@ namespace Lucene.Net.Search
             /// Remove this reader from the cache, if present. </summary>
             public virtual void PurgeByCacheKey(object coreCacheKey)
             {
-                lock (readerCache)
+                UninterruptableMonitor.Enter(readerCache);
+                try
+                {
                     readerCache.Remove(coreCacheKey);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(readerCache);
+                }
             }
 
             /// <summary>
@@ -257,7 +286,8 @@ namespace Lucene.Net.Search
             {
                 IDictionary<TKey, object> innerCache;
                 object readerKey = reader.CoreCacheKey;
-                lock (readerCache)
+                UninterruptableMonitor.Enter(readerCache);
+                try
                 {
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
 
@@ -286,6 +316,10 @@ namespace Lucene.Net.Search
                         innerCache[key] = value;
                     // else if another thread beat us to it, leave the current value
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(readerCache);
+                }
             }
 
             public virtual TValue Get(AtomicReader reader, TKey key, bool setDocsWithField)
@@ -293,7 +327,8 @@ namespace Lucene.Net.Search
                 IDictionary<TKey, object> innerCache;
                 object value = null;
                 object readerKey = reader.CoreCacheKey;
-                lock (readerCache)
+                UninterruptableMonitor.Enter(readerCache);
+                try
                 {
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                     innerCache = readerCache.GetValue(readerKey, (readerKey) =>
@@ -327,16 +362,26 @@ namespace Lucene.Net.Search
                             innerCache[key] = value = new FieldCache.CreationPlaceholder<TValue>();
                     }
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(readerCache);
+                }
                 if (value is FieldCache.CreationPlaceholder<TValue> progress)
                 {
-                    lock (value)
+                    UninterruptableMonitor.Enter(value);
+                    try
                     {
                         if (progress.Value is null)
                         {
                             progress.Value = CreateValue(reader, key, setDocsWithField);
-                            lock (readerCache)
+                            UninterruptableMonitor.Enter(readerCache);
+                            try
                             {
                                 innerCache[key] = progress.Value;
+                            }
+                            finally
+                            {
+                                UninterruptableMonitor.Exit(readerCache);
                             }
                             // Only check if key.custom (the parser) is
                             // non-null; else, we check twice for a single
@@ -351,6 +396,10 @@ namespace Lucene.Net.Search
                             }
                         }
                         return progress.Value;
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(value);
                     }
                 }
                 return (TValue)value;

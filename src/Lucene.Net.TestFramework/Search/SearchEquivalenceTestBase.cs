@@ -58,18 +58,23 @@ namespace Lucene.Net.Search
         protected static string m_stopword; // we always pick a character as a stopword
 
 //#if TESTFRAMEWORK_MSTEST
-//        private static readonly IList<string> initalizationLock = new List<string>();
+//        private static readonly IList<string> initalizationLock = new JCG.List<string>();
 
 //        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
 //        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
 //        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
 //        {
-//            lock (initalizationLock)
+//            UninterruptableMonitor.Enter(initializationLock);
+//            try
 //            {
 //                if (!initalizationLock.Contains(context.FullyQualifiedTestClassName))
 //                    initalizationLock.Add(context.FullyQualifiedTestClassName);
 //                else
 //                    return; // Only allow this class to initialize once (MSTest bug)
+//            }
+//            finally
+//            {
+//                UninterruptableMonitor.Exit(initializationLock);
 //            }
 //#else
 #if TESTFRAMEWORK_NUNIT

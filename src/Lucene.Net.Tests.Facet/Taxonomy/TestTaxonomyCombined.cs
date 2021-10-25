@@ -4,11 +4,11 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -592,7 +592,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 // find expected children by looking at all expectedCategories
                 // for children
-                List<int?> expectedChildren = new List<int?>();
+                JCG.List<int?> expectedChildren = new JCG.List<int?>();
                 for (int j = ExpectedCategories.Length - 1; j >= 0; j--)
                 {
                     if (ExpectedCategories[j].Length != ExpectedCategories[i].Length + 1)
@@ -896,9 +896,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             public override void Run()
             {
-#if FEATURE_THREAD_PRIORITY
                 Priority = 1 + Priority;
-#endif 
                 try
                 {
                     while (!stop)
@@ -906,6 +904,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         int lastOrd = tr.ParallelTaxonomyArrays.Parents.Length - 1;
                         Assert.IsNotNull(tr.GetPath(lastOrd), "path of last-ord " + lastOrd + " is not found!");
                         AssertChildrenArrays(tr.ParallelTaxonomyArrays, retry, retrieval[0]++);
+
                         Thread.Sleep(10);// don't starve refresh()'s CPU, which sleeps every 50 bytes for 1 ms
                     }
                 }

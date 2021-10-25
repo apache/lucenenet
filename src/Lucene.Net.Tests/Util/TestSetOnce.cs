@@ -1,4 +1,5 @@
 ﻿using J2N.Threading;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Globalization;

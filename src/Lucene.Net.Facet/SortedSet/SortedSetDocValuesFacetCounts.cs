@@ -3,6 +3,7 @@ using J2N.Text;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.SortedSet
 {
@@ -289,7 +290,7 @@ namespace Lucene.Net.Facet.SortedSet
 
         public override IList<FacetResult> GetAllDims(int topN)
         {
-            List<FacetResult> results = new List<FacetResult>();
+            JCG.List<FacetResult> results = new JCG.List<FacetResult>();
             foreach (KeyValuePair<string, OrdRange> ent in state.PrefixToOrdRange)
             {
                 FacetResult fr = GetDim(ent.Key, ent.Value, topN);

@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -82,7 +83,8 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             // LUCENENET NOTE: Since ConditionalWeakTable doesn't synchronize on enumeration in the RamBytesUsed() method,
             // the lock is still required here despite it being a threadsafe collection.
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 object cacheKey = context.Reader.CoreCacheKey;
                 if (!ordsCache.TryGetValue(cacheKey, out CachedOrds ords))
@@ -96,6 +98,10 @@ namespace Lucene.Net.Facet.Taxonomy
                     ordsCache.Add(cacheKey, ords);
                 }
                 return ords;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
@@ -198,7 +204,8 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public virtual long RamBytesUsed()
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 long bytes = 0;
                 foreach (var pair in ordsCache)
@@ -207,6 +214,10 @@ namespace Lucene.Net.Facet.Taxonomy
                 }
 
                 return bytes;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
     }

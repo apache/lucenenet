@@ -6,7 +6,7 @@ using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial
 {
@@ -38,7 +38,7 @@ namespace Lucene.Net.Spatial
             SpatialContext ctx = SpatialContext.GEO;
             IEnumerator<SpatialTestQuery> iter = SpatialTestQuery.GetTestQueries(
                 new SpatialArgsParser(), ctx, name, @in);//closes the InputStream
-            List<SpatialTestQuery> tests = new List<SpatialTestQuery>();
+            IList<SpatialTestQuery> tests = new JCG.List<SpatialTestQuery>();
             while (iter.MoveNext())
             {
                 tests.Add(iter.Current);

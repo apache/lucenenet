@@ -276,7 +276,7 @@ namespace Lucene.Net.Codecs
             }
         }
 
-        private readonly IList<FieldMetaData> fields = new List<FieldMetaData>();
+        private readonly IList<FieldMetaData> fields = new JCG.List<FieldMetaData>();
         // private final String segment;
 
         /// <summary>
@@ -848,7 +848,7 @@ namespace Lucene.Net.Codecs
                     int curStart = count;
                     subCount = 0;
 
-                    IList<PendingBlock> floorBlocks = new List<PendingBlock>();
+                    IList<PendingBlock> floorBlocks = new JCG.List<PendingBlock>();
                     PendingBlock firstBlock = null;
 
                     for (int sub = 0; sub < numSubs; sub++)
@@ -1058,7 +1058,7 @@ namespace Lucene.Net.Codecs
                 }
                 else
                 {
-                    subIndices = new List<FST<BytesRef>>();
+                    subIndices = new JCG.List<FST<BytesRef>>();
                     termCount = 0;
                     foreach (PendingEntry ent in slice)
                     {

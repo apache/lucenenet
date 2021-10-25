@@ -433,7 +433,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         /// <returns>All tasks participating in this algorithm.</returns>
         public virtual IList<PerfTask> ExtractTasks()
         {
-            List<PerfTask> res = new List<PerfTask>();
+            IList<PerfTask> res = new JCG.List<PerfTask>();
             ExtractTasks(res, sequence);
             return res;
         }

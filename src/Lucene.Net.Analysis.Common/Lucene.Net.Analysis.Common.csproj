@@ -24,7 +24,7 @@
   <Import Project="$(SolutionDir)build/NuGet.props" />
   
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net45</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Analysis.Common</AssemblyTitle>
@@ -34,9 +34,12 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
+  <Import Project="$(SolutionDir)build/Dependencies.props" />
+
   <ItemGroup>
-    <EmbeddedResource Include="Analysis\Gl\galician.rslp;Analysis\Pt\portuguese.rslp;Analysis\Compound\Hyphenation\hyphenation.dtd" />
-    <EmbeddedResource Include="Analysis\**\stopwords.txt;Analysis\Snowball\*_stop.txt" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+    <EmbeddedResource Include="**/*.rslp" Exclude="bin/**/*;obj/**/*" Label="RSLP Test Data" />
+    <EmbeddedResource Include="**/*.dtd" Exclude="bin/**/*;obj/**/*" Label="DTD Test Data" />
+    <EmbeddedResource Include="**/*.txt" Exclude="bin/**/*;obj/**/*" Label="Text Test Data" />
   </ItemGroup>
 
   <ItemGroup>

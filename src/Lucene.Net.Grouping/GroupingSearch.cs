@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -324,7 +325,7 @@ namespace Lucene.Net.Search.Grouping
             ICollector firstRound;
             if (allGroupHeads || allGroups)
             {
-                List<ICollector> collectors = new List<ICollector>();
+                JCG.List<ICollector> collectors = new JCG.List<ICollector>();
                 collectors.Add(firstPassCollector);
 
                 if (allGroups)
@@ -448,7 +449,7 @@ namespace Lucene.Net.Search.Grouping
             ICollector firstRound;
             if (allGroupHeads || allGroups)
             {
-                List<ICollector> collectors = new List<ICollector>();
+                JCG.List<ICollector> collectors = new JCG.List<ICollector>();
                 collectors.Add(firstPassCollector);
 
                 if (allGroups)

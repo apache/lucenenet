@@ -5,10 +5,10 @@ using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -61,7 +61,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 defaultField, anlzr);
             qp.AllowLeadingWildcard = true;
 
-            List<Query> qq = new List<Query>();
+            JCG.List<Query> qq = new JCG.List<Query>();
             string fileName = m_config.Get("file.query.maker.file", null);
             if (fileName != null)
             {

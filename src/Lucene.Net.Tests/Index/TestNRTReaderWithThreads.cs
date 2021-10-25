@@ -2,6 +2,7 @@
 using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Threading;
@@ -39,7 +40,6 @@ namespace Lucene.Net.Index
 
         [Test]
         [Slow] // (occasionally)
-        [Deadlock][Timeout(600000)]
         public virtual void TestIndexing()
         {
             Directory mainDir = NewDirectory();

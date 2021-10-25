@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Support.Threading;
 using opennlp.tools.tokenize;
 using opennlp.tools.util;
 
@@ -41,7 +42,8 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public virtual Span[] GetTerms(string sentence)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (tokenizer == null)
                 {
@@ -50,6 +52,10 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
                     return span1;
                 }
                 return tokenizer.tokenizePos(sentence);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
     }

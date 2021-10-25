@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             if (types != null)
             {
                 IList<string> files = SplitFileNames(types);
-                IList<string> wlist = new List<string>();
+                IList<string> wlist = new JCG.List<string>();
                 foreach (string file in files)
                 {
                     IList<string> lines = GetLines(loader, file.Trim());

@@ -5,8 +5,8 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Xml;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Xml.Builders
 {
@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
         /// </summary>
         public virtual Filter GetFilter(XmlElement e)
         {
-            List<BytesRef> terms = new List<BytesRef>();
+            IList<BytesRef> terms = new JCG.List<BytesRef>();
             string text = DOMUtils.GetNonBlankTextOrFail(e);
             string fieldName = DOMUtils.GetAttributeWithInheritanceOrFail(e, "fieldName");
 

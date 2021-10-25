@@ -2,6 +2,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.IO;

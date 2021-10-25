@@ -1,5 +1,6 @@
 ﻿using J2N.Text;
 using Lucene.Net.Benchmarks.ByTask.Utils;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -86,7 +88,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         private readonly DisposableThreadLocal<StringBuilder> trecDocBuffer = new DisposableThreadLocal<StringBuilder>();
         private DirectoryInfo dataDir = null;
-        private readonly List<FileInfo> inputFiles = new List<FileInfo>();
+        private readonly IList<FileInfo> inputFiles = new JCG.List<FileInfo>();
         private int nextFile = 0;
         // Use to synchronize threads on reading from the TREC documents.
         private readonly object @lock = new object(); // LUCENENET: marked readonly
@@ -261,7 +263,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             // protect reading from the TREC files by multiple threads. The rest of the
             // method, i.e., parsing the content and returning the DocData can run unprotected.
-            lock (@lock)
+            UninterruptableMonitor.Enter(@lock);
+            try
             {
                 if (reader == null)
                 {
@@ -291,6 +294,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 docBuf.Length = 0;
                 Read(docBuf, TERMINATING_DOC, false, true);
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(@lock);
+            }
 
             // count char length of text to be parsed (may be larger than the resulted plain doc body text).
             AddBytes(docBuf.Length);
@@ -305,12 +312,17 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         public override void ResetInputs()
         {
-            lock (@lock)
+            UninterruptableMonitor.Enter(@lock);
+            try
             {
                 base.ResetInputs();
                 DoClose();
                 nextFile = 0;
                 iteration = 0;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(@lock);
             }
         }
 

@@ -8,6 +8,7 @@ using Lucene.Net.Facet.Taxonomy.Directory;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -138,8 +139,14 @@ namespace Lucene.Net.Replicator
             // introducing timeouts is not good, can easily lead to false positives.
             while (client.IsUpdateThreadAlive)
             {
-                Thread.Sleep(100);
-                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException.
+                try
+                {
+                    Thread.Sleep(100);
+                }
+                catch (Exception e) when (e.IsInterruptedException())
+                {
+                    throw new Util.ThreadInterruptedException(e);
+                }
 
                 try
                 {

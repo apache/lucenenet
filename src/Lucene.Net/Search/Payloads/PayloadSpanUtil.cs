@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using JCG = J2N.Collections.Generic;
 
@@ -59,7 +59,7 @@ namespace Lucene.Net.Search.Payloads
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public virtual ICollection<byte[]> GetPayloadsForQuery(Query query)
         {
-            var payloads = new List<byte[]>();
+            var payloads = new JCG.List<byte[]>();
             QueryToSpanQuery(query, payloads);
             return payloads;
         }
@@ -135,7 +135,7 @@ namespace Lucene.Net.Search.Payloads
 
                     // LUCENENET: Changed from Query to SpanQuery to eliminate the O(n) cast
                     // required to instantiate SpanOrQuery below
-                    IList<SpanQuery>[] disjunctLists = new List<SpanQuery>[maxPosition + 1];
+                    IList<SpanQuery>[] disjunctLists = new JCG.List<SpanQuery>[maxPosition + 1];
                     int distinctPositions = 0;
 
                     for (int i = 0; i < termArrays.Count; ++i)
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search.Payloads
                         IList<SpanQuery> disjuncts = disjunctLists[positions[i]]; // LUCENENET: Changed from Query to SpanQuery
                         if (disjuncts == null)
                         {
-                            disjuncts = (disjunctLists[positions[i]] = new List<SpanQuery>(termArray.Length)); // LUCENENET: Changed from Query to SpanQuery
+                            disjuncts = (disjunctLists[positions[i]] = new JCG.List<SpanQuery>(termArray.Length)); // LUCENENET: Changed from Query to SpanQuery
                             ++distinctPositions;
                         }
                         foreach (Term term in termArray)

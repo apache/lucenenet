@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using System;
 using System.Collections.Generic;
@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
@@ -196,15 +197,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
                 new XmlReaderSettings
                 {
-                    // DTD Processing currently is
-                    // not supported in .NET Standard 1.x but will come back in .NET Standard 2.0.
-                    // https://github.com/dotnet/corefx/issues/4376.
-#if FEATURE_DTD_PROCESSING
                     DtdProcessing = DtdProcessing.Parse,
                     XmlResolver = new DtdResolver()
-#else
-                    DtdProcessing = DtdProcessing.Ignore
-#endif
                 };
         }
 
@@ -296,7 +290,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         protected virtual IList<object> NormalizeException<T1>(IList<T1> ex)
         {
-            List<object> res = new List<object>();
+            IList<object> res = new JCG.List<object>();
             for (int i = 0; i < ex.Count; i++)
             {
                 object item = ex[i];
@@ -377,7 +371,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return il.ToString();
         }
 
-#if FEATURE_DTD_PROCESSING
         /// <summary>
         /// LUCENENET specific helper class to force the DTD file to be read from the embedded resource
         /// rather than from the file system.
@@ -395,7 +388,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 return base.GetEntity(absoluteUri, role, ofObjectToReturn);
             }
         }
-#endif
 
         //
         // ContentHandler methods
@@ -433,7 +425,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             else if (local.Equals("exceptions", StringComparison.Ordinal))
             {
                 currElement = ELEM_EXCEPTIONS;
-                exception = new List<object>();
+                exception = new JCG.List<object>();
             }
             else if (local.Equals("hyphen", StringComparison.Ordinal))
             {
@@ -470,7 +462,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     case ELEM_EXCEPTIONS:
                         exception.Add(word);
                         exception = NormalizeException(exception);
-                        consumer.AddException(GetExceptionWord(exception), new List<object>(exception));
+                        consumer.AddException(GetExceptionWord(exception), new JCG.List<object>(exception));
                         break;
                     case ELEM_PATTERNS:
                         consumer.AddPattern(GetPattern(word), GetInterletterValues(word));
@@ -523,7 +515,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     case ELEM_EXCEPTIONS:
                         exception.Add(word);
                         exception = NormalizeException(exception);
-                        consumer.AddException(GetExceptionWord(exception), new List<object>(exception));
+                        consumer.AddException(GetExceptionWord(exception), new JCG.List<object>(exception));
                         exception.Clear();
                         break;
                     case ELEM_PATTERNS:

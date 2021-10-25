@@ -20,16 +20,16 @@
 -->
 <Project>
 
-  <!-- Features in .NET Core 3.x and .NET 5.x only -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) ">
+  <!-- Features in .NET Core 3.x, .NET 5.x, and .NET 6.x only -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or '$(TargetFramework)' == 'net6.0' ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ARGITERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_DICTIONARY_REMOVE_CONTINUEENUMERATION</DefineConstants>
 
   </PropertyGroup>
   
-  <!-- Features in .NET Standard, .NET Core, and .NET 5 only (no .NET Framework support) -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard')) Or $(TargetFramework.StartsWith('netcoreapp')) Or '$(TargetFramework)' == 'net5.0' ">
+  <!-- Features in .NET Standard, .NET Core, .NET 5.x, and .NET 6.x only (no .NET Framework support) -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard')) Or $(TargetFramework.StartsWith('netcoreapp')) Or '$(TargetFramework)' == 'net5.0' Or '$(TargetFramework)' == 'net6.0' ">
     
     <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_ARRAYEMPTY</DefineConstants>
@@ -39,8 +39,8 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
-  <!-- Features in .NET Standard 2.1 only -->
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' Or $(TargetFramework.StartsWith('netcoreapp3.')) Or '$(TargetFramework)' == 'net5.0' ">
+  <!-- Features in .NET Standard 2.1, .NET 5.x, and .NET 6.x only -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' Or $(TargetFramework.StartsWith('netcoreapp3.')) Or '$(TargetFramework)' == 'net5.0' Or '$(TargetFramework)' == 'net6.0' ">
 
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE</DefineConstants>
@@ -48,41 +48,30 @@
     
   </PropertyGroup>
 
-  <!-- Features in .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, and .NET 5 -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or '$(TargetFramework)' == 'net5.0' ">
+  <!-- Features in .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x, and .NET 6.x -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or '$(TargetFramework)' == 'net5.0' Or '$(TargetFramework)' == 'net6.0' ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ICONFIGURATIONROOT_PROVIDERS</DefineConstants>
 
   </PropertyGroup>
 
-  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, and .NET 5  -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or '$(TargetFramework)' == 'net5.0' ">
+  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x, and .NET 6.x  -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or '$(TargetFramework)' == 'net5.0' Or '$(TargetFramework)' == 'net6.0' ">
 
-    <DefineConstants>$(DefineConstants);FEATURE_APPDOMAIN_BASEDIRECTORY</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_APPDOMAIN_GETASSEMBLIES</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_APPDOMAIN_ISFULLYTRUSTED</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_ASSEMBLY_GETCALLINGASSEMBLY</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_CULTUREINFO_GETCULTURES</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_DTD_PROCESSING</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_FILESTREAM_LOCK</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_METHODBASE_GETMETHODBODY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_STACKTRACE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_TEXTWRITER_CLOSE</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_TEXTWRITER_INITIALIZELIFETIMESERVICE</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_THREAD_PRIORITY</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_THREAD_YIELD</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_TYPE_GETMETHOD__BINDINGFLAGS_PARAMS</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_XSLT</DefineConstants>
 
   </PropertyGroup>
 
-  <!-- Features in .NET Standard 1.x and .NET Core 1.x -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard1.')) Or $(TargetFramework.StartsWith('netcoreapp1.')) ">
-    
-    <DefineConstants>$(DefineConstants);NETSTANDARD1_X</DefineConstants>
-    
+  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x (No .NET 6.x support ) -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or '$(TargetFramework)' == 'net5.0' ">
+
+    <DefineConstants>$(DefineConstants);FEATURE_TEXTWRITER_INITIALIZELIFETIMESERVICE</DefineConstants>
+
   </PropertyGroup>
 
   <!-- Features in .NET Framework 4.6.1+ only -->
@@ -105,8 +94,6 @@
     <DefineConstants>$(DefineConstants);NETFRAMEWORK</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_ARGITERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_MEMORYMAPPEDFILESECURITY</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_OPENNLP</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE_EXCEPTIONS</DefineConstants>
     <!-- Although HostProtectionAttribute is available in .NET Standard 2.0+ via platform extensions, we are excluding
          it due to the fact it is not a primary feature of Lucene.NET -->
     <DefineConstants>$(DefineConstants);FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION</DefineConstants>
@@ -115,6 +102,16 @@
     
     <DebugType>full</DebugType>
   </PropertyGroup>
+
+  <!-- Features in .NET Framework 4.5+ but not in .NET Standard 2.0 -->
+  <!-- net461 is used to test .NET Standard 2.0, so we treat it like it is not part of this group -->
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('net4')) And '$(TargetFramework)' != 'net461'">
+
+    <DefineConstants>$(DefineConstants);FEATURE_OPENNLP</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE_EXCEPTIONS</DefineConstants>
+
+  </PropertyGroup>
+    
 
   <PropertyGroup>
     <!-- NuGet.org only supports portable debug symbol format: 

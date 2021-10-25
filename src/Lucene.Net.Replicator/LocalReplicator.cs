@@ -1,4 +1,5 @@
 ﻿using J2N.Threading.Atomic;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -159,18 +160,24 @@ namespace Lucene.Net.Replicator
         /// <exception cref="ObjectDisposedException">This replicator has already been disposed.</exception>
         protected void EnsureOpen()
         {
-            lock (padlock)
+            UninterruptableMonitor.Enter(padlock);
+            try
             {
                 if (!disposed)
                     return;
 
                 throw AlreadyClosedException.Create(this.GetType().FullName, "This replicator has already been disposed.");
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(padlock);
+            }
         }
 
         public virtual SessionToken CheckForUpdate(string currentVersion)
         {
-            lock (padlock)
+            UninterruptableMonitor.Enter(padlock);
+            try
             {
                 EnsureOpen();
                 if (currentRevision == null)
@@ -187,6 +194,10 @@ namespace Lucene.Net.Replicator
                 sessions[sessionID] = new ReplicationSession(token, currentRevision);
                 return token;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(padlock);
+            }
         }
 
         protected virtual void Dispose(bool disposing)
@@ -194,11 +205,16 @@ namespace Lucene.Net.Replicator
             if (disposed || !disposing)
                 return;
 
-            lock (padlock)
+            UninterruptableMonitor.Enter(padlock);
+            try
             {
                 foreach (ReplicationSession session in sessions.Values)
                     session.Revision.DecRef();
                 sessions.Clear();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(padlock);
             }
             disposed = true;
         }
@@ -221,18 +237,24 @@ namespace Lucene.Net.Replicator
             get => expirationThreshold;
             set
             {
-                lock (padlock)
+                UninterruptableMonitor.Enter(padlock);
+                try
                 {
                     EnsureOpen();
                     expirationThreshold = value;
                     CheckExpiredSessions();
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(padlock);
                 }
             }
         }
 
         public virtual Stream ObtainFile(string sessionId, string source, string fileName)
         {
-            lock (padlock)
+            UninterruptableMonitor.Enter(padlock);
+            try
             {
                 EnsureOpen();
 
@@ -249,11 +271,16 @@ namespace Lucene.Net.Replicator
                 sessions[sessionId].MarkAccessed();
                 return session.Revision.Revision.Open(source, fileName);
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(padlock);
+            }
         }
 
         public virtual void Publish(IRevision revision)
         {
-            lock (padlock)
+            UninterruptableMonitor.Enter(padlock);
+            try
             {
                 EnsureOpen();
 
@@ -281,15 +308,24 @@ namespace Lucene.Net.Replicator
 
                 CheckExpiredSessions();
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(padlock);
+            }
         }
 
         /// <exception cref="InvalidOperationException"></exception>
         public virtual void Release(string sessionId)
         {
-            lock (padlock)
+            UninterruptableMonitor.Enter(padlock);
+            try
             {
                 EnsureOpen();
                 ReleaseSession(sessionId);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(padlock);
             }
         }
     }

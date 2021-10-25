@@ -4,6 +4,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;
@@ -91,13 +92,18 @@ namespace Lucene.Net.Index
 
             public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     if (!mayMerge.Value && writer.NextMerge() != null)
                     {
                         throw AssertionError.Create();
                     }
                     base.Merge(writer, trigger, newMergesFound);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }

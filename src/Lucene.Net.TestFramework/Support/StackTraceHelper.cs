@@ -1,12 +1,5 @@
-using System;
-
-#if FEATURE_STACKTRACE
+﻿using System;
 using System.Diagnostics;
-#else
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-#endif
 
 namespace Lucene.Net.Util
 {
@@ -41,7 +34,6 @@ namespace Lucene.Net.Util
         /// </summary>
         public static bool DoesStackTraceContainMethod(string methodName)
         {
-#if FEATURE_STACKTRACE
             StackTrace trace = new StackTrace();
             foreach (var frame in trace.GetFrames())
             {
@@ -51,10 +43,6 @@ namespace Lucene.Net.Util
                 }
             }
             return false;
-#else
-            IEnumerable<string> allMethods = GetStackTrace(false);
-            return allMethods.Contains(methodName);
-#endif
         }
 
         /// <summary>
@@ -65,7 +53,6 @@ namespace Lucene.Net.Util
         /// </summary>
         public static bool DoesStackTraceContainMethod(string className, string methodName) 
         {
-#if FEATURE_STACKTRACE
             StackTrace trace = new StackTrace();
             foreach (var frame in trace.GetFrames())
             {
@@ -76,37 +63,6 @@ namespace Lucene.Net.Util
                 }
             }
             return false;
-#else
-            IEnumerable<string> allMethods = GetStackTrace(true);
-            return allMethods.Any(x => x.Contains(className + '.' + methodName));
-#endif
         }
-
-#if !FEATURE_STACKTRACE
-        private static readonly Regex METHOD_NAME_REGEX = new Regex(@"at\s+(?<fullyQualifiedMethod>.*\.(?<method>[\w`]+))\(");
-
-        private static IEnumerable<string> GetStackTrace(bool includeFullyQualifiedName)
-        {
-            var matches =
-                Environment.StackTrace
-                .Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(line =>
-                {
-                    var match = METHOD_NAME_REGEX.Match(line);
-
-                    if (!match.Success)
-                    {
-                        return null;
-                    }
-
-                    return includeFullyQualifiedName
-                        ? match.Groups["fullyQualifiedMethod"].Value
-                        : match.Groups["method"].Value;
-                })
-                .Where(line => !string.IsNullOrEmpty(line));
-
-            return matches;
-        }
-#endif
     }
 }

@@ -9,6 +9,7 @@ using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial
 {
@@ -34,7 +35,7 @@ namespace Lucene.Net.Spatial
         //@ParametersFactory
         public static IList<Object[]> Parameters()
         {
-            List<Object[]> ctorArgs = new List<object[]>();
+            IList<Object[]> ctorArgs = new JCG.List<object[]>();
 
             SpatialContext ctx = SpatialContext.GEO;
             SpatialPrefixTree grid;

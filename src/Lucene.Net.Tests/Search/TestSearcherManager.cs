@@ -2,12 +2,14 @@
 using J2N.Threading.Atomic;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
@@ -70,7 +72,7 @@ namespace Lucene.Net.Search
 
         private SearcherManager mgr;
         private SearcherLifetimeManager lifetimeMGR;
-        private readonly IList<long> pastSearchers = new List<long>();
+        private readonly IList<long> pastSearchers = new JCG.List<long>();
         private bool isNRT;
 
         protected override void DoAfterWriter(TaskScheduler es)
@@ -195,7 +197,8 @@ namespace Lucene.Net.Search
 
             IndexSearcher s = null;
 
-            lock (pastSearchers)
+            UninterruptableMonitor.Enter(pastSearchers);
+            try
             {
                 while (pastSearchers.Count != 0 && Random.NextDouble() < 0.25)
                 {
@@ -216,6 +219,10 @@ namespace Lucene.Net.Search
                     }
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(pastSearchers);
+            }
 
             if (s == null)
             {
@@ -223,12 +230,17 @@ namespace Lucene.Net.Search
                 if (s.IndexReader.NumDocs != 0)
                 {
                     long token = lifetimeMGR.Record(s);
-                    lock (pastSearchers)
+                    UninterruptableMonitor.Enter(pastSearchers);
+                    try
                     {
                         if (!pastSearchers.Contains(token))
                         {
                             pastSearchers.Add(token);
                         }
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(pastSearchers);
                     }
                 }
             }

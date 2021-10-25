@@ -1202,12 +1202,12 @@ namespace Lucene.Net.Search.Highlight
                 wTerms = new WeightedSpanTerm[2];
                 wTerms[0] = new WeightedSpanTerm(10f, "hello");
 
-                List<PositionSpan> positionSpans = new List<PositionSpan>();
+                IList<PositionSpan> positionSpans = new JCG.List<PositionSpan>();
                 positionSpans.Add(new PositionSpan(0, 0));
                 wTerms[0].AddPositionSpans(positionSpans);
 
                 wTerms[1] = new WeightedSpanTerm(1f, "kennedy");
-                positionSpans = new List<PositionSpan>();
+                positionSpans = new JCG.List<PositionSpan>();
                 positionSpans.Add(new PositionSpan(14, 14));
                 wTerms[1].AddPositionSpans(positionSpans);
 
@@ -1636,7 +1636,7 @@ namespace Lucene.Net.Search.Highlight
                 posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
                 offsetAtt = AddAttribute<IOffsetAttribute>();
 
-                lst = new List<Token>();
+                lst = new JCG.List<Token>();
                 Token t;
                 t = createToken("hi", 0, 2);
                 t.PositionIncrement = (1);
@@ -1657,7 +1657,7 @@ namespace Lucene.Net.Search.Highlight
             }
 
             IEnumerator<Token> iter;
-            internal List<Token> lst;
+            internal IList<Token> lst;
             private readonly ICharTermAttribute termAtt;
             private readonly IPositionIncrementAttribute posIncrAtt;
             private readonly IOffsetAttribute offsetAtt;
@@ -1698,7 +1698,7 @@ namespace Lucene.Net.Search.Highlight
                 posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
                 offsetAtt = AddAttribute<IOffsetAttribute>();
 
-                lst = new List<Token>();
+                lst = new JCG.List<Token>();
                 Token t;
                 t = createToken("hispeed", 0, 8);
                 t.PositionIncrement = (1);
@@ -1719,7 +1719,7 @@ namespace Lucene.Net.Search.Highlight
             }
 
             IEnumerator<Token> iter;
-            internal List<Token> lst;
+            internal IList<Token> lst;
             private readonly ICharTermAttribute termAtt;
             private readonly IPositionIncrementAttribute posIncrAtt;
             private readonly IOffsetAttribute offsetAtt;

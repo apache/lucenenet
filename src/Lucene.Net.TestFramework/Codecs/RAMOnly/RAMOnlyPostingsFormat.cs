@@ -1,8 +1,9 @@
-using J2N.Text;
+﻿using J2N.Text;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -187,7 +188,7 @@ namespace Lucene.Net.Codecs.RAMOnly
         {
             internal readonly string term;
             internal long totalTermFreq;
-            internal readonly IList<RAMDoc> docs = new List<RAMDoc>();
+            internal readonly IList<RAMDoc> docs = new JCG.List<RAMDoc>();
 
             public RAMTerm(string term)
             {
@@ -609,9 +610,14 @@ namespace Lucene.Net.Codecs.RAMOnly
             RAMPostings postings = new RAMPostings();
             RAMFieldsConsumer consumer = new RAMFieldsConsumer(postings);
 
-            lock (state)
+            UninterruptableMonitor.Enter(state);
+            try
             {
                 state[id] = postings;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(state);
             }
             return consumer;
         }
@@ -641,9 +647,14 @@ namespace Lucene.Net.Codecs.RAMOnly
                 }
             }
 
-            lock (state)
+            UninterruptableMonitor.Enter(state);
+            try
             {
                 return state[id];
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(state);
             }
         }
     }

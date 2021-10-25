@@ -6,7 +6,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
@@ -393,7 +393,7 @@ namespace Lucene.Net.Util.Packed
 
         private static IList<PackedInt32s.Mutable> CreatePackedInts(int valueCount, int bitsPerValue)
         {
-            IList<PackedInt32s.Mutable> packedInts = new List<PackedInt32s.Mutable>();
+            IList<PackedInt32s.Mutable> packedInts = new JCG.List<PackedInt32s.Mutable>();
             if (bitsPerValue <= 8)
             {
                 packedInts.Add(new Direct8(valueCount));

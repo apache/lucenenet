@@ -1,5 +1,4 @@
-﻿#if FEATURE_XSLT
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -182,4 +181,3 @@ namespace Lucene.Net.QueryParsers.Xml
         }
     }
 }
-#endif

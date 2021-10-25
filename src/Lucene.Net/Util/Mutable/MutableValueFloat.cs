@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Mutable
 {
@@ -56,7 +56,9 @@ namespace Lucene.Net.Util.Mutable
         public override bool EqualsSameType(object other)
         {
             MutableValueSingle b = (MutableValueSingle)other;
-            return Value == b.Value && Exists == b.Exists;
+            // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+            return NumericUtils.SingleToSortableInt32(Value) == NumericUtils.SingleToSortableInt32(b.Value)
+                && Exists == b.Exists;
         }
 
         public override int CompareSameType(object other)

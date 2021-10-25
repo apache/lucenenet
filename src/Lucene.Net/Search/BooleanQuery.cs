@@ -1,5 +1,6 @@
 ﻿using J2N;
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -238,7 +239,7 @@ namespace Lucene.Net.Search
             /// The <see cref="Similarities.Similarity"/> implementation. </summary>
             protected Similarity m_similarity;
 
-            protected List<Weight> m_weights;
+            protected IList<Weight> m_weights;
             protected int m_maxCoord; // num optional + num required
             private readonly bool disableCoord;
 
@@ -247,7 +248,7 @@ namespace Lucene.Net.Search
                 this.outerInstance = outerInstance;
                 this.m_similarity = searcher.Similarity;
                 this.disableCoord = disableCoord;
-                m_weights = new List<Weight>(outerInstance.clauses.Count);
+                m_weights = new JCG.List<Weight>(outerInstance.clauses.Count);
                 for (int i = 0; i < outerInstance.clauses.Count; i++)
                 {
                     BooleanClause c = outerInstance.clauses[i];
@@ -400,10 +401,10 @@ namespace Lucene.Net.Search
                     return base.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
                 }
 
-                IList<BulkScorer> prohibited = new List<BulkScorer>();
-                IList<BulkScorer> optional = new List<BulkScorer>();
+                IList<BulkScorer> prohibited = new JCG.List<BulkScorer>();
+                IList<BulkScorer> optional = new JCG.List<BulkScorer>();
                 using (IEnumerator<BooleanClause> cIter = outerInstance.clauses.GetEnumerator())
-                { 
+                {
                     foreach (Weight w in m_weights)
                     {
                         cIter.MoveNext();
@@ -440,9 +441,9 @@ namespace Lucene.Net.Search
 
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
-                IList<Scorer> required = new List<Scorer>();
-                IList<Scorer> prohibited = new List<Scorer>();
-                IList<Scorer> optional = new List<Scorer>();
+                IList<Scorer> required = new JCG.List<Scorer>();
+                IList<Scorer> prohibited = new JCG.List<Scorer>();
+                IList<Scorer> optional = new JCG.List<Scorer>();
                 IEnumerator<BooleanClause> cIter = outerInstance.clauses.GetEnumerator();
                 foreach (Weight w in m_weights)
                 {
@@ -681,9 +682,10 @@ namespace Lucene.Net.Search
                 return false;
             }
             BooleanQuery other = (BooleanQuery)o;
-            return this.Boost == other.Boost 
-                && this.clauses.Equals(other.clauses) 
-                && this.MinimumNumberShouldMatch == other.MinimumNumberShouldMatch 
+            // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+            return NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost)
+                && this.clauses.Equals(other.clauses)
+                && this.MinimumNumberShouldMatch == other.MinimumNumberShouldMatch
                 && this.disableCoord == other.disableCoord;
         }
 

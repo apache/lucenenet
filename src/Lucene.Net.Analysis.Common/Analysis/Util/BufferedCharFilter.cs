@@ -3,6 +3,7 @@
 // https://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/
 
 using Lucene.Net.Analysis.CharFilters;
+using Lucene.Net.Support.Threading;
 using System;
 using System.IO;
 using System.Text;
@@ -119,7 +120,8 @@ namespace Lucene.Net.Analysis.Util
 #if FEATURE_TEXTWRITER_CLOSE
                 this.isDisposing = true;
 #endif
-                lock (m_lock)
+                UninterruptableMonitor.Enter(m_lock);
+                try
                 {
                     if (!IsClosed)
                     {
@@ -127,6 +129,10 @@ namespace Lucene.Net.Analysis.Util
                         @in = null;
                         buf = null;
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(m_lock);
                 }
 #if FEATURE_TEXTWRITER_CLOSE
                 this.isDisposing = false;
@@ -225,11 +231,16 @@ namespace Lucene.Net.Analysis.Util
             {
                 throw new ArgumentOutOfRangeException(nameof(markLimit), "Read-ahead limit < 0");
             }
-            lock (m_lock)
+            UninterruptableMonitor.Enter(m_lock);
+            try
             {
                 EnsureOpen();
                 this.markLimit = markLimit;
                 mark = pos;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(m_lock);
             }
         }
 
@@ -253,7 +264,8 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="IOException">If this reader is disposed or some other I/O error occurs.</exception>
         public override int Read()
         {
-            lock (m_lock)
+            UninterruptableMonitor.Enter(m_lock);
+            try
             {
                 EnsureOpen();
                 /* Are there buffered characters available? */
@@ -262,6 +274,10 @@ namespace Lucene.Net.Analysis.Util
                     return buf[pos++];
                 }
                 return -1;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(m_lock);
             }
         }
 
@@ -483,12 +499,17 @@ namespace Lucene.Net.Analysis.Util
         {
             get
             {
-                lock (m_lock)
+                UninterruptableMonitor.Enter(m_lock);
+                try
                 {
                     EnsureOpen();
                     // LUCENENET specific: only CharFilter derived types support IsReady
                     var charFilter = @in as CharFilter;
                     return ((end - pos) > 0) || (charFilter != null && charFilter.IsReady);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(m_lock);
                 }
             }
         }
@@ -503,7 +524,8 @@ namespace Lucene.Net.Analysis.Util
         /// <seealso cref="IsMarkSupported"/>
         public override void Reset()
         {
-            lock (m_lock)
+            UninterruptableMonitor.Enter(m_lock);
+            try
             {
                 EnsureOpen();
                 if (mark < 0)
@@ -512,6 +534,10 @@ namespace Lucene.Net.Analysis.Util
                     throw new IOException("Reader not marked");
                 }
                 pos = mark;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(m_lock);
             }
         }
 
@@ -534,7 +560,8 @@ namespace Lucene.Net.Analysis.Util
             {
                 throw new ArgumentOutOfRangeException(nameof(amount), "skip value is negative");
             }
-            lock (m_lock)
+            UninterruptableMonitor.Enter(m_lock);
+            try
             {
                 EnsureOpen();
                 if (amount < 1)
@@ -565,6 +592,10 @@ namespace Lucene.Net.Analysis.Util
                     pos = end;
                 }
                 return amount;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(m_lock);
             }
         }
 

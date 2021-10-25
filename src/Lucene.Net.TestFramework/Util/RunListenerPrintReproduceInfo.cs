@@ -1,4 +1,4 @@
-#if TESTFRAMEWORK
+﻿#if TESTFRAMEWORK
 // LUCENENET NOTE: This is incomplete
 using System;
 using System.Collections.Generic;
@@ -49,7 +49,7 @@ namespace Lucene.Net.Util
       /// A list of all test suite classes executed so far in this JVM (ehm, 
       /// under this class's classloader).
       /// </summary>
-      private static IList<string> TestClassesRun = new List<string>();
+      private static IList<string> TestClassesRun = new JCG.List<string>();
 
       /// <summary>
       /// The currently executing scope.

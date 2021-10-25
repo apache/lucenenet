@@ -455,7 +455,7 @@ namespace Lucene.Net.Search
         private IList<IList<PhrasePositions>> GatherRptGroups(JCG.LinkedDictionary<Term, int?> rptTerms)
         {
             PhrasePositions[] rpp = RepeatingPPs(rptTerms);
-            IList<IList<PhrasePositions>> res = new List<IList<PhrasePositions>>();
+            IList<IList<PhrasePositions>> res = new JCG.List<IList<PhrasePositions>>();
             if (!hasMultiTermRpts)
             {
                 // simpler - no multi-terms - can base on positions in first doc
@@ -480,7 +480,7 @@ namespace Lucene.Net.Search
                         {
                             g = res.Count;
                             pp.rptGroup = g;
-                            List<PhrasePositions> rl = new List<PhrasePositions>(2)
+                            IList<PhrasePositions> rl = new JCG.List<PhrasePositions>(2)
                             {
                                 pp
                             };
@@ -494,7 +494,7 @@ namespace Lucene.Net.Search
             else
             {
                 // more involved - has multi-terms
-                IList<JCG.HashSet<PhrasePositions>> tmp = new List<JCG.HashSet<PhrasePositions>>();
+                IList<JCG.HashSet<PhrasePositions>> tmp = new JCG.List<JCG.HashSet<PhrasePositions>>();
                 IList<FixedBitSet> bb = PpTermsBitSets(rpp, rptTerms);
                 UnionTermGroups(bb);
                 IDictionary<Term, int> tg = TermGroups(rptTerms, bb);
@@ -518,7 +518,7 @@ namespace Lucene.Net.Search
                 }
                 foreach (JCG.HashSet<PhrasePositions> hs in tmp)
                 {
-                    res.Add(new List<PhrasePositions>(hs));
+                    res.Add(new JCG.List<PhrasePositions>(hs));
                 }
             }
             return res;
@@ -558,7 +558,7 @@ namespace Lucene.Net.Search
         /// Find repeating pps, and for each, if has multi-terms, update this.hasMultiTermRpts </summary>
         private PhrasePositions[] RepeatingPPs(IDictionary<Term, int?> rptTerms)
         {
-            List<PhrasePositions> rp = new List<PhrasePositions>();
+            IList<PhrasePositions> rp = new JCG.List<PhrasePositions>();
             for (PhrasePositions pp = min, prev = null; prev != max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
             {
                 foreach (Term t in pp.terms)
@@ -578,7 +578,7 @@ namespace Lucene.Net.Search
         /// bit-sets - for each repeating pp, for each of its repeating terms, the term ordinal values is set </summary>
         private static IList<FixedBitSet> PpTermsBitSets(PhrasePositions[] rpp, IDictionary<Term, int?> tord) // LUCENENET: CA1822: Mark members as static
         {
-            List<FixedBitSet> bb = new List<FixedBitSet>(rpp.Length);
+            IList<FixedBitSet> bb = new JCG.List<FixedBitSet>(rpp.Length);
             foreach (PhrasePositions pp in rpp)
             {
                 FixedBitSet b = new FixedBitSet(tord.Count);

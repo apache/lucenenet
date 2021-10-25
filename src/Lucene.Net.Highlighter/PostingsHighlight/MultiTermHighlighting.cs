@@ -10,6 +10,7 @@ using Lucene.Net.Util.Automaton;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.PostingsHighlight
 {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// </summary>
         internal static CharacterRunAutomaton[] ExtractAutomata(Query query, string field)
         {
-            List<CharacterRunAutomaton> list = new List<CharacterRunAutomaton>();
+            JCG.List<CharacterRunAutomaton> list = new JCG.List<CharacterRunAutomaton>();
             if (query is BooleanQuery booleanQuery)
             {
                 foreach (BooleanClause clause in booleanQuery.GetClauses())

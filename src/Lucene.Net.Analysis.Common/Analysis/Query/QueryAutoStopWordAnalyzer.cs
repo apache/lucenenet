@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
@@ -180,7 +180,7 @@ namespace Lucene.Net.Analysis.Query
         /// <returns> the stop words (as terms) </returns>
         public Term[] GetStopWords()
         {
-            IList<Term> allStopWords = new List<Term>();
+            IList<Term> allStopWords = new JCG.List<Term>();
             foreach (string fieldName in stopWordsPerField.Keys)
             {
                 ISet<string> stopWords = stopWordsPerField[fieldName];

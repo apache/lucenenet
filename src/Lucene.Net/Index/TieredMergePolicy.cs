@@ -318,7 +318,7 @@ namespace Lucene.Net.Index
             ICollection<SegmentCommitInfo> merging = m_writer.Get().MergingSegments;
             ICollection<SegmentCommitInfo> toBeMerged = new JCG.HashSet<SegmentCommitInfo>();
 
-            List<SegmentCommitInfo> infosSorted = new List<SegmentCommitInfo>(infos.AsList());
+            JCG.List<SegmentCommitInfo> infosSorted = new JCG.List<SegmentCommitInfo>(infos.AsList());
             infosSorted.Sort(new SegmentByteSizeDescending(this));
 
             // Compute total index bytes & print details about the index
@@ -385,7 +385,7 @@ namespace Lucene.Net.Index
                 // Gather eligible segments for merging, ie segments
                 // not already being merged and not already picked (by
                 // prior iteration of this loop) for merging:
-                IList<SegmentCommitInfo> eligible = new List<SegmentCommitInfo>();
+                IList<SegmentCommitInfo> eligible = new JCG.List<SegmentCommitInfo>();
                 for (int idx = tooBigCount; idx < infosSorted.Count; idx++)
                 {
                     SegmentCommitInfo info = infosSorted[idx];
@@ -424,7 +424,7 @@ namespace Lucene.Net.Index
                     {
                         long totAfterMergeBytes = 0;
 
-                        IList<SegmentCommitInfo> candidate = new List<SegmentCommitInfo>();
+                        IList<SegmentCommitInfo> candidate = new JCG.List<SegmentCommitInfo>();
                         bool hitTooLarge = false;
                         for (int idx = startIdx; idx < eligible.Count && candidate.Count < maxMergeAtOnce; idx++)
                         {

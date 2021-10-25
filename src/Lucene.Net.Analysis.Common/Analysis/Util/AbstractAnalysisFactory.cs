@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Support;
@@ -395,7 +395,7 @@ namespace Lucene.Net.Analysis.Util
                 return Collections.EmptyList<string>();
             }
 
-            IList<string> result = new List<string>();
+            IList<string> result = new JCG.List<string>();
             foreach (string file in SplitFileNameHolder.FILE_SPLIT_PATTERN.Split(fileNames))
             {
                 result.Add(SplitFileNameHolder.FILE_REPLACE_PATTERN.Replace(file, string.Empty));

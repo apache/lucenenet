@@ -1,10 +1,12 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -39,7 +41,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         // LUCENENET specific: DateFormatInfo not used
 
         private DirectoryInfo dataDir = null;
-        private readonly List<FileInfo> inputFiles = new List<FileInfo>(); // LUCENENET: marked readonly
+        private readonly IList<FileInfo> inputFiles = new JCG.List<FileInfo>(); // LUCENENET: marked readonly
         private int nextFile = 0;
         private int iteration = 0;
 
@@ -82,7 +84,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             FileInfo f = null;
             string name = null;
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (nextFile >= inputFiles.Count)
                 {
@@ -96,6 +99,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
                 f = inputFiles[nextFile++];
                 name = f.GetCanonicalPath() + "_" + iteration;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
 
             using TextReader reader = new StreamReader(new FileStream(f.FullName, FileMode.Open, FileAccess.Read), Encoding.UTF8);
@@ -127,11 +134,16 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         public override void ResetInputs()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 base.ResetInputs();
                 nextFile = 0;
                 iteration = 0;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
     }

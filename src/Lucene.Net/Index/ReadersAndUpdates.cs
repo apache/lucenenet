@@ -1,6 +1,7 @@
 ﻿using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -125,9 +126,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     return pendingDeleteCount;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -135,7 +141,8 @@ namespace Lucene.Net.Index
         // Call only from assert!
         public virtual bool VerifyDocCounts()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 int count;
                 if (liveDocs != null)
@@ -156,6 +163,10 @@ namespace Lucene.Net.Index
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(Info.Info.DocCount - Info.DelCount - pendingDeleteCount == count, "info.docCount={0} info.DelCount={1} pendingDeleteCount={2} count={3}", Info.Info.DocCount, Info.DelCount, pendingDeleteCount, count);
                 return true;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -182,7 +193,8 @@ namespace Lucene.Net.Index
         // index):
         public virtual SegmentReader GetMergeReader(IOContext context)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 //System.out.println("  livedocs=" + rld.liveDocs);
 
@@ -215,25 +227,35 @@ namespace Lucene.Net.Index
                 mergeReader.IncRef();
                 return mergeReader;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public virtual void Release(SegmentReader sr)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(Info == sr.SegmentInfo);
                 sr.DecRef();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
         public virtual bool Delete(int docID)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (Debugging.AssertsEnabled)
                 {
                     Debugging.Assert(liveDocs != null);
-                    Debugging.Assert(Monitor.IsEntered(writer));
+                    Debugging.Assert(UninterruptableMonitor.IsEntered(writer));
                     Debugging.Assert(docID >= 0 && docID < liveDocs.Length, "out of bounds: docid={0} liveDocsLength={1} seg={2} docCount={3}", docID, liveDocs.Length, Info.Info.Name, Info.Info.DocCount);
                     Debugging.Assert(!liveDocsShared);
                 }
@@ -246,12 +268,17 @@ namespace Lucene.Net.Index
                 }
                 return didDelete;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         // NOTE: removes callers ref
         public virtual void DropReaders()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // TODO: can we somehow use IOUtils here...?  problem is
                 // we are calling .decRef not .close)...
@@ -288,6 +315,10 @@ namespace Lucene.Net.Index
 
                 DecRef();
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
@@ -297,7 +328,8 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual SegmentReader GetReadOnlyClone(IOContext context)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (reader == null)
                 {
@@ -316,15 +348,20 @@ namespace Lucene.Net.Index
                     return reader;
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public virtual void InitWritableLiveDocs()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(Monitor.IsEntered(writer));
+                    Debugging.Assert(UninterruptableMonitor.IsEntered(writer));
                     Debugging.Assert(Info.Info.DocCount > 0);
                 }
                 //System.out.println("initWritableLivedocs seg=" + info + " liveDocs=" + liveDocs + " shared=" + shared);
@@ -347,37 +384,52 @@ namespace Lucene.Net.Index
                     liveDocsShared = false;
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public virtual IBits LiveDocs
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(Monitor.IsEntered(writer));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(UninterruptableMonitor.IsEntered(writer));
                     return liveDocs;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
 
         public virtual IBits GetReadOnlyLiveDocs()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 //System.out.println("getROLiveDocs seg=" + info);
-                if (Debugging.AssertsEnabled) Debugging.Assert(Monitor.IsEntered(writer));
+                if (Debugging.AssertsEnabled) Debugging.Assert(UninterruptableMonitor.IsEntered(writer));
                 liveDocsShared = true;
                 //if (liveDocs != null) {
                 //System.out.println("  liveCount=" + liveDocs.count());
                 //}
                 return liveDocs;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public virtual void DropChanges()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // Discard (don't save) changes when we are dropping
                 // the reader; this is used only on the sub-readers
@@ -389,6 +441,10 @@ namespace Lucene.Net.Index
                 pendingDeleteCount = 0;
                 DropMergingUpdates();
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         // Commit live docs (writes new _X_N.del files) and field updates (writes new
@@ -398,9 +454,10 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual bool WriteLiveDocs(Directory dir)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(Monitor.IsEntered(writer));
+                if (Debugging.AssertsEnabled) Debugging.Assert(UninterruptableMonitor.IsEntered(writer));
                 //System.out.println("rld.writeLiveDocs seg=" + info + " pendingDelCount=" + pendingDeleteCount + " numericUpdates=" + numericUpdates);
                 if (pendingDeleteCount == 0)
                 {
@@ -457,15 +514,20 @@ namespace Lucene.Net.Index
 
                 return true;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         // Writes field updates (new _X_N updates files) to the directory
         [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual void WriteFieldUpdates(Directory dir, DocValuesFieldUpdates.Container dvUpdates)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(Monitor.IsEntered(writer));
+                if (Debugging.AssertsEnabled) Debugging.Assert(UninterruptableMonitor.IsEntered(writer));
                 //System.out.println("rld.writeFieldUpdates: seg=" + info + " numericFieldUpdates=" + numericFieldUpdates);
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(dvUpdates.Any());
@@ -674,6 +736,10 @@ namespace Lucene.Net.Index
                     }
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
@@ -751,9 +817,10 @@ namespace Lucene.Net.Index
         /// </summary>
         internal virtual SegmentReader GetReaderForMerge(IOContext context)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(Monitor.IsEntered(writer));
+                if (Debugging.AssertsEnabled) Debugging.Assert(UninterruptableMonitor.IsEntered(writer));
                 // must execute these two statements as atomic operation, otherwise we
                 // could lose updates if e.g. another thread calls writeFieldUpdates in
                 // between, or the updates are applied to the obtained reader, but then
@@ -761,6 +828,10 @@ namespace Lucene.Net.Index
                 // bugs).
                 isMerging = true;
                 return GetReader(context);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -770,10 +841,15 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual void DropMergingUpdates()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 mergingDVUpdates.Clear();
                 isMerging = false;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -783,9 +859,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     return mergingDVUpdates;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }

@@ -28,18 +28,33 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="bocchan.utf-8;search-segmentation-tests.txt;userdict.txt;Tools\custom-dictionary-input.zip" />
+    <EmbeddedResource Include="**/*.utf-8" Exclude="bin/**/*;obj/**/*" Label="UTF-8 Test Data" />
+    <EmbeddedResource Include="**/*.txt" Exclude="bin/**/*;obj/**/*" Label="Text Test Data" />
+    <EmbeddedResource Include="**/*.zip" Exclude="bin/**/*;obj/**/*" Label="Zip Test Data" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net.Analysis.Kuromoji\Lucene.Net.Analysis.Kuromoji.csproj" />
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Kuromoji\Lucene.Net.Analysis.Kuromoji.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
   </ItemGroup>
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)"/>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461' ">
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="$(SystemTextEncodingCodePagesPackageVersion)" />
   </ItemGroup>
 
 </Project>

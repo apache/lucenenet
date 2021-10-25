@@ -5,12 +5,14 @@ using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Attributes;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Th
 {
@@ -252,10 +254,10 @@ namespace Lucene.Net.Analysis.Th
             IOffsetAttribute offsetAtt;
             IPositionIncrementAttribute posIncAtt;
 
-            List<string> tokens = new List<string>();
-            List<int> positions = new List<int>();
-            List<int> startOffsets = new List<int>();
-            List<int> endOffsets = new List<int>();
+            JCG.List<string> tokens = new JCG.List<string>();
+            JCG.List<int> positions = new JCG.List<int>();
+            JCG.List<int> startOffsets = new JCG.List<int>();
+            JCG.List<int> endOffsets = new JCG.List<int>();
 
             TokenStream ts;
             TextReader reader = new StringReader(text);

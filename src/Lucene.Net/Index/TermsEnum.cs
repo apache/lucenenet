@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -336,9 +337,14 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
                         return base.Attributes;
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                 }
             }

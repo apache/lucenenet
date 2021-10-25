@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Store
@@ -313,7 +314,7 @@ namespace Lucene.Net.Store
 
         private class MockFSDirectory : BaseDirectory
         {
-            internal readonly IList<IndexInput> allIndexInputs = new List<IndexInput>();
+            internal readonly IList<IndexInput> allIndexInputs = new JCG.List<IndexInput>();
             private readonly Random rand;
             private readonly Directory dir;
 

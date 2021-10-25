@@ -29,26 +29,29 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Morfologik\custom-dictionary.dict" />
-    <None Remove="Morfologik\custom-dictionary.info" />
-    <None Remove="Morfologik\custom-dictionary.input" />
+    <EmbeddedResource Include="**/*.dict" Exclude="bin/**/*;obj/**/*" Label="Dict Test Data" />
+    <EmbeddedResource Include="**/*.info" Exclude="bin/**/*;obj/**/*" Label="Info Test Data" />
+    <EmbeddedResource Include="**/*.input" Exclude="bin/**/*;obj/**/*" Label="Input Test Data" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Morfologik\custom-dictionary.dict" />
-    <EmbeddedResource Include="Morfologik\custom-dictionary.info" />
-    <EmbeddedResource Include="Morfologik\custom-dictionary.input" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net.Analysis.Morfologik\Lucene.Net.Analysis.Morfologik.csproj" />
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Morfologik\Lucene.Net.Analysis.Morfologik.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
   </ItemGroup>
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)"/>
-  </ItemGroup>
 
 </Project>

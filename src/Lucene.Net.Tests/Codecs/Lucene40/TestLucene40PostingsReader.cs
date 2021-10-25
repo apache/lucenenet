@@ -7,6 +7,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -141,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         internal virtual string FieldValue(int maxTF)
         {
-            IList<string> shuffled = new List<string>();
+            IList<string> shuffled = new JCG.List<string>();
             StringBuilder sb = new StringBuilder();
             int i = Random.Next(terms.Length);
             while (i < terms.Length)

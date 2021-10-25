@@ -356,7 +356,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             int tc = 0;
 
-            var fieldTerms = new List<Term>();
+            var fieldTerms = new JCG.List<Term>();
 
             for (int f = 0; f < numField; f++)
             {

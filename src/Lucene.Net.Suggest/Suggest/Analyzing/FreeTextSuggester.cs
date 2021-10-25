@@ -617,7 +617,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // results, return that; else, fallback:
                 double backoff = 1.0;
 
-                List<LookupResult> results = new List<LookupResult>(num);
+                JCG.List<LookupResult> results = new JCG.List<LookupResult>(num);
 
                 // We only add a given suffix once, from the highest
                 // order model that saw it; for subsequent lower order

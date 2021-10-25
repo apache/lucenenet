@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support.Threading;
+using System;
 using System.IO;
 using System.Threading;
 
@@ -136,8 +137,14 @@ namespace Lucene.Net.Store
                     throw e;
                 }
 
-                Thread.Sleep(TimeSpan.FromMilliseconds(LOCK_POLL_INTERVAL));
-                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
+                try
+                {
+                    Thread.Sleep(TimeSpan.FromMilliseconds(LOCK_POLL_INTERVAL));
+                }
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    throw new Util.ThreadInterruptedException(ie);
+                }
 
                 locked = Obtain();
             }

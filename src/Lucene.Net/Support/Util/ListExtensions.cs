@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -42,7 +43,13 @@ namespace Lucene.Net.Util
                 throw new ArgumentNullException(nameof(collection));
 
             if (list is List<T> thisList)
+            {
                 thisList.AddRange(collection);
+            }
+            else if (list is JCG.List<T> jcgList)
+            {
+                jcgList.AddRange(collection);
+            }
             else
             {
                 foreach (var item in collection)
@@ -65,6 +72,10 @@ namespace Lucene.Net.Util
             {
                 listToSort.Sort();
             }
+            else if (list is JCG.List<T> jcgListToSort)
+            {
+                jcgListToSort.Sort();
+            }
             else
             {
                 CollectionUtil.TimSort(list);
@@ -84,6 +95,10 @@ namespace Lucene.Net.Util
             if (list is List<T> listToSort)
             {
                 listToSort.Sort(comparer);
+            }
+            else if (list is JCG.List<T> jcgListToSort)
+            {
+                jcgListToSort.Sort(comparer);
             }
             else
             {

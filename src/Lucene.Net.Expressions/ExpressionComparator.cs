@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Expressions
 {
@@ -65,7 +66,8 @@ namespace Lucene.Net.Expressions
 
         public override int Compare(int slot1, int slot2)
         {
-            return values[slot1].CompareTo(values[slot2]);
+            // LUCENENET specific - use JCG comparer to get the same logic as Java
+            return JCG.Comparer<double>.Default.Compare(values[slot1], values[slot2]);
         }
 
         public override void SetBottom(int slot)
@@ -80,7 +82,8 @@ namespace Lucene.Net.Expressions
 
         public override int CompareBottom(int doc)
         {
-            return bottom.CompareTo(scores.DoubleVal(doc));
+            // LUCENENET specific - use JCG comparer to get the same logic as Java
+            return JCG.Comparer<double>.Default.Compare(bottom, scores.DoubleVal(doc));
         }
 
         public override void Copy(int slot, int doc)
@@ -99,7 +102,8 @@ namespace Lucene.Net.Expressions
 
         public override int CompareTop(int doc)
         {
-            return topValue.CompareTo(scores.DoubleVal(doc));
+            // LUCENENET specific - use JCG comparer to get the same logic as Java
+            return JCG.Comparer<double>.Default.Compare(topValue, scores.DoubleVal(doc));
         }
     }
 }

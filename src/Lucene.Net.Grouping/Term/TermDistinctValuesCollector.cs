@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping.Terms
 {
@@ -34,7 +35,7 @@ namespace Lucene.Net.Search.Grouping.Terms
     {
         private readonly string groupField;
         private readonly string countField;
-        private readonly List<GroupCount> groups;
+        private readonly IList<GroupCount> groups;
         private readonly SentinelInt32Set ordSet;
         private readonly GroupCount[] groupCounts;
 
@@ -52,7 +53,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             this.groupField = groupField;
             this.countField = countField;
             int groupCount = groups.Count();
-            this.groups = new List<GroupCount>(groupCount);
+            this.groups = new JCG.List<GroupCount>(groupCount);
             foreach (ISearchGroup<BytesRef> group in groups)
             {
                 this.groups.Add(new GroupCount(group.GroupValue));

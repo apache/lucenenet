@@ -5,6 +5,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Join
 {
@@ -221,7 +222,7 @@ namespace Lucene.Net.Join
 
             public override ICollection<ChildScorer> GetChildren()
             {
-                return new List<ChildScorer> { new ChildScorer(_childScorer, "BLOCK_JOIN") };
+                return new JCG.List<ChildScorer> { new ChildScorer(_childScorer, "BLOCK_JOIN") };
             }
 
             internal virtual int ChildCount => _childDocUpto;

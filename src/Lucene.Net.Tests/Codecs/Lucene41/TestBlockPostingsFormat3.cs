@@ -261,7 +261,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 numPasses++;
             }
 
-            List<BytesRef> shuffledTests = new List<BytesRef>(tests);
+            IList<BytesRef> shuffledTests = new JCG.List<BytesRef>(tests);
             shuffledTests.Shuffle(Random);
 
             foreach (BytesRef b in shuffledTests)

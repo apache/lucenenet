@@ -55,7 +55,6 @@ namespace Lucene.Net.Index
     /// </summary>
     [SuppressCodecs("Lucene3x")]
     [Slow]
-    [Deadlock][Timeout(1200000)]
     [TestFixture]
     public class TestIndexWriterWithThreads : LuceneTestCase
     {
@@ -120,8 +119,14 @@ namespace Lucene.Net.Index
                         {
                             diskFull = true;
 
-                            Thread.Sleep(1);
-                            // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
+                            try
+                            {
+                                Thread.Sleep(1);
+                            }
+                            catch (Exception ie) when (ie.IsInterruptedException())
+                            {
+                                throw new Util.ThreadInterruptedException(ie);
+                            }
 
                             if (fullCount++ >= 5)
                             {
@@ -780,10 +785,10 @@ namespace Lucene.Net.Index
                                 {
                                     // ok
                                 }
-                                //catch (NullReferenceException) // LUCENENET specific - NullReferenceException must be allowed to propagate so we can defensively avoid it in .NET
-                                //{
-                                //    // ok
-                                //}
+                                catch (NullReferenceException) // LUCENENET TODO: - NullReferenceException must be allowed to propagate so we can defensively avoid it in .NET
+                                {
+                                    // ok
+                                }
                                 finally
                                 {
                                     commitLock.Unlock();
@@ -803,10 +808,10 @@ namespace Lucene.Net.Index
                                 {
                                     // ok
                                 }
-                                //catch (NullReferenceException) // LUCENENET specific - NullReferenceException must be allowed to propagate so we can defensively avoid it in .NET
-                                //{
-                                //    // ok
-                                //}
+                                catch (NullReferenceException) // LUCENENET TODO: - NullReferenceException must be allowed to propagate so we can defensively avoid it in .NET
+                                {
+                                    // ok
+                                }
                                 catch (Exception ae) when (ae.IsAssertionError())
                                 {
                                     // ok

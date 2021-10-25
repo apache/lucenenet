@@ -1,6 +1,7 @@
 ﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -282,17 +284,13 @@ namespace Lucene.Net.Search
 
             nrtDeletesThread = new ControlledRealTimeReopenThread<IndexSearcher>(genWriter, nrtDeletes, maxReopenSec, minReopenSec);
             nrtDeletesThread.Name = "NRTDeletes Reopen Thread";
-#if FEATURE_THREAD_PRIORITY
             nrtDeletesThread.Priority = (ThreadPriority)Math.Min((int)Thread.CurrentThread.Priority + 2, (int)ThreadPriority.Highest);
-#endif
             nrtDeletesThread.IsBackground = (true);
             nrtDeletesThread.Start();
 
             nrtNoDeletesThread = new ControlledRealTimeReopenThread<IndexSearcher>(genWriter, nrtNoDeletes, maxReopenSec, minReopenSec);
             nrtNoDeletesThread.Name = "NRTNoDeletes Reopen Thread";
-#if FEATURE_THREAD_PRIORITY
             nrtNoDeletesThread.Priority = (ThreadPriority)Math.Min((int)Thread.CurrentThread.Priority + 2, (int)ThreadPriority.Highest);
-#endif
             nrtNoDeletesThread.IsBackground = (true);
             nrtNoDeletesThread.Start();
         }
@@ -331,9 +329,14 @@ namespace Lucene.Net.Search
 
         private void AddMaxGen(long gen)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 maxGen = Math.Max(gen, maxGen);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -525,12 +528,18 @@ namespace Lucene.Net.Search
             public override void UpdateDocument(Term term, IEnumerable<IIndexableField> doc, Analyzer analyzer)
             {
                 base.UpdateDocument(term, doc, analyzer);
-                if (waitAfterUpdate)
+                try
                 {
-                    signal.Reset(signal.CurrentCount == 0 ? 0 : signal.CurrentCount - 1);
-                    latch.Wait();
+                    if (waitAfterUpdate)
+                    {
+                        signal.Reset(signal.CurrentCount == 0 ? 0 : signal.CurrentCount - 1);
+                        latch.Wait();
+                    }
                 }
-                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    throw new Util.ThreadInterruptedException(ie);
+                }
             }
         }
 
@@ -664,7 +673,7 @@ namespace Lucene.Net.Search
             controlledRealTimeReopenThread.IsBackground = (true);
             controlledRealTimeReopenThread.Start();
 
-            IList<ThreadJob> commitThreads = new List<ThreadJob>();
+            IList<ThreadJob> commitThreads = new JCG.List<ThreadJob>();
 
             for (int i = 0; i < 500; i++)
             {

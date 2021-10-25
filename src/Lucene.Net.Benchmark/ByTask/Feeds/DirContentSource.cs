@@ -1,6 +1,7 @@
 ﻿using J2N.Text;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -182,7 +183,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             FileInfo f = null;
             string name = null;
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (!inputFiles.MoveNext())
                 {
@@ -197,6 +199,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 f = inputFiles.Current;
                 // System.err.println(f);
                 name = f.GetCanonicalPath() + "_" + iteration;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
 
             string line = null;
@@ -230,11 +236,16 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         public override void ResetInputs()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 base.ResetInputs();
                 inputFiles = new Enumerator(dataDir);
                 iteration = 0;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

@@ -1,4 +1,4 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
 using System.Collections.Generic;
@@ -40,7 +40,8 @@ namespace Lucene.Net.Index
 
         internal virtual void AddDeletes(DocumentsWriterDeleteQueue deleteQueue)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 IncTickets(); // first inc the ticket count - freeze opens
                 // a window for #anyChanges to fail
@@ -58,6 +59,10 @@ namespace Lucene.Net.Index
                     }
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         private void IncTickets()
@@ -74,7 +79,8 @@ namespace Lucene.Net.Index
 
         internal virtual SegmentFlushTicket AddFlushTicket(DocumentsWriterPerThread dwpt)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // Each flush is assigned a ticket in the order they acquire the ticketQueue
                 // lock
@@ -96,24 +102,38 @@ namespace Lucene.Net.Index
                     }
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         internal virtual void AddSegment(SegmentFlushTicket ticket, FlushedSegment segment)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // the actual flush is done asynchronously and once done the FlushedSegment
                 // is passed to the flush ticket
                 ticket.SetSegment(segment);
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         internal virtual void MarkTicketFailed(SegmentFlushTicket ticket)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // to free the queue we mark tickets as failed just to clean up the queue.
                 ticket.SetFailed();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -134,10 +154,15 @@ namespace Lucene.Net.Index
             {
                 FlushTicket head;
                 bool canPublish;
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     head = queue.Count <= 0 ? null : queue.Peek();
                     canPublish = head != null && head.CanPublish; // do this synced
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
                 if (canPublish)
                 {
@@ -154,12 +179,17 @@ namespace Lucene.Net.Index
                     }
                     finally
                     {
-                        lock (this)
+                        UninterruptableMonitor.Enter(this);
+                        try
                         {
                             // finally remove the published ticket from the queue
                             FlushTicket poll = queue.Dequeue();
                             ticketCount.DecrementAndGet();
                             if (Debugging.AssertsEnabled) Debugging.Assert(poll == head);
+                        }
+                        finally
+                        {
+                            UninterruptableMonitor.Exit(this);
                         }
                     }
                 }
@@ -175,8 +205,8 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(!Monitor.IsEntered(this));
-                Debugging.Assert(!Monitor.IsEntered(writer));
+                Debugging.Assert(!UninterruptableMonitor.IsEntered(this));
+                Debugging.Assert(!UninterruptableMonitor.IsEntered(writer));
             }
             purgeLock.@Lock();
             try
@@ -193,8 +223,8 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(!Monitor.IsEntered(this));
-                Debugging.Assert(!Monitor.IsEntered(writer));
+                Debugging.Assert(!UninterruptableMonitor.IsEntered(this));
+                Debugging.Assert(!UninterruptableMonitor.IsEntered(writer));
             }
             if (purgeLock.TryLock())
             {
@@ -214,10 +244,15 @@ namespace Lucene.Net.Index
 
         internal virtual void Clear()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 queue.Clear();
                 ticketCount.Value = 0;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

@@ -83,14 +83,12 @@ namespace Lucene.Net.Analysis.Phonetic
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if FEATURE_METHODBASE_GETMETHODBODY
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Analysis.Phonetic.BeiderMorseFilter))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)
         {
             base.TestForMethodsThatReturnWritableArray(typeFromTargetAssembly);
         }
-#endif
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Analysis.Phonetic.BeiderMorseFilter))]

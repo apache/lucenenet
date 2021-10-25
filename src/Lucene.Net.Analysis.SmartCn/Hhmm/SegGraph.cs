@@ -1,6 +1,7 @@
 ﻿// lucene version compatibility level: 4.8.1
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 {
@@ -70,7 +71,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <returns>a <see cref="T:IList{SegToken}"/> of these ordered tokens.</returns>
         public virtual IList<SegToken> MakeIndex()
         {
-            IList<SegToken> result = new List<SegToken>();
+            IList<SegToken> result = new JCG.List<SegToken>();
             int s = -1, count = 0, size = tokenListTable.Count;
             IList<SegToken> tokenList;
             int index = 0;
@@ -101,7 +102,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             int s = token.StartOffset;
             if (!IsStartExist(s))
             {
-                List<SegToken> newlist = new List<SegToken>
+                IList<SegToken> newlist = new JCG.List<SegToken>
                 {
                     token
                 };
@@ -124,7 +125,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <returns><see cref="T:IList{SegToken}"/> of all tokens in the map.</returns>
         public virtual IList<SegToken> ToTokenList()
         {
-            IList<SegToken> result = new List<SegToken>();
+            IList<SegToken> result = new JCG.List<SegToken>();
             int s = -1, count = 0, size = tokenListTable.Count;
             IList<SegToken> tokenList;
 

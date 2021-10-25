@@ -3,7 +3,7 @@ using Lucene.Net.Analysis.Ja.Util;
 using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ja.Tools
 {
@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Ja.Tools
                 TestUtil.Unzip(zipFileStream, inputDir);
             }
 
-            var args = new List<string>();
+            var args = new JCG.List<string>();
             args.Add("ipadic"); // dictionary format
             args.Add(inputDir.FullName); // input dir
             args.Add(outputDir.FullName); // output dir

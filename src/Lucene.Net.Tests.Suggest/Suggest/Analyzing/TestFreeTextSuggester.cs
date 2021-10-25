@@ -420,7 +420,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             sug.Build(new TestRandomInputEnumerator(docs));
 
             // Build inefficient but hopefully correct model:
-            List<IDictionary<string, int?>> gramCounts = new List<IDictionary<string, int?>>(grams);
+            IList<IDictionary<string, int?>> gramCounts = new JCG.List<IDictionary<string, int?>>(grams);
             for (int gram = 0; gram < grams; gram++)
             {
                 if (Verbose)
@@ -498,7 +498,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
 
                 // Expected:
-                List<Lookup.LookupResult> expected = new List<Lookup.LookupResult>();
+                JCG.List<Lookup.LookupResult> expected = new JCG.List<Lookup.LookupResult>();
                 double backoff = 1.0;
                 seen = new JCG.HashSet<string>();
 
@@ -581,7 +581,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         Console.WriteLine("      find terms w/ prefix=" + tokens[tokens.Length - 1]);
                     }
-                    List<Lookup.LookupResult> tmp = new List<Lookup.LookupResult>();
+                    JCG.List<Lookup.LookupResult> tmp = new JCG.List<Lookup.LookupResult>();
                     foreach (string term in terms)
                     {
                         if (term.StartsWith(tokens[tokens.Length - 1], StringComparison.Ordinal))
@@ -605,7 +605,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                                 // LUCENENET NOTE: We need to calculate this as decimal because when using double it can sometimes 
                                 // return numbers that are greater than long.MaxValue, which results in a negative long number.
                                 // This is also the way it is being done in the FreeTextSuggester to work around the issue.
-                                Lookup.LookupResult lr = new Lookup.LookupResult(ngram, (long)(long.MaxValue * ((decimal)backoff * (decimal)count / contextCount)));
+
+                                // LUCENENET NOTE: The order of parentheses in the Java test didn't match the production code. This apparently doesn't affect the
+                                // result in Java, but does in .NET, so we changed the test to match the production code.
+                                //Lookup.LookupResult lr = new Lookup.LookupResult(ngram, (long)(long.MaxValue * ((decimal)backoff * (decimal)count / contextCount)));
+                                Lookup.LookupResult lr = new Lookup.LookupResult(ngram, (long)(long.MaxValue * (decimal)backoff * ((decimal)count) / contextCount));
                                 tmp.Add(lr);
                                 if (Verbose)
                                 {

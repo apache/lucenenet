@@ -7,12 +7,14 @@ using Lucene.Net.Facet.Taxonomy;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask
 {
@@ -147,7 +149,7 @@ namespace Lucene.Net.Benchmarks.ByTask
                           docMaker, facetSource, contentSource);
 
                 // close all perf objects that are closeable.
-                List<IDisposable> perfObjectsToClose = new List<IDisposable>();
+                IList<IDisposable> perfObjectsToClose = new JCG.List<IDisposable>();
                 foreach (object obj in perfObjects.Values)
                 {
                     if (obj is IDisposable disposable)
@@ -209,10 +211,15 @@ namespace Lucene.Net.Benchmarks.ByTask
         /// </summary>
         public virtual object GetPerfObject(string key)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 perfObjects.TryGetValue(key, out object result);
                 return result;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -223,9 +230,14 @@ namespace Lucene.Net.Benchmarks.ByTask
         /// </summary>
         public virtual void SetPerfObject(string key, object obj)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 perfObjects[key] = obj;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -268,7 +280,8 @@ namespace Lucene.Net.Benchmarks.ByTask
         /// <param name="taxoReader">The taxonomy reader to set.</param>
         public virtual void SetTaxonomyReader(TaxonomyReader taxoReader)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (taxoReader == this.taxonomyReader)
                 {
@@ -285,6 +298,10 @@ namespace Lucene.Net.Benchmarks.ByTask
                 }
                 this.taxonomyReader = taxoReader;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
@@ -294,13 +311,18 @@ namespace Lucene.Net.Benchmarks.ByTask
         /// </summary>
         public virtual TaxonomyReader GetTaxonomyReader()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (taxonomyReader != null)
                 {
                     taxonomyReader.IncRef();
                 }
                 return taxonomyReader;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -320,13 +342,18 @@ namespace Lucene.Net.Benchmarks.ByTask
         /// </summary>
         public virtual DirectoryReader GetIndexReader()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (indexReader != null)
                 {
                     indexReader.IncRef();
                 }
                 return indexReader;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -338,13 +365,18 @@ namespace Lucene.Net.Benchmarks.ByTask
         /// <returns></returns>
         public virtual IndexSearcher GetIndexSearcher()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (indexReader != null)
                 {
                     indexReader.IncRef();
                 }
                 return indexSearcher;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -357,7 +389,8 @@ namespace Lucene.Net.Benchmarks.ByTask
         /// <param name="indexReader">The indexReader to set.</param>
         public virtual void SetIndexReader(DirectoryReader indexReader)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (indexReader == this.indexReader)
                 {
@@ -381,6 +414,10 @@ namespace Lucene.Net.Benchmarks.ByTask
                 {
                     indexSearcher = null;
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -441,7 +478,8 @@ namespace Lucene.Net.Benchmarks.ByTask
         /// </summary>
         public virtual IQueryMaker GetQueryMaker(ReadTask readTask)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // mapping the query maker by task class allows extending/adding new search/read tasks
                 // without needing to modify this class.
@@ -461,6 +499,10 @@ namespace Lucene.Net.Benchmarks.ByTask
                     readTaskQueryMaker[readTaskClass] = qm;
                 }
                 return qm;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

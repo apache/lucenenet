@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -125,7 +126,7 @@ namespace Lucene.Net.Search.Grouping
                 BuildSortedSet();
             }
 
-            ICollection<ISearchGroup<TGroupValue>> result = new List<ISearchGroup<TGroupValue>>();
+            ICollection<ISearchGroup<TGroupValue>> result = new JCG.List<ISearchGroup<TGroupValue>>();
             int upto = 0;
             int sortFieldCount = groupSort.GetSort().Length;
             foreach (CollectedSearchGroup<TGroupValue> group in m_orderedGroups)
@@ -242,10 +243,15 @@ namespace Lucene.Net.Search.Grouping
                 // the bottom group with this new group.
                 //CollectedSearchGroup<TGroupValue> bottomGroup = orderedGroups.PollLast();
                 CollectedSearchGroup<TGroupValue> bottomGroup;
-                lock (m_orderedGroups)
+                UninterruptableMonitor.Enter(m_orderedGroups);
+                try
                 {
                     bottomGroup = m_orderedGroups.Last();
                     m_orderedGroups.Remove(bottomGroup);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(m_orderedGroups);
                 }
                 if (Debugging.AssertsEnabled) Debugging.Assert(m_orderedGroups.Count == topNGroups - 1);
 
@@ -309,10 +315,15 @@ namespace Lucene.Net.Search.Grouping
             CollectedSearchGroup<TGroupValue> prevLast;
             if (m_orderedGroups != null)
             {
-                lock (m_orderedGroups)
+                UninterruptableMonitor.Enter(m_orderedGroups);
+                try
                 {
                     prevLast = m_orderedGroups.Last();
                     m_orderedGroups.Remove(group);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(m_orderedGroups);
                 }
                 if (Debugging.AssertsEnabled) Debugging.Assert(m_orderedGroups.Count == topNGroups - 1);
             }

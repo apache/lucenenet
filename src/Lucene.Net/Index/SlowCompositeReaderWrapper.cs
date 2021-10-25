@@ -1,4 +1,5 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -109,7 +110,8 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             OrdinalMap map = null;
-            lock (cachedOrdMaps)
+            UninterruptableMonitor.Enter(cachedOrdMaps);
+            try
             {
                 if (!cachedOrdMaps.TryGetValue(field, out map))
                 {
@@ -125,6 +127,10 @@ namespace Lucene.Net.Index
                     }
                     return dv;
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(cachedOrdMaps);
             }
             // cached ordinal map
             if (FieldInfos.FieldInfo(field).DocValuesType != DocValuesType.SORTED)
@@ -149,7 +155,8 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             OrdinalMap map = null;
-            lock (cachedOrdMaps)
+            UninterruptableMonitor.Enter(cachedOrdMaps);
+            try
             {
                 if (!cachedOrdMaps.TryGetValue(field, out map))
                 {
@@ -165,6 +172,10 @@ namespace Lucene.Net.Index
                     }
                     return dv;
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(cachedOrdMaps);
             }
             // cached ordinal map
             if (FieldInfos.FieldInfo(field).DocValuesType != DocValuesType.SORTED_SET)

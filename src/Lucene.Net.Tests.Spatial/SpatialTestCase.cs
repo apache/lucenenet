@@ -10,8 +10,8 @@ using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial
 {
@@ -115,7 +115,7 @@ namespace Lucene.Net.Spatial
             {
                 TopDocs topDocs = indexSearcher.Search(query, numDocs);
 
-                List<SearchResult> results = new List<SearchResult>();
+                IList<SearchResult> results = new JCG.List<SearchResult>();
                 foreach (ScoreDoc scoreDoc in topDocs.ScoreDocs)
                 {
                     results.Add(new SearchResult(scoreDoc.Score, indexSearcher.Doc(scoreDoc.Doc)));
@@ -196,9 +196,9 @@ namespace Lucene.Net.Spatial
         {
 
             public int numFound;
-            public List<SearchResult> results;
+            public IList<SearchResult> results;
 
-            public SearchResults(int numFound, List<SearchResult> results)
+            public SearchResults(int numFound, IList<SearchResult> results)
             {
                 this.numFound = numFound;
                 this.results = results;

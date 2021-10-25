@@ -55,7 +55,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// </summary>
         public ParseException(Token currentToken,
             int[][] expectedTokenSequences, string[] tokenImage)
-            : base(string.Format(QueryParserMessages.INVALID_SYNTAX, Initialize(
+            : base(string.Format(QueryParserMessages.INVALID_SYNTAX!, Initialize(
                 currentToken, expectedTokenSequences, tokenImage)))
         {
             this.CurrentToken = currentToken;
@@ -73,7 +73,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// these constructors.
         /// </summary>
         public ParseException()
-            : base(string.Format(QueryParserMessages.INVALID_SYNTAX, "Error"))
+            : base(string.Format(QueryParserMessages.INVALID_SYNTAX!, "Error")!)
         {
         }
 

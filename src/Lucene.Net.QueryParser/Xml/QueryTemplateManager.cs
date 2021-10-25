@@ -1,5 +1,4 @@
-﻿#if FEATURE_XSLT
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Xsl;
@@ -180,4 +179,3 @@ namespace Lucene.Net.QueryParsers.Xml
         }
     }
 }
-#endif

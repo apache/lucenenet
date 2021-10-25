@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -36,7 +37,7 @@ namespace Lucene.Net.Analysis.Synonym
         public virtual void TestInvalidMappingRules()
         {
             SlowSynonymMap synMap = new SlowSynonymMap(true);
-            IList<string> rules = new List<string>(1);
+            IList<string> rules = new JCG.List<string>(1);
             rules.Add("a=>b=>c");
             try
             {
@@ -54,7 +55,7 @@ namespace Lucene.Net.Analysis.Synonym
             SlowSynonymMap synMap;
 
             // (a)->[b]
-            IList<string> rules = new List<string>();
+            IList<string> rules = new JCG.List<string>();
             rules.Add("a=>b");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
@@ -134,7 +135,7 @@ namespace Lucene.Net.Analysis.Synonym
 
             // (a)->[a]
             // (b)->[a]
-            IList<string> rules = new List<string>();
+            IList<string> rules = new JCG.List<string>();
             rules.Add("a,b");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", false, null);
@@ -186,7 +187,7 @@ namespace Lucene.Net.Analysis.Synonym
 
             // (a)->[a][b]
             // (b)->[a][b]
-            IList<string> rules = new List<string>();
+            IList<string> rules = new JCG.List<string>();
             rules.Add("a,b");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
@@ -262,7 +263,7 @@ namespace Lucene.Net.Analysis.Synonym
             TokenizerFactory tf = new NGramTokenizerFactory(args);
 
             // (ab)->(bc)->(cd)->[ef][fg][gh]
-            IList<string> rules = new List<string>();
+            IList<string> rules = new JCG.List<string>();
             rules.Add("abcd=>efgh");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, tf);

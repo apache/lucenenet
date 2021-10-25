@@ -1,5 +1,6 @@
 ﻿using J2N;
 using J2N.Threading;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Threading;
 
@@ -103,11 +104,16 @@ namespace Lucene.Net.Search
 
         private void RefreshDone()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // if we're finishing, , make it out so that all waiting search threads will return
                 searchingGen = finish ? long.MaxValue : refreshStartGen;
                 available.Set();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
             reopenCond.Reset();
         }
@@ -135,13 +141,21 @@ namespace Lucene.Net.Search
             {
                 finish = true;
                 reopenCond.Set();
-                
-                Join();
-                // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
 
-                // LUCENENET specific: dispose reset event
-                reopenCond.Dispose();
-                available.Dispose();
+                try
+                {
+                    Join();
+                }
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    throw new Util.ThreadInterruptedException(ie);
+                }
+                finally
+                {
+                    // LUCENENET specific: dispose reset event
+                    reopenCond.Dispose();
+                    available.Dispose();
+                }
             }
         }
 
@@ -184,7 +198,9 @@ namespace Lucene.Net.Search
             {
                 throw new ArgumentException("targetGen=" + targetGen + " was never returned by the ReferenceManager instance (current gen=" + curGen + ")");
             }
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
+            {
                 if (targetGen <= searchingGen)
                     return true;
                 else
@@ -193,6 +209,11 @@ namespace Lucene.Net.Search
                     reopenCond.Set();
                     available.Reset();
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
 
             long startMS = Time.NanoTime() / 1000000;
 
@@ -231,8 +252,15 @@ namespace Lucene.Net.Search
             {
                 bool hasWaiting;
 
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
+                {
                     hasWaiting = waitingGen > searchingGen;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
 
                 long nextReopenStartNS = lastReopenStartNS + (hasWaiting ? targetMinStaleNS : targetMaxStaleNS);
                 long sleepNS = nextReopenStartNS - Time.NanoTime();

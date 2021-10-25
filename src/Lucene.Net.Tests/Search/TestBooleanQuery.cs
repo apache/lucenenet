@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -212,9 +213,6 @@ namespace Lucene.Net.Search
         }
 
         [Test]
-#if NETFRAMEWORK
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test fails on x86 on .NET Framework in Release mode only
-#endif
         public virtual void TestBS2DisjunctionNextVsAdvance()
         {
             Directory d = NewDirectory();
@@ -262,7 +260,7 @@ namespace Lucene.Net.Search
                 {
                     Console.WriteLine("iter=" + iter);
                 }
-                IList<string> terms = new List<string> { "a", "b", "c", "d", "e", "f" };
+                IList<string> terms = new JCG.List<string> { "a", "b", "c", "d", "e", "f" };
                 int numTerms = TestUtil.NextInt32(Random, 1, terms.Count);
                 while (terms.Count > numTerms)
                 {
@@ -285,7 +283,7 @@ namespace Lucene.Net.Search
                 Scorer scorer = weight.GetScorer(s.m_leafContexts[0], null);
 
                 // First pass: just use .NextDoc() to gather all hits
-                IList<ScoreDoc> hits = new List<ScoreDoc>();
+                IList<ScoreDoc> hits = new JCG.List<ScoreDoc>();
                 while (scorer.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                 {
                     hits.Add(new ScoreDoc(scorer.DocID, scorer.GetScore()));
@@ -336,8 +334,10 @@ namespace Lucene.Net.Search
                         {
                             ScoreDoc hit = hits[nextUpto];
                             Assert.AreEqual(hit.Doc, nextDoc);
+
+                            // LUCENENET: For some weird reason, on x86 in .NET Framework (optimizations enabled), using == (as they did in Lucene) doesn't work with optimizations enabled, but using AreEqual with epsilon of 0f does.
                             // Test for precise float equality:
-                            Assert.IsTrue(hit.Score == scorer.GetScore(), "doc " + hit.Doc + " has wrong score: expected=" + hit.Score + " actual=" + scorer.GetScore());
+                            Assert.AreEqual(hit.Score, scorer.GetScore(), 0f, "doc " + hit.Doc + " has wrong score: expected=" + hit.Score + " actual=" + scorer.GetScore());
                         }
                         upto = nextUpto;
                     }

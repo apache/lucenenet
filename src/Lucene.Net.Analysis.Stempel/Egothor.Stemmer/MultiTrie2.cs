@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 /*
                     Egothor Software License version 1.00
@@ -339,7 +340,7 @@ namespace Egothor.Stemmer
         /// <returns>the newly reduced Trie</returns>
         public override Trie Reduce(Reduce by)
         {
-            List<Trie> h = new List<Trie>();
+            IList<Trie> h = new JCG.List<Trie>();
             foreach (Trie trie in m_tries)
                 h.Add(trie.Reduce(by));
 

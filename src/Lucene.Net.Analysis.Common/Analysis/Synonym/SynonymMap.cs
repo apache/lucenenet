@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Synonym
             {
                 internal bool includeOrig;
                 // we could sort for better sharing ultimately, but it could confuse people
-                internal List<int> ords = new List<int>();
+                internal JCG.List<int> ords = new JCG.List<int>();
             }
 
             /// <summary>

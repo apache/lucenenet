@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Hunspell
 {
@@ -81,11 +82,11 @@ namespace Lucene.Net.Analysis.Hunspell
             string[] dicts = dictionaryFiles.Split(',').TrimEnd();
 
             Stream affix = null;
-            IList<Stream> dictionaries = new List<Stream>();
+            IList<Stream> dictionaries = new JCG.List<Stream>();
 
             try
             {
-                dictionaries = new List<Stream>();
+                dictionaries = new JCG.List<Stream>();
                 foreach (string file in dicts)
                 {
                     dictionaries.Add(loader.OpenResource(file));

@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
         // all condition checks used by prefixes and suffixes. these are typically re-used across
         // many affix stripping rules. so these are deduplicated, to save RAM.
-        internal List<CharacterRunAutomaton> patterns = new List<CharacterRunAutomaton>();
+        internal IList<CharacterRunAutomaton> patterns = new JCG.List<CharacterRunAutomaton>();
 
         // the entries in the .dic file, mapping to their set of flags.
         // the fst output is the ordinal list for flagLookup
@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <exception cref="IOException"> Can be thrown while reading from the <see cref="Stream"/>s </exception>
         /// <exception cref="Exception"> Can be thrown if the content of the files does not meet expected formats </exception>
         public Dictionary(Stream affix, Stream dictionary) 
-            : this(affix, new List<Stream>() { dictionary }, false)
+            : this(affix, new JCG.List<Stream>() { dictionary }, false)
         {
         }
 
@@ -652,7 +652,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
                 if (!affixes.TryGetValue(affixArg, out IList<int> list) || list == null)
                 {
-                    affixes[affixArg] = list = new List<int>();
+                    affixes[affixArg] = list = new JCG.List<int>();
                 }
 
                 list.Add(currentAffix);

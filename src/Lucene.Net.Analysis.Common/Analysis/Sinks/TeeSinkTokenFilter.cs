@@ -1,7 +1,8 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Sinks
 {
@@ -200,7 +201,7 @@ namespace Lucene.Net.Analysis.Sinks
         /// </summary>
         public sealed class SinkTokenStream : TokenStream
         {
-            private readonly IList<AttributeSource.State> cachedStates = new List<AttributeSource.State>();
+            private readonly IList<AttributeSource.State> cachedStates = new JCG.List<AttributeSource.State>();
             private AttributeSource.State finalState;
             private IEnumerator<AttributeSource.State> it = null;
             private readonly SinkFilter filter; // LUCENENET: marked readonly

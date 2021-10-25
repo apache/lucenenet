@@ -44,11 +44,13 @@ namespace Lucene.Net.Util
 
             try
             {
+#pragma warning disable SYSLIB0011 // Type or member is obsolete (BinaryFormatter)
                 var binaryFormatter = new BinaryFormatter();
                 using var serializationStream = new MemoryStream();
                 binaryFormatter.Serialize(serializationStream, exception);
                 serializationStream.Seek(0, SeekOrigin.Begin);
                 clone = (T)binaryFormatter.Deserialize(serializationStream);
+#pragma warning restore SYSLIB0011 // Type or member is obsolete (BinaryFormatter)
             }
             catch (SerializationException)
             {

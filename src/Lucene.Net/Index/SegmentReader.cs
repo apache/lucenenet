@@ -1,4 +1,4 @@
-using J2N.Runtime.CompilerServices;
+﻿using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
 
         private readonly FieldInfos fieldInfos; // LUCENENET specific - since it is readonly, made all internal classes use property
 
-        private readonly IList<long?> dvGens = new List<long?>();
+        private readonly IList<long?> dvGens = new JCG.List<long?>();
 
         /// <summary>
         /// Constructs a new <see cref="SegmentReader"/> with a new core. </summary>
@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
                 long gen = fi.DocValuesGen;
                 if (!genInfos.TryGetValue(gen, out IList<FieldInfo> infos) || infos == null)
                 {
-                    infos = new List<FieldInfo>();
+                    infos = new JCG.List<FieldInfo>();
                     genInfos[gen] = infos;
                 }
                 infos.Add(fi);

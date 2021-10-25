@@ -4,12 +4,14 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -52,7 +54,6 @@ namespace Lucene.Net.Index
     using TopDocs = Lucene.Net.Search.TopDocs;
 
     [TestFixture]
-    [Deadlock][Timeout(600000)]
     public class TestIndexWriterReader : LuceneTestCase
     {
         private readonly int numThreads = TestNightly ? 5 : 3;
@@ -471,7 +472,7 @@ namespace Lucene.Net.Index
             internal int numDirs;
             internal ThreadJob[] threads;
             internal IndexWriter mainWriter;
-            internal readonly IList<Exception> failures = new List<Exception>();
+            internal readonly IList<Exception> failures = new JCG.List<Exception>();
             internal IndexReader[] readers;
             internal bool didClose = false;
             internal AtomicInt32 count = new AtomicInt32(0);
@@ -509,11 +510,19 @@ namespace Lucene.Net.Index
             {
                 for (int i = 0; i < outerInstance.numThreads; i++)
                 {
-
-                    threads[i].Join();
-                    // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
+                    try
+                    {
+                        threads[i].Join();
+                    }
+                    catch (Exception ie) when (ie.IsInterruptedException())
+                    {
+#pragma warning disable IDE0001 // Simplify name
+                        throw new Util.ThreadInterruptedException(ie);
+#pragma warning restore IDE0001 // Simplify name
+                    }
                 }
             }
+
 
             internal virtual void Close(bool doWait)
             {
@@ -537,9 +546,14 @@ namespace Lucene.Net.Index
             internal virtual void Handle(Exception t)
             {
                 Console.WriteLine(t.StackTrace);
-                lock (failures)
+                UninterruptableMonitor.Enter(failures);
+                try
                 {
                     failures.Add(t);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(failures);
                 }
             }
 

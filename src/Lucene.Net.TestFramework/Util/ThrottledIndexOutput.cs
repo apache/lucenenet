@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Threading;
 
@@ -142,9 +143,16 @@ namespace Lucene.Net.Util
                 return;
             }
 
-            Thread.Sleep(TimeSpan.FromMilliseconds(ms));
-            // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
-
+            try
+            {
+                Thread.Sleep(TimeSpan.FromMilliseconds(ms));
+            }
+            catch (Exception e) when (e.IsInterruptedException())
+            {
+#pragma warning disable IDE0001 // Simplify name
+                throw new Util.ThreadInterruptedException(e);
+#pragma warning restore IDE0001 // Simplify name
+            }
         }
 
         public override long Length

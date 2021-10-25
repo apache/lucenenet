@@ -1,11 +1,13 @@
 ﻿using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using Directory = Lucene.Net.Store.Directory;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell
 {
@@ -144,8 +146,9 @@ namespace Lucene.Net.Search.Spell
         public virtual void SetSpellIndex(Directory spellIndexDir)
         {
             // this could be the same directory as the current spellIndex
-            // modifications to the directory should be synchronized 
-            lock (modifyCurrentIndexLock)
+            // modifications to the directory should be synchronized
+            UninterruptableMonitor.Enter(modifyCurrentIndexLock);
+            try
             {
                 EnsureOpen();
                 if (!DirectoryReader.IndexExists(spellIndexDir))
@@ -155,6 +158,10 @@ namespace Lucene.Net.Search.Spell
 #pragma warning restore 612, 618
                 }
                 SwapSearcher(spellIndexDir);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(modifyCurrentIndexLock);
             }
         }
 
@@ -442,7 +449,8 @@ namespace Lucene.Net.Search.Spell
         /// <exception cref="ObjectDisposedException"> if the Spellchecker is already closed </exception>
         public virtual void ClearIndex()
         {
-            lock (modifyCurrentIndexLock)
+            UninterruptableMonitor.Enter(modifyCurrentIndexLock);
+            try
             {
                 EnsureOpen();
                 var dir = this.spellIndex;
@@ -451,6 +459,10 @@ namespace Lucene.Net.Search.Spell
                     { OpenMode = OpenMode.CREATE })) { }
 #pragma warning restore 612, 618
                 SwapSearcher(dir);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(modifyCurrentIndexLock);
             }
         }
 
@@ -485,14 +497,15 @@ namespace Lucene.Net.Search.Spell
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public void IndexDictionary(IDictionary dict, IndexWriterConfig config, bool fullMerge)
         {
-            lock (modifyCurrentIndexLock)
+            UninterruptableMonitor.Enter(modifyCurrentIndexLock);
+            try
             {
                 EnsureOpen();
                 Directory dir = this.spellIndex;
                 using (var writer = new IndexWriter(dir, config))
                 {
                     IndexSearcher indexSearcher = ObtainSearcher();
-                    IList<TermsEnum> termsEnums = new List<TermsEnum>();
+                    IList<TermsEnum> termsEnums = new JCG.List<TermsEnum>();
 
                     IndexReader reader = searcher.IndexReader;
                     if (reader.MaxDoc > 0)
@@ -557,6 +570,10 @@ namespace Lucene.Net.Search.Spell
                 // also re-open the spell index to see our own changes when the next suggestion
                 // is fetched:
                 SwapSearcher(dir);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(modifyCurrentIndexLock);
             }
         }
 
@@ -634,11 +651,16 @@ namespace Lucene.Net.Search.Spell
 
         private IndexSearcher ObtainSearcher()
         {
-            lock (searcherLock)
+            UninterruptableMonitor.Enter(searcherLock);
+            try
             {
                 EnsureOpen();
                 searcher.IndexReader.IncRef();
                 return searcher;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(searcherLock);
             }
         }
 
@@ -681,11 +703,16 @@ namespace Lucene.Net.Search.Spell
         {
             if (disposing && !disposed)
             {
-                lock (searcherLock)
+                UninterruptableMonitor.Enter(searcherLock);
+                try
                 {
                     disposed = true;
                     searcher?.IndexReader?.Dispose();
                     searcher = null;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(searcherLock);
                 }
             }
         }
@@ -698,7 +725,8 @@ namespace Lucene.Net.Search.Spell
              * this operation than block access to the current searcher while opening.
              */
             IndexSearcher indexSearcher = CreateSearcher(dir);
-            lock (searcherLock)
+            UninterruptableMonitor.Enter(searcherLock);
+            try
             {
                 if (disposed)
                 {
@@ -709,6 +737,10 @@ namespace Lucene.Net.Search.Spell
                 // set the spellindex in the sync block - ensure consistency.
                 searcher = indexSearcher;
                 this.spellIndex = dir;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(searcherLock);
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.Search.Spans;
-using System.Collections.Generic;
 using System.Xml;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Xml.Builders
 {
@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
 
         public override SpanQuery GetSpanQuery(XmlElement e)
         {
-            List<SpanQuery> clausesList = new List<SpanQuery>();
+            JCG.List<SpanQuery> clausesList = new JCG.List<SpanQuery>();
             for (XmlNode kid = e.FirstChild; kid != null; kid = kid.NextSibling)
             {
                 if (kid.NodeType == XmlNodeType.Element)

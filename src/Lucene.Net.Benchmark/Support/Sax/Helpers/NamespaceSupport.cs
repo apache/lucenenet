@@ -9,6 +9,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Sax.Helpers
 {
@@ -586,7 +587,7 @@ namespace Sax.Helpers
                 }
                 if (declarations == null)
                 {
-                    declarations = new List<string>();
+                    declarations = new JCG.List<string>();
                 }
 
                 prefix = prefix.Intern();

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
@@ -758,7 +759,7 @@ namespace Lucene.Net.Search
             Analyzer analyzer = new MockAnalyzer(Random);
 
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMergePolicy(NewLogMergePolicy()));
-            IList<IList<string>> docs = new List<IList<string>>();
+            IList<IList<string>> docs = new JCG.List<IList<string>>();
             Documents.Document d = new Documents.Document();
             Field f = NewTextField("f", "", Field.Store.NO);
             d.Add(f);
@@ -771,7 +772,7 @@ namespace Lucene.Net.Search
                 // must be > 4096 so it spans multiple chunks
                 int termCount = TestUtil.NextInt32(Random, 4097, 8200);
 
-                IList<string> doc = new List<string>();
+                IList<string> doc = new JCG.List<string>();
 
                 StringBuilder sb = new StringBuilder();
                 while (doc.Count < termCount)

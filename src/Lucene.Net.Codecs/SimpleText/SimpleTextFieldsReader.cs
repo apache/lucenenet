@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
@@ -677,7 +678,8 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override Terms GetTerms(string field)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (!_termsCache.TryGetValue(field, out SimpleTextTerms terms) || terms == null)
                 {
@@ -693,6 +695,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
 
                 return terms;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

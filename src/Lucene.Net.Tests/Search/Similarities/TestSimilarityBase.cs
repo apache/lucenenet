@@ -1,7 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Lucene.Net.Documents;
 using NUnit.Framework;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search.Similarities
@@ -126,7 +127,7 @@ namespace Lucene.Net.Search.Similarities
             searcher = NewSearcher(reader);
             writer.Dispose();
 
-            sims = new List<SimilarityBase>();
+            sims = new JCG.List<SimilarityBase>();
             foreach (BasicModel basicModel in BASIC_MODELS)
             {
                 foreach (AfterEffect afterEffect in AFTER_EFFECTS)

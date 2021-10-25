@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -45,7 +46,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         private static void IncrNumSearches()
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 prevLastMillis = lastMillis;
                 lastMillis = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
@@ -54,6 +56,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     startMillis = prevLastMillis = lastMillis;
                 }
                 numSearches++;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 

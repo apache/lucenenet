@@ -1127,7 +1127,8 @@ namespace Lucene.Net.Search
             {
                 if (obj is AcceptableOverheadRatio other)
                 {
-                    return Value.Equals(other.Value);
+                    // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                    return NumericUtils.SingleToSortableInt32(Value) == NumericUtils.SingleToSortableInt32(other.Value);
                 }
                 return false;
             }

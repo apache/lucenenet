@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// The <see cref="Weight"/>s for our subqueries, in 1-1 correspondence with disjuncts </summary>
-            protected List<Weight> m_weights = new List<Weight>(); // The Weight's for our subqueries, in 1-1 correspondence with disjuncts
+            protected IList<Weight> m_weights = new JCG.List<Weight>(); // The Weight's for our subqueries, in 1-1 correspondence with disjuncts
 
             /// <summary>
             /// Construct the <see cref="Weight"/> for this <see cref="Search.Query"/> searched by <paramref name="searcher"/>.  Recursively construct subquery weights. </summary>
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
             /// Create the scorer used to score our associated <see cref="DisjunctionMaxQuery"/> </summary>
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
-                IList<Scorer> scorers = new List<Scorer>();
+                IList<Scorer> scorers = new JCG.List<Scorer>();
                 foreach (Weight w in m_weights)
                 {
                     // we will advance() subscorers
@@ -357,8 +357,9 @@ namespace Lucene.Net.Search
                 return false;
             }
             DisjunctionMaxQuery other = (DisjunctionMaxQuery)o;
-            return this.Boost == other.Boost 
-                && this.tieBreakerMultiplier == other.tieBreakerMultiplier 
+            // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+            return NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost)
+                && NumericUtils.SingleToSortableInt32(this.tieBreakerMultiplier) == NumericUtils.SingleToSortableInt32(other.tieBreakerMultiplier)
                 && this.disjuncts.Equals(other.disjuncts);
         }
 

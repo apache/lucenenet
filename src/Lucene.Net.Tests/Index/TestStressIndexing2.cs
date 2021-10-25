@@ -7,6 +7,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
@@ -14,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -69,7 +71,7 @@ namespace Lucene.Net.Index
                 //      if (name.equals("startCommit")) {
                 if (Random.Next(4) == 2)
                 {
-                    Thread.Sleep(0);
+                    Thread.Yield();
                 }
             }
         }
@@ -210,9 +212,14 @@ namespace Lucene.Net.Index
             for (int i = 0; i < threads.Length; i++)
             {
                 IndexingThread th = threads[i];
-                lock (th)
+                UninterruptableMonitor.Enter(th);
+                try
                 {
                     docs.PutAll(th.docs);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(th);
                 }
             }
 
@@ -257,9 +264,14 @@ namespace Lucene.Net.Index
             for (int i = 0; i < threads.Length; i++)
             {
                 IndexingThread th = threads[i];
-                lock (th)
+                UninterruptableMonitor.Enter(th);
+                try
                 {
                     docs.PutAll(th.docs);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(th);
                 }
             }
 
@@ -282,7 +294,7 @@ namespace Lucene.Net.Index
             while (iter.MoveNext())
             {
                 Document d = iter.Current;
-                List<IIndexableField> fields = new List<IIndexableField>();
+                IList<IIndexableField> fields = new JCG.List<IIndexableField>();
                 fields.AddRange(d.Fields);
                 // put fields in same order each time
                 fields.Sort(fieldNameComparer);
@@ -908,7 +920,7 @@ namespace Lucene.Net.Index
                 customType1.IsTokenized = false;
                 customType1.OmitNorms = true;
 
-                List<Field> fields = new List<Field>();
+                IList<Field> fields = new JCG.List<Field>();
                 string idString = IdString;
                 Field idField = NewField("id", idString, customType1);
                 fields.Add(idField);
@@ -1043,9 +1055,14 @@ namespace Lucene.Net.Index
                     Assert.Fail(e.ToString());
                 }
 
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     int dummy = docs.Count;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }

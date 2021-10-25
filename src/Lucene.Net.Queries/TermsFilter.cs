@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Queries
 {
@@ -171,7 +172,7 @@ namespace Lucene.Net.Queries
             this.offsets = new int[length + 1];
             int lastEndOffset = 0;
             int index = 0;
-            var termsAndFields = new List<TermsAndField>();
+            var termsAndFields = new JCG.List<TermsAndField>();
             TermsAndField lastTermsAndField = null;
             BytesRef previousTerm = null;
             string previousField = null;

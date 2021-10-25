@@ -1,6 +1,7 @@
 ﻿using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
@@ -100,7 +101,14 @@ namespace Lucene.Net.Index
 
         private readonly ISet<IReaderClosedListener> readerClosedListeners = new JCG.LinkedHashSet<IReaderClosedListener>().AsConcurrent();
 
-        private readonly ISet<IdentityWeakReference<IndexReader>> parentReaders = new ConcurrentHashSet<IdentityWeakReference<IndexReader>>();
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+        private readonly ConditionalWeakTable<IndexReader, object> parentReaders = new ConditionalWeakTable<IndexReader, object>();
+#else
+        private readonly WeakDictionary<IndexReader, object> parentReaders = new WeakDictionary<IndexReader, object>();
+#endif
+        // LUCENENET specific - since neither WeakDictionary nor ConditionalWeakTable synchronize
+        // on the enumerator, we need to do external synchronization to make them threadsafe.
+        private readonly object parentReadersLock = new object();
 
         /// <summary>
         /// Expert: adds a <see cref="IReaderClosedListener"/>.  The
@@ -136,12 +144,28 @@ namespace Lucene.Net.Index
         public void RegisterParentReader(IndexReader reader)
         {
             EnsureOpen();
-            parentReaders.Add(new IdentityWeakReference<IndexReader>(reader));
+            // LUCENENET specific - since neither WeakDictionary nor ConditionalWeakTable synchronize
+            // on the enumerator, we need to do external synchronization to make them threadsafe.
+            UninterruptableMonitor.Enter(parentReadersLock);
+            try
+            {
+                // LUCENENET: Since there is a set Add operation (unique) in Lucene, the equivalent
+                // operation in .NET is AddOrUpdate, which effectively does nothing if the key exists.
+                // Null is passed as a value, since it is not used anyway and .NET doesn't have a boolean
+                // reference type.
+                parentReaders.AddOrUpdate(key: reader, value: null);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(parentReadersLock);
+            }
         }
 
         private void NotifyReaderClosedListeners(Exception th)
         {
-            lock (((ICollection)readerClosedListeners).SyncRoot) // LUCENENET: Ensure we sync on the SyncRoot of ConcurrentSet<T>
+            object syncRoot = ((ICollection)readerClosedListeners).SyncRoot;
+            UninterruptableMonitor.Enter(syncRoot); // LUCENENET: Ensure we sync on the SyncRoot of ConcurrentSet<T>
+            try
             {
                 foreach (IReaderClosedListener listener in readerClosedListeners)
                 {
@@ -163,19 +187,27 @@ namespace Lucene.Net.Index
                 }
                 IOUtils.ReThrowUnchecked(th);
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncRoot);
+            }
         }
 
         private void ReportCloseToParentReaders()
         {
-            lock (parentReaders) // LUCENENET: This does not actually synchronize the set, it only ensures this method can only be entered by 1 thread
+            // LUCENENET specific - since neither WeakDictionary nor ConditionalWeakTable synchronize
+            // on the enumerator, we need to do external synchronization to make them threadsafe.
+            UninterruptableMonitor.Enter(parentReadersLock);
+            try
             {
-                foreach (IdentityWeakReference<IndexReader> parent in parentReaders)
+                foreach (var kvp in parentReaders)
                 {
-                    //Using weak references
-                    IndexReader target = parent.Target;
+                    IndexReader target = kvp.Key;
 
+                    // LUCENENET: This probably can't happen, but we are being defensive to avoid exceptions
                     if (target != null)
                     {
+                        //Using weak references
                         target.closedByChild = true;
                         // cross memory barrier by a fake write:
                         target.refCount.AddAndGet(0);
@@ -183,6 +215,10 @@ namespace Lucene.Net.Index
                         target.ReportCloseToParentReaders();
                     }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(parentReadersLock);
             }
         }
 
@@ -551,13 +587,18 @@ namespace Lucene.Net.Index
         {
             if (disposing)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     if (!closed)
                     {
                         DecRef();
                         closed = true;
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }

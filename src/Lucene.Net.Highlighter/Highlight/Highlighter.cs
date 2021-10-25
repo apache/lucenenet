@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Highlight
 {
@@ -137,7 +138,7 @@ namespace Lucene.Net.Search.Highlight
             TextFragment[] frag = GetBestTextFragments(tokenStream, text, true, maxNumFragments);
 
             //Get text
-            var fragTexts = new List<string>();
+            var fragTexts = new JCG.List<string>();
             for (int i = 0; i < frag.Length; i++)
             {
                 if ((frag[i] != null) && (frag[i].Score > 0))
@@ -161,7 +162,7 @@ namespace Lucene.Net.Search.Highlight
             bool mergeContiguousFragments,
             int maxNumFragments)
         {
-            var docFrags = new List<TextFragment>();
+            var docFrags = new JCG.List<TextFragment>();
             var newText = new StringBuilder();
 
             var termAtt = tokenStream.AddAttribute<ICharTermAttribute>();
@@ -305,7 +306,7 @@ namespace Lucene.Net.Search.Highlight
                 if (mergeContiguousFragments)
                 {
                     MergeContiguousFragments(frag);
-                    List<TextFragment> fragTexts = new List<TextFragment>();
+                    JCG.List<TextFragment> fragTexts = new JCG.List<TextFragment>();
                     for (int i = 0; i < frag.Length; i++)
                     {
                         if ((frag[i] != null) && (frag[i].Score > 0))

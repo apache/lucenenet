@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
@@ -51,7 +52,7 @@ namespace Lucene.Net.Analysis
             if (cache == null)
             {
                 // fill cache lazily
-                cache = new List<AttributeSource.State>();
+                cache = new JCG.List<AttributeSource.State>();
                 FillCache();
                 iterator = cache.GetEnumerator();
             }

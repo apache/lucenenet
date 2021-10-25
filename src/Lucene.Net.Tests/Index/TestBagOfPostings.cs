@@ -1,6 +1,7 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using Lucene.Net.Documents;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
@@ -51,7 +52,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void Test()
         {
-            IList<string> postingsList = new List<string>();
+            IList<string> postingsList = new JCG.List<string>();
             int numTerms = AtLeast(300);
             int maxTermsPerDoc = TestUtil.NextInt32(Random, 10, 20);
 

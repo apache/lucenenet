@@ -3,12 +3,14 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -112,7 +114,7 @@ namespace Lucene.Net.Index
 
             AtomicInt32 numCommitting = new AtomicInt32();
 
-            IList<ThreadJob> threads = new List<ThreadJob>();
+            IList<ThreadJob> threads = new JCG.List<ThreadJob>();
 
             Directory dir = NewDirectory();
 
@@ -206,12 +208,17 @@ namespace Lucene.Net.Index
                                 long version;
                                 DirectoryReader oldReader;
 
-                                lock (outerInstance)
+                                UninterruptableMonitor.Enter(outerInstance);
+                                try
                                 {
                                     newCommittedModel = new Dictionary<int, long>(outerInstance.model); // take a snapshot
                                     version = outerInstance.snapshotCount++;
                                     oldReader = outerInstance.reader;
                                     oldReader.IncRef(); // increment the reference since we will use this for reopening
+                                }
+                                finally
+                                {
+                                    UninterruptableMonitor.Exit(outerInstance);
                                 }
 
                                 DirectoryReader newReader;
@@ -260,7 +267,8 @@ namespace Lucene.Net.Index
 
                                 oldReader.DecRef();
 
-                                lock (outerInstance)
+                                UninterruptableMonitor.Enter(outerInstance);
+                                try
                                 {
                                     // install the new reader if it's newest (and check the current version since another reader may have already been installed)
                                     //System.out.println(Thread.currentThread().getName() + ": newVersion=" + newReader.getVersion());
@@ -308,6 +316,10 @@ namespace Lucene.Net.Index
                                         newReader.DecRef();
                                     }
                                 }
+                                finally
+                                {
+                                    UninterruptableMonitor.Exit(outerInstance);
+                                }
                             }
                             numCommitting.DecrementAndGet();
                         }
@@ -326,7 +338,8 @@ namespace Lucene.Net.Index
 
                             // We can't concurrently update the same document and retain our invariants of increasing values
                             // since we can't guarantee what order the updates will be executed.
-                            lock (sync)
+                            UninterruptableMonitor.Enter(sync);
+                            try
                             {
                                 long val = outerInstance.model[id];
                                 long nextVal = Math.Abs(val) + 1;
@@ -390,6 +403,10 @@ namespace Lucene.Net.Index
                                     outerInstance.model[id] = nextVal;
                                 }
                             }
+                            finally
+                            {
+                                UninterruptableMonitor.Exit(sync);
+                            }
 
                             if (!before)
                             {
@@ -444,11 +461,16 @@ namespace Lucene.Net.Index
 
                         long val;
                         DirectoryReader r;
-                        lock (outerInstance)
+                        UninterruptableMonitor.Enter(outerInstance);
+                        try
                         {
                             val = outerInstance.committedModel[id];
                             r = outerInstance.reader;
                             r.IncRef();
+                        }
+                        finally
+                        {
+                            UninterruptableMonitor.Exit(outerInstance);
                         }
 
                         if (Verbose)

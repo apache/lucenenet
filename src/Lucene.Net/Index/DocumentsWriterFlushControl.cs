@@ -1,6 +1,7 @@
 ﻿using J2N.Runtime.CompilerServices;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -86,9 +87,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     return activeBytes;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -97,9 +103,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     return flushBytes;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -108,9 +119,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     return flushBytes + activeBytes;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -195,7 +211,8 @@ namespace Lucene.Net.Index
 
         internal DocumentsWriterPerThread DoAfterDocument(ThreadState perThread, bool isUpdate)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 try
                 {
@@ -242,6 +259,10 @@ namespace Lucene.Net.Index
                     if (Debugging.AssertsEnabled) Debugging.Assert(AssertNumDocsSinceStalled(stalled) && AssertMemory());
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         private bool AssertNumDocsSinceStalled(bool stalled)
@@ -266,7 +287,8 @@ namespace Lucene.Net.Index
 
         internal void DoAfterFlush(DocumentsWriterPerThread dwpt)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(flushingWriters.ContainsKey(dwpt));
                 try
@@ -285,15 +307,19 @@ namespace Lucene.Net.Index
                     }
                     finally
                     {
-                        Monitor.PulseAll(this);
+                        UninterruptableMonitor.PulseAll(this);
                     }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
         private bool UpdateStallState()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(Monitor.IsEntered(this));
+            if (Debugging.AssertsEnabled) Debugging.Assert(UninterruptableMonitor.IsEntered(this));
             long limit = StallLimitBytes;
             /*
              * we block indexing threads if net byte grows due to slow flushes
@@ -309,13 +335,24 @@ namespace Lucene.Net.Index
 
         public void WaitForFlush()
         {
-             lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 while (flushingWriters.Count != 0)
                 {
-                    Monitor.Wait(this);
-                    // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
+                    try
+                    {
+                        UninterruptableMonitor.Wait(this);
+                    }
+                    catch (Exception ie) when (ie.IsInterruptedException())
+                    {
+                        throw new Util.ThreadInterruptedException(ie);
+                    }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -326,7 +363,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public void SetFlushPending(ThreadState perThread)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(!perThread.flushPending);
                 if (perThread.dwpt.NumDocsInRAM > 0)
@@ -339,11 +377,16 @@ namespace Lucene.Net.Index
                     if (Debugging.AssertsEnabled) Debugging.Assert(AssertMemory());
                 } // don't assert on numDocs since we could hit an abort excp. while selecting that dwpt for flushing
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         internal void DoOnAbort(ThreadState state)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 try
                 {
@@ -364,14 +407,23 @@ namespace Lucene.Net.Index
                     UpdateStallState();
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         internal DocumentsWriterPerThread TryCheckoutForFlush(ThreadState perThread)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(perThread.IsHeldByCurrentThread); // LUCENENET specific: Since .NET Core doesn't use unfair locking, we need to ensure the current thread has a lock before calling InternalTryCheckoutForFlush.
                 return perThread.flushPending ? InternalTryCheckOutForFlush(perThread) : null;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -403,7 +455,7 @@ namespace Lucene.Net.Index
             {
                 // LUCENENET specific - Since we need to mimic the unfair behavior of ReentrantLock, we need to ensure that all threads that enter here hold the lock.
                 Debugging.Assert(perThread.IsHeldByCurrentThread);
-                Debugging.Assert(Monitor.IsEntered(this));
+                Debugging.Assert(UninterruptableMonitor.IsEntered(this));
                 Debugging.Assert(perThread.flushPending);
             }
             try
@@ -441,7 +493,8 @@ namespace Lucene.Net.Index
         {
             int numPending;
             bool fullFlush;
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 DocumentsWriterPerThread poll;
                 if (flushQueue.Count > 0 && (poll = flushQueue.Dequeue()) != null)
@@ -451,6 +504,10 @@ namespace Lucene.Net.Index
                 }
                 fullFlush = this.fullFlush;
                 numPending = this.numPending;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
             if (numPending > 0 && !fullFlush) // don't check if we are doing a full flush
             {
@@ -480,7 +537,8 @@ namespace Lucene.Net.Index
 
         internal void SetClosed()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // set by DW to signal that we should not release new DWPT after close
                 if (!closed)
@@ -488,6 +546,10 @@ namespace Lucene.Net.Index
                     this.closed = true;
                     perThreadPool.DeactivateUnreleasedStates();
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -545,10 +607,15 @@ namespace Lucene.Net.Index
 
         internal void DoOnDelete()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // pass null this is a global delete no update
                 flushPolicy.OnDelete(this, null);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -563,9 +630,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     return flushingWriters.Count;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -611,7 +683,8 @@ namespace Lucene.Net.Index
         internal void MarkForFullFlush()
         {
             DocumentsWriterDeleteQueue flushingQueue;
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (Debugging.AssertsEnabled)
                 {
@@ -624,6 +697,10 @@ namespace Lucene.Net.Index
                 // we do another full flush
                 DocumentsWriterDeleteQueue newQueue = new DocumentsWriterDeleteQueue(flushingQueue.generation + 1);
                 documentsWriter.deleteQueue = newQueue;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
             int limit = perThreadPool.NumThreadStatesActive;
             for (int i = 0; i < limit; i++)
@@ -656,7 +733,8 @@ namespace Lucene.Net.Index
                     next.Unlock();
                 }
             }
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 /* make sure we move all DWPT that are where concurrently marked as
                  * pending and moved to blocked are moved over to the flushQueue. There is
@@ -671,6 +749,10 @@ namespace Lucene.Net.Index
                 }
                 fullFlushBuffer.Clear();
                 UpdateStallState();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
             if (Debugging.AssertsEnabled) Debugging.Assert(AssertActiveDeleteQueue(documentsWriter.deleteQueue));
         }
@@ -694,7 +776,7 @@ namespace Lucene.Net.Index
             return true;
         }
 
-        private readonly IList<DocumentsWriterPerThread> fullFlushBuffer = new List<DocumentsWriterPerThread>();
+        private readonly IList<DocumentsWriterPerThread> fullFlushBuffer = new JCG.List<DocumentsWriterPerThread>();
 
         internal void AddFlushableState(ThreadState perThread)
         {
@@ -712,7 +794,8 @@ namespace Lucene.Net.Index
             }
             if (dwpt.NumDocsInRAM > 0)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     if (!perThread.flushPending)
                     {
@@ -725,6 +808,10 @@ namespace Lucene.Net.Index
                         Debugging.Assert(dwpt == flushingDWPT, "flushControl returned different DWPT");
                     }
                     fullFlushBuffer.Add(flushingDWPT);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
             else
@@ -758,7 +845,8 @@ namespace Lucene.Net.Index
 
         internal void FinishFullFlush()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (Debugging.AssertsEnabled)
                 {
@@ -781,6 +869,10 @@ namespace Lucene.Net.Index
                     UpdateStallState();
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         internal bool AssertBlockedFlushes(DocumentsWriterDeleteQueue flushingQueue)
@@ -794,7 +886,8 @@ namespace Lucene.Net.Index
 
         internal void AbortFullFlushes(ISet<string> newFiles)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 try
                 {
@@ -805,11 +898,16 @@ namespace Lucene.Net.Index
                     fullFlush = false;
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         internal void AbortPendingFlushes(ISet<string> newFiles)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 try
                 {
@@ -854,6 +952,10 @@ namespace Lucene.Net.Index
                     UpdateStallState();
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
@@ -863,9 +965,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     return fullFlush;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -878,9 +985,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     return flushQueue.Count;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -894,9 +1006,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     return blockedFlushes.Count;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }

@@ -22,7 +22,7 @@
 
          IMPORTANT: Make sure you update the AssemblyVersionRevision number on every code/dependency/script change!
      -->
-    <AssemblyVersionRevision>10</AssemblyVersionRevision>
+    <AssemblyVersionRevision>11</AssemblyVersionRevision>
 
     <AssemblyMajorMinorPatchPattern>^\d+\.\d+\.\d+</AssemblyMajorMinorPatchPattern>
     <AssemblyMajorMinorPatch>$([System.Text.RegularExpressions.Regex]::Match($(AssemblyVersion), $(AssemblyMajorMinorPatchPattern)))</AssemblyMajorMinorPatch>

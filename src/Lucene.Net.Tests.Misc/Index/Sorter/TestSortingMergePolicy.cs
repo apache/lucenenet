@@ -32,7 +32,7 @@ namespace Lucene.Net.Index.Sorter
     [SuppressCodecs("Lucene3x")]
     public class TestSortingMergePolicy : LuceneTestCase
     {
-        private List<string> terms;
+        private IList<string> terms;
         private Directory dir1, dir2;
         private Sort sort;
         private IndexReader reader;
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 randomTerms.add(TestUtil.RandomSimpleString(Random));
             }
-            terms = new List<string>(randomTerms);
+            terms = new JCG.List<string>(randomTerms);
             long seed = Random.NextInt64();
             IndexWriterConfig iwc1 = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(new Random((int)seed)));
             IndexWriterConfig iwc2 = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(new Random((int)seed)));

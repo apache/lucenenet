@@ -1,9 +1,10 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
@@ -104,7 +105,7 @@ namespace Lucene.Net.Search
 
             BooleanScorer bs = new BooleanScorer(weight, false, 1, scorers, Collections.EmptyList<BulkScorer>(), scorers.Length);
 
-            IList<int> hits = new List<int>();
+            IList<int> hits = new JCG.List<int>();
             bs.Score(new CollectorAnonymousClass(this, hits));
 
             Assert.AreEqual(1, hits.Count, "should have only 1 hit");

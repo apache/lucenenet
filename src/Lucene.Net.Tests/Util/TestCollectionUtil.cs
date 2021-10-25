@@ -1,9 +1,9 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -105,7 +105,7 @@ namespace Lucene.Net.Util
             CollectionUtil.TimSort(list, Collections.ReverseOrder<int>());
 
             // check that empty non-random access lists pass sorting without ex (as sorting is not needed)
-            list = new List<int>();
+            list = new JCG.List<int>();
             CollectionUtil.IntroSort(list);
             CollectionUtil.TimSort(list);
             CollectionUtil.IntroSort(list, Collections.ReverseOrder<int>());
@@ -116,7 +116,7 @@ namespace Lucene.Net.Util
         public virtual void TestOneElementListSort()
         {
             // check that one-element non-random access lists pass sorting without ex (as sorting is not needed)
-            IList<int> list = new List<int>();
+            IList<int> list = new JCG.List<int>();
             list.Add(1);
             CollectionUtil.IntroSort(list);
             CollectionUtil.TimSort(list);

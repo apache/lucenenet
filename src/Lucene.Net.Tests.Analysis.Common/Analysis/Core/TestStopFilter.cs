@@ -1,13 +1,13 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.Core
@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Core
         public virtual void TestStopPositons()
         {
             StringBuilder sb = new StringBuilder();
-            List<string> a = new List<string>();
+            JCG.List<string> a = new JCG.List<string>();
             for (int i = 0; i < 20; i++)
             {
                 string w = English.Int32ToEnglish(i).Trim();
@@ -88,8 +88,8 @@ namespace Lucene.Net.Analysis.Core
 #pragma warning restore 612, 618
             DoTestStopPositons(stpf, false);
             // with increments, concatenating two stop filters
-            List<string> a0 = new List<string>();
-            List<string> a1 = new List<string>();
+            JCG.List<string> a0 = new JCG.List<string>();
+            JCG.List<string> a1 = new JCG.List<string>();
             for (int i = 0; i < a.Count; i++)
             {
                 if (i % 2 == 0)

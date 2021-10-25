@@ -1,5 +1,6 @@
 ﻿using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -146,13 +147,18 @@ namespace Lucene.Net.Index
 
         internal bool DeleteQueries(params Query[] queries)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // TODO why is this synchronized?
                 DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
                 deleteQueue.AddDelete(queries);
                 flushControl.DoOnDelete();
                 return ApplyAllDeletes(deleteQueue);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -161,7 +167,8 @@ namespace Lucene.Net.Index
         // per-DWPT map (but still must go into the global map)
         internal bool DeleteTerms(params Term[] terms)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // TODO why is this synchronized?
                 DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
@@ -169,27 +176,41 @@ namespace Lucene.Net.Index
                 flushControl.DoOnDelete();
                 return ApplyAllDeletes(deleteQueue);
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         internal bool UpdateNumericDocValue(Term term, string field, long? value)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
                 deleteQueue.AddNumericUpdate(new NumericDocValuesUpdate(term, field, value));
                 flushControl.DoOnDelete();
                 return ApplyAllDeletes(deleteQueue);
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         internal bool UpdateBinaryDocValue(Term term, string field, BytesRef value)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
                 deleteQueue.AddBinaryUpdate(new BinaryDocValuesUpdate(term, field, value));
                 flushControl.DoOnDelete();
                 return ApplyAllDeletes(deleteQueue);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -242,9 +263,10 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal void Abort(IndexWriter writer)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!Monitor.IsEntered(writer), "IndexWriter lock should never be hold when aborting");
+                if (Debugging.AssertsEnabled) Debugging.Assert(!UninterruptableMonitor.IsEntered(writer), "IndexWriter lock should never be hold when aborting");
                 bool success = false;
                 JCG.HashSet<string> newFilesSet = new JCG.HashSet<string>();
                 try
@@ -281,11 +303,16 @@ namespace Lucene.Net.Index
                     }
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         internal void LockAndAbortAll(IndexWriter indexWriter)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(indexWriter.HoldsFullFlushLock);
                 if (infoStream.IsEnabled("DW"))
@@ -323,6 +350,10 @@ namespace Lucene.Net.Index
                     }
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         private void AbortThreadState(ThreadState perThread, ISet<string> newFiles)
@@ -356,7 +387,8 @@ namespace Lucene.Net.Index
 
         internal void UnlockAllAfterAbortAll(IndexWriter indexWriter)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(indexWriter.HoldsFullFlushLock);
                 if (infoStream.IsEnabled("DW"))
@@ -374,7 +406,7 @@ namespace Lucene.Net.Index
                             perThread.Unlock();
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (e.IsThrowable())
                     {
                         if (infoStream.IsEnabled("DW"))
                         {
@@ -383,6 +415,10 @@ namespace Lucene.Net.Index
                         // ignore & keep on unlocking
                     }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -708,10 +744,15 @@ namespace Lucene.Net.Index
         // for asserts
         private bool SetFlushingDeleteQueue(DocumentsWriterDeleteQueue session)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 currentFullFlushDelQueue = session;
                 return true;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -729,7 +770,8 @@ namespace Lucene.Net.Index
                 infoStream.Message("DW", "startFullFlush");
             }
 
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 pendingChangesInCurrentFullFlush = AnyChanges();
                 flushingDeleteQueue = deleteQueue;
@@ -738,6 +780,10 @@ namespace Lucene.Net.Index
                  * delete queue */
                 flushControl.MarkForFullFlush(); // swaps the delQueue synced on FlushControl
                 if (Debugging.AssertsEnabled) Debugging.Assert(SetFlushingDeleteQueue(flushingDeleteQueue));
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
             if (Debugging.AssertsEnabled)
             {

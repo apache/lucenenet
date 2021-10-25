@@ -6,6 +6,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -361,9 +362,14 @@ namespace Lucene.Net.Search
                 {
                     outerInstance.DoTestSearch();
                 }
-                lock (success)
+                UninterruptableMonitor.Enter(success);
+                try
                 {
                     success.Set(num);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(success);
                 }
             }
         }
@@ -401,8 +407,16 @@ namespace Lucene.Net.Search
                 int docId = doc + docBase;
                 if (slowdown > 0)
                 {
-                    ThreadJob.Sleep(slowdown);
-                    // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
+                    try
+                    {
+                        ThreadJob.Sleep(slowdown);
+                    }
+                    catch (Exception ie) when (ie.IsInterruptedException())
+                    {
+#pragma warning disable IDE0001 // Simplify name
+                        throw new Util.ThreadInterruptedException(ie);
+#pragma warning restore IDE0001 // Simplify name
+                    }
                 }
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(docId >= 0," base={0} doc={1}", docBase, doc);

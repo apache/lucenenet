@@ -781,7 +781,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         protected virtual Passage[] GetEmptyHighlight(string fieldName, BreakIterator bi, int maxPassages)
         {
             // BreakIterator should be un-next'd:
-            List<Passage> passages = new List<Passage>();
+            JCG.List<Passage> passages = new JCG.List<Passage>();
             int pos = bi.Current;
             if (Debugging.AssertsEnabled) Debugging.Assert(pos == 0);
             while (passages.Count < maxPassages)

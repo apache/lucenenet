@@ -36,20 +36,20 @@ namespace Lucene.Net.Support.Threading
             // we enter the lock, then we immediately decrement it because that thread is no longer in the queue.
             // Due to race conditions, the queue length is an estimate only.
             Interlocked.Increment(ref _queueLength);
-            Monitor.Enter(_lock);
+            UninterruptableMonitor.Enter(_lock);
             Interlocked.Decrement(ref _queueLength);
         }
 
         // .NET Port: mimic ReentrantLock -- Monitor is re-entrant
         public void Unlock()
         {
-            Monitor.Exit(_lock);
+            UninterruptableMonitor.Exit(_lock);
         }
 
         public bool TryLock()
         {
             Interlocked.Increment(ref _queueLength);
-            bool success = Monitor.TryEnter(_lock);
+            bool success = UninterruptableMonitor.TryEnter(_lock);
             Interlocked.Decrement(ref _queueLength);
 
             return success;
@@ -69,6 +69,6 @@ namespace Lucene.Net.Support.Threading
 
         public bool HasQueuedThreads => _queueLength > 0;
 
-        public bool IsHeldByCurrentThread => Monitor.IsEntered(_lock);
+        public bool IsHeldByCurrentThread => UninterruptableMonitor.IsEntered(_lock);
     }
 }

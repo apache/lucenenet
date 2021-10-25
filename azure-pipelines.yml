@@ -41,7 +41,7 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 # IsNightly: 'false' (Optional - set to 'true' to run additional tests for the nightly build)
 # IsWeekly: 'false' (Optional - set to 'true' to run additional tests for the weekly build)
 # RunSlowTests: 'true' (Optional - set to 'false' to skip slow tests to make testing time shorter)
-# RunAwaitsFixTests: 'false' (Optional - set to 'true' to run flakey tests)
+# RunAwaitsFixTests: 'true' (Optional - set to 'false' to disable running flakey tests)
 # Codec: 'random' (Optional - set to a specific codec to test the same codec throughout all tests)
 # DocValuesFormat: 'random' (Optional - set to a specific doc values format to test the same codec throughout all tests)
 # PostingsFormat: 'random' (Optional - set to a specific postings format to test the same codec throughout all tests)
@@ -54,6 +54,8 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 variables:
 - name: BuildCounter
   value: $[counter(variables['VersionSuffix'],coalesce(variables['BuildCounterSeed'], 1250))]
+- name: BuildSDKVersion
+  value: '6.0.100-rc.2.21505.57'
 - name: DocumentationArtifactName
   value: 'docs'
 - name: DocumentationArtifactZipFileName
@@ -121,9 +123,10 @@ stages:
       displayName: 'Setup Default Variable Values'
 
     - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk 5.0.400'
+      displayName: 'Use .NET Core sdk $(BuildSDKVersion)'
       inputs:
-        version: 5.0.400
+        packageType: 'sdk'
+        version: '$(BuildSDKVersion)'
 
     - pwsh: |
         Import-Module "$(BuildDirectory)/psake.psm1"
@@ -236,6 +239,13 @@ stages:
     - template: 'build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
+        framework: 'net6.0'
+        binaryArtifactName: '$(BinaryArtifactName)'
+        testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+
+    - template: 'build/azure-templates/publish-test-binaries.yml'
+      parameters:
+        publishDirectory: $(PublishTempDirectory)
         framework: 'net5.0'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
@@ -250,7 +260,7 @@ stages:
     - template: 'build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
-        framework: 'netcoreapp2.1'
+        framework: 'net461'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
@@ -318,6 +328,74 @@ stages:
   displayName: 'Test Stage:'
   jobs:
 
+  - job: Test_net6_0_x64
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+    strategy:
+      matrix:
+        Windows:
+          osName: 'Windows'
+          imageName: 'windows-2019'
+          maximumParallelJobs: 8
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
+        Linux:
+          osName: 'Linux'
+          imageName: 'ubuntu-latest'
+          maximumParallelJobs: 7
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
+        macOS:
+          osName: 'macOS'
+          imageName: 'macOS-latest'
+          maximumParallelJobs: 7
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
+    displayName: 'Test net6.0,x64 on'
+    pool:
+      vmImage: $(imageName)
+    steps:
+    - template: 'build/azure-templates/run-tests-on-os.yml'
+      parameters:
+        osName: $(osName)
+        framework: 'net6.0'
+        vsTestPlatform: 'x64'
+        testBinariesArtifactName: '$(TestBinariesArtifactName)'
+        nugetArtifactName: '$(NuGetArtifactName)'
+        testResultsArtifactName: '$(TestResultsArtifactName)'
+        maximumParallelJobs: $(maximumParallelJobs)
+        maximumAllowedFailures: $(maximumAllowedFailures)
+
+  - job: Test_net6_0_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
+    strategy:
+      matrix:
+        Windows:
+          osName: 'Windows'
+          imageName: 'windows-2019'
+          maximumParallelJobs: 8
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
+        Linux:
+          osName: 'Linux'
+          imageName: 'ubuntu-latest'
+          maximumParallelJobs: 7
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
+        macOS:
+          osName: 'macOS'
+          imageName: 'macOS-latest'
+          maximumParallelJobs: 7
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
+    displayName: 'Test net6.0,x86 on'
+    pool:
+      vmImage: $(imageName)
+    steps:
+    - template: 'build/azure-templates/run-tests-on-os.yml'
+      parameters:
+        osName: $(osName)
+        framework: 'net6.0'
+        vsTestPlatform: 'x86'
+        testBinariesArtifactName: '$(TestBinariesArtifactName)'
+        nugetArtifactName: '$(NuGetArtifactName)'
+        testResultsArtifactName: '$(TestResultsArtifactName)'
+        maximumParallelJobs: $(maximumParallelJobs)
+        maximumAllowedFailures: $(maximumAllowedFailures)
+
   - job: Test_net5_0_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
     strategy:
@@ -326,17 +404,17 @@ stages:
           osName: 'Windows'
           imageName: 'windows-2019'
           maximumParallelJobs: 8
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
           imageName: 'ubuntu-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
           imageName: 'macOS-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
     displayName: 'Test net5.0,x64 on'
     pool:
       vmImage: $(imageName)
@@ -360,17 +438,17 @@ stages:
           osName: 'Windows'
           imageName: 'windows-2019'
           maximumParallelJobs: 8
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
           imageName: 'ubuntu-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
           imageName: 'macOS-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
     displayName: 'Test net5.0,x86 on'
     pool:
       vmImage: $(imageName)
@@ -394,17 +472,17 @@ stages:
           osName: 'Windows'
           imageName: 'windows-2019'
           maximumParallelJobs: 8
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
           imageName: 'ubuntu-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
           imageName: 'macOS-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
     displayName: 'Test netcoreapp3.1,x64 on'
     pool:
       vmImage: $(imageName)
@@ -428,17 +506,17 @@ stages:
           osName: 'Windows'
           imageName: 'windows-2019'
           maximumParallelJobs: 8
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
           imageName: 'ubuntu-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
           imageName: 'macOS-latest'
           maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
     displayName: 'Test netcoreapp3.1,x86 on'
     pool:
       vmImage: $(imageName)
@@ -454,7 +532,7 @@ stages:
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
 
-  - job: Test_netcoreapp2_2_x64
+  - job: Test_net461_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
     strategy:
       matrix:
@@ -462,25 +540,15 @@ stages:
           osName: 'Windows'
           imageName: 'windows-2019'
           maximumParallelJobs: 8
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
-        Linux:
-          osName: 'Linux'
-          imageName: 'ubuntu-latest'
-          maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
-        macOS:
-          osName: 'macOS'
-          imageName: 'macOS-latest'
-          maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
-    displayName: 'Test netcoreapp2.1,x64 on'
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
+    displayName: 'Test net461,x64 on'
     pool:
       vmImage: $(imageName)
     steps:
     - template: 'build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
-        framework: 'netcoreapp2.1'
+        framework: 'net461'
         vsTestPlatform: 'x64'
         testBinariesArtifactName: '$(TestBinariesArtifactName)'
         nugetArtifactName: '$(NuGetArtifactName)'
@@ -488,7 +556,7 @@ stages:
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
 
-  - job: Test_netcoreapp2_2_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
+  - job: Test_net461_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
     condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
     strategy:
       matrix:
@@ -496,25 +564,15 @@ stages:
           osName: 'Windows'
           imageName: 'windows-2019'
           maximumParallelJobs: 8
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
-        Linux:
-          osName: 'Linux'
-          imageName: 'ubuntu-latest'
-          maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
-        macOS:
-          osName: 'macOS'
-          imageName: 'macOS-latest'
-          maximumParallelJobs: 7
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
-    displayName: 'Test netcoreapp2.1,x86 on'
+          maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
+    displayName: 'Test net461,x86 on'
     pool:
       vmImage: $(imageName)
     steps:
     - template: 'build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
-        framework: 'netcoreapp2.1'
+        framework: 'net461'
         vsTestPlatform: 'x86'
         testBinariesArtifactName: '$(TestBinariesArtifactName)'
         nugetArtifactName: '$(NuGetArtifactName)'
@@ -554,7 +612,7 @@ stages:
         nugetArtifactName: '$(NuGetArtifactName)'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: 8
-        maximumAllowedFailures: 5 # Maximum allowed failures for a successful build
+        maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
 
 
 - stage: Publish_Stage

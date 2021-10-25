@@ -28,12 +28,28 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Test-Files\cities-Intersects-BBox.txt;Test-Files\Data\countries-bbox.txt;Test-Files\Data\countries-poly.txt;Test-Files\Data\geonames-IE.txt;Test-Files\Data\LUCENE-4464.txt;Test-Files\Data\simple-bbox.txt;Test-Files\Data\states-bbox.txt;Test-Files\Data\states-poly.txt;Test-Files\Data\world-cities-points.txt;Test-Files\simple-Queries-BBox.txt;Test-Files\states-Intersects-BBox.txt;Test-Files\states-IsWithin-BBox.txt" />
+    <EmbeddedResource Include="Test-Files\**\*" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net.Spatial\Lucene.Net.Spatial.csproj" />
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Spatial\Lucene.Net.Spatial.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
   </ItemGroup>
   
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
@@ -41,10 +57,6 @@
   <ItemGroup>
     <PackageReference Include="Spatial4n.Core" Version="$(Spatial4nCorePackageVersion)" />
     <PackageReference Include="Spatial4n.Core.NTS" Version="$(Spatial4nCoreNTSPackageVersion)" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)"/>
   </ItemGroup>
 
 </Project>

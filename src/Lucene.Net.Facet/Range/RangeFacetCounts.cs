@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Range
 {
@@ -90,7 +91,7 @@ namespace Lucene.Net.Facet.Range
 
         public override IList<FacetResult> GetAllDims(int topN)
         {
-            return new List<FacetResult> { GetTopChildren(topN, null) };
+            return new JCG.List<FacetResult> { GetTopChildren(topN, null) };
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using J2N.Text;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 {
@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
     {
         private static readonly int TEN = 10;
 
-        public static List<Object[]> Values = new List<object[]> { new Object[] { "Renault", "rinD|rinDlt|rina|rinalt|rino|rinolt|rinu|rinult", NameType.GENERIC, RuleType.APPROX, true, TEN },
+        public static JCG.List<Object[]> Values = new JCG.List<object[]> { new Object[] { "Renault", "rinD|rinDlt|rina|rinalt|rino|rinolt|rinu|rinult", NameType.GENERIC, RuleType.APPROX, true, TEN },
                             new Object[] { "Renault", "rYnDlt|rYnalt|rYnult|rinDlt|rinalt|rinult", NameType.ASHKENAZI, RuleType.APPROX, true, TEN },
                             new Object[] { "Renault", "rYnDlt", NameType.ASHKENAZI, RuleType.APPROX, true, 1 },
                             new Object[] { "Renault", "rinDlt", NameType.SEPHARDIC, RuleType.APPROX, true, TEN },

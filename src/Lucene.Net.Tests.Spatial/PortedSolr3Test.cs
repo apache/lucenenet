@@ -40,7 +40,7 @@ namespace Lucene.Net.Spatial
         //@ParametersFactory
         public static IList<Object[]> Parameters()
         {
-            List<Object[]> ctorArgs = new List<object[]>();
+            IList<Object[]> ctorArgs = new JCG.List<object[]>();
 
             SpatialContext ctx = SpatialContext.GEO;
             SpatialPrefixTree grid;

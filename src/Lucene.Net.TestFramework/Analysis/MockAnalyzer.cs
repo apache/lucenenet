@@ -1,3 +1,4 @@
+﻿using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using System;
@@ -105,7 +106,8 @@ namespace Lucene.Net.Analysis
 
         private TokenFilter MaybePayload(TokenFilter stream, string fieldName)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 previousMappings.TryGetValue(fieldName, out int? val);
                 if (val == null)
@@ -154,6 +156,10 @@ namespace Lucene.Net.Analysis
                 {
                     return new MockFixedLengthPayloadFilter(random, stream, (int)val);
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

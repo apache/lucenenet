@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -141,13 +142,18 @@ namespace Lucene.Net.Facet
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual DimConfig GetDimConfig(string dimName)
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 if (!fieldTypes.TryGetValue(dimName, out DimConfig ft))
                 {
                     ft = DefaultDimConfig;
                 }
                 return ft;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
@@ -158,7 +164,8 @@ namespace Lucene.Net.Facet
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void SetHierarchical(string dimName, bool v)
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
                 if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
@@ -170,6 +177,10 @@ namespace Lucene.Net.Facet
                     fieldType.IsHierarchical = v;
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         /// <summary>
@@ -179,7 +190,8 @@ namespace Lucene.Net.Facet
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void SetMultiValued(string dimName, bool v)
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
                 if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
@@ -191,6 +203,10 @@ namespace Lucene.Net.Facet
                     fieldType.IsMultiValued = v;
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         /// <summary>
@@ -201,7 +217,8 @@ namespace Lucene.Net.Facet
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void SetRequireDimCount(string dimName, bool v)
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
                 if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
@@ -213,6 +230,10 @@ namespace Lucene.Net.Facet
                     fieldType.RequireDimCount = v;
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         /// <summary>
@@ -222,7 +243,8 @@ namespace Lucene.Net.Facet
         /// </summary>
         public virtual void SetIndexFieldName(string dimName, string indexFieldName)
         {
-            lock (syncLock)
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
                 // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
                 if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
@@ -233,6 +255,10 @@ namespace Lucene.Net.Facet
                 {
                     fieldType.IndexFieldName = indexFieldName;
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
@@ -301,7 +327,7 @@ namespace Lucene.Net.Facet
                     string indexFieldName = dimConfig.IndexFieldName;
                     if (!byField.TryGetValue(indexFieldName, out IList<FacetField> fields))
                     {
-                        fields = new List<FacetField>();
+                        fields = new JCG.List<FacetField>();
                         byField[indexFieldName] = fields;
                     }
                     fields.Add(facetField);
@@ -318,7 +344,7 @@ namespace Lucene.Net.Facet
                     string indexFieldName = dimConfig.IndexFieldName;
                     if (!dvByField.TryGetValue(indexFieldName, out IList<SortedSetDocValuesFacetField> fields))
                     {
-                        fields = new List<SortedSetDocValuesFacetField>();
+                        fields = new JCG.List<SortedSetDocValuesFacetField>();
                         dvByField[indexFieldName] = fields;
                     }
                     fields.Add(facetField);
@@ -344,7 +370,7 @@ namespace Lucene.Net.Facet
                     string indexFieldName = dimConfig.IndexFieldName;
                     if (!assocByField.TryGetValue(indexFieldName, out IList<AssociationFacetField> fields))
                     {
-                        fields = new List<AssociationFacetField>();
+                        fields = new JCG.List<AssociationFacetField>();
                         assocByField[indexFieldName] = fields;
                     }
                     fields.Add(facetField);
@@ -669,7 +695,7 @@ namespace Lucene.Net.Facet
         /// </summary>
         public static string[] StringToPath(string s)
         {
-            List<string> parts = new List<string>();
+            JCG.List<string> parts = new JCG.List<string>();
             int length = s.Length;
             if (length == 0)
             {

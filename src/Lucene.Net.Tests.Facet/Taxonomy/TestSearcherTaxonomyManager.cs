@@ -4,6 +4,7 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -70,7 +71,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 try
                 {
                     var seen = new JCG.HashSet<string>();
-                    IList<string> paths = new List<string>();
+                    IList<string> paths = new JCG.List<string>();
                     while (true)
                     {
                         Document doc = new Document();

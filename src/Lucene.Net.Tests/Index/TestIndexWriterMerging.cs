@@ -2,11 +2,13 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -305,7 +307,8 @@ namespace Lucene.Net.Index
 
             public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     while (true)
                     {
@@ -320,6 +323,10 @@ namespace Lucene.Net.Index
                         }
                         writer.Merge(merge);
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
 
@@ -405,7 +412,7 @@ namespace Lucene.Net.Index
                     ((LogMergePolicy)writer.Config.MergePolicy).MergeFactor = 2;
 
                     IndexWriter finalWriter = writer;
-                    List<Exception> failure = new List<Exception>();
+                    IList<Exception> failure = new JCG.List<Exception>();
                     ThreadJob t1 = new ThreadAnonymousClass(this, doc, finalWriter, failure);
 
                     if (failure.Count > 0)
@@ -437,9 +444,9 @@ namespace Lucene.Net.Index
 
             private Document doc;
             private IndexWriter finalWriter;
-            private List<Exception> failure;
+            private IList<Exception> failure;
 
-            public ThreadAnonymousClass(TestIndexWriterMerging outerInstance, Document doc, IndexWriter finalWriter, List<Exception> failure)
+            public ThreadAnonymousClass(TestIndexWriterMerging outerInstance, Document doc, IndexWriter finalWriter, IList<Exception> failure)
             {
                 this.outerInstance = outerInstance;
                 this.doc = doc;
@@ -464,7 +471,7 @@ namespace Lucene.Net.Index
                             break;
                         }
 #pragma warning disable 168
-                        catch (NullReferenceException e)
+                        catch (NullReferenceException e) // LUCENENET TODO: We should fix the components so this cannot occur (assuming it can).
 #pragma warning restore 168
                         {
                             done = true;
@@ -478,7 +485,7 @@ namespace Lucene.Net.Index
                             break;
                         }
                     }
-                    Thread.Sleep(0);
+                    Thread.Yield();
                 }
             }
         }

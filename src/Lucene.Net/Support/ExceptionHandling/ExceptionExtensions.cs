@@ -155,6 +155,10 @@ namespace Lucene
                 // .NET made IOException a SystemExcpetion, but those should not be included here
                 e.IsIOException() ||
 
+                // .NET made System.Threading.ThreadInterruptedException a SystemException, but we need to ignore it
+                // because InterruptedException in Java subclasses Exception, not RuntimeException
+                e is System.Threading.ThreadInterruptedException ||
+
                 // ObjectDisposedException is a special case because in Lucene the AlreadyClosedException derived
                 // from IOException and was therefore a checked excpetion type.
                 e is ObjectDisposedException ||
@@ -448,10 +452,10 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsInterruptedException(this Exception e)
         {
-            // LUCENENET: Special case - we only catch under certain scenarios and do not rethrow explicitly.
             // This exception is the shutdown signal for a thread and it is used in Lucene for control flow.
-            // However, in .NET it is thrown in more cases than in Java. So, rather than wrapping it in a new
-            // exception type, we don't catch it unless there is a specific reason to do something other than re-throw.
+            // Lucene uses a custom Lucene.Net.Util.ThreadInterruptedException exception to handle the signal.
+            // It is only thrown from certain blocks, and we use UninterruptableMonitor.Enter() to avoid getting
+            // the System.Threading.ThreadInterruptedException when obtaining locks.
             return e is ThreadInterruptedException;
         }
 

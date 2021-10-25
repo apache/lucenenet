@@ -1,4 +1,4 @@
-namespace Lucene.Net.Search
+﻿namespace Lucene.Net.Search
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -76,13 +76,14 @@ namespace Lucene.Net.Search
 
         protected internal override sealed bool LessThan(ScoreDoc hitA, ScoreDoc hitB)
         {
-            if (hitA.Score == hitB.Score)
+            // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+            if (NumericUtils.SingleToSortableInt32(hitA.Score) == NumericUtils.SingleToSortableInt32(hitB.Score))
             {
                 return hitA.Doc > hitB.Doc;
             }
             else
             {
-                return hitA.Score < hitB.Score;
+                return NumericUtils.SingleToSortableInt32(hitA.Score) < NumericUtils.SingleToSortableInt32(hitB.Score);
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using Lucene.Net.Documents;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -55,7 +57,7 @@ namespace Lucene.Net.Index
         [Slow]
         public virtual void Test()
         {
-            IList<string> postingsList = new List<string>();
+            IList<string> postingsList = new JCG.List<string>();
             int numTerms = AtLeast(300);
             int maxTermsPerDoc = TestUtil.NextInt32(Random, 10, 20);
             bool isSimpleText = "SimpleText".Equals(TestUtil.GetPostingsFormat("field"), StringComparison.Ordinal);

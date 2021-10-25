@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -214,9 +215,14 @@ namespace Lucene.Net.Codecs
         private void PutPostingsFormatTypeImpl(Type postingsFormat)
         {
             string name = GetServiceName(postingsFormat);
-            lock (m_initializationLock)
+            UninterruptableMonitor.Enter(m_initializationLock);
+            try
             {
                 postingsFormatNameToTypeMap[name] = postingsFormat;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(m_initializationLock);
             }
         }
 
@@ -228,10 +234,15 @@ namespace Lucene.Net.Codecs
         public virtual PostingsFormat GetPostingsFormat(string name)
         {
             EnsureInitialized(); // Safety in case a subclass doesn't call it
-            lock (m_initializationLock)
+            UninterruptableMonitor.Enter(m_initializationLock);
+            try
             {
                 Type codecType = GetPostingsFormatType(name);
                 return GetPostingsFormat(codecType);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(m_initializationLock);
             }
         }
 
@@ -246,13 +257,18 @@ namespace Lucene.Net.Codecs
                 throw new ArgumentNullException(nameof(type));
             if (!postingsFormatInstanceCache.TryGetValue(type, out PostingsFormat instance))
             {
-                lock (m_initializationLock)
+                UninterruptableMonitor.Enter(m_initializationLock);
+                try
                 {
                     if (!postingsFormatInstanceCache.TryGetValue(type, out instance))
                     {
                         instance = NewPostingsFormat(type);
                         postingsFormatInstanceCache[type] = instance;
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(m_initializationLock);
                 }
             }
 

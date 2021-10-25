@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Xml;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Xml.Builders
 {
@@ -39,7 +40,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             string slopString = DOMUtils.GetAttributeOrFail(e, "slop");
             int slop = int.Parse(slopString, CultureInfo.InvariantCulture);
             bool inOrder = DOMUtils.GetAttribute(e, "inOrder", false);
-            List<SpanQuery> spans = new List<SpanQuery>();
+            JCG.List<SpanQuery> spans = new JCG.List<SpanQuery>();
             for (XmlNode kid = e.FirstChild; kid != null; kid = kid.NextSibling)
             {
                 if (kid.NodeType == XmlNodeType.Element)

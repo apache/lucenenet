@@ -71,7 +71,7 @@ namespace Lucene.Net.Tests.Queries
             AtomicReaderContext context = (AtomicReaderContext)reader.Context;
             w.Dispose();
 
-            IList<Term> terms = new List<Term>();
+            IList<Term> terms = new JCG.List<Term>();
             terms.Add(new Term(fieldName, "19"));
             FixedBitSet bits = (FixedBitSet)TermsFilter(Random.NextBoolean(), terms).GetDocIdSet(context, context.AtomicReader.LiveDocs);
             assertNull("Must match nothing", bits);
@@ -154,7 +154,7 @@ namespace Lucene.Net.Tests.Queries
                 Random, dir);
             int num = AtLeast(3);
             int skip = Random.Next(num);
-            var terms = new List<Term>();
+            var terms = new JCG.List<Term>();
             for (int i = 0; i < num; i++)
             {
                 terms.Add(new Term("field" + i, "content1"));
@@ -294,7 +294,7 @@ namespace Lucene.Net.Tests.Queries
                 return new TermsFilter(termList.ToList());
             }
             TermsFilter filter;
-            var bytes = new List<BytesRef>();
+            var bytes = new JCG.List<BytesRef>();
             string field = null;
             foreach (Term term in termList)
             {
@@ -315,7 +315,7 @@ namespace Lucene.Net.Tests.Queries
         {
             int num = AtLeast(100);
             bool singleField = Random.NextBoolean();
-            IList<Term> terms = new List<Term>();
+            IList<Term> terms = new JCG.List<Term>();
             var uniqueTerms = new JCG.HashSet<Term>();
             for (int i = 0; i < num; i++)
             {
@@ -330,7 +330,7 @@ namespace Lucene.Net.Tests.Queries
                 assertEquals(right.GetHashCode(), left.GetHashCode());
                 if (uniqueTerms.Count > 1)
                 {
-                    IList<Term> asList = new List<Term>(uniqueTerms);
+                    IList<Term> asList = new JCG.List<Term>(uniqueTerms);
                     asList.RemoveAt(0);
                     TermsFilter notEqual = TermsFilter(singleField && Random.NextBoolean(), asList);
                     assertFalse(left.Equals(notEqual));

@@ -1,9 +1,10 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -118,7 +119,7 @@ namespace Lucene.Net.Search
             // collectors (e.g. ToParentBlockJoinCollector) that
             // need to walk the scorer tree will miss/skip the
             // Scorer we wrap:
-            return new List<ChildScorer>() { new ChildScorer(@in, "SHOULD") };
+            return new JCG.List<ChildScorer>() { new ChildScorer(@in, "SHOULD") };
         }
 
         public override int Freq

@@ -1,11 +1,13 @@
 ﻿using J2N.Threading;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Security;
 using System.Text;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -52,7 +54,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// List of currently active <see cref="MergeThread"/>s. </summary>
-        protected internal IList<MergeThread> m_mergeThreads = new List<MergeThread>();
+        protected internal IList<MergeThread> m_mergeThreads = new JCG.List<MergeThread>();
 
         /// <summary>
         /// Default <see cref="MaxThreadCount"/>.
@@ -149,10 +151,15 @@ namespace Lucene.Net.Index
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     InitMergeThreadPriority();
                     return mergeThreadPriority;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -167,7 +174,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual void SetMergeThreadPriority(int priority)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (priority > (int)ThreadPriority.Highest || priority < (int)ThreadPriority.Lowest)
                 {
@@ -175,6 +183,10 @@ namespace Lucene.Net.Index
                 }
                 mergeThreadPriority = priority;
                 UpdateMergeThreads();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -199,11 +211,12 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual void UpdateMergeThreads()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 // Only look at threads that are alive & not in the
                 // process of stopping (ie have an active merge):
-                IList<MergeThread> activeMerges = new List<MergeThread>();
+                IList<MergeThread> activeMerges = new JCG.List<MergeThread>();
 
                 int threadIdx = 0;
                 while (threadIdx < m_mergeThreads.Count)
@@ -269,6 +282,10 @@ namespace Lucene.Net.Index
                     }
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
@@ -295,7 +312,8 @@ namespace Lucene.Net.Index
 
         private void InitMergeThreadPriority()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (mergeThreadPriority == -1)
                 {
@@ -307,6 +325,10 @@ namespace Lucene.Net.Index
                         mergeThreadPriority = (int)ThreadPriority.Highest;
                     }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -325,7 +347,8 @@ namespace Lucene.Net.Index
                 while (true)
                 {
                     MergeThread toSync = null;
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
                         foreach (MergeThread t in m_mergeThreads)
                         {
@@ -335,6 +358,10 @@ namespace Lucene.Net.Index
                                 break;
                             }
                         }
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                     if (toSync != null)
                     {
@@ -372,7 +399,8 @@ namespace Lucene.Net.Index
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     int count = 0;
                     foreach (MergeThread mt in m_mergeThreads)
@@ -384,15 +412,20 @@ namespace Lucene.Net.Index
                     }
                     return count;
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
             }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!Monitor.IsEntered(writer));
+                if (Debugging.AssertsEnabled) Debugging.Assert(!UninterruptableMonitor.IsEntered(writer));
 
                 this.m_writer = writer;
 
@@ -434,8 +467,14 @@ namespace Lucene.Net.Index
                         {
                             Message("    too many merges; stalling...");
                         }
-                        Monitor.Wait(this);
-                        // LUCENENET: Just let ThreadInterruptedException propagate. Note that it could be thrown above on lock (this).
+                        try
+                        {
+                            UninterruptableMonitor.Wait(this);
+                        }
+                        catch (Exception ie) when (ie.IsInterruptedException())
+                        {
+                            throw new Util.ThreadInterruptedException(ie);
+                        }
                     }
 
                     if (IsVerbose)
@@ -491,6 +530,10 @@ namespace Lucene.Net.Index
                     }
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
@@ -505,13 +548,18 @@ namespace Lucene.Net.Index
         /// Create and return a new <see cref="MergeThread"/> </summary>
         protected virtual MergeThread GetMergeThread(IndexWriter writer, MergePolicy.OneMerge merge)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 MergeThread thread = new MergeThread(this, writer, merge);
                 thread.SetThreadPriority((ThreadPriority)mergeThreadPriority);
                 thread.IsBackground = true;
                 thread.Name = "Lucene Merge Thread #" + m_mergeThreadCount++;
                 return thread;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -543,16 +591,26 @@ namespace Lucene.Net.Index
             {
                 set
                 {
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
                         runningMerge = value;
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                 }
                 get
                 {
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
                         return runningMerge;
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                 }
             }
@@ -565,7 +623,8 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    lock (this)
+                    UninterruptableMonitor.Enter(this);
+                    try
                     {
                         if (done)
                         {
@@ -579,6 +638,10 @@ namespace Lucene.Net.Index
                         {
                             return startMerge;
                         }
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(this);
                     }
                 }
             }
@@ -633,9 +696,14 @@ namespace Lucene.Net.Index
                         // Notify here in case any threads were stalled;
                         // they will notice that the pending merge has
                         // been pulled and possibly resume:
-                        lock (outerInstance)
+                        UninterruptableMonitor.Enter(outerInstance);
+                        try
                         {
-                            Monitor.PulseAll(outerInstance);
+                            UninterruptableMonitor.PulseAll(outerInstance);
+                        }
+                        finally
+                        {
+                            UninterruptableMonitor.Exit(outerInstance);
                         }
 
                         if (merge != null)
@@ -675,10 +743,15 @@ namespace Lucene.Net.Index
                 finally
                 {
                     done = true;
-                    lock (outerInstance)
+                    UninterruptableMonitor.Enter(outerInstance);
+                    try
                     {
                         outerInstance.UpdateMergeThreads();
-                        Monitor.PulseAll(outerInstance);
+                        UninterruptableMonitor.PulseAll(outerInstance);
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(outerInstance);
                     }
                 }
             }
@@ -690,15 +763,21 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual void HandleMergeException(Exception exc)
         {
-            // When an exception is hit during merge, IndexWriter
-            // removes any partial files and then allows another
-            // merge to run.  If whatever caused the error is not
-            // transient then the exception will keep happening,
-            // so, we sleep here to avoid saturating CPU in such
-            // cases:
-            Thread.Sleep(250);
+            try
+            {
+                // When an exception is hit during merge, IndexWriter
+                // removes any partial files and then allows another
+                // merge to run.  If whatever caused the error is not
+                // transient then the exception will keep happening,
+                // so, we sleep here to avoid saturating CPU in such
+                // cases:
+                Thread.Sleep(250);
+            }
+            catch (Exception ie) when (ie.IsInterruptedException())
+            {
+                throw new Util.ThreadInterruptedException(ie);
+            }
             throw new MergePolicy.MergeException(exc, m_dir);
-            // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException
         }
 
         private bool suppressExceptions;
@@ -731,7 +810,7 @@ namespace Lucene.Net.Index
             ConcurrentMergeScheduler clone = (ConcurrentMergeScheduler)base.Clone();
             clone.m_writer = null;
             clone.m_dir = null;
-            clone.m_mergeThreads = new List<MergeThread>();
+            clone.m_mergeThreads = new JCG.List<MergeThread>();
             return clone;
         }
     }

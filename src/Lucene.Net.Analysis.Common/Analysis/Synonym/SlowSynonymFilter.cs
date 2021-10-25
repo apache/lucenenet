@@ -1,8 +1,9 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -120,7 +121,7 @@ namespace Lucene.Net.Analysis.Synonym
                 }
 
                 // reuse, or create new one each time?
-                List<AttributeSource> generated = new List<AttributeSource>(result.Synonyms.Length + matched.Count + 1);
+                IList<AttributeSource> generated = new JCG.List<AttributeSource>(result.Synonyms.Length + matched.Count + 1);
 
                 //
                 // there was a match... let's generate the new tokens, merging

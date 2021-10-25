@@ -22,9 +22,9 @@ using Sax.Ext;
 using Sax.Helpers;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace TagSoup
 {
@@ -1093,7 +1093,7 @@ namespace TagSoup
             {
                 return Arrays.Empty<string>();
             }
-            var l = new List<string>();
+            var l = new JCG.List<string>();
             int s = 0;
             int e; // LUCENENET: IDE0059: Remove unnecessary value assignment
             bool sq = false; // single quote

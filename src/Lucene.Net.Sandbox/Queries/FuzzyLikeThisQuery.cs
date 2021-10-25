@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Similarities;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -291,22 +292,20 @@ namespace Lucene.Net.Sandbox.Queries
             //create BooleanQueries to hold the variants for each token/field pair and ensure it
             // has no coord factor
             //Step 1: sort the termqueries by term/field
-            IDictionary<Term, List<ScoreTerm>> variantQueries = new Dictionary<Term, List<ScoreTerm>>();
+            IDictionary<Term, IList<ScoreTerm>> variantQueries = new Dictionary<Term, IList<ScoreTerm>>();
             int size = q.Count;
             for (int i = 0; i < size; i++)
             {
                 ScoreTerm st = q.Pop();
-                //List<ScoreTerm> l = variantQueries.get(st.fuzziedSourceTerm);
-                //          if(l==null)
-                if (!variantQueries.TryGetValue(st.FuzziedSourceTerm, out List<ScoreTerm> l) || l == null)
+                if (!variantQueries.TryGetValue(st.FuzziedSourceTerm, out IList<ScoreTerm> l) || l == null)
                 {
-                    l = new List<ScoreTerm>();
+                    l = new JCG.List<ScoreTerm>();
                     variantQueries[st.FuzziedSourceTerm] = l;
                 }
                 l.Add(st);
             }
             //Step 2: Organize the sorted termqueries into zero-coord scoring boolean queries
-            foreach (List<ScoreTerm> variants in variantQueries.Values)
+            foreach (IList<ScoreTerm> variants in variantQueries.Values)
             {
                 if (variants.Count == 1)
                 {
@@ -364,15 +363,13 @@ namespace Lucene.Net.Sandbox.Queries
             /// (non-Javadoc)
             /// <see cref="Util.PriorityQueue{T}.LessThan(T, T)"/>
             /// </summary>
-#if NETFRAMEWORK
-            [MethodImpl(MethodImplOptions.NoOptimization)] // LUCENENET specific: comparing score equality fails in x86 on .NET Framework with optimizations enabled
-#endif
             protected internal override bool LessThan(ScoreTerm termA, ScoreTerm termB)
             {
-                if (termA.Score == termB.Score)
+                // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                if (NumericUtils.SingleToSortableInt32(termA.Score) == NumericUtils.SingleToSortableInt32(termB.Score))
                     return termA.Term.CompareTo(termB.Term) > 0;
                 else
-                    return termA.Score < termB.Score;
+                    return NumericUtils.SingleToSortableInt32(termA.Score) < NumericUtils.SingleToSortableInt32(termB.Score);
             }
 
         }

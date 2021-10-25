@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
@@ -6,6 +6,7 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search.Spans
@@ -418,7 +419,7 @@ namespace Lucene.Net.Search.Spans
 #pragma warning disable 612, 618
             BytesRef pay = new BytesRef(("pos: " + 5).GetBytes(IOUtils.CHARSET_UTF_8));
 #pragma warning restore 612, 618
-            SpanQuery query = new SpanPayloadCheckQuery(term1, new List<byte[]>() { pay.Bytes });
+            SpanQuery query = new SpanPayloadCheckQuery(term1, new JCG.List<byte[]>() { pay.Bytes });
             CheckHits(query, new int[] { 1125, 1135, 1145, 1155, 1165, 1175, 1185, 1195, 1225, 1235, 1245, 1255, 1265, 1275, 1285, 1295, 1325, 1335, 1345, 1355, 1365, 1375, 1385, 1395, 1425, 1435, 1445, 1455, 1465, 1475, 1485, 1495, 1525, 1535, 1545, 1555, 1565, 1575, 1585, 1595, 1625, 1635, 1645, 1655, 1665, 1675, 1685, 1695, 1725, 1735, 1745, 1755, 1765, 1775, 1785, 1795, 1825, 1835, 1845, 1855, 1865, 1875, 1885, 1895, 1925, 1935, 1945, 1955, 1965, 1975, 1985, 1995 });
             Assert.IsTrue(searcher.Explain(query, 1125).Value > 0.0f);
 
@@ -435,7 +436,7 @@ namespace Lucene.Net.Search.Spans
             pay = new BytesRef(("pos: " + 0).GetBytes(IOUtils.CHARSET_UTF_8));
             pay2 = new BytesRef(("pos: " + 1).GetBytes(IOUtils.CHARSET_UTF_8));
 #pragma warning restore 612, 618
-            list = new List<byte[]>();
+            list = new JCG.List<byte[]>();
             list.Add(pay.Bytes);
             list.Add(pay2.Bytes);
             query = new SpanNearPayloadCheckQuery(snq, list);
@@ -450,7 +451,7 @@ namespace Lucene.Net.Search.Spans
             pay2 = new BytesRef(("pos: " + 1).GetBytes(IOUtils.CHARSET_UTF_8));
             BytesRef pay3 = new BytesRef(("pos: " + 2).GetBytes(IOUtils.CHARSET_UTF_8));
 #pragma warning restore 612, 618
-            list = new List<byte[]>();
+            list = new JCG.List<byte[]>();
             list.Add(pay.Bytes);
             list.Add(pay2.Bytes);
             list.Add(pay3.Bytes);
@@ -478,7 +479,7 @@ namespace Lucene.Net.Search.Spans
             query = new SpanPositionRangeQuery(oneThousHunThree, 0, 6);
             CheckHits(query, new int[] { 1103, 1203, 1303, 1403, 1503, 1603, 1703, 1803, 1903 });
 
-            var payloads = new List<byte[]>();
+            var payloads = new JCG.List<byte[]>();
 #pragma warning disable 612, 618
             BytesRef pay = new BytesRef(("pos: " + 0).GetBytes(IOUtils.CHARSET_UTF_8));
             BytesRef pay2 = new BytesRef(("pos: " + 1).GetBytes(IOUtils.CHARSET_UTF_8));

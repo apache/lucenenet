@@ -8,8 +8,8 @@ using Lucene.Net.Util.Automaton;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Hunspell
 {
@@ -190,7 +190,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
         private IList<CharsRef> DoStem(char[] word, int length, bool caseVariant)
         {
-            List<CharsRef> stems = new List<CharsRef>();
+            JCG.List<CharsRef> stems = new JCG.List<CharsRef>();
             Int32sRef forms = dictionary.LookupWord(word, 0, length);
             if (forms != null)
             {
@@ -250,7 +250,7 @@ namespace Lucene.Net.Analysis.Hunspell
 #pragma warning disable 612, 618
                 LuceneVersion.LUCENE_CURRENT, 8, dictionary.ignoreCase);
 #pragma warning restore 612, 618
-            IList<CharsRef> deduped = new List<CharsRef>();
+            IList<CharsRef> deduped = new JCG.List<CharsRef>();
             foreach (CharsRef s in stems)
             {
                 if (!terms.Contains(s))
@@ -348,7 +348,7 @@ namespace Lucene.Net.Analysis.Hunspell
         private IList<CharsRef> Stem(char[] word, int length, int previous, int prevFlag, int prefixFlag, int recursionDepth, bool doPrefix, bool doSuffix, bool previousWasPrefix, bool circumfix, bool caseVariant)
         {
             // TODO: allow this stuff to be reused by tokenfilter
-            List<CharsRef> stems = new List<CharsRef>();
+            JCG.List<CharsRef> stems = new JCG.List<CharsRef>();
 
             if (doPrefix && dictionary.prefixes != null)
             {
@@ -619,7 +619,7 @@ namespace Lucene.Net.Analysis.Hunspell
             condition = condition.TripleShift(1);
             char append = (char)(affixReader.ReadInt16() & 0xffff);
 
-            List<CharsRef> stems = new List<CharsRef>();
+            JCG.List<CharsRef> stems = new JCG.List<CharsRef>();
 
             Int32sRef forms = dictionary.LookupWord(strippedWord, 0, length);
             if (forms != null)

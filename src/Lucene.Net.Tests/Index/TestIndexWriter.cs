@@ -2,6 +2,7 @@
 using J2N.Threading;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Diagnostics;
@@ -9,6 +10,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
@@ -785,7 +787,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-#if FEATURE_THREAD_PRIORITY
         // LUCENE-1036
         [Test]
         public virtual void TestMaxThreadPriority()
@@ -814,7 +815,6 @@ namespace Lucene.Net.Index
                 Thread.CurrentThread.Priority = pri;
             }
         }
-#endif
 
         [Test]
         public virtual void TestVariableSchema()
@@ -1046,7 +1046,7 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
                 termAtt = AddAttribute<ICharTermAttribute>();
                 posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
-                terms = new List<string> { "a", "b", "c" }.GetEnumerator();
+                terms = new JCG.List<string> { "a", "b", "c" }.GetEnumerator();
                 first = true;
             }
 
@@ -1317,7 +1317,7 @@ namespace Lucene.Net.Index
                             w.Dispose();
                             w = null;
                             //DirectoryReader.Open(dir).Dispose();
-                            using (var reader = DirectoryReader.Open(dir)) { }
+                            using var reader = DirectoryReader.Open(dir);
 
                             // Strangely, if we interrupt a thread before
                             // all classes are loaded, the class loader
@@ -1331,30 +1331,41 @@ namespace Lucene.Net.Index
                             allowInterrupt = true;
                         }
                     }
-                    catch (ThreadInterruptedException re) // LUCENENET: This was a custom wrapper type named ThreadInterruptedException in Lucene, so leaving the catch block as is
+                    catch (Util.ThreadInterruptedException re)
                     {
                         // NOTE: important to leave this verbosity/noise
                         // on!!  this test doesn't repro easily so when
                         // Jenkins hits a fail we need to study where the
                         // interrupts struck!
                         Console.WriteLine("TEST: got interrupt");
-                        Console.WriteLine(re.ToString());
+                        Console.WriteLine(GetToStringFrom(re));
 
-                        // LUCENENET NOTE: Since our original exception is ThreadInterruptException instead of InterruptException
-                        // in .NET, our expectation is typically that the InnerException is null (but it doesn't have to be).
-                        // So, this assertion is not needed in .NET. And if we get to this catch block, we already know we have
-                        // the right exception type, so there is nothing to test here.
-                        //Exception e = re.InnerException;
-                        //Assert.IsTrue(e is ThreadInterruptedException);
+                        Exception e = re.InnerException;
+                        Assert.IsTrue(e is System.Threading.ThreadInterruptedException);
                         if (finish)
                         {
                             break;
                         }
                     }
+                    //// LUCENENET specific:
+                    //catch (System.Threading.ThreadInterruptedException re)
+                    //{
+                    //    // NOTE: important to leave this verbosity/noise
+                    //    // on!!  this test doesn't repro easily so when
+                    //    // Jenkins hits a fail we need to study where the
+                    //    // interrupts struck!
+                    //    Console.WriteLine("TEST: got .NET interrupt");
+                    //    Console.WriteLine(GetToStringFrom(re));
+
+                    //    if (finish)
+                    //    {
+                    //        break;
+                    //    }
+                    //}
                     catch (Exception t) when (t.IsThrowable())
                     {
                         Console.WriteLine("FAILED; unexpected exception");
-                        Console.WriteLine(t.ToString());
+                        Console.WriteLine(GetToStringFrom(t));
                         failed = true;
                         break;
                     }
@@ -1366,20 +1377,29 @@ namespace Lucene.Net.Index
                     {
                         Console.WriteLine("TEST: now rollback");
                     }
+
+                    // LUCENENET specific - .NET has no way to "clear" the "interrupted status", so we
+                    // simply catch and ignore the ThreadInterruptedException on a call to Thread.Sleep(0).
+                    // This would cause undesired side effects if there were competing threads, but since
+                    // this is a standalone cleanup block in a single thread, we can get away with it here.
+                    // Thread.Sleep(0) should never be used in production code to read the "interrupted status",
+                    // always catch ThreadInterruptedException and ignore it instead.
+
                     // clear interrupt state:
-                    ThreadJob.Interrupted();
+                    try
+                    {
+                        Thread.Sleep(0);
+                    }
+                    catch (Exception ie) when (ie.IsInterruptedException())
+                    {
+                        // ignore
+                    }
+
                     if (w != null)
                     {
                         try
                         {
                             w.Rollback();
-                        }
-                        // LUCENENET specific - there is a chance that our thread will be
-                        // interrupted here, so we need to catch and ignore that exception
-                        // when our MockDirectoryWrapper throws it.
-                        catch (Exception e) when (e.IsInterruptedException())
-                        {
-                            // ignore
                         }
                         catch (Exception ioe) when (ioe.IsIOException())
                         {
@@ -1426,11 +1446,36 @@ namespace Lucene.Net.Index
                     throw RuntimeException.Create(e);
                 }
             }
+
+            // LUCENENET specific - since the lock statement can potentially throw System.Threading.ThreadInterruptedException in .NET,
+            // we need to be vigilant about getting stack trace info from the errors during tests and retry if we get an interrupt exception.
+            /// <summary>
+            /// Safely gets the ToString() of an exception while ignoring any System.Threading.ThreadInterruptedException and retrying.
+            /// </summary>
+            private string GetToStringFrom(Exception exception)
+            {
+                // Clear interrupt state:
+                try
+                {
+                    Thread.Sleep(0);
+                }
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    // ignore
+                }
+                try
+                {
+                    return exception.ToString();
+                }
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    return GetToStringFrom(exception);
+                }
+            }
         }
 
         [Test]
         [Slow]
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test occasionally fails
         public virtual void TestThreadInterruptDeadlock()
         {
             IndexerThreadInterrupt t = new IndexerThreadInterrupt(this);
@@ -1441,7 +1486,7 @@ namespace Lucene.Net.Index
             // up front... else we can see a false failure if 2nd
             // interrupt arrives while class loader is trying to
             // init this class (in servicing a first interrupt):
-            //Assert.IsTrue((new ThreadInterruptedException(new Exception("Thread interrupted"))).InnerException is ThreadInterruptedException);
+            Assert.IsTrue(new Util.ThreadInterruptedException(new System.Threading.ThreadInterruptedException()).InnerException is System.Threading.ThreadInterruptedException);
 
             // issue 300 interrupts to child thread
             int numInterrupts = AtLeast(300);
@@ -1471,7 +1516,6 @@ namespace Lucene.Net.Index
         /// testThreadInterruptDeadlock but with 2 indexer threads </summary>
         [Test]
         [Slow]
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test occasionally fails
         public virtual void TestTwoThreadsInterruptDeadlock()
         {
             IndexerThreadInterrupt t1 = new IndexerThreadInterrupt(this);
@@ -1486,8 +1530,7 @@ namespace Lucene.Net.Index
             // up front... else we can see a false failure if 2nd
             // interrupt arrives while class loader is trying to
             // init this class (in servicing a first interrupt):
-            // C# does not have the late load problem.
-            //Assert.IsTrue((new ThreadInterruptedException(new Exception("Thread interrupted"))).InnerException is ThreadInterruptedException);
+            Assert.IsTrue((new Util.ThreadInterruptedException(new System.Threading.ThreadInterruptedException())).InnerException is System.Threading.ThreadInterruptedException);
 
             // issue 300 interrupts to child thread
             int numInterrupts = AtLeast(300);
@@ -1664,7 +1707,7 @@ namespace Lucene.Net.Index
                     r = DirectoryReader.Open(dir);
                 }
 
-                IList<string> files = new List<string>(dir.ListAll());
+                IList<string> files = new JCG.List<string>(dir.ListAll());
 
                 // RAMDir won't have a write.lock, but fs dirs will:
                 files.Remove("write.lock");
@@ -1824,7 +1867,7 @@ namespace Lucene.Net.Index
             int computedExtraFileCount = 0;
             foreach (string file in dir.ListAll())
             {
-                if (file.LastIndexOf('.') < 0 || !new List<string> { "fdx", "fdt", "tvx", "tvd", "tvf" }.Contains(file.Substring(file.LastIndexOf('.') + 1)))
+                if (file.LastIndexOf('.') < 0 || !new JCG.List<string> { "fdx", "fdt", "tvx", "tvd", "tvf" }.Contains(file.Substring(file.LastIndexOf('.') + 1)))
                 // don't count stored fields and term vectors in
                 {
                     ++computedExtraFileCount;
@@ -2204,7 +2247,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
-            IList<Document> docs = new List<Document>();
+            IList<Document> docs = new JCG.List<Document>();
             docs.Add(new Document());
             w.UpdateDocuments(new Term("foo", "bar"), docs);
             w.Dispose();
@@ -2565,7 +2608,7 @@ namespace Lucene.Net.Index
             ISet<string> liveIds = new JCG.HashSet<string>();
             for (int i = 0; i < iters; i++)
             {
-                IList<IEnumerable<IIndexableField>> docs = new List<IEnumerable<IIndexableField>>();
+                IList<IEnumerable<IIndexableField>> docs = new JCG.List<IEnumerable<IIndexableField>>();
                 FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
                 FieldType idFt = new FieldType(TextField.TYPE_STORED);
 

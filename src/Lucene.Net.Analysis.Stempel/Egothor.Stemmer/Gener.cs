@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Support;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 /*
                     Egothor Software License version 1.00
@@ -91,7 +92,7 @@ namespace Egothor.Stemmer
             }
 
             Arrays.Fill(remap, -1);
-            rows = RemoveGaps(orig.root, orows, new List<Row>(), remap);
+            rows = RemoveGaps(orig.root, orows, new JCG.List<Row>(), remap);
 
             return new Trie(orig.forward, remap[orig.root], cmds, rows);
         }

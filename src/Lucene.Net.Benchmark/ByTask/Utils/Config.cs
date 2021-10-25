@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Utils
 {
@@ -64,7 +65,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         public Config(TextReader algReader)
         {
             // read alg file to array of lines
-            IList<string> lines = new List<string>();
+            IList<string> lines = new JCG.List<string>();
             int lastConfigLine = 0;
             string line;
             while ((line = algReader.ReadLine()) != null)
@@ -141,7 +142,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         private void PrintProps()
         {
             Console.WriteLine("------------> config properties:");
-            List<string> propKeys = new List<string>(props.Keys);
+            IList<string> propKeys = new JCG.List<string>(props.Keys);
             propKeys.Sort();
             foreach (string propName in propKeys)
             {
@@ -381,7 +382,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 return new string[] { s };
             }
 
-            List<string> a = new List<string>();
+            JCG.List<string> a = new JCG.List<string>();
             StringTokenizer st = new StringTokenizer(s, ":");
             while (st.MoveNext())
             {
@@ -399,7 +400,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 return new int[] { int.Parse(s, CultureInfo.InvariantCulture) };
             }
 
-            List<int> a = new List<int>();
+            IList<int> a = new JCG.List<int>();
             StringTokenizer st = new StringTokenizer(s, ":");
             while (st.MoveNext())
             {
@@ -422,7 +423,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 return new double[] { double.Parse(s, CultureInfo.InvariantCulture) };
             }
 
-            List<double> a = new List<double>();
+            IList<double> a = new JCG.List<double>();
             StringTokenizer st = new StringTokenizer(s, ":");
             while (st.MoveNext())
             {
@@ -445,7 +446,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 return new bool[] { bool.Parse(s) };
             }
 
-            List<bool> a = new List<bool>();
+            IList<bool> a = new JCG.List<bool>();
             StringTokenizer st = new StringTokenizer(s, ":");
             while (st.MoveNext())
             {

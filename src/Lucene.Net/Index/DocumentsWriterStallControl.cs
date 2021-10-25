@@ -1,6 +1,8 @@
 ﻿using J2N.Runtime.CompilerServices;
 using J2N.Threading;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -57,14 +59,19 @@ namespace Lucene.Net.Index
         /// </summary>
         internal void UpdateStalled(bool stalled)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 this.stalled = stalled;
                 if (stalled)
                 {
                     wasStalled = true;
                 }
-                Monitor.PulseAll(this);
+                UninterruptableMonitor.PulseAll(this);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -76,21 +83,31 @@ namespace Lucene.Net.Index
         {
             if (stalled)
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     if (stalled) // react on the first wakeup call!
                     {
                         // don't loop here, higher level logic will re-stall!
-
-                        // LUCENENET: make sure not to run IncWaiters / DecrWaiters in Debugging.Assert as that gets 
-                        // disabled in production
-                        var result = IncWaiters();
-                        if (Debugging.AssertsEnabled) Debugging.Assert(result);
-                        Monitor.Wait(this);
-                        result = DecrWaiters();
-                        if (Debugging.AssertsEnabled) Debugging.Assert(result);
-                        // LUCENENET NOTE: No need to catch and rethrow same excepton type ThreadInterruptedException 
+                        try
+                        {
+                            // LUCENENET: make sure not to run IncWaiters / DecrWaiters in Debugging.Assert as that gets 
+                            // disabled in production
+                            var result = IncWaiters();
+                            if (Debugging.AssertsEnabled) Debugging.Assert(result);
+                            UninterruptableMonitor.Wait(this);
+                            result = DecrWaiters();
+                            if (Debugging.AssertsEnabled) Debugging.Assert(result);
+                        }
+                        catch (Exception ie) when (ie.IsInterruptedException())
+                        {
+                            throw new Util.ThreadInterruptedException(ie);
+                        }
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -122,9 +139,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     return numWaiting > 0;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }
@@ -133,9 +155,14 @@ namespace Lucene.Net.Index
 
         internal bool IsThreadQueued(ThreadJob t) // for tests
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 return waiting.ContainsKey(t);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -143,9 +170,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                lock (this)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
                     return wasStalled;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }

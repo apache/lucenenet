@@ -492,7 +492,7 @@ namespace Lucene.Net.Facet
                 valueCount *= 2;
             }
 
-            IList<Doc> docs = new List<Doc>();
+            IList<Doc> docs = new JCG.List<Doc>();
             for (int i = 0; i < numDocs; i++)
             {
                 Doc doc = new Doc();
@@ -1051,7 +1051,7 @@ namespace Lucene.Net.Facet
         {
             int numDims = dimValues.Length;
 
-            List<Doc> hits = new List<Doc>();
+            JCG.List<Doc> hits = new JCG.List<Doc>();
             Counters drillDownCounts = new Counters(dimValues);
             Counters[] drillSidewaysCounts = new Counters[dimValues.Length];
             for (int dim = 0; dim < numDims; dim++)

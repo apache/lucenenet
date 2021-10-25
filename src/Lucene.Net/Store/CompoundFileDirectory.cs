@@ -2,6 +2,7 @@
 using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -285,7 +286,8 @@ namespace Lucene.Net.Store
 
         protected override void Dispose(bool disposing)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (disposing)
                 {
@@ -306,11 +308,16 @@ namespace Lucene.Net.Store
                     }
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public override IndexInput OpenInput(string name, IOContext context)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 EnsureOpen();
                 if (Debugging.AssertsEnabled) Debugging.Assert(!openForWrite);
@@ -322,6 +329,10 @@ namespace Lucene.Net.Store
                         string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", entries.Keys) + ")");
                 }
                 return handle.OpenSlice(name, entry.Offset, entry.Length);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

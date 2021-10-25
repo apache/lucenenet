@@ -24,7 +24,7 @@
   <Import Project="$(SolutionDir)build/NuGet.props" />
   
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net45</TargetFrameworks>
 
     <RootNamespace>Lucene.Net.QueryParsers</RootNamespace>
@@ -37,6 +37,8 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
     <NoWarn Label="Remove unused parameter">$(NoWarn);IDE0060</NoWarn>
   </PropertyGroup>
+
+  <Import Project="$(SolutionDir)build/Dependencies.props" />
   
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -218,9 +219,14 @@ namespace Lucene.Net.Codecs
         private void PutCodecTypeImpl(Type codec)
         {
             string name = GetServiceName(codec);
-            lock (m_initializationLock)
+            UninterruptableMonitor.Enter(m_initializationLock);
+            try
             {
                 codecNameToTypeMap[name] = codec;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(m_initializationLock);
             }
         }
 
@@ -232,10 +238,15 @@ namespace Lucene.Net.Codecs
         public virtual Codec GetCodec(string name)
         {
             EnsureInitialized(); // Safety in case a subclass doesn't call it
-            lock (m_initializationLock)
+            UninterruptableMonitor.Enter(m_initializationLock);
+            try
             {
                 Type codecType = GetCodecType(name);
                 return GetCodec(codecType);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(m_initializationLock);
             }
         }
 
@@ -250,13 +261,18 @@ namespace Lucene.Net.Codecs
                 throw new ArgumentNullException(nameof(type));
             if (!codecInstanceCache.TryGetValue(type, out Codec instance))
             {
-                lock (m_initializationLock)
+                UninterruptableMonitor.Enter(m_initializationLock);
+                try
                 {
                     if (!codecInstanceCache.TryGetValue(type, out instance))
                     {
                         instance = NewCodec(type);
                         codecInstanceCache[type] = instance;
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(m_initializationLock);
                 }
             }
 

@@ -24,6 +24,7 @@ SOFTWARE.
 
 */
 
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -352,7 +353,9 @@ namespace Lucene.Net.Support
 
                 GetBucketAndLockNo(hashcode, out int bucketNo, out int lockNo, tables.Buckets.Length, tables.Locks.Length);
 
-                lock (tables.Locks[lockNo])
+                object syncRoot = tables.Locks[lockNo];
+                UninterruptableMonitor.Enter(syncRoot);
+                try
                 {
                     // If the table just got resized, we may not be holding the right lock, and must retry.
                     // This should be a rare occurrence.
@@ -382,6 +385,10 @@ namespace Lucene.Net.Support
                         }
                         previous = current;
                     }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(syncRoot);
                 }
 
                 return false;
@@ -478,7 +485,7 @@ namespace Lucene.Net.Support
                 try
                 {
                     if (acquireLock)
-                        Monitor.Enter(tables.Locks[lockNo], ref lockTaken);
+                        UninterruptableMonitor.Enter(tables.Locks[lockNo], ref lockTaken);
 
                     // If the table just got resized, we may not be holding the right lock, and must retry.
                     // This should be a rare occurrence.
@@ -519,7 +526,7 @@ namespace Lucene.Net.Support
                 finally
                 {
                     if (lockTaken)
-                        Monitor.Exit(tables.Locks[lockNo]);
+                        UninterruptableMonitor.Exit(tables.Locks[lockNo]);
                 }
 
                 //
@@ -709,7 +716,7 @@ namespace Lucene.Net.Support
                 var lockTaken = false;
                 try
                 {
-                    Monitor.Enter(locks[i], ref lockTaken);
+                    UninterruptableMonitor.Enter(locks[i], ref lockTaken);
                 }
                 finally
                 {
@@ -727,7 +734,7 @@ namespace Lucene.Net.Support
 
             for (var i = fromInclusive; i < toExclusive; i++)
             {
-                Monitor.Exit(_tables.Locks[i]);
+                UninterruptableMonitor.Exit(_tables.Locks[i]);
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using J2N.IO;
+using Lucene.Net.Support.Threading;
 using System;
 using System.IO;
 
@@ -81,7 +82,8 @@ namespace Lucene.Net.Support.IO
                 return 0;
 
             int read = 0;
-            lock (readLock)
+            UninterruptableMonitor.Enter(readLock);
+            try
             {
                 long originalPosition = stream.Position;
                 stream.Seek(position, SeekOrigin.Begin);
@@ -110,6 +112,10 @@ namespace Lucene.Net.Support.IO
                 // Per Java's FileChannel.Read(), we don't want to alter the position
                 // of the stream, so we return it as it was originally.
                 stream.Seek(originalPosition, SeekOrigin.Begin);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(readLock);
             }
 
             return read;

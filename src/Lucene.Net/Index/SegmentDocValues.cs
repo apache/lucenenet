@@ -1,5 +1,6 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -68,9 +69,14 @@ namespace Lucene.Net.Index
             protected override void Release()
             {
                 m_object.Dispose();
-                lock (outerInstance)
+                UninterruptableMonitor.Enter(outerInstance);
+                try
                 {
                     outerInstance.genDVProducers.Remove(gen);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(outerInstance);
                 }
             }
         }
@@ -79,7 +85,8 @@ namespace Lucene.Net.Index
         /// Returns the <see cref="DocValuesProducer"/> for the given generation. </summary>
         internal DocValuesProducer GetDocValuesProducer(long? gen, SegmentCommitInfo si, IOContext context, Directory dir, DocValuesFormat dvFormat, IList<FieldInfo> infos, int termsIndexDivisor)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (!genDVProducers.TryGetValue(gen, out RefCount<DocValuesProducer> dvp))
                 {
@@ -93,6 +100,10 @@ namespace Lucene.Net.Index
                 }
                 return dvp.Get();
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         /// <summary>
@@ -101,7 +112,8 @@ namespace Lucene.Net.Index
         /// </summary>
         internal void DecRef(IList<long?> dvProducersGens)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 Exception t = null;
                 foreach (long? gen in dvProducersGens)
@@ -124,6 +136,10 @@ namespace Lucene.Net.Index
                 {
                     IOUtils.ReThrow(t);
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
     }

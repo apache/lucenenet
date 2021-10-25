@@ -1,6 +1,7 @@
 ﻿using J2N.Text;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -78,7 +79,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long Push(FrozenBufferedUpdates packet)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 /*
                  * The insert operation must be atomic. If we let threads increment the gen
@@ -105,16 +107,25 @@ namespace Lucene.Net.Index
                 if (Debugging.AssertsEnabled) Debugging.Assert(CheckDeleteStats());
                 return packet.DelGen;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         public virtual void Clear()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 updates.Clear();
                 nextGen = 1;
                 numTerms.Value = 0;
                 bytesUsed.Value = 0;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -169,7 +180,8 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual ApplyDeletesResult ApplyDeletesAndUpdates(IndexWriter.ReaderPool readerPool, IList<SegmentCommitInfo> infos)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 long t0 = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
@@ -196,7 +208,7 @@ namespace Lucene.Net.Index
 
                 long gen = nextGen++;
 
-                List<SegmentCommitInfo> infos2 = new List<SegmentCommitInfo>();
+                JCG.List<SegmentCommitInfo> infos2 = new JCG.List<SegmentCommitInfo>();
                 infos2.AddRange(infos);
                 infos2.Sort(sortSegInfoByDelGen);
 
@@ -284,7 +296,7 @@ namespace Lucene.Net.Index
                         {
                             if (allDeleted == null)
                             {
-                                allDeleted = new List<SegmentCommitInfo>();
+                                allDeleted = new JCG.List<SegmentCommitInfo>();
                             }
                             allDeleted.Add(info);
                         }
@@ -346,7 +358,7 @@ namespace Lucene.Net.Index
                             {
                                 if (allDeleted == null)
                                 {
-                                    allDeleted = new List<SegmentCommitInfo>();
+                                    allDeleted = new JCG.List<SegmentCommitInfo>();
                                 }
                                 allDeleted.Add(info);
                             }
@@ -371,13 +383,22 @@ namespace Lucene.Net.Index
 
                 return new ApplyDeletesResult(anyNewDeletes, gen, allDeleted);
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         internal virtual long GetNextGen()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 return nextGen++;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -390,7 +411,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual void Prune(SegmentInfos segmentInfos)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(CheckDeleteStats());
                 long minGen = long.MaxValue;
@@ -422,11 +444,16 @@ namespace Lucene.Net.Index
                     Debugging.Assert(CheckDeleteStats());
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         private void Prune(int count)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (count > 0)
                 {
@@ -445,12 +472,17 @@ namespace Lucene.Net.Index
                     updates.RemoveRange(0, count); // LUCENENET: Checked count parameter for correctness
                 }
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         // Delete by Term
         private long ApplyTermDeletes(IEnumerable<Term> termsIter, ReadersAndUpdates rld, SegmentReader reader)
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 long delCount = 0;
                 Fields fields = reader.Fields;
@@ -535,12 +567,17 @@ namespace Lucene.Net.Index
 
                 return delCount;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
         }
 
         // DocValues updates
         private void ApplyDocValuesUpdates<T1>(IEnumerable<T1> updates, ReadersAndUpdates rld, SegmentReader reader, DocValuesFieldUpdates.Container dvUpdatesContainer) where T1 : DocValuesUpdate
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 Fields fields = reader.Fields;
                 if (fields == null)
@@ -626,6 +663,10 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

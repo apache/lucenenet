@@ -8,6 +8,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -65,7 +66,7 @@ namespace Lucene.Net.Index
             {
                 if (random.Next(4) == 2)
                 {
-                    System.Threading.Thread.Sleep(0);
+                    Thread.Yield();
                 }
             }
         }

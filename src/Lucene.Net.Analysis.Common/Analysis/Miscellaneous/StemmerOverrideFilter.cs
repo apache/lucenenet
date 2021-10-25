@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
@@ -6,6 +6,7 @@ using Lucene.Net.Util.Fst;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -158,7 +159,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             private readonly BytesRefHash hash = new BytesRefHash();
             private readonly BytesRef spare = new BytesRef();
-            private readonly List<string> outputValues = new List<string>();
+            private readonly IList<string> outputValues = new JCG.List<string>();
             private readonly bool ignoreCase;
             private readonly CharsRef charsSpare = new CharsRef();
 

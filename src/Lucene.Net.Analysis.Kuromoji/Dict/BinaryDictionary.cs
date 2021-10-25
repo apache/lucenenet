@@ -61,13 +61,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
         private static string LoadDataDir()
         {
             // LUCENENET specific - reformatted with :, renamed from "analysis.data.dir"
-            string currentPath = SystemProperties.GetProperty("kuromoji:data:dir",
-#if FEATURE_APPDOMAIN_BASEDIRECTORY
-            AppDomain.CurrentDomain.BaseDirectory
-#else
-            System.AppContext.BaseDirectory
-#endif
-            );
+            string currentPath = SystemProperties.GetProperty("kuromoji:data:dir", AppDomain.CurrentDomain.BaseDirectory);
 
             // If a matching directory path is found, set our DATA_DIR static
             // variable. If it is null or empty after this process, we need to

@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Utils;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.IO;
@@ -78,7 +79,8 @@ namespace Lucene.Net.Benchmarks.ByTask
         /// </summary>
         public virtual void Execute()
         {
-            lock (this)
+            UninterruptableMonitor.Enter(this);
+            try
             {
                 if (executed)
                 {
@@ -87,6 +89,10 @@ namespace Lucene.Net.Benchmarks.ByTask
                 executed = true;
                 runData.SetStartTimeMillis();
                 algorithm.Execute();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

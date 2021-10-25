@@ -1,8 +1,8 @@
 ﻿using Lucene.Net.Support;
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ja.Util
 {
@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Ja.Util
         public static string[] Parse(string line)
         {
             bool insideQuote = false;
-            List<string> result = new List<string>();
+            JCG.List<string> result = new JCG.List<string>();
             int quoteCount = 0;
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < line.Length; i++)

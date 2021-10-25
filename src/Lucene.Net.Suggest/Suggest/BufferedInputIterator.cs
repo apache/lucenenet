@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.Search.Suggest
         protected BytesRefArray m_payloads = new BytesRefArray(Counter.NewCounter());
         /// <summary>
         /// buffered context set entries </summary>
-        protected IList<ICollection<BytesRef>> m_contextSets = new List<ICollection<BytesRef>>();
+        protected IList<ICollection<BytesRef>> m_contextSets = new JCG.List<ICollection<BytesRef>>();
         /// <summary>
         /// current buffer position </summary>
         protected int m_curPos = -1;

@@ -1,6 +1,7 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -23,7 +24,7 @@ namespace Lucene.Net.Index
 
     internal class SynchronizedList<T> : IList<T>
     {
-        private readonly List<T> _list = new List<T>();
+        private readonly JCG.List<T> _list = new JCG.List<T>();
 
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
 

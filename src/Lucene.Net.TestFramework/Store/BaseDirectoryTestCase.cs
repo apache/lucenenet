@@ -501,11 +501,7 @@ namespace Lucene.Net.Store
         //                        using (IndexOutput output = this.dir.CreateOutput(fileName, NewIOContext(Random)))
         //                        {
         //                            // Add some lags so that the other thread can read the content of the directory.
-        //#if !FEATURE_THREAD_YIELD
-        //                            Thread.Sleep(0);
-        //#else
         //                            Thread.Yield();
-        //#endif
         //                        }
         //                        assertTrue(SlowFileExists(this.dir, fileName));
         //                    }
@@ -1325,7 +1321,7 @@ namespace Lucene.Net.Store
         //{
         //    using (Directory dir = GetDirectory(CreateTempDir()))
         //    {
-        //        IList<string> names = new List<string>();
+        //        IList<string> names = new JCG.List<string>();
         //        int iters = AtLeast(50);
         //        for (int iter = 0; iter < iters; iter++)
         //        {
@@ -1347,7 +1343,7 @@ namespace Lucene.Net.Store
         //            .Where(file => !ExtraFS.IsExtra(file)) // remove any ExtrasFS stuff.
         //            .ToList();
 
-        //        assertEquals(new List<string>(names), files);
+        //        assertEquals(new JCG.List<string>(names), files);
         //    }
         //}
 

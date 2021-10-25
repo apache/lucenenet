@@ -1,4 +1,5 @@
 ﻿using J2N.Threading;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -26,7 +27,6 @@ namespace Lucene.Net
 
     public class TestWorstCaseTestBehavior : LuceneTestCase
     {
-#if FEATURE_THREAD_YIELD
         [Ignore("Ignored in Lucene")]
         [Test]
         public virtual void TestThreadLeak()
@@ -41,7 +41,6 @@ namespace Lucene.Net
 
             // once alive, leave it to run outside of the test scope.
         }
-#endif
 
         private class ThreadAnonymousClass : ThreadJob
         {

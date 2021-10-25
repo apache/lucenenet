@@ -24,7 +24,7 @@
   <Import Project="$(SolutionDir)build/NuGet.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net451</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Analysis.Morfologik</AssemblyTitle>
@@ -35,26 +35,14 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
+  <Import Project="$(SolutionDir)build/Dependencies.props" />
+
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Uk\mapping_uk.txt" />
-    <None Remove="Uk\README" />
-    <None Remove="Uk\stopwords.txt" />
-    <None Remove="Uk\tagset.txt" />
-    <None Remove="Uk\ukrainian.dict" />
-    <None Remove="Uk\ukrainian.info" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Uk\mapping_uk.txt" />
-    <EmbeddedResource Include="Uk\README" />
-    <EmbeddedResource Include="Uk\stopwords.txt" />
-    <EmbeddedResource Include="Uk\tagset.txt" />
-    <EmbeddedResource Include="Uk\ukrainian.dict" />
-    <EmbeddedResource Include="Uk\ukrainian.info" />
+    <EmbeddedResource Include="Uk/**/*" Exclude="*.cs" />
   </ItemGroup>
 
   <ItemGroup>

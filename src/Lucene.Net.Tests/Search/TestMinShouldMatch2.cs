@@ -251,7 +251,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestNextAllTerms()
         {
-            IList<string> termsList = new List<string>(commonTerms.Length + mediumTerms.Length + rareTerms.Length);
+            IList<string> termsList = new JCG.List<string>(commonTerms.Length + mediumTerms.Length + rareTerms.Length);
             termsList.AddRange(commonTerms);
             termsList.AddRange(mediumTerms);
             termsList.AddRange(rareTerms);
@@ -270,7 +270,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestAdvanceAllTerms()
         {
-            IList<string> termsList = new List<string>(commonTerms.Length + mediumTerms.Length + rareTerms.Length);
+            IList<string> termsList = new JCG.List<string>(commonTerms.Length + mediumTerms.Length + rareTerms.Length);
             termsList.AddRange(commonTerms);
             termsList.AddRange(mediumTerms);
             termsList.AddRange(rareTerms);
