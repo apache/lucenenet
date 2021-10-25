@@ -181,7 +181,7 @@ Building on the Command Line is currently only supported on Windows.
 
 ##### Execution
 
-To build the source, clone or download and unzip the repository. From the repository root, execute the `batch.bat` file from a command prompt and include the desired options from the build options table below:
+To build the source, clone or download and unzip the repository. From the repository root, execute the `build.bat` file from a command prompt and include the desired options from the build options table below:
 
 ```
 > build [options]
