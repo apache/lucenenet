@@ -48,7 +48,8 @@ env:
 jobs:
   build:
     runs-on: windows-latest
-    if: ${{ github.repository == 'apache/lucenenet' }} # Run only on the main fork (SHAZWAZZA - check whether this is right)
+    # Run only on the main fork (SHAZWAZZA - check whether this is right)
+    # if: ${{ github.repository == 'apache/lucenenet' }}
     steps:
 
       # Checkout the main repo with all history so we get all tags
