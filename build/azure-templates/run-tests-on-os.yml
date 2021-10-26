@@ -219,7 +219,7 @@ steps:
   displayName: 'Publish Artifact: ${{ parameters.testResultsArtifactName }}'
   inputs:
     targetPath: '$(Build.ArtifactStagingDirectory)/${{ parameters.testResultsArtifactName }}'
-    ArtifactName: '${{ parameters.testResultsArtifactName }}_${{ parameters.osName }}_${{ parameters.framework }}_${{ parameters.vsTestPlatform }}'
+    ArtifactName: '${{ parameters.testResultsArtifactName }}_${{ parameters.osName }}_${{ parameters.framework }}_${{ parameters.vsTestPlatform }}__JobID_$(System.JobId)'
   condition: succeededOrFailed()
 
 # Due to the fact that it is not possible to loop a task and
