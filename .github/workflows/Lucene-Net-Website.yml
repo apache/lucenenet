@@ -28,15 +28,14 @@ name: 'Lucene.Net.Website'
 
 on:
   workflow_dispatch:
-  create:
-    tags:
-      - Website_*
   push:
+    tags:
+    - Website_*
     #branches:
     #- master
     paths:
     - 'websites/site/**/*'
-    #- '.github/workflows/Lucene-Net-Website.yml' # This causes the action to run whenever this file is added to any branch (seems like overkill)
+    - '.github/workflows/Lucene-Net-Website.yml'
 
 env:
   # If a tag is specified, the tag will be in the format: Website_4_8_0_beta00013 which
@@ -91,6 +90,7 @@ jobs:
 
           if ($version -ne '') {
             # the tag parsed to the correct version format, write the environment var
+            echo "parsed version is $version"
             echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_ENV
           }
           else {
