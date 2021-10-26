@@ -35,6 +35,8 @@ param (
     [int] $StagingPort = 8080
 )
 
+$ErrorActionPreference = "Stop"
+
 # if the base URL is the lucene live site default value we also need to include the version
 if ($BaseUrl -eq 'https://lucenenet.apache.org/docs/') {
     $BaseUrl += $LuceneNetVersion
@@ -72,7 +74,7 @@ $DocFxExe = "$ToolsFolder\docfx\docfx.exe"
 if (-not (test-path $DocFxExe)) {
     Write-Host "Retrieving docfx..."
     $DocFxZip = "$ToolsFolder\tmp\docfx.zip"
-    Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.56.2/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60
+    Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.58/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60
 
     #unzip
     Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
@@ -121,9 +123,13 @@ if ($DisablePlugins -eq $false) {
     $pluginSln = (Join-Path -Path $RepoRoot "src\docs\DocumentationTools.sln")
     & $nuget restore $pluginSln
 
+    if (-not $?) {throw "Failed to restore plugin sln"}
+
     $PluginsFolder = (Join-Path -Path $ApiDocsFolder "Templates\LuceneTemplate\plugins")
     New-Item $PluginsFolder -type directory -force
     & $msbuild $pluginSln /target:LuceneDocsPlugins "/p:OutDir=$PluginsFolder"
+
+    if (-not $?) {throw "Failed to build plugin sln"}
 }
 
 # update the docjx.global.json file based
@@ -205,15 +211,19 @@ if ($? -and $DisableBuild -eq $false) {
         # build the output
         Write-Host "Building site output for $projFile..."
 
-        # Before we build the site we have to clear the frickin docfx cache!
-        # else the xref links don't work on the home page. That is crazy.
-        Remove-Item (Join-Path -Path $ApiDocsFolder "obj\.cache") -recurse -force -ErrorAction SilentlyContinue
+        # Specifying --force, --forcePostProcess and --cleanupCacheHistory
+        # seems to be required in order for all xref links to resolve consistently across
+        # all of the docfx builds (see https://dotnet.github.io/docfx/RELEASENOTE.html?tabs=csharp).
+        # Previously we used to do this:
+        #   Remove-Item (Join-Path -Path $ApiDocsFolder "obj\.cache") -recurse -force -ErrorAction SilentlyContinue
+        # to force remove the cache else the xref's wouldn't work correctly. So far with these new parameters
+        # it seems much happier.
 
         if ($Clean) {
-            & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --force --debug
+            & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --force --debug --cleanupCacheHistory --force --forcePostProcess
         }
         else {
-            & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --debug
+            & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --debug --cleanupCacheHistory --force --forcePostProcess
         }
 
         # Add the baseUrl to the output xrefmap, see https://github.com/dotnet/docfx/issues/2346#issuecomment-356054027

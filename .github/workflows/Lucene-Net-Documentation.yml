@@ -15,31 +15,38 @@
 # specific language governing permissions and limitations
 # under the License.
 
-name: 'Lucene.Net.Website'
+name: 'Lucene.Net.Documentation'
 
 # This will:
 # checkout this repo
-# get current or latest tag to parse a version for use in the website
-# Build the website
+# get current or latest tag to parse a version for use in the docs
+# change to docs/VERSION branch
+# Build the docs
+
 # Checkout the website repo
 # Create a branch
 # Commit/Push to the branch
 # Create a PR
 
+# push the docs/VERSION branch
+
 on:
   workflow_dispatch:
   push:
     tags:
-    - Website_*
+    - Docs_*
     #branches:
     #- master
     paths:
-    - 'websites/site/**/*'
-    - '.github/workflows/Lucene-Net-Website.yml'
+    - 'websites/apidocs/**'
+    - 'src/docs/LuceneDocsPlugins/**'
+    - '.github/workflows/Lucene-Net-Documentation.yml'
 
 env:
-  # If a tag is specified, the tag will be in the format: Website_4_8_0_beta00013 which
-  # will be parsed to create the version number used in the docs like 4.8.0-beta00013
+  # If a tag is specified, the tag will be in the format: Docs_4_8_0_beta00013
+  # Or if not tag is specified, the latest Lucene.Net_4_8_0_beta00013 release tag will be used
+  # which will be parsed to create the version number used in the docs like 4.8.0-beta00013
+  CURRENT_TAG: "NO-VERSION"
   RELEASE_VERSION: "(no tag)"
   SITE_REPO: "${{ github.repository }}-site"
   GIT_MAIN_REPO:  "${{ github.workspace }}\\main-repo\\.git"
@@ -47,8 +54,6 @@ env:
 jobs:
   build:
     runs-on: windows-latest
-    # Run only on the main fork (SHAZWAZZA - check whether this is right)
-    # if: ${{ github.repository == 'apache/lucenenet' }}
     steps:
 
       # Checkout the main repo with all history so we get all tags
@@ -60,6 +65,8 @@ jobs:
 
       - name: Set version from tag
         run: |
+          # initialize to SHA
+          echo ("CURRENT_TAG=" + $Env:GITHUB_SHA) >> $env:GITHUB_ENV
           $ref = $Env:GITHUB_REF
 
           if ($ref.StartsWith("refs/tags/")) {
@@ -76,6 +83,9 @@ jobs:
             exit 1
           }
 
+          # write the environment var
+          echo ("CURRENT_TAG=" + $tag) >> $env:GITHUB_ENV
+
           $parts = $tag.Split("_")
           $version = '';
           For ($i=1; $i -le $parts.Length; $i++) {
@@ -90,7 +100,6 @@ jobs:
 
           if ($version -ne '') {
             # the tag parsed to the correct version format, write the environment var
-            echo "parsed version is $version"
             echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_ENV
           }
           else {
@@ -101,11 +110,17 @@ jobs:
 
       - name: Verify environment variables
         run: |
+          echo "CURRENT_TAG=$Env:CURRENT_TAG"
           echo "RELEASE_VERSION=$Env:RELEASE_VERSION"
         shell: powershell
 
-      - name: Build website
-        run: ./main-repo/websites/site/site.ps1 -Clean
+      - name: Change branch
+        run: |
+          git --git-dir "$Env:GIT_MAIN_REPO" checkout -b "docs/${{ env.RELEASE_VERSION }}"
+        shell: powershell
+
+      - name: Build docs
+        run: ./main-repo/websites/apidocs/docs.ps1 -Clean -LuceneNetVersion ${{ env.RELEASE_VERSION }}
         shell: powershell
 
       - name: Checkout Lucene.Net website
@@ -115,27 +130,31 @@ jobs:
           ref: asf-site
           path: website-repo
 
-      - name: Copy website files
-        run: Get-ChildItem -Path "$Env:GITHUB_WORKSPACE\main-repo\websites\site\_site" | Copy-Item -Destination "$Env:GITHUB_WORKSPACE\website-repo" -Recurse -Force
+      - name: Copy documentation site files
+        run: Get-ChildItem -Path "$Env:GITHUB_WORKSPACE\main-repo\websites\apidocs\_site" | Copy-Item -Destination "$Env:GITHUB_WORKSPACE\website-repo\docs\$Env:RELEASE_VERSION" -Recurse -Force
         shell: powershell
 
+      # Always push to the same branch based on the CURRENT_TAG (latest version tag)
+      # Because we are always building the docs against a consistent version
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.LUCENE_NET_WEBSITE_BUILD }}
           path: website-repo
-          commit-message: New website version built
+          commit-message: New documentation version built
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          branch: task/website-build-${{ github.sha }}
+          branch: ${{ env.CURRENT_TAG }}
           delete-branch: true
-          title: 'New website build ${{ github.sha }}'
+          title: 'New documentation version built ${{ env.CURRENT_TAG }}'
           body: |
-            New website build on rev/tag ${{ github.sha }}
-            For release version ${{ env.RELEASE_VERSION }}
+            New documentation version built ${{ env.CURRENT_TAG }}
+            - For version ${{ env.RELEASE_VERSION }}
 
       - name: Check outputs
         run: |
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
           echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+
+      # TODO: Commit and push docs branch
