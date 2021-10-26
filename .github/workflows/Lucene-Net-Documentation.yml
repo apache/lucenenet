@@ -32,10 +32,9 @@ name: 'Lucene.Net.Documentation'
 
 on:
   workflow_dispatch:
-  create:
-    tags:
-      - Docs_*
   push:
+    tags:
+    - Docs_*
     #branches:
     #- master
     paths:
