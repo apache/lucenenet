@@ -2,10 +2,13 @@
 uid: contributing/make-release
 ---
 
-# Making a release of Lucene.Net
+# Making a release of Lucene.NET
 
 > [!NOTE]
 > This is a project-specific procedure, based on the [Apache Release Creation Process](https://infra.apache.org/release-publishing.html)
+
+> [!NOTE]
+> All commands should be executed from the root of the Lucene.NET repository unless otherwise stated.
 
 ## Versioning
 
@@ -46,6 +49,14 @@ The following steps need only to be performed once.
 
 ## Release Steps
 
+- Checkout the Lucene.NET master branch:
+  - If you have no local clone:
+    - `git clone https://github.com/apache/lucenenet.git`
+  - If you are updating your local clone:
+    - Save your local work (if any, run `git status` to determine this) in the stash or commit it to a branch other than master
+    - `git checkout master` and make sure it succeeds to be on the master branch
+    - `git pull https://gitbox.apache.org/repos/asf/lucenenet.git master` to update your local copy
+
 - Prepare a GitHub Release. Review the [master branch commit history](https://github.com/apache/lucenenet/commits/master), and [create a new **DRAFT** GitHub release](https://github.com/apache/lucenenet/releases/new) using the following template:
 
   ```txt
@@ -66,7 +77,37 @@ The following steps need only to be performed once.
   * #<GitHub Issue ID (optional)> - <A descriptive title (may need to add context or summarize)>
   ```
 
-- Checkout the Lucene.NET master branch: `git clone https://github.com/apache/lucenenet.git`
+  > [!TIP]
+  > Click the "Save draft" button frequently during the above updates to ensure you don't lose them if your browser crashes.
+
+  > [!NOTE]
+  > Be sure to check the "This is a pre-release" box as appropriate.
+  
+- Click the "Save draft" button when finished.
+  
+
+- Update Website with the release notes
+  
+  Only people with permissions on GitHub will be able to see the draft release notes. [PMC members](https://people.apache.org/phonebook.html?ctte=lucenenet) and [committers](https://people.apache.org/phonebook.html?unix=lucenenet) can have permissions, but only if they set them up themselves. So, we duplicate the above information on a release notes page that all subscribers of the dev@lucenenet.apache.org mailing list can view during the release vote.
+
+  > [!NOTE]
+  > If the release notes require updating, don't forget the primary place to update them are on the GitHub Releases draft page above. It is best to update that page and then copy the changes from GitHub Releases to the release notes page on the website, then commit the changes and [publish the website](https://lucenenet.apache.org/contributing/documentation.html#website) as usual.
+
+  - Create a new release notes page in the `/websites/site/release-notes` directory, in most cases it's easiest to just copy the previous release notes page.
+    - Ensure the `uid` in the header is correct
+    - Update all headers to the release version number (i.e. `4.8.0-beta00008`)
+  - Copy the release notes from the GitHub Releases draft to the new website release notes page
+    - Delete the prior information in the current version release notes except for the header (whether from a prior version or an update)
+    - Copy and paste the GitHub Releases draft just below the header
+    - Add the URLs to issues on GitHub. These are the instructions for Notepad++. Modify as needed if you are using another text editor.
+      - Find: `#(\d+)`
+      - Replace with: `[#$1]\(https://github.com/apache/lucenenet/pull/$1\)`
+      - Search mode: "regular expression"
+      - Click "Replace All" and verify the URLs work correctly
+
+  - Follow the instructions on how to [build, test & publish the website](https://lucenenet.apache.org/contributing/documentation.html#website) and run/test the website locally.
+
+  - Commit changes and [publish the website](https://lucenenet.apache.org/contributing/documentation.html#website).
 
 - Add Missing License Headers
 
@@ -79,7 +120,7 @@ The following steps need only to be performed once.
   - Review and commit the changes to your local Git clone, adding exclusions to `.rat-excludes` and re-running as necessary
     - Exclude files that already have license headers
     - Exclude files that are automatically generated
-    - Exclude files that don't work properly with licence headers included
+    - Exclude files that don't work properly with license headers included
   - Push the changes to the remote `lucenenet` repository (`https://gitbox.apache.org/repos/asf/lucenenet.gif`)
 
     ```powershell
@@ -92,7 +133,10 @@ The following steps need only to be performed once.
   build -pv:<packageVersion> -t -mp:10
   ```
 
-- Execute a complete test on a temporary Azure DevOps organization (it can take around 30-40 minutes) (see [build instructions on README.md](https://github.com/apache/lucenenet#azure-devops)).
+  > [!NOTE]
+  > Adjust the `-mp:` (maximum number of parallel jobs) number as appropriate based on the machine that runs them. In general, a powerful machine should be able to run 10 jobs or more and a weaker machine may only be able to run 7 or 8 jobs in parallel. It may take some experimentation to find the right number on your hardware to execute the tests fastest.
+
+- Execute a complete test on a temporary Azure DevOps organization (it can take around 40-50 minutes) (see [build instructions on README.md](https://github.com/apache/lucenenet#azure-devops)).
 
 ## Successful Release Preparation
 
@@ -152,16 +196,26 @@ Perform basic checks against the release binary:
 
 ### Add Release Artifacts to the SVN `dev` Distribution Repository
 
-```powershell
-# Note the command copies the <repo root>/svn-release/KEYS file to <repo-root>/svn-dev/KEYS
-# and overwrites any local changes to it
+  > [!WARNING]
+  > The following command copies the `<repo root>/svn-release/KEYS` file to `<repo-root>/svn-dev/KEYS` and overwrites any local changes to it.
 
+```powershell
 dotnet msbuild -t:CommitReleaseCandidate -p:PackageVersion=<packageVersion>
 ```
 
 ### Create a VOTE Thread
 
 Notify the developer mailing list of a new version vote. Be sure to replace all values in [] with the appropriate values. Use the [Countdown Timer Tool](https://www.timeanddate.com/countdown/create) to create a timer to show exactly when the vote ends.
+
+Use the [Apache URL Shortener](https://s.apache.org/) to replace the URLs in the release vote email to ensure they are not broken using the following ID pattern:
+
+- `<packageVersion>-tag`
+- `<packageVersion>-notes`
+- `<packageVersion>-test`
+- `<packageVersion>-countdown`
+
+> [!NOTE]
+> Apache doesn't allow usage of 3rd party URL shortener services.
 
 ```txt
 To: dev@lucenenet.apache.org
@@ -180,6 +234,9 @@ https://github.com/apache/lucenenet/tree/[tag]
 The release notes are listed at:
 https://github.com/apache/lucenenet/releases/tag/[tag-url]
 
+The tests for this release can be viewed at:
+https://dev.azure.com/lucene-net/Lucene.NET/_build/results?buildId=<Build ID for Release>&view=ms.vss-test-web.build-test-results-tab
+
 The release was made using the Lucene.NET release process, documented on the website:
 https://lucenenet.apache.org/contributing/make-release.html
 
@@ -196,9 +253,6 @@ The vote passes if at least three binding +1 votes are cast.
 [ ] -1 Do not release the packages because...
 
 ```
-
-> [!NOTE]
-> Only people with permissions on GitHub will be able to see the draft release notes. [PMC members](https://people.apache.org/phonebook.html?ctte=lucenenet) and [committers](https://people.apache.org/phonebook.html?unix=lucenenet) can have permissions, but only if they set them up themselves.
 
 ## After a Successful Vote
 
@@ -225,13 +279,21 @@ The vote is ***successful/not successful***
 
 ### Release to NuGet.org
 
+> [!TIP]
+> NuGet.org's API keys expire every year, so it would be good to check the NuGet.org API Key section to see whether the current API key is current and update it prior to attempting the steps below.
+
 - Login to the [Lucene.NET release pipeline](https://dev.azure.com/lucene-net/Lucene.NET/_release?_a=releases&view=mine&definitionId=1) on Azure DevOps
 
 - Click the release that corresponds to the version that is being released
 
 - The `Release [VOTE]` step should be waiting for manual intervention, click the `Resume` button
 
-- Enter the result of the vote in the following format: `Binding Votes +1: [3] 0: [0] -1: [0] Non Binding Votes +1: [3] 0: [0] -1: [0]`, updating the values within `[ ]` appropriately
+- Enter the result of the vote in the following format, updating the values within `[ ]` appropriately
+
+  ```
+  Binding Votes +1: [3] 0: [0] -1: [0]
+  Non Binding Votes +1: [3] 0: [0] -1: [0]
+  ```
 
 - Upon clicking `Resume` again the release will finish, submitting the NuGet packages to NuGet.org
 
@@ -260,28 +322,34 @@ To reduce the load on the ASF mirrors, projects are required to delete old relea
 
 Remove the old releases from SVN under https://dist.apache.org/repos/dist/release/lucenenet/.
 
-### Update Website with new release
-
-- Update the `/websites/site/lucenetemplate/doap_Lucene_Net.rdf` file to reflect the new version and ensure other links/info in the file are correct.
-  > [!IMPORTANT]
-  > Only update the version if it's a new stable version.
-- Create a new release page in the `/websites/site/download`, in most cases it's easiest to just copy the previous release page.
-  - Ensure the `uid` in the header is correct
-  - Update all headers, status, release date to be correct
-  - Ensure supported frameworks and packages section is accurate for the new release
-- Add the new release page to the `/websites/site/download/toc.yml` file
-- Follow the instructions on how to [build, test & publish the website](https://lucenenet.apache.org/contributing/documentation.html#website) and run/test the website locally.
-- Commit changes and [publish the website](https://lucenenet.apache.org/contributing/documentation.html#website).
-
-### Update the API Documentation with new release
-
-Follow the instructions on how to [build](https://lucenenet.apache.org/contributing/documentation.html#api-docs), test and [publish](https://lucenenet.apache.org/contributing/documentation.html#publishing-the-docs) the docs.
-
 ### Post-Release Steps
 
 - Log the new version at https://reporter.apache.org/addrelease.html?lucenenet
 
 - Publish the Draft [GitHub Release](https://github.com/apache/lucenenet/releases) that was [created earlier](#release-steps), updating the tag if necessary
+
+- Update Website with new release
+
+  - Update the `/websites/site/lucenetemplate/doap_Lucene_Net.rdf` file to reflect the new version and ensure other links/info in the file are correct.
+    > [!IMPORTANT]
+    > Only update the version if it's a new stable version.
+
+  - Create a new release page in the `/websites/site/download`, in most cases it's easiest to just copy the previous release page.
+    - Ensure the `uid` in the header is correct
+    - Update all headers, status, release date to be correct
+    - Ensure supported frameworks and packages section is accurate for the new release
+
+  - Add the new release page to the `/websites/site/download/toc.yml` file
+
+  - Add the new release version and release date to the `/websites/site/download/download.md` file
+
+  - Follow the instructions on how to [build, test & publish the website](https://lucenenet.apache.org/contributing/documentation.html#website) and run/test the website locally.
+
+  - Commit changes and [publish the website](https://lucenenet.apache.org/contributing/documentation.html#website).
+
+- Update the API Documentation with new release
+
+  - Follow the instructions on how to [build](https://lucenenet.apache.org/contributing/documentation.html#api-docs), test and [publish](https://lucenenet.apache.org/contributing/documentation.html#publishing-the-docs) the docs.
 
 - Send announcement email 24 hours after the release (to ensure the mirrors have propagated the download locations)
 
@@ -303,7 +371,7 @@ Follow the instructions on how to [build](https://lucenenet.apache.org/contribut
   https://github.com/apache/lucenenet#all-packages-1
 
   Changes in this version:
-  https://github.com/apache/lucenenet/releases/tag/<tag>
+  https://github.com/apache/lucenenet/releases/tag/[tag]
 
   The Apache Lucene.NET Team
 
@@ -316,3 +384,14 @@ The release vote may fail due to an issue discovered in the release candidate. I
 - Sending an email to [dev@lucenenet.apache.org](mailto:dev@lucenenet.apache.org) on the VOTE thread notifying of the vote’s cancellation.
 
 A new release candidate can now be prepared. When complete, a new VOTE thread can be started as described in the steps above.
+
+> [!NOTE]
+> Due to the fact that an Azure Pipeline cannot be re-run with the same version number and users who reference `.nupkg` files will have them in their local `.nuget` cache, there are 2 choices:
+>
+> 1. To use the same version number that failed:
+>   - Create a new Azure DevOps pipeline by copying the settings from the pipeline named Lucene.NET-Release.
+>   - Test the Lucene.NET-Release pipeline thoroughly, using different version numbers than the one you are releasing.
+>   - Create a release pipeline and copy the settings from the release pipeline named Lucene.NET-Release.   
+>   - Delete the tag for this release and recreate it with the same version number at the appropriate commit.
+>   - If the vote has already started, the new release vote email should provide instructions for removing the previous version from the `.nuget` cache to ensure the new release with the same version is the one being scrutinized.
+> 2. To use a new version number, simply re-start the process from the beginning, copy the release notes from the previous version (both on GitHub and the website) and follow all of the remaining steps above. Discard the draft release notes on GitHub when complete.
