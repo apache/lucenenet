@@ -51,15 +51,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{4DF7EACE
 		src\dotnet\tools\Directory.Build.props = src\dotnet\tools\Directory.Build.props
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apidocs", "apidocs", "{58FD6E39-F30F-4566-90E5-B7C9D6BC0660}"
-	ProjectSection(SolutionItems) = preProject
-		apidocs\docfx.filter.yml = apidocs\docfx.filter.yml
-		apidocs\docfx.json = apidocs\docfx.json
-		apidocs\docs.ps1 = apidocs\docs.ps1
-		apidocs\index.md = apidocs\index.md
-		apidocs\toc.yml = apidocs\toc.yml
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4DF0A2A1-B9C7-4EE5-BAF0-BEEF53E34220}"
 	ProjectSection(SolutionItems) = preProject
 		.asf.yaml = .asf.yaml
@@ -216,6 +207,27 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{4D0ED7D9
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.AllProjects", "src\Lucene.Net.Tests.AllProjects\Lucene.Net.Tests.AllProjects.csproj", "{9880B87D-8D14-476B-B093-9C3AA0DA8B24}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "websites", "websites\", "{8988CDA4-8420-4BEE-869A-66825055EED2}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_59352"
+		Debug.AspNetCompiler.PhysicalPath = "websites\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_59352\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_59352"
+		Release.AspNetCompiler.PhysicalPath = "websites\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_59352\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "59352"
+		SlnRelativePath = "websites\"
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -487,6 +499,8 @@ Global
 		{9880B87D-8D14-476B-B093-9C3AA0DA8B24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9880B87D-8D14-476B-B093-9C3AA0DA8B24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9880B87D-8D14-476B-B093-9C3AA0DA8B24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8988CDA4-8420-4BEE-869A-66825055EED2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8988CDA4-8420-4BEE-869A-66825055EED2}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
