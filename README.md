@@ -124,7 +124,7 @@ There is also a dotnet command line tool available on NuGet. It contains all of 
 - [Prerequisite: .NET Core 3.1.0 Runtime](https://www.microsoft.com/net/download/core#/runtime)
 
 ```
-dotnet tool install lucene-cli -g --version 4.8.0-beta00014
+dotnet tool install lucene-cli -g --version 4.8.0-beta00015
 ```
 
 > NOTE: The version of the CLI you install should match the version of Lucene.NET you use.
@@ -230,10 +230,10 @@ To build the source, clone or download and unzip the repository. From the reposi
     </tr>
 </table>
 
-For example the following command creates a Release build with NuGet package version 4.8.0‑ci00014 and assembly file version 4.8.0:
+For example the following command creates a Release build with NuGet package version 4.8.0‑ci00015 and assembly file version 4.8.0:
 
 ```
-> build ‑‑Configuration:Release ‑pv:4.8.0‑ci00014 ‑v:4.8.0
+> build ‑‑Configuration:Release ‑pv:4.8.0‑ci00015 ‑v:4.8.0
 ```
 
 In the above example we are using "ci" in the package version to indicate this is not a publically released beta version but rather the ouput of a continuous integration build from master which occured after beta00014 but before beta00015 was released.  
