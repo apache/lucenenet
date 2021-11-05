@@ -1,4 +1,6 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -6,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.ExceptionServices;
 using System.Text;
 
 namespace Lucene.Net.Replicator.Http
@@ -161,13 +164,20 @@ namespace Lucene.Net.Replicator.Http
                 //           and have these Sync methods with their caveats.
                 input = response.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             }
-            catch (Exception)
+            catch (Exception t) when (t.IsThrowable())
             {
                 // the response stream is not an exception - could be an error in servlet.init().
-                response.EnsureSuccessStatusCode();
-                //Note: This is unreachable, but the compiler and resharper cant see that EnsureSuccessStatusCode always
-                //      throws an exception in this scenario. So it complains later on in the method.
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                // LUCENENET: Check status code to see if we had an HTTP error
+                try
+                {
+                    response.EnsureSuccessStatusCode();
+                }
+                catch (HttpRequestException e)
+                {
+                    throw RuntimeException.Create(e);
+                }
+
+                throw RuntimeException.Create("Unknown error: ", t);
             }
 
             Exception exception;
@@ -177,22 +187,17 @@ namespace Lucene.Net.Replicator.Http
                 JsonSerializer serializer = JsonSerializer.Create(ReplicationService.JSON_SERIALIZER_SETTINGS);
                 exception = (Exception)serializer.Deserialize(new JsonTextReader(reader));
             }
-            catch (Exception e)
+            catch (Exception th) when (th.IsThrowable())
             {
                 //not likely
-                throw new HttpRequestException(string.Format("Failed to read exception object: {0} {1}", response.StatusCode, response.ReasonPhrase), e);
+                throw RuntimeException.Create(string.Format("Failed to read exception object: {0} {1}", response.StatusCode, response.ReasonPhrase), th);
             }
             finally
             {
                 input.Dispose();
             }
 
-            if (exception is IOException)
-            {
-                //NOTE: Preserve server stacktrace, but there are probably better options.
-                throw new IOException(exception.Message, exception);
-            }
-            throw new HttpRequestException(string.Format("unknown exception: {0} {1}", response.StatusCode, response.ReasonPhrase), exception);
+            Util.IOUtils.ReThrow(exception);
         }
 
         /// <summary>
@@ -281,28 +286,39 @@ namespace Lucene.Net.Replicator.Http
         /// </summary>
         protected virtual T DoAction<T>(HttpResponseMessage response, bool consume, Func<T> call)
         {
-            Exception error = new NotImplementedException();
+            Exception th = null;
             try
             {
                 return call();
             }
-            catch (IOException e)
+            catch (Exception t) when (t.IsThrowable())
             {
-                error = e;
-            }
-            catch (Exception e)
-            {
-                error = new IOException(e.Message, e);
+                th = t;
             }
             finally
             {
-                //JAVA: Had a TryCatch here and then used a EntityUtils class to consume the response,
-                //JAVA: Unsure of what that was trying to achieve it was left out.
-                //JAVA: This also means that right now this overload does nothing more than support the signature given by the Java ver.
-                //JAVA: Overall from a .NET perspective, this method is overly suspicious.
-                VerifyStatus(response);
+                try
+                {
+                    VerifyStatus(response);
+                }
+                finally
+                {
+                    if (consume)
+                    {
+                        try
+                        {
+                            response.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult()?.Dispose();
+                        }
+                        finally
+                        {
+                            // ignoring on purpose
+                        }
+                    }
+                }
             }
-            throw error; // should not get here
+            if (Debugging.AssertsEnabled) Debugging.Assert(th != null); // extra safety - if we get here, it means the Func<T> failed
+            Util.IOUtils.ReThrow(th);
+            return default; // silly, if we're here, IOUtils.reThrow always throws an exception 
         }
 
         /// <summary>
@@ -311,7 +327,7 @@ namespace Lucene.Net.Replicator.Http
         /// </summary>
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
+            if (disposing && !isDisposed)
             {
                 httpc.Dispose();
             }
