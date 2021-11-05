@@ -227,11 +227,7 @@ namespace Lucene.Net.Replicator.Http
             req.Content = new StringContent(JToken.FromObject(entity, JsonSerializer.Create(ReplicationService.JSON_SERIALIZER_SETTINGS))
                 .ToString(Formatting.None), Encoding.UTF8, "application/json");
 
-            //.NET Note: Bridging from Async to Sync, this is not ideal and we could consider changing the interface to be Async or provide Async overloads
-            //      and have these Sync methods with their caveats.
-            HttpResponseMessage response = httpc.SendAsync(req).ConfigureAwait(false).GetAwaiter().GetResult();
-            VerifyStatus(response);
-            return response;
+            return Execute(req);
         }
 
         /// <summary>
@@ -241,11 +237,17 @@ namespace Lucene.Net.Replicator.Http
         protected virtual HttpResponseMessage ExecuteGet(string request, params string[] parameters)
         {
             EnsureOpen();
+
             //Note: No headers? No ContentType?... Bad use of Http?
             HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Get, QueryString(request, parameters));
+            return Execute(req);
+        }
+
+        private HttpResponseMessage Execute(HttpRequestMessage request)
+        {
             //.NET Note: Bridging from Async to Sync, this is not ideal and we could consider changing the interface to be Async or provide Async overloads
             //      and have these Sync methods with their caveats.
-            HttpResponseMessage response = httpc.SendAsync(req).ConfigureAwait(false).GetAwaiter().GetResult();
+            HttpResponseMessage response = httpc.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false).GetAwaiter().GetResult();
             VerifyStatus(response);
             return response;
         }
