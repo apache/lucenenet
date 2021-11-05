@@ -130,7 +130,7 @@ namespace Lucene.Net.Replicator
                         reader.Dispose();
                     }
                 }
-                catch (Exception)
+                catch (Exception e) when (e.IsException())
                 {
                     // we can hit IndexNotFoundException or e.g. EOFException (on
                     // segments_N) because it is being copied at the same time it is read by
@@ -261,7 +261,7 @@ namespace Lucene.Net.Replicator
             handler = new IndexReplicationHandler(handlerDir, () =>
             {
                 if (Random.NextDouble() < 0.2 && failures > 0)
-                    throw new Exception("random exception from callback");
+                    throw RuntimeException.Create("random exception from callback");
                 return null;
             });
             client = new ReplicationClientAnonymousClass(this, replicator, handler, sourceDirFactory, failures);
@@ -351,7 +351,7 @@ namespace Lucene.Net.Replicator
 
             protected override void HandleUpdateException(Exception exception)
             {
-                if (exception is IOException)
+                if (exception.IsIOException())
                 {
                     if (Verbose)
                     {
@@ -375,6 +375,11 @@ namespace Lucene.Net.Replicator
                         // verify index consistency
                         TestUtil.CheckIndex(test.handlerDir.Delegate);
                     }
+                    catch (Exception e) when (e.IsIOException())
+                    {
+                        // exceptions here are bad, don't ignore them
+                        throw RuntimeException.Create(e);
+                    }
                     finally
                     {
                         // count-down number of failures
@@ -395,7 +400,10 @@ namespace Lucene.Net.Replicator
                 }
                 else
                 {
-                    ExceptionDispatchInfo.Capture(exception).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
+                    if (exception.IsRuntimeException())
+                        ExceptionDispatchInfo.Capture(exception).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
+                    else
+                        throw RuntimeException.Create(exception);
                 }
             }
         }

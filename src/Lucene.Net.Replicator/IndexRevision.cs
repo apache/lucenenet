@@ -102,7 +102,7 @@ namespace Lucene.Net.Replicator
         public IndexRevision(IndexWriter writer)
         {
             sdp = writer.Config.IndexDeletionPolicy as SnapshotDeletionPolicy;
-            if (sdp == null)
+            if (sdp is null)
                 throw new ArgumentException("IndexWriter must be created with SnapshotDeletionPolicy", nameof(writer));
 
             this.writer = writer;
