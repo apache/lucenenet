@@ -1,4 +1,4 @@
-using Lucene.Net.Store;
+﻿using Lucene.Net.Store;
 using System;
 using System.IO;
 using Directory = Lucene.Net.Store.Directory;
@@ -44,6 +44,8 @@ namespace Lucene.Net.Replicator
         {
             string sourceDirectory = Path.Combine(workingDirectory, sessionId, source);
             System.IO.Directory.CreateDirectory(sourceDirectory);
+            if (!System.IO.Directory.Exists(sourceDirectory))
+                throw new IOException("failed to create source directory " + sourceDirectory);
             return FSDirectory.Open(sourceDirectory);
         }
 

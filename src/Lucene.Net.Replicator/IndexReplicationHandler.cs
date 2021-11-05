@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
@@ -138,7 +138,7 @@ namespace Lucene.Net.Replicator
                 {
                     directory.DeleteFile(file);
                 }
-                catch
+                catch (Exception t) when (t.IsThrowable())
                 {
                     // suppress any exception because if we're here, it means copy
                     // failed, and we must cleanup after ourselves.
@@ -182,7 +182,7 @@ namespace Lucene.Net.Replicator
                             {
                                 directory.DeleteFile(file);
                             }
-                            catch
+                            catch (Exception t) when (t.IsThrowable())
                             {
                                 // suppress, it's just a best effort
                             }
@@ -191,7 +191,7 @@ namespace Lucene.Net.Replicator
 
                 }
             }
-            catch 
+            catch (Exception t) when (t.IsThrowable())
             {
                 // ignore any errors that happens during this state and only log it. this
                 // cleanup will have a chance to succeed the next time we get a new
@@ -230,7 +230,7 @@ namespace Lucene.Net.Replicator
             {
                 directory.DeleteFile(IndexFileNames.SEGMENTS_GEN);
             }
-            catch
+            catch (Exception t) when (t.IsThrowable())
             {
                 // suppress any errors while deleting this file.
             }
@@ -326,7 +326,7 @@ namespace Lucene.Net.Replicator
                 {
                     callback.Invoke();
                 }
-                catch (Exception e)
+                catch (Exception e) when (e.IsException())
                 {
                     throw new IOException(e.ToString(), e);
                 }

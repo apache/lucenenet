@@ -156,16 +156,20 @@ namespace Lucene.Net.Replicator
             // against those errors, app will probably hit them elsewhere.
             IndexReplicationHandler.CleanupOldIndexFiles(indexDirectory, indexSegmentsFile);
             IndexReplicationHandler.CleanupOldIndexFiles(taxonomyDirectory, taxonomySegmentsFile);
-            
+
             // successfully updated the index, notify the callback that the index is
             // ready.
-            if (callback != null) {
-              try {
-                callback.Invoke();
-              } catch (Exception e) {
-                throw new IOException(e.Message, e);
-              }
-            } 
+            if (callback != null)
+            {
+                try
+                {
+                    callback.Invoke();
+                }
+                catch (Exception e) when (e.IsException())
+                {
+                    throw new IOException(e.ToString(), e);
+                }
+            }
         }
 
         // LUCENENET specific utility method

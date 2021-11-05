@@ -164,7 +164,7 @@ namespace Lucene.Net.Replicator
                         reader.Dispose();
                     }
                 }
-                catch (Exception)
+                catch (Exception e) when (e.IsException())
                 {
                     // we can hit IndexNotFoundException or e.g. EOFException (on
                     // segments_N) because it is being copied at the same time it is read by
@@ -330,7 +330,7 @@ namespace Lucene.Net.Replicator
             handler = new IndexAndTaxonomyReplicationHandler(handlerIndexDir, handlerTaxoDir, () =>
             {
                 if (Random.NextDouble() < 0.2 && failures > 0)
-                    throw new Exception("random exception from callback");
+                    throw RuntimeException.Create("random exception from callback");
                 return null;
             });
             client = new ReplicationClientAnonymousClass(this, replicator, handler, @in, failures);
@@ -440,7 +440,7 @@ namespace Lucene.Net.Replicator
 
             protected override void HandleUpdateException(Exception exception)
             {
-                if (exception is IOException)
+                if (exception.IsIOException())
                 {
                     try
                     {
@@ -467,6 +467,10 @@ namespace Lucene.Net.Replicator
                         // verify taxonomy index is fully consistent (since we only add one
                         // category to all documents, there's nothing much more to validate
                         TestUtil.CheckIndex(test.handlerTaxoDir.Delegate);
+                    }
+                    catch (Exception e) when (e.IsIOException())
+                    {
+                        throw RuntimeException.Create(e);
                     }
                     finally
                     {

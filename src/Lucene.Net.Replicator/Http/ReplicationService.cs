@@ -1,10 +1,12 @@
 ﻿using J2N.IO;
 using J2N.Text;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Replicator.Http.Abstractions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 
 namespace Lucene.Net.Replicator.Http
 {
@@ -120,7 +122,7 @@ namespace Lucene.Net.Replicator.Http
             string param = request.QueryParam(paramName);
             if (param == null)
             {
-                throw IllegalStateException.Create("Missing mandatory parameter: " + paramName);
+                throw ServletException.Create("Missing mandatory parameter: " + paramName);
             }
             return param;
         }
@@ -136,17 +138,17 @@ namespace Lucene.Net.Replicator.Http
             string[] pathElements = GetPathElements(request);
             if (pathElements.Length != 2)
             {
-                throw IllegalStateException.Create("invalid path, must contain shard ID and action, e.g. */s1/update");
+                throw ServletException.Create("invalid path, must contain shard ID and action, e.g. */s1/update");
             }
 
             if (!Enum.TryParse(pathElements[ACTION_IDX], true, out ReplicationAction action))
             {
-                throw IllegalStateException.Create("Unsupported action provided: " + pathElements[ACTION_IDX]);
+                throw ServletException.Create("Unsupported action provided: " + pathElements[ACTION_IDX]);
             }
 
             if (!replicators.TryGetValue(pathElements[SHARD_IDX], out IReplicator replicator))
             {
-                throw IllegalStateException.Create("unrecognized shard ID " + pathElements[SHARD_IDX]);
+                throw ServletException.Create("unrecognized shard ID " + pathElements[SHARD_IDX]);
             }
 
             // SOLR-8933 Don't close this stream.
@@ -179,22 +181,25 @@ namespace Lucene.Net.Replicator.Http
                             token.Serialize(new DataOutputStream(response.Body));
                         }
                         break;
+
+                        // LUCENENET specific:
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        if (Debugging.AssertsEnabled) Debugging.Assert(false, "Invalid ReplicationAction specified");
+                        break;
                 }
             }
             catch (Exception e)
             {
-                response.StatusCode = 500;
+                response.StatusCode = (int)HttpStatusCode.InternalServerError; // propagate the failure
                 try
                 {
                     TextWriter writer = new StreamWriter(response.Body);
                     JsonSerializer serializer = JsonSerializer.Create(JSON_SERIALIZER_SETTINGS);
                     serializer.Serialize(writer, e, e.GetType());
                 }
-                catch (Exception exception)
+                catch (Exception e2) when (e2.IsException())
                 {
-                    throw new IOException("Could not serialize", exception);
+                    throw new IOException("Could not serialize", e2);
                 }
             }
             finally

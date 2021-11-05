@@ -458,7 +458,7 @@ namespace Lucene.Net.Replicator.Http
                             input.Dispose();
                         }
                     }
-                    catch (Exception ioe) when (ioe.IsIOException())
+                    catch (Exception e) when (e.IsException())
                     {
                         // ignored on purpose
                     }
