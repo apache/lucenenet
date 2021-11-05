@@ -45,7 +45,7 @@ namespace Lucene.Net.Replicator.Http
         /// </summary>
         //Note: LUCENENET Specific
         public HttpReplicator(string url, HttpMessageHandler messageHandler = null)
-            : this(url, new HttpClient(messageHandler ?? new HttpClientHandler()) { Timeout = TimeSpan.FromMilliseconds(DEFAULT_CONNECTION_TIMEOUT) })
+            : this(url, new HttpClient(messageHandler ?? new HttpClientHandler()) { Timeout = DEFAULT_TIMEOUT })
         {
         }
 
