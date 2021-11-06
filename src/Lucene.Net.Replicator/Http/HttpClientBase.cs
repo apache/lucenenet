@@ -264,9 +264,10 @@ namespace Lucene.Net.Replicator.Http
         /// Internal utility: input stream of the provided response.
         /// </summary>
         /// <exception cref="IOException"></exception>
+        [Obsolete("Use GetResponseStream(HttpResponseMessage) instead.  This extension method will be removed in 4.8.0 release candidate.")]
         public virtual Stream ResponseInputStream(HttpResponseMessage response)
         {
-            return ResponseInputStream(response, false);
+            return GetResponseStream(response, false);
         }
 
         // TODO: can we simplify this Consuming !?!?!?
@@ -275,7 +276,28 @@ namespace Lucene.Net.Replicator.Http
         /// consumes the response's resources when the input stream is exhausted.
         /// </summary>
         /// <exception cref="IOException"></exception>
+        [Obsolete("Use GetResponseStream(HttpResponseMessage, bool) instead.  This extension method will be removed in 4.8.0 release candidate.")]
         public virtual Stream ResponseInputStream(HttpResponseMessage response, bool consume)
+        {
+            return GetResponseStream(response, consume);
+        }
+
+        /// <summary>
+        /// Internal utility: input stream of the provided response.
+        /// </summary>
+        /// <exception cref="IOException"></exception>
+        public virtual Stream GetResponseStream(HttpResponseMessage response) // LUCENENET: This was ResponseInputStream in Lucene
+        {
+            return GetResponseStream(response, false);
+        }
+
+        // TODO: can we simplify this Consuming !?!?!?
+        /// <summary>
+        /// Internal utility: input stream of the provided response, which optionally 
+        /// consumes the response's resources when the input stream is exhausted.
+        /// </summary>
+        /// <exception cref="IOException"></exception>
+        public virtual Stream GetResponseStream(HttpResponseMessage response, bool consume) // LUCENENET: This was ResponseInputStream in Lucene
         {
             Stream result = response.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             if (consume)
