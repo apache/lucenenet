@@ -71,7 +71,7 @@ namespace Lucene.Net.Replicator.Http
             HttpResponseMessage response = base.ExecuteGet(ReplicationService.ReplicationAction.UPDATE.ToString(), parameters);
             return DoAction(response, () =>
             {
-                using DataInputStream inputStream = new DataInputStream(ResponseInputStream(response));
+                using DataInputStream inputStream = new DataInputStream(GetResponseStream(response));
                 return inputStream.ReadByte() == 0 ? null : new SessionToken(inputStream);
             });
         }
@@ -85,7 +85,7 @@ namespace Lucene.Net.Replicator.Http
                 ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId,
                 ReplicationService.REPLICATE_SOURCE_PARAM, source,
                 ReplicationService.REPLICATE_FILENAME_PARAM, fileName);
-            return DoAction(response, false, () => ResponseInputStream(response));
+            return DoAction(response, false, () => GetResponseStream(response));
         }
 
         /// <summary>
