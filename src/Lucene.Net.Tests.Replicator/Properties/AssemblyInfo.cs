@@ -35,8 +35,3 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("418e9d8e-2369-4b52-8d2f-5a987213999b")]
-
-
-// LUCENENET specific - time out this test project at 47 minutes to allow for time before this
-// test runs and the results to be uploaded before the 60 minute Azure DevOps job cutoff for easier troubleshooting
-[assembly: Timeout(2820000)]
