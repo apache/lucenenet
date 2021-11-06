@@ -1,9 +1,10 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Microsoft.AspNetCore.TestHost;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -42,11 +43,18 @@ namespace Lucene.Net.Replicator.Http
         private Directory serverIndexDir;
         private Directory handlerIndexDir;
 
+        private MockErrorConfig mockErrorConfig;
+
         private void StartServer()
         {
             ReplicationService service = new ReplicationService(new Dictionary<string, IReplicator> { { "s1", serverReplicator } });
 
-            server = NewHttpServer<ReplicationServlet>(service);
+#if FEATURE_ASPNETCORE_ENDPOINT_CONFIG
+            server = NewHttpServer(service, mockErrorConfig); // Call like this to use ReplicationServerMiddleware on the specific path /replicate/{shard?}/{action?}, but allow other paths to be served
+#else
+            server = NewHttpServer<ReplicationServlet>(service, mockErrorConfig); // Call like this to use ReplicationServlet as a Startup Class
+#endif
+
             port = ServerPort(server);
             host = ServerHost(server);
         }
@@ -57,6 +65,7 @@ namespace Lucene.Net.Replicator.Http
             clientWorkDir = CreateTempDir("httpReplicatorTest");
             handlerIndexDir = NewDirectory();
             serverIndexDir = NewDirectory();
+            mockErrorConfig = new MockErrorConfig(); // LUCENENET specific
             serverReplicator = new LocalReplicator();
             StartServer();
 
@@ -107,6 +116,42 @@ namespace Lucene.Net.Replicator.Http
             client.UpdateNow();
             ReopenReader();
             assertEquals(2, int.Parse(reader.IndexCommit.UserData["ID"], NumberStyles.HexNumber));
+        }
+
+        [Test]
+        public void TestServerErrors()
+        {
+            // tests the behaviour of the client when the server sends an error
+            IReplicator replicator = new HttpReplicator(host, port, ReplicationService.REPLICATION_CONTEXT + "/s1", server.CreateHandler());
+            using ReplicationClient client = new ReplicationClient(replicator, new IndexReplicationHandler(handlerIndexDir, null),
+                new PerSessionDirectoryFactory(clientWorkDir.FullName));
+
+            try
+            {
+                PublishRevision(5);
+
+                try
+                {
+                    mockErrorConfig.RespondWithError = true;
+                    client.UpdateNow();
+                    fail("expected exception");
+                }
+                catch (Exception t) when (t.IsThrowable())
+                {
+                    // expected
+                }
+
+                mockErrorConfig.RespondWithError = false;
+                client.UpdateNow(); // now it should work
+                ReopenReader();
+                assertEquals(5, J2N.Numerics.Int32.Parse(reader.IndexCommit.UserData["ID"], 16));
+
+                client.Dispose();
+            }
+            finally
+            {
+                mockErrorConfig.RespondWithError = false;
+            }
         }
     }
 }

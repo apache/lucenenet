@@ -20,6 +20,13 @@
 -->
 <Project>
 
+  <!-- Features in .NET 5.x and .NET 6.x only -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) ">
+
+    <DefineConstants>$(DefineConstants);FEATURE_ASPNETCORE_ENDPOINT_CONFIG</DefineConstants>
+
+  </PropertyGroup>
+  
   <!-- Features in .NET Core 3.x, .NET 5.x, and .NET 6.x only -->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or '$(TargetFramework)' == 'net6.0' ">
 
