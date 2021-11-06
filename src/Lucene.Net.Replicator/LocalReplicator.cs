@@ -123,7 +123,7 @@ namespace Lucene.Net.Replicator
 
         private long expirationThreshold = DEFAULT_SESSION_EXPIRATION_THRESHOLD;
 
-        private readonly object padlock = new object();
+        private readonly object syncLock = new object();
 
         private volatile RefCountedRevision currentRevision;
         private volatile bool disposed = false;
@@ -160,7 +160,7 @@ namespace Lucene.Net.Replicator
         /// <exception cref="ObjectDisposedException">This replicator has already been disposed.</exception>
         protected void EnsureOpen()
         {
-            UninterruptableMonitor.Enter(padlock);
+            UninterruptableMonitor.Enter(syncLock);
             try
             {
                 if (!disposed)
@@ -170,13 +170,13 @@ namespace Lucene.Net.Replicator
             }
             finally
             {
-                UninterruptableMonitor.Exit(padlock);
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
         public virtual SessionToken CheckForUpdate(string currentVersion)
         {
-            UninterruptableMonitor.Enter(padlock);
+            UninterruptableMonitor.Enter(syncLock);
             try
             {
                 EnsureOpen();
@@ -196,7 +196,7 @@ namespace Lucene.Net.Replicator
             }
             finally
             {
-                UninterruptableMonitor.Exit(padlock);
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
@@ -205,7 +205,7 @@ namespace Lucene.Net.Replicator
             if (disposed || !disposing)
                 return;
 
-            UninterruptableMonitor.Enter(padlock);
+            UninterruptableMonitor.Enter(syncLock);
             try
             {
                 foreach (ReplicationSession session in sessions.Values)
@@ -214,7 +214,7 @@ namespace Lucene.Net.Replicator
             }
             finally
             {
-                UninterruptableMonitor.Exit(padlock);
+                UninterruptableMonitor.Exit(syncLock);
             }
             disposed = true;
         }
@@ -237,7 +237,7 @@ namespace Lucene.Net.Replicator
             get => expirationThreshold;
             set
             {
-                UninterruptableMonitor.Enter(padlock);
+                UninterruptableMonitor.Enter(syncLock);
                 try
                 {
                     EnsureOpen();
@@ -246,14 +246,14 @@ namespace Lucene.Net.Replicator
                 }
                 finally
                 {
-                    UninterruptableMonitor.Exit(padlock);
+                    UninterruptableMonitor.Exit(syncLock);
                 }
             }
         }
 
         public virtual Stream ObtainFile(string sessionId, string source, string fileName)
         {
-            UninterruptableMonitor.Enter(padlock);
+            UninterruptableMonitor.Enter(syncLock);
             try
             {
                 EnsureOpen();
@@ -273,13 +273,13 @@ namespace Lucene.Net.Replicator
             }
             finally
             {
-                UninterruptableMonitor.Exit(padlock);
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
         public virtual void Publish(IRevision revision)
         {
-            UninterruptableMonitor.Enter(padlock);
+            UninterruptableMonitor.Enter(syncLock);
             try
             {
                 EnsureOpen();
@@ -310,14 +310,14 @@ namespace Lucene.Net.Replicator
             }
             finally
             {
-                UninterruptableMonitor.Exit(padlock);
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
 
         /// <exception cref="InvalidOperationException"></exception>
         public virtual void Release(string sessionId)
         {
-            UninterruptableMonitor.Enter(padlock);
+            UninterruptableMonitor.Enter(syncLock);
             try
             {
                 EnsureOpen();
@@ -325,7 +325,7 @@ namespace Lucene.Net.Replicator
             }
             finally
             {
-                UninterruptableMonitor.Exit(padlock);
+                UninterruptableMonitor.Exit(syncLock);
             }
         }
     }
