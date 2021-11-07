@@ -204,13 +204,13 @@ namespace Lucene.Net.Util
         /// Calculates the hash code as required by <see cref="Index.TermsHash"/> during indexing.
         /// <para/> This is currently implemented as MurmurHash3 (32
         /// bit), using the seed from 
-        /// <see cref="StringHelper.GOOD_FAST_HASH_SEED"/>, but is subject to
+        /// <see cref="StringHelper.GoodFastHashSeed"/>, but is subject to
         /// change from release to release.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
-            return StringHelper.Murmurhash3_x86_32(this, StringHelper.GOOD_FAST_HASH_SEED);
+            return StringHelper.Murmurhash3_x86_32(this, StringHelper.GoodFastHashSeed);
         }
 
         public override bool Equals(object other)

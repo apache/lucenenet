@@ -525,7 +525,7 @@ namespace Lucene.Net.Util
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int DoHash(byte[] bytes, int offset, int length)
         {
-            return StringHelper.Murmurhash3_x86_32(bytes, offset, length, StringHelper.GOOD_FAST_HASH_SEED);
+            return StringHelper.Murmurhash3_x86_32(bytes, offset, length, StringHelper.GoodFastHashSeed);
         }
 
         /// <summary>

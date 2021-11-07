@@ -31,38 +31,25 @@ namespace Lucene.Net.Util
     /// </summary>
     public static class StringHelper // LUCENENET specific - marked static and removed private constructor
     {
-        /// <summary>
-        /// Pass this as the seed to <see cref="Murmurhash3_x86_32(byte[], int, int, int)"/>. </summary>
-
-        //Singleton-esque member. Only created once
-        public static readonly int GOOD_FAST_HASH_SEED = InitializeHashSeed();
-
         // Poached from Guava: set a different salt/seed
         // for each JVM instance, to frustrate hash key collision
         // denial of service attacks, and to catch any places that
         // somehow rely on hash function/order across JVM
         // instances:
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int InitializeHashSeed()
-        {
-            // LUCENENET specific - reformatted with :
-            string prop = SystemProperties.GetProperty("tests:seed", null);
 
-            if (prop != null)
-            {
-                // So if there is a test failure that relied on hash
-                // order, we remain reproducible based on the test seed:
-                if (prop.Length > 8)
-                {
-                    prop = prop.Substring(prop.Length - 8);
-                }
-                return Convert.ToInt32(prop, 16);
-            }
-            else
-            {
-                return (int)J2N.Time.CurrentTimeMilliseconds();
-            }
-        }
+        // LUCENENET specific - Since NUnit considers hash seed a per-test setting, we make the
+        // backing field internal and writable so it can be set by the test framework.
+        // The tests:seed system property is only applicable to the test environment, as it has no
+        // useful purpose in production.
+        internal static int goodFastHashSeed = (int)J2N.Time.CurrentTimeMilliseconds();
+
+        /// <summary>
+        /// Pass this as the seed to <see cref="Murmurhash3_x86_32(byte[], int, int, int)"/>. </summary>
+        //Singleton-esque member. Only created once
+        public static int GoodFastHashSeed => goodFastHashSeed;
+
+        [Obsolete("Use GoodFastHashSeed instead. This field will be removed in 4.8.0 release candidate.")]
+        public static int GOOD_FAST_HASH_SEED => goodFastHashSeed;
 
         /// <summary>
         /// Compares two <see cref="BytesRef"/>, element by element, and returns the
