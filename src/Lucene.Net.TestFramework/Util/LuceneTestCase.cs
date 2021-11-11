@@ -1033,6 +1033,19 @@ namespace Lucene.Net.Util
             /* LUCENENET TODO: Not sure how to convert these
                 ParentChainCallRule.TeardownCalled = true;
                 */
+#if TESTFRAMEWORK_NUNIT
+            TestResult result = TestExecutionContext.CurrentContext.CurrentResult;
+            string message = result.Message + $"\n\nTo reproduce this test result, apply the [RandomSeed({Randomizer.InitialSeed})]" +
+                $" attribute to the test class or use the following .runsettings file.\n\n" +
+                $"<RunSettings>\n" +
+                $"  <TestRunParameters>\n" +
+                $"    <Parameter name=\"RandomSeed\" value=\"{Randomizer.InitialSeed}\" />\n" +
+                $"  </TestRunParameters>\n" +
+                $"</RunSettings>\n\nSee the .runsettings documentation at: https://docs.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file.";
+
+            string stackTrace = result.StackTrace;
+            result.SetResult(result.ResultState, message, stackTrace);
+#endif
         }
 
 #if TESTFRAMEWORK_MSTEST
