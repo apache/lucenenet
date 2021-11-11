@@ -53,6 +53,8 @@ namespace Lucene.Net.Util
                 // For now, ignore anything NUnit3TestAdapter does, because it is messing up repeatable runs.
                 Randomizer.InitialSeed = SystemProperties.GetPropertyAsInt32("tests:seed", new Random().Next());
             }
+
+            StringHelper.goodFastHashSeed = Randomizer.InitialSeed * 31; // LUCENENET: Multiplying 31 to remove the possility of a collision with the test framework while still using a deterministic number.
         }
     }
 }
