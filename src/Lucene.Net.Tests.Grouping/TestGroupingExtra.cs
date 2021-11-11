@@ -41,9 +41,10 @@ namespace Lucene.Net.Search.Grouping
 {
 
     /// <summary>
-    /// LUCENENET: File not includes in java Lucene. This file contains extra
-    /// tests to test a few specific ways of using grouping.  
+    /// LUCENENET: File not included in java Lucene. This file contains extra
+    /// tests to test a few specific ways of using grouping.
     /// </summary>
+    [SuppressCodecs("Lucene3x")]
     public class TestGroupingExtra : LuceneTestCase
     {
 
