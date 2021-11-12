@@ -78,7 +78,7 @@ namespace Lucene.Net.Util
 
             // HACK: NUnit3TestAdapter seems to be supplying the seed from nunit_random_seed.tmp whether
             // or not there is a RandomSeed set by the user. This is a workaorund until that is fixed.
-            _randomSeedInitializer.InitializeRandomSeed(fixture);
+            _randomSeedInitializer.EnsureInitialized(fixture);
 
             if (fixture.RunState != RunState.NotRunnable)
                 CheckTestFixtureIsValid(fixture);
@@ -187,7 +187,7 @@ namespace Lucene.Net.Util
 
             // HACK: NUnit3TestAdapter seems to be supplying the seed from nunit_random_seed.tmp whether
             // or not there is a RandomSeed set by the user. This is a workaorund until that is fixed.
-            _randomSeedInitializer.InitializeRandomSeed(fixture);
+            _randomSeedInitializer.EnsureInitialized(fixture);
 
             if (fixture.RunState != RunState.NotRunnable)
                 CheckTestFixtureIsValid(fixture);
@@ -225,8 +225,10 @@ namespace Lucene.Net.Util
             foreach (IMethodInfo method in methods)
             {
                 // Generate the seed whether or not we use a filter to ensure we invoke the Randomizer to
-                // move to the next random test seed (a test should always get the same seed).
+                // move to the next random test seed (a test should always get the same seed in the sequence).
                 Test test = BuildTestCase(method, fixture);
+
+                _randomSeedInitializer.GenerateRandomSeeds(test);
 
                 if (filter.IsMatch(fixture.TypeInfo.Type, method.MethodInfo))
                 {

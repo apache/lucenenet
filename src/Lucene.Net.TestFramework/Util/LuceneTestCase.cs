@@ -1035,8 +1035,8 @@ namespace Lucene.Net.Util
                 */
 #if TESTFRAMEWORK_NUNIT
             TestResult result = TestExecutionContext.CurrentContext.CurrentResult;
-            string message = result.Message + $"\n\nTo reproduce this test result, apply the [RandomSeed({Randomizer.InitialSeed})]" +
-                $" attribute to the test class or use the following .runsettings file.\n\n" +
+            string message = result.Message + $"\n\nTo reproduce this test result, apply the [assembly: RandomSeed({Randomizer.InitialSeed})]" +
+                $" attribute to the test assembly or use the following .runsettings file.\n\n" +
                 $"<RunSettings>\n" +
                 $"  <TestRunParameters>\n" +
                 $"    <Parameter name=\"RandomSeed\" value=\"{Randomizer.InitialSeed}\" />\n" +
@@ -1237,32 +1237,6 @@ namespace Lucene.Net.Util
             get
             {
 #if TESTFRAMEWORK_NUNIT
-                var currentTest = TestExecutionContext.CurrentContext.CurrentTest;
-                if (currentTest.IsSuite)
-                {
-                    // We may get here if this property is called in OneTimeSetUp or OneTimeTearDown
-                    // of either a TextFixture or TestSetupFixture, or somewhere else outside of
-                    // a test's context like direct calls from external code and field initializers.
-
-                    const string SuiteRandomizer = "SuiteRandomizer";
-
-                    UninterruptableMonitor.Enter(randomCreationLock);
-                    try
-                    {
-                        if (currentTest.Properties.ContainsKey(SuiteRandomizer))
-                            return (Random)currentTest.Properties[SuiteRandomizer];
-
-                        var random = new Random(Randomizer.InitialSeed);
-                        currentTest.Properties.Add(SuiteRandomizer, random);
-                        return random;
-                    }
-                    finally
-                    {
-                        UninterruptableMonitor.Exit(randomCreationLock);
-                    }
-                }
-
-                // If we are here, this is a test, and it has a valid seed that was generated for it specifically.
                 return NUnit.Framework.TestContext.CurrentContext.Random;
 #else
                 return random ?? (random = new Random(/* LUCENENET TODO seed */));
@@ -1270,8 +1244,6 @@ namespace Lucene.Net.Util
 #endif
             }
         }
-
-        private static readonly object randomCreationLock = new object();
 
 #if !TESTFRAMEWORK_NUNIT
         [ThreadStatic]
