@@ -1034,12 +1034,16 @@ namespace Lucene.Net.Util
                 ParentChainCallRule.TeardownCalled = true;
                 */
 #if TESTFRAMEWORK_NUNIT
-            TestResult result = TestExecutionContext.CurrentContext.CurrentResult;
-            string message = result.Message + $"\n\nTo reproduce this test result, apply the [assembly: RandomSeed({Randomizer.InitialSeed})]" +
+            var context = TestExecutionContext.CurrentContext;
+            int seed = 0;
+            if (context.CurrentTest.Parent.Properties.ContainsKey("RandomSeed"))
+                seed = (int)context.CurrentTest.Parent.Properties.Get("RandomSeed");
+            TestResult result = context.CurrentResult;
+            string message = result.Message + $"\n\nTo reproduce this test result, apply the [assembly: RandomSeed({seed})]" +
                 $" attribute to the test assembly or use the following .runsettings file.\n\n" +
                 $"<RunSettings>\n" +
                 $"  <TestRunParameters>\n" +
-                $"    <Parameter name=\"RandomSeed\" value=\"{Randomizer.InitialSeed}\" />\n" +
+                $"    <Parameter name=\"RandomSeed\" value=\"{seed}\" />\n" +
                 $"  </TestRunParameters>\n" +
                 $"</RunSettings>\n\nSee the .runsettings documentation at: https://docs.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file.";
 

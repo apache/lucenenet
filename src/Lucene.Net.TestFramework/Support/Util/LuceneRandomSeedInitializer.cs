@@ -24,6 +24,8 @@ namespace Lucene.Net.Util
 
     internal class LuceneRandomSeedInitializer
     {
+        const string RandomSeed = "RandomSeed";
+
         #region Messages
 
         const string RANDOM_SEED_PARAMS_MSG =
@@ -32,7 +34,6 @@ namespace Lucene.Net.Util
         #endregion
 
         private Random random;
-        private int seed;
 
         private bool TryGetRandomSeedFromContext(Test test, out int seed)
         {
@@ -45,11 +46,11 @@ namespace Lucene.Net.Util
             }
             // HACK: NUnit3TestAdapter seems to be supplying the seed from nunit_random_seed.tmp whether
             // or not there is a RandomSeed set by the user. This is a workaorund until that is fixed.
-            else if (NUnit.Framework.TestContext.Parameters.Exists("RandomSeed"))
+            else if (NUnit.Framework.TestContext.Parameters.Exists(RandomSeed))
             {
-                if (NUnit.Framework.TestContext.Parameters["RandomSeed"].Equals("random", StringComparison.OrdinalIgnoreCase))
+                if (NUnit.Framework.TestContext.Parameters[RandomSeed].Equals("random", StringComparison.OrdinalIgnoreCase))
                     seed = -1;
-                else if (int.TryParse(NUnit.Framework.TestContext.Parameters["RandomSeed"], out int initialSeed))
+                else if (int.TryParse(NUnit.Framework.TestContext.Parameters[RandomSeed], out int initialSeed))
                     seed = initialSeed;
                 else
                 {
@@ -71,13 +72,15 @@ namespace Lucene.Net.Util
             return true;
         }
 
-        public void EnsureInitialized(Test fixture)
+        public void EnsureInitialized(TestFixture fixture)
         {
             TryGetRandomSeedFromContext(fixture, out int seed);
             random = new Random(seed);
 
-            if (Randomizer.InitialSeed != seed)
-                Randomizer.InitialSeed = seed;
+            // Set a prpoperty on the test fixture. This is where we will later
+            // report the seed in the TearDown method (which sets the TestResult message).
+            fixture.Properties.Set(RandomSeed, seed);
+
             int goodFastHashSeed = seed * 31; // LUCENENET: Multiplying 31 to remove the possility of a collision with the test framework while still using a deterministic number.
             if (StringHelper.goodFastHashSeed != goodFastHashSeed)
                 StringHelper.goodFastHashSeed = goodFastHashSeed;
@@ -86,39 +89,6 @@ namespace Lucene.Net.Util
             // which will be used during OneTimeSetUp and OneTimeTearDown.
             fixture.Seed = random.Next();
         }
-
-        //public void EnsureInitialized(Test test)
-        //{
-        //    if (!TryGetRandomSeedFromContext(test, out int contextSeed) || seed != contextSeed)
-        //    {
-        //        seed = contextSeed;
-        //        random = new Random(seed);
-        //    }
-
-        //    if (Randomizer.InitialSeed != seed)
-        //        Randomizer.InitialSeed = seed;
-        //    int goodFastHashSeed = seed * 31; // LUCENENET: Multiplying 31 to remove the possility of a collision with the test framework while still using a deterministic number.
-        //    if (StringHelper.goodFastHashSeed != goodFastHashSeed)
-        //        StringHelper.goodFastHashSeed = goodFastHashSeed;
-        //}
-
-        //private void ResetRandomizer(TestFixture fixture)
-        //{
-        //    TryGetRandomSeedFromContext(fixture, out int seed);
-        //    random = new Random(seed);
-
-        //    if (Randomizer.InitialSeed != seed)
-        //        Randomizer.InitialSeed = seed;
-        //    int goodFastHashSeed = seed * 31; // LUCENENET: Multiplying 31 to remove the possility of a collision with the test framework while still using a deterministic number.
-        //    if (StringHelper.goodFastHashSeed != goodFastHashSeed)
-        //        StringHelper.goodFastHashSeed = goodFastHashSeed;
-        //}
-
-        //public void SetNextFixtureSeed(TestFixture fixture)
-        //{
-        //    ResetRandomizer(fixture);
-        //    random.Next();
-        //}
 
         public void GenerateRandomSeeds(Test test)
         {
