@@ -418,11 +418,13 @@ namespace Lucene.Net.Search.Grouping.Terms
                 if (outerInstance.fields[compIDX].Type == SortFieldType.SCORE)
                 {
                     float score = outerInstance.scorer.GetScore();
-                    if (scores[compIDX] < score)
+                    // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                    if (NumericUtils.SingleToSortableInt32(scores[compIDX]) < NumericUtils.SingleToSortableInt32(score))
                     {
                         return 1;
                     }
-                    else if (scores[compIDX] > score)
+                    // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                    else if (NumericUtils.SingleToSortableInt32(scores[compIDX]) > NumericUtils.SingleToSortableInt32(score))
                     {
                         return -1;
                     }
@@ -775,11 +777,13 @@ namespace Lucene.Net.Search.Grouping.Terms
             public override int Compare(int compIDX, int doc)
             {
                 float score = outerInstance.scorer.GetScore();
-                if (scores[compIDX] < score)
+                // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                if (NumericUtils.SingleToSortableInt32(scores[compIDX]) < NumericUtils.SingleToSortableInt32(score))
                 {
                     return 1;
                 }
-                else if (scores[compIDX] > score)
+                // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                else if (NumericUtils.SingleToSortableInt32(scores[compIDX]) > NumericUtils.SingleToSortableInt32(score))
                 {
                     return -1;
                 }
