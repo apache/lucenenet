@@ -995,7 +995,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     else
                     {
                         current = termEnum.Term().Bytes;
-                        return true;
+                        return current != null;
                     }
                 }
 

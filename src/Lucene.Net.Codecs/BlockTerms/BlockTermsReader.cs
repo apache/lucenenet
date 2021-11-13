@@ -707,7 +707,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     // NOTE: meaningless in the non-ord case
                     state.Ord++;
 
-                    return true;
+                    return term != null;
                 }
 
                 [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]

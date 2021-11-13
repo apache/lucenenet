@@ -841,7 +841,7 @@ namespace Lucene.Net.Codecs.Memory
                     current = fstEnum.Current;
                     didDecode = false;
                     //System.out.println("  term=" + field.name + ":" + current.input.utf8ToString());
-                    return true;
+                    return current != null;
                 }
                 current = null;
                 //System.out.println("  END");

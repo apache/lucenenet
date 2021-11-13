@@ -514,7 +514,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                     decoded = false;
                     seekPending = false;
-                    return moved;
+                    return moved && term != null;
                 }
 
                 [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
@@ -664,7 +664,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         pending = false;
                         DecodeStats();
-                        return true;
+                        return term != null;
                     }
                     decoded = false;
                     while (level > 0)
@@ -698,7 +698,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 DFSBreak:
                     DecodeStats();
-                    return true;
+                    return term != null;
                 }
 
                 [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]

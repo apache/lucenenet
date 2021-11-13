@@ -301,7 +301,7 @@ namespace Lucene.Net.Index.Memory
                     else
                     {
                         info.terms.Get(info.sortedTerms[termUpto], br);
-                        return true;
+                        return br != null;
                     }
                 }
 

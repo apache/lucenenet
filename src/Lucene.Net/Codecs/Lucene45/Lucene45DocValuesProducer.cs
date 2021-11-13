@@ -1123,7 +1123,7 @@ namespace Lucene.Net.Codecs.Lucene45
                         input.ReadBytes(termBuffer.Bytes, start, suffix);
                         termBuffer.Length = start + suffix;
                         SetTerm();
-                        return true;
+                        return true; // LUCENENET: term is readonly so cannot be null
                     }
                 }
 
