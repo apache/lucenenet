@@ -119,11 +119,7 @@ namespace Lucene.Net.Search
 
             Trace.TraceInformation("Checked");
 
-            JCG.SortedSet<int> correct = new JCG.SortedSet<int>();
-            for (int i = 0; i < results.Length; i++)
-            {
-                correct.Add(Convert.ToInt32(results[i], CultureInfo.InvariantCulture));
-            }
+            JCG.SortedSet<int> correct = new JCG.SortedSet<int>(results);
             JCG.SortedSet<int> actual = new JCG.SortedSet<int>();
             ICollector c = new SetCollector(actual);
 
