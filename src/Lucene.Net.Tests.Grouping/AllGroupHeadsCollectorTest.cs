@@ -565,11 +565,13 @@ namespace Lucene.Net.Search.Grouping
                     int cmp;
                     if (sf.Type == SortFieldType.SCORE)
                     {
-                        if (d1.score > d2.score)
+                        // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                        if (NumericUtils.SingleToSortableInt32(d1.score) > NumericUtils.SingleToSortableInt32(d2.score))
                         {
                             cmp = -1;
                         }
-                        else if (d1.score < d2.score)
+                        // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                        else if (NumericUtils.SingleToSortableInt32(d1.score) < NumericUtils.SingleToSortableInt32(d2.score))
                         {
                             cmp = 1;
                         }
