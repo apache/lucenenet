@@ -367,7 +367,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                 if (it.MoveNext())
                 {
                     current = it.Current;
-                    return true;
+                    return current != null;
                 }
                 else
                 {
@@ -427,7 +427,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                 => throw UnsupportedOperationException.Create();
 
             // TODO: reuse BytesRef
-            public override BytesRef Term => new BytesRef(current);
+            public override BytesRef Term => current is null ? null : new BytesRef(current);
 
             public override int DocFreq
                 => ramField.termToDocs[current].docs.Count;

@@ -779,7 +779,9 @@ namespace Lucene.Net.Codecs.Memory
 
             public override bool MoveNext()
             {
-                return input.MoveNext();
+                if (input.MoveNext())
+                    return input.Current.Input != null;
+                return false;
             }
 
             [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]

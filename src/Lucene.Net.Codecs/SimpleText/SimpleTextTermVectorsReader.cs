@@ -391,7 +391,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 if (_iterator.MoveNext())
                 {
                     _current = _iterator.Current;
-                    return true;
+                    return _current.Key != null;
                 }
                 else
                 {

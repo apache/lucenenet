@@ -287,7 +287,7 @@ namespace Lucene.Net.Codecs.Bloom
                     delegateTermsEnum = null;
                 }
 
-                private TermsEnum Delegate =>
+                private TermsEnum @delegate =>
                     // pull the iterator only if we really need it -
                     // this can be a relativly heavy operation depending on the 
                     // delegate postings format and they underlying directory
@@ -296,13 +296,13 @@ namespace Lucene.Net.Codecs.Bloom
 
                 public override bool MoveNext()
                 {
-                    return Delegate.MoveNext();
+                    return @delegate.MoveNext();
                 }
 
                 [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
                 public override sealed BytesRef Next()
                 {
-                    return Delegate.Next();
+                    return @delegate.Next();
                 }
 
                 public override sealed IComparer<BytesRef> Comparer => _delegateTerms.Comparer;
@@ -318,36 +318,36 @@ namespace Lucene.Net.Codecs.Bloom
                     {
                         return false;
                     }
-                    return Delegate.SeekExact(text);
+                    return @delegate.SeekExact(text);
                 }
 
                 public override sealed SeekStatus SeekCeil(BytesRef text)
                 {
-                    return Delegate.SeekCeil(text);
+                    return @delegate.SeekCeil(text);
                 }
 
                 public override sealed void SeekExact(long ord)
                 {
-                    Delegate.SeekExact(ord);
+                    @delegate.SeekExact(ord);
                 }
 
-                public override sealed BytesRef Term => Delegate.Term;
+                public override sealed BytesRef Term => @delegate.Term;
 
-                public override sealed long Ord => Delegate.Ord;
+                public override sealed long Ord => @delegate.Ord;
 
-                public override sealed int DocFreq => Delegate.DocFreq;
+                public override sealed int DocFreq => @delegate.DocFreq;
 
-                public override sealed long TotalTermFreq => Delegate.TotalTermFreq;
+                public override sealed long TotalTermFreq => @delegate.TotalTermFreq;
 
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs,
                     DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
                 {
-                    return Delegate.DocsAndPositions(liveDocs, reuse, flags);
+                    return @delegate.DocsAndPositions(liveDocs, reuse, flags);
                 }
 
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
-                    return Delegate.Docs(liveDocs, reuse, flags);
+                    return @delegate.Docs(liveDocs, reuse, flags);
                 }
             }
 

@@ -2472,7 +2472,7 @@ namespace Lucene.Net.Codecs
                         else
                         {
                             //if (DEBUG) System.out.println("  return term=" + term.utf8ToString() + " " + term + " currentFrame.ord=" + currentFrame.ord);
-                            return true;
+                            return term != null;
                         }
                     }
                 }

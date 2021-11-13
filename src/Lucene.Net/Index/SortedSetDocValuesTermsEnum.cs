@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 
@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
                 return false;
             }
             values.LookupOrd(currentOrd, term);
-            return true;
+            return term != null;
         }
 
         [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]

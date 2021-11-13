@@ -295,7 +295,7 @@ namespace Lucene.Net.Search
                 queuedBottom = BytesRef.DeepCopyOf(actualEnum.Term);
             }
 
-            return moved;
+            return moved && actualEnum.Term != null;
         }
 
         [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]

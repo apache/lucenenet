@@ -454,7 +454,7 @@ namespace Lucene.Net.Index
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(base.Term.IsValid());
                     state = State.POSITIONED;
-                    return true;
+                    return base.Term != null;
                 }
             }
 

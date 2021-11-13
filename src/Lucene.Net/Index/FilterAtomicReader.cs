@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -163,7 +163,9 @@ namespace Lucene.Net.Index
 
             public override bool MoveNext()
             {
-                return m_input.MoveNext();
+                if (m_input.MoveNext())
+                    return m_input.Term != null;
+                return false;
             }
 
             [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]

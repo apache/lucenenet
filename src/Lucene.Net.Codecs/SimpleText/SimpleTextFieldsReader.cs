@@ -168,7 +168,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 _docsStart = pair1.Output1.Value;
                 _docFreq = (int)pair2.Output1;
                 _totalTermFreq = pair2.Output2.Value;
-                return true;
+                return _fstEnum.Current.Input != null;
             }
 
             [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]

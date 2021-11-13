@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
                         goto case FilteredTermsEnum.AcceptStatus.YES;
                     case FilteredTermsEnum.AcceptStatus.YES:
                         // term accepted
-                        return true;
+                        return actualTerm != null;
 
                     case FilteredTermsEnum.AcceptStatus.NO_AND_SEEK:
                         // invalid term, seek next time
