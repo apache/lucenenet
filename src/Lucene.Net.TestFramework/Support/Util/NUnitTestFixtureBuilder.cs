@@ -76,9 +76,8 @@ namespace Lucene.Net.Util
         {
             var fixture = new TestFixture(typeInfo);
 
-            // HACK: NUnit3TestAdapter seems to be supplying the seed from nunit_random_seed.tmp whether
-            // or not there is a RandomSeed set by the user. This is a workaorund until that is fixed.
-            _randomSeedInitializer.EnsureInitialized(fixture);
+            // Set the seed for the test fixture with an offset of 2
+            _randomSeedInitializer.InitializeTestFixture(fixture, seedOffset: 2);
 
             if (fixture.RunState != RunState.NotRunnable)
                 CheckTestFixtureIsValid(fixture);
@@ -185,9 +184,8 @@ namespace Lucene.Net.Util
                 foreach (object val in testFixtureData.Properties[key])
                     fixture.Properties.Add(key, val);
 
-            // HACK: NUnit3TestAdapter seems to be supplying the seed from nunit_random_seed.tmp whether
-            // or not there is a RandomSeed set by the user. This is a workaorund until that is fixed.
-            _randomSeedInitializer.EnsureInitialized(fixture);
+            // Set the seed for the test fixture with an offset of 2
+            _randomSeedInitializer.InitializeTestFixture(fixture, seedOffset: 2);
 
             if (fixture.RunState != RunState.NotRunnable)
                 CheckTestFixtureIsValid(fixture);

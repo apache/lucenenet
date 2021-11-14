@@ -1034,21 +1034,23 @@ namespace Lucene.Net.Util
                 ParentChainCallRule.TeardownCalled = true;
                 */
 #if TESTFRAMEWORK_NUNIT
-            var context = TestExecutionContext.CurrentContext;
-            int seed = 0;
-            if (context.CurrentTest.Parent.Properties.ContainsKey("RandomSeed"))
-                seed = (int)context.CurrentTest.Parent.Properties.Get("RandomSeed");
-            TestResult result = context.CurrentResult;
-            string message = result.Message + $"\n\nTo reproduce this test result, apply the [assembly: RandomSeed({seed})]" +
-                $" attribute to the test assembly or use the following .runsettings file.\n\n" +
+            TestResult result = TestExecutionContext.CurrentContext.CurrentResult;
+            string message = result.Message + $"\n\nTo reproduce this test result:\n\n" +
+                $"Option 1:\n\n" +
+                $" Apply the following assembly-level attributes:\n\n" +
+                $"[assembly: Lucene.Net.Util.RandomSeed({RandomizedContext.CurrentContext.RandomSeedAsHex}L)]\n" +
+                $"[assembly: NUnit.Framework.Property(\"tests:culture\", \"{Thread.CurrentThread.CurrentCulture.Name}\")]\n\n\n" +
+                $"Option 2:\n\n" +
+                $" Use the following .runsettings file.\n\n" +
                 $"<RunSettings>\n" +
                 $"  <TestRunParameters>\n" +
-                $"    <Parameter name=\"RandomSeed\" value=\"{seed}\" />\n" +
+                $"    <Parameter name=\"tests:seed\" value=\"{RandomizedContext.CurrentContext.RandomSeedAsHex}\" />\n" +
+                $"    <Parameter name=\"tests:culture\" value=\"{Thread.CurrentThread.CurrentCulture.Name}\" />\n" +
                 $"  </TestRunParameters>\n" +
-                $"</RunSettings>\n\nSee the .runsettings documentation at: https://docs.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file.";
+                $"</RunSettings>\n\n" +
+                $"See the .runsettings documentation at: https://docs.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file.";
 
-            string stackTrace = result.StackTrace;
-            result.SetResult(result.ResultState, message, stackTrace);
+            result.SetResult(result.ResultState, message, result.StackTrace);
 #endif
         }
 
@@ -1241,7 +1243,10 @@ namespace Lucene.Net.Util
             get
             {
 #if TESTFRAMEWORK_NUNIT
-                return NUnit.Framework.TestContext.CurrentContext.Random;
+                var context = RandomizedContext.CurrentContext;
+                if (context is null)
+                    Assert.Fail("LuceneTestCase.Random may only be used within tests/setup/teardown context in subclasses of LuceneTestCase or LuceneTestFrameworkInitializer.");
+                return context.RandomGenerator;
 #else
                 return random ?? (random = new Random(/* LUCENENET TODO seed */));
                 //return RandomizedContext.Current.Random;
