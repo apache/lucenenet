@@ -7,6 +7,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -541,7 +542,7 @@ namespace Lucene.Net.Index
         private FieldInfos currentFieldInfos;
 
         // LUCENENET specific - cache the list of index options so we don't need to look it up over and over
-        private static readonly IndexOptions[] ALL_INDEX_OPTIONS = (IndexOptions[])Enum.GetValues(typeof(IndexOptions));
+        private static readonly IndexOptions[] ALL_INDEX_OPTIONS = ((IndexOptions[])Enum.GetValues(typeof(IndexOptions))).Where(x => x != IndexOptions.NONE).ToArray();
 
         // maxAllowed = the "highest" we can index, but we will still
         // randomly index at lower IndexOption
