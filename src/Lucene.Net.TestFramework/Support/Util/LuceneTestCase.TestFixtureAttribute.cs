@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Lucene.Net.Util
 {
-    #region Copyright (c) 2021 Charlie Poole, Rob Prouse
+    #region Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License.
 
     // Copyright (c) 2021 Charlie Poole, Rob Prouse
     // 

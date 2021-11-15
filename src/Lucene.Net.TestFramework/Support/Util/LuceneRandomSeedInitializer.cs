@@ -36,9 +36,6 @@ namespace Lucene.Net.Util
 
         private bool TryGetRandomSeedFromContext(Test test, out long seed)
         {
-            // Setup the factories
-            LuceneTestFrameworkInitializer.EnsureInitialized();
-
             bool generate;
             seed = 0;
             var randomSeedAttribute = (RandomSeedAttribute)test.TypeInfo.Assembly
@@ -82,7 +79,7 @@ namespace Lucene.Net.Util
         /// <param name="fixture">The test fixture.</param>
         /// <param name="seedOffset">Offset that will be added to the initial seed. This should be different for SetUpFixture and TestFixture attributes
         /// so they have different seeds that are deterministically based on the initial seed.</param>
-        public void InitializeTestFixture(TestFixture fixture, int seedOffset = 0)
+        public RandomizedContext InitializeTestFixture(Test fixture, int seedOffset = 0)
         {
             if (fixture is null)
                 throw new ArgumentNullException(nameof(fixture));
@@ -99,7 +96,11 @@ namespace Lucene.Net.Util
             // Assumption: The passed in fixture doesn't have any tests added.
             // The tests are added in a later step to prevent differences in the
             // result when there are filters applied.
-            SetRandomSeeds(fixture);
+
+            // Generate a new long value that is the seed for this specific test.
+            var randomizedContext = new RandomizedContext(fixture, initialSeed, random.NextInt64());
+            fixture.Properties.Set(RandomizedContext.RandomizedContextPropertyName, randomizedContext);
+            return randomizedContext;
         }
 
         /// <summary>

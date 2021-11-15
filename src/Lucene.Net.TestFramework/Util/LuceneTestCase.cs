@@ -548,8 +548,6 @@ namespace Lucene.Net.Util
         {
             public SystemPropertyData()
             {
-                // LUCENENET: Always ensure the system properties are initailized before any attempt to read them.
-                LuceneTestFrameworkInitializer.EnsureInitialized();
                 Verbose = SystemProperties.GetPropertyAsBoolean("tests:verbose", // LUCENENET specific - reformatted with :
 #if DEBUG
                     true
@@ -1099,9 +1097,6 @@ namespace Lucene.Net.Util
 
             try
             {
-                // Setup the factories
-                LuceneTestFrameworkInitializer.EnsureInitialized();
-
                 ClassEnvRule.Before(null);
 
                 // LUCENENET: Generate the info once so it can be printed out for each test
@@ -1139,9 +1134,6 @@ namespace Lucene.Net.Util
         {
             try
             {
-                // Setup the factories
-                LuceneTestFrameworkInitializer.EnsureInitialized();
-
                 ClassEnvRule.Before(this);
 
                 // LUCENENET: Generate the info once so it can be printed out for each test

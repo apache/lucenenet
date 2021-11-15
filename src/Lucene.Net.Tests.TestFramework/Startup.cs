@@ -39,7 +39,7 @@ public class Startup : LuceneTestFrameworkInitializer
         initilizationReset = initializationCount.GetAndSet(0) != 0;
     }
 
-    protected override void TestFrameworkSetUp()
+    protected override void Initialize()
     {
         // Decorate the existing configuration factory with mock settings
         // so we don't interfere with the operation of the test framework.

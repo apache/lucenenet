@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace Lucene.Net.Util
 {
-    #region Copyright (c) 2021 Charlie Poole, Rob Prouse
+    #region Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License.
 
     // Copyright (c) 2021 Charlie Poole, Rob Prouse
     // 
@@ -42,6 +42,11 @@ namespace Lucene.Net.Util
     /// </summary>
     internal class NUnitTestFixtureBuilder
     {
+        const int SETUP_FIXTURE_SEED_OFFSET = 7;
+        const int TEST_FIXTURE_SEED_OFFSET = 3;
+
+        private static RandomizedContext setUpFixtureRandomizedContext = null;
+
         #region Messages
 
         const string NO_TYPE_ARGS_MSG =
@@ -55,6 +60,7 @@ namespace Lucene.Net.Util
         #region Instance Fields
 
         private readonly ITestCaseBuilder _testBuilder = new DefaultTestCaseBuilder();
+        private readonly LuceneSetUpFixtureBuilder _setUpFixtureBuilder = new LuceneSetUpFixtureBuilder();
         private readonly LuceneRandomSeedInitializer _randomSeedInitializer = new LuceneRandomSeedInitializer();
 
         #endregion
@@ -74,10 +80,12 @@ namespace Lucene.Net.Util
         // TODO: This should really return a TestFixture, but that requires changes to the Test hierarchy.
         public TestSuite BuildFrom(ITypeInfo typeInfo, IPreFilter filter)
         {
+            // Build our custom SetUpFixture to get the NUnit runner to initialize us
+            // even though we don't own the test assembly.
+            var setUpFixture = _setUpFixtureBuilder.BuildFrom(typeInfo);
             var fixture = new TestFixture(typeInfo);
 
-            // Set the seed for the test fixture with an offset of 2
-            _randomSeedInitializer.InitializeTestFixture(fixture, seedOffset: 2);
+            SetUpRandomizedContext(setUpFixture, fixture);
 
             if (fixture.RunState != RunState.NotRunnable)
                 CheckTestFixtureIsValid(fixture);
@@ -86,7 +94,8 @@ namespace Lucene.Net.Util
 
             AddTestCasesToFixture(fixture, filter);
 
-            return fixture;
+            setUpFixture.Add(fixture);
+            return setUpFixture;
         }
 
         /// <summary>
@@ -137,7 +146,12 @@ namespace Lucene.Net.Util
                 }
             }
 
+            // Build our custom SetUpFixture to get the NUnit runner to initialize us
+            // even though we don't own the test assembly.
+            var setUpFixture = _setUpFixtureBuilder.BuildFrom(typeInfo);
             var fixture = new TestFixture(typeInfo, arguments);
+
+            SetUpRandomizedContext(setUpFixture, fixture);
 
             string name = fixture.Name;
 
@@ -184,9 +198,6 @@ namespace Lucene.Net.Util
                 foreach (object val in testFixtureData.Properties[key])
                     fixture.Properties.Add(key, val);
 
-            // Set the seed for the test fixture with an offset of 2
-            _randomSeedInitializer.InitializeTestFixture(fixture, seedOffset: 2);
-
             if (fixture.RunState != RunState.NotRunnable)
                 CheckTestFixtureIsValid(fixture);
 
@@ -194,12 +205,35 @@ namespace Lucene.Net.Util
 
             AddTestCasesToFixture(fixture, filter);
 
-            return fixture;
+            setUpFixture.Add(fixture);
+            return setUpFixture;
         }
 
         #endregion
 
         #region Helper Methods
+
+        /// <summary>
+        /// Sets up the randomized context for both the set up fixture and the test fixture.
+        /// We use the same instance for every set up fixture in the assembly, but each test
+        /// fixture has its own distinct randomized context instance.
+        /// </summary>
+        /// <param name="setUpFixture">The setup fixture.</param>
+        /// <param name="testFixture">The test fixture.</param>
+        private void SetUpRandomizedContext(Test setUpFixture, Test testFixture)
+        {
+            // Setup the factories so we can read the random seed from the system properties
+            LuceneTestCase.SetUpFixture.EnsureInitialized(setUpFixture, testFixture);
+
+            // Reuse the same randomized context for each setup fixture instance, since these all need to report
+            // the same seed. Note that setUpFixtureRandomizedContext is static, so we do this once per assembly.
+            if (setUpFixtureRandomizedContext is null)
+                setUpFixtureRandomizedContext = _randomSeedInitializer.InitializeTestFixture(setUpFixture, SETUP_FIXTURE_SEED_OFFSET);
+            else
+                setUpFixture.Properties.Add(RandomizedContext.RandomizedContextPropertyName, setUpFixtureRandomizedContext);
+
+            _randomSeedInitializer.InitializeTestFixture(testFixture, TEST_FIXTURE_SEED_OFFSET);
+        }
 
         /// <summary>
         /// Method to add test cases to the newly constructed fixture.
@@ -393,8 +427,22 @@ namespace Lucene.Net.Util
                 .Any(m => m.ReturnType == to && m.Name == "op_Implicit");
         }
 
+        internal static IEnumerable<Type> TypeAndBaseTypes(this Type type)
+        {
+            for (; type != null; type = type.GetTypeInfo().BaseType)
+            {
+                yield return type;
+            }
+        }
+
 
         // From NUnit's Extensions class
+
+        public static bool IsStatic(this Type type)
+        {
+            return type.GetTypeInfo().IsAbstract && type.GetTypeInfo().IsSealed;
+        }
+
         public static bool HasAttribute<T>(this ICustomAttributeProvider attributeProvider, bool inherit)
         {
             return attributeProvider.IsDefined(typeof(T), inherit);
@@ -403,6 +451,21 @@ namespace Lucene.Net.Util
         public static bool HasAttribute<T>(this Type type, bool inherit)
         {
             return ((ICustomAttributeProvider)type.GetTypeInfo()).HasAttribute<T>(inherit);
+        }
+
+        public static T[] GetAttributes<T>(this ICustomAttributeProvider attributeProvider, bool inherit) where T : class
+        {
+            return (T[])attributeProvider.GetCustomAttributes(typeof(T), inherit);
+        }
+
+        public static T[] GetAttributes<T>(this Assembly assembly) where T : class
+        {
+            return assembly.GetAttributes<T>(inherit: false);
+        }
+
+        public static T[] GetAttributes<T>(this Type type, bool inherit) where T : class
+        {
+            return ((ICustomAttributeProvider)type.GetTypeInfo()).GetAttributes<T>(inherit);
         }
     }
 
