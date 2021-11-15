@@ -983,6 +983,9 @@ namespace Lucene.Net.Util
             // LUCENENET: Printing out randomized context regardless
             // of whether verbose is enabled (since we need it for debugging,
             // but the verbose output can crash tests).
+            Console.Write("RandomSeed: ");
+            Console.WriteLine(RandomizedContext.CurrentContext.RandomSeedAsHex);
+
             Console.Write("Culture: ");
             Console.WriteLine(ClassEnvRule.locale.Name);
 
@@ -1033,22 +1036,25 @@ namespace Lucene.Net.Util
                 */
 #if TESTFRAMEWORK_NUNIT
             TestResult result = TestExecutionContext.CurrentContext.CurrentResult;
-            string message = result.Message + $"\n\nTo reproduce this test result:\n\n" +
-                $"Option 1:\n\n" +
-                $" Apply the following assembly-level attributes:\n\n" +
-                $"[assembly: Lucene.Net.Util.RandomSeed({RandomizedContext.CurrentContext.RandomSeedAsHex}L)]\n" +
-                $"[assembly: NUnit.Framework.Property(\"tests:culture\", \"{Thread.CurrentThread.CurrentCulture.Name}\")]\n\n\n" +
-                $"Option 2:\n\n" +
-                $" Use the following .runsettings file.\n\n" +
-                $"<RunSettings>\n" +
-                $"  <TestRunParameters>\n" +
-                $"    <Parameter name=\"tests:seed\" value=\"{RandomizedContext.CurrentContext.RandomSeedAsHex}\" />\n" +
-                $"    <Parameter name=\"tests:culture\" value=\"{Thread.CurrentThread.CurrentCulture.Name}\" />\n" +
-                $"  </TestRunParameters>\n" +
-                $"</RunSettings>\n\n" +
-                $"See the .runsettings documentation at: https://docs.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file.";
-
-            result.SetResult(result.ResultState, message, result.StackTrace);
+            string message;
+            if (result.ResultState == ResultState.Failure || result.ResultState == ResultState.Error)
+            {
+                message = result.Message + $"\n\nTo reproduce this test result:\n\n" +
+                    $"Option 1:\n\n" +
+                    $" Apply the following assembly-level attributes:\n\n" +
+                    $"[assembly: Lucene.Net.Util.RandomSeed({RandomizedContext.CurrentContext.RandomSeedAsHex}L)]\n" +
+                    $"[assembly: NUnit.Framework.Property(\"tests:culture\", \"{Thread.CurrentThread.CurrentCulture.Name}\")]\n\n\n" +
+                    $"Option 2:\n\n" +
+                    $" Use the following .runsettings file.\n\n" +
+                    $"<RunSettings>\n" +
+                    $"  <TestRunParameters>\n" +
+                    $"    <Parameter name=\"tests:seed\" value=\"{RandomizedContext.CurrentContext.RandomSeedAsHex}\" />\n" +
+                    $"    <Parameter name=\"tests:culture\" value=\"{Thread.CurrentThread.CurrentCulture.Name}\" />\n" +
+                    $"  </TestRunParameters>\n" +
+                    $"</RunSettings>\n\n" +
+                    $"See the .runsettings documentation at: https://docs.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file.";
+                result.SetResult(result.ResultState, message, result.StackTrace);
+            }
 #endif
         }
 
