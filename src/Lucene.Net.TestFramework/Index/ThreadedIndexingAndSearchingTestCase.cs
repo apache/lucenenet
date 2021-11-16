@@ -49,6 +49,8 @@ namespace Lucene.Net.Index
     /// Utility class that spawns multiple indexing and
     /// searching threads.
     /// </summary>
+    // LUCENENET specific - Specify to unzip the line file docs
+    [UseTempLineDocsFile]
     public abstract class ThreadedIndexingAndSearchingTestCase : LuceneTestCase
 #if TESTFRAMEWORK_XUNIT
         , Xunit.IClassFixture<BeforeAfterClass>
@@ -79,13 +81,6 @@ namespace Lucene.Net.Index
                 this.PackID = packID;
                 this.SubIDs = subIDs;
             }
-        }
-
-        // LUCENENET specific - Specify to unzip the line file docs
-        public override void BeforeClass()
-        {
-            UseTempLineDocsFile = true;
-            base.BeforeClass();
         }
 
         // Called per-search

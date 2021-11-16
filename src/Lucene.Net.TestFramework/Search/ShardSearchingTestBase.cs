@@ -72,6 +72,8 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Base test class for simulating distributed search across multiple shards.
     /// </summary>
+    // LUCENENET specific - Specify to unzip the line file docs
+    [UseTempLineDocsFile]
     public abstract class ShardSearchingTestBase : LuceneTestCase
 #if TESTFRAMEWORK_XUNIT
         , Xunit.IClassFixture<BeforeAfterClass>
@@ -83,13 +85,6 @@ namespace Lucene.Net.Search
 #else
     {
 #endif
-        // LUCENENET specific - Specify to unzip the line file docs
-        public override void BeforeClass()
-        {
-            UseTempLineDocsFile = true;
-            base.BeforeClass();
-        }
-
 
         // LUCENENET specific - de-nested SearcherExpiredException
 

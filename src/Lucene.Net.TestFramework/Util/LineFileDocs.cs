@@ -60,12 +60,12 @@ namespace Lucene.Net.Util
         }
 
         public LineFileDocs(Random random)
-            : this(random, LuceneTestCase.TempLineDocsFile ?? LuceneTestCase.TestLineDocsFile, true)
+            : this(random, LuceneTestCase.TestLineDocsFile, true)
         {
         }
 
         public LineFileDocs(Random random, bool useDocValues)
-            : this(random, LuceneTestCase.TempLineDocsFile ?? LuceneTestCase.TestLineDocsFile, useDocValues)
+            : this(random, LuceneTestCase.TestLineDocsFile, useDocValues)
         {
         }
 

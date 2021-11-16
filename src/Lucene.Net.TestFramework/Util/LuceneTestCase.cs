@@ -694,18 +694,8 @@ namespace Lucene.Net.Util
         public static string TestLineDocsFile // LUCENENET specific - changed from field to property, and renamed
         {
             get => TestProperties.TestLineDocsFile;
-            set => TestProperties.TestLineDocsFile = value;
+            internal set => TestProperties.TestLineDocsFile = value;
         }
-
-        /// <summary>
-        /// The line file used by <see cref="LineFileDocs"/> to override <see cref="TestLineDocsFile"/> if it exists (points to an unzipped file).</summary>
-        // LUCENENET specific - used to unzip the LineDocsFile at the class level so we don't have to do it in every test.
-        internal static string TempLineDocsFile { get; set; }
-
-        /// <summary>
-        /// Whether to use the temporary line docs file. This should be set to <c>true</c> when a subclass requires <see cref="LineFileDocs"/>.</summary>
-        // LUCENENET specific - used to unzip the LineDocsFile at the class level so we don't have to do it in every test.
-        internal bool UseTempLineDocsFile { get; set; }
 
         /// <summary>
         /// Whether or not <see cref="NightlyAttribute"/> tests should run. </summary>
@@ -1111,11 +1101,6 @@ namespace Lucene.Net.Util
 
                 // LUCENENET TODO: Scan for a custom attribute and setup ordering to
                 // initialize data from this class to the top class
-
-                if (UseTempLineDocsFile)
-                {
-                    TempLineDocsFile = LineFileDocs.MaybeCreateTempFile();
-                }
             }
             catch (Exception ex)
             {
@@ -1145,11 +1130,6 @@ namespace Lucene.Net.Util
                 // LUCENENET: Generate the info once so it can be printed out for each test
                 codecType = ClassEnvRule.codec.GetType().Name;
                 similarityName = ClassEnvRule.similarity.ToString();
-
-                if (UseTempLineDocsFile)
-                {
-                    TempLineDocsFile = LineFileDocs.MaybeCreateTempFile();
-                }
             }
             catch (Exception ex)
             {
@@ -1170,10 +1150,6 @@ namespace Lucene.Net.Util
             {
                 ClassEnvRule.After();
                 CleanupTemporaryFiles();
-                if (UseTempLineDocsFile)
-                {
-                    TempLineDocsFile = null;
-                }
             }
             catch (Exception ex)
             {
@@ -1199,10 +1175,6 @@ namespace Lucene.Net.Util
             {
                 ClassEnvRule.After();
                 CleanupTemporaryFiles();
-                if (UseTempLineDocsFile)
-                {
-                    TempLineDocsFile = null;
-                }
             }
             catch (Exception ex)
             {

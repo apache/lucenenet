@@ -95,6 +95,8 @@ namespace Lucene.Net.Analysis
     /// </summary>
     /// <seealso cref="MockAnalyzer"/>
     /// <seealso cref="MockTokenizer"/>
+    // LUCENENET specific - Specify to unzip the line file docs
+    [UseTempLineDocsFile]
     public abstract class BaseTokenStreamTestCase : LuceneTestCase
 #if TESTFRAMEWORK_XUNIT
         , Xunit.IClassFixture<BeforeAfterClass>
@@ -125,13 +127,6 @@ namespace Lucene.Net.Analysis
         // LUCENENET specific - de-nested ICheckClearAttributesAttribute
 
         // LUCENENET specific - de-nested CheckClearAttributesAttribute
-
-        // LUCENENET specific - Specify to unzip the line file docs
-        public override void BeforeClass()
-        {
-            UseTempLineDocsFile = true;
-            base.BeforeClass();
-        }
 
         // offsetsAreCorrect also validates:
         //   - graph offsets are correct (all tokens leaving from

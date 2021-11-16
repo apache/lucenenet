@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
 {
@@ -37,9 +38,10 @@ namespace Lucene.Net.Index
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
-    
 
-    [TestFixture]
+
+    // LUCENENET specific - Specify to unzip the line file docs
+    [UseTempLineDocsFile]
     [Timeout(900000)]
     public class TestFlushByRamOrCountsPolicy : LuceneTestCase 
     {
@@ -49,7 +51,6 @@ namespace Lucene.Net.Index
         [OneTimeSetUp]
         public override void BeforeClass()
         {
-            UseTempLineDocsFile = true; // LUCENENET specific - Specify to unzip the line file docs
             base.BeforeClass();
             lineDocFile = new LineFileDocs(Random, DefaultCodecSupportsDocValues);
         }

@@ -126,12 +126,16 @@ namespace Lucene.Net.Util
         private IPostingsFormatFactory postingsFormatFactory;
         private IConfigurationFactory configurationFactory;
 
+        private readonly AbstractBeforeAfterRule useTempLineDocsFileRule;
+
         protected LuceneTestFrameworkInitializer()
         {
             codecFactory = new TestCodecFactory();
             docValuesFormatFactory = new TestDocValuesFormatFactory();
             postingsFormatFactory = new TestPostingsFormatFactory();
             configurationFactory = new TestConfigurationFactory();
+
+            useTempLineDocsFileRule = new UseTempLineDocsFileRule();
         }
 
         // LUCENENET specific factory methods to scan the test framework for codecs/docvaluesformats/postingsformats only once
@@ -220,11 +224,7 @@ namespace Lucene.Net.Util
         /// </summary>
         internal void DoTestFrameworkSetUp()
         {
-            // If we can cleanup, unzip the LineDocsFile 1 time for the entire test run,
-            // which will dramatically improve performance.
-            var temp = LineFileDocs.MaybeCreateTempFile(removeAfterClass: false);
-            if (null != temp)
-                LuceneTestCase.TestLineDocsFile = temp;
+            useTempLineDocsFileRule.Before();
 
             try
             {
@@ -253,18 +253,7 @@ namespace Lucene.Net.Util
                 throw RuntimeException.Create($"An exception occurred during TestFrameworkTearDown:\n{ex}", ex);
             }
 
-            // Cleanup our LineDocsFile and reset LuceneTestCase back to its original state.
-            var originalLineDocsFile = SystemProperties.GetProperty("tests:linedocsfile", LuceneTestCase.DEFAULT_LINE_DOCS_FILE);
-            if (!originalLineDocsFile.Equals(LuceneTestCase.TestLineDocsFile))
-            {
-                try
-                {
-                    if (!string.IsNullOrEmpty(LuceneTestCase.TestLineDocsFile) && File.Exists(LuceneTestCase.TestLineDocsFile))
-                        File.Delete(LuceneTestCase.TestLineDocsFile);
-                }
-                catch { }
-                LuceneTestCase.TestLineDocsFile = originalLineDocsFile;
-            }
+            useTempLineDocsFileRule.After();
         }
 
         /// <summary>

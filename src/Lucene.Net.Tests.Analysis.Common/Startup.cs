@@ -18,9 +18,6 @@
 
 using Lucene.Net.Util;
 
-// LUCENENET: With this class in place, the LineDocsFile is exported to a temp file 1 time per test run,
-// which makes the tests run faster. This class is simply here to facilitate the call from NUnit which
-// would not occur if it were not here.
 public class Startup : LuceneTestFrameworkInitializer
 {
     protected override void TestFrameworkSetUp()
