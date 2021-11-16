@@ -1,4 +1,4 @@
-namespace Lucene.Net.Util
+﻿namespace Lucene.Net.Util
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,11 +23,11 @@ namespace Lucene.Net.Util
     /// </summary>
     public abstract class AbstractBeforeAfterRule
     {
-        public virtual void Before(LuceneTestCase testInstance)
+        public virtual void Before()
         {
         }
 
-        public virtual void After(LuceneTestCase testInstance)
+        public virtual void After()
         {
         }
     }

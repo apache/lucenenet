@@ -108,7 +108,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public override void Before(LuceneTestCase testInstance)
+        public override void Before()
         {
             // LUCENENET specific - SOLR setup code removed
 
@@ -369,7 +369,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// After suite cleanup (always invoked).
         /// </summary>
-        public override void After(LuceneTestCase testInstance)
+        public override void After()
         {
             // LUCENENT specific - Not used in .NET
             //foreach (KeyValuePair<string, string> e in restoreProperties)

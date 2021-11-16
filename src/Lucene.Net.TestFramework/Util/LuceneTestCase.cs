@@ -1103,7 +1103,7 @@ namespace Lucene.Net.Util
 
             try
             {
-                ClassEnvRule.Before(null);
+                ClassEnvRule.Before();
 
                 // LUCENENET: Generate the info once so it can be printed out for each test
                 codecType = ClassEnvRule.codec.GetType().Name;
@@ -1140,7 +1140,7 @@ namespace Lucene.Net.Util
         {
             try
             {
-                ClassEnvRule.Before(this);
+                ClassEnvRule.Before();
 
                 // LUCENENET: Generate the info once so it can be printed out for each test
                 codecType = ClassEnvRule.codec.GetType().Name;
@@ -1168,7 +1168,7 @@ namespace Lucene.Net.Util
         {
             try
             {
-                ClassEnvRule.After(null);
+                ClassEnvRule.After();
                 CleanupTemporaryFiles();
                 if (UseTempLineDocsFile)
                 {
@@ -1197,7 +1197,7 @@ namespace Lucene.Net.Util
         {
             try
             {
-                ClassEnvRule.After(this);
+                ClassEnvRule.After();
                 CleanupTemporaryFiles();
                 if (UseTempLineDocsFile)
                 {
