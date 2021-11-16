@@ -43,7 +43,7 @@ namespace Lucene.Net.Util
 
             protected internal override bool LessThan(int? a, int? b)
             {
-                return (a <= b);
+                return (a < b);
             }
         }
 
@@ -186,21 +186,38 @@ namespace Lucene.Net.Util
 
         private class Less : IComparer<int?>
         {
+            public static IComparer<int?> Default { get; } = new Less();
+
+            private Less() { }
+
             public int Compare(int? a, int? b)
             {
                 Assert.IsNotNull(a);
                 Assert.IsNotNull(b);
-                return (int) (a - b);
+                if (a < b)
+                    return -1;
+                if (a > b)
+                    return 1;
+                return 0;
             }
         }
 
         private class Greater : IComparer<int?>
         {
+            public static IComparer<int?> Default { get; } = new Greater();
+
+            private Greater() { }
+
             public int Compare(int? a, int? b)
             {
                 Assert.IsNotNull(a);
                 Assert.IsNotNull(b);
-                return (int) (a - b);
+                if (a > b)
+                    return -1;
+                if (a < b)
+                    return 1;
+                return 0;
+
             }
         } 
 
@@ -493,7 +510,7 @@ namespace Lucene.Net.Util
             for (int i = 1; i < size; i++)
             {
                 T next = pq.Pop();
-                Assert.IsTrue(pq.LessThan(last, next));
+                Assert.IsTrue(pq.LessThan(last, next) || last.Equals(next));
                 last = next;
             }
         }
@@ -542,7 +559,7 @@ namespace Lucene.Net.Util
 
             AddElements(pq, elements);
 
-            ArrayUtil.IntroSort(elements, new Less());
+            ArrayUtil.IntroSort(elements, Less.Default);
 
             PopAndTestElements(pq, elements);
         }
@@ -618,14 +635,14 @@ namespace Lucene.Net.Util
             Console.WriteLine("\nSorted list of elements...");
 
             pq = new IntegerQueue(maxSize);
-            ArrayUtil.IntroSort(elements, new Less());
+            ArrayUtil.IntroSort(elements, Less.Default);
             TimedAddAndPop<int?>(pq, elements);
             pq.Clear();
 
             Console.WriteLine("\nReverse sorted list of elements...");
 
             pq = new IntegerQueue(maxSize);
-            ArrayUtil.IntroSort(elements, new Greater());
+            ArrayUtil.IntroSort(elements, Greater.Default);
             TimedAddAndPop<int?>(pq, elements);
             pq.Clear();
         }
