@@ -1,6 +1,7 @@
 ﻿using J2N;
 using NUnit.Framework.Internal;
 using System;
+using System.Reflection;
 
 namespace Lucene.Net.Util
 {
@@ -29,14 +30,23 @@ namespace Lucene.Net.Util
         internal const string RandomizedContextPropertyName = "RandomizedContext";
 
         private Random randomGenerator;
+        private readonly Test currentTest;
+        private readonly Assembly currentTestAssembly;
         private readonly long randomSeed;
         private readonly string randomSeedAsHex;
         private readonly long testSeed;
-        private readonly Test currentTest;
 
-        public RandomizedContext(Test currentTest, long randomSeed, long testSeed)
+        /// <summary>
+        /// Initializes the randomized context.
+        /// </summary>
+        /// <param name="currentTest">The test or test fixture for the context.</param>
+        /// <param name="currentTestAssembly">The test assembly. This can be used in <see cref="LuceneTestFrameworkInitializer"/> to scan the test assembly for attributes.</param>
+        /// <param name="randomSeed">The initial random seed that can be used to regenerate this context.</param>
+        /// <param name="testSeed">The individual test's seed to regenerate the test.</param>
+        public RandomizedContext(Test currentTest, Assembly currentTestAssembly, long randomSeed, long testSeed)
         {
             this.currentTest = currentTest ?? throw new ArgumentNullException(nameof(currentTest));
+            this.currentTestAssembly = currentTestAssembly ?? throw new ArgumentNullException(nameof(currentTestAssembly));
             this.randomSeed = randomSeed;
             this.randomSeedAsHex = "0x" + randomSeed.ToHexString();
             this.testSeed = testSeed;
@@ -56,6 +66,11 @@ namespace Lucene.Net.Util
         /// The current test for this context.
         /// </summary>
         public Test CurrentTest => currentTest;
+
+        /// <summary>
+        /// The current test assembly, which may be used to scan the assembly for custom attributes.
+        /// </summary>
+        public Assembly CurrentTestAssembly => currentTestAssembly;
 
         /// <summary>
         /// The random seed for this test's <see cref="RandomGenerator"/>.

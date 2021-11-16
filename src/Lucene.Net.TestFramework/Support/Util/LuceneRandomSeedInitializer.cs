@@ -2,6 +2,7 @@
 using NUnit.Framework.Internal;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace Lucene.Net.Util
 {
@@ -34,6 +35,14 @@ namespace Lucene.Net.Util
         private J2N.Randomizer random;
         private long initialSeed;
 
+        /// <summary>
+        /// Tries to get the random seed from either a <see cref="RandomSeedAttribute"/> or the "tests:seed" system property.
+        /// If niether of these exist, a random seed will be generated and this method returns <c>false</c>;
+        /// </summary>
+        /// <param name="test">The test fixture.</param>
+        /// <param name="seed">The random seed for a new <see cref="Random"/> instance.
+        /// Note this is a subclass of <see cref="Random"/>, since the default doesn't produce consistent results across platforms.</param>
+        /// <returns><c>true</c> if the seed was found in context; <c>false</c> if the seed was generated.</returns>
         private bool TryGetRandomSeedFromContext(Test test, out long seed)
         {
             bool generate;
@@ -79,7 +88,8 @@ namespace Lucene.Net.Util
         /// <param name="fixture">The test fixture.</param>
         /// <param name="seedOffset">Offset that will be added to the initial seed. This should be different for SetUpFixture and TestFixture attributes
         /// so they have different seeds that are deterministically based on the initial seed.</param>
-        public RandomizedContext InitializeTestFixture(Test fixture, int seedOffset = 0)
+        /// <returns>The randomized context.</returns>
+        public RandomizedContext InitializeTestFixture(Test fixture, Assembly testAssembly, int seedOffset = 0)
         {
             if (fixture is null)
                 throw new ArgumentNullException(nameof(fixture));
@@ -98,7 +108,20 @@ namespace Lucene.Net.Util
             // result when there are filters applied.
 
             // Generate a new long value that is the seed for this specific test.
-            var randomizedContext = new RandomizedContext(fixture, initialSeed, random.NextInt64());
+            return InitializeTestFixture(fixture, new RandomizedContext(fixture, testAssembly, initialSeed, random.NextInt64()));
+        }
+
+        /// <summary>
+        /// Initializes the randomized context for the fixture.
+        /// </summary>
+        /// <param name="fixture">The test fixture.</param>
+        /// <param name="randomizedContext">The randomized context to associate with the fixture.</param>
+        /// <returns>The randomized context.</returns>
+        public RandomizedContext InitializeTestFixture(Test fixture, RandomizedContext randomizedContext)
+        {
+            if (fixture is null)
+                throw new ArgumentNullException(nameof(fixture));
+
             fixture.Properties.Set(RandomizedContext.RandomizedContextPropertyName, randomizedContext);
             return randomizedContext;
         }
@@ -118,10 +141,12 @@ namespace Lucene.Net.Util
             if (test is null)
                 return;
 
+            var testAssembly = test is ParameterizedMethodSuite ? test.Tests[0].TypeInfo.Assembly : test.TypeInfo.Assembly;
+
             test.Properties.Set(
                 RandomizedContext.RandomizedContextPropertyName,
                 // Generate a new long value that is the seed for this specific test.
-                new RandomizedContext(test, initialSeed, random.NextInt64()));
+                new RandomizedContext(test, testAssembly, initialSeed, random.NextInt64()));
 
             if (test.HasChildren)
             {

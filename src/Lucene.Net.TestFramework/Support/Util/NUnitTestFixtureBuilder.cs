@@ -228,11 +228,11 @@ namespace Lucene.Net.Util
             // Reuse the same randomized context for each setup fixture instance, since these all need to report
             // the same seed. Note that setUpFixtureRandomizedContext is static, so we do this once per assembly.
             if (setUpFixtureRandomizedContext is null)
-                setUpFixtureRandomizedContext = _randomSeedInitializer.InitializeTestFixture(setUpFixture, SETUP_FIXTURE_SEED_OFFSET);
+                setUpFixtureRandomizedContext = _randomSeedInitializer.InitializeTestFixture(setUpFixture, testFixture.TypeInfo.Assembly, SETUP_FIXTURE_SEED_OFFSET);
             else
-                setUpFixture.Properties.Add(RandomizedContext.RandomizedContextPropertyName, setUpFixtureRandomizedContext);
+                _randomSeedInitializer.InitializeTestFixture(setUpFixture, setUpFixtureRandomizedContext);
 
-            _randomSeedInitializer.InitializeTestFixture(testFixture, TEST_FIXTURE_SEED_OFFSET);
+            _randomSeedInitializer.InitializeTestFixture(testFixture, testFixture.TypeInfo.Assembly, TEST_FIXTURE_SEED_OFFSET);
         }
 
         /// <summary>
