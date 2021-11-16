@@ -659,7 +659,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="startIndex"> Lower index </param>
         /// <param name="endIndex"> One-past the last bit to clear </param>
-        public void Clear(int startIndex, int endIndex)
+        public void Clear(int startIndex, int endIndex) // LUCENENET TODO: API: Change this to use startIndex and length to match .NET
         {
             if (Debugging.AssertsEnabled)
             {

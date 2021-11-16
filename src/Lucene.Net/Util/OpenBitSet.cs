@@ -312,7 +312,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="startIndex"> Lower index </param>
         /// <param name="endIndex"> One-past the last bit to set </param>
-        public virtual void Set(long startIndex, long endIndex)
+        public virtual void Set(long startIndex, long endIndex) // LUCENENET TODO: API: Change this to use startIndex and length to match .NET
         {
             if (endIndex <= startIndex)
             {
@@ -401,7 +401,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="startIndex"> Lower index </param>
         /// <param name="endIndex"> One-past the last bit to clear </param>
-        public virtual void Clear(int startIndex, int endIndex)
+        public virtual void Clear(int startIndex, int endIndex) // LUCENENET TODO: API: Change this to use startIndex and length to match .NET
         {
             if (endIndex <= startIndex)
             {
@@ -448,7 +448,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="startIndex"> Lower index </param>
         /// <param name="endIndex"> One-past the last bit to clear </param>
-        public virtual void Clear(long startIndex, long endIndex)
+        public virtual void Clear(long startIndex, long endIndex) // LUCENENET TODO: API: Change this to use startIndex and length to match .NET
         {
             if (endIndex <= startIndex)
             {
@@ -587,7 +587,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="startIndex"> Lower index </param>
         /// <param name="endIndex"> One-past the last bit to flip </param>
-        public virtual void Flip(long startIndex, long endIndex)
+        public virtual void Flip(long startIndex, long endIndex) // LUCENENET TODO: API: Change this to use startIndex and length to match .NET
         {
             if (endIndex <= startIndex)
             {
