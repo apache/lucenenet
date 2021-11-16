@@ -150,7 +150,7 @@ namespace Lucene.Net.Util
                 InfoStream.Default = new NullInfoStream();
             }
 
-            Type targetClass = testInstance?.GetType() ?? LuceneTestCase.GetTestClass();
+            Type targetClass = LuceneTestCase.TestType;
             avoidCodecs = new JCG.HashSet<string>();
             var suppressCodecsAttribute = targetClass.GetCustomAttribute<LuceneTestCase.SuppressCodecsAttribute>();
             if (suppressCodecsAttribute != null)

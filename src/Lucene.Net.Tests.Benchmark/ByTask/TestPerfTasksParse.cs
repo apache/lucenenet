@@ -139,7 +139,7 @@ namespace Lucene.Net.Benchmarks.ByTask
                         if (Type.GetType(contentSource) == null)
                             throw ClassNotFoundException.Create(contentSource);
                     }
-                    config.Set("work.dir", CreateTempDir(LuceneTestCase.GetTestClass().Name).FullName);
+                    config.Set("work.dir", CreateTempDir(LuceneTestCase.TestType.Name).FullName);
                     config.Set("content.source", typeof(MockContentSource).AssemblyQualifiedName);
                     String dir = config.Get("content.source", null);
                     if (dir != null)

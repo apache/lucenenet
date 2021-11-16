@@ -1278,8 +1278,15 @@ namespace Lucene.Net.Util
         ////}*/
 
         /// <summary>
+        /// Gets the current type being tested.
+        /// </summary>
+        public static Type TestType
+            => TestExecutionContext.CurrentContext.CurrentTest.Fixture?.GetType();
+
+        /// <summary>
         /// Return the current type being tested.
         /// </summary>
+        [Obsolete("Use TestType instead. This method will be removed in 4.8.0 release candidate.")]
         public static Type GetTestClass()
         {
 #if !TESTFRAMEWORK_XUNIT
