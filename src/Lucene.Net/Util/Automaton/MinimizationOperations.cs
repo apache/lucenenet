@@ -1,5 +1,4 @@
 ﻿using J2N;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using JCG = J2N.Collections.Generic;
@@ -214,7 +213,7 @@ namespace Lucene.Net.Util.Automaton
                     }
                     sb.Clear();
                 }
-                refine.Clear(0, refine.Length - 1);
+                refine.Clear(0, refine.Length);
             }
             // make a new state for each equivalence class, set initial state
             State[] newstates = new State[k];
