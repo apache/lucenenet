@@ -741,7 +741,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             //DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
             //return getDate(df.parse(s), resolution);
 
-            return GetDate(DateTime.Parse(s), resolution); // TODO: Locale...
+            return GetDate(DateTime.ParseExact(s, "d", null), resolution);
         }
 
         /** for testing DateTools support */
