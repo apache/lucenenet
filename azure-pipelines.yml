@@ -480,7 +480,7 @@ stages:
           maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
-          imageName: 'macOS-10.14' # macOS-latest should not be used here because we may get OS Darwin 19.6.0, which isn't supported fully (we get PlatformNotSupportedException).
+          imageName: 'macOS-10.15' # macOS-latest should not be used here because we may get OS Darwin 19.6.0, which isn't supported fully (we get PlatformNotSupportedException).
           maximumParallelJobs: 7
           maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
     displayName: 'Test netcoreapp3.1,x64 on'
@@ -514,7 +514,7 @@ stages:
           maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
-          imageName: 'macOS-10.14' # macOS-latest should not be used here because we may get OS Darwin 19.6.0, which isn't supported fully (we get PlatformNotSupportedException).
+          imageName: 'macOS-10.15' # macOS-latest should not be used here because we may get OS Darwin 19.6.0, which isn't supported fully (we get PlatformNotSupportedException).
           maximumParallelJobs: 7
           maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
     displayName: 'Test netcoreapp3.1,x86 on'
