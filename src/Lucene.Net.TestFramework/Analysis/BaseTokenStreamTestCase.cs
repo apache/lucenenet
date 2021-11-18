@@ -710,7 +710,7 @@ namespace Lucene.Net.Analysis
                     if (latch != null) latch.Wait();
                     // see the part in checkRandomData where it replays the same text again
                     // to verify reproducability/reuse: hopefully this would catch thread hazards.
-                    CheckRandomData(new Random((int)seed), a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw);
+                    CheckRandomData(new J2N.Randomizer(seed), a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw);
                     success = true;
                 }
                 catch (Exception e) when (e.IsException()) // LUCENENET TODO: This catch block can be removed because Rethrow.rethrow() simply does what its name says, but need to get rid of the FirstException functionality and fix ThreadJob so it re-throws ThreadInterruptedExcepetion first.
@@ -749,7 +749,7 @@ namespace Lucene.Net.Analysis
 #endif
         {
             CheckResetException(a, "best effort");
-            long seed = random.Next();
+            long seed = random.NextInt64();
             bool useCharFilter = random.NextBoolean();
             Directory dir = null;
             RandomIndexWriter iw = null;
@@ -764,13 +764,13 @@ namespace Lucene.Net.Analysis
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
-                    new Random((int)seed), dir, a);
+                    new J2N.Randomizer(seed), dir, a);
             }
 
             bool success = false;
             try
             {
-                CheckRandomData(new Random((int)seed), a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw);
+                CheckRandomData(new J2N.Randomizer(seed), a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw);
                 // now test with multiple threads: note we do the EXACT same thing we did before in each thread,
                 // so this should only really fail from another thread if its an actual thread problem
                 int numThreads = TestUtil.NextInt32(random, 2, 4);
@@ -780,7 +780,7 @@ namespace Lucene.Net.Analysis
                 {
                     threads[i] = new AnalysisThread(seed, startingGun, a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw);
                 }
-                
+
                 foreach (AnalysisThread thread in threads)
                 {
                     thread.Start();
@@ -943,7 +943,7 @@ namespace Lucene.Net.Analysis
                     {
                         // TODO: really we should pass a random seed to
                         // checkAnalysisConsistency then print it here too:
-                        Console.Error.WriteLine("TEST FAIL: useCharFilter=" + useCharFilter + " text='" + Escape(text) + "'");
+                        Console.Error.WriteLine($"TEST FAIL (iteration {i}): useCharFilter=" + useCharFilter + " text='" + Escape(text) + "'");
                         throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
                 }
@@ -1196,8 +1196,8 @@ namespace Lucene.Net.Analysis
             }
             reader = new StringReader(text);
 
-            long seed = random.Next();
-            random = new Random((int)seed);
+            long seed = random.NextInt64();
+            random = new J2N.Randomizer(seed);
             if (random.Next(30) == 7)
             {
                 if (Verbose)
@@ -1243,7 +1243,7 @@ namespace Lucene.Net.Analysis
             if (field != null)
             {
                 reader = new StringReader(text);
-                random = new Random((int)seed);
+                random = new J2N.Randomizer(seed);
                 if (random.Next(30) == 7)
                 {
                     if (Verbose)
