@@ -1033,9 +1033,9 @@ namespace Lucene.Net.Util
                     $"Option 1:\n\n" +
                     $" Apply the following assembly-level attributes:\n\n" +
                     $"[assembly: Lucene.Net.Util.RandomSeed({RandomizedContext.CurrentContext.RandomSeedAsHex}L)]\n" +
-                    $"[assembly: NUnit.Framework.Property(\"tests:culture\", \"{Thread.CurrentThread.CurrentCulture.Name}\")]\n\n\n" +
+                    $"[assembly: NUnit.Framework.SetCulture(\"{Thread.CurrentThread.CurrentCulture.Name}\")]\n\n" +
                     $"Option 2:\n\n" +
-                    $" Use the following .runsettings file.\n\n" +
+                    $" Use the following .runsettings file:\n\n" +
                     $"<RunSettings>\n" +
                     $"  <TestRunParameters>\n" +
                     $"    <Parameter name=\"tests:seed\" value=\"{RandomizedContext.CurrentContext.RandomSeedAsHex}\" />\n" +
