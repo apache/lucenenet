@@ -99,8 +99,8 @@ namespace Lucene.Net.Search.Spell
 
             int queueInitialCapacity = maxSuggestions > 10 ? 10 : maxSuggestions;
             IComparer<SuggestWordArrayWrapper> queueComparer = sortMethod == BreakSuggestionSortMethod.NUM_CHANGES_THEN_MAX_FREQUENCY 
-                ? (IComparer<SuggestWordArrayWrapper>)new LengthThenMaxFreqComparer() 
-                : new LengthThenSumFreqComparer();
+                ? (IComparer<SuggestWordArrayWrapper>)LengthThenMaxFreqComparer.Default 
+                : LengthThenSumFreqComparer.Default;
             JCG.PriorityQueue<SuggestWordArrayWrapper> suggestions = new JCG.PriorityQueue<SuggestWordArrayWrapper>(queueInitialCapacity, queueComparer);
 
             int origFreq = ir.DocFreq(term);
@@ -172,7 +172,7 @@ namespace Lucene.Net.Search.Spell
             }
 
             int queueInitialCapacity = maxSuggestions > 10 ? 10 : maxSuggestions;
-            IComparer<CombineSuggestionWrapper> queueComparer = new CombinationsThenFreqComparer();
+            IComparer<CombineSuggestionWrapper> queueComparer = CombinationsThenFreqComparer.Default;
             JCG.PriorityQueue<CombineSuggestionWrapper> suggestions = new JCG.PriorityQueue<CombineSuggestionWrapper>(queueInitialCapacity, queueComparer);
 
             int thisTimeEvaluations = 0;
@@ -409,6 +409,10 @@ namespace Lucene.Net.Search.Spell
 
         private sealed class LengthThenMaxFreqComparer : IComparer<SuggestWordArrayWrapper>
         {
+            private LengthThenMaxFreqComparer() { } // LUCENENET: Made into singleton
+
+            public static IComparer<SuggestWordArrayWrapper> Default { get; } = new LengthThenMaxFreqComparer();
+
             public int Compare(SuggestWordArrayWrapper o1, SuggestWordArrayWrapper o2)
             {
                 if (o1.SuggestWords.Length != o2.SuggestWords.Length)
@@ -425,6 +429,10 @@ namespace Lucene.Net.Search.Spell
 
         private sealed class LengthThenSumFreqComparer : IComparer<SuggestWordArrayWrapper>
         {
+            private LengthThenSumFreqComparer() { } // LUCENENET: Made into singleton
+
+            public static IComparer<SuggestWordArrayWrapper> Default { get; } = new LengthThenSumFreqComparer();
+
             public int Compare(SuggestWordArrayWrapper o1, SuggestWordArrayWrapper o2)
             {
                 if (o1.SuggestWords.Length != o2.SuggestWords.Length)
@@ -441,9 +449,9 @@ namespace Lucene.Net.Search.Spell
 
         private sealed class CombinationsThenFreqComparer : IComparer<CombineSuggestionWrapper>
         {
-            public CombinationsThenFreqComparer()
-            {
-            }
+            private CombinationsThenFreqComparer() { } // LUCENENET: Made into singleton
+
+            public static IComparer<CombineSuggestionWrapper> Default { get; } = new CombinationsThenFreqComparer();
 
             public int Compare(CombineSuggestionWrapper o1, CombineSuggestionWrapper o2)
             {

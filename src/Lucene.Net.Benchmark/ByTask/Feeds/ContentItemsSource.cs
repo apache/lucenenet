@@ -107,7 +107,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         protected void CollectFiles(DirectoryInfo dir, IList<FileInfo> files)
         {
             CollectFilesImpl(dir, files);
-            files.Sort(new FileNameComparer());
+            files.Sort(FileNameComparer.Default);
         }
 
         private void CollectFilesImpl(DirectoryInfo dir, IList<FileInfo> files)
@@ -122,6 +122,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         private class FileNameComparer : IComparer<FileInfo>
         {
+            private FileNameComparer() { } // LUCENENET: Made into singleton
+
+            public static IComparer<FileInfo> Default { get; } = new FileNameComparer();
+
             public int Compare(FileInfo x, FileInfo y)
             {
                 return x.FullName.CompareToOrdinal(y.FullName);

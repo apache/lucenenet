@@ -48,6 +48,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             private class Comparer : IComparer<FileInfo>
             {
+                private Comparer() { } // LUCENENET: Made into singleton
+
+                public static IComparer<FileInfo> Default { get; } = new Comparer();
+
                 public int Compare(FileInfo a, FileInfo b)
                 {
                     string a2 = a.ToString();
@@ -83,7 +87,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             /* this seems silly ... there must be a better way ...
                not that this is good, but can it matter? */
 
-            private readonly Comparer c = new Comparer(); // LUCENENET: marked readonly
+            private readonly IComparer<FileInfo> c = Comparer.Default; // LUCENENET: marked readonly
 
             private FileInfo current;
 

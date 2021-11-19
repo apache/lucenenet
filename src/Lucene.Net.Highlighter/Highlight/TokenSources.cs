@@ -37,6 +37,10 @@ namespace Lucene.Net.Search.Highlight
     {
         private class TokenComparer : IComparer<Token>
         {
+            private TokenComparer() { } // LUCENENET: Made into singleton
+
+            public static IComparer<Token> Default { get; } = new TokenComparer();
+
             public int Compare(Token t1, Token t2)
             {
                 if (t1.StartOffset == t2.StartOffset)
@@ -275,7 +279,7 @@ namespace Lucene.Net.Search.Highlight
             if (unsortedTokens != null)
             {
                 tokensInOriginalOrder = unsortedTokens.ToArray();
-                ArrayUtil.TimSort(tokensInOriginalOrder, new TokenComparer());
+                ArrayUtil.TimSort(tokensInOriginalOrder, TokenComparer.Default);
                 //tokensInOriginalOrder = tokensInOriginalOrder
                 //    .OrderBy(t => t, new TokenComparer() )
                 //    .ToArray();

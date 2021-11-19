@@ -244,6 +244,10 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
         private class DaitchMokotoffRuleComparer : IComparer<Rule>
         {
+            private DaitchMokotoffRuleComparer() { } // LUCENENET: Made into singleton
+
+            public static IComparer<Rule> Default { get; } = new DaitchMokotoffRuleComparer();
+
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public int Compare(Rule rule1, Rule rule2)
             {
@@ -268,7 +272,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             foreach (var rule in RULES)
             {
                 IList<Rule> ruleList = rule.Value;
-                ruleList.Sort(new DaitchMokotoffRuleComparer());
+                ruleList.Sort(DaitchMokotoffRuleComparer.Default);
             }
         }
 
