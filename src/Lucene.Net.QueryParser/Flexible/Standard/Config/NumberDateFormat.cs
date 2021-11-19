@@ -81,12 +81,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         public override string Format(double number)
         {
-            return new DateTime(EPOCH).AddMilliseconds(number).ToString(GetDateFormat(), Culture);
+            return J2N.Time.UnixEpoch
+                .ToCalendar(Culture)
+                //.ToTimeZone(TimeZone) // LUCENENET TODO: Add TimeZone support
+                .AddMilliseconds(number)
+                .ToString(GetDateFormat(), Culture);
         }
 
         public override string Format(long number)
         {
-            return new DateTime(EPOCH).AddMilliseconds(number).ToString(GetDateFormat(), Culture);
+            return J2N.Time.UnixEpoch
+                .ToCalendar(Culture)
+                //.ToTimeZone(TimeZone) // LUCENENET TODO: Add TimeZone support
+                .AddMilliseconds(number)
+                .ToString(GetDateFormat(), Culture);
         }
 
         public override object Parse(string source)
@@ -95,12 +103,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             DateTime d;
             d = DateTime.ParseExact(source, GetDateFormat(), Culture, DateTimeStyles.None);
 
-            return (d - new DateTime(EPOCH)).TotalMilliseconds;
+            return (d - J2N.Time.UnixEpoch).TotalMilliseconds;
         }
 
         public override string Format(object number)
         {
-            return new DateTime(EPOCH).AddMilliseconds(Convert.ToInt64(number, CultureInfo.InvariantCulture)).ToString(GetDateFormat(), Culture);
+            return J2N.Time.UnixEpoch
+                .ToCalendar(Culture)
+                //.ToTimeZone(TimeZone) // LUCENENET TODO: Add TimeZone support
+                .AddMilliseconds(Convert.ToInt64(number, CultureInfo.InvariantCulture))
+                .ToString(GetDateFormat(), Culture);
         }
 
         public void SetDateFormat(string dateFormat)
@@ -120,46 +132,80 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             return GetDateFormat(this.dateStyle, this.timeStyle, Culture);
         }
 
-        public static string GetDateFormat(DateFormat dateStyle, DateFormat timeStyle, CultureInfo culture)
+        public static string GetDateFormat(DateFormat dateStyle, DateFormat timeStyle, IFormatProvider provider)
         {
             string datePattern = "", timePattern = "";
+            DateTimeFormatInfo dateTimeFormat = (DateTimeFormatInfo)provider.GetFormat(typeof(DateTimeFormatInfo));
 
             switch (dateStyle)
             {
                 case DateFormat.SHORT:
-                    datePattern = culture.DateTimeFormat.ShortDatePattern;
+                    datePattern = dateTimeFormat.ShortDatePattern;
                     break;
                 case DateFormat.MEDIUM:
-                    datePattern = culture.DateTimeFormat.LongDatePattern
+                    datePattern = dateTimeFormat.LongDatePattern
                         .Replace("dddd,", "").Replace(", dddd", "") // Remove the day of the week
                         .Replace("MMMM", "MMM"); // Replace month with abbreviated month
                     break;
                 case DateFormat.LONG:
-                    datePattern = culture.DateTimeFormat.LongDatePattern
+                    datePattern = dateTimeFormat.LongDatePattern
                         .Replace("dddd,", "").Replace(", dddd", ""); // Remove the day of the week
                     break;
                 case DateFormat.FULL:
-                    datePattern = culture.DateTimeFormat.LongDatePattern;
+                    datePattern = dateTimeFormat.LongDatePattern;
                     break;
             }
 
             switch (timeStyle)
             {
                 case DateFormat.SHORT:
-                    timePattern = culture.DateTimeFormat.ShortTimePattern;
+                    timePattern = dateTimeFormat.ShortTimePattern;
                     break;
                 case DateFormat.MEDIUM:
-                    timePattern = culture.DateTimeFormat.LongTimePattern;
+                    timePattern = dateTimeFormat.LongTimePattern;
                     break;
                 case DateFormat.LONG:
-                    timePattern = culture.DateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " z";
+                    timePattern = dateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " z";
                     break;
                 case DateFormat.FULL:
-                    timePattern = culture.DateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " z"; // LUCENENET TODO: Time zone info not being added to match behavior of Java, but Java doc is unclear on what the difference is between this and LONG
+                    timePattern = dateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " z"; // LUCENENET TODO: Time zone info not being added to match behavior of Java, but Java doc is unclear on what the difference is between this and LONG
                     break;
             }
 
             return string.Concat(datePattern, " ", timePattern);
+        }
+    }
+
+    // LUCENENET TODO: API - Move to J2N.Time?
+    internal static class DateTimeExtensions
+    {
+        private static Calendar GetCalendar(IFormatProvider provider)
+        {
+            DateTimeFormatInfo dateTimeFormat = (DateTimeFormatInfo)provider.GetFormat(typeof(DateTimeFormatInfo));
+            return dateTimeFormat.Calendar;
+        }
+
+        public static DateTime ToCalendar(this DateTime input, IFormatProvider provider)
+        {
+            return ToCalendar(input, GetCalendar(provider));
+        }
+
+        public static DateTime ToCalendar(this DateTime input, Calendar calendar)
+        {
+            return new DateTime(
+                calendar.GetYear(input),
+                calendar.GetMonth(input),
+                calendar.GetDayOfMonth(input),
+                calendar.GetHour(input),
+                calendar.GetMinute(input),
+                calendar.GetSecond(input),
+                (int)calendar.GetMilliseconds(input),
+                calendar);
+        }
+
+        public static DateTime ToTimeZone(this DateTime input, TimeZoneInfo timeZone)
+        {
+            return TimeZoneInfo.ConvertTime(input, timeZone);
         }
     }
 }
