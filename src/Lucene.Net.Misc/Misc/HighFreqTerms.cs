@@ -57,13 +57,13 @@ namespace Lucene.Net.Misc
 
             Store.Directory dir = FSDirectory.Open(new DirectoryInfo(args[0]));
 
-            IComparer<TermStats> comparer = new DocFreqComparer();
+            IComparer<TermStats> comparer = DocFreqComparer.Default;
 
             for (int i = 1; i < args.Length; i++)
             {
                 if (args[i].Equals("-t", StringComparison.Ordinal))
                 {
-                    comparer = new TotalTermFreqComparer();
+                    comparer = TotalTermFreqComparer.Default;
                 }
                 else
                 {
@@ -144,6 +144,9 @@ namespace Lucene.Net.Misc
         /// </summary>
         public sealed class DocFreqComparer : IComparer<TermStats>
         {
+            private DocFreqComparer() { } // LUCENENET: Made into singleton
+
+            public static IComparer<TermStats> Default { get; } = new DocFreqComparer();
 
             public int Compare(TermStats a, TermStats b)
             {
@@ -165,6 +168,10 @@ namespace Lucene.Net.Misc
         /// </summary>
         public sealed class TotalTermFreqComparer : IComparer<TermStats>
         {
+            private TotalTermFreqComparer() { } // LUCENENT: Made into singleton
+
+            public static IComparer<TermStats> Default { get; } = new TotalTermFreqComparer();
+
             public int Compare(TermStats a, TermStats b)
             {
                 int res = a.TotalTermFreq.CompareTo(b.TotalTermFreq);
