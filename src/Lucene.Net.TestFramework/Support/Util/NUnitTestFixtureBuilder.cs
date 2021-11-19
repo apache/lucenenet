@@ -342,6 +342,8 @@ namespace Lucene.Net.Util
 
     internal class MethodInfoComparer : IComparer<IMethodInfo>
     {
+        private MethodInfoComparer() { } // LUCENENT: Made into singleton
+
         public static IComparer<IMethodInfo> Default { get; } = new MethodInfoComparer();
 
         public int Compare(IMethodInfo x, IMethodInfo y)
