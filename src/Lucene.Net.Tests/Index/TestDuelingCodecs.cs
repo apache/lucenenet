@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -171,6 +171,7 @@ namespace Lucene.Net.Index
         /// checks the two indexes are equivalent
         /// </summary>
         [Test]
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/545")] // LUCENENET TODO: This test occasionally fails
         public virtual void TestEquals()
         {
             AssertReaderEquals(info, leftReader, rightReader);

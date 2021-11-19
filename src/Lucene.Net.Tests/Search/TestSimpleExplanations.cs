@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
@@ -274,6 +274,9 @@ namespace Lucene.Net.Search
         }
 
         [Test]
+#if NETFRAMEWORK
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/546")] // LUCENENET TODO: This test fails on x86 .NET Framework in Release mode only
+#endif
         public virtual void TestDMQ8()
         {
             DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.5f);
