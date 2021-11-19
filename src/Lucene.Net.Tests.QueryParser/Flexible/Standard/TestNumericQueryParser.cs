@@ -70,15 +70,41 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         private static IndexReader reader = null;
         private static IndexSearcher searcher = null;
 
-        private static bool checkDateFormatSanity(/*DateFormat*/string dateFormat, long date)
+        private static bool checkDateFormatSanity(NumberDateFormat dateFormat, long date)
         {
-            var culture = LOCALE;
-            if (IsOutOfBounds(date, culture))
+            IFormatProvider provider = dateFormat.FormatProvider ?? CultureInfo.CurrentCulture;
+            TimeZoneInfo timeZone = dateFormat.TimeZone;
+
+            if (IsOutOfBounds(date, provider, timeZone))
                 return false;
 
-            return DateTime.TryParseExact(J2N.Time.UnixEpoch.ToCalendar(culture).AddMilliseconds(date).ToString(dateFormat, culture),
-                dateFormat, culture, DateTimeStyles.RoundtripKind, out DateTime _);
+            string format = dateFormat.GetDateFormat();
+            string formattedDate = J2N.Time.UnixEpoch
+                .ToCalendar(provider)
+                .ToTimeZone(timeZone)
+                .AddMilliseconds(date)
+                .ToString(format, provider);
+            return DateTime.TryParseExact(formattedDate, format, provider, DateTimeStyles.None, out DateTime _);
         }
+
+        // LUCENENET specific bounds check
+        private static bool IsOutOfBounds(double date, IFormatProvider provider, TimeZoneInfo timeZone)
+        {
+            Calendar calendar = DateTimeExtensions.GetCalendar(provider);
+
+            var newDate = J2N.Time.UnixEpoch
+                .ToCalendar(calendar)
+                .ToTimeZone(timeZone)
+                .Ticks + (long)(date * TimeSpan.TicksPerMillisecond);
+            return newDate < calendar.MinSupportedDateTime.Ticks || newDate > calendar.MaxSupportedDateTime.Ticks;
+        }
+
+        // LUCENENET specific bounds check
+        private static bool IsOutOfBoundsOrZero(double absNumber, IFormatProvider provider, TimeZoneInfo timeZone)
+        {
+            return absNumber == 0 || IsOutOfBounds(absNumber, provider, timeZone) || IsOutOfBounds(-absNumber, provider, timeZone);
+        }
+
 
         [OneTimeSetUp]
         public override void BeforeClass()
@@ -92,7 +118,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             IDictionary<string, /*Number*/object> randomNumberMap = new JCG.Dictionary<string, object>();
 
             /*SimpleDateFormat*/
-            string dateFormat;
+            //string dateFormat;
             long randomDate;
             bool dateFormatSanityCheckPass;
             int count = 0;
@@ -131,7 +157,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 DATE_FORMAT.SetDateFormat(DATE_FORMAT.GetDateFormat() + " g s z yyyy");
 
 
-                dateFormat = DATE_FORMAT.GetDateFormat();
+                //dateFormat = DATE_FORMAT.GetDateFormat();
 
                 do
                 {
@@ -148,11 +174,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     randomDate = Math.Abs(randomDate);
                 } while (randomDate == 0L);
 
-                dateFormatSanityCheckPass &= checkDateFormatSanity(dateFormat, randomDate);
+                dateFormatSanityCheckPass &= checkDateFormatSanity(DATE_FORMAT, randomDate);
 
-                dateFormatSanityCheckPass &= checkDateFormatSanity(dateFormat, 0);
+                dateFormatSanityCheckPass &= checkDateFormatSanity(DATE_FORMAT, 0);
 
-                dateFormatSanityCheckPass &= checkDateFormatSanity(dateFormat,
+                dateFormatSanityCheckPass &= checkDateFormatSanity(DATE_FORMAT,
                           -randomDate);
 
                 count++;
@@ -172,16 +198,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             float randomFloat;
 
             while (IsOutOfBoundsOrZero((randomLong = Convert.ToInt64(NormalizeNumber(Math.Abs(Random.nextLong()))
-                )), LOCALE))
+                )), LOCALE, TIMEZONE))
                 ;
             while (IsOutOfBoundsOrZero((randomDouble = Convert.ToDouble(NormalizeNumber(Math.Abs(Random.NextDouble()))
-                )), LOCALE))
+                )), LOCALE, TIMEZONE))
                 ;
             while (IsOutOfBoundsOrZero((randomFloat = Convert.ToSingle(NormalizeNumber(Math.Abs(Random.nextFloat()))
-                )), LOCALE))
+                )), LOCALE, TIMEZONE))
                 ;
             while (IsOutOfBoundsOrZero((randomInt = Convert.ToInt32(NormalizeNumber(Math.Abs(Random.nextInt()))
-                )), LOCALE))
+                )), LOCALE, TIMEZONE))
                 ;
 
             randomNumberMap.Put(NumericType.INT64.ToString(), randomLong);
@@ -263,25 +289,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             searcher = NewSearcher(reader);
             writer.Dispose();
 
-        }
-
-        // LUCENENET specific bounds check
-        private static bool IsOutOfBounds(double date, IFormatProvider culture)
-        {
-            var dateTimeFormat = culture.GetFormat(typeof(DateTimeFormatInfo)) as DateTimeFormatInfo;
-            if (dateTimeFormat is null)
-                throw new InvalidOperationException("The passed in provider didn't return a DateTimeFormatInfo.");
-
-            // LUCENENET: Crappy API - no way to check if a date is out of range without converting to ticks
-            var newDate = J2N.Time.UnixEpoch.ToCalendar(dateTimeFormat.Calendar).Ticks + (long)(date * TimeSpan.TicksPerMillisecond);
-            // Extra saftety - allow one tick on each bound in case the floating point to long conversion rounds the wrong way.
-            return newDate < dateTimeFormat.Calendar.MinSupportedDateTime.Ticks + 1 || newDate > dateTimeFormat.Calendar.MaxSupportedDateTime.Ticks - 1;
-        }
-
-        // LUCENENET specific bounds check
-        private static bool IsOutOfBoundsOrZero(double absNumber, IFormatProvider culture)
-        {
-            return absNumber == 0 || IsOutOfBounds(absNumber, culture) || IsOutOfBounds(-absNumber, culture);
         }
 
         private static /*Number*/ object GetNumberType(NumberType? numberType, String fieldName)

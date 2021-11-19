@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Util;
 using System;
 using System.Globalization;
+#nullable enable
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 {
@@ -45,29 +46,32 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         // The .NET ticks representing January 1, 1970 0:00:00 GMT, also known as the "epoch".
         public const long EPOCH = 621355968000000000;
 
-        private string dateFormat;
+        private string? dateFormat;
         private readonly DateFormat dateStyle;
         private readonly DateFormat timeStyle;
         private TimeZoneInfo timeZone = TimeZoneInfo.Local;
 
         /// <summary>
         /// Constructs a <see cref="NumberDateFormat"/> object using the given <paramref name="dateFormat"/>
-        /// and <paramref name="locale"/>.
+        /// and <paramref name="formatProvider"/>.
         /// </summary>
-        /// <param name="dateFormat">Date format used to parse and format dates</param>
-        /// <param name="locale"></param>
-        public NumberDateFormat(string dateFormat, CultureInfo locale)
-            : base(locale)
+        /// <param name="dateFormat">Date format used to parse and format dates.</param>
+        /// <param name="formatProvider">An object that supplies culture-specific formatting information.</param>
+        public NumberDateFormat(string? dateFormat, IFormatProvider? formatProvider)
+            : base(formatProvider)
         {
             this.dateFormat = dateFormat;
         }
 
         /// <summary>
         /// Constructs a <see cref="NumberDateFormat"/> object using the given <paramref name="dateStyle"/>,
-        /// <paramref name="timeStyle"/>, and <paramref name="culture"/>.
+        /// <paramref name="timeStyle"/>, and <paramref name="formatProvider"/>.
         /// </summary>
-        public NumberDateFormat(DateFormat dateStyle, DateFormat timeStyle, CultureInfo culture)
-            : base(culture)
+        /// <param name="dateStyle"></param>
+        /// <param name="timeStyle"></param>
+        /// <param name="formatProvider">An object that supplies culture-specific formatting information.</param>
+        public NumberDateFormat(DateFormat dateStyle, DateFormat timeStyle, IFormatProvider? formatProvider)
+            : base(formatProvider)
         {
             this.dateStyle = dateStyle;
             this.timeStyle = timeStyle;
@@ -82,37 +86,34 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         public override string Format(double number)
         {
             return J2N.Time.UnixEpoch
-                .ToCalendar(Culture)
-                //.ToTimeZone(TimeZone) // LUCENENET TODO: Add TimeZone support
+                .ToCalendar(FormatProvider)
+                .ToTimeZone(TimeZone)
                 .AddMilliseconds(number)
-                .ToString(GetDateFormat(), Culture);
+                .ToString(GetDateFormat(), FormatProvider);
         }
 
         public override string Format(long number)
         {
             return J2N.Time.UnixEpoch
-                .ToCalendar(Culture)
-                //.ToTimeZone(TimeZone) // LUCENENET TODO: Add TimeZone support
+                .ToCalendar(FormatProvider)
+                .ToTimeZone(TimeZone)
                 .AddMilliseconds(number)
-                .ToString(GetDateFormat(), Culture);
+                .ToString(GetDateFormat(), FormatProvider);
         }
 
         public override object Parse(string source)
         {
-            // Try exact format first, if it fails, do a loose DateTime.Parse
-            DateTime d;
-            d = DateTime.ParseExact(source, GetDateFormat(), Culture, DateTimeStyles.None);
-
-            return (d - J2N.Time.UnixEpoch).TotalMilliseconds;
+            DateTime d = DateTime.ParseExact(source, GetDateFormat(), FormatProvider, DateTimeStyles.None);
+            return (d.ToCalendar(FormatProvider) - J2N.Time.UnixEpoch.ToCalendar(FormatProvider).ToTimeZone(TimeZone)).TotalMilliseconds;
         }
 
         public override string Format(object number)
         {
             return J2N.Time.UnixEpoch
-                .ToCalendar(Culture)
-                //.ToTimeZone(TimeZone) // LUCENENET TODO: Add TimeZone support
+                .ToCalendar(FormatProvider)
+                .ToTimeZone(TimeZone)
                 .AddMilliseconds(Convert.ToInt64(number, CultureInfo.InvariantCulture))
-                .ToString(GetDateFormat(), Culture);
+                .ToString(GetDateFormat(), FormatProvider);
         }
 
         public void SetDateFormat(string dateFormat)
@@ -129,13 +130,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         {
             if (dateFormat != null) return dateFormat;
 
-            return GetDateFormat(this.dateStyle, this.timeStyle, Culture);
+            return GetDateFormat(this.dateStyle, this.timeStyle, FormatProvider);
         }
 
-        public static string GetDateFormat(DateFormat dateStyle, DateFormat timeStyle, IFormatProvider provider)
+        public static string GetDateFormat(DateFormat dateStyle, DateFormat timeStyle, IFormatProvider? provider)
         {
             string datePattern = "", timePattern = "";
-            DateTimeFormatInfo dateTimeFormat = (DateTimeFormatInfo)provider.GetFormat(typeof(DateTimeFormatInfo));
+            DateTimeFormatInfo dateTimeFormat = (provider ?? DateTimeFormatInfo.CurrentInfo)
+                .GetFormat(typeof(DateTimeFormatInfo)) as DateTimeFormatInfo ?? DateTimeFormatInfo.CurrentInfo;
 
             switch (dateStyle)
             {
@@ -176,22 +178,70 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         }
     }
 
-    // LUCENENET TODO: API - Move to J2N.Time?
+    /// <summary>
+    /// Extensions to <see cref="DateTime"/>.
+    /// </summary>
     internal static class DateTimeExtensions
     {
-        private static Calendar GetCalendar(IFormatProvider provider)
+        /// <summary>
+        /// Returns the <see cref="Calendar"/> from the specified <paramref name="provider"/>.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider to use to format the value.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// A null reference (Nothing in Visual Basic) to obtain the numeric format information from the locale setting of the current thread.
+        /// </param>
+        /// <returns>The <see cref="Calendar"/> instance.</returns>
+        /// <exception cref="NotSupportedException">The supplied <paramref name="provider"/> returned <c>null</c> for the requested type <see cref="DateTimeFormatInfo"/>.</exception>
+        internal static Calendar GetCalendar(IFormatProvider? provider)
         {
-            DateTimeFormatInfo dateTimeFormat = (DateTimeFormatInfo)provider.GetFormat(typeof(DateTimeFormatInfo));
+            DateTimeFormatInfo? dateTimeFormat = (provider ?? DateTimeFormatInfo.CurrentInfo).GetFormat(typeof(DateTimeFormatInfo)) as DateTimeFormatInfo;
+            if (dateTimeFormat is null)
+                throw new NotSupportedException($"The specified format provider did not return a '{typeof(DateTimeFormatInfo).FullName}' instance from IFormatProvider.GetFormat(System.Type).");
+
             return dateTimeFormat.Calendar;
         }
 
-        public static DateTime ToCalendar(this DateTime input, IFormatProvider provider)
+        /// <summary>
+        /// Returns a new <see cref="DateTime"/> that converts the value of <paramref name="input"/> (current instance) into
+        /// the corresponding value in the <see cref="DateTimeFormatInfo.Calendar"/> of the <paramref name="provider"/>.
+        /// </summary>
+        /// <param name="input">The current <see cref="DateTime"/> instance.</param>
+        /// <param name="provider">
+        /// The provider to use to format the value.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// A null reference (Nothing in Visual Basic) to obtain the numeric format information from the locale setting of the current thread.
+        /// </param>
+        /// <returns>A new <see cref="DateTime"/> instance with the same value of <paramref name="input"/> adjusted
+        /// for the <see cref="DateTimeFormatInfo.Calendar"/> of the <paramref name="provider"/>.</returns>
+        /// <exception cref="NotSupportedException">The supplied <paramref name="provider"/> returned <c>null</c> for the requested type <see cref="DateTimeFormatInfo"/>.</exception>
+        public static DateTime ToCalendar(this DateTime input, IFormatProvider? provider)
         {
             return ToCalendar(input, GetCalendar(provider));
         }
 
+        /// <summary>
+        /// Returns a new <see cref="DateTime"/> that converts the value of <paramref name="input"/> (current instance) into
+        /// the corresponding value in the provided <paramref name="calendar"/>.
+        /// </summary>
+        /// <param name="input">The current <see cref="DateTime"/> instance.</param>
+        /// <param name="calendar">A <see cref="Calendar"/> instance.</param>
+        /// <returns>A new <see cref="DateTime"/> instance with the same value of <paramref name="input"/> adjusted
+        /// for the provided <paramref name="calendar"/>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="calendar"/> is null.</exception>
         public static DateTime ToCalendar(this DateTime input, Calendar calendar)
         {
+            if (calendar is null)
+                throw new ArgumentNullException(nameof(calendar));
+
+            // Get the remaining ticks so we don't lose resolution.
+            DateTime temp = new DateTime(input.Year, input.Month, input.Day, input.Hour, input.Minute, input.Second, input.Millisecond, input.Kind);
+            long diffTicks = input.Ticks - temp.Ticks;
+
             return new DateTime(
                 calendar.GetYear(input),
                 calendar.GetMonth(input),
@@ -199,8 +249,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
                 calendar.GetHour(input),
                 calendar.GetMinute(input),
                 calendar.GetSecond(input),
-                (int)calendar.GetMilliseconds(input),
-                calendar);
+                (int)calendar.GetMilliseconds(input)
+                , calendar
+                //)
+                , input.Kind)
+                .AddTicks(diffTicks);
         }
 
         public static DateTime ToTimeZone(this DateTime input, TimeZoneInfo timeZone)
