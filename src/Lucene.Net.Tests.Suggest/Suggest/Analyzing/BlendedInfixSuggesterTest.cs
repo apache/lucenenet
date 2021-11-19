@@ -203,6 +203,33 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             suggester.Dispose();
         }
 
+
+        [Test]
+        public void TestNullPrefixToken()
+        {
+            BytesRef payload = new BytesRef("lake");
+
+            Input[] keys = new Input[] {
+                new Input("top of the lake", 8, payload)
+            };
+
+            DirectoryInfo tempDir = CreateTempDir("BlendedInfixSuggesterTest");
+
+            Analyzer a = new StandardAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+            BlendedInfixSuggester suggester = new BlendedInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a,
+                                                                        AnalyzingInfixSuggester.DEFAULT_MIN_PREFIX_CHARS,
+                                                                        BlendedInfixSuggester.BlenderType.POSITION_RECIPROCAL,
+                                                                        BlendedInfixSuggester.DEFAULT_NUM_FACTOR);     //LUCENENET TODO: add extra false param at version 4.11.0
+            suggester.Build(new InputArrayEnumerator(keys));
+
+            GetInResults(suggester, "of ", payload, 1);
+            GetInResults(suggester, "the ", payload, 1);
+            GetInResults(suggester, "lake ", payload, 1);
+
+            suggester.Dispose();
+        }
+
+
         private static long GetInResults(BlendedInfixSuggester suggester, string prefix, BytesRef payload, int num)
         {
 
