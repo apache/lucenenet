@@ -10,6 +10,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -71,8 +72,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         private static bool checkDateFormatSanity(/*DateFormat*/string dateFormat, long date)
         {
-            return DateTime.TryParseExact(new DateTime(NumberDateFormat.EPOCH).AddMilliseconds(date).ToString(dateFormat),
-                dateFormat, CultureInfo.CurrentCulture, DateTimeStyles.RoundtripKind, out DateTime _);
+            var culture = LOCALE;
+            if (IsOutOfBounds(date, culture))
+                return false;
+
+            return DateTime.TryParseExact(J2N.Time.UnixEpoch.ToCalendar(culture).AddMilliseconds(date).ToString(dateFormat, culture),
+                dateFormat, culture, DateTimeStyles.RoundtripKind, out DateTime _);
         }
 
         [OneTimeSetUp]
@@ -166,16 +171,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             int randomInt;
             float randomFloat;
 
-            while ((randomLong = Convert.ToInt64(NormalizeNumber(Math.Abs(Random.nextLong()))
-                )) == 0L)
+            while (IsOutOfBoundsOrZero((randomLong = Convert.ToInt64(NormalizeNumber(Math.Abs(Random.nextLong()))
+                )), LOCALE))
                 ;
-            while ((randomDouble = Convert.ToDouble(NormalizeNumber(Math.Abs(Random.NextDouble()))
-                )) == 0.0)
+            while (IsOutOfBoundsOrZero((randomDouble = Convert.ToDouble(NormalizeNumber(Math.Abs(Random.NextDouble()))
+                )), LOCALE))
                 ;
-            while ((randomFloat = Convert.ToSingle(NormalizeNumber(Math.Abs(Random.nextFloat()))
-                )) == 0.0f)
+            while (IsOutOfBoundsOrZero((randomFloat = Convert.ToSingle(NormalizeNumber(Math.Abs(Random.nextFloat()))
+                )), LOCALE))
                 ;
-            while ((randomInt = Convert.ToInt32(NormalizeNumber(Math.Abs(Random.nextInt())))) == 0)
+            while (IsOutOfBoundsOrZero((randomInt = Convert.ToInt32(NormalizeNumber(Math.Abs(Random.nextInt()))
+                )), LOCALE))
                 ;
 
             randomNumberMap.Put(NumericType.INT64.ToString(), randomLong);
@@ -257,6 +263,25 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             searcher = NewSearcher(reader);
             writer.Dispose();
 
+        }
+
+        // LUCENENET specific bounds check
+        private static bool IsOutOfBounds(double date, IFormatProvider culture)
+        {
+            var dateTimeFormat = culture.GetFormat(typeof(DateTimeFormatInfo)) as DateTimeFormatInfo;
+            if (dateTimeFormat is null)
+                throw new InvalidOperationException("The passed in provider didn't return a DateTimeFormatInfo.");
+
+            // LUCENENET: Crappy API - no way to check if a date is out of range without converting to ticks
+            var newDate = J2N.Time.UnixEpoch.ToCalendar(dateTimeFormat.Calendar).Ticks + (long)(date * TimeSpan.TicksPerMillisecond);
+            // Extra saftety - allow one tick on each bound in case the floating point to long conversion rounds the wrong way.
+            return newDate < dateTimeFormat.Calendar.MinSupportedDateTime.Ticks + 1 || newDate > dateTimeFormat.Calendar.MaxSupportedDateTime.Ticks - 1;
+        }
+
+        // LUCENENET specific bounds check
+        private static bool IsOutOfBoundsOrZero(double absNumber, IFormatProvider culture)
+        {
+            return absNumber == 0 || IsOutOfBounds(absNumber, culture) || IsOutOfBounds(-absNumber, culture);
         }
 
         private static /*Number*/ object GetNumberType(NumberType? numberType, String fieldName)
@@ -603,9 +628,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         public override void AfterClass()
         {
             searcher = null;
-            reader.Dispose();
+            reader?.Dispose();
             reader = null;
-            directory.Dispose();
+            directory?.Dispose();
             directory = null;
             qp = null;
 
