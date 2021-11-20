@@ -143,7 +143,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         {
             Console.WriteLine("------------> config properties:");
             IList<string> propKeys = new JCG.List<string>(props.Keys);
-            propKeys.Sort();
+            propKeys.Sort(StringComparer.Ordinal);
             foreach (string propName in propKeys)
             {
                 Console.WriteLine(propName + " = " + props[propName]);

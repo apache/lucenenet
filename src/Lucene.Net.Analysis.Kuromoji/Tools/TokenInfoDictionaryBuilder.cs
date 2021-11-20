@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             {
                 csvFiles.Add(file.FullName);
             }
-            csvFiles.Sort();
+            csvFiles.Sort(StringComparer.Ordinal);
             return BuildDictionary(csvFiles);
         }
 

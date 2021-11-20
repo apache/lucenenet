@@ -187,8 +187,8 @@ namespace Lucene.Net.Index
             (new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)))).Rollback();
             string[] endFiles = dir.ListAll();
 
-            Array.Sort(startFiles);
-            Array.Sort(endFiles);
+            Array.Sort(startFiles, StringComparer.Ordinal);
+            Array.Sort(endFiles, StringComparer.Ordinal);
 
             if (!Arrays.Equals(startFiles, endFiles))
             {
