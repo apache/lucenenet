@@ -940,7 +940,7 @@ namespace Lucene.Net.Util.Fst
                                                               outputs,
                                                               null,
                                                               true);
-          Arrays.sort(strings);
+          Array.Sort(strings, StringComparer.Ordinal);
           final IntsRef scratch = new IntsRef();
           for(String s : strings) {
             builder.Add(Util.ToIntsRef(new BytesRef(s), scratch), outputs.getNoOutput());
@@ -1260,7 +1260,7 @@ namespace Lucene.Net.Util.Fst
             StringBuilder b = new StringBuilder();
             s.Generate(@out, b, 'a', 'i', 10);
             string[] input = @out.ToArray();
-            Array.Sort(input);
+            Array.Sort(input, StringComparer.Ordinal);
             FST<object> fst = s.Compile(input);
             FST.Arc<object> arc = fst.GetFirstArc(new FST.Arc<object>());
             s.VerifyStateAndBelow(fst, arc, 1);
