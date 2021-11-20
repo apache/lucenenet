@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -132,8 +132,8 @@ namespace Lucene.Net.Index
             string[] files2 = dir.ListAll();
             dir.Dispose();
 
-            Array.Sort(files);
-            Array.Sort(files2);
+            Array.Sort(files, StringComparer.Ordinal);
+            Array.Sort(files2, StringComparer.Ordinal);
 
             ISet<string> dif = DifFiles(files, files2);
 

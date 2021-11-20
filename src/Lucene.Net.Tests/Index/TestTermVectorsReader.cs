@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
             }
             */
 
-            Array.Sort(testTerms);
+            Array.Sort(testTerms, StringComparer.Ordinal);
             int tokenUpto = 0;
             for (int i = 0; i < testTerms.Length; i++)
             {

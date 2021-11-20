@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
             if (Verbose)
             {
                 // utf16 order
-                terms.Sort();
+                terms.Sort(StringComparer.Ordinal);
                 Console.WriteLine("UTF16 order:");
                 foreach (string s in terms)
                 {
