@@ -82,6 +82,7 @@
     <SystemSecurityCryptographyXmlPackageVersion>4.7.0</SystemSecurityCryptographyXmlPackageVersion>
     <SystemTextEncodingCodePagesPackageVersion>4.3.0</SystemTextEncodingCodePagesPackageVersion>
     <SystemTextEncodingCodePagesPackageVersion Condition=" '$(TargetFramework)' == 'net461' ">5.0.0</SystemTextEncodingCodePagesPackageVersion>
+    <TimeZoneConverterPackageVersion>3.5.0</TimeZoneConverterPackageVersion>
     <XUnitPackageVersion>2.3.1</XUnitPackageVersion>
     <XUnitRunnerVisualStudioPackageVersion>$(XUnitPackageVersion)</XUnitRunnerVisualStudioPackageVersion>
   </PropertyGroup>
