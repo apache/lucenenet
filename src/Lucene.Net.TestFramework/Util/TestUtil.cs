@@ -952,7 +952,7 @@ namespace Lucene.Net.Util
 
             // otherwise, try to make it more realistic with 'words' since most tests use MockTokenizer
             // first decide how big the string will really be: 0..n
-            maxLength = random.Next(maxLength);
+            maxLength = maxLength == 0 ? 0 : random.Next(maxLength); // LUCENENET: Lucene bug - random.Next(int) in Java must be > 0, and so must J2N.Randomizer. So, just pass through 0 as .NET would.
             int avgWordLength = TestUtil.NextInt32(random, 3, 8);
             StringBuilder sb = new StringBuilder();
             while (sb.Length < maxLength)
