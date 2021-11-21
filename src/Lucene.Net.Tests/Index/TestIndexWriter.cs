@@ -1476,6 +1476,7 @@ namespace Lucene.Net.Index
 
         [Test]
         [Slow]
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/544")] // LUCENENET TODO: This test occasionally fails
         public virtual void TestThreadInterruptDeadlock()
         {
             IndexerThreadInterrupt t = new IndexerThreadInterrupt(this);
