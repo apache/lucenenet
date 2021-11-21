@@ -33,6 +33,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Jaspell
@@ -362,6 +363,11 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             }
         }
 
+        // LUCENENET: .NET has no Math.Random() method, so we need to lazy initialize an instance for this purpose.
+        // Note that the J2N.Randomizer.Next() method is threadsafe.
+        private static Random random;
+        private static Random Random => LazyInitializer.EnsureInitialized(ref random, () => new J2N.Randomizer());
+
         /// <summary>
         /// Recursively visits each node to be deleted.
         /// 
@@ -433,7 +439,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             TSTNode targetNode;
             if (deltaHi == deltaLo)
             {
-                if (new Random(1).NextDouble() < 0.5)
+                if (Random.NextDouble() < 0.5)
                 {
                     deltaHi++;
                 }
