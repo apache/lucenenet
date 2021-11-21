@@ -16,6 +16,7 @@ using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -157,8 +158,8 @@ namespace Lucene.Net.Index
                 new Lucene41WithOrds(), 
                 new SimpleTextPostingsFormat(),
                 new AssertingPostingsFormat(),
-                new MemoryPostingsFormat(true, random.nextFloat()), 
-                new MemoryPostingsFormat(false, random.nextFloat())
+                new MemoryPostingsFormat(true, random.NextSingle()), 
+                new MemoryPostingsFormat(false, random.NextSingle())
             );
 
             AddDocValues(avoidCodecs, 

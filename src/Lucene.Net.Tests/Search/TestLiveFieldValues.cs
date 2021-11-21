@@ -9,6 +9,7 @@ using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using RandomizedTesting.Generators;
 
 namespace Lucene.Net.Search
 {
@@ -78,7 +79,7 @@ namespace Lucene.Net.Search
             for (int t = 0; t < numThreads; t++)
             {
                 int threadID = t;
-                Random threadRandom = new Random(Random.Next());
+                Random threadRandom = new J2N.Randomizer(Random.NextInt64());
                 ThreadJob thread = new ThreadAnonymousClass(w, mgr, missing, rt, startingGun, iters, idCount, reopenChance, deleteChance, addChance, t, threadID, threadRandom);
                 threads.Add(thread);
                 thread.Start();

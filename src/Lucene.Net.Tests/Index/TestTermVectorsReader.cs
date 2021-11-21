@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
                 for (int j = 0; j < TERM_FREQ; j++)
                 {
                     // positions are always sorted in increasing order
-                    positions[i][j] = (int)(j * 10 + new Random(1).NextDouble() * 10);
+                    positions[i][j] = (int)(j * 10 + Random.NextDouble() * 10); // LUCENENET: Using Random because Math.random() doesn't exist in .NET and it seems to make sense to want this repeatable.
                     TestToken token = tokens[tokenUpto++] = new TestToken(this);
                     token.text = testTerms[i];
                     token.pos = positions[i][j];

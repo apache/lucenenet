@@ -65,10 +65,10 @@ namespace Lucene.Net.Index.Sorter
                 randomTerms.add(TestUtil.RandomSimpleString(Random));
             }
             terms = new JCG.List<string>(randomTerms);
-            int seed = Random.Next();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(new Random(seed)));
+            long seed = Random.NextInt64();
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(new J2N.Randomizer(seed)));
             iwc.SetMergePolicy(TestSortingMergePolicy.NewSortingMergePolicy(sort));
-            iw = new RandomIndexWriter(new Random(seed), dir, iwc);
+            iw = new RandomIndexWriter(new J2N.Randomizer(seed), dir, iwc);
             for (int i = 0; i < numDocs; ++i)
             {
                 Document doc = RandomDocument();

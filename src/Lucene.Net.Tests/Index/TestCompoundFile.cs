@@ -64,8 +64,8 @@ namespace Lucene.Net.Index
             IndexOutput os = dir.CreateOutput(name, NewIOContext(Random));
             for (int i = 0; i < size; i++)
             {
-                var b = unchecked((sbyte)(new Random(1).NextDouble() * 256));
-                os.WriteByte((byte)b);
+                var b = (byte)(Random.NextDouble() * 256); // LUCENENET: Using Random, since Math.random() doesn't exist in .NET, and it seems to make sense to make this repeatable.
+                os.WriteByte(b);
             }
             os.Dispose();
         }
@@ -611,11 +611,11 @@ namespace Lucene.Net.Index
         public virtual void TestLargeWrites()
         {
             IndexOutput os = dir.CreateOutput("testBufferStart.txt", NewIOContext(Random));
-
+            
             var largeBuf = new byte[2048];
             for (int i = 0; i < largeBuf.Length; i++)
             {
-                largeBuf[i] = (byte)(new Random(1).NextDouble() * 256);
+                largeBuf[i] = (byte)(Random.NextDouble() * 256); // LUCENENET: Using Random, since Math.random() doesn't exist in .NET, and it seems to make sense to make this repeatable.
             }
 
             long currentPos = os.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream

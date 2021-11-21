@@ -1203,7 +1203,7 @@ namespace Lucene.Net.Util
         /// invocations are present or create a derivative local <see cref="System.Random"/> for millions of calls
         /// like this:
         /// <code>
-        /// Random random = new Random(Random.Next());
+        /// Random random = new J2N.Randomizer(Random.NextInt64());
         /// // tight loop with many invocations.
         /// </code>
         /// </summary>
@@ -1218,7 +1218,7 @@ namespace Lucene.Net.Util
                     Assert.Fail("LuceneTestCase.Random may only be used within tests/setup/teardown context in subclasses of LuceneTestCase or LuceneTestFrameworkInitializer.");
                 return context.RandomGenerator;
 #else
-                return random ?? (random = new Random(/* LUCENENET TODO seed */));
+                return random ?? (random = new J2N.Randomizer(/* LUCENENET TODO seed */));
                 //return RandomizedContext.Current.Random;
 #endif
             }
@@ -1750,7 +1750,7 @@ namespace Lucene.Net.Util
 
         public static AlcoholicMergePolicy NewAlcoholicMergePolicy(Random random, TimeZoneInfo timeZone)
         {
-            return new AlcoholicMergePolicy(timeZone, new Random(random.Next()));
+            return new AlcoholicMergePolicy(timeZone, new J2N.Randomizer(random.NextInt64()));
         }
 
         public static LogMergePolicy NewLogMergePolicy(Random random)

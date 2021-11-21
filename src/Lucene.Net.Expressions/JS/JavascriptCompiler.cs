@@ -194,7 +194,7 @@ namespace Lucene.Net.Expressions.JS
 
         private void BeginCompile()
         {
-            var assemblyName = new AssemblyName("Lucene.Net.Expressions.Dynamic" + new Random().Next());
+            var assemblyName = new AssemblyName("Lucene.Net.Expressions.Dynamic" + Math.Abs(new J2N.Randomizer().Next()));
             asmBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndCollect);
 
             modBuilder = asmBuilder.DefineDynamicModule(assemblyName.Name + ".dll");

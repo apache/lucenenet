@@ -84,12 +84,12 @@ namespace Lucene.Net.Codecs.Lucene41
                 Tokenizer tokenizer = new MockTokenizer(reader);
                 if (fieldName.Contains("payloadsFixed"))
                 {
-                    TokenFilter filter = new MockFixedLengthPayloadFilter(new Random(0), tokenizer, 1);
+                    TokenFilter filter = new MockFixedLengthPayloadFilter(new J2N.Randomizer(0), tokenizer, 1);
                     return new TokenStreamComponents(tokenizer, filter);
                 }
                 else if (fieldName.Contains("payloadsVariable"))
                 {
-                    TokenFilter filter = new MockVariableLengthPayloadFilter(new Random(0), tokenizer);
+                    TokenFilter filter = new MockVariableLengthPayloadFilter(new J2N.Randomizer(0), tokenizer);
                     return new TokenStreamComponents(tokenizer, filter);
                 }
                 else

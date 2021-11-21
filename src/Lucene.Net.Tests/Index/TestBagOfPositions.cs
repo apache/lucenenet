@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
 
             for (int threadID = 0; threadID < threadCount; threadID++)
             {
-                Random threadRandom = new Random(Random.Next());
+                Random threadRandom = new J2N.Randomizer(Random.NextInt64());
                 Document document = new Document();
                 Field field = new Field("field", "", fieldType);
                 document.Add(field);

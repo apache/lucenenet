@@ -131,7 +131,7 @@ namespace Lucene.Net.Tests.Queries
                 RandomOccur(Random), Random.NextSingle(), Random.NextBoolean()), query);
             {
                 long seed = Random.NextInt64();
-                Random r = new Random((int)seed);
+                Random r = new J2N.Randomizer(seed);
                 CommonTermsQuery left = new CommonTermsQuery(RandomOccur(r),
                     RandomOccur(r), r.NextSingle(), r.NextBoolean());
                 int leftTerms = AtLeast(r, 2);
@@ -143,7 +143,7 @@ namespace Lucene.Net.Tests.Queries
 
                 left.HighFreqMinimumNumberShouldMatch = r.nextInt(4);
                 left.LowFreqMinimumNumberShouldMatch = r.nextInt(4);
-                r = new Random((int)seed);
+                r = new J2N.Randomizer(seed);
                 CommonTermsQuery right = new CommonTermsQuery(RandomOccur(r),
                     RandomOccur(r), r.NextSingle(), r.NextBoolean());
                 int rightTerms = AtLeast(r, 2);
@@ -593,7 +593,7 @@ namespace Lucene.Net.Tests.Queries
         /// </summary>
         public static void CreateRandomIndex(int numdocs, RandomIndexWriter writer, long seed)
         {
-            Random random = new Random((int)seed);
+            Random random = new J2N.Randomizer(seed);
             // primary source for our data is from linefiledocs, its realistic.
             LineFileDocs lineFileDocs = new LineFileDocs(random, false); // no docvalues in 4x
 

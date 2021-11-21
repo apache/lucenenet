@@ -35,25 +35,25 @@ namespace Lucene.Net.Search
         public AssertingIndexSearcher(Random random, IndexReader r)
             : base(r)
         {
-            this.random = new Random(random.Next());
+            this.random = new J2N.Randomizer(random.NextInt64());
         }
 
         public AssertingIndexSearcher(Random random, IndexReaderContext context)
             : base(context)
         {
-            this.random = new Random(random.Next());
+            this.random = new J2N.Randomizer(random.NextInt64());
         }
 
         public AssertingIndexSearcher(Random random, IndexReader r, TaskScheduler ex)
             : base(r, ex)
         {
-            this.random = new Random(random.Next());
+            this.random = new J2N.Randomizer(random.NextInt64());
         }
 
         public AssertingIndexSearcher(Random random, IndexReaderContext context, TaskScheduler ex)
             : base(context, ex)
         {
-            this.random = new Random(random.Next());
+            this.random = new J2N.Randomizer(random.NextInt64());
         }
 
         /// <summary>

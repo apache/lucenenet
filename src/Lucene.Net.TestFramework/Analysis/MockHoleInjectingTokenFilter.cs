@@ -1,5 +1,6 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
+using RandomizedTesting.Generators;
 using System;
 
 namespace Lucene.Net.Analysis
@@ -30,7 +31,7 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public sealed class MockHoleInjectingTokenFilter : TokenFilter
     {
-        private readonly int randomSeed; // LUCENENET specific - changed from long to int, as in .NET a System.Random seed is int
+        private readonly long randomSeed;
         private Random random;
         private readonly IPositionIncrementAttribute posIncAtt;
         private readonly IPositionLengthAttribute posLenAtt;
@@ -40,7 +41,7 @@ namespace Lucene.Net.Analysis
         public MockHoleInjectingTokenFilter(Random random, TokenStream @in)
             : base(@in)
         {
-            randomSeed = random.Next();
+            randomSeed = random.NextInt64();
             posIncAtt = AddAttribute<IPositionIncrementAttribute>();
             posLenAtt = AddAttribute<IPositionLengthAttribute>();
         }
@@ -48,7 +49,7 @@ namespace Lucene.Net.Analysis
         public override void Reset()
         {
             base.Reset();
-            random = new Random(randomSeed);
+            random = new J2N.Randomizer(randomSeed);
             maxPos = -1;
             pos = -1;
         }

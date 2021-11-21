@@ -1163,7 +1163,7 @@ namespace Lucene.Net.Index
             internal IndexerThreadInterrupt(TestIndexWriter outerInstance)
             {
                 this.outerInstance = outerInstance;
-                this.random = new Random(LuceneTestCase.Random.Next());
+                this.random = new J2N.Randomizer(Random.NextInt64());
                 // make a little directory for addIndexes
                 // LUCENE-2239: won't work with NIOFS/MMAP
                 adder = new MockDirectoryWrapper(this.random, new RAMDirectory());

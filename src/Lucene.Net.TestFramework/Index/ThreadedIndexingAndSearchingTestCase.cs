@@ -565,7 +565,7 @@ namespace Lucene.Net.Index
 
             long t0 = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
-            Random random = new Random(Random.Next());
+            Random random = new J2N.Randomizer(Random.NextInt64());
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
             DirectoryInfo tempDir = CreateTempDir(testName);
             m_dir = GetDirectory(NewMockFSDirectory(tempDir)); // some subclasses rely on this being MDW

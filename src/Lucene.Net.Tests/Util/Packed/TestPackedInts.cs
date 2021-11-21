@@ -431,7 +431,7 @@ namespace Lucene.Net.Util.Packed
 
         private static void Fill(PackedInt32s.Mutable packedInt, long maxValue, long randomSeed)
         {
-            Random rnd2 = new Random((int)randomSeed);
+            Random rnd2 = new J2N.Randomizer(randomSeed);
             for (int i = 0; i < packedInt.Count; i++)
             {
                 long value = TestUtil.NextInt64(rnd2, 0, maxValue);

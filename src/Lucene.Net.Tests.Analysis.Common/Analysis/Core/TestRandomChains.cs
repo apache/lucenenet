@@ -417,7 +417,7 @@ namespace Lucene.Net.Analysis.Core
         {
             public object Create(Random random)
             {
-                return new Random(random.Next());
+                return new J2N.Randomizer(random.NextInt64());
             }
         }
 

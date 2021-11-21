@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -36,7 +37,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 new Input("barbara", 6)
             };
 
-            Random random = new Random(Random.Next());
+            Random random = new J2N.Randomizer(Random.NextInt64());
             WFSTCompletionLookup suggester = new WFSTCompletionLookup();
             suggester.Build(new InputArrayEnumerator(keys));
 
@@ -171,7 +172,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             suggester.Build(new InputArrayEnumerator(keys));
 
             assertEquals(numWords, suggester.Count);
-            Random random = new Random(Random.Next());
+            Random random = new J2N.Randomizer(Random.NextInt64());
             foreach (String prefix in allPrefixes)
             {
                 int topN = TestUtil.NextInt32(random, 1, 10);

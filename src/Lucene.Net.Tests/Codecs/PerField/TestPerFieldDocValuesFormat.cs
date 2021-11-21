@@ -1,9 +1,10 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -61,7 +62,7 @@ namespace Lucene.Net.Codecs.PerField
         [SetUp]
         public override void SetUp()
         {
-            codec = new RandomCodec(new Random(Random.Next()), Collections.EmptySet<string>());
+            codec = new RandomCodec(new J2N.Randomizer(Random.NextInt64()), Collections.EmptySet<string>());
             base.SetUp();
         }
 

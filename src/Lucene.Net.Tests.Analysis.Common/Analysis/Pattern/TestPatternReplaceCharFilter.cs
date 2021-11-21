@@ -2,6 +2,7 @@
 using J2N;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.IO;
 using System.Text;
@@ -251,11 +252,11 @@ namespace Lucene.Net.Analysis.Pattern
         [Slow]
         public virtual void TestRandomStrings()
         {
-            int numPatterns = 10 + LuceneTestCase.Random.Next(20);
-            Random random = new Random(Random.nextInt(int.MaxValue));
+            int numPatterns = 10 + Random.Next(20);
+            Random random = new J2N.Randomizer(Random.NextInt64());
             for (int i = 0; i < numPatterns; i++)
             {
-                Regex p = TestUtil.RandomRegex(LuceneTestCase.Random);
+                Regex p = TestUtil.RandomRegex(Random);
 
                 string replacement = TestUtil.RandomSimpleString(random);
                 Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>

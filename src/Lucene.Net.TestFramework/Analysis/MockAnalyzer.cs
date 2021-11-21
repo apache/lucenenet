@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -72,7 +73,7 @@ namespace Lucene.Net.Analysis
             : base(PER_FIELD_REUSE_STRATEGY)
         {
             // TODO: this should be solved in a different way; Random should not be shared (!).
-            this.random = new Random(random.Next());
+            this.random = new J2N.Randomizer(random.NextInt64());
             this.runAutomaton = runAutomaton;
             this.lowerCase = lowerCase;
             this.filter = filter;

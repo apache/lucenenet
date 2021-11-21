@@ -272,7 +272,7 @@ namespace Lucene.Net.Util
         /// invocations are present or create a derivative local <see cref="System.Random"/> for millions of calls
         /// like this:
         /// <code>
-        /// Random random = new Random(Random.Next());
+        /// Random random = new J2N.Randomizer(Random.NextInt64());
         /// // tight loop with many invocations.
         /// </code>
         /// </summary>

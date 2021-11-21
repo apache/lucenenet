@@ -1030,7 +1030,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    r = new Random(@base + range + seed);
+                    r = new J2N.Randomizer(@base + range + seed);
                     for (int i = 0; i < iterations; i++)
                     {
                         int what = NextInt(100);

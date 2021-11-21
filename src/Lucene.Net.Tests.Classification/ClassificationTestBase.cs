@@ -240,7 +240,7 @@ namespace Lucene.Net.Classification
             ft.StoreTermVectorOffsets = true;
             ft.StoreTermVectorPositions = true;
             int docs = 1000;
-            Random random = new Random();
+            Random random = Random;
             for (int i = 0; i < docs; i++)
             {
                 Boolean b = random.NextBoolean();

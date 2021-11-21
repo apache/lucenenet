@@ -226,7 +226,7 @@ namespace Lucene.Net.Util
                 }
                 else if ("MockRandom".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal))
                 {
-                    format = new MockRandomPostingsFormat(new Random(random.Next()));
+                    format = new MockRandomPostingsFormat(new J2N.Randomizer(random.NextInt64()));
                 }
                 else
                 {

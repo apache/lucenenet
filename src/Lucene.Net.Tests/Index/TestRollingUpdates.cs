@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestRollingUpdates_Mem()
         {
-            Random random = new Random(Random.Next());
+            Random random = new J2N.Randomizer(Random.NextInt64());
             BaseDirectoryWrapper dir = NewDirectory();
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
 

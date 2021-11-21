@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Suggest
             : base(source)
         {
             ords = new int[m_entries.Length];
-            Random random = new Random();
+            Random random = new J2N.Randomizer();
             for (int i = 0; i < ords.Length; i++)
             {
                 ords[i] = i;

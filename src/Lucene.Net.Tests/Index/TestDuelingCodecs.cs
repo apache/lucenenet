@@ -2,6 +2,7 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Text.RegularExpressions;
 
@@ -66,13 +67,13 @@ namespace Lucene.Net.Index
             leftDir = NewDirectory();
             rightDir = NewDirectory();
 
-            long seed = Random.Next();
+            long seed = Random.NextInt64();
 
             // must use same seed because of random payloads, etc
             int maxTermLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
-            MockAnalyzer leftAnalyzer = new MockAnalyzer(new Random((int)seed));
+            MockAnalyzer leftAnalyzer = new MockAnalyzer(new J2N.Randomizer(seed));
             leftAnalyzer.MaxTokenLength = maxTermLength;
-            MockAnalyzer rightAnalyzer = new MockAnalyzer(new Random((int)seed));
+            MockAnalyzer rightAnalyzer = new MockAnalyzer(new J2N.Randomizer(seed));
             rightAnalyzer.MaxTokenLength = maxTermLength;
 
             // but these can be different
@@ -88,8 +89,8 @@ namespace Lucene.Net.Index
             rightConfig.SetMergePolicy(NewLogMergePolicy());
 
             // must use same seed because of random docvalues fields, etc
-            RandomIndexWriter leftWriter = new RandomIndexWriter(new Random((int)seed), leftDir, leftConfig);
-            RandomIndexWriter rightWriter = new RandomIndexWriter(new Random((int)seed), rightDir, rightConfig);
+            RandomIndexWriter leftWriter = new RandomIndexWriter(new J2N.Randomizer(seed), leftDir, leftConfig);
+            RandomIndexWriter rightWriter = new RandomIndexWriter(new J2N.Randomizer(seed), rightDir, rightConfig);
 
             int numdocs = AtLeast(100);
             CreateRandomIndex(numdocs, leftWriter, seed);
@@ -136,7 +137,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static void CreateRandomIndex(int numdocs, RandomIndexWriter writer, long seed)
         {
-            Random random = new Random((int)seed);
+            Random random = new J2N.Randomizer(seed);
             // primary source for our data is from linefiledocs, its realistic.
             LineFileDocs lineFileDocs = new LineFileDocs(random);
 
@@ -159,7 +160,7 @@ namespace Lucene.Net.Index
                 document.RemoveFields("sparsenumeric");
                 if (random.Next(4) == 2)
                 {
-                    document.Add(new NumericDocValuesField("sparsenumeric", random.Next()));
+                    document.Add(new NumericDocValuesField("sparsenumeric", random.NextInt64()));
                 }
                 writer.AddDocument(document);
             }

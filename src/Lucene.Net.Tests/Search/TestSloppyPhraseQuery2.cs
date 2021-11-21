@@ -1,4 +1,5 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 
 namespace Lucene.Net.Search
@@ -212,7 +213,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestRandomIncreasingSloppiness()
         {
-            int seed = Random.Next();
+            long seed = Random.NextInt64();
             MultiPhraseQuery q1 = RandomPhraseQuery(seed);
             MultiPhraseQuery q2 = RandomPhraseQuery(seed);
             for (int i = 0; i < 10; i++)
@@ -223,9 +224,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        private MultiPhraseQuery RandomPhraseQuery(int seed)
+        private MultiPhraseQuery RandomPhraseQuery(long seed)
         {
-            Random random = new Random(seed);
+            Random random = new J2N.Randomizer(seed);
             int length = TestUtil.NextInt32(random, 2, 5);
             MultiPhraseQuery pq = new MultiPhraseQuery();
             int position = 0;

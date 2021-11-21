@@ -1,4 +1,5 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
+using RandomizedTesting.Generators;
 using System;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -28,15 +29,15 @@ namespace Lucene.Net.Analysis
     public sealed class MockRandomLookaheadTokenFilter : LookaheadTokenFilter<LookaheadTokenFilter.Position>
     {
         private readonly ICharTermAttribute termAtt;
-        private Random random; // LUCENENET: not readonly to reset seed later
-        private readonly int seed; // LUCENENET specific: changed to int, since .NET random seed is int, not long
+        private readonly J2N.Randomizer random;
+        private readonly long seed;
 
         public MockRandomLookaheadTokenFilter(Random random, TokenStream @in)
             : base(@in)
         {
             this.termAtt = AddAttribute<ICharTermAttribute>();
-            this.seed = random.Next();
-            this.random = new Random(seed);
+            this.seed = random.NextInt64();
+            this.random = new J2N.Randomizer(seed);
         }
 
         protected override Position NewPosition()
@@ -110,7 +111,7 @@ namespace Lucene.Net.Analysis
         public override void Reset()
         {
             base.Reset();
-            random = new Random(seed);
+            random.Seed = seed;
         }
     }
 }

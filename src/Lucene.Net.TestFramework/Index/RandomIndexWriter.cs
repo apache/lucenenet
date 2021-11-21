@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
         public static IndexWriter MockIndexWriter(Directory dir, IndexWriterConfig conf, Random r)
         {
             // Randomly calls Thread.yield so we mixup thread scheduling
-            Random random = new Random(r.Next());
+            Random random = new J2N.Randomizer(r.NextInt64());
             return MockIndexWriter(dir, conf, new TestPointAnonymousClass(random));
         }
 
@@ -162,7 +162,7 @@ namespace Lucene.Net.Index
         public RandomIndexWriter(Random r, Directory dir, IndexWriterConfig c)
         {
             // TODO: this should be solved in a different way; Random should not be shared (!).
-            this.r = new Random(r.Next());
+            this.r = new J2N.Randomizer(r.NextInt64());
             IndexWriter = MockIndexWriter(dir, c, r);
             flushAt = TestUtil.NextInt32(r, 10, 1000);
             codec = IndexWriter.Config.Codec;

@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
                 this.storedOnlyType = storedOnlyType;
                 this.numCommitting = numCommitting;
                 this.writer = writer;
-                rand = new Random(Random.Next());
+                rand = new J2N.Randomizer(Random.NextInt64());
             }
 
             internal Random rand;
@@ -439,7 +439,7 @@ namespace Lucene.Net.Index
                 this.ndocs = ndocs;
                 this.tombstones = tombstones;
                 this.operations = operations;
-                rand = new Random(Random.Next());
+                rand = new J2N.Randomizer(Random.NextInt64());
             }
 
             internal Random rand;

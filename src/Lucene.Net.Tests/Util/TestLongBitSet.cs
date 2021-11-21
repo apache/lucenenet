@@ -243,10 +243,10 @@ namespace Lucene.Net.Util
         [Test, LuceneNetSpecific]
         public void TestClearLarge()
         {
+            Random random = Random;
             int iters = AtLeast(1000);
             for (int it = 0; it < iters; it++)
             {
-                Random random = new Random();
                 int sz = AtLeast(1200);
                 Int64BitSet a = new Int64BitSet(sz);
                 Int64BitSet b = new Int64BitSet(sz);

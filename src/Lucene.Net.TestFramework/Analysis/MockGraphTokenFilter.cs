@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
+using RandomizedTesting.Generators;
 using System;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -38,13 +39,13 @@ namespace Lucene.Net.Analysis
 
         private readonly ICharTermAttribute termAtt;
 
-        private readonly int seed; // LUCENENET specific: changed to int, since .NET random seed is int, not long
+        private readonly long seed;
         private Random random;
 
         public MockGraphTokenFilter(Random random, TokenStream input)
             : base(input)
         {
-            seed = random.Next();
+            seed = random.NextInt64();
             termAtt = AddAttribute<ICharTermAttribute>();
         }
 
@@ -111,7 +112,7 @@ namespace Lucene.Net.Analysis
             // NOTE: must be "deterministically random" because
             // baseTokenStreamTestCase pulls tokens twice on the
             // same input and asserts they are the same:
-            this.random = new Random(seed);
+            this.random = new J2N.Randomizer(seed);
         }
 
         protected override void Dispose(bool disposing)

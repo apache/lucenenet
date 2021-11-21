@@ -89,11 +89,11 @@ namespace Lucene.Net.Index.Sorter
             }
             terms = new JCG.List<string>(randomTerms);
             long seed = Random.NextInt64();
-            IndexWriterConfig iwc1 = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(new Random((int)seed)));
-            IndexWriterConfig iwc2 = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(new Random((int)seed)));
+            IndexWriterConfig iwc1 = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(new J2N.Randomizer(seed)));
+            IndexWriterConfig iwc2 = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(new J2N.Randomizer(seed)));
             iwc2.SetMergePolicy(NewSortingMergePolicy(sort));
-            RandomIndexWriter iw1 = new RandomIndexWriter(new Random((int)seed), dir1, iwc1);
-            RandomIndexWriter iw2 = new RandomIndexWriter(new Random((int)seed), dir2, iwc2);
+            RandomIndexWriter iw1 = new RandomIndexWriter(new J2N.Randomizer(seed), dir1, iwc1);
+            RandomIndexWriter iw2 = new RandomIndexWriter(new J2N.Randomizer(seed), dir2, iwc2);
             for (int i = 0; i < numDocs; ++i)
             {
                 if (Random.nextInt(5) == 0 && i != numDocs - 1)

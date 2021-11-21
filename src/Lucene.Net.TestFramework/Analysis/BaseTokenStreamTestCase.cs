@@ -1292,7 +1292,7 @@ namespace Lucene.Net.Analysis
         /// <summary>Returns a random <see cref="AttributeFactory"/> impl</summary>
         public static AttributeFactory NewAttributeFactory(Random random)
         {
-            switch (random.nextInt(2))
+            switch (random.Next(2))
             {
                 case 0:
                     return Token.TOKEN_ATTRIBUTE_FACTORY;
