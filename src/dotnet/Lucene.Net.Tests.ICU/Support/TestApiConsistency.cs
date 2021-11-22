@@ -45,7 +45,7 @@ namespace Lucene.Net.Support
         [TestCase(typeof(Lucene.Net.Collation.ICUCollationAttributeFactory))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]

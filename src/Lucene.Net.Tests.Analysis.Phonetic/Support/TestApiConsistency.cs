@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Phonetic
         [TestCase(typeof(Lucene.Net.Analysis.Phonetic.BeiderMorseFilter))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]

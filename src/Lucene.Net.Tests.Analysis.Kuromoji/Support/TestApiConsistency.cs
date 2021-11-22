@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Ja.Support
         [TestCase(typeof(Lucene.Net.Analysis.Ja.GraphvizFormatter))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]

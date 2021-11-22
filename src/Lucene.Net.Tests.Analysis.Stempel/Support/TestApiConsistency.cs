@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Stempel
         [TestCase(typeof(Lucene.Net.Analysis.Stempel.StempelFilter))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]

@@ -45,7 +45,7 @@ namespace Lucene.Net.Tests.Suggest
         [TestCase(typeof(Lucene.Net.Search.Suggest.IInputEnumerator))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]

@@ -45,7 +45,7 @@ namespace Lucene.Net.Tests.Queries
         [TestCase(typeof(Lucene.Net.Queries.BooleanFilter))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]

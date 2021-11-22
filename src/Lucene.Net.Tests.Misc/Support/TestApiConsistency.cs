@@ -45,7 +45,7 @@ namespace Lucene.Net.Tests.Misc
         [TestCase(typeof(Lucene.Net.Misc.SweetSpotSimilarity))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]
