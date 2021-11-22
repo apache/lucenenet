@@ -38,7 +38,7 @@ namespace Lucene.Net.QueryParsers
         [TestCase(typeof(Lucene.Net.QueryParsers.Classic.ICharStream))]
         public override void TestPrivateFieldNames(Type typeFromTargetAssembly)
         {
-            base.TestPrivateFieldNames(typeFromTargetAssembly, @"Snowball\.Ext\..+Stemmer");
+            base.TestPrivateFieldNames(typeFromTargetAssembly, @"DateTimeOffsetUtil");
         }
 
         [Test, LuceneNetSpecific]

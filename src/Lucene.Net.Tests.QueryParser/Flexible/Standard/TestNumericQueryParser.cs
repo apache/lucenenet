@@ -73,36 +73,58 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         private static bool checkDateFormatSanity(NumberDateFormat dateFormat, long date)
         {
             IFormatProvider provider = dateFormat.FormatProvider ?? CultureInfo.CurrentCulture;
-            TimeZoneInfo timeZone = dateFormat.TimeZone;
 
-            if (IsOutOfBounds(date, provider, timeZone))
+            if (IsOutOfBounds(date, provider))
                 return false;
 
             string format = dateFormat.GetDateFormat();
-            string formattedDate = J2N.Time.UnixEpoch
-                .ToCalendar(provider)
-                .ToTimeZone(timeZone)
-                .AddMilliseconds(date)
-                .ToString(format, provider);
-            return DateTime.TryParseExact(formattedDate, format, provider, DateTimeStyles.None, out DateTime _);
+            DateTimeOffset offset = DateTimeOffsetUtil.FromUnixTimeMilliseconds(Convert.ToInt64(date));
+            string formattedDate = offset.ToString(format, provider);
+
+            return DateTimeOffset.TryParseExact(formattedDate, format, provider, DateTimeStyles.None, out DateTimeOffset _);
         }
 
         // LUCENENET specific bounds check
-        private static bool IsOutOfBounds(double date, IFormatProvider provider, TimeZoneInfo timeZone)
+        // We need to be sure that the date is within the range of the current calendar, or we will get
+        // an ArgumentOutOfRangeException when attempting to materialize it.
+        private static bool IsOutOfBounds(double date, IFormatProvider provider)
         {
-            Calendar calendar = DateTimeExtensions.GetCalendar(provider);
+            Calendar calendar = GetCalendar(provider);
 
-            var newDate = J2N.Time.UnixEpoch
-                .ToCalendar(calendar)
-                .ToTimeZone(timeZone)
-                .Ticks + (long)(date * TimeSpan.TicksPerMillisecond);
-            return newDate < calendar.MinSupportedDateTime.Ticks || newDate > calendar.MaxSupportedDateTime.Ticks;
+            if (date < DateTimeOffsetUtil.MinMilliseconds || date > DateTimeOffsetUtil.MaxMilliseconds)
+                return false;
+
+            // We can't convert to a DateTimeOffset because it will do the calendar check and throw ArgumentOutOfRangeException
+            // before we can check the range.
+            long newDateTicks = DateTimeOffsetUtil.GetTicksFromUnixTimeMilliseconds(Convert.ToInt64(date));
+            return newDateTicks < calendar.MinSupportedDateTime.Ticks || newDateTicks > calendar.MaxSupportedDateTime.Ticks;
         }
 
         // LUCENENET specific bounds check
-        private static bool IsOutOfBoundsOrZero(double absNumber, IFormatProvider provider, TimeZoneInfo timeZone)
+        private static bool IsOutOfBoundsOrZero(double absNumber, IFormatProvider provider)
         {
-            return absNumber == 0 || IsOutOfBounds(absNumber, provider, timeZone) || IsOutOfBounds(-absNumber, provider, timeZone);
+            return absNumber == 0 || IsOutOfBounds(absNumber, provider) || IsOutOfBounds(-absNumber, provider);
+        }
+
+        /// <summary>
+        /// Returns the <see cref="Calendar"/> from the specified <paramref name="provider"/>.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider to use to format the value.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// A null reference (Nothing in Visual Basic) to obtain the numeric format information from the locale setting of the current thread.
+        /// </param>
+        /// <returns>The <see cref="Calendar"/> instance.</returns>
+        /// <exception cref="NotSupportedException">The supplied <paramref name="provider"/> returned <c>null</c> for the requested type <see cref="DateTimeFormatInfo"/>.</exception>
+        internal static Calendar GetCalendar(IFormatProvider? provider)
+        {
+            DateTimeFormatInfo? dateTimeFormat = (provider ?? DateTimeFormatInfo.CurrentInfo).GetFormat(typeof(DateTimeFormatInfo)) as DateTimeFormatInfo;
+            if (dateTimeFormat is null)
+                throw new NotSupportedException($"The specified format provider did not return a '{typeof(DateTimeFormatInfo).FullName}' instance from IFormatProvider.GetFormat(System.Type).");
+
+            return dateTimeFormat.Calendar;
         }
 
 
@@ -198,16 +220,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             float randomFloat;
 
             while (IsOutOfBoundsOrZero((randomLong = Convert.ToInt64(NormalizeNumber(Math.Abs(Random.nextLong()))
-                )), LOCALE, TIMEZONE))
+                )), LOCALE))
                 ;
             while (IsOutOfBoundsOrZero((randomDouble = Convert.ToDouble(NormalizeNumber(Math.Abs(Random.NextDouble()))
-                )), LOCALE, TIMEZONE))
+                )), LOCALE))
                 ;
             while (IsOutOfBoundsOrZero((randomFloat = Convert.ToSingle(NormalizeNumber(Math.Abs(Random.nextFloat()))
-                )), LOCALE, TIMEZONE))
+                )), LOCALE))
                 ;
             while (IsOutOfBoundsOrZero((randomInt = Convert.ToInt32(NormalizeNumber(Math.Abs(Random.nextInt()))
-                )), LOCALE, TIMEZONE))
+                )), LOCALE))
                 ;
 
             randomNumberMap.Put(NumericType.INT64.ToString(), randomLong);

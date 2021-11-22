@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using J2N;
 using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using TimeZoneConverter;
@@ -47,9 +48,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
                 TimeZone = timeZone
             };
 
-            DateTime dateToParse = J2N.Time.UnixEpoch.ToCalendar(culture).ToTimeZone(timeZone);
+            // Convert from Unix epoch to time zone.
+            DateTime dateToParse = TimeZoneInfo.ConvertTimeFromUtc(J2N.Time.UnixEpoch, timeZone);
 
-            long dateAsLong = (long)(dateToParse - J2N.Time.UnixEpoch.ToCalendar(culture)).TotalMilliseconds;
+            // Get the difference since the Unix epoch in milliseconds.
+            long dateAsLong = dateToParse.GetMillisecondsSinceUnixEpoch();
 
             string actual = formatter.Format(dateAsLong);
 
@@ -57,13 +60,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             Console.WriteLine($"\"{actual}\"");
 
 
-            // Make sure time zone is correct in the string
+            // Make sure time zone is correct in the string for PST, including DST.
             if (timeZone.IsDaylightSavingTime(dateToParse))
-                Assert.IsTrue(Regex.IsMatch(actual, @"\+\s?0?8"));
+                Assert.IsTrue(Regex.IsMatch(actual, @"\-\s?0?7"));
             else
-                Assert.IsTrue(Regex.IsMatch(actual, @"\+\s?0?7"));
+                Assert.IsTrue(Regex.IsMatch(actual, @"\-\s?0?8"));
 
-
+            // Convert the parsed result back to a long
             long parsedLong = Convert.ToInt64(formatter.Parse(actual));
 
             // Make sure round trip results in the same number

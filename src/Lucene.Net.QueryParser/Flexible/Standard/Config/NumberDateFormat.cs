@@ -43,9 +43,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
     {
         //private static readonly long serialVersionUID = 964823936071308283L;
 
-        // The .NET ticks representing January 1, 1970 0:00:00 GMT, also known as the "epoch".
-        public const long EPOCH = 621355968000000000;
-
         private string? dateFormat;
         private readonly DateFormat dateStyle;
         private readonly DateFormat timeStyle;
@@ -85,35 +82,29 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         public override string Format(double number)
         {
-            return J2N.Time.UnixEpoch
-                .ToCalendar(FormatProvider)
-                .ToTimeZone(TimeZone)
-                .AddMilliseconds(number)
-                .ToString(GetDateFormat(), FormatProvider);
+            DateTimeOffset offset = DateTimeOffsetUtil.FromUnixTimeMilliseconds(Convert.ToInt64(number));
+            DateTimeOffset timeZoneAdjusted = TimeZoneInfo.ConvertTime(offset, TimeZone);
+            return timeZoneAdjusted.ToString(GetDateFormat(), FormatProvider);
         }
 
         public override string Format(long number)
         {
-            return J2N.Time.UnixEpoch
-                .ToCalendar(FormatProvider)
-                .ToTimeZone(TimeZone)
-                .AddMilliseconds(number)
-                .ToString(GetDateFormat(), FormatProvider);
+            DateTimeOffset offset = DateTimeOffsetUtil.FromUnixTimeMilliseconds(Convert.ToInt64(number));
+            DateTimeOffset timeZoneAdjusted = TimeZoneInfo.ConvertTime(offset, TimeZone);
+            return timeZoneAdjusted.ToString(GetDateFormat(), FormatProvider);
         }
 
         public override object Parse(string source)
         {
-            DateTime d = DateTime.ParseExact(source, GetDateFormat(), FormatProvider, DateTimeStyles.None);
-            return (d.ToCalendar(FormatProvider) - J2N.Time.UnixEpoch.ToCalendar(FormatProvider).ToTimeZone(TimeZone)).TotalMilliseconds;
+            DateTimeOffset d = DateTimeOffset.ParseExact(source, GetDateFormat(), FormatProvider, DateTimeStyles.None);
+            return DateTimeOffsetUtil.ToUnixTimeMilliseconds(d);
         }
 
         public override string Format(object number)
         {
-            return J2N.Time.UnixEpoch
-                .ToCalendar(FormatProvider)
-                .ToTimeZone(TimeZone)
-                .AddMilliseconds(Convert.ToInt64(number, CultureInfo.InvariantCulture))
-                .ToString(GetDateFormat(), FormatProvider);
+            DateTimeOffset offset = DateTimeOffsetUtil.FromUnixTimeMilliseconds(Convert.ToInt64(number, FormatProvider));
+            DateTimeOffset timeZoneAdjusted = TimeZoneInfo.ConvertTime(offset, TimeZone);
+            return timeZoneAdjusted.ToString(GetDateFormat(), FormatProvider);
         }
 
         public void SetDateFormat(string dateFormat)
@@ -146,12 +137,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
                     break;
                 case DateFormat.MEDIUM:
                     datePattern = dateTimeFormat.LongDatePattern
-                        .Replace("dddd,", "").Replace(", dddd", "") // Remove the day of the week
+                        .Replace("dddd, ", "").Replace(", dddd", "") // Remove the day of the week
                         .Replace("MMMM", "MMM"); // Replace month with abbreviated month
                     break;
                 case DateFormat.LONG:
                     datePattern = dateTimeFormat.LongDatePattern
-                        .Replace("dddd,", "").Replace(", dddd", ""); // Remove the day of the week
+                        .Replace("dddd, ", "").Replace(", dddd", ""); // Remove the day of the week
                     break;
                 case DateFormat.FULL:
                     datePattern = dateTimeFormat.LongDatePattern;
@@ -178,87 +169,75 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         }
     }
 
-    /// <summary>
-    /// Extensions to <see cref="DateTime"/>.
-    /// </summary>
-    internal static class DateTimeExtensions
+    // Source: https://github.com/dotnet/runtime/blob/af4efb1936b407ca5f4576e81484cf5687b79a26/src/libraries/System.Private.CoreLib/src/System/DateTimeOffset.cs
+    internal static class DateTimeOffsetUtil
     {
-        /// <summary>
-        /// Returns the <see cref="Calendar"/> from the specified <paramref name="provider"/>.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider to use to format the value.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// A null reference (Nothing in Visual Basic) to obtain the numeric format information from the locale setting of the current thread.
-        /// </param>
-        /// <returns>The <see cref="Calendar"/> instance.</returns>
-        /// <exception cref="NotSupportedException">The supplied <paramref name="provider"/> returned <c>null</c> for the requested type <see cref="DateTimeFormatInfo"/>.</exception>
-        internal static Calendar GetCalendar(IFormatProvider? provider)
-        {
-            DateTimeFormatInfo? dateTimeFormat = (provider ?? DateTimeFormatInfo.CurrentInfo).GetFormat(typeof(DateTimeFormatInfo)) as DateTimeFormatInfo;
-            if (dateTimeFormat is null)
-                throw new NotSupportedException($"The specified format provider did not return a '{typeof(DateTimeFormatInfo).FullName}' instance from IFormatProvider.GetFormat(System.Type).");
-
-            return dateTimeFormat.Calendar;
-        }
+        public const long MinMilliseconds = /*DateTime.*/MinTicks / TimeSpan.TicksPerMillisecond - UnixEpochMilliseconds;
+        public const long MaxMilliseconds = /*DateTime.*/MaxTicks / TimeSpan.TicksPerMillisecond - UnixEpochMilliseconds;
 
         /// <summary>
-        /// Returns a new <see cref="DateTime"/> that converts the value of <paramref name="input"/> (current instance) into
-        /// the corresponding value in the <see cref="DateTimeFormatInfo.Calendar"/> of the <paramref name="provider"/>.
+        /// The .NET ticks representing January 1, 1970 0:00:00, also known as the "epoch".
         /// </summary>
-        /// <param name="input">The current <see cref="DateTime"/> instance.</param>
-        /// <param name="provider">
-        /// The provider to use to format the value.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// A null reference (Nothing in Visual Basic) to obtain the numeric format information from the locale setting of the current thread.
-        /// </param>
-        /// <returns>A new <see cref="DateTime"/> instance with the same value of <paramref name="input"/> adjusted
-        /// for the <see cref="DateTimeFormatInfo.Calendar"/> of the <paramref name="provider"/>.</returns>
-        /// <exception cref="NotSupportedException">The supplied <paramref name="provider"/> returned <c>null</c> for the requested type <see cref="DateTimeFormatInfo"/>.</exception>
-        public static DateTime ToCalendar(this DateTime input, IFormatProvider? provider)
+        private const long UnixEpochTicks = 621355968000000000L;
+
+        private const long UnixEpochMilliseconds = UnixEpochTicks / TimeSpan.TicksPerMillisecond; // 62,135,596,800,000
+
+
+        // From System.DateTime
+
+        // Number of 100ns ticks per time unit
+        private const long TicksPerMillisecond = 10000;
+        private const long TicksPerSecond = TicksPerMillisecond * 1000;
+        private const long TicksPerMinute = TicksPerSecond * 60;
+        private const long TicksPerHour = TicksPerMinute * 60;
+        private const long TicksPerDay = TicksPerHour * 24;
+
+        // Number of days in a non-leap year
+        private const int DaysPerYear = 365;
+        // Number of days in 4 years
+        private const int DaysPer4Years = DaysPerYear * 4 + 1;       // 1461
+        // Number of days in 100 years
+        private const int DaysPer100Years = DaysPer4Years * 25 - 1;  // 36524
+        // Number of days in 400 years
+        private const int DaysPer400Years = DaysPer100Years * 4 + 1; // 146097
+
+        // Number of days from 1/1/0001 to 12/31/9999
+        private const int DaysTo10000 = DaysPer400Years * 25 - 366;  // 3652059
+
+        internal const long MinTicks = 0;
+        internal const long MaxTicks = DaysTo10000 * TicksPerDay - 1;
+
+
+        public static long GetTicksFromUnixTimeMilliseconds(long milliseconds)
         {
-            return ToCalendar(input, GetCalendar(provider));
+            if (milliseconds < MinMilliseconds || milliseconds > MaxMilliseconds)
+            {
+                throw new ArgumentOutOfRangeException(nameof(milliseconds),
+                    string.Format("Valid values are between {0} and {1}, inclusive.", MinMilliseconds, MaxMilliseconds));
+            }
+
+            long ticks = milliseconds * TimeSpan.TicksPerMillisecond + UnixEpochTicks;
+            return ticks;
         }
 
-        /// <summary>
-        /// Returns a new <see cref="DateTime"/> that converts the value of <paramref name="input"/> (current instance) into
-        /// the corresponding value in the provided <paramref name="calendar"/>.
-        /// </summary>
-        /// <param name="input">The current <see cref="DateTime"/> instance.</param>
-        /// <param name="calendar">A <see cref="Calendar"/> instance.</param>
-        /// <returns>A new <see cref="DateTime"/> instance with the same value of <paramref name="input"/> adjusted
-        /// for the provided <paramref name="calendar"/>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="calendar"/> is null.</exception>
-        public static DateTime ToCalendar(this DateTime input, Calendar calendar)
+        public static DateTimeOffset FromUnixTimeMilliseconds(long milliseconds)
         {
-            if (calendar is null)
-                throw new ArgumentNullException(nameof(calendar));
+            if (milliseconds < MinMilliseconds || milliseconds > MaxMilliseconds)
+            {
+                throw new ArgumentOutOfRangeException(nameof(milliseconds),
+                    string.Format("Valid values are between {0} and {1}, inclusive.", MinMilliseconds, MaxMilliseconds));
+            }
 
-            // Get the remaining ticks so we don't lose resolution.
-            DateTime temp = new DateTime(input.Year, input.Month, input.Day, input.Hour, input.Minute, input.Second, input.Millisecond, input.Kind);
-            long diffTicks = input.Ticks - temp.Ticks;
-
-            return new DateTime(
-                calendar.GetYear(input),
-                calendar.GetMonth(input),
-                calendar.GetDayOfMonth(input),
-                calendar.GetHour(input),
-                calendar.GetMinute(input),
-                calendar.GetSecond(input),
-                (int)calendar.GetMilliseconds(input)
-                , calendar
-                //)
-                , input.Kind)
-                .AddTicks(diffTicks);
+            long ticks = milliseconds * TimeSpan.TicksPerMillisecond + UnixEpochTicks;
+            return new DateTimeOffset(ticks, TimeSpan.Zero);
         }
 
-        public static DateTime ToTimeZone(this DateTime input, TimeZoneInfo timeZone)
+        public static long ToUnixTimeMilliseconds(DateTimeOffset offset)
         {
-            return TimeZoneInfo.ConvertTime(input, timeZone);
+            // Truncate sub-millisecond precision before offsetting by the Unix Epoch to avoid
+            // the last digit being off by one for dates that result in negative Unix times
+            long milliseconds = offset.UtcDateTime.Ticks / TimeSpan.TicksPerMillisecond;
+            return milliseconds - UnixEpochMilliseconds;
         }
     }
 }
