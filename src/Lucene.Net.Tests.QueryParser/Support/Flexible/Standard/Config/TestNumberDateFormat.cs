@@ -9,6 +9,7 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using TimeZoneConverter;
 using NUnit.Framework;
+using Console = Lucene.Net.Util.SystemConsole;
 
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
@@ -51,6 +52,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             long dateAsLong = (long)(dateToParse - J2N.Time.UnixEpoch.ToCalendar(culture)).TotalMilliseconds;
 
             string actual = formatter.Format(dateAsLong);
+
+            Console.WriteLine("Output of formatter.Format():");
+            Console.WriteLine($"\"{actual}\"");
 
 
             // Make sure time zone is correct in the string
