@@ -50,6 +50,7 @@
     <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>$(MicrosoftCodeAnalysisVisualBasicPackageVersion)</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
     <MicrosoftExtensionsConfigurationPackageVersion>2.0.0</MicrosoftExtensionsConfigurationPackageVersion>
     <MicrosoftExtensionsConfigurationPackageVersion Condition=" $(TargetFramework.StartsWith('net45')) ">1.1.2</MicrosoftExtensionsConfigurationPackageVersion>
+    <MicrosoftExtensionsConfigurationPackageVersion Condition=" $(TargetFramework.StartsWith('netcoreapp')) ">3.0.0</MicrosoftExtensionsConfigurationPackageVersion>
     <MicrosoftExtensionsConfigurationAbstractionsPackageVersion>$(MicrosoftExtensionsConfigurationPackageVersion)</MicrosoftExtensionsConfigurationAbstractionsPackageVersion>
     <MicrosoftExtensionsConfigurationCommandLinePackageVersion>$(MicrosoftExtensionsConfigurationPackageVersion)</MicrosoftExtensionsConfigurationCommandLinePackageVersion>
     <MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion>$(MicrosoftExtensionsConfigurationPackageVersion)</MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion>
