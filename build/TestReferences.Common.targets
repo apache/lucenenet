@@ -28,6 +28,12 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
     <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)" />
   </ItemGroup>
 
