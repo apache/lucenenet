@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Support
         [TestCase(typeof(Lucene.Net.Analysis.Cn.Smart.AnalyzerProfile))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]

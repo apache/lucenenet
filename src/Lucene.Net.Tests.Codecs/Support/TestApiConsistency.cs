@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs.Tests
         [TestCase(typeof(Lucene.Net.Codecs.BlockTerms.BlockTermsReader))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]

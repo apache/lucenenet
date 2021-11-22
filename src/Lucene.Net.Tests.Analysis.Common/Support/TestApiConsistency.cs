@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis
         [TestCase(typeof(Lucene.Net.Analysis.Standard.ClassicAnalyzer))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]

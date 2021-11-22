@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
         [TestCase(typeof(Lucene.Net.Search.Highlight.DefaultEncoder))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]

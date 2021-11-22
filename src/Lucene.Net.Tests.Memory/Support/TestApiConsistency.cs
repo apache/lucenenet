@@ -45,7 +45,7 @@ namespace Lucene.Net.Tests.Memory
         [TestCase(typeof(Lucene.Net.Index.Memory.MemoryIndex))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]

@@ -45,7 +45,7 @@ namespace Lucene.Net.Classification
         [TestCase(typeof(Lucene.Net.Classification.KNearestNeighborClassifier))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]
