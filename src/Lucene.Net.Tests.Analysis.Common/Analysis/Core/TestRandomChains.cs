@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 
+using J2N;
 using J2N.Runtime.CompilerServices;
 using J2N.Text;
 using Lucene.Net.Analysis.CharFilters;
@@ -25,6 +26,7 @@ using Lucene.Net.TestFramework.Analysis;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -108,7 +110,7 @@ namespace Lucene.Net.Analysis.Core
                     typeof(CrankyTokenFilter),
                     // Not broken: we forcefully add this, so we shouldn't
                     // also randomly pick it:
-                    typeof(ValidatingTokenFilter)
+                    typeof(ValidatingTokenFilter),
                 })
                 {
                     foreach (ConstructorInfo ctor in c.GetConstructors())
@@ -415,7 +417,7 @@ namespace Lucene.Net.Analysis.Core
         {
             public object Create(Random random)
             {
-                return new Random(random.Next());
+                return new J2N.Randomizer(random.NextInt64());
             }
         }
 
@@ -692,16 +694,45 @@ namespace Lucene.Net.Analysis.Core
 
         private class SynonymMapArgProducer : IArgProducer
         {
+            // LUCENENET specific: Added functionality to export the source code of the builder with all of the escaped text.
+            //
+            // USAGE
+            //
+            // This is intended to be used in conjunction with a fixed random seed after a failure. You should confirm
+            // first that you can reproduce a test failure before exporting.
+            //
+            // 1. Change exportSourceCode to true to export the source code
+            // 2. Update the exportPath to a folder on your local system. Note that it won't automatically create directories.
+            //    The {0} token will be replaced with a map number. Normally, you would get the contents of the highest number,
+            //    which is the last successful map that occurred before there was a test failure.
+
+            private StringBuilder sb = new StringBuilder();
+            private static bool exportSourceCode = false;                 // Change to enable source code export.
+            private static string exportPath = @"F:\synonym-map-{0}.txt"; // Change as necessary for your system.
+            private int mapCount = 0;
             public object Create(Random random)
             {
-                SynonymMap.Builder b = new SynonymMap.Builder(random.nextBoolean());
+                if (exportSourceCode) sb.Clear();
+                bool dedup = random.NextBoolean();
+                SynonymMap.Builder b = new SynonymMap.Builder(dedup);
+
+                if (exportSourceCode) sb.AppendLine($"SynonymMap.Builder b = new SynonymMap.Builder({dedup.ToString().ToLowerInvariant()});");
+
                 int numEntries = AtLeast(10);
                 for (int j = 0; j < numEntries; j++)
                 {
-                    AddSyn(b, RandomNonEmptyString(random), RandomNonEmptyString(random), random.nextBoolean());
+                    AddSyn(b, RandomNonEmptyString(random), RandomNonEmptyString(random), random.NextBoolean());
                 }
                 try
                 {
+                    if (exportSourceCode)
+                    {
+                        sb.AppendLine("SynonymMap synonymMap = b.Build();");
+                        mapCount++;
+                        string path = string.Format(exportPath, mapCount);
+                        File.WriteAllText(path, sb.ToString());
+                    }
+
                     return b.Build();
                 }
                 catch (Exception ex) when (ex.IsException())
@@ -713,11 +744,24 @@ namespace Lucene.Net.Analysis.Core
                 }
             }
 
+            private static readonly Regex whiteSpace = new Regex(" +", RegexOptions.Compiled);
+
             private void AddSyn(SynonymMap.Builder b, string input, string output, bool keepOrig)
             {
-                b.Add(new CharsRef(input.Replace(" +", "\u0000")),
-                      new CharsRef(output.Replace(" +", "\u0000")),
-                      keepOrig);
+                string inputNoSpaces = whiteSpace.Replace(input, "\u0000");
+                string outputNoSpaces = whiteSpace.Replace(output, "\u0000");
+
+                if (exportSourceCode)
+                {
+                    sb.AppendLine($"b.Add(new CharsRef(\"{Escape(inputNoSpaces)}\"),");
+                    sb.AppendLine($"    new CharsRef(\"{Escape(outputNoSpaces)}\"),");
+                    sb.AppendLine($"    {keepOrig.ToString().ToLowerInvariant()});");
+                    sb.AppendLine();
+                }
+
+                b.Add(new CharsRef(inputNoSpaces),
+                    new CharsRef(outputNoSpaces),
+                    keepOrig);
             }
 
             private string RandomNonEmptyString(Random random)
@@ -814,10 +858,9 @@ namespace Lucene.Net.Analysis.Core
 
         private class MockRandomAnalyzer : Analyzer
         {
-            internal readonly int seed;
+            internal readonly long seed;
 
-
-            public MockRandomAnalyzer(int seed)
+            public MockRandomAnalyzer(long seed)
             {
                 this.seed = seed;
             }
@@ -827,7 +870,7 @@ namespace Lucene.Net.Analysis.Core
                 get
                 {
                     // TODO: can we not do the full chain here!?
-                    Random random = new Random(seed);
+                    Random random = new Randomizer(seed);
                     TokenizerSpec tokenizerSpec = NewTokenizer(random, new StringReader(""));
                     TokenFilterSpec filterSpec = NewFilterChain(random, tokenizerSpec.tokenizer, tokenizerSpec.offsetsAreCorrect);
                     return filterSpec.offsetsAreCorrect;
@@ -836,7 +879,7 @@ namespace Lucene.Net.Analysis.Core
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
-                Random random = new Random(seed);
+                Random random = new Randomizer(seed);
                 TokenizerSpec tokenizerSpec = NewTokenizer(random, reader);
                 //System.out.println("seed=" + seed + ",create tokenizer=" + tokenizerSpec.toString);
                 TokenFilterSpec filterSpec = NewFilterChain(random, tokenizerSpec.tokenizer, tokenizerSpec.offsetsAreCorrect);
@@ -846,7 +889,7 @@ namespace Lucene.Net.Analysis.Core
 
             protected internal override TextReader InitReader(string fieldName, TextReader reader)
             {
-                Random random = new Random(seed);
+                Random random = new Randomizer(seed);
                 CharFilterSpec charfilterspec = NewCharFilterChain(random, reader);
                 return charfilterspec.reader;
             }
@@ -854,13 +897,13 @@ namespace Lucene.Net.Analysis.Core
 
             public override string ToString()
             {
-                Random random = new Random(seed);
+                Random random = new Randomizer(seed);
                 StringBuilder sb = new StringBuilder();
                 CharFilterSpec charFilterSpec = NewCharFilterChain(random, new StringReader(""));
                 sb.Append("\ncharfilters=");
                 sb.Append(charFilterSpec.toString);
                 // intentional: initReader gets its own separate random
-                random = new Random(seed);
+                random = new Randomizer(seed);
                 TokenizerSpec tokenizerSpec = NewTokenizer(random, charFilterSpec.reader);
                 sb.Append("\n");
                 sb.Append("tokenizer=");
@@ -1119,15 +1162,14 @@ namespace Lucene.Net.Analysis.Core
         }
 
         [Test]
-        [Slow]
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test occasionally fails
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/271#issuecomment-973005744")] // LUCENENET TODO: this test occasionally fails
         public void TestRandomChains_()
         {
             int numIterations = AtLeast(20);
             Random random = Random;
             for (int i = 0; i < numIterations; i++)
             {
-                MockRandomAnalyzer a = new MockRandomAnalyzer(random.Next());
+                MockRandomAnalyzer a = new MockRandomAnalyzer(random.NextInt64());
                 if (Verbose)
                 {
                     Console.WriteLine("Creating random analyzer:" + a);
@@ -1139,7 +1181,7 @@ namespace Lucene.Net.Analysis.Core
                 }
                 catch (Exception e) when (e.IsThrowable())
                 {
-                    Console.WriteLine("Exception from random analyzer: " + a);
+                    Console.WriteLine("Exception from random analyzer (iteration {i}): " + a);
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                 }
             }
@@ -1147,15 +1189,14 @@ namespace Lucene.Net.Analysis.Core
 
         // we might regret this decision...
         [Test]
-        [Slow]
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test occasionally fails
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/271#issuecomment-973005744")] // LUCENENET TODO: this test occasionally fails
         public void TestRandomChainsWithLargeStrings()
         {
             int numIterations = AtLeast(20);
             Random random = Random;
             for (int i = 0; i < numIterations; i++)
             {
-                MockRandomAnalyzer a = new MockRandomAnalyzer(random.Next());
+                MockRandomAnalyzer a = new MockRandomAnalyzer(random.NextInt64());
                 if (Verbose)
                 {
                     Console.WriteLine("Creating random analyzer:" + a);
@@ -1167,7 +1208,7 @@ namespace Lucene.Net.Analysis.Core
                 }
                 catch (Exception e) when (e.IsThrowable())
                 {
-                    Console.WriteLine("Exception from random analyzer: " + a);
+                    Console.WriteLine($"Exception from random analyzer (iteration {i}): " + a);
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                 }
             }

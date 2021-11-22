@@ -109,7 +109,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             base.SetConfig(config);
             sortRange = config.Get("sort.rng", 20000);
-            r = new Random(config.Get("rand.seed", 13));
+            r = new J2N.Randomizer(config.Get("rand.seed", 13));
         }
     }
 }

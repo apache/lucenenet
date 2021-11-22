@@ -445,7 +445,7 @@ namespace Lucene.Net.Store
         public virtual void TestChecksum()
         {
             CRC32 expected = new CRC32();
-            int numBytes = Random.nextInt(20000);
+            int numBytes = Random.Next(20000);
             byte[] bytes = new byte[numBytes];
             Random.NextBytes(bytes);
             expected.Update(bytes);
@@ -494,7 +494,7 @@ namespace Lucene.Net.Store
         //            {
         //                try
         //                {
-        //                    Random rnd = new Random(Random.Next() + 1); // LUCENENET: Changed from Long to Int32
+        //                    Random rnd = new J2N.Randomizer(Random.NextInt64() + 1);
         //                    for (int i = 0, max = RandomInts.RandomInt32Between(Random, 500, 1000); i < max; i++)
         //                    {
         //                        string fileName = "file-" + i;
@@ -534,7 +534,7 @@ namespace Lucene.Net.Store
         //            {
         //                try
         //                {
-        //                    Random rnd = new Random(Random.Next()); // LUCENENET: Changed from Long to Int32
+        //                    Random rnd = new J2N.Randomizer(Random.NextInt64());
         //                    while (!stop.Get())
         //                    {
         //                        string[] files = dir.ListAll()

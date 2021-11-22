@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Suggest
         internal readonly int num = 7;
         internal readonly bool onlyMorePopular = false;
 
-        private readonly static Random random = new Random(0xdeadbee); // LUCENENET NOTE: Changed seed so it would fit in an int
+        private readonly static Random random = new J2N.Randomizer(0xdeadbeef);
 
         /**
          * Input term/weight pairs.

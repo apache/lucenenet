@@ -1,5 +1,6 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -42,7 +43,7 @@ namespace Lucene.Net.Util.Fst
         {
             int[] ints = new int[7];
             Int32sRef input = new Int32sRef(ints, 0, ints.Length);
-            int seed = Random.Next();
+            long seed = Random.NextInt64();
 
             Directory dir = new MMapDirectory(CreateTempDir("2BFST"));
 
@@ -59,7 +60,7 @@ namespace Lucene.Net.Util.Fst
                     Builder<object> b = new Builder<object>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPack, PackedInt32s.COMPACT, true, 15);
 
                     int count = 0;
-                    Random r = new Random(seed);
+                    Random r = new J2N.Randomizer(seed);
                     int[] ints2 = new int[200];
                     Int32sRef input2 = new Int32sRef(ints2, 0, ints2.Length);
                     while (true)
@@ -89,7 +90,7 @@ namespace Lucene.Net.Util.Fst
                         Console.WriteLine("\nTEST: now verify [fst size=" + fst.GetSizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
 
                         Arrays.Fill(ints2, 0);
-                        r = new Random(seed);
+                        r = new J2N.Randomizer(seed);
 
                         for (int i = 0; i < count; i++)
                         {
@@ -109,7 +110,7 @@ namespace Lucene.Net.Util.Fst
                         Int32sRefFSTEnum<object> fstEnum = new Int32sRefFSTEnum<object>(fst);
 
                         Arrays.Fill(ints2, 0);
-                        r = new Random(seed);
+                        r = new J2N.Randomizer(seed);
                         int upto = 0;
                         while (true)
                         {
@@ -157,7 +158,7 @@ namespace Lucene.Net.Util.Fst
                     BytesRef output = new BytesRef(outputBytes);
                     Arrays.Fill(ints, 0);
                     int count = 0;
-                    Random r = new Random(seed);
+                    Random r = new J2N.Randomizer(seed);
                     while (true)
                     {
                         r.NextBytes(outputBytes);
@@ -180,7 +181,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         Console.WriteLine("\nTEST: now verify [fst size=" + fst.GetSizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
 
-                        r = new Random(seed);
+                        r = new J2N.Randomizer(seed);
                         Arrays.Fill(ints, 0);
 
                         for (int i = 0; i < count; i++)
@@ -198,7 +199,7 @@ namespace Lucene.Net.Util.Fst
                         Int32sRefFSTEnum<BytesRef> fstEnum = new Int32sRefFSTEnum<BytesRef>(fst);
 
                         Arrays.Fill(ints, 0);
-                        r = new Random(seed);
+                        r = new J2N.Randomizer(seed);
                         int upto = 0;
                         while (true)
                         {
@@ -243,7 +244,7 @@ namespace Lucene.Net.Util.Fst
 
                     Arrays.Fill(ints, 0);
                     int count = 0;
-                    Random r = new Random(seed);
+                    Random r = new J2N.Randomizer(seed);
                     while (true)
                     {
                         //System.out.println("add: " + input + " -> " + output);
@@ -270,7 +271,7 @@ namespace Lucene.Net.Util.Fst
                         Arrays.Fill(ints, 0);
 
                         output = 1;
-                        r = new Random(seed);
+                        r = new J2N.Randomizer(seed);
                         for (int i = 0; i < count; i++)
                         {
                             if (i % 1000000 == 0)
@@ -290,7 +291,7 @@ namespace Lucene.Net.Util.Fst
                         Int32sRefFSTEnum<long?> fstEnum = new Int32sRefFSTEnum<long?>(fst);
 
                         Arrays.Fill(ints, 0);
-                        r = new Random(seed);
+                        r = new J2N.Randomizer(seed);
                         int upto = 0;
                         output = 1;
                         while (true)

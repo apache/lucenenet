@@ -291,7 +291,7 @@ namespace Lucene.Net.Util.Fst
 
         private void TestRandomWords(int maxNumWords, int numIter)
         {
-            Random random = new Random(Random.Next());
+            Random random = new J2N.Randomizer(Random.NextInt64());
             for (int iter = 0; iter < numIter; iter++)
             {
                 if (Verbose)
@@ -426,7 +426,7 @@ namespace Lucene.Net.Util.Fst
 
                 if (ord > 0)
                 {
-                    Random random = new Random(Random.Next());
+                    Random random = new J2N.Randomizer(Random.NextInt64());
                     // Now confirm BytesRefFSTEnum and TermsEnum act the
                     // same:
                     BytesRefFSTEnum<long?> fstEnum = new BytesRefFSTEnum<long?>(fst);
@@ -829,7 +829,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (ord == 0)
                 {
-                    rand = new Random(17);
+                    rand = new J2N.Randomizer(17);
                 }
                 return outputs.NewPair(ord, TestUtil.NextInt32(rand, 1, 5000));
             }
@@ -860,7 +860,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (ord == 0)
                 {
-                    rand = new Random(17);
+                    rand = new J2N.Randomizer(17);
                 }
                 return (long)TestUtil.NextInt32(rand, 1, 5000);
             }

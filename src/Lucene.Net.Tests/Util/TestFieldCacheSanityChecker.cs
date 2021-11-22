@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using NUnit.Framework;
 using System;
@@ -139,7 +139,7 @@ namespace Lucene.Net.Util
 
             if (0 < insanity.Length)
             {
-                DumpArray(GetTestClass().Name + "#" + TestName + " INSANITY", insanity, Console.Error);
+                DumpArray(TestType.Name + "#" + TestName + " INSANITY", insanity, Console.Error);
             }
 
             Assert.AreEqual(0, insanity.Length, "shouldn't be any cache insanity");

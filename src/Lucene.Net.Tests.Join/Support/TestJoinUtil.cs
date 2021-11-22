@@ -393,6 +393,9 @@ namespace Lucene.Net.Tests.Join
 
         [Test]
         // [Slow] // LUCENENET specific - Not slow in .NET
+#if NETFRAMEWORK
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/549")] // LUCENENET TODO: This test fails on x86 .NET Framework in Release mode only
+#endif
         public void TestMultiValueRandomJoin()
         // this test really takes more time, that is why the number of iterations are smaller.
         {

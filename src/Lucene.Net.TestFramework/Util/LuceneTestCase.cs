@@ -48,7 +48,7 @@ using After = NUnit.Framework.TearDownAttribute;
 using OneTimeSetUp = NUnit.Framework.OneTimeSetUpAttribute;
 using OneTimeTearDown = NUnit.Framework.OneTimeTearDownAttribute;
 using Test = NUnit.Framework.TestAttribute;
-using TestFixture = NUnit.Framework.TestFixtureAttribute;
+//using TestFixture = Lucene.Net.Util.LuceneTestCase.TestFixtureAttribute;
 using AssumptionViolatedException = NUnit.Framework.InconclusiveException;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
@@ -548,8 +548,6 @@ namespace Lucene.Net.Util
         {
             public SystemPropertyData()
             {
-                // LUCENENET: Always ensure the system properties are initailized before any attempt to read them.
-                LuceneTestFrameworkInitializer.EnsureInitialized();
                 Verbose = SystemProperties.GetPropertyAsBoolean("tests:verbose", // LUCENENET specific - reformatted with :
 #if DEBUG
                     true
@@ -696,18 +694,8 @@ namespace Lucene.Net.Util
         public static string TestLineDocsFile // LUCENENET specific - changed from field to property, and renamed
         {
             get => TestProperties.TestLineDocsFile;
-            set => TestProperties.TestLineDocsFile = value;
+            internal set => TestProperties.TestLineDocsFile = value;
         }
-
-        /// <summary>
-        /// The line file used by <see cref="LineFileDocs"/> to override <see cref="TestLineDocsFile"/> if it exists (points to an unzipped file).</summary>
-        // LUCENENET specific - used to unzip the LineDocsFile at the class level so we don't have to do it in every test.
-        internal static string TempLineDocsFile { get; set; }
-
-        /// <summary>
-        /// Whether to use the temporary line docs file. This should be set to <c>true</c> when a subclass requires <see cref="LineFileDocs"/>.</summary>
-        // LUCENENET specific - used to unzip the LineDocsFile at the class level so we don't have to do it in every test.
-        internal bool UseTempLineDocsFile { get; set; }
 
         /// <summary>
         /// Whether or not <see cref="NightlyAttribute"/> tests should run. </summary>
@@ -985,6 +973,9 @@ namespace Lucene.Net.Util
             // LUCENENET: Printing out randomized context regardless
             // of whether verbose is enabled (since we need it for debugging,
             // but the verbose output can crash tests).
+            Console.Write("RandomSeed: ");
+            Console.WriteLine(RandomizedContext.CurrentContext.RandomSeedAsHex);
+
             Console.Write("Culture: ");
             Console.WriteLine(ClassEnvRule.locale.Name);
 
@@ -1033,6 +1024,28 @@ namespace Lucene.Net.Util
             /* LUCENENET TODO: Not sure how to convert these
                 ParentChainCallRule.TeardownCalled = true;
                 */
+#if TESTFRAMEWORK_NUNIT
+            TestResult result = TestExecutionContext.CurrentContext.CurrentResult;
+            string message;
+            if (result.ResultState == ResultState.Failure || result.ResultState == ResultState.Error)
+            {
+                message = result.Message + $"\n\nTo reproduce this test result:\n\n" +
+                    $"Option 1:\n\n" +
+                    $" Apply the following assembly-level attributes:\n\n" +
+                    $"[assembly: Lucene.Net.Util.RandomSeed({RandomizedContext.CurrentContext.RandomSeedAsHex}L)]\n" +
+                    $"[assembly: NUnit.Framework.SetCulture(\"{Thread.CurrentThread.CurrentCulture.Name}\")]\n\n" +
+                    $"Option 2:\n\n" +
+                    $" Use the following .runsettings file:\n\n" +
+                    $"<RunSettings>\n" +
+                    $"  <TestRunParameters>\n" +
+                    $"    <Parameter name=\"tests:seed\" value=\"{RandomizedContext.CurrentContext.RandomSeedAsHex}\" />\n" +
+                    $"    <Parameter name=\"tests:culture\" value=\"{Thread.CurrentThread.CurrentCulture.Name}\" />\n" +
+                    $"  </TestRunParameters>\n" +
+                    $"</RunSettings>\n\n" +
+                    $"See the .runsettings documentation at: https://docs.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file.";
+                result.SetResult(result.ResultState, message, result.StackTrace);
+            }
+#endif
         }
 
 #if TESTFRAMEWORK_MSTEST
@@ -1080,10 +1093,7 @@ namespace Lucene.Net.Util
 
             try
             {
-                // Setup the factories
-                LuceneTestFrameworkInitializer.EnsureInitialized();
-
-                ClassEnvRule.Before(null);
+                ClassEnvRule.Before();
 
                 // LUCENENET: Generate the info once so it can be printed out for each test
                 codecType = ClassEnvRule.codec.GetType().Name;
@@ -1091,11 +1101,6 @@ namespace Lucene.Net.Util
 
                 // LUCENENET TODO: Scan for a custom attribute and setup ordering to
                 // initialize data from this class to the top class
-
-                if (UseTempLineDocsFile)
-                {
-                    TempLineDocsFile = LineFileDocs.MaybeCreateTempFile();
-                }
             }
             catch (Exception ex)
             {
@@ -1120,19 +1125,11 @@ namespace Lucene.Net.Util
         {
             try
             {
-                // Setup the factories
-                LuceneTestFrameworkInitializer.EnsureInitialized();
-
-                ClassEnvRule.Before(this);
+                ClassEnvRule.Before();
 
                 // LUCENENET: Generate the info once so it can be printed out for each test
                 codecType = ClassEnvRule.codec.GetType().Name;
                 similarityName = ClassEnvRule.similarity.ToString();
-
-                if (UseTempLineDocsFile)
-                {
-                    TempLineDocsFile = LineFileDocs.MaybeCreateTempFile();
-                }
             }
             catch (Exception ex)
             {
@@ -1151,12 +1148,8 @@ namespace Lucene.Net.Util
         {
             try
             {
-                ClassEnvRule.After(null);
+                ClassEnvRule.After();
                 CleanupTemporaryFiles();
-                if (UseTempLineDocsFile)
-                {
-                    TempLineDocsFile = null;
-                }
             }
             catch (Exception ex)
             {
@@ -1180,12 +1173,8 @@ namespace Lucene.Net.Util
         {
             try
             {
-                ClassEnvRule.After(this);
+                ClassEnvRule.After();
                 CleanupTemporaryFiles();
-                if (UseTempLineDocsFile)
-                {
-                    TempLineDocsFile = null;
-                }
             }
             catch (Exception ex)
             {
@@ -1214,7 +1203,7 @@ namespace Lucene.Net.Util
         /// invocations are present or create a derivative local <see cref="System.Random"/> for millions of calls
         /// like this:
         /// <code>
-        /// Random random = new Random(Random.Next());
+        /// Random random = new J2N.Randomizer(Random.NextInt64());
         /// // tight loop with many invocations.
         /// </code>
         /// </summary>
@@ -1224,9 +1213,12 @@ namespace Lucene.Net.Util
             get
             {
 #if TESTFRAMEWORK_NUNIT
-                return NUnit.Framework.TestContext.CurrentContext.Random;
+                var context = RandomizedContext.CurrentContext;
+                if (context is null)
+                    Assert.Fail("LuceneTestCase.Random may only be used within tests/setup/teardown context in subclasses of LuceneTestCase or LuceneTestFrameworkInitializer.");
+                return context.RandomGenerator;
 #else
-                return _random ?? (_random = new Random(/* LUCENENET TODO seed */));
+                return random ?? (random = new J2N.Randomizer(/* LUCENENET TODO seed */));
                 //return RandomizedContext.Current.Random;
 #endif
             }
@@ -1234,7 +1226,7 @@ namespace Lucene.Net.Util
 
 #if !TESTFRAMEWORK_NUNIT
         [ThreadStatic]
-        private static Random _random;
+        private static Random random;
 #endif
 
         /////// <summary>
@@ -1258,8 +1250,15 @@ namespace Lucene.Net.Util
         ////}*/
 
         /// <summary>
+        /// Gets the current type being tested.
+        /// </summary>
+        public static Type TestType
+            => TestExecutionContext.CurrentContext.CurrentTest.Fixture?.GetType();
+
+        /// <summary>
         /// Return the current type being tested.
         /// </summary>
+        [Obsolete("Use TestType instead. This method will be removed in 4.8.0 release candidate.")]
         public static Type GetTestClass()
         {
 #if !TESTFRAMEWORK_XUNIT
@@ -1751,7 +1750,7 @@ namespace Lucene.Net.Util
 
         public static AlcoholicMergePolicy NewAlcoholicMergePolicy(Random random, TimeZoneInfo timeZone)
         {
-            return new AlcoholicMergePolicy(timeZone, new Random(random.Next()));
+            return new AlcoholicMergePolicy(timeZone, new J2N.Randomizer(random.NextInt64()));
         }
 
         public static LogMergePolicy NewLogMergePolicy(Random random)

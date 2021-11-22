@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
 
             internal IndexWriter writer;
 
-            internal readonly Random r = new Random(Random.Next());
+            internal readonly Random r = new J2N.Randomizer(Random.NextInt64());
             internal volatile Exception failure = null;
 
             public IndexerThread(TestIndexWriterExceptions outerInstance, int i, IndexWriter writer)
@@ -294,7 +294,7 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
             }
 
-            internal Random r = new Random(Random.Next());
+            internal Random r = new J2N.Randomizer(Random.NextInt64());
 
             public void Apply(string name)
             {

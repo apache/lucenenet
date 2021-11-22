@@ -1,5 +1,6 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 
 namespace Lucene.Net.Codecs.PerField
@@ -32,7 +33,7 @@ namespace Lucene.Net.Codecs.PerField
     {
         protected override Codec GetCodec()
         {
-            return new RandomCodec(new Random(Random.Next()), Collections.EmptySet<string>());
+            return new RandomCodec(new J2N.Randomizer(Random.NextInt64()), Collections.EmptySet<string>());
         }
 
         [Test]

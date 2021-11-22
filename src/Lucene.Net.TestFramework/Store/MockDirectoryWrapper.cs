@@ -166,7 +166,7 @@ namespace Lucene.Net.Store
             // must make a private random since our methods are
             // called from different threads; else test failures may
             // not be reproducible from the original seed
-            this.randomState = new Random(random.Next());
+            this.randomState = new J2N.Randomizer(random.NextInt64());
             this.throttledOutput = new ThrottledIndexOutput(ThrottledIndexOutput.MBitsToBytes(40 + randomState.Next(10)), 5 + randomState.Next(5), null);
             // force wrapping of lockfactory
             this.m_lockFactory = new MockLockFactoryWrapper(this, @delegate.LockFactory);

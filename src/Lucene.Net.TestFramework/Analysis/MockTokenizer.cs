@@ -1,7 +1,8 @@
-using J2N;
+﻿using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
+using RandomizedTesting.Generators;
 using System;
 using System.Globalization;
 using System.IO;
@@ -99,7 +100,7 @@ namespace Lucene.Net.Analysis
         private bool enableChecks = true;
 
         // evil: but we don't change the behavior with this random, we only switch up how we read
-        private readonly Random random = new Random(LuceneTestCase.Random.Next() /*RandomizedContext.Current.Random.nextLong()*/); // LUCENENET TODO: Random seed synchronization
+        private readonly Random random = new J2N.Randomizer(LuceneTestCase.Random.NextInt64()); // LUCENENET: LuceneTestCase.Random instead of using RandomizedContext.CurrentContext.RandomGenerator, since the latter could be null
 
         public MockTokenizer(AttributeFactory factory, TextReader input, CharacterRunAutomaton runAutomaton, bool lowerCase, int maxTokenLength)
             : base(factory, input)

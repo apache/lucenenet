@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Attributes;
 using Lucene.Net.Index;
 using Lucene.Net.Replicator;
-using Lucene.Net.Store;
+using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
+using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Tests.Replicator
@@ -30,7 +28,7 @@ namespace Lucene.Net.Tests.Replicator
 
     //Note: LUCENENET specific
     [LuceneNetSpecific]
-    public class IndexInputStreamTest
+    public class IndexInputStreamTest : LuceneTestCase
     {
         
         [Test]
@@ -38,7 +36,7 @@ namespace Lucene.Net.Tests.Replicator
         public void Read_RemainingIndexInputLargerThanReadCount_ReturnsReadCount()
         {
             byte[] buffer = new byte[8.KiloBytes()];
-            new Random().NextBytes(buffer);
+            Random.NextBytes(buffer);
             IndexInputStream stream = new IndexInputStream(new MockIndexInput(buffer));
 
             int readBytes = 2.KiloBytes();
@@ -51,7 +49,7 @@ namespace Lucene.Net.Tests.Replicator
         public void Read_RemainingIndexInputLargerThanReadCount_ReturnsExpectedSection([Range(1,8)]int section)
         {
             byte[] buffer = new byte[8.KiloBytes()];
-            new Random().NextBytes(buffer);
+            Random.NextBytes(buffer);
             IndexInputStream stream = new IndexInputStream(new MockIndexInput(buffer));
 
             int readBytes = 1.KiloBytes();

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
+using RandomizedTesting.Generators;
 
 namespace Lucene.Net.Util
 {
@@ -123,7 +124,7 @@ namespace Lucene.Net.Util
         {
             // Build a random number of lists
             IList<int?> expected = new JCG.List<int?>();
-            Random random = new Random(Random.Next());
+            Random random = new J2N.Randomizer(Random.NextInt64());
             int numLists = itrsWithVal + random.Next(1000 - itrsWithVal);
             IList<int>[] lists = new IList<int>[numLists];
             for (int i = 0; i < numLists; i++)
@@ -292,7 +293,7 @@ namespace Lucene.Net.Util
         {
             // Build a random number of lists
             IList<int?> expected = new JCG.List<int?>();
-            Random random = new Random(Random.Next());
+            Random random = new J2N.Randomizer(Random.NextInt64());
             int numLists = itrsWithVal + random.Next(1000 - itrsWithVal);
             IList<int>[] lists = new IList<int>[numLists];
             for (int i = 0; i < numLists; i++)

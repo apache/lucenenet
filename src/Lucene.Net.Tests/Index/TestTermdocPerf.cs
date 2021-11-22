@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.IO;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -143,7 +144,7 @@ namespace Lucene.Net.Index
 
             int ret = 0;
             DocsEnum tdocs = null;
-            Random random = new Random(Random.Next());
+            Random random = new J2N.Randomizer(Random.NextInt64());
             for (int i = 0; i < iter; i++)
             {
                 tenum.SeekCeil(new BytesRef("val"));

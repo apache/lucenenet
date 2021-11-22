@@ -505,7 +505,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             updateDocIDLimit = config.Get("doc.random.id.limit", -1);
             if (updateDocIDLimit != -1)
             {
-                r = new Random(179);
+                r = new J2N.Randomizer(179);
             }
         }
     }

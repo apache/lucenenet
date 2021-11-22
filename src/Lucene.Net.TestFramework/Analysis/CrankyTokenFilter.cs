@@ -62,7 +62,7 @@ namespace Lucene.Net.TestFramework.Analysis
         public override void Reset()
         {
             base.Reset();
-            thingToDo = random.nextInt(100);
+            thingToDo = random.Next(100);
             if (thingToDo == 2 && random.nextBoolean())
             {
                 throw new IOException("Fake IOException from TokenStream.Reset()");

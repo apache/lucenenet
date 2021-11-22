@@ -96,7 +96,7 @@ namespace Lucene.Net.Facet
             {
                 return null;
             }
-            return new Random((int)random.NextInt64());
+            return new J2N.Randomizer(random.NextInt64());
         }
 
         /// <summary>

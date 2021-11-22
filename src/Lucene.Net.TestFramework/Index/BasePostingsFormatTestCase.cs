@@ -142,8 +142,8 @@ namespace Lucene.Net.Index
 
             public SeedPostings(long seed, int minDocFreq, int maxDocFreq, IBits liveDocs, IndexOptions options)
             {
-                random = new Random((int)seed);
-                docRandom = new Random(random.Next());
+                random = new J2N.Randomizer(seed);
+                docRandom = new J2N.Randomizer(random.NextInt64());
                 DocFreq = TestUtil.NextInt32(random, minDocFreq, maxDocFreq);
                 this.liveDocs = liveDocs;
 

@@ -1163,7 +1163,7 @@ namespace Lucene.Net.Index
             internal IndexerThreadInterrupt(TestIndexWriter outerInstance)
             {
                 this.outerInstance = outerInstance;
-                this.random = new Random(LuceneTestCase.Random.Next());
+                this.random = new J2N.Randomizer(Random.NextInt64());
                 // make a little directory for addIndexes
                 // LUCENE-2239: won't work with NIOFS/MMAP
                 adder = new MockDirectoryWrapper(this.random, new RAMDirectory());
@@ -1476,6 +1476,7 @@ namespace Lucene.Net.Index
 
         [Test]
         [Slow]
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/544")] // LUCENENET TODO: This test occasionally fails
         public virtual void TestThreadInterruptDeadlock()
         {
             IndexerThreadInterrupt t = new IndexerThreadInterrupt(this);
@@ -1516,6 +1517,7 @@ namespace Lucene.Net.Index
         /// testThreadInterruptDeadlock but with 2 indexer threads </summary>
         [Test]
         [Slow]
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/544")] // LUCENENET TODO: This test occasionally fails
         public virtual void TestTwoThreadsInterruptDeadlock()
         {
             IndexerThreadInterrupt t1 = new IndexerThreadInterrupt(this);

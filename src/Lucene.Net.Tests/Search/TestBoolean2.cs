@@ -308,7 +308,7 @@ namespace Lucene.Net.Search
                 for (int i = 0; i < num; i++)
                 {
                     int level = Random.Next(3);
-                    q1 = RandBoolQuery(new Random(Random.Next()), Random.NextBoolean(), level, field, vals, null);
+                    q1 = RandBoolQuery(new J2N.Randomizer(Random.NextInt64()), Random.NextBoolean(), level, field, vals, null);
 
                     // Can't sort by relevance since floating point numbers may not quite
                     // match up.

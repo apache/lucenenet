@@ -1,6 +1,7 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -43,7 +44,7 @@ namespace Lucene.Net.Index
         public virtual void TestDeletes1()
         {
             //IndexWriter.debug2 = System.out;
-            Directory dir = new MockDirectoryWrapper(new Random(Random.Next()), new RAMDirectory());
+            Directory dir = new MockDirectoryWrapper(new J2N.Randomizer(Random.NextInt64()), new RAMDirectory());
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergeScheduler(new SerialMergeScheduler());
             iwc.SetMaxBufferedDocs(5000);

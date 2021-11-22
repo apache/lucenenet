@@ -50,7 +50,7 @@ namespace Lucene.Net.Util
             long netBytes = 0;
             long seed = Random.NextInt64();
             long lastFP = 0;
-            Random r2 = new Random((int)seed);
+            Random r2 = new J2N.Randomizer(seed);
             while (netBytes < 1.1 * int.MaxValue)
             {
                 int numBytes = TestUtil.NextInt32(r2, 1, 32768);
@@ -68,7 +68,7 @@ namespace Lucene.Net.Util
             input.Dispose();
             PagedBytes.Reader reader = pb.Freeze(true);
 
-            r2 = new Random((int)seed);
+            r2 = new J2N.Randomizer(seed);
             netBytes = 0;
             while (netBytes < 1.1 * int.MaxValue)
             {

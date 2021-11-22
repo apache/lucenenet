@@ -4,6 +4,7 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -97,7 +98,7 @@ namespace Lucene.Net.Index
             internal int delCount = 0;
             internal int addCount = 0;
             internal int type;
-            internal readonly Random r = new Random(Random.Next());
+            internal readonly Random r = new J2N.Randomizer(Random.NextInt64());
 
             public RunThread(TestNRTReaderWithThreads outerInstance, int type, IndexWriter writer)
             {

@@ -1,6 +1,7 @@
 ﻿using J2N.Runtime.CompilerServices;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
@@ -46,13 +47,13 @@ namespace Lucene.Net.Codecs.Lucene40
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     // TODO: really this should be in BaseTestPF or somewhere else? useful test!
-    [TestFixture]
+    // LUCENENET specific - Specify to unzip the line file docs
+    [UseTempLineDocsFile]
     public class TestReuseDocsEnum : LuceneTestCase
     {
         [OneTimeSetUp]
         public override void BeforeClass()
         {
-            UseTempLineDocsFile = true;
             base.BeforeClass();
             OldFormatImpersonationIsActive = true; // explicitly instantiates ancient codec
         }

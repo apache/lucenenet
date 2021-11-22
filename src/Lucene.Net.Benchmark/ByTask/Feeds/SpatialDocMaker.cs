@@ -219,7 +219,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     double radius = radiusDegrees;
                     if (plusMinus > 0.0)
                     {
-                        Random random = new Random(point.GetHashCode());//use hashCode so it's reproducibly random
+                        Random random = new J2N.Randomizer(point.GetHashCode());//use hashCode so it's reproducibly random
                         radius += random.NextDouble() * 2 * plusMinus - plusMinus;
                         radius = Math.Abs(radius);//can happen if configured plusMinus > radiusDegrees
                     }

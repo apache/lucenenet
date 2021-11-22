@@ -1,6 +1,7 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -35,7 +36,7 @@ namespace Lucene.Net.Index
         {
             // fork a private random, since we are called
             // unpredictably from threads:
-            this.random = new Random(random.Next());
+            this.random = new J2N.Randomizer(random.NextInt64());
         }
 
         public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos)

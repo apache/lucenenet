@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Util
+﻿using System;
+
+namespace Lucene.Net.Util
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -18,17 +20,11 @@
      */
 
     /// <summary>
-    /// LUCENENET specific for mimicking the JUnit rule functionality.
-    /// We simplify things by just running the rules inside LuceneTestCase.
+    /// Specifies to extract the <see cref="LineFileDocs"/> to a temp directory and use the same file for the entire assembly.
+    /// The file path can be obtained from the to <see cref="LuceneTestCase.TestLineDocsFile"/> property.
     /// </summary>
-    public abstract class AbstractBeforeAfterRule
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    public class UseTempLineDocsFileAttribute : System.Attribute
     {
-        public virtual void Before()
-        {
-        }
-
-        public virtual void After()
-        {
-        }
     }
 }

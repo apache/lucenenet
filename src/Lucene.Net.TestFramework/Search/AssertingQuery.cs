@@ -1,4 +1,5 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 
@@ -41,13 +42,12 @@ namespace Lucene.Net.Search
         /// Wrap a query if necessary. </summary>
         public static Query Wrap(Random random, Query query)
         {
-            var aq = query as AssertingQuery;
-            return aq ?? new AssertingQuery(random, query);
+            return query is AssertingQuery ? query : new AssertingQuery(random, query);
         }
 
         public override Weight CreateWeight(IndexSearcher searcher)
         {
-            return AssertingWeight.Wrap(new Random(random.Next()), @in.CreateWeight(searcher));
+            return AssertingWeight.Wrap(new J2N.Randomizer(random.NextInt64()), @in.CreateWeight(searcher));
         }
 
         public override void ExtractTerms(ISet<Term> terms)
@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
 
         public override object Clone()
         {
-            return Wrap(new Random(random.Next()), (Query)@in.Clone());
+            return Wrap(new J2N.Randomizer(random.NextInt64()), (Query)@in.Clone());
         }
 
         public override Query Rewrite(IndexReader reader)
@@ -86,18 +86,14 @@ namespace Lucene.Net.Search
             }
             else
             {
-                return Wrap(new Random(random.Next()), rewritten);
+                return Wrap(new J2N.Randomizer(random.NextInt64()), rewritten);
             }
         }
 
         public override float Boost
         {
             get => @in.Boost;
-            set
-            {
-                if (@in != null)
-                    @in.Boost = value;
-            }
+            set => @in.Boost = value;
         }
     }
 }

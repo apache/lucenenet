@@ -356,10 +356,10 @@ namespace Lucene.Net.Util
         [Test, LuceneNetSpecific]
         public void TestClearLarge()
         {
+            Random random = Random;
             int iters = AtLeast(1000);
             for (int it = 0; it < iters; it++)
             {
-                Random random = new Random();
                 int sz = AtLeast(1200);
                 OpenBitSet a = new OpenBitSet(sz);
                 OpenBitSet b = new OpenBitSet(sz);

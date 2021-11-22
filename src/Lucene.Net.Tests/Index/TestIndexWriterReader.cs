@@ -1070,7 +1070,7 @@ namespace Lucene.Net.Index
                 this.writer = writer;
                 this.endTime = endTime;
                 this.excs = excs;
-                rand = new Random(Random.Next());
+                rand = new J2N.Randomizer(Random.NextInt64());
             }
 
             internal readonly Random rand;

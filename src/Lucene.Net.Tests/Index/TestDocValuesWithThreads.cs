@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
             CountdownEvent startingGun = new CountdownEvent(1);
             for (int t = 0; t < numThreads; t++)
             {
-                Random threadRandom = new Random(Random.Next());
+                Random threadRandom = new J2N.Randomizer(Random.NextInt64());
                 ThreadJob thread = new ThreadAnonymousClass(this, numbers, binary, sorted, numDocs, ar, startingGun, threadRandom);
                 thread.Start();
                 threads.Add(thread);

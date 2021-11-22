@@ -95,7 +95,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         public override void SetConfig(Config config)
         {
             base.SetConfig(config);
-            random = new Random(config.Get("rand.seed", 13));
+            random = new J2N.Randomizer(config.Get("rand.seed", 13));
             maxDocFacets = config.Get("max.doc.facets", 10);
             maxDims = config.Get("max.doc.facets.dims", 5);
             maxFacetDepth = config.Get("max.facet.depth", 3);

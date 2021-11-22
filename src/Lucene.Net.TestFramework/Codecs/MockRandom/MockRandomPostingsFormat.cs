@@ -43,7 +43,7 @@ namespace Lucene.Net.Codecs.MockRandom
         private readonly Random seedRandom;
         private const string SEED_EXT = "sd";
 
-        private class RandomAnonymousClassHelper : Random
+        private class RandomAnonymousClassHelper : J2N.Randomizer
         {
             public RandomAnonymousClassHelper()
                 : base(0)
@@ -67,7 +67,7 @@ namespace Lucene.Net.Codecs.MockRandom
             if (random == null)
                 this.seedRandom = new RandomAnonymousClassHelper();
             else
-                this.seedRandom = new Random(random.Next());
+                this.seedRandom = new J2N.Randomizer(random.NextInt64());
         }
 
         // Chooses random IntStreamFactory depending on file's extension
@@ -78,7 +78,7 @@ namespace Lucene.Net.Codecs.MockRandom
 
             public MockInt32StreamFactory(Random random)
             {
-                salt = random.nextInt();
+                salt = random.Next();
                 delegates.Add(new MockSingleInt32Factory());
                 int blockSize = TestUtil.NextInt32(random, 1, 2000);
                 delegates.Add(new MockFixedInt32BlockPostingsFormat.MockInt32Factory(blockSize));
@@ -98,7 +98,7 @@ namespace Lucene.Net.Codecs.MockRandom
             {
                 // Must only use extension, because IW.addIndexes can
                 // rename segment!
-                Int32StreamFactory f = delegates[(Math.Abs(salt ^ GetExtension(fileName).GetHashCode())) % delegates.size()];
+                Int32StreamFactory f = delegates[(Math.Abs(salt ^ GetExtension(fileName).GetHashCode())) % delegates.Count];
                 if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("MockRandomCodec: read using int factory " + f + " from fileName=" + fileName);
@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs.MockRandom
 
             public override Int32IndexOutput CreateOutput(Directory dir, string fileName, IOContext context)
             {
-                Int32StreamFactory f = delegates[(Math.Abs(salt ^ GetExtension(fileName).GetHashCode())) % delegates.size()];
+                Int32StreamFactory f = delegates[(Math.Abs(salt ^ GetExtension(fileName).GetHashCode())) % delegates.Count];
                 if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("MockRandomCodec: write using int factory " + f + " to fileName=" + fileName);
@@ -121,9 +121,9 @@ namespace Lucene.Net.Codecs.MockRandom
         {
             private readonly Random rand;
             private readonly int gap;
-            public IndexTermSelectorAnonymousClass(int seed, int gap)
+            public IndexTermSelectorAnonymousClass(long seed, int gap)
             {
-                rand = new Random(seed);
+                rand = new J2N.Randomizer(seed);
                 this.gap = gap;
             }
             public override bool IsIndexTerm(BytesRef term, TermStats stats)
@@ -158,7 +158,7 @@ namespace Lucene.Net.Codecs.MockRandom
                 Console.WriteLine("MockRandomCodec: skipInterval=" + skipInterval);
             }
 
-            long seed = seedRandom.nextLong();
+            long seed = seedRandom.NextInt64();
 
             if (LuceneTestCase.Verbose)
             {
@@ -176,9 +176,9 @@ namespace Lucene.Net.Codecs.MockRandom
                 @out.Dispose();
             }
 
-            Random random = new Random((int)seed);
+            Random random = new J2N.Randomizer(seed);
 
-            random.nextInt(); // consume a random for buffersize
+            random.Next(); // consume a random for buffersize
 
             PostingsWriterBase postingsWriter;
             if (random.nextBoolean())
@@ -195,7 +195,7 @@ namespace Lucene.Net.Codecs.MockRandom
                 postingsWriter = new Lucene41PostingsWriter(state, skipInterval);
             }
 
-            if (random.nextBoolean())
+            if (random.NextBoolean())
             {
                 int totTFCutoff = TestUtil.NextInt32(random, 1, 20);
                 if (LuceneTestCase.Verbose)
@@ -206,7 +206,7 @@ namespace Lucene.Net.Codecs.MockRandom
             }
 
             FieldsConsumer fields;
-            int t1 = random.nextInt(4);
+            int t1 = random.Next(4);
 
             if (t1 == 0)
             {
@@ -252,7 +252,7 @@ namespace Lucene.Net.Codecs.MockRandom
                 // TODO: would be nice to allow 1 but this is very
                 // slow to write
                 int minTermsInBlock = TestUtil.NextInt32(random, 2, 100);
-                int maxTermsInBlock = Math.Max(2, (minTermsInBlock - 1) * 2 + random.nextInt(100));
+                int maxTermsInBlock = Math.Max(2, (minTermsInBlock - 1) * 2 + random.Next(100));
 
                 bool success = false;
                 try
@@ -281,7 +281,7 @@ namespace Lucene.Net.Codecs.MockRandom
                 TermsIndexWriterBase indexWriter;
                 try
                 {
-                    if (random.nextBoolean())
+                    if (random.NextBoolean())
                     {
                         state.TermIndexInterval = TestUtil.NextInt32(random, 1, 100);
                         if (LuceneTestCase.Verbose)
@@ -293,7 +293,7 @@ namespace Lucene.Net.Codecs.MockRandom
                     else
                     {
                         VariableGapTermsIndexWriter.IndexTermSelector selector;
-                        int n2 = random.nextInt(3);
+                        int n2 = random.Next(3);
                         if (n2 == 0)
                         {
                             int tii = TestUtil.NextInt32(random, 1, 100);
@@ -311,7 +311,7 @@ namespace Lucene.Net.Codecs.MockRandom
                         }
                         else
                         {
-                            int seed2 = random.Next();
+                            long seed2 = random.NextInt64();
                             int gap = TestUtil.NextInt32(random, 2, 40);
                             if (LuceneTestCase.Verbose)
                             {
@@ -368,7 +368,7 @@ namespace Lucene.Net.Codecs.MockRandom
             }
             @in.Dispose();
 
-            Random random = new Random((int)seed);
+            Random random = new J2N.Randomizer(seed);
 
             int readBufferSize = TestUtil.NextInt32(random, 1, 4096);
             if (LuceneTestCase.Verbose)
@@ -378,7 +378,7 @@ namespace Lucene.Net.Codecs.MockRandom
 
             PostingsReaderBase postingsReader;
 
-            if (random.nextBoolean())
+            if (random.NextBoolean())
             {
                 if (LuceneTestCase.Verbose)
                 {
@@ -396,7 +396,7 @@ namespace Lucene.Net.Codecs.MockRandom
                 postingsReader = new Lucene41PostingsReader(state.Directory, state.FieldInfos, state.SegmentInfo, state.Context, state.SegmentSuffix);
             }
 
-            if (random.nextBoolean())
+            if (random.NextBoolean())
             {
                 int totTFCutoff = TestUtil.NextInt32(random, 1, 20);
                 if (LuceneTestCase.Verbose)
@@ -407,7 +407,7 @@ namespace Lucene.Net.Codecs.MockRandom
             }
 
             FieldsProducer fields;
-            int t1 = random.nextInt(4);
+            int t1 = random.Next(4);
             if (t1 == 0)
             {
                 bool success = false;

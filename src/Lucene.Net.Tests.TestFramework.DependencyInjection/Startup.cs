@@ -29,7 +29,7 @@ using System.Collections.Generic;
 /// </summary>
 public class Startup : LuceneTestFrameworkInitializer
 {
-    protected override void TestFrameworkSetUp()
+    protected override void Initialize()
     {
         // Composition root
 

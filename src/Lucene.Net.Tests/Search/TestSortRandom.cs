@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestRandomStringSort()
         {
-            Random random = new Random(Random.Next());
+            Random random = new J2N.Randomizer(Random.NextInt64());
 
             int NUM_DOCS = AtLeast(100);
             Directory dir = NewDirectory();

@@ -108,7 +108,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public override void Before(LuceneTestCase testInstance)
+        public override void Before()
         {
             // LUCENENET specific - SOLR setup code removed
 
@@ -150,7 +150,7 @@ namespace Lucene.Net.Util
                 InfoStream.Default = new NullInfoStream();
             }
 
-            Type targetClass = testInstance?.GetType() ?? LuceneTestCase.GetTestClass();
+            Type targetClass = LuceneTestCase.TestType;
             avoidCodecs = new JCG.HashSet<string>();
             var suppressCodecsAttribute = targetClass.GetCustomAttribute<LuceneTestCase.SuppressCodecsAttribute>();
             if (suppressCodecsAttribute != null)
@@ -226,7 +226,7 @@ namespace Lucene.Net.Util
                 }
                 else if ("MockRandom".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal))
                 {
-                    format = new MockRandomPostingsFormat(new Random(random.Next()));
+                    format = new MockRandomPostingsFormat(new J2N.Randomizer(random.NextInt64()));
                 }
                 else
                 {
@@ -281,18 +281,35 @@ namespace Lucene.Net.Util
             Codec.Default = codec;
 
             // Initialize locale/ timezone.
-            string testLocale = SystemProperties.GetProperty("tests:locale", "random");  // LUCENENET specific - reformatted with :
+            
             string testTimeZone = SystemProperties.GetProperty("tests:timezone", "random");  // LUCENENET specific - reformatted with :
 
-            // Always pick a random one for consistency (whether tests.locale was specified or not).
-            savedLocale = CultureInfo.CurrentCulture;
+            // LUCENENET: We need to ensure our random generator stays consistent here so we can repeat the session exactly,
+            // so always call this whether the return value is useful or not.
             CultureInfo randomLocale = LuceneTestCase.RandomCulture(random);
-            locale = testLocale.Equals("random", StringComparison.Ordinal) ? randomLocale : LuceneTestCase.CultureForName(testLocale);
+
+            // LUCENENET: Allow NUnit properties to set the culture and respect that culture over our random one.
+            // Note that SetCultureAttribute may also be on the test method, but we don't need to deal with that here.
+            if (targetClass.Assembly.HasAttribute<NUnit.Framework.SetCultureAttribute>(inherit: true)
+                || targetClass.HasAttribute<NUnit.Framework.SetCultureAttribute>(inherit: true))
+            {
+                locale = CultureInfo.CurrentCulture;
+            }
+            else
+            {
+                // LUCENENET: Accept either tests:culture or tests:locale (culture preferred).
+                string testLocale = SystemProperties.GetProperty("tests:culture", SystemProperties.GetProperty("tests:locale", "random")); // LUCENENET specific - reformatted with :
+
+                // Always pick a random one for consistency (whether tests.locale was specified or not).
+                savedLocale = CultureInfo.CurrentCulture;
+                
+                locale = testLocale.Equals("random", StringComparison.Ordinal) ? randomLocale : LuceneTestCase.CultureForName(testLocale);
 #if FEATURE_CULTUREINFO_CURRENTCULTURE_SETTER
-            CultureInfo.CurrentCulture = locale;
+                CultureInfo.CurrentCulture = locale;
 #else
-            Thread.CurrentThread.CurrentCulture = locale;
+                Thread.CurrentThread.CurrentCulture = locale;
 #endif
+            }
 
             // TimeZone.getDefault will set user.timezone to the default timezone of the user's locale.
             // So store the original property value and restore it at end.
@@ -368,7 +385,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// After suite cleanup (always invoked).
         /// </summary>
-        public override void After(LuceneTestCase testInstance)
+        public override void After()
         {
             // LUCENENT specific - Not used in .NET
             //foreach (KeyValuePair<string, string> e in restoreProperties)

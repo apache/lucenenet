@@ -281,9 +281,9 @@ namespace Lucene.Net.Search
             try
             {
                 emptyReaders[0] = new MultiReader();
-                emptyReaders[4] = MakeEmptyIndex(new Random(0), 4);
-                emptyReaders[5] = MakeEmptyIndex(new Random(0), 5);
-                emptyReaders[7] = MakeEmptyIndex(new Random(0), 7);
+                emptyReaders[4] = MakeEmptyIndex(new J2N.Randomizer(0), 4);
+                emptyReaders[5] = MakeEmptyIndex(new J2N.Randomizer(0), 5);
+                emptyReaders[7] = MakeEmptyIndex(new J2N.Randomizer(0), 7);
             }
             catch (Exception ex) when (ex.IsIOException())
             {

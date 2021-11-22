@@ -1,6 +1,7 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Store;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace Lucene.Net.Util.Fst
 
         private void TestRandomWords(int maxNumWords, int numIter)
         {
-            Random random = new Random(Random.Next());
+            Random random = new J2N.Randomizer(Random.NextInt64());
             for (int iter = 0; iter < numIter; iter++)
             {
                 if (Verbose)

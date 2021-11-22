@@ -1,9 +1,8 @@
 ﻿using J2N.Threading;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Globalization;
-using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -46,7 +45,7 @@ namespace Lucene.Net.Util
 
             public SetOnceThread(Random random)
             {
-                RAND = new Random(random.Next());
+                RAND = new J2N.Randomizer(random.NextInt64());
             }
 
             public override void Run()

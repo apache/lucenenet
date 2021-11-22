@@ -215,7 +215,7 @@
 //            {
 //                for (int t = 0; t < threadCount; t++)
 //                {
-//                    Random rnd = new Random(Random.Next());
+//                    Random rnd = new J2N.Randomizer(Random.NextInt64());
 //                    var worker = new RunnableAnonymousClass(this, keyCount, map, keys, rnd);
 //                    workers[t] = worker;
 //                    worker.Start();

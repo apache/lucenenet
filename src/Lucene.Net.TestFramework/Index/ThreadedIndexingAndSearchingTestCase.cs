@@ -49,6 +49,8 @@ namespace Lucene.Net.Index
     /// Utility class that spawns multiple indexing and
     /// searching threads.
     /// </summary>
+    // LUCENENET specific - Specify to unzip the line file docs
+    [UseTempLineDocsFile]
     public abstract class ThreadedIndexingAndSearchingTestCase : LuceneTestCase
 #if TESTFRAMEWORK_XUNIT
         , Xunit.IClassFixture<BeforeAfterClass>
@@ -79,13 +81,6 @@ namespace Lucene.Net.Index
                 this.PackID = packID;
                 this.SubIDs = subIDs;
             }
-        }
-
-        // LUCENENET specific - Specify to unzip the line file docs
-        public override void BeforeClass()
-        {
-            UseTempLineDocsFile = true;
-            base.BeforeClass();
         }
 
         // Called per-search
@@ -570,7 +565,7 @@ namespace Lucene.Net.Index
 
             long t0 = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
-            Random random = new Random(Random.Next());
+            Random random = new J2N.Randomizer(Random.NextInt64());
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
             DirectoryInfo tempDir = CreateTempDir(testName);
             m_dir = GetDirectory(NewMockFSDirectory(tempDir)); // some subclasses rely on this being MDW

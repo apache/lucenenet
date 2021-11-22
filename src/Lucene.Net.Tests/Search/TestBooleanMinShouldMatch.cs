@@ -353,10 +353,10 @@ namespace Lucene.Net.Search
             for (int i = 0; i < num; i++)
             {
                 int lev = Random.Next(maxLev);
-                int seed = Random.Next();
-                BooleanQuery q1 = TestBoolean2.RandBoolQuery(new Random(seed), true, lev, field, vals, null);
-                // BooleanQuery q2 = TestBoolean2.randBoolQuery(new Random(seed), lev, field, vals, minNrCB);
-                BooleanQuery q2 = TestBoolean2.RandBoolQuery(new Random(seed), true, lev, field, vals, null);
+                long seed = Random.NextInt64();
+                BooleanQuery q1 = TestBoolean2.RandBoolQuery(new J2N.Randomizer(seed), true, lev, field, vals, null);
+                // BooleanQuery q2 = TestBoolean2.randBoolQuery(new J2N.Randomizer(seed), lev, field, vals, minNrCB);
+                BooleanQuery q2 = TestBoolean2.RandBoolQuery(new J2N.Randomizer(seed), true, lev, field, vals, null);
                 // only set minimumNumberShouldMatch on the top level query since setting
                 // at a lower level can change the score.
                 minNrCB.PostCreate(q2);
