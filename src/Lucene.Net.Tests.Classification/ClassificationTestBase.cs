@@ -221,7 +221,12 @@ namespace Lucene.Net.Classification
                 classifier.Train(atomicReader, textFieldName, classFieldName, analyzer);
                 long trainEnd = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 long trainTime = trainEnd - trainStart;
+                // LUCENENET: This test is running slow on .NET Framework in CI, so we are giving it a little more time to complete.
+#if NETFRAMEWORK
+                Assert.IsTrue(trainTime < 150000, "training took more than 2.5 mins : " + trainTime / 1000 + "s");
+#else
                 Assert.IsTrue(trainTime < 120000, "training took more than 2 mins : " + trainTime / 1000 + "s");
+#endif
             }
             finally
             {

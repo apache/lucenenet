@@ -43,9 +43,6 @@ namespace Lucene.Net.Classification
             CheckCorrectClassification(new KNearestNeighborClassifier(1), TECHNOLOGY_INPUT, TECHNOLOGY_RESULT, new MockAnalyzer(Random), textFieldName, categoryFieldName, new TermQuery(new Term(textFieldName, "it")));
         }
 
-#if NET461
-        [Ignore("LUCENENET: We don't care if this fails on .NET Standard 2.0/.NET 4.6.1.")]
-#endif
         [Test]
         public void TestPerformance()
         {
