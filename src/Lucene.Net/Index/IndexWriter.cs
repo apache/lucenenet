@@ -155,12 +155,17 @@ namespace Lucene.Net.Index
     /// this may cause deadlock; use your own (non-Lucene) objects
     /// instead. </para>
     ///
-    /// <para><b>NOTE</b>: If you call
-    /// <see cref="Thread.Interrupt()"/> on a thread that's within
-    /// <see cref="IndexWriter"/>, <see cref="IndexWriter"/> will try to catch this (eg, if
-    /// it's in a <see cref="Monitor.Wait(object)"/> or <see cref="Thread.Sleep(int)"/>), and will then throw
-    /// the unchecked exception <see cref="Util.ThreadInterruptedException"/>
-    /// and <b>clear</b> the interrupt status on the thread.</para>
+    /// <para><b>NOTE</b>:
+    /// Do not use <see cref="Thread.Interrupt()"/> on a thread that's within
+    /// <see cref="IndexWriter"/>, as .NET will throw <see cref="ThreadInterruptedException"/> on any
+    /// wait, sleep, or join including any lock statement with contention on it.
+    /// As a result, it is not practical to try to support <see cref="Thread.Interrupt()"/> due to the
+    /// chance <see cref="ThreadInterruptedException"/> could potentially be thrown in the middle of a
+    /// <see cref="Commit()"/> or somewhere in the application that will cause a deadlock.</para>
+    /// <para>
+    /// We recommend using another shutdown mechanism to safely cancel a parallel operation.
+    /// See: <a href="https://github.com/apache/lucenenet/issues/526">https://github.com/apache/lucenenet/issues/526</a>.
+    /// </para>
     /// </remarks>
 
     /*
