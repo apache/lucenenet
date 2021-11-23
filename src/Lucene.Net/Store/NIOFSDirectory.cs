@@ -43,7 +43,7 @@ namespace Lucene.Net.Store
     /// underlying file descriptor immediately if at the same time the thread is
     /// blocked on IO. The file descriptor will remain closed and subsequent access
     /// to <see cref="NIOFSDirectory"/> will throw a <see cref="ObjectDisposedException"/>. If
-    /// your application uses either <see cref="System.Threading.Thread.Interrupt()"/> or
+    /// your application uses
     /// <see cref="System.Threading.Tasks.Task"/> you should use <see cref="SimpleFSDirectory"/> in
     /// favor of <see cref="NIOFSDirectory"/>.</font>
     /// </para>

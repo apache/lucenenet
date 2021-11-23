@@ -48,16 +48,12 @@ namespace Lucene.Net.Store
     ///         synchronizes when multiple threads read from the
     ///         same file.</description></item>
     ///
-    ///     <item><description> <see cref="NIOFSDirectory"/> uses java.nio's
-    ///         FileChannel's positional io when reading to avoid
-    ///         synchronization when reading from the same file.
-    ///         Unfortunately, due to a Windows-only <a
-    ///         href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6265734">Sun
-    ///         JRE bug</a> this is a poor choice for Windows, but
-    ///         on all other platforms this is the preferred
-    ///         choice. Applications using <see cref="Thread.Interrupt()"/> or
+    ///     <item><description> <see cref="NIOFSDirectory"/>
+    ///         uses <see cref="FileStream"/>'s positional read,
+    ///         which allows multiple threads to read from the same
+    ///         file without synchronizing. Applications using
     ///         <see cref="Task{TResult}"/> should use
-    ///         <see cref="SimpleFSDirectory"/> instead. See <see cref="NIOFSDirectory"/> java doc
+    ///         <see cref="SimpleFSDirectory"/> instead. See <see cref="NIOFSDirectory"/> documentation
     ///         for details.</description></item>
     ///
     ///     <item><description> <see cref="MMapDirectory"/> uses memory-mapped IO when
@@ -67,8 +63,7 @@ namespace Lucene.Net.Store
     ///         running on a 32 bit runtime but your index sizes are
     ///         small enough to fit into the virtual memory space.
     ///         <para/>
-    ///         Applications using <see cref="Thread.Interrupt()"/> or
-    ///         <see cref="Task{TResult}"/> should use
+    ///         Applications using <see cref="Task{TResult}"/> should use
     ///         <see cref="SimpleFSDirectory"/> instead. See <see cref="MMapDirectory"/>
     ///         doc for details.</description></item>
     /// </list>
