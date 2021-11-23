@@ -203,7 +203,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             suggester.Dispose();
         }
 
-
+        /**
+        * Handle trailing spaces that result in no prefix token LUCENE-6093
+        */
         [Test]
         public void TestNullPrefixToken()
         {
@@ -218,7 +220,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             Analyzer a = new StandardAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
             BlendedInfixSuggester suggester = new BlendedInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a,
                                                                         AnalyzingInfixSuggester.DEFAULT_MIN_PREFIX_CHARS,
-                                                                        BlendedInfixSuggester.BlenderType.POSITION_RECIPROCAL,
+                                                                        BlendedInfixSuggester.BlenderType.POSITION_LINEAR,
                                                                         BlendedInfixSuggester.DEFAULT_NUM_FACTOR);     //LUCENENET TODO: add extra false param at version 4.11.0
             suggester.Build(new InputArrayEnumerator(keys));
 
