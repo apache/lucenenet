@@ -167,6 +167,34 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             suggester.Dispose();
         }
+        
+        /**
+        * Handle trailing spaces that result in no prefix token LUCENE-6093
+        */
+        [Test]
+        public void TestNullPrefixToken()
+        {
+            BytesRef payload = new BytesRef("lake");
+
+            Input[] keys = new Input[] {
+                new Input("top of the lake", 8, payload)
+            };
+
+            DirectoryInfo tempDir = CreateTempDir("BlendedInfixSuggesterTest");
+
+            Analyzer a = new StandardAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+            BlendedInfixSuggester suggester = new BlendedInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a,
+                                                                        AnalyzingInfixSuggester.DEFAULT_MIN_PREFIX_CHARS,
+                                                                        BlendedInfixSuggester.BlenderType.POSITION_LINEAR,
+                                                                        BlendedInfixSuggester.DEFAULT_NUM_FACTOR);     //LUCENENET TODO: add extra false param at version 4.11.0
+            suggester.Build(new InputArrayEnumerator(keys));
+
+            GetInResults(suggester, "of ", payload, 1);
+            GetInResults(suggester, "the ", payload, 1);
+            GetInResults(suggester, "lake ", payload, 1);
+
+            suggester.Dispose();
+        }
 
         [Test]
         public void TestTrying()
@@ -199,34 +227,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 Console.WriteLine(response);
             }
-
-            suggester.Dispose();
-        }
-
-        /**
-        * Handle trailing spaces that result in no prefix token LUCENE-6093
-        */
-        [Test]
-        public void TestNullPrefixToken()
-        {
-            BytesRef payload = new BytesRef("lake");
-
-            Input[] keys = new Input[] {
-                new Input("top of the lake", 8, payload)
-            };
-
-            DirectoryInfo tempDir = CreateTempDir("BlendedInfixSuggesterTest");
-
-            Analyzer a = new StandardAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
-            BlendedInfixSuggester suggester = new BlendedInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a,
-                                                                        AnalyzingInfixSuggester.DEFAULT_MIN_PREFIX_CHARS,
-                                                                        BlendedInfixSuggester.BlenderType.POSITION_LINEAR,
-                                                                        BlendedInfixSuggester.DEFAULT_NUM_FACTOR);     //LUCENENET TODO: add extra false param at version 4.11.0
-            suggester.Build(new InputArrayEnumerator(keys));
-
-            GetInResults(suggester, "of ", payload, 1);
-            GetInResults(suggester, "the ", payload, 1);
-            GetInResults(suggester, "lake ", payload, 1);
 
             suggester.Dispose();
         }
