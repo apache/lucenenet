@@ -237,6 +237,7 @@ namespace Lucene.Net.Support
 
         [Test, LuceneNetSpecific]
         [Slow]
+        [Ignore("Lucene.NET does not support Thread.Interrupt(). See https://github.com/apache/lucenenet/issues/526.")]
         public virtual void TestThreadInterrupt()
         {
             TransactionlThreadInterrupt t = new TransactionlThreadInterrupt();
@@ -270,6 +271,7 @@ namespace Lucene.Net.Support
 
         [Test, LuceneNetSpecific]
         [Slow]
+        [Ignore("Lucene.NET does not support Thread.Interrupt(). See https://github.com/apache/lucenenet/issues/526.")]
         public virtual void TestTwoThreadsInterrupt()
         {
             TransactionlThreadInterrupt t1 = new TransactionlThreadInterrupt();
