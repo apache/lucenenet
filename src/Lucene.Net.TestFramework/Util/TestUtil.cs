@@ -864,7 +864,6 @@ namespace Lucene.Net.Util
         //    {
         //      try
         //      {
-        //        UninterruptableMonitor.RestoreInterrupt();
         //        ex.shutdown();
         //        ex.awaitTermination(1, TimeUnit.SECONDS);
         //      }
