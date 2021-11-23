@@ -45,12 +45,8 @@ namespace Lucene.Net.Expressions
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(document == scorer.DocID);
 
-#if NETSTANDARD2_1_OR_GREATER || NET5_0_OR_GREATER
-                return scorer.GetScore();
-#else
-                // LUCENENET specific: The intermediate cast to decimal is required here to prevent us from losing precision on x86 .NET Framework with optimizations enabled
-                return (double)(decimal)scorer.GetScore();
-#endif
+                // LUCENENET specific: The explicit cast to float is required here to prevent us from losing precision on x86 .NET Framework with optimizations enabled
+                return (float)scorer.GetScore();
             }
             catch (Exception exception) when (exception.IsIOException())
             {
