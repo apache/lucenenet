@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Search
 {
@@ -78,7 +79,8 @@ namespace Lucene.Net.Search
         {
             if (root < m_numScorers && m_subScorers[root].DocID == m_doc)
             {
-                float sub = m_subScorers[root].GetScore();
+                // LUCENENET specific: The explicit cast to float is required here to prevent us from losing precision on x86 .NET Framework with optimizations enabled
+                float sub = (float)m_subScorers[root].GetScore();
                 freq++;
                 scoreSum += sub;
                 scoreMax = Math.Max(scoreMax, sub);
