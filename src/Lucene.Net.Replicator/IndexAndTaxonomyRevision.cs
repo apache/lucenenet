@@ -53,19 +53,13 @@ namespace Lucene.Net.Replicator
             private SnapshotDeletionPolicy sdp;
             private IndexWriter writer; // LUCENENET TODO: Why does disposing this in Dispose(true) throw an excpetion?
 
-            /// <summary>
-            /// <see cref="DirectoryTaxonomyWriter(Directory, OpenMode, ITaxonomyWriterCache)"/>
-            /// </summary>
-            /// <exception cref="IOException"></exception>
+            /// <inheritdoc/>
             public SnapshotDirectoryTaxonomyWriter(Directory directory, OpenMode openMode, ITaxonomyWriterCache cache)
                 : base(directory, openMode, cache)
             {
             }
 
-            /// <summary>
-            /// <see cref="DirectoryTaxonomyWriter(Directory, OpenMode)"/>
-            /// </summary>
-            /// <exception cref="IOException"></exception>
+            /// <inheritdoc/>
             public SnapshotDirectoryTaxonomyWriter(Directory directory, OpenMode openMode = OpenMode.CREATE_OR_APPEND)
                 : base(directory, openMode)
             {
@@ -107,7 +101,6 @@ namespace Lucene.Net.Replicator
         /// <summary>
         /// Returns a map of the revision files from the given <see cref="IndexCommit"/>s of the search and taxonomy indexes.
         /// </summary>
-        /// <exception cref="IOException"></exception>
         public static IDictionary<string, IList<RevisionFile>> RevisionFiles(IndexCommit indexCommit, IndexCommit taxonomyCommit)
         {
             return new Dictionary<string, IList<RevisionFile>>{
@@ -131,7 +124,8 @@ namespace Lucene.Net.Replicator
         /// <see cref="IndexCommit"/> found in the <see cref="Directory"/> managed by the given
         /// writer.
         /// </summary>
-        /// <exception cref="IOException"></exception>
+        /// <exception cref="InvalidOperationException">If this index does not have any commits yet.</exception>
+        /// <exception cref="ArgumentException">If the <see cref="IndexWriterConfig.IndexDeletionPolicy"/> is not a <see cref="SnapshotDeletionPolicy"/>.</exception>
         public IndexAndTaxonomyRevision(IndexWriter indexWriter, SnapshotDirectoryTaxonomyWriter taxonomyWriter)
         {
             this.indexSdp = indexWriter.Config.IndexDeletionPolicy as SnapshotDeletionPolicy;
@@ -183,7 +177,7 @@ namespace Lucene.Net.Replicator
 
         public virtual IDictionary<string, IList<RevisionFile>> SourceFiles => sourceFiles;
 
-        /// <exception cref="IOException"></exception>
+        /// <exception cref="IOException">An IO exception occurred.</exception>
         public virtual Stream Open(string source, string fileName)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(source.Equals(INDEX_SOURCE, StringComparison.Ordinal) || source.Equals(TAXONOMY_SOURCE, StringComparison.Ordinal), "invalid source; expected=({0} or {1}) got={2}", INDEX_SOURCE, TAXONOMY_SOURCE, source);
@@ -191,7 +185,7 @@ namespace Lucene.Net.Replicator
             return new IndexInputStream(commit.Directory.OpenInput(fileName, IOContext.READ_ONCE));
         }
 
-        /// <exception cref="IOException"></exception>
+        /// <exception cref="IOException">An IO exception occurred.</exception>
         public virtual void Release()
         {
             try
