@@ -38,7 +38,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// the indexed text.
     /// Please note that it increases the number of elements searched and applies the
     /// ponderation after. It might be costly for long suggestions.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class BlendedInfixSuggester : AnalyzingInfixSuggester
@@ -71,7 +71,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             /// <summary>
             /// Application dependent; override <see cref="CalculateCoefficient(int)"/>
-            /// to compute it. 
+            /// to compute it.
             /// </summary>
             CUSTOM,
             /// <summary>
@@ -260,7 +260,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 string docTerm = it.Term.Utf8ToString();
 
-                if (matchedTokens.Contains(docTerm) || docTerm.StartsWith(prefixToken, StringComparison.Ordinal))
+                if (matchedTokens.Contains(docTerm) || prefixToken != null &&  docTerm.StartsWith(prefixToken, StringComparison.Ordinal))
                 {
                     DocsAndPositionsEnum docPosEnum = it.DocsAndPositions(null, null, DocsAndPositionsFlags.OFFSETS);
                     docPosEnum.NextDoc();
