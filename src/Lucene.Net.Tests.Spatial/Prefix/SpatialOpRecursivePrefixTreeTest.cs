@@ -108,7 +108,8 @@ namespace Lucene.Net.Spatial.Prefix
             doTest(SpatialOperation.IsWithin);
         }
 
-        [Test, Repeat(ITERATIONS)]
+        [Test , Repeat(ITERATIONS)]
+        [AwaitsFix("https://github.com/apache/lucenenet/issues/559")]
         public virtual void TestContains()
         {
             SetupGrid(-1);
