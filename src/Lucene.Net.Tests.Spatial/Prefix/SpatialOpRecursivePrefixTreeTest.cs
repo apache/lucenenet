@@ -109,7 +109,7 @@ namespace Lucene.Net.Spatial.Prefix
         }
 
         [Test , Repeat(ITERATIONS)]
-        [AwaitsFix("https://github.com/apache/lucenenet/issues/559")]
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/559")]
         public virtual void TestContains()
         {
             SetupGrid(-1);
