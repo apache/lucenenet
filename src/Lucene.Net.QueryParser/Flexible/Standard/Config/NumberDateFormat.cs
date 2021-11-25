@@ -97,6 +97,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         public override object Parse(string source)
         {
             DateTimeOffset d = DateTimeOffset.ParseExact(source, GetDateFormat(), FormatProvider, DateTimeStyles.None);
+            d = TimeZoneInfo.ConvertTime(d, TimeZone);
             return DateTimeOffsetUtil.ToUnixTimeMilliseconds(d);
         }
 

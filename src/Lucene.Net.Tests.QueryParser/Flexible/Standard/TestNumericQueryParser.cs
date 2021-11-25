@@ -17,6 +17,7 @@ using System.Globalization;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard
 {
@@ -70,7 +71,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         private static IndexReader reader = null;
         private static IndexSearcher searcher = null;
 
-        private static bool checkDateFormatSanity(NumberDateFormat dateFormat, long date)
+        private static bool checkDateFormatSanity(NumberDateFormat dateFormat, long date, TimeZoneInfo timeZone)
         {
             IFormatProvider provider = dateFormat.FormatProvider ?? CultureInfo.CurrentCulture;
 
@@ -79,6 +80,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             string format = dateFormat.GetDateFormat();
             DateTimeOffset offset = DateTimeOffsetUtil.FromUnixTimeMilliseconds(Convert.ToInt64(date));
+            offset = TimeZoneInfo.ConvertTime(offset, timeZone);
             string formattedDate = offset.ToString(format, provider);
 
             return DateTimeOffset.TryParseExact(formattedDate, format, provider, DateTimeStyles.None, out DateTimeOffset _);
@@ -196,12 +198,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     randomDate = Math.Abs(randomDate);
                 } while (randomDate == 0L);
 
-                dateFormatSanityCheckPass &= checkDateFormatSanity(DATE_FORMAT, randomDate);
+                dateFormatSanityCheckPass &= checkDateFormatSanity(DATE_FORMAT, randomDate, TIMEZONE);
 
-                dateFormatSanityCheckPass &= checkDateFormatSanity(DATE_FORMAT, 0);
+                dateFormatSanityCheckPass &= checkDateFormatSanity(DATE_FORMAT, 0, TIMEZONE);
 
                 dateFormatSanityCheckPass &= checkDateFormatSanity(DATE_FORMAT,
-                          -randomDate);
+                          -randomDate, TIMEZONE);
 
                 count++;
             } while (!dateFormatSanityCheckPass);
