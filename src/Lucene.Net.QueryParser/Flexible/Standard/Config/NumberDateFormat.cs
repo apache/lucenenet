@@ -172,9 +172,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
     // Source: https://github.com/dotnet/runtime/blob/af4efb1936b407ca5f4576e81484cf5687b79a26/src/libraries/System.Private.CoreLib/src/System/DateTimeOffset.cs
     internal static class DateTimeOffsetUtil
     {
-        public const long MinMilliseconds = /*DateTime.*/MinTicks / TimeSpan.TicksPerMillisecond - UnixEpochMilliseconds;
-        public const long MaxMilliseconds = /*DateTime.*/MaxTicks / TimeSpan.TicksPerMillisecond - UnixEpochMilliseconds;
-
         /// <summary>
         /// The .NET ticks representing January 1, 1970 0:00:00, also known as the "epoch".
         /// </summary>
@@ -182,6 +179,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         private const long UnixEpochMilliseconds = UnixEpochTicks / TimeSpan.TicksPerMillisecond; // 62,135,596,800,000
 
+        public const long MinMilliseconds = /*DateTime.*/MinTicks / TimeSpan.TicksPerMillisecond - UnixEpochMilliseconds;
+        public const long MaxMilliseconds = /*DateTime.*/MaxTicks / TimeSpan.TicksPerMillisecond - UnixEpochMilliseconds;
 
         // From System.DateTime
 
