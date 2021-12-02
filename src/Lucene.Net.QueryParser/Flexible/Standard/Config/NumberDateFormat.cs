@@ -162,7 +162,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
                     timePattern = dateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " z";
                     break;
                 case DateFormat.FULL:
-                    timePattern = dateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " z"; // LUCENENET TODO: Time zone info not being added to match behavior of Java, but Java doc is unclear on what the difference is between this and LONG
+                    timePattern = dateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " zzz";
                     break;
             }
 
