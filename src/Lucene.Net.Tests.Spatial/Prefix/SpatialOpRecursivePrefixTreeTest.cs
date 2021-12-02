@@ -38,6 +38,7 @@ namespace Lucene.Net.Spatial.Prefix
 
         private SpatialPrefixTree grid;
 
+        private SpatialContext ctx2D;
 
         public override void SetUp()
         {
@@ -51,9 +52,21 @@ namespace Lucene.Net.Spatial.Prefix
                 SetupQuadGrid(maxLevels);
             else
                 SetupGeohashGrid(maxLevels);
+            SetupCtx2D(ctx);
             //((PrefixTreeStrategy) strategy).setDistErrPct(0);//fully precise to grid
 
             Console.WriteLine("Strategy: " + strategy.toString());
+        }
+
+        private void SetupCtx2D(SpatialContext ctx)
+        {
+            if (!ctx.IsGeo)
+                ctx2D = ctx;
+            //A non-geo version of ctx.
+            FakeSpatialContextFactory ctxFactory = new FakeSpatialContextFactory();
+            ctxFactory.geo = false;
+            ctxFactory.worldBounds = ctx.WorldBounds;
+            ctx2D = ctxFactory.NewSpatialContext();
         }
 
         private void SetupQuadGrid(int maxLevels)
@@ -128,7 +141,7 @@ namespace Lucene.Net.Spatial.Prefix
         public virtual void TestContainsPairOverlap()
         {
             SetupQuadGrid(3);
-            adoc("0", new ShapePair(ctx.MakeRectangle(0, 33, -128, 128), ctx.MakeRectangle(33, 128, -128, 128), true, ctx));
+            adoc("0", new ShapePair(ctx.MakeRectangle(0, 33, -128, 128), ctx.MakeRectangle(33, 128, -128, 128), true, ctx, ctx2D));
             Commit();
             Query query = strategy.MakeQuery(new SpatialArgs(SpatialOperation.Contains,
                 ctx.MakeRectangle(0, 128, -16, 128)));
@@ -141,7 +154,7 @@ namespace Lucene.Net.Spatial.Prefix
         {
             SetupQuadGrid(7);
             //one shape comprised of two parts, quite separated apart
-            adoc("0", new ShapePair(ctx.MakeRectangle(0, 10, -120, -100), ctx.MakeRectangle(220, 240, 110, 125), false, ctx));
+            adoc("0", new ShapePair(ctx.MakeRectangle(0, 10, -120, -100), ctx.MakeRectangle(220, 240, 110, 125), false, ctx, ctx2D));
             Commit();
             //query surrounds only the second part of the indexed shape
             Query query = strategy.MakeQuery(new SpatialArgs(SpatialOperation.IsWithin,
@@ -173,6 +186,17 @@ namespace Lucene.Net.Spatial.Prefix
             assertTrue(executeQuery(strategy.MakeQuery(
                 new SpatialArgs(SpatialOperation.IsWithin, ctx.MakeRectangle(38, 192, -72, 80))
             ), 1).numFound == 1);//match
+        }
+
+        [Test]
+        public void TestShapePair()
+        {
+            ctx = SpatialContext.GEO;
+            SetupCtx2D(ctx);
+
+            IShape leftShape = new ShapePair(ctx.MakeRectangle(-74, -56, -8, 1), ctx.MakeRectangle(-180, 134, -90, 90), true, ctx, ctx2D);
+            IShape queryShape = ctx.MakeRectangle(-180, 180, -90, 90);
+            assertEquals(SpatialRelation.WITHIN, leftShape.Relate(queryShape));
         }
 
         //Override so we can index parts of a pair separately, resulting in the detailLevel
@@ -380,7 +404,7 @@ namespace Lucene.Net.Spatial.Prefix
         {
             IRectangle shape1 = randomRectangle();
             IRectangle shape2 = randomRectangle();
-            return new ShapePair(shape1, shape2, biasContains, ctx);
+            return new ShapePair(shape1, shape2, biasContains, ctx, ctx2D);
         }
 
         private void fail(String label, String id, IDictionary<String, IShape> indexedShapes, IDictionary<String, IShape> indexedShapesGS, IShape queryShape)
@@ -402,7 +426,7 @@ namespace Lucene.Net.Spatial.Prefix
             if (snapMe is ShapePair)
             {
                 ShapePair me = (ShapePair)snapMe;
-                return new ShapePair(gridSnap(me.shape1), gridSnap(me.shape2), me.biasContainsThenWithin, ctx);
+                return new ShapePair(gridSnap(me.shape1), gridSnap(me.shape2), me.biasContainsThenWithin, ctx, ctx2D);
             }
             if (snapMe is IPoint)
             {
@@ -434,25 +458,52 @@ namespace Lucene.Net.Spatial.Prefix
         {
 
             private readonly SpatialContext ctx;
-            internal IShape shape1, shape2;
+            internal readonly IShape shape1, shape2;
+            internal readonly IShape shape1_2D, shape2_2D;//not geo (bit of a hack)
             internal bool biasContainsThenWithin;//a hack
+            private readonly SpatialContext ctx2D;
 
-            public ShapePair(IShape shape1, IShape shape2, bool containsThenWithin, SpatialContext ctx)
+            public ShapePair(IShape shape1, IShape shape2, bool containsThenWithin, SpatialContext ctx, SpatialContext ctx2D)
                         : base(new JCG.List<IShape> { shape1, shape2 }, ctx)
             {
                 this.ctx = ctx;
+                this.ctx2D = ctx2D;
 
                 this.shape1 = shape1;
                 this.shape2 = shape2;
+                this.shape1_2D = ToNonGeo(shape1);
+                this.shape2_2D = ToNonGeo(shape2);
                 biasContainsThenWithin = containsThenWithin;
+            }
+
+            private IShape ToNonGeo(IShape shape)
+            {
+                if (!ctx.IsGeo)
+                    return shape;//already non-geo
+                if (shape is IRectangle) {
+                    Rectangle rect = (Rectangle)shape;
+                    if (rect.CrossesDateLine)
+                    {
+                        return new ShapePair(
+                            ctx2D.MakeRectangle(rect.MinX, 180, rect.MinY, rect.MaxY),
+                            ctx2D.MakeRectangle(-180, rect.MaxX, rect.MinY, rect.MaxY),
+                            biasContainsThenWithin, ctx, ctx2D);
+                    }
+                    else
+                    {
+                        return ctx2D.MakeRectangle(rect.MinX, rect.MaxX, rect.MinY, rect.MaxY);
+                    }
+                }
+                //no need to do others; this addresses the -180/+180 ambiguity corner test problem
+                return shape;
             }
 
             public override SpatialRelation Relate(IShape other)
             {
-                SpatialRelation r = relateApprox(other);
-                if (r == SpatialRelation.CONTAINS)
-                    return r;
+                SpatialRelation r = RelateApprox(other);
                 if (r == SpatialRelation.DISJOINT)
+                    return r;
+                if (r == SpatialRelation.CONTAINS)
                     return r;
                 if (r == SpatialRelation.WITHIN && !biasContainsThenWithin)
                     return r;
@@ -462,17 +513,27 @@ namespace Lucene.Net.Spatial.Prefix
                 bool pairTouches = shape1.Relate(shape2).Intersects();
                 if (!pairTouches)
                     return r;
+                // LUCENENET: From commit: https://github.com/apache/lucene/commit/e9906a334b8e123e93b917c3feb6e55fed0a8c57
                 //test all 4 corners
+                // Note: awkwardly, we use a non-geo context for this because in geo, -180 & +180 are the same place, which means
+                //  that "other" might wrap the world horizontally and yet all its corners could be in shape1 (or shape2) even
+                //  though shape1 is only adjacent to the dateline. I couldn't think of a better way to handle this.
                 IRectangle oRect = (IRectangle)other;
-                if (Relate(ctx.MakePoint(oRect.MinX, oRect.MinY)) == SpatialRelation.CONTAINS
-                    && Relate(ctx.MakePoint(oRect.MinX, oRect.MaxY)) == SpatialRelation.CONTAINS
-                    && Relate(ctx.MakePoint(oRect.MaxX, oRect.MinY)) == SpatialRelation.CONTAINS
-                    && Relate(ctx.MakePoint(oRect.MaxX, oRect.MaxY)) == SpatialRelation.CONTAINS)
+                if (CornerContainsNonGeo(oRect.MinX, oRect.MinY)
+                    && CornerContainsNonGeo(oRect.MinX, oRect.MaxY)
+                    && CornerContainsNonGeo(oRect.MaxX, oRect.MinY)
+                    && CornerContainsNonGeo(oRect.MaxX, oRect.MaxY))
                     return SpatialRelation.CONTAINS;
                 return r;
             }
 
-            private SpatialRelation relateApprox(IShape other)
+            private bool CornerContainsNonGeo(double x, double y)
+            {
+                IShape pt = ctx2D.MakePoint(x, y);
+                return shape1_2D.Relate(pt).Intersects() || shape2_2D.Relate(pt).Intersects();
+            }
+
+            private SpatialRelation RelateApprox(IShape other)
             {
                 if (biasContainsThenWithin)
                 {
