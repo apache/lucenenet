@@ -178,7 +178,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
                 // not all date patterns includes era, full year, timezone and second,
                 // so we add them here
-                DATE_FORMAT.SetDateFormat(DATE_FORMAT.GetDateFormat() + " g s z yyyy");
+                DATE_FORMAT.SetDateFormat(DATE_FORMAT.GetDateFormat() + " %g s zzz yyyy");
 
 
                 //dateFormat = DATE_FORMAT.GetDateFormat();
