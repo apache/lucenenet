@@ -31,8 +31,8 @@ namespace Lucene.Net.Codecs.SimpleText
 
     internal class SimpleTextFieldsWriter : FieldsConsumer
     {
-        private IndexOutput _output;
-        private readonly BytesRef _scratch = new BytesRef(10);
+        private IndexOutput output;
+        private readonly BytesRef scratch = new BytesRef(10);
 
         internal static readonly BytesRef END = new BytesRef("END");
         internal static readonly BytesRef FIELD = new BytesRef("field ");
@@ -46,23 +46,23 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public SimpleTextFieldsWriter(SegmentWriteState state)
         {
-            var fileName = SimpleTextPostingsFormat.GetPostingsFileName(state.SegmentInfo.Name, state.SegmentSuffix);
-            _output = state.Directory.CreateOutput(fileName, state.Context);
+            string fileName = SimpleTextPostingsFormat.GetPostingsFileName(state.SegmentInfo.Name, state.SegmentSuffix);
+            output = state.Directory.CreateOutput(fileName, state.Context);
         }
 
         private void Write(string s)
         {
-            SimpleTextUtil.Write(_output, s, _scratch);
+            SimpleTextUtil.Write(output, s, scratch);
         }
 
         private void Write(BytesRef b)
         {
-            SimpleTextUtil.Write(_output, b);
+            SimpleTextUtil.Write(output, b);
         }
 
         private void Newline()
         {
-            SimpleTextUtil.WriteNewline(_output);
+            SimpleTextUtil.WriteNewline(output);
         }
 
         public override TermsConsumer AddField(FieldInfo field)
@@ -75,16 +75,16 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private class SimpleTextTermsWriter : TermsConsumer
         {
-            private readonly SimpleTextPostingsWriter _postingsWriter;
+            private readonly SimpleTextPostingsWriter postingsWriter;
 
             public SimpleTextTermsWriter(SimpleTextFieldsWriter outerInstance, FieldInfo field)
             {
-                _postingsWriter = new SimpleTextPostingsWriter(outerInstance, field);
+                postingsWriter = new SimpleTextPostingsWriter(outerInstance, field);
             }
 
             public override PostingsConsumer StartTerm(BytesRef term)
             {
-                return _postingsWriter.Reset(term);
+                return postingsWriter.Reset(term);
             }
 
             public override void FinishTerm(BytesRef term, TermStats stats)
@@ -100,89 +100,91 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private class SimpleTextPostingsWriter : PostingsConsumer
         {
-            private readonly SimpleTextFieldsWriter _outerInstance;
+            private readonly SimpleTextFieldsWriter outerInstance;
 
-            private BytesRef _term;
-            private bool _wroteTerm;
-            private readonly IndexOptions _indexOptions;
-            private readonly bool _writePositions;
-            private readonly bool _writeOffsets;
+            private BytesRef term;
+            private bool wroteTerm;
+            private readonly IndexOptions indexOptions;
+            private readonly bool writePositions;
+            private readonly bool writeOffsets;
 
             // for assert:
-            private int _lastStartOffset;
+            private int lastStartOffset;
 
             public SimpleTextPostingsWriter(SimpleTextFieldsWriter outerInstance, FieldInfo field)
             {
-                _outerInstance = outerInstance;
-                _indexOptions = field.IndexOptions;
+                this.outerInstance = outerInstance;
+                indexOptions = field.IndexOptions;
                 // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
-                _writePositions = IndexOptionsComparer.Default.Compare(_indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-                _writeOffsets = IndexOptionsComparer.Default.Compare(_indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                writePositions = IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                writeOffsets = IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                //System.out.println("writeOffsets=" + writeOffsets);
+                //System.out.println("writePos=" + writePositions);
             }
 
             public override void StartDoc(int docId, int termDocFreq)
             {
-                if (!_wroteTerm)
+                if (!wroteTerm)
                 {
                     // we lazily do this, in case the term had zero docs
-                    _outerInstance.Write(TERM);
-                    _outerInstance.Write(_term);
-                    _outerInstance.Newline();
-                    _wroteTerm = true;
+                    outerInstance.Write(TERM);
+                    outerInstance.Write(term);
+                    outerInstance.Newline();
+                    wroteTerm = true;
                 }
 
-                _outerInstance.Write(DOC);
-                _outerInstance.Write(Convert.ToString(docId, CultureInfo.InvariantCulture));
-                _outerInstance.Newline();
-                if (_indexOptions != IndexOptions.DOCS_ONLY)
+                outerInstance.Write(DOC);
+                outerInstance.Write(Convert.ToString(docId, CultureInfo.InvariantCulture));
+                outerInstance.Newline();
+                if (indexOptions != IndexOptions.DOCS_ONLY)
                 {
-                    _outerInstance.Write(FREQ);
-                    _outerInstance.Write(Convert.ToString(termDocFreq, CultureInfo.InvariantCulture));
-                    _outerInstance.Newline();
+                    outerInstance.Write(FREQ);
+                    outerInstance.Write(Convert.ToString(termDocFreq, CultureInfo.InvariantCulture));
+                    outerInstance.Newline();
                 }
 
-                _lastStartOffset = 0;
+                lastStartOffset = 0;
             }
 
             public virtual PostingsConsumer Reset(BytesRef term)
             {
-                _term = term;
-                _wroteTerm = false;
+                this.term = term;
+                wroteTerm = false;
                 return this;
             }
 
             public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
             {
-                if (_writePositions)
+                if (writePositions)
                 {
-                    _outerInstance.Write(POS);
-                    _outerInstance.Write(Convert.ToString(position, CultureInfo.InvariantCulture));
-                    _outerInstance.Newline();
+                    outerInstance.Write(POS);
+                    outerInstance.Write(Convert.ToString(position, CultureInfo.InvariantCulture));
+                    outerInstance.Newline();
                 }
 
-                if (_writeOffsets)
+                if (writeOffsets)
                 {
                     if (Debugging.AssertsEnabled)
                     {
                         Debugging.Assert(endOffset >= startOffset);
-                        Debugging.Assert(startOffset >= _lastStartOffset,
-                            "startOffset={0} lastStartOffset={1}", startOffset, _lastStartOffset);
+                        Debugging.Assert(startOffset >= lastStartOffset,
+                            "startOffset={0} lastStartOffset={1}", startOffset, lastStartOffset);
                     }
-                    _lastStartOffset = startOffset;
-                    _outerInstance.Write(START_OFFSET);
-                    _outerInstance.Write(Convert.ToString(startOffset, CultureInfo.InvariantCulture));
-                    _outerInstance.Newline();
-                    _outerInstance.Write(END_OFFSET);
-                    _outerInstance.Write(Convert.ToString(endOffset, CultureInfo.InvariantCulture));
-                    _outerInstance.Newline();
+                    lastStartOffset = startOffset;
+                    outerInstance.Write(START_OFFSET);
+                    outerInstance.Write(Convert.ToString(startOffset, CultureInfo.InvariantCulture));
+                    outerInstance.Newline();
+                    outerInstance.Write(END_OFFSET);
+                    outerInstance.Write(Convert.ToString(endOffset, CultureInfo.InvariantCulture));
+                    outerInstance.Newline();
                 }
 
                 if (payload != null && payload.Length > 0)
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(payload.Length != 0);
-                    _outerInstance.Write(PAYLOAD);
-                    _outerInstance.Write(payload);
-                    _outerInstance.Newline();
+                    outerInstance.Write(PAYLOAD);
+                    outerInstance.Write(payload);
+                    outerInstance.Newline();
                 }
             }
 
@@ -196,18 +198,18 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             if (disposing)
             {
-                if (_output == null) return;
+                if (output is null) return;
 
                 try
                 {
                     Write(END);
                     Newline();
-                    SimpleTextUtil.WriteChecksum(_output, _scratch);
+                    SimpleTextUtil.WriteChecksum(output, scratch);
                 }
                 finally
                 {
-                    _output.Dispose();
-                    _output = null;
+                    output.Dispose();
+                    output = null;
                 }
             }
         }
