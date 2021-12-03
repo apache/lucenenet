@@ -55,7 +55,7 @@ variables:
 - name: BuildCounter
   value: $[counter(variables['VersionSuffix'],coalesce(variables['BuildCounterSeed'], 1250))]
 - name: BuildSDKVersion
-  value: '6.0.100-rc.2.21505.57'
+  value: '6.0.100'
 - name: DocumentationArtifactName
   value: 'docs'
 - name: DocumentationArtifactZipFileName
