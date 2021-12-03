@@ -73,7 +73,7 @@ param(
 
     [string[]]$Configurations = @('Release'),
 
-    [string]$DotNet6SDKVersion = '6.0.100-rc.1.21463.6',
+    [string]$DotNet6SDKVersion = '6.0.100',
 
     [string]$DotNet5SDKVersion = '5.0.400',
 

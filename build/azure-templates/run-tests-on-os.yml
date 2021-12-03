@@ -83,13 +83,13 @@ steps:
   displayName: 'Use .NET sdk 5.0.400'
   inputs:
     version: 5.0.400
+  condition: and(succeeded(), contains('${{ parameters.testTargetFrameworks }}', 'net5.'))
 
 - task: UseDotNet@2
-  displayName: 'Use .NET sdk 6.0.100-rc.2'
+  displayName: 'Use .NET sdk 6.0.100'
   inputs:
     packageType: 'sdk'
-    version: '6.0.100-rc.2.21505.57'
-  condition: and(succeeded(), contains('${{ parameters.testTargetFrameworks }}', 'net6.')) # When this is not a pre-release, we can remove this line and make net5.0 conditional
+    version: '6.0.100'
 
 #- template: 'show-all-files.yml' # Uncomment for debugging
 - pwsh: |

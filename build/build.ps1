@@ -27,7 +27,7 @@ properties {
     [string]$publish_directory = "$release_directory/Publish"
     [string]$solutionFile = "$base_directory/Lucene.Net.sln"
     [string]$sdkPath = "$env:programfiles/dotnet/sdk"
-    [string]$sdkVersion = "6.0.100-rc.1.21463.6"
+    [string]$sdkVersion = "6.0.100"
     [bool]$skipSdkInstallation = $false
     [string]$globalJsonFile = "$base_directory/global.json"
     [string]$versionPropsFile = "$base_directory/Version.props"

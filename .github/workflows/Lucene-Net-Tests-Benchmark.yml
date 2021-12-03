@@ -98,7 +98,7 @@ jobs:
       - name: Setup .NET 6 SDK
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0.100-rc.1.21463.6'
+          dotnet-version: '6.0.100'
 
       - run: |
           $project_name = [System.IO.Path]::GetFileNameWithoutExtension($env:project_path)
