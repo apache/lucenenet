@@ -86,4 +86,8 @@
     <Folder Include="Resources\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="TimeZoneConverter" Version="$(TimeZoneConverterPackageVersion)" />
+  </ItemGroup>
+
 </Project>
