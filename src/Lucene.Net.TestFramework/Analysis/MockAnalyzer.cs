@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis
         private int positionIncrementGap;
         private int? offsetGap;
         private readonly Random random;
-        private readonly IDictionary<string, int?> previousMappings = new Dictionary<string, int?>(); // LUCENENET: marked readonly
+        private readonly IDictionary<string, int> previousMappings = new Dictionary<string, int>(); // LUCENENET: marked readonly
         private bool enableChecks = true;
         private int maxTokenLength = MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH;
 
@@ -110,8 +110,7 @@ namespace Lucene.Net.Analysis
             UninterruptableMonitor.Enter(this);
             try
             {
-                previousMappings.TryGetValue(fieldName, out int? val);
-                if (val == null)
+                if (!previousMappings.TryGetValue(fieldName, out int val))
                 {
                     val = -1; // no payloads
                     if (LuceneTestCase.Rarely(random))
@@ -155,7 +154,7 @@ namespace Lucene.Net.Analysis
                 }
                 else
                 {
-                    return new MockFixedLengthPayloadFilter(random, stream, (int)val);
+                    return new MockFixedLengthPayloadFilter(random, stream, val);
                 }
             }
             finally
