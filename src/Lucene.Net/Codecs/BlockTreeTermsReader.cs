@@ -824,7 +824,7 @@ namespace Lucene.Net.Codecs
 
                                 // If current state is accept, we must process
                                 // first block in case it has empty suffix:
-                                if (outerInstance.runAutomaton.IsAccept(state))
+                                if (!outerInstance.runAutomaton.IsAccept(state))
                                 {
                                     // Maybe skip floor blocks:
                                     while (numFollowFloorBlocks != 0 && nextFloorLabel <= transitions[0].Min)
