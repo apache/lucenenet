@@ -1762,7 +1762,7 @@ namespace Lucene.Net.Search
                 return (term.Bytes[term.Offset] - 'A') * 123456;
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -1826,7 +1826,7 @@ namespace Lucene.Net.Search
                 return (byte)(term.Bytes[term.Offset] - 'A');
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -1893,7 +1893,7 @@ namespace Lucene.Net.Search
                 return (short)(term.Bytes[term.Offset] - 'A');
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -1958,7 +1958,7 @@ namespace Lucene.Net.Search
                 return (term.Bytes[term.Offset] - 'A') * 1234567890L;
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -2023,7 +2023,7 @@ namespace Lucene.Net.Search
                 return (float)Math.Sqrt(term.Bytes[term.Offset]);
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -2085,7 +2085,7 @@ namespace Lucene.Net.Search
                 return Math.Pow(term.Bytes[term.Offset], (term.Bytes[term.Offset] - 'A'));
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
