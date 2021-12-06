@@ -131,15 +131,15 @@ namespace Lucene.Net.Search
             for (int i = 0; i < NUM_DOCS; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewStringField("theLong", (theLong--).ToString(CultureInfo.InvariantCulture), Field.Store.NO));
-                doc.Add(NewStringField("theDouble", (theDouble--).ToString("R", CultureInfo.InvariantCulture), Field.Store.NO));
-                doc.Add(NewStringField("theByte", (theByte--).ToString(CultureInfo.InvariantCulture), Field.Store.NO));
-                doc.Add(NewStringField("theShort", (theShort--).ToString(CultureInfo.InvariantCulture), Field.Store.NO));
-                doc.Add(NewStringField("theInt", (theInt--).ToString(CultureInfo.InvariantCulture), Field.Store.NO));
-                doc.Add(NewStringField("theFloat", (theFloat--).ToString("R", CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theLong", J2N.Numerics.Int64.ToString(theLong--, CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theDouble", J2N.Numerics.Double.ToString(theDouble--, CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theByte", J2N.Numerics.SByte.ToString(theByte--, CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theShort", J2N.Numerics.Int16.ToString(theShort--, CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theInt", J2N.Numerics.Int32.ToString(theInt--, CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theFloat", J2N.Numerics.Single.ToString(theFloat--, CultureInfo.InvariantCulture), Field.Store.NO));
                 if (i % 2 == 0)
                 {
-                    doc.Add(NewStringField("sparse", (i).ToString(CultureInfo.InvariantCulture), Field.Store.NO));
+                    doc.Add(NewStringField("sparse", J2N.Numerics.Int32.ToString(i, CultureInfo.InvariantCulture), Field.Store.NO));
                 }
 
                 if (i % 2 == 0)
