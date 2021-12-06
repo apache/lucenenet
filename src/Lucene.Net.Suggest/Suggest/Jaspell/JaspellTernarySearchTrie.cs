@@ -25,6 +25,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+using J2N.Globalization;
 using J2N.Text;
 using Lucene.Net.Util;
 using System;
@@ -289,7 +290,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 occur = one;
                 if (pos != -1)
                 {
-                    occur = Convert.ToSingle(word.Substring(pos + 1).Trim(), CultureInfo.InvariantCulture);
+                    occur = J2N.Numerics.Single.Parse(word.Substring(pos + 1).Trim(), NumberStyle.Float, NumberFormatInfo.InvariantInfo);
                     word = word.Substring(0, pos);
                 }
                 string key = culture.TextInfo.ToLower(word);
