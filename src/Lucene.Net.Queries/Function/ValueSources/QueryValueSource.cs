@@ -214,7 +214,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             try
             {
-                return Exists(doc) ? scorer.GetScore() : (float?)null;
+                return Exists(doc) ? J2N.Numerics.Single.GetInstance(scorer.GetScore()) : null; // LUCENENET: In Java, the conversion to instance of java.util.Float is implicit, but we need to do an explicit conversion
             }
             catch (Exception e) when (e.IsIOException())
             {

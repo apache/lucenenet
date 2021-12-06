@@ -85,7 +85,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override object ObjectVal(int doc)
         {
-            return Exists(doc) ? BoolVal(doc) : (bool?)null;
+            return Exists(doc) ? J2N.Numerics.Int32.GetInstance(Int32Val(doc)) : null; // LUCENENET TODO: Create Boolean reference type in J2N to return here (and format, etc)
         }
 
         public override string ToString(int doc)

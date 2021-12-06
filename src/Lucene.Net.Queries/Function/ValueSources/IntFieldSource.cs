@@ -115,7 +115,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override object ObjectVal(int doc)
             {
-                return valid.Get(doc) ? arr.Get(doc) : (int?)null;
+                return valid.Get(doc) ? J2N.Numerics.Int32.GetInstance(arr.Get(doc)) : null; // LUCENENET: In Java, the conversion to instance of java.util.Integer is implicit, but we need to do an explicit conversion
             }
 
             public override bool Exists(int doc)

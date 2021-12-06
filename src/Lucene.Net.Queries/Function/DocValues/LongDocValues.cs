@@ -86,7 +86,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override object ObjectVal(int doc)
         {
-            return Exists(doc) ? Int64Val(doc) : (long?)null;
+            return Exists(doc) ? J2N.Numerics.Int64.GetInstance(Int64Val(doc)) : null; // LUCENENET: In Java, the conversion to instance of java.util.Long is implicit, but we need to do an explicit conversion
         }
 
         public override string ToString(int doc)

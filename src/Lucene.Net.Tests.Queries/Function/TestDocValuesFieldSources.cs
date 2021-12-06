@@ -118,7 +118,7 @@ namespace Lucene.Net.Tests.Queries.Function
                     }
                     else if (vs is Int64FieldSource)
                     {
-                        assertTrue(values.ObjectVal(i) is long?);
+                        assertTrue(values.ObjectVal(i) is J2N.Numerics.Int64);
                         assertTrue(values.BytesVal(i, bytes));
                     }
                     else
