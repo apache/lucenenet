@@ -61,9 +61,9 @@ namespace Lucene.Net.Search
 
     public static class FieldCacheRangeFilter
     {
-        private class AnonymousStringFieldCacheRangeFilter : FieldCacheRangeFilter<string>
+        private class StringFieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<string>
         {
-            internal AnonymousStringFieldCacheRangeFilter(string field, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
+            internal StringFieldCacheRangeFilterAnonymousClass(string field, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
                 : base(field, null, lowerVal, upperVal, includeLower, includeUpper)
             {
             }
@@ -129,9 +129,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class AnonymousBytesRefFieldCacheRangeFilter : FieldCacheRangeFilter<BytesRef>
+        private class BytesRefFieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<BytesRef>
         {
-            internal AnonymousBytesRefFieldCacheRangeFilter(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
+            internal BytesRefFieldCacheRangeFilterAnonymousClass(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
                 : base(field, null, lowerVal, upperVal, includeLower, includeUpper)
             {
             }
@@ -197,9 +197,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class AnonymousSbyteFieldCacheRangeFilter : FieldCacheRangeFilter<sbyte?>
+        private class SByteFieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<sbyte?>
         {
-            internal AnonymousSbyteFieldCacheRangeFilter(string field, FieldCache.IParser parser, sbyte? lowerVal, sbyte? upperVal, bool includeLower, bool includeUpper)
+            internal SByteFieldCacheRangeFilterAnonymousClass(string field, FieldCache.IParser parser, sbyte? lowerVal, sbyte? upperVal, bool includeLower, bool includeUpper)
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
             {
             }
@@ -246,9 +246,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class AnonymousInt16FieldCacheRangeFilter : FieldCacheRangeFilter<short?>
+        private class Int16FieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<short?>
         {
-            internal AnonymousInt16FieldCacheRangeFilter(string field, FieldCache.IParser parser, short? lowerVal, short? upperVal, bool includeLower, bool includeUpper)
+            internal Int16FieldCacheRangeFilterAnonymousClass(string field, FieldCache.IParser parser, short? lowerVal, short? upperVal, bool includeLower, bool includeUpper)
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
             {
             }
@@ -296,9 +296,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class AnonymousInt32FieldCacheRangeFilter : FieldCacheRangeFilter<int?>
+        private class Int32FieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<int?>
         {
-            internal AnonymousInt32FieldCacheRangeFilter(string field, FieldCache.IParser parser, int? lowerVal, int? upperVal, bool includeLower, bool includeUpper)
+            internal Int32FieldCacheRangeFilterAnonymousClass(string field, FieldCache.IParser parser, int? lowerVal, int? upperVal, bool includeLower, bool includeUpper)
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
             {
             }
@@ -343,9 +343,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class AnonymousInt64FieldCacheRangeFilter : FieldCacheRangeFilter<long?>
+        private class Int64FieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<long?>
         {
-            internal AnonymousInt64FieldCacheRangeFilter(string field, FieldCache.IParser parser, long? lowerVal, long? upperVal, bool includeLower, bool includeUpper)
+            internal Int64FieldCacheRangeFilterAnonymousClass(string field, FieldCache.IParser parser, long? lowerVal, long? upperVal, bool includeLower, bool includeUpper)
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
             {
             }
@@ -390,9 +390,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class AnonymousSingleFieldCacheRangeFilter : FieldCacheRangeFilter<float?>
+        private class SingleFieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<float?>
         {
-            internal AnonymousSingleFieldCacheRangeFilter(string field, FieldCache.IParser parser, float? lowerVal, float? upperVal, bool includeLower, bool includeUpper)
+            internal SingleFieldCacheRangeFilterAnonymousClass(string field, FieldCache.IParser parser, float? lowerVal, float? upperVal, bool includeLower, bool includeUpper)
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
             {
             }
@@ -442,9 +442,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class AnonymousDoubleFieldCacheRangeFilter : FieldCacheRangeFilter<double?>
+        private class DoubleFieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<double?>
         {
-            internal AnonymousDoubleFieldCacheRangeFilter(string field, FieldCache.IParser parser, double? lowerVal, double? upperVal, bool includeLower, bool includeUpper)
+            internal DoubleFieldCacheRangeFilterAnonymousClass(string field, FieldCache.IParser parser, double? lowerVal, double? upperVal, bool includeLower, bool includeUpper)
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
             {
             }
@@ -503,7 +503,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static FieldCacheRangeFilter<string> NewStringRange(string field, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
         {
-            return new AnonymousStringFieldCacheRangeFilter(field, lowerVal, upperVal, includeLower, includeUpper);
+            return new StringFieldCacheRangeFilterAnonymousClass(field, lowerVal, upperVal, includeLower, includeUpper);
         }
 
         /// <summary>
@@ -514,7 +514,7 @@ namespace Lucene.Net.Search
         // TODO: bogus that newStringRange doesnt share this code... generics hell
         public static FieldCacheRangeFilter<BytesRef> NewBytesRefRange(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
         {
-            return new AnonymousBytesRefFieldCacheRangeFilter(field, lowerVal, upperVal, includeLower, includeUpper);
+            return new BytesRefFieldCacheRangeFilterAnonymousClass(field, lowerVal, upperVal, includeLower, includeUpper);
         }
 
         /// <summary>
@@ -536,7 +536,7 @@ namespace Lucene.Net.Search
         [Obsolete, CLSCompliant(false)]  // LUCENENET NOTE: marking non-CLS compliant because it is sbyte, but obsolete anyway
         public static FieldCacheRangeFilter<sbyte?> NewByteRange(string field, FieldCache.IByteParser parser, sbyte? lowerVal, sbyte? upperVal, bool includeLower, bool includeUpper)
         {
-            return new AnonymousSbyteFieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
+            return new SByteFieldCacheRangeFilterAnonymousClass(field, parser, lowerVal, upperVal, includeLower, includeUpper);
         }
 
         /// <summary>
@@ -562,7 +562,7 @@ namespace Lucene.Net.Search
         [Obsolete]
         public static FieldCacheRangeFilter<short?> NewInt16Range(string field, FieldCache.IInt16Parser parser, short? lowerVal, short? upperVal, bool includeLower, bool includeUpper)
         {
-            return new AnonymousInt16FieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
+            return new Int16FieldCacheRangeFilterAnonymousClass(field, parser, lowerVal, upperVal, includeLower, includeUpper);
         }
 
         /// <summary>
@@ -586,7 +586,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static FieldCacheRangeFilter<int?> NewInt32Range(string field, FieldCache.IInt32Parser parser, int? lowerVal, int? upperVal, bool includeLower, bool includeUpper)
         {
-            return new AnonymousInt32FieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
+            return new Int32FieldCacheRangeFilterAnonymousClass(field, parser, lowerVal, upperVal, includeLower, includeUpper);
         }
 
         /// <summary>
@@ -608,7 +608,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static FieldCacheRangeFilter<long?> NewInt64Range(string field, FieldCache.IInt64Parser parser, long? lowerVal, long? upperVal, bool includeLower, bool includeUpper)
         {
-            return new AnonymousInt64FieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
+            return new Int64FieldCacheRangeFilterAnonymousClass(field, parser, lowerVal, upperVal, includeLower, includeUpper);
         }
 
         /// <summary>
@@ -632,7 +632,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static FieldCacheRangeFilter<float?> NewSingleRange(string field, FieldCache.ISingleParser parser, float? lowerVal, float? upperVal, bool includeLower, bool includeUpper)
         {
-            return new AnonymousSingleFieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
+            return new SingleFieldCacheRangeFilterAnonymousClass(field, parser, lowerVal, upperVal, includeLower, includeUpper);
         }
 
         /// <summary>
@@ -652,7 +652,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static FieldCacheRangeFilter<double?> NewDoubleRange(string field, FieldCache.IDoubleParser parser, double? lowerVal, double? upperVal, bool includeLower, bool includeUpper)
         {
-            return new AnonymousDoubleFieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
+            return new DoubleFieldCacheRangeFilterAnonymousClass(field, parser, lowerVal, upperVal, includeLower, includeUpper);
         }
     }
 
