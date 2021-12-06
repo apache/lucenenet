@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Store;
+﻿using J2N.Numerics;
+using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -82,7 +83,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 }
                 charsSpare.Grow(spare.Length);
                 UnicodeUtil.UTF8toUTF16(spare.Bytes, spare.Offset, spare.Length, charsSpare);
-                trie.Put(charsSpare.ToString(), weight);
+                trie.Put(charsSpare.ToString(), J2N.Numerics.Int64.GetInstance(weight));
             }
         }
 
@@ -220,7 +221,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             @out.WriteByte((byte)mask);
             if (node.data != null)
             {
-                @out.WriteInt64((long)(node.data));
+                @out.WriteInt64(((Number)node.data).ToInt64());
             }
             WriteRecursively(@out, node.relatives[JaspellTernarySearchTrie.TSTNode.LOKID]);
             WriteRecursively(@out, node.relatives[JaspellTernarySearchTrie.TSTNode.EQKID]);

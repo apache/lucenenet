@@ -502,21 +502,21 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         {
             string key2 = culture.TextInfo.ToLower(key.Trim());
             TSTNode node = GetNode(key2);
-            if (node == null)
+            if (node is null)
             {
                 return null;
             }
-            float? aux = (float?)(node.data);
-            if (aux == null)
+            J2N.Numerics.Number aux = (J2N.Numerics.Number)node.data; // LUCENENET: Original was using Float, but that may not cast if there is an Int64 in the node. This is safer.
+            if (aux is null)
             {
-                aux = new float?(1);
+                aux = J2N.Numerics.Single.GetInstance(1);
             }
             else
             {
-                aux = new float?((int)aux + 1);
+                aux = J2N.Numerics.Single.GetInstance(aux.ToInt32() + 1);
             }
             Put(key2, aux);
-            return aux;
+            return aux.ToSingle();
         }
 
         /// <summary>
