@@ -207,9 +207,9 @@ namespace Lucene.Net.Search
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 sbyte inclusiveLowerPoint, inclusiveUpperPoint;
-                if (lowerVal != null)
+                if (lowerVal.HasValue)
                 {
-                    sbyte i = (sbyte)lowerVal;
+                    sbyte i = lowerVal.Value;
                     if (!includeLower && i == sbyte.MaxValue)
                         return null;
                     inclusiveLowerPoint = (sbyte)(includeLower ? i : (i + 1));
@@ -218,9 +218,9 @@ namespace Lucene.Net.Search
                 {
                     inclusiveLowerPoint = sbyte.MinValue;
                 }
-                if (upperVal != null)
+                if (upperVal.HasValue)
                 {
-                    sbyte i = (sbyte)upperVal;
+                    sbyte i = upperVal.Value;
                     if (!includeUpper && i == sbyte.MinValue)
                         return null;
                     inclusiveUpperPoint = (sbyte)(includeUpper ? i : (i - 1));
@@ -257,9 +257,9 @@ namespace Lucene.Net.Search
             {
                 short inclusiveLowerPoint, inclusiveUpperPoint;
 
-                if (lowerVal != null)
+                if (lowerVal.HasValue)
                 {
-                    short i = (short)lowerVal;
+                    short i = lowerVal.Value;
                     if (!includeLower && i == short.MaxValue)
                         return null;
                     inclusiveLowerPoint = (short)(includeLower ? i : (i + 1));
@@ -268,9 +268,9 @@ namespace Lucene.Net.Search
                 {
                     inclusiveLowerPoint = short.MinValue;
                 }
-                if (upperVal != null)
+                if (upperVal.HasValue)
                 {
-                    short i = (short)upperVal;
+                    short i = upperVal.Value;
                     if (!includeUpper && i == short.MinValue)
                         return null;
                     inclusiveUpperPoint = (short)(includeUpper ? i : (i - 1));
@@ -307,9 +307,9 @@ namespace Lucene.Net.Search
             {
                 int inclusiveLowerPoint, inclusiveUpperPoint;
 
-                if (lowerVal != null)
+                if (lowerVal.HasValue)
                 {
-                    int i = (int)lowerVal;
+                    int i = lowerVal.Value;
                     if (!includeLower && i == int.MaxValue)
                         return null;
                     inclusiveLowerPoint = includeLower ? i : (i + 1);
@@ -318,9 +318,9 @@ namespace Lucene.Net.Search
                 {
                     inclusiveLowerPoint = int.MinValue;
                 }
-                if (upperVal != null)
+                if (upperVal.HasValue)
                 {
-                    int i = (int)upperVal;
+                    int i = upperVal.Value;
                     if (!includeUpper && i == int.MinValue)
                         return null;
                     inclusiveUpperPoint = includeUpper ? i : (i - 1);
@@ -354,9 +354,9 @@ namespace Lucene.Net.Search
             {
                 long inclusiveLowerPoint, inclusiveUpperPoint;
 
-                if (lowerVal != null)
+                if (lowerVal.HasValue)
                 {
-                    long i = (long)lowerVal;
+                    long i = lowerVal.Value;
                     if (!includeLower && i == long.MaxValue)
                         return null;
                     inclusiveLowerPoint = includeLower ? i : (i + 1L);
@@ -365,9 +365,9 @@ namespace Lucene.Net.Search
                 {
                     inclusiveLowerPoint = long.MinValue;
                 }
-                if (upperVal != null)
+                if (upperVal.HasValue)
                 {
-                    long i = (long)upperVal;
+                    long i = upperVal.Value;
                     if (!includeUpper && i == long.MinValue)
                         return null;
                     inclusiveUpperPoint = includeUpper ? i : (i - 1L);
@@ -403,9 +403,9 @@ namespace Lucene.Net.Search
                 // using NumericUtils to easier find the next bigger/lower value
                 float inclusiveLowerPoint;
                 float inclusiveUpperPoint;
-                if (lowerVal != null)
+                if (lowerVal.HasValue)
                 {
-                    float f = (float)lowerVal;
+                    float f = lowerVal.Value;
                     if (!includeUpper && f > 0.0f && float.IsInfinity(f))
                         return null;
                     int i = NumericUtils.SingleToSortableInt32(f);
@@ -415,9 +415,9 @@ namespace Lucene.Net.Search
                 {
                     inclusiveLowerPoint = float.NegativeInfinity;
                 }
-                if (upperVal != null)
+                if (upperVal.HasValue)
                 {
-                    float f = (float)upperVal;
+                    float f = upperVal.Value;
                     if (!includeUpper && f < 0.0f && float.IsInfinity(f))
                         return null;
                     int i = NumericUtils.SingleToSortableInt32(f);
@@ -455,9 +455,9 @@ namespace Lucene.Net.Search
                 // using NumericUtils to easier find the next bigger/lower value
                 double inclusiveLowerPoint;
                 double inclusiveUpperPoint;
-                if (lowerVal != null)
+                if (lowerVal.HasValue)
                 {
-                    double f = (double)lowerVal;
+                    double f = lowerVal.Value;
                     if (!includeUpper && f > 0.0 && double.IsInfinity(f))
                         return null;
                     long i = NumericUtils.DoubleToSortableInt64(f);
@@ -467,9 +467,9 @@ namespace Lucene.Net.Search
                 {
                     inclusiveLowerPoint = double.NegativeInfinity;
                 }
-                if (upperVal != null)
+                if (upperVal.HasValue)
                 {
-                    double f = (double)upperVal;
+                    double f = upperVal.Value;
                     if (!includeUpper && f < 0.0 && double.IsInfinity(f))
                         return null;
                     long i = NumericUtils.DoubleToSortableInt64(f);
