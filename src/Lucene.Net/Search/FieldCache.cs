@@ -607,7 +607,7 @@ namespace Lucene.Net.Search
             /// <param name="terms">The <see cref="Index.Terms"/> instance to create the <see cref="Index.TermsEnum"/> from.</param>
             /// <returns>A possibly filtered <see cref="Index.TermsEnum"/> instance, this method must not return <c>null</c>.</returns>
             /// <exception cref="IOException">If an <see cref="IOException"/> occurs</exception>
-            TermsEnum TermsEnum(Terms terms);
+            TermsEnum GetTermsEnum(Terms terms);
         }
 
         /// <summary>
@@ -728,7 +728,7 @@ namespace Lucene.Net.Search
                 return typeof(IFieldCache).FullName + ".DEFAULT_BYTE_PARSER";
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -763,7 +763,7 @@ namespace Lucene.Net.Search
                 return typeof(IFieldCache).FullName + ".DEFAULT_INT16_PARSER";
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -793,7 +793,7 @@ namespace Lucene.Net.Search
                 return int.Parse(term.Utf8ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture);
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -830,7 +830,7 @@ namespace Lucene.Net.Search
                 return J2N.Numerics.Single.Parse(text, NumberStyle.Float, NumberFormatInfo.InvariantInfo);
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -865,7 +865,7 @@ namespace Lucene.Net.Search
                 return long.Parse(term.Utf8ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture);
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -896,7 +896,7 @@ namespace Lucene.Net.Search
                 return J2N.Numerics.Double.Parse(text, NumberStyle.Float, NumberFormatInfo.InvariantInfo);
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -925,7 +925,7 @@ namespace Lucene.Net.Search
                 return NumericUtils.PrefixCodedToInt32(term);
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return NumericUtils.FilterPrefixCodedInt32s(terms.GetEnumerator());
             }
@@ -959,7 +959,7 @@ namespace Lucene.Net.Search
                 return typeof(IFieldCache).FullName + ".NUMERIC_UTILS_SINGLE_PARSER";
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return NumericUtils.FilterPrefixCodedInt32s(terms.GetEnumerator());
             }
@@ -988,7 +988,7 @@ namespace Lucene.Net.Search
                 return typeof(IFieldCache).FullName + ".NUMERIC_UTILS_INT64_PARSER";
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return NumericUtils.FilterPrefixCodedInt64s(terms.GetEnumerator());
             }
@@ -1012,7 +1012,7 @@ namespace Lucene.Net.Search
                 return typeof(IFieldCache).FullName + ".NUMERIC_UTILS_DOUBLE_PARSER";
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return NumericUtils.FilterPrefixCodedInt64s(terms.GetEnumerator());
             }

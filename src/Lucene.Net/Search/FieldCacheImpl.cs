@@ -758,7 +758,7 @@ namespace Lucene.Net.Search
 
                 protected override TermsEnum GetTermsEnum(Terms terms)
                 {
-                    return parser.TermsEnum(terms);
+                    return parser.GetTermsEnum(terms);
                 }
             }
         }
@@ -931,7 +931,7 @@ namespace Lucene.Net.Search
 
                 protected override TermsEnum GetTermsEnum(Terms terms)
                 {
-                    return parser.TermsEnum(terms);
+                    return parser.GetTermsEnum(terms);
                 }
             }
         }
@@ -1170,7 +1170,7 @@ namespace Lucene.Net.Search
 
                 protected override TermsEnum GetTermsEnum(Terms terms)
                 {
-                    return parser.TermsEnum(terms);
+                    return parser.GetTermsEnum(terms);
                 }
             }
         }
@@ -1418,7 +1418,7 @@ namespace Lucene.Net.Search
 
                 protected override TermsEnum GetTermsEnum(Terms terms)
                 {
-                    return parser.TermsEnum(terms);
+                    return parser.GetTermsEnum(terms);
                 }
             }
         }
@@ -1602,7 +1602,7 @@ namespace Lucene.Net.Search
 
                 protected override TermsEnum GetTermsEnum(Terms terms)
                 {
-                    return parser.TermsEnum(terms);
+                    return parser.GetTermsEnum(terms);
                 }
             }
         }
@@ -1755,7 +1755,7 @@ namespace Lucene.Net.Search
 
                 protected override TermsEnum GetTermsEnum(Terms terms)
                 {
-                    return parser.TermsEnum(terms);
+                    return parser.GetTermsEnum(terms);
                 }
             }
         }

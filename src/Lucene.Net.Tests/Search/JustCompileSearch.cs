@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
                 throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
                 throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
