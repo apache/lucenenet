@@ -3,6 +3,7 @@ using J2N.Numerics;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
+using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Globalization;
@@ -104,9 +105,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override string GetDescription()
         {
-            return m_a.ToString(CultureInfo.InvariantCulture) + 
-                "/(" + m_m.ToString(CultureInfo.InvariantCulture) + 
-                "*float(" + m_source.GetDescription() + ")" + "+" + m_b.ToString(CultureInfo.InvariantCulture) + ')';
+            return J2N.Numerics.Single.ToString(m_a, CultureInfo.InvariantCulture) + 
+                "/(" + J2N.Numerics.Single.ToString(m_m, CultureInfo.InvariantCulture) + 
+                "*float(" + m_source.GetDescription() + ")" + "+" + J2N.Numerics.Single.ToString(m_b, CultureInfo.InvariantCulture) + ')';
         }
 
         public override int GetHashCode()
@@ -120,7 +121,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             if (!(o is ReciprocalSingleFunction other))
                 return false;
-            return this.m_m == other.m_m && this.m_a == other.m_a && this.m_b == other.m_b && this.m_source.Equals(other.m_source);
+            // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+            return J2N.BitConversion.SingleToInt32Bits(this.m_m) == J2N.BitConversion.SingleToInt32Bits(other.m_m)
+                && J2N.BitConversion.SingleToInt32Bits(this.m_a) == J2N.BitConversion.SingleToInt32Bits(other.m_a)
+                && J2N.BitConversion.SingleToInt32Bits(this.m_b) == J2N.BitConversion.SingleToInt32Bits(other.m_b)
+                && this.m_source.Equals(other.m_source);
         }
     }
 }
