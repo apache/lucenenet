@@ -95,33 +95,23 @@ namespace Lucene.Net.Classification.Utils
                     }
                     else
                     {
+                        // LUCENENET specific: Cache the value locally rather than fetching it twice
+                        TextReader readerValue;
+                        BytesRef binaryValue;
+                        string stringValue;
                         foreach (IIndexableField storableField in originalIndex.Document(scoreDoc.Doc).Fields)
                         {
-                            if (storableField.GetReaderValue() != null)
+                            if ((readerValue = storableField.GetReaderValue()) != null)
                             {
-                                doc.Add(new Field(storableField.Name, storableField.GetReaderValue(), ft));
+                                doc.Add(new Field(storableField.Name, readerValue, ft));
                             }
-                            else if (storableField.GetBinaryValue() != null)
+                            else if ((binaryValue = storableField.GetBinaryValue()) != null)
                             {
-                                doc.Add(new Field(storableField.Name, storableField.GetBinaryValue(), ft));
+                                doc.Add(new Field(storableField.Name, binaryValue, ft));
                             }
-                            else if (storableField.GetStringValue() != null)
+                            else if ((stringValue = storableField.GetStringValue(CultureInfo.InvariantCulture)) != null)
                             {
-                                doc.Add(new Field(storableField.Name, storableField.GetStringValue(), ft));
-                            }
-                            else if (storableField.NumericType != NumericFieldType.NONE) // LUCENENET specific - checking the NumricType property is quicker than the type conversion
-                            {
-                                // LUCENENET specific - need to pass invariant culture here (we are assuming the Field will be stored)
-                                // and we need to round-trip floating point numbers so we don't lose precision. 
-                                if (storableField.NumericType == NumericFieldType.SINGLE || storableField.NumericType == NumericFieldType.DOUBLE)
-                                {
-                                    // LUCENENET: Need to specify the "R" for round-trip: http://stackoverflow.com/a/611564
-                                    doc.Add(new Field(storableField.Name, storableField.GetStringValue("R", CultureInfo.InvariantCulture), ft));
-                                }
-                                else
-                                {
-                                    doc.Add(new Field(storableField.Name, storableField.GetStringValue(CultureInfo.InvariantCulture), ft));
-                                }
+                                doc.Add(new Field(storableField.Name, stringValue, ft));
                             }
                         }
                     }
