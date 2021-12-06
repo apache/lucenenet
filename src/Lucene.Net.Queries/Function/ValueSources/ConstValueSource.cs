@@ -89,7 +89,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
             public override object ObjectVal(int doc)
             {
-                return outerInstance.constant;
+                return J2N.Numerics.Single.GetInstance(outerInstance.constant); // LUCENENET: In Java, the conversion to instance of java.util.Float is implicit, but we need to do an explicit conversion
             }
             public override bool BoolVal(int doc)
             {

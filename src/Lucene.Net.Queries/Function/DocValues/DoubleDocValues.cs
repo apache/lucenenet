@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 4.8.1
+using J2N.Globalization;
 using Lucene.Net.Index;
 using Lucene.Net.Util.Mutable;
 using System;
@@ -82,12 +83,12 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override string StrVal(int doc)
         {
-            return DoubleVal(doc).ToString("R", CultureInfo.InvariantCulture);
+            return J2N.Numerics.Double.ToString(DoubleVal(doc), NumberFormatInfo.InvariantInfo); // LUCENENET: Use J2N to mimic the Java string format using the "J" format
         }
 
         public override object ObjectVal(int doc)
         {
-            return Exists(doc) ? DoubleVal(doc) : (double?)null;
+            return Exists(doc) ? J2N.Numerics.Double.GetInstance(DoubleVal(doc)) : null; // LUCENENET: In Java, the conversion to instance of java.util.Double is implicit, but we need to do an explicit conversion
         }
 
         public override string ToString(int doc)
@@ -106,7 +107,7 @@ namespace Lucene.Net.Queries.Function.DocValues
             }
             else
             {
-                lower = Convert.ToDouble(lowerVal, CultureInfo.InvariantCulture);
+                lower = J2N.Numerics.Double.Parse(lowerVal, NumberStyle.Float, NumberFormatInfo.InvariantInfo);
             }
 
             if (upperVal == null)
@@ -115,7 +116,7 @@ namespace Lucene.Net.Queries.Function.DocValues
             }
             else
             {
-                upper = Convert.ToDouble(upperVal, CultureInfo.InvariantCulture);
+                upper = J2N.Numerics.Double.Parse(upperVal, NumberStyle.Float, NumberFormatInfo.InvariantInfo);
             }
 
             double l = lower;
