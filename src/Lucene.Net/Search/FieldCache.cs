@@ -1,4 +1,5 @@
-﻿using System;
+﻿using J2N.Globalization;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -825,13 +826,8 @@ namespace Lucene.Net.Search
                 // FloatField, instead, which already decodes
                 // directly from byte[]
 
-                // LUCENENET: We parse to double first and then cast to float, which allows us to parse 
-                // double.MaxValue.ToString("R") (resulting in Infinity). This is how it worked in Java
-                // and the TestFieldCache.TestInfoStream() test depends on this behavior to pass.
-
-                // We also need to use the same logic as DEFAULT_DOUBLE_PARSER to ensure we have signed zero
-                // support, so just call it directly rather than duplicating the logic here.
-                return (float)DEFAULT_DOUBLE_PARSER.ParseDouble(term);
+                string text = term.Utf8ToString();
+                return J2N.Numerics.Single.Parse(text, NumberStyle.Float, NumberFormatInfo.InvariantInfo);
             }
 
             public TermsEnum TermsEnum(Terms terms)
@@ -897,17 +893,7 @@ namespace Lucene.Net.Search
                 // DoubleField, instead, which already decodes
                 // directly from byte[]
                 string text = term.Utf8ToString();
-                double value = double.Parse(text, NumberStyles.Float, CultureInfo.InvariantCulture);
-
-                // LUCENENET specific special case - check whether a negative
-                // zero was passed in and, if so, convert the sign. Unfotunately, double.Parse()
-                // doesn't take care of this for us.
-                if (value == 0 && text.TrimStart().StartsWith("-", StringComparison.Ordinal))
-                {
-                    value = -0d; // Hard-coding the value in case double.Parse() works right someday (which would break if we did value * -1)
-                }
-
-                return value;
+                return J2N.Numerics.Double.Parse(text, NumberStyle.Float, NumberFormatInfo.InvariantInfo);
             }
 
             public TermsEnum TermsEnum(Terms terms)
