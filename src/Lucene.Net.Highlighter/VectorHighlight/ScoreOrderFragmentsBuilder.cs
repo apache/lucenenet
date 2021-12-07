@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using WeightedFragInfo = Lucene.Net.Search.VectorHighlight.FieldFragList.WeightedFragInfo;
 
@@ -67,6 +68,11 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <see cref="IComparer{T}"/> for <see cref="WeightedFragInfo"/> by boost, breaking ties 
         /// by offset.
         /// </summary>
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public class ScoreComparer : IComparer<WeightedFragInfo>
         {
             private ScoreComparer() { } // Singleton only

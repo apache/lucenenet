@@ -52,9 +52,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Temporary map to store interletter values on pattern loading.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [NonSerialized]
-#endif
         private TernaryTree ivalues;
 
         public HyphenationTree()

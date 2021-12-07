@@ -129,6 +129,11 @@ namespace Lucene.Net.Search.Suggest
         /// </summary>
         public static readonly IComparer<string> CHARSEQUENCE_COMPARER = new CharSequenceComparer();
 
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class CharSequenceComparer : IComparer<string>
         {
 

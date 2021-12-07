@@ -446,5 +446,32 @@ namespace Lucene.Net.Util
             Assert.IsTrue(bits.Get(1));
             Assert.IsFalse(newBits.Get(1));
         }
+
+#if FEATURE_SERIALIZABLE
+
+        [Test, LuceneNetSpecific]
+        public void TestSerialization()
+        {
+            var numWords = Int64BitSet.Bits2words(10);
+            var expected = new long[numWords];
+            for (int i = 0; i < numWords; i++)
+                expected[i] = i;
+
+            var set = new Int64BitSet(expected, 10);
+
+
+            Assert.AreEqual(expected, set.bits);
+            Assert.AreSame(expected, set.bits);
+            Assert.AreEqual(numWords, set.numWords);
+            Assert.AreEqual(10L, set.Length);
+
+            var clone = Clone(set);
+
+            Assert.AreEqual(expected, clone.bits);
+            Assert.AreNotSame(expected, clone.bits);
+            Assert.AreEqual(numWords, clone.numWords);
+            Assert.AreEqual(10L, clone.Length);
+        }
+#endif
     }
 }

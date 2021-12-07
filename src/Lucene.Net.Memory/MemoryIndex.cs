@@ -155,9 +155,6 @@ namespace Lucene.Net.Index.Memory
     /// 
     /// </para>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public partial class MemoryIndex
     {
         /// <summary>
@@ -167,9 +164,6 @@ namespace Lucene.Net.Index.Memory
 
         /// <summary>
         /// fields sorted ascending by fieldName; lazily computed on demand </summary>
-#if FEATURE_SERIALIZABLE
-        [NonSerialized]
-#endif
         private KeyValuePair<string, Info>[] sortedFields;
 
         private readonly bool storeOffsets;

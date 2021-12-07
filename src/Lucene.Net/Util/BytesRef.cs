@@ -399,6 +399,11 @@ namespace Lucene.Net.Util
         }
     }
 
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class Utf8SortedAsUnicodeComparer : IComparer<BytesRef>
     {
         public static Utf8SortedAsUnicodeComparer Instance = new Utf8SortedAsUnicodeComparer();
@@ -435,6 +440,11 @@ namespace Lucene.Net.Util
 
     /// @deprecated this comparer is only a transition mechanism
     [Obsolete("this comparer is only a transition mechanism")]
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class Utf8SortedAsUtf16Comparer : IComparer<BytesRef>
     {
         // Only singleton

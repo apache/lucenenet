@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.QueryParsers.Classic
 {
@@ -18,10 +18,12 @@ namespace Lucene.Net.QueryParsers.Classic
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary> 
     /// Describes the input token stream.
     /// </summary>
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif

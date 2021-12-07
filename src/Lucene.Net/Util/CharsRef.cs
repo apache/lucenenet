@@ -315,7 +315,7 @@ namespace Lucene.Net.Util
 
         /// @deprecated this comparer is only a transition mechanism
         [Obsolete("this comparer is only a transition mechanism")]
-        private static readonly IComparer<CharsRef> utf16SortedAsUTF8SortOrder = new Utf16SortedAsUTF8Comparer();
+        private static readonly IComparer<CharsRef> utf16SortedAsUTF8SortOrder = new Utf16SortedAsUtf8Comparer();
 
         /// @deprecated this comparer is only a transition mechanism
         [Obsolete("this comparer is only a transition mechanism")]
@@ -323,10 +323,15 @@ namespace Lucene.Net.Util
 
         /// @deprecated this comparer is only a transition mechanism
         [Obsolete("this comparer is only a transition mechanism")]
-        private class Utf16SortedAsUTF8Comparer : IComparer<CharsRef>
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
+        private class Utf16SortedAsUtf8Comparer : IComparer<CharsRef>
         {
             // Only singleton
-            internal Utf16SortedAsUTF8Comparer()
+            internal Utf16SortedAsUtf8Comparer()
             {
             }
 

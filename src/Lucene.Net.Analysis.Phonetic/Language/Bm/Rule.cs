@@ -940,6 +940,11 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
     public sealed class Phoneme : IPhonemeExpr
     {
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class PhonemeComparer : IComparer<Phoneme>
         {
             public int Compare(Phoneme o1, Phoneme o2)

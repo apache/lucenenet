@@ -2,6 +2,11 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
+#if FEATURE_SERIALIZABLE
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+#endif
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -29,6 +34,9 @@ namespace Lucene.Net.Util
     {
         private static readonly int MAX_PQ_SIZE = ArrayUtil.MAX_ARRAY_LENGTH - 1;
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class IntegerQueue : PriorityQueue<int?>
         {
             public IntegerQueue(int count)
@@ -647,6 +655,32 @@ namespace Lucene.Net.Util
             pq.Clear();
         }
 
-        #endregion
+#if FEATURE_SERIALIZABLE
+
+        [Test, LuceneNetSpecific]
+        public void TestSerialization()
+        {
+            var queue = new IntegerQueue(10);
+            var expected = new int?[11];
+
+            for (int i = 0; i < 10; i++)
+            {
+                queue.Add(i);
+                expected[i + 1] = i;
+            }
+
+            Assert.AreEqual(10, queue.maxSize);
+            Assert.AreEqual(expected, queue.heap);
+            Assert.AreEqual(10, queue.Count);
+
+            var clone = Clone(queue);
+
+            Assert.AreEqual(10, clone.maxSize);
+            Assert.AreEqual(expected, clone.heap);
+            Assert.AreEqual(10, clone.Count);
+        }
+#endif
+
+#endregion
     }
 }

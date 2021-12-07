@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Index
@@ -27,6 +28,12 @@ namespace Lucene.Net.Index
     /// this class was created as a more performant alternative than calling <c>CompareTo()</c> on <see cref="IndexOptions"/>.
     /// </summary>
     // See: GH-376
+
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class IndexOptionsComparer : IComparer<IndexOptions>
     {
         private IndexOptionsComparer() { } // No instance

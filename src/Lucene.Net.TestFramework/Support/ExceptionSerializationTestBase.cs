@@ -1,10 +1,7 @@
 ﻿#if FEATURE_SERIALIZABLE
 using System;
 using System.Globalization;
-using System.IO;
 using System.Reflection;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -37,28 +34,6 @@ namespace Lucene.Net.Util
 #else
     {
 #endif
-
-        protected static bool TypeCanSerialize<T>(T exception)
-        {
-            T clone;
-
-            try
-            {
-#pragma warning disable SYSLIB0011 // Type or member is obsolete (BinaryFormatter)
-                var binaryFormatter = new BinaryFormatter();
-                using var serializationStream = new MemoryStream();
-                binaryFormatter.Serialize(serializationStream, exception);
-                serializationStream.Seek(0, SeekOrigin.Begin);
-                clone = (T)binaryFormatter.Deserialize(serializationStream);
-#pragma warning restore SYSLIB0011 // Type or member is obsolete (BinaryFormatter)
-            }
-            catch (SerializationException)
-            {
-                return false;
-            }
-
-            return true;
-        }
 
         protected static object TryInstantiate(Type type)
         {
