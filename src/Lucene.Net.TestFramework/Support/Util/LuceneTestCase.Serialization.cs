@@ -79,18 +79,21 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <typeparam name="T">The type of <paramref name="source"/>.</typeparam>
         /// <param name="source">An object to serialize. It must be serializable.</param>
+        /// <param name="exception">The output <see cref="SerializationException"/> throw if serialization fails.</param>
         /// <returns><c>true</c> if the serialization operation was successful; otherwise <c>false</c>.</returns>
-        internal static bool TypeCanSerialize<T>(T source)
+        internal static bool TypeCanSerialize<T>(T source, out SerializationException exception)
         {
             try
             {
                 Clone(source);
             }
-            catch (SerializationException)
+            catch (SerializationException e)
             {
+                exception = e;
                 return false;
             }
 
+            exception = null;
             return true;
         }
     }

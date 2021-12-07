@@ -1,12 +1,10 @@
 ﻿#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using Lucene.Net.Attributes;
-using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Runtime.Serialization;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.ExceptionHandling
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -25,30 +23,14 @@ namespace Lucene.Net.Support
      * limitations under the License.
      */
 
-    [TestFixture]
-    public class TestExceptionSerialization : ExceptionSerializationTestBase
+    [LuceneNetSpecific]
+    public class TestExceptionSerialization : ExceptionScanningTestCase
     {
-        public static IEnumerable<object> ExceptionTestData
-        {
-            get
-            {
-                var exceptionTypes = typeof(Lucene.Net.Replicator.IReplicator).Assembly.GetTypes().Where(t => typeof(Exception).IsAssignableFrom(t)).Cast<object>();
-
-                // If the assembly has no exceptions, just provide Exception so the test will pass
-                if (!exceptionTypes.Any())
-                {
-                    return new Type[] { typeof(Exception) };
-                }
-
-                return exceptionTypes;
-            }
-        }
-
-        [Test, LuceneNetSpecific]
-        public void AllExceptionsInLuceneNamespaceCanSerialize([ValueSource("ExceptionTestData")]Type luceneException)
+        [Test]
+        public void TestCanSerialize([ValueSource("LuceneExceptionTypes")] Type luceneException)
         {
             var instance = TryInstantiate(luceneException);
-            Assert.That(TypeCanSerialize(instance), string.Format("Unable to serialize {0}", luceneException.FullName));
+            Assert.That(TypeCanSerialize(instance, out SerializationException se), $"Unable to serialize {luceneException.FullName}:\n\n{se}");
         }
     }
 }

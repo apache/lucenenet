@@ -1,5 +1,4 @@
-﻿using J2N.Text;
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Attributes;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
@@ -14,11 +13,9 @@ using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Security;
-using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
-using JCG = J2N.Collections.Generic;
 
-namespace Lucene
+namespace Lucene.Net.Support.ExceptionHandling
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -37,9 +34,8 @@ namespace Lucene
      * limitations under the License.
      */
 
-#pragma warning disable IDE0001 // Name can be simplified
     [LuceneNetSpecific]
-    public class TestExceptionExtensions : LuceneTestCase
+    public abstract class ExceptionScanningTestCase : AssemblyScanningTestCase
     {
         // Internal types references
         private static readonly Type DebugAssertExceptionType =
@@ -106,65 +102,23 @@ namespace Lucene
             Type.GetType("NUnit.Framework.Internal.InvalidPlatformException, NUnit.Framework");
 
 
-        // Load exception types from all assemblies
-        private static readonly Assembly[] LuceneAssemblies = new Assembly[]
-        {
-            typeof(Lucene.Net.Analysis.Analyzer).Assembly,                         // Lucene.Net
-            typeof(Lucene.Net.Analysis.Standard.ClassicAnalyzer).Assembly,         // Lucene.Net.Analysis.Common
-            typeof(Lucene.Net.Analysis.Ja.GraphvizFormatter).Assembly,             // Lucene.Net.Analysis.Kuromoji
-            typeof(Lucene.Net.Analysis.Morfologik.MorfologikAnalyzer).Assembly,    // Lucene.Net.Analysis.Morfologik
-#if FEATURE_OPENNLP
-            typeof(Lucene.Net.Analysis.OpenNlp.OpenNLPTokenizer).Assembly,         // Lucene.Net.Analysis.OpenNlp
-#endif
-            typeof(Lucene.Net.Analysis.Phonetic.BeiderMorseFilter).Assembly,       // Lucene.Net.Analysis.Phonetic
-            typeof(Lucene.Net.Analysis.Cn.Smart.AnalyzerProfile).Assembly,         // Lucene.Net.Analysis.SmartCn
-            typeof(Lucene.Net.Analysis.Stempel.StempelFilter).Assembly,            // Lucene.Net.Analysis.Stempel
-            typeof(Lucene.Net.Benchmarks.Constants).Assembly,                      // Lucene.Net.Benchmark
-            typeof(Lucene.Net.Classification.KNearestNeighborClassifier).Assembly, // Lucene.Net.Classification
-            typeof(Lucene.Net.Codecs.BlockTerms.BlockTermsReader).Assembly,        // Lucene.Net.Codecs
-            typeof(Lucene.Net.Expressions.Bindings).Assembly,                      // Lucene.Net.Expressions
-            typeof(Lucene.Net.Facet.Facets).Assembly,                              // Lucene.Net.Facet
-            typeof(Lucene.Net.Search.Grouping.ICollectedSearchGroup).Assembly,     // Lucene.Net.Grouping
-            typeof(Lucene.Net.Search.Highlight.DefaultEncoder).Assembly,           // Lucene.Net.Highlighter
-            typeof(Lucene.Net.Search.Join.JoinUtil).Assembly,                      // Lucene.Net.Join
-            typeof(Lucene.Net.Index.Memory.MemoryIndex).Assembly,                  // Lucene.Net.Memory
-            typeof(Lucene.Net.Misc.SweetSpotSimilarity).Assembly,                  // Lucene.Net.Misc
-            typeof(Lucene.Net.Queries.BooleanFilter).Assembly,                     // Lucene.Net.Queries
-            typeof(Lucene.Net.QueryParsers.Classic.QueryParser).Assembly,          // Lucene.Net.QueryParser
-            typeof(Lucene.Net.Replicator.IReplicator).Assembly,                    // Lucene.Net.Replicator
-            typeof(Lucene.Net.Sandbox.Queries.DuplicateFilter).Assembly,           // Lucene.Net.Sandbox
-            typeof(Lucene.Net.Spatial.DisjointSpatialFilter).Assembly,             // Lucene.Net.Spatial
-            typeof(Lucene.Net.Util.LuceneTestCase).Assembly,                       // Lucene.Net.TestFramework
-        };
-
-
-        private static readonly Assembly[] DotNetAssemblies = new Assembly[]
-        {
-            typeof(Exception).Assembly
-        };
-
-        private static readonly Assembly[] NUnitAssemblies = new Assembly[]
-        {
-            typeof(NUnit.Framework.AssertionException).Assembly
-        };
-
         // Base class Exception
-        private static readonly ICollection<Type> DotNetExceptionTypes = LoadTypesSubclassing(baseClass: typeof(Exception), DotNetAssemblies);
-        private static readonly ICollection<Type> NUnitExceptionTypes = LoadTypesSubclassing(baseClass: typeof(Exception), NUnitAssemblies);
-        private static readonly ICollection<Type> LuceneExceptionTypes = LoadTypesSubclassing(baseClass: typeof(Exception), LuceneAssemblies);
+        public static readonly ICollection<Type> DotNetExceptionTypes = LoadTypesSubclassing(baseClass: typeof(Exception), DotNetAssemblies);
+        public static readonly ICollection<Type> NUnitExceptionTypes = LoadTypesSubclassing(baseClass: typeof(Exception), NUnitAssemblies);
+        public static readonly ICollection<Type> LuceneExceptionTypes = LoadTypesSubclassing(baseClass: typeof(Exception), LuceneAssemblies);
 
-        private static readonly ICollection<Type> AllExceptionTypes = DotNetExceptionTypes.Union(NUnitExceptionTypes).Union(LuceneExceptionTypes).ToList();
+        public static readonly ICollection<Type> AllExceptionTypes = DotNetExceptionTypes.Union(NUnitExceptionTypes).Union(LuceneExceptionTypes).ToList();
 
         // Base class IOException
-        private static readonly ICollection<Type> DotNetIOExceptionTypes = LoadTypesSubclassing(baseClass: typeof(IOException), DotNetAssemblies);
-        private static readonly ICollection<Type> NUnitIOExceptionTypes = LoadTypesSubclassing(baseClass: typeof(IOException), NUnitAssemblies);
-        private static readonly ICollection<Type> LuceneIOExceptionTypes = LoadTypesSubclassing(baseClass: typeof(IOException), LuceneAssemblies);
+        public static readonly ICollection<Type> DotNetIOExceptionTypes = LoadTypesSubclassing(baseClass: typeof(IOException), DotNetAssemblies);
+        public static readonly ICollection<Type> NUnitIOExceptionTypes = LoadTypesSubclassing(baseClass: typeof(IOException), NUnitAssemblies);
+        public static readonly ICollection<Type> LuceneIOExceptionTypes = LoadTypesSubclassing(baseClass: typeof(IOException), LuceneAssemblies);
 
-        private static readonly ICollection<Type> AllIOExceptionTypes = DotNetIOExceptionTypes.Union(NUnitIOExceptionTypes).Union(LuceneIOExceptionTypes).ToList();
+        public static readonly ICollection<Type> AllIOExceptionTypes = DotNetIOExceptionTypes.Union(NUnitIOExceptionTypes).Union(LuceneIOExceptionTypes).ToList();
 
         #region Known types of exception families
 
-        private static readonly IEnumerable<Type> KnownAssertionErrorTypes = LoadKnownAssertionErrorTypes();
+        public static readonly IEnumerable<Type> KnownAssertionErrorTypes = LoadKnownAssertionErrorTypes();
 
         private static IEnumerable<Type> LoadKnownAssertionErrorTypes()
         {
@@ -186,7 +140,7 @@ namespace Lucene
             return result;
         }
 
-        private static readonly IEnumerable<Type> KnownErrorExceptionTypes = LoadKnownErrorExceptionTypes();
+        public static readonly IEnumerable<Type> KnownErrorExceptionTypes = LoadKnownErrorExceptionTypes();
 
         private static IEnumerable<Type> LoadKnownErrorExceptionTypes()
         {
@@ -215,26 +169,26 @@ namespace Lucene
             };
         }
 
-        private static readonly IEnumerable<Type> KnownExceptionTypes = AllExceptionTypes
+        public static readonly IEnumerable<Type> KnownExceptionTypes = AllExceptionTypes
             // Exceptions in Java exclude Errors
             .Except(KnownErrorExceptionTypes)
             // Special Case: We never want to catch this NUnit exception
             .Where(t => !Type.Equals(t, NUnitFrameworkInternalInvalidPlatformExceptionType));
 
-        private static readonly IEnumerable<Type> KnownThrowableExceptionTypes = AllExceptionTypes
+        public static readonly IEnumerable<Type> KnownThrowableExceptionTypes = AllExceptionTypes
             // Special Case: We never want to catch this NUnit exception
             .Where(t => !Type.Equals(t, NUnitFrameworkInternalInvalidPlatformExceptionType));
 
 
-        private static readonly IEnumerable<Type> KnownIOExceptionTypes = new Type[] {
-            typeof(UnauthorizedAccessException),
-            typeof(ObjectDisposedException),
-            typeof(Lucene.AlreadyClosedException),
-        }.Union(AllIOExceptionTypes)
+        public static readonly IEnumerable<Type> KnownIOExceptionTypes = new Type[] {
+                typeof(UnauthorizedAccessException),
+                typeof(ObjectDisposedException),
+                typeof(Lucene.AlreadyClosedException),
+            }.Union(AllIOExceptionTypes)
             // .NET Framework only - Subclasses UnauthorizedAccessException
             .Union(new[] { PrivilegeNotHeldExceptionType });
 
-        private static readonly IEnumerable<Type> KnownIndexOutOfBoundsExceptionTypes = new Type[] {
+        public static readonly IEnumerable<Type> KnownIndexOutOfBoundsExceptionTypes = new Type[] {
             typeof(ArgumentOutOfRangeException),
             typeof(IndexOutOfRangeException),
 
@@ -244,7 +198,7 @@ namespace Lucene
             typeof(IndexOutOfBoundsException),
         };
 
-        private static readonly IEnumerable<Type> KnownNullPointerExceptionTypes = new Type[] {
+        public static readonly IEnumerable<Type> KnownNullPointerExceptionTypes = new Type[] {
             typeof(ArgumentNullException),
             typeof(NullReferenceException),
 
@@ -252,7 +206,7 @@ namespace Lucene
             typeof(NullPointerException),
         };
 
-        private static readonly IEnumerable<Type> KnownIllegalArgumentExceptionTypes = new Type[] {
+        public static readonly IEnumerable<Type> KnownIllegalArgumentExceptionTypes = new Type[] {
             typeof(ArgumentException),
             typeof(ArgumentNullException),
             typeof(ArgumentOutOfRangeException),
@@ -271,7 +225,7 @@ namespace Lucene
             typeof(System.Text.EncoderFallbackException),
         };
 
-        private static readonly IEnumerable<Type> KnownIllegalArgumentExceptionTypes_TestEnvironment = new Type[] {
+        public static readonly IEnumerable<Type> KnownIllegalArgumentExceptionTypes_TestEnvironment = new Type[] {
             typeof(ArgumentException),
 
             // Types for use as Java Aliases in .NET
@@ -284,7 +238,7 @@ namespace Lucene
             typeof(System.Text.EncoderFallbackException),
         };
 
-        private static readonly IEnumerable<Type> KnownRuntimeExceptionTypes = LoadKnownRuntimeExceptionTypes();
+        public static readonly IEnumerable<Type> KnownRuntimeExceptionTypes = LoadKnownRuntimeExceptionTypes();
 
         private static IEnumerable<Type> LoadKnownRuntimeExceptionTypes()
         {
@@ -475,7 +429,7 @@ namespace Lucene
 
         #region Special case constructors
 
-        private static readonly IDictionary<Type, Func<Type, string, object>> NonStandardExceptionConstructors = LoadNonStandardExceptionConstructors();
+        public static readonly IDictionary<Type, Func<Type, string, object>> NonStandardExceptionConstructors = LoadNonStandardExceptionConstructors();
 
         private static IDictionary<Type, Func<Type, string, object>> LoadNonStandardExceptionConstructors()
         {
@@ -552,7 +506,7 @@ namespace Lucene
             return result;
         }
 
-        public class NUnitExceptionMessage : NUnit.Framework.Interfaces.ITestResult
+        private class NUnitExceptionMessage : ITestResult
         {
             private readonly string message;
 
@@ -613,182 +567,7 @@ namespace Lucene
         #endregion Special case constructors
 
 
-        private static ICollection<Type> LoadTypesSubclassing(Type baseClass, params Assembly[] assemblies)
-        {
-            if (baseClass is null)
-                throw new ArgumentNullException(nameof(baseClass));
-            if (assemblies is null)
-                throw new ArgumentNullException(nameof(assemblies));
-
-            var result = new JCG.SortedSet<Type>(Comparer<Type>.Create((left, right) => left.Name.CompareToOrdinal(right.Name)));
-            foreach (var assembly in assemblies)
-            {
-                result.UnionWith(assembly.GetTypes().Where(exceptionType => baseClass.IsAssignableFrom(exceptionType)));
-            }
-            return result;
-        }
-
-        public static IEnumerable<TestCaseData> ThrowableTypeExpressions
-        {
-            get
-            {
-                foreach (var exceptionType in AllExceptionTypes)
-                {
-                    // expectedToThrow is true when we expect the error to be thrown and false when we expect it to be caught
-                    yield return new TestCaseData(
-                        exceptionType,                                         // exception type (to make NUnit display them all)
-                        !KnownThrowableExceptionTypes.Contains(exceptionType), // expectedToThrow
-                        new Action(() => ThrowException(exceptionType)));      // throw exception expression
-                }
-            }
-        }
-
-
-        public static IEnumerable<TestCaseData> ErrorTypeExpressions
-        {
-            get
-            {
-                foreach (var exceptionType in AllExceptionTypes)
-                {
-                    // expectedToThrow is true when we expect the error to be thrown and false when we expect it to be caught
-                    yield return new TestCaseData(
-                        exceptionType,                                      // exception type (to make NUnit display them all)
-                        !KnownErrorExceptionTypes.Contains(exceptionType),  // expectedToThrow
-                        new Action(() => ThrowException(exceptionType)));   // throw exception expression
-                }
-            }
-        }
-
-        public static IEnumerable<TestCaseData> ExceptionTypeExpressions
-        {
-            get
-            {
-                foreach (var exceptionType in AllExceptionTypes)
-                {
-                    // expectedToThrow is true when we expect the error to be thrown and false when we expect it to be caught
-                    yield return new TestCaseData(
-                        exceptionType,                                      // exception type (to make NUnit display them all)
-                        !KnownExceptionTypes.Contains(exceptionType),       // expectedToThrow
-                        new Action(() => ThrowException(exceptionType)));   // throw exception expression
-                }
-            } 
-        }
-
-        public static IEnumerable<TestCaseData> RuntimeExceptionTypeExpressions
-        {
-            get
-            {
-                foreach (var exceptionType in AllExceptionTypes)
-                {
-#if NETCOREAPP2_1
-                    // These don't seem to match on .NET Core 2.1, but we don't care
-                    if (exceptionType.FullName.Equals("System.CrossAppDomainMarshaledException") ||
-                        exceptionType.FullName.Equals("System.AppDomainUnloadedException"))
-                    {
-                        continue;
-                    }
-#endif
-
-                    // expectedToThrow is true when we expect the error to be thrown and false when we expect it to be caught
-                    yield return new TestCaseData(
-                        exceptionType,                                      // exception type (to make NUnit display them all)
-                        !KnownRuntimeExceptionTypes.Contains(exceptionType),// expectedToThrow
-                        new Action(() => ThrowException(exceptionType)));   // throw exception expression
-                }
-            }
-        }
-
-        public static IEnumerable<TestCaseData> IOExceptionTypeExpressions
-        {
-            get
-            {
-                foreach (var exceptionType in AllExceptionTypes)
-                {
-                    // expectedToThrow is true when we expect the error to be thrown and false when we expect it to be caught
-                    yield return new TestCaseData(
-                        exceptionType,                                      // exception type (to make NUnit display them all)
-                        !KnownIOExceptionTypes.Contains(exceptionType),     // expectedToThrow
-                        new Action(() => ThrowException(exceptionType)));   // throw exception expression
-                }
-            }
-        }
-
-        public static IEnumerable<TestCaseData> AssertionErrorTypeExpressions
-        {
-            get
-            {
-                foreach (var exceptionType in AllExceptionTypes)
-                {
-                    // expectedToThrow is true when we expect the error to be thrown and false when we expect it to be caught
-                    yield return new TestCaseData(
-                        exceptionType,                                         // exception type (to make NUnit display them all)
-                        !KnownAssertionErrorTypes.Contains(exceptionType),     // expectedToThrow
-                        new Action(() => ThrowException(exceptionType)));      // throw exception expression
-                }
-            }
-        }
-
-        public static IEnumerable<TestCaseData> IndexOutOfBoundsExceptionTypeExpressions
-        {
-            get
-            {
-                foreach (var exceptionType in AllExceptionTypes)
-                {
-                    // expectedToThrow is true when we expect the error to be thrown and false when we expect it to be caught
-                    yield return new TestCaseData(
-                        exceptionType,                                                    // exception type (to make NUnit display them all)
-                        !KnownIndexOutOfBoundsExceptionTypes.Contains(exceptionType),     // expectedToThrow
-                        new Action(() => ThrowException(exceptionType)));                 // throw exception expression
-                }
-            }
-        }
-
-        public static IEnumerable<TestCaseData> NullPointerExceptionTypeExpressions
-        {
-            get
-            {
-                foreach (var exceptionType in AllExceptionTypes)
-                {
-                    // expectedToThrow is true when we expect the error to be thrown and false when we expect it to be caught
-                    yield return new TestCaseData(
-                        exceptionType,                                                    // exception type (to make NUnit display them all)
-                        !KnownNullPointerExceptionTypes.Contains(exceptionType),          // expectedToThrow
-                        new Action(() => ThrowException(exceptionType)));                 // throw exception expression
-                }
-            }
-        }
-
-        public static IEnumerable<TestCaseData> IllegalArgumentExceptionTypeExpressions
-        {
-            get
-            {
-                foreach (var exceptionType in AllExceptionTypes)
-                {
-                    // expectedToThrow is true when we expect the error to be thrown and false when we expect it to be caught
-                    yield return new TestCaseData(
-                        exceptionType,                                                    // exception type (to make NUnit display them all)
-                        !KnownIllegalArgumentExceptionTypes.Contains(exceptionType),      // expectedToThrow
-                        new Action(() => ThrowException(exceptionType)));                 // throw exception expression
-                }
-            }
-        }
-
-        public static IEnumerable<TestCaseData> IllegalArgumentExceptionTypeExpressions_TestEnvironment
-        {
-            get
-            {
-                foreach (var exceptionType in AllExceptionTypes)
-                {
-                    // expectedToThrow is true when we expect the error to be thrown and false when we expect it to be caught
-                    yield return new TestCaseData(
-                        exceptionType,                                                               // exception type (to make NUnit display them all)
-                        !KnownIllegalArgumentExceptionTypes_TestEnvironment.Contains(exceptionType), // expectedToThrow
-                        new Action(() => ThrowException(exceptionType)));                            // throw exception expression
-                }
-            }
-        }
-
-        private static void ThrowException(Type exceptionType)
+        protected static Exception TryInstantiate(Type exceptionType)
         {
             object exception = null;
             if (NonStandardExceptionConstructors.TryGetValue(exceptionType, out Func<Type, string, object> constructionFactory))
@@ -821,238 +600,7 @@ namespace Lucene
                     }
                 }
             }
-            throw (Exception)exception;
-        }
-
-        [Test]
-        [TestCaseSource("ThrowableTypeExpressions")]
-        public void TestIsThrowable(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
-        {
-            static bool extensionMethod(Exception e) => e.IsThrowable();
-
-            if (expectedToThrow)
-            {
-                AssertDoesNotCatch(expression, extensionMethod);
-            }
-            else
-            {
-                AssertCatches(expression, extensionMethod);
-            }
-        }
-
-        [Test]
-        [TestCaseSource("ErrorTypeExpressions")]
-        public void TestIsError(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
-        {
-            static bool extensionMethod(Exception e) => e.IsError();
-
-            if (expectedToThrow)
-            {
-                AssertDoesNotCatch(expression, extensionMethod);
-            }
-            else
-            {
-                AssertCatches(expression, extensionMethod);
-            }
-        }
-
-        // This test ensures that all known Error types from Java are not caught by
-        // our IsException() handler.
-        [Test]
-        [TestCaseSource("ExceptionTypeExpressions")]
-        public void TestIsException(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
-        {
-            static bool extensionMethod(Exception e) => e.IsException();
-
-            if (expectedToThrow)
-            {
-                AssertDoesNotCatch(expression, extensionMethod);
-            }
-            else
-            {
-                AssertCatches(expression, extensionMethod);
-            }
-        }
-
-        // This test ensures that all known Error types from Java are not caught by
-        // our IsRuntimeException() handler.
-        [Test]
-        [TestCaseSource("RuntimeExceptionTypeExpressions")]
-        public void TestIsRuntimeException(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
-        {
-            static bool extensionMethod(Exception e) => e.IsRuntimeException();
-
-            if (expectedToThrow)
-            {
-                AssertDoesNotCatch(expression, extensionMethod);
-            }
-            else
-            {
-                AssertCatches(expression, extensionMethod);
-            }
-        }
-
-        [Test]
-        [TestCaseSource("IOExceptionTypeExpressions")]
-        public void TestIsIOException(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
-        {
-            static bool extensionMethod(Exception e) => e.IsIOException();
-
-            if (expectedToThrow)
-            {
-                AssertDoesNotCatch(expression, extensionMethod);
-            }
-            else
-            {
-                AssertCatches(expression, extensionMethod);
-            }
-        }
-
-        // This test ensures that Lucene.NET's AssertionException, the .NET platform's DebugAssertException, and
-        // NUnit's AssertionException and MultipleAssertException types are all treated as if they were AssertionError
-        // in Java.
-        [Test]
-        [TestCaseSource("AssertionErrorTypeExpressions")]
-        public void TestIsAssertionError(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
-        {
-            static bool extensionMethod(Exception e) => e.IsAssertionError();
-
-            if (expectedToThrow)
-            {
-                AssertDoesNotCatch(expression, extensionMethod);
-            }
-            else
-            {
-                AssertCatches(expression, extensionMethod);
-            }
-        }
-
-        // This test ensures that ArgumentOutOfRangeException and IndexOutOfRangeException are both caught by our
-        // IndexOutOfBoundsException handler, because they both correspond to IndexOutOfBoundsException in Java.
-        // Java has 2 other types ArrayIndexOutOfBoundsException and StringIndexOutOfBoundsException, whose alias
-        // exception types are also part of the test.
-        [Test]
-        [TestCaseSource("IndexOutOfBoundsExceptionTypeExpressions")]
-        public void TestIsIndexOutOfBoundsException(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
-        {
-            static bool extensionMethod(Exception e) => e.IsIndexOutOfBoundsException();
-
-            if (expectedToThrow)
-            {
-                AssertDoesNotCatch(expression, extensionMethod);
-            }
-            else
-            {
-                AssertCatches(expression, extensionMethod);
-            }
-        }
-
-        // This test ensures that ArgumentNullException and NullReferenceException are both caught by our
-        // NullPointerException handler, because they both correspond to NullPointerException in Java
-        [Test]
-        [TestCaseSource("NullPointerExceptionTypeExpressions")]
-        public void TestIsNullPointerException(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
-        {
-            static bool extensionMethod(Exception e) => e.IsNullPointerException();
-
-            if (expectedToThrow)
-            {
-                AssertDoesNotCatch(expression, extensionMethod);
-            }
-            else
-            {
-                AssertCatches(expression, extensionMethod);
-            }
-        }
-
-        // This test ensures that any known ArgumentException will be caught.
-        // We do it this way in production to ensure that if we "upgrade" to a .NET
-        // ArgumentNullException or ArgumentOutOfRangeException it won't break the code.
-        [Test]
-        [TestCaseSource("IllegalArgumentExceptionTypeExpressions")]
-        public void TestIsIllegalArgumentException(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
-        {
-            // Make sure we are testing the production code
-            static bool extensionMethod(Exception e) => Lucene.ExceptionExtensions.IsIllegalArgumentException(e);
-
-            if (expectedToThrow)
-            {
-                AssertDoesNotCatch(expression, extensionMethod);
-            }
-            else
-            {
-                AssertCatches(expression, extensionMethod);
-            }
-        }
-
-        // This test ensures that ArgumentNullException and ArgumentOutOfRangeException are not caught by our
-        // IllegalArgumentException handler in tests, because they wouldn't be in Java. We do this differently
-        // in the test environment to ensure that if a test is specified wrong it will fail and should be updated
-        // and commented to indicate we diverged from Lucene.
-        [Test]
-        [TestCaseSource("IllegalArgumentExceptionTypeExpressions_TestEnvironment")]
-        public void TestIsIllegalArgumentException_TestEnvironment(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
-        {
-            // Make sure we are testing the test environment code
-            static bool extensionMethod(Exception e) => Lucene.Net.ExceptionExtensions.IsIllegalArgumentException(e);
-
-            if (expectedToThrow)
-            {
-                AssertDoesNotCatch(expression, extensionMethod);
-            }
-            else
-            {
-                AssertCatches(expression, extensionMethod);
-            }
-        }
-
-        private void AssertCatches(Action action, Func<Exception, bool> extensionMethodExpression)
-        {
-            try
-            {
-                try
-                {
-                    action();
-                }
-                catch (Exception e) when (extensionMethodExpression(e))
-                {
-                    // expected
-                    Assert.Pass($"Expected: Caught exception {e.GetType().FullName}");
-                }
-            }
-            catch (Exception e) when (!(e is NUnit.Framework.SuccessException))
-            {
-                // not expected
-                Assert.Fail($"Exception thrown when expected to be caught: {e.GetType().FullName}");
-            }
-        }
-
-        private void AssertDoesNotCatch(Action action, Func<Exception, bool> extensionMethodExpression)
-        {
-            try
-            {
-                try
-                {
-                    action();
-                }
-                catch (NUnit.Framework.AssertionException e)
-                {
-                    // Special case - need to suppress this from being thrown to the outer catch
-                    // or we will get a false failure
-                    Assert.IsFalse(extensionMethodExpression(e));
-                    Assert.Pass($"Expected: Did not catch exception {e.GetType().FullName}");
-                }
-                catch (Exception e) when (extensionMethodExpression(e))
-                {
-                    // not expected
-                    Assert.Fail($"Exception caught when expected to be thrown: {e.GetType().FullName}");
-                }
-            }
-            catch (Exception e) when (!(e is NUnit.Framework.AssertionException))
-            {
-                // expected
-                Assert.Pass($"Expected: Did not catch exception {e.GetType().FullName}");
-            }
+            return (Exception)exception;
         }
     }
 }
