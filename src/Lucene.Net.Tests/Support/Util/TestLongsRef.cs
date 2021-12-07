@@ -21,29 +21,30 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
+    // LUCENENET: These tests didn't exist in Lucene 4.8.0. Just copying the TestIntsRef tests so we can test the same things.
     [TestFixture]
-    public class TestIntsRef : LuceneTestCase
+    public class TestLongsRef : LuceneTestCase
     {
-        [Test]
+        [Test, LuceneNetSpecific]
         public virtual void TestEmpty()
         {
-            Int32sRef i = new Int32sRef();
-            Assert.AreEqual(Int32sRef.EMPTY_INT32S, i.Int32s);
+            Int64sRef i = new Int64sRef();
+            Assert.AreEqual(Int64sRef.EMPTY_INT64S, i.Int64s);
             Assert.AreEqual(0, i.Offset);
             Assert.AreEqual(0, i.Length);
         }
 
-        [Test]
-        public virtual void TestFromInts()
+        [Test, LuceneNetSpecific]
+        public virtual void TestFromLongs()
         {
-            int[] ints = new int[] { 1, 2, 3, 4 };
-            Int32sRef i = new Int32sRef(ints, 0, 4);
-            Assert.AreEqual(ints, i.Int32s);
+            long[] ints = new long[] { 1, 2, 3, 4 };
+            Int64sRef i = new Int64sRef(ints, 0, 4);
+            Assert.AreEqual(ints, i.Int64s);
             Assert.AreEqual(0, i.Offset);
             Assert.AreEqual(4, i.Length);
 
-            Int32sRef i2 = new Int32sRef(ints, 1, 3);
-            Assert.AreEqual(new Int32sRef(new int[] { 2, 3, 4 }, 0, 3), i2);
+            Int64sRef i2 = new Int64sRef(ints, 1, 3);
+            Assert.AreEqual(new Int64sRef(new long[] { 2, 3, 4 }, 0, 3), i2);
 
             Assert.IsFalse(i.Equals(i2));
         }
@@ -53,20 +54,20 @@ namespace Lucene.Net.Util
         [Test, LuceneNetSpecific]
         public void TestSerialization()
         {
-            var ints = new int[] { 5, 10, 15, 20, 25, 30, 35, 40 };
+            var longs = new long[] { 5, 10, 15, 20, 25, 30, 35, 40 };
 
-            var intsRef = new Int32sRef(ints, 3, 4);
+            var longsRef = new Int64sRef(longs, 3, 4);
 
-            Assert.AreEqual(4, intsRef.Length);
-            Assert.AreSame(ints, intsRef.Int32s);
-            Assert.AreEqual(ints, intsRef.Int32s);
-            Assert.AreEqual(3, intsRef.Offset);
+            Assert.AreEqual(4, longsRef.Length);
+            Assert.AreSame(longs, longsRef.Int64s);
+            Assert.AreEqual(longs, longsRef.Int64s);
+            Assert.AreEqual(3, longsRef.Offset);
 
-            var clone = Clone(intsRef);
+            var clone = Clone(longsRef);
 
             Assert.AreEqual(4, clone.Length);
-            Assert.AreNotSame(ints, clone.Int32s);
-            Assert.AreEqual(ints, clone.Int32s);
+            Assert.AreNotSame(longs, clone.Int64s);
+            Assert.AreEqual(longs, clone.Int64s);
             Assert.AreEqual(3, clone.Offset);
         }
 #endif

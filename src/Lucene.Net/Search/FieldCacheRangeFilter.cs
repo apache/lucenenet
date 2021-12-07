@@ -61,9 +61,6 @@ namespace Lucene.Net.Search
 
     public static class FieldCacheRangeFilter
     {
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class AnonymousStringFieldCacheRangeFilter : FieldCacheRangeFilter<string>
         {
             internal AnonymousStringFieldCacheRangeFilter(string field, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
@@ -132,9 +129,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class AnonymousBytesRefFieldCacheRangeFilter : FieldCacheRangeFilter<BytesRef>
         {
             internal AnonymousBytesRefFieldCacheRangeFilter(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
@@ -203,9 +197,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class AnonymousSbyteFieldCacheRangeFilter : FieldCacheRangeFilter<sbyte?>
         {
             internal AnonymousSbyteFieldCacheRangeFilter(string field, FieldCache.IParser parser, sbyte? lowerVal, sbyte? upperVal, bool includeLower, bool includeUpper)
@@ -255,9 +246,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class AnonymousInt16FieldCacheRangeFilter : FieldCacheRangeFilter<short?>
         {
             internal AnonymousInt16FieldCacheRangeFilter(string field, FieldCache.IParser parser, short? lowerVal, short? upperVal, bool includeLower, bool includeUpper)
@@ -308,9 +296,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class AnonymousInt32FieldCacheRangeFilter : FieldCacheRangeFilter<int?>
         {
             internal AnonymousInt32FieldCacheRangeFilter(string field, FieldCache.IParser parser, int? lowerVal, int? upperVal, bool includeLower, bool includeUpper)
@@ -358,9 +343,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class AnonymousInt64FieldCacheRangeFilter : FieldCacheRangeFilter<long?>
         {
             internal AnonymousInt64FieldCacheRangeFilter(string field, FieldCache.IParser parser, long? lowerVal, long? upperVal, bool includeLower, bool includeUpper)
@@ -408,9 +390,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class AnonymousSingleFieldCacheRangeFilter : FieldCacheRangeFilter<float?>
         {
             internal AnonymousSingleFieldCacheRangeFilter(string field, FieldCache.IParser parser, float? lowerVal, float? upperVal, bool includeLower, bool includeUpper)
@@ -463,9 +442,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class AnonymousDoubleFieldCacheRangeFilter : FieldCacheRangeFilter<double?>
         {
             internal AnonymousDoubleFieldCacheRangeFilter(string field, FieldCache.IParser parser, double? lowerVal, double? upperVal, bool includeLower, bool includeUpper)

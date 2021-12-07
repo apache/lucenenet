@@ -18,16 +18,17 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary> 
     /// Describes the input token stream.
     /// </summary>
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
     public class Token
     {
-
         /// <summary> 
         /// An integer that describes the kind of this token.  This numbering
         /// system is determined by JavaCCParser, and a table of these numbers is

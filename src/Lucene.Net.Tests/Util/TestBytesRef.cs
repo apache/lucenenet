@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -96,5 +96,28 @@ namespace Lucene.Net.Util
             b.CopyBytes(new BytesRef("bcde"));
             Assert.AreEqual("bcde", b.Utf8ToString());
         }
+
+#if FEATURE_SERIALIZABLE
+
+        [Test, LuceneNetSpecific]
+        public void TestSerialization()
+        {
+            byte[] bytes = new byte[] { 44, 66, 77, 33, 99, 13, 74, 26 };
+
+            var bytesRef = new BytesRef(bytes, 2, 4);
+
+            Assert.AreEqual(4, bytesRef.Length);
+            Assert.AreSame(bytes, bytesRef.Bytes);
+            Assert.AreEqual(bytes, bytesRef.Bytes);
+            Assert.AreEqual(2, bytesRef.Offset);
+
+            var clone = Clone(bytesRef);
+
+            Assert.AreEqual(4, clone.Length);
+            Assert.AreNotSame(bytes, clone.Bytes);
+            Assert.AreEqual(bytes, clone.Bytes);
+            Assert.AreEqual(2, clone.Offset);
+        }
+#endif
     }
 }

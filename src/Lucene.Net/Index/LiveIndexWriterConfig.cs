@@ -35,9 +35,6 @@ namespace Lucene.Net.Index
     ///
     /// @since 4.0
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class LiveIndexWriterConfig
     {
         private readonly Analyzer analyzer;

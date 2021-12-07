@@ -164,7 +164,7 @@ namespace Lucene.Net.Queries.Function.DocValues
         // LUCENENET: It is no longer good practice to use binary serialization. 
         // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
-    [Serializable]
+        [Serializable]
 #endif
         public sealed class DocTermsIndexException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
         {

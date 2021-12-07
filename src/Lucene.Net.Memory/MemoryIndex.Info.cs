@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using System;
 
 namespace Lucene.Net.Index.Memory
@@ -38,9 +38,6 @@ namespace Lucene.Net.Index.Memory
             /// <summary>
             /// Terms sorted ascending by term text; computed on demand 
             /// </summary>
-#if FEATURE_SERIALIZABLE
-            [NonSerialized]
-#endif
             internal int[] sortedTerms;
 
             /// <summary>

@@ -44,9 +44,6 @@ namespace Lucene.Net.Search
     ///    <para/>See also the family of Span Queries (<see cref="Lucene.Net.Search.Spans"/>)
     ///       and additional queries available in the <a href="{@docRoot}/../queries/overview-summary.html">Queries module</a>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class Query // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         // LUCENENET NOTE: We can't set the default boost in the constructor because the

@@ -43,8 +43,8 @@ namespace Lucene.Net.Util
     public abstract class PriorityQueue<T>
     {
         private int size = 0;
-        private readonly int maxSize;
-        private readonly T[] heap;
+        internal readonly int maxSize; // LUCENENET: Internal for testing
+        internal readonly T[] heap; // LUCENENET: Internal for testing
 
         protected PriorityQueue(int maxSize) // LUCENENET specific - made protected instead of public
             : this(maxSize, true)

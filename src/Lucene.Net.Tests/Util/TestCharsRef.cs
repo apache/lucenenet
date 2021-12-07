@@ -247,5 +247,28 @@ namespace Lucene.Net.Util
                 // expected exception
             }
         }
+
+#if FEATURE_SERIALIZABLE
+
+        [Test, LuceneNetSpecific]
+        public void TestSerialization()
+        {
+            var chars = "The quick brown fox jumped over the lazy dog.".ToCharArray();
+
+            var charsRef = new CharsRef(chars, 8, 10);
+
+            Assert.AreEqual(10, charsRef.Length);
+            Assert.AreSame(chars, charsRef.Chars);
+            Assert.AreEqual(chars, charsRef.Chars);
+            Assert.AreEqual(8, charsRef.Offset);
+
+            var clone = Clone(charsRef);
+
+            Assert.AreEqual(10, clone.Length);
+            Assert.AreNotSame(chars, clone.Chars);
+            Assert.AreEqual(chars, clone.Chars);
+            Assert.AreEqual(8, clone.Offset);
+        }
+#endif
     }
 }
