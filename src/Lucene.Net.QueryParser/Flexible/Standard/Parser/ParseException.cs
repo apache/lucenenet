@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
+#endif
+#if FEATURE_CODE_ACCESS_SECURITY
 using System.Security.Permissions;
 #endif
 using System.Text;
@@ -103,12 +105,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         protected ParseException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            CurrentToken = (Token)info.GetValue("CurrentToken", typeof(Token));
-            ExpectedTokenSequences = (int[][])info.GetValue("ExpectedTokenSequences", typeof(int[][]));
-            TokenImage = (string[])info.GetValue("TokenImage", typeof(string[]));
+            CurrentToken = (Token)info.GetValue("CurrentToken", typeof(Token))!;
+            ExpectedTokenSequences = (int[][])info.GetValue("ExpectedTokenSequences", typeof(int[][]))!;
+            TokenImage = (string[])info.GetValue("TokenImage", typeof(string[]))!;
         }
 
+#if FEATURE_CODE_ACCESS_SECURITY
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+#endif
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
