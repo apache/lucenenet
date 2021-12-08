@@ -48,6 +48,7 @@ Framework or Silverlight), or Microsoft application platform (such as Microsoft
 Office or Microsoft Dynamics).
 */
 
+using J2N.Threading.Atomic;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -63,6 +64,8 @@ namespace Lucene.Net.Support.Threading
     /// </summary>
     internal class LimitedConcurrencyLevelTaskScheduler : TaskScheduler
     {
+        private readonly AtomicBoolean shutDown = new AtomicBoolean(false);
+
         // Indicates whether the current thread is processing work items.
         [ThreadStatic]
         private static bool _currentThreadIsProcessingItems;
@@ -86,6 +89,9 @@ namespace Lucene.Net.Support.Threading
         // Queues a task to the scheduler. 
         protected sealed override void QueueTask(Task task)
         {
+            // Don't queue any more work.
+            if (shutDown) return;
+
             // Add the task to the list of tasks to be processed.  If there aren't enough 
             // delegates currently queued or running to process tasks, schedule another.
             UninterruptableMonitor.Enter(_tasks);
@@ -200,6 +206,12 @@ namespace Lucene.Net.Support.Threading
             {
                 if (lockTaken) UninterruptableMonitor.Exit(_tasks);
             }
+        }
+
+        // Stops this TaskScheduler from queuing new tasks.
+        public void Shutdown()
+        {
+            shutDown.Value = true;
         }
     }
 }
