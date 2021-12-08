@@ -2433,7 +2433,7 @@ namespace Lucene.Net.Util
             else
             {
                 int threads = 0;
-                TaskScheduler ex;
+                LimitedConcurrencyLevelTaskScheduler ex;
                 if (random.NextBoolean())
                 {
                     ex = null;
@@ -2452,7 +2452,7 @@ namespace Lucene.Net.Util
                     {
                         Console.WriteLine("NOTE: newSearcher using ExecutorService with " + threads + " threads");
                     }
-                    //r.AddReaderClosedListener(new ReaderClosedListenerAnonymousClass(ex)); // LUCENENET TODO: Implement event (see the commented ReaderClosedListenerAnonymousClass class near the bottom of this file)
+                    r.AddReaderClosedListener(new ReaderClosedListenerAnonymousClass(ex));
                 }
                 IndexSearcher ret;
                 if (wrapWithAssertions)
@@ -3655,20 +3655,21 @@ namespace Lucene.Net.Util
         {
             return Random.NextGaussian();
         }
+
+        private class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
+        {
+            private readonly LimitedConcurrencyLevelTaskScheduler ex;
+
+            public ReaderClosedListenerAnonymousClass(LimitedConcurrencyLevelTaskScheduler ex)
+            {
+                this.ex = ex;
+            }
+
+            public void OnClose(IndexReader reader)
+            {
+                ex?.Shutdown();
+                //TestUtil.ShutdownExecutorService(ex);
+            }
+        }
     }
-
-    //private class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
-    //{
-    //    private TaskScheduler ex;
-
-    //    public ReaderClosedListenerAnonymousClass(TaskScheduler ex)
-    //    {
-    //        this.ex = ex;
-    //    }
-
-    //    public void OnClose(IndexReader reader)
-    //    {
-    //        TestUtil.ShutdownExecutorService(ex);
-    //    }
-    //}
 }
