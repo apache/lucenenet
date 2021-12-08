@@ -75,7 +75,7 @@
 
   </PropertyGroup>
 
-  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x (No .NET 6.x support ) -->
+  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x (No .NET 6.x support) -->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or '$(TargetFramework)' == 'net5.0' ">
 
     <DefineConstants>$(DefineConstants);FEATURE_TEXTWRITER_INITIALIZELIFETIMESERVICE</DefineConstants>
@@ -101,10 +101,10 @@
 
     <DefineConstants>$(DefineConstants);NETFRAMEWORK</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_ARGITERATOR</DefineConstants>
+    <!-- Although code access security is available in .NET Standard 2.0+ via platform extensions, we are excluding
+    it due to the fact it is not a primary feature of Lucene.NET and it is supported in .NET Framework -->
+    <DefineConstants>$(DefineConstants);FEATURE_CODE_ACCESS_SECURITY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_MEMORYMAPPEDFILESECURITY</DefineConstants>
-    <!-- Although HostProtectionAttribute is available in .NET Standard 2.0+ via platform extensions, we are excluding
-         it due to the fact it is not a primary feature of Lucene.NET -->
-    <DefineConstants>$(DefineConstants);FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_STACKOVERFLOWEXCEPTION__ISCATCHABLE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_TEXTWRITER_CREATEOBJREF</DefineConstants>
     

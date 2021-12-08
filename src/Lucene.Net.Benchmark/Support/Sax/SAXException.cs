@@ -6,6 +6,8 @@
 using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
+#endif
+#if FEATURE_CODE_ACCESS_SECURITY
 using System.Security.Permissions;
 #endif
 
@@ -102,7 +104,9 @@ namespace Sax
             exception = (Exception)info.GetValue("Exception", typeof(Exception));
         }
 
+#if FEATURE_CODE_ACCESS_SECURITY
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+#endif
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);

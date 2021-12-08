@@ -1,6 +1,8 @@
 ﻿using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
+#endif
+#if FEATURE_CODE_ACCESS_SECURITY
 using System.Security.Permissions;
 #endif
 #nullable enable
@@ -86,10 +88,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
             query = info.GetString("query");
             beginColumn = info.GetInt32("beginColumn");
             beginLine = info.GetInt32("beginLine");
-            errorToken = info.GetString("errorToken");
+            errorToken = info.GetString("errorToken")!;
         }
 
+#if FEATURE_CODE_ACCESS_SECURITY
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+#endif
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
