@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lucene.Net.Support.Threading
@@ -20,7 +21,7 @@ namespace Lucene.Net.Support.Threading
      * limitations under the License.
      */
 
-    internal class TaskSchedulerCompletionService<T> : ICompletionService<T>
+    internal class TaskSchedulerCompletionService<T>
     {
         private readonly TaskFactory<T> factory;
         private readonly Queue<Task<T>> taskQueue = new Queue<Task<T>>();
@@ -30,9 +31,9 @@ namespace Lucene.Net.Support.Threading
             this.factory = new TaskFactory<T>(scheduler ?? TaskScheduler.Default);
         }
 
-        public Task<T> Submit(ICallable<T> task)
+        public Task<T> Submit(Func<T> task)
         {
-            var t = factory.StartNew(task.Call);
+            var t = factory.StartNew(task);
             taskQueue.Enqueue(t);
             return t;
         }
