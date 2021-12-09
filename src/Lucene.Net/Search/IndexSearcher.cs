@@ -456,7 +456,7 @@ namespace Lucene.Net.Search
 
                 for (int i = 0; i < m_leafSlices.Length; i++) // search each sub
                 {
-                    runner.Submit(new SearcherCallableNoSort(@lock, this, m_leafSlices[i], weight, after, nDocs, hq));
+                    runner.Submit(new SearcherCallableNoSort(@lock, this, m_leafSlices[i], weight, after, nDocs, hq).Call);
                 }
 
                 int totalHits = 0;
@@ -549,10 +549,12 @@ namespace Lucene.Net.Search
 
                 ReentrantLock @lock = new ReentrantLock();
                 ExecutionHelper<TopFieldDocs> runner = new ExecutionHelper<TopFieldDocs>(executor);
+
                 for (int i = 0; i < m_leafSlices.Length; i++) // search each leaf slice
                 {
-                    runner.Submit(new SearcherCallableWithSort(@lock, this, m_leafSlices[i], weight, after, nDocs, topCollector, sort, doDocScores, doMaxScore));
+                    runner.Submit(new SearcherCallableWithSort(@lock, this, m_leafSlices[i], weight, after, nDocs, topCollector, sort, doDocScores, doMaxScore).Call);
                 }
+
                 int totalHits = 0;
                 float maxScore = float.NegativeInfinity;
                 foreach (TopFieldDocs topFieldDocs in runner)
@@ -722,7 +724,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// A thread subclass for searching a single searchable
         /// </summary>
-        private sealed class SearcherCallableNoSort : ICallable<TopDocs>
+        private sealed class SearcherCallableNoSort // LUCENENET: no need for ICallable<V> interface
         {
             private readonly ReentrantLock @lock;
             private readonly IndexSearcher searcher;
@@ -771,7 +773,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// A thread subclass for searching a single searchable
         /// </summary>
-        private sealed class SearcherCallableWithSort : ICallable<TopFieldDocs>
+        private sealed class SearcherCallableWithSort // LUCENENET: no need for ICallable<V> interface
         {
             private readonly ReentrantLock @lock;
             private readonly IndexSearcher searcher;
@@ -834,13 +836,13 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// A helper class that wraps a <see cref="ICompletionService{T}"/> and provides an
-        /// iterable interface to the completed <see cref="ICallable{V}"/> instances.
+        /// A helper class that wraps a <see cref="TaskSchedulerCompletionService{T}"/> and provides an
+        /// iterable interface to the completed <see cref="Func{T}"/> delegates.
         /// </summary>
-        /// <typeparam name="T">the type of the <see cref="ICallable{V}"/> return value</typeparam>
+        /// <typeparam name="T">the type of the <see cref="Func{T}"/> return value</typeparam>
         private sealed class ExecutionHelper<T> : IEnumerator<T>, IEnumerable<T>
         {
-            private readonly ICompletionService<T> service;
+            private readonly TaskSchedulerCompletionService<T> service;
             private int numTasks;
             private T current;
 
@@ -857,7 +859,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public void Submit(ICallable<T> task)
+            public void Submit(Func<T> task)
             {
                 this.service.Submit(task);
                 ++numTasks;

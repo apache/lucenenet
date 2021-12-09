@@ -120,7 +120,7 @@ namespace Lucene.Net.Search.Suggest
             Console.WriteLine("-- construction time");
             foreach (var cls in benchmarkClasses)
             {
-                BenchmarkResult result = Measure(new CallableIntHelper(this, cls));
+                BenchmarkResult result = Measure(new CallableIntHelper(this, cls).Call);
 
                 Console.WriteLine(
                     string.Format(CultureInfo.InvariantCulture, "{0,15}s input: {1}, time[ms]: {2}" /*"%-15s input: %d, time[ms]: %s"*/,
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        private class CallableIntHelper : ICallable<int>
+        private class CallableIntHelper // LUCENENET: no need for ICallable<V> interface
         {
             private readonly Type cls;
             private readonly LookupBenchmarkTest outerInstance;
@@ -250,7 +250,7 @@ namespace Lucene.Net.Search.Suggest
                     input.Add(sub);
                 }
 
-                BenchmarkResult result = Measure(new PerformanceTestCallableIntHelper(this, input, lookup));
+                BenchmarkResult result = Measure(new PerformanceTestCallableIntHelper(this, input, lookup).Call);
 
                 Console.WriteLine(
                     string.Format(CultureInfo.InvariantCulture, "{0,15}s queries: {1}, time[ms]: {2}, ~kQPS: {3:#.0}" /*"%-15s queries: %d, time[ms]: %s, ~kQPS: %.0f"*/,
@@ -261,7 +261,7 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        internal class PerformanceTestCallableIntHelper : ICallable<int>
+        internal class PerformanceTestCallableIntHelper // LUCENENET: no need for ICallable<V> interface
         {
             private readonly IEnumerable<string> input;
             private readonly Lookup lookup;
@@ -288,7 +288,7 @@ namespace Lucene.Net.Search.Suggest
         /**
          * Do the measurements.
          */
-        private BenchmarkResult Measure(ICallable<int> callable)
+        private BenchmarkResult Measure(Func<int> callable)
         {
             double NANOS_PER_MS = 1000000;
 
@@ -298,7 +298,7 @@ namespace Lucene.Net.Search.Suggest
                 for (int i = 0; i < warmup + rounds; i++)
                 {
                     long start = J2N.Time.NanoTime();
-                    guard = Convert.ToInt32(callable.Call());
+                    guard = Convert.ToInt32(callable());
                     times.Add((J2N.Time.NanoTime() - start) / NANOS_PER_MS );
                 }
                 return new BenchmarkResult(times, warmup, rounds);
