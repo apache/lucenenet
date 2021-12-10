@@ -620,8 +620,8 @@ namespace Lucene.Net.Index
             // build to less than 1 hour.
             int RUN_TIME_SEC = LuceneTestCase.TestNightly ? 150 : RandomMultiplier;
 
-            ISet<string> delIDs = new ConcurrentHashSet<string>();
-            ISet<string> delPackIDs = new ConcurrentHashSet<string>();
+            ISet<string> delIDs = new HashSet<string>().AsConcurrent();
+            ISet<string> delPackIDs = new HashSet<string>().AsConcurrent();
             ConcurrentQueue<SubDocs> allSubDocs = new ConcurrentQueue<SubDocs>();
 
             long stopTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + (RUN_TIME_SEC * 1000); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
