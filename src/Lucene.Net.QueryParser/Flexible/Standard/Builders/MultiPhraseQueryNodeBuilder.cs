@@ -46,7 +46,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
             if (children != null)
             {
-                IDictionary<int?, JCG.List<Term>> positionTermMap = new JCG.SortedDictionary<int?, JCG.List<Term>>();
+                IDictionary<int, JCG.List<Term>> positionTermMap = new JCG.SortedDictionary<int, JCG.List<Term>>();
 
                 foreach (IQueryNode child in children)
                 {
