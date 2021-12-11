@@ -1,5 +1,6 @@
 ﻿using J2N;
 using J2N.Threading;
+using J2N.Threading.Atomic;
 using Lucene.Net.Support.Threading;
 using System;
 using System.Threading;
@@ -51,9 +52,9 @@ namespace Lucene.Net.Search
         private volatile bool finish;
         private long waitingGen;
         private long searchingGen;
-        private long refreshStartGen;
-        private bool isDisposed = false;
-		
+        private readonly AtomicInt64 refreshStartGen = new AtomicInt64();
+        private readonly AtomicBoolean isDisposed = new AtomicBoolean(false);
+
         private readonly EventWaitHandle intrinsic = new ManualResetEvent(false);  // LUCENENET specific: used to mimic intrinsic monitor used by java wait and notifyAll keywords.
         private readonly EventWaitHandle reopenCond = new AutoResetEvent(false);   // LUCENENET NOTE: unlike java, in c# we don't need to lock reopenCond when calling methods on it.
 
@@ -142,49 +143,37 @@ namespace Lucene.Net.Search
         // LUCENENET specific - Support for Dispose(bool) since this is a non-sealed class.
         protected virtual void Dispose(bool disposing)
         {
-            UninterruptableMonitor.Enter(this);
-			try
+            // LUCENENET: Prevent double-dispose of our managed resources.
+            if (isDisposed.GetAndSet(true))
             {
-                if (isDisposed)
-                {
-                    return;
-                }
-
-                if (disposing)
-                {
-
-                    finish = true;
-
-                    // So thread wakes up and notices it should finish:
-                    reopenCond.Set();
-
-                    try
-                    {
-                        Join();
-                    }
-                    catch (Exception ie) when (ie.IsInterruptedException())
-                    {
-                        throw new Util.ThreadInterruptedException(ie);
-                    }
-                    finally
-                    {
-                        RefreshDone();
-
-                        // LUCENENET specific: dispose reset event
-                        reopenCond.Dispose();
-                        intrinsic.Dispose();
-
-                    }
-                }
-
-                isDisposed = true;
+                return;
             }
-			finally
-			{
-				UninterruptableMonitor.Exit(this);
-			}
-        }
 
+            if (disposing)
+            {
+                finish = true;
+
+                // So thread wakes up and notices it should finish:
+                reopenCond.Set();
+
+                try
+                {
+                    Join();
+                }
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    throw new Util.ThreadInterruptedException(ie);
+                }
+                finally
+                {
+                    RefreshDone();
+
+                    // LUCENENET specific: dispose reset events
+                    reopenCond.Dispose();
+                    intrinsic.Dispose();
+                }
+            }
+        }
 
         /// <summary>
         /// Waits for the target generation to become visible in
@@ -335,7 +324,7 @@ namespace Lucene.Net.Search
                 // Save the gen as of when we started the reopen; the
                 // listener (HandleRefresh above) copies this to
                 // searchingGen once the reopen completes:
-                refreshStartGen = writer.GetAndIncrementGeneration();
+                refreshStartGen.Value = writer.GetAndIncrementGeneration();
                 try
                 {
                     manager.MaybeRefreshBlocking();
@@ -344,10 +333,7 @@ namespace Lucene.Net.Search
                 {
                     throw RuntimeException.Create(ioe);
                 }
-                
             }
         }
-
-        
     }
 }
