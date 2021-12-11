@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using Lucene.Net.Attributes;
 
 namespace Lucene.Net.Search
 {
@@ -761,6 +762,8 @@ namespace Lucene.Net.Search
         /// </summary>
         // LUCENENET specific - An extra test to demonstrate use of ControlledRealTimeReopen.
         [Test]
+        [LuceneNetSpecific]
+        [Ignore("Run Manually (contains timing code that doesn't play well with other tests)")]
         public void TestStraightForwardDemonstration()
         {
 
@@ -881,6 +884,8 @@ namespace Lucene.Net.Search
         /// </summary>
         // LUCENENET specific - An extra test to test multithreaded use of ControlledRealTimeReopen.
         [Test]
+        [LuceneNetSpecific]
+        [Ignore("Run Manually (contains timing code that doesn't play well with other tests)")]
         public void TestMultithreadedWaitForGeneration()
         {
             Thread CreateWorker(int threadNum, ControlledRealTimeReopenThread<IndexSearcher> controlledReopen, long generation,
