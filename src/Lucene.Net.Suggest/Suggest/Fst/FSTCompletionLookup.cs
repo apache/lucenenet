@@ -290,13 +290,13 @@ namespace Lucene.Net.Search.Suggest.Fst
         }
 
         /// <summary>
-        /// Returns the bucket (weight) as a Long for the provided key if it exists,
+        /// Returns the bucket (weight) as a <see cref="T:long?"/> for the provided key if it exists,
         /// otherwise null if it does not.
         /// </summary>
-        public virtual object Get(string key)
+        public virtual long? Get(string key)
         {
             int bucket = normalCompletion.GetBucket(key);
-            return bucket == -1 ? (long?)null : bucket;
+            return bucket == -1 ? null : bucket;
         }
 
         public override bool Store(DataOutput output)
