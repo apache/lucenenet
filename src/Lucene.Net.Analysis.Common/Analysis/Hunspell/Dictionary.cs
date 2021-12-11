@@ -298,7 +298,7 @@ namespace Lucene.Net.Analysis.Hunspell
         {
             var prefixes = new JCG.SortedDictionary<string, IList<int>>(StringComparer.Ordinal);
             var suffixes = new JCG.SortedDictionary<string, IList<int>>(StringComparer.Ordinal);
-            IDictionary<string, int?> seenPatterns = new JCG.Dictionary<string, int?>
+            IDictionary<string, int> seenPatterns = new JCG.Dictionary<string, int>
             {
                 // zero condition -> 0 ord
                 [".*"] = 0
@@ -306,7 +306,7 @@ namespace Lucene.Net.Analysis.Hunspell
             patterns.Add(null);
 
             // zero strip -> 0 ord
-            IDictionary<string, int?> seenStrips = new JCG.LinkedDictionary<string, int?>
+            IDictionary<string, int> seenStrips = new JCG.LinkedDictionary<string, int>
             {
                 [""] = 0
             };
@@ -509,8 +509,8 @@ namespace Lucene.Net.Analysis.Hunspell
                     string header,
                     TextReader reader,
                     string conditionPattern,
-                    IDictionary<string, int?> seenPatterns,
-                    IDictionary<string, int?> seenStrips)
+                    IDictionary<string, int> seenPatterns,
+                    IDictionary<string, int> seenStrips)
         {
             BytesRef scratch = new BytesRef();
             StringBuilder sb = new StringBuilder();
@@ -592,7 +592,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 }
 
                 // deduplicate patterns
-                if (!seenPatterns.TryGetValue(regex, out int? patternIndex) || patternIndex == null)
+                if (!seenPatterns.TryGetValue(regex, out int patternIndex))
                 {
                     patternIndex = patterns.Count;
                     if (patternIndex > short.MaxValue)
@@ -604,7 +604,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     patterns.Add(pattern);
                 }
 
-                if (!seenStrips.TryGetValue(strip, out int? stripOrd) || stripOrd == null)
+                if (!seenStrips.TryGetValue(strip, out int stripOrd))
                 {
                     stripOrd = seenStrips.Count;
                     seenStrips[strip] = stripOrd;
