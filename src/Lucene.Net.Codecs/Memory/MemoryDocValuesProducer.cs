@@ -38,16 +38,16 @@ namespace Lucene.Net.Codecs.Memory
     internal class MemoryDocValuesProducer : DocValuesProducer
     {
         // metadata maps (just file pointers and minimal stuff)
-        private readonly IDictionary<int?, NumericEntry> numerics;
-        private readonly IDictionary<int?, BinaryEntry> binaries;
-        private readonly IDictionary<int?, FSTEntry> fsts;
+        private readonly IDictionary<int, NumericEntry> numerics;
+        private readonly IDictionary<int, BinaryEntry> binaries;
+        private readonly IDictionary<int, FSTEntry> fsts;
         private readonly IndexInput data;
 
         // ram instances we have already loaded
-        private readonly IDictionary<int?, NumericDocValues> numericInstances = new Dictionary<int?, NumericDocValues>();
-        private readonly IDictionary<int?, BinaryDocValues> binaryInstances = new Dictionary<int?, BinaryDocValues>();
-        private readonly IDictionary<int?, FST<long?>> fstInstances = new Dictionary<int?, FST<long?>>();
-        private readonly IDictionary<int?, IBits> docsWithFieldInstances = new Dictionary<int?, IBits>();
+        private readonly IDictionary<int, NumericDocValues> numericInstances = new Dictionary<int, NumericDocValues>();
+        private readonly IDictionary<int, BinaryDocValues> binaryInstances = new Dictionary<int, BinaryDocValues>();
+        private readonly IDictionary<int, FST<long?>> fstInstances = new Dictionary<int, FST<long?>>();
+        private readonly IDictionary<int, IBits> docsWithFieldInstances = new Dictionary<int, IBits>();
 
         private readonly int maxDoc;
         private readonly AtomicInt64 ramBytesUsed;
@@ -81,9 +81,9 @@ namespace Lucene.Net.Codecs.Memory
             try
             {
                 version = CodecUtil.CheckHeader(@in, metaCodec, VERSION_START, VERSION_CURRENT);
-                numerics = new Dictionary<int?, NumericEntry>();
-                binaries = new Dictionary<int?, BinaryEntry>();
-                fsts = new Dictionary<int?, FSTEntry>();
+                numerics = new Dictionary<int, NumericEntry>();
+                binaries = new Dictionary<int, BinaryEntry>();
+                fsts = new Dictionary<int, FSTEntry>();
                 ReadFields(@in /*, state.FieldInfos // LUCENENET: Not referenced */);
                 if (version >= VERSION_CHECKSUM)
                 {
