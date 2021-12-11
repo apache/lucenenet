@@ -82,8 +82,8 @@ namespace Lucene.Net.Search
 
             this.writer = writer;
             this.manager = manager;
-            this.targetMaxStaleNS = (long)(1000000000 * targetMaxStaleSec);
-            this.targetMinStaleNS = (long)(1000000000 * targetMinStaleSec);
+            this.targetMaxStaleNS = (long)(Time.SecondsPerNanosecond * targetMaxStaleSec);
+            this.targetMinStaleNS = (long)(Time.SecondsPerNanosecond * targetMinStaleSec);
             manager.AddListener(new HandleRefresh(this));
         }
 
@@ -249,7 +249,7 @@ namespace Lucene.Net.Search
                 UninterruptableMonitor.Exit(this);
             }
 
-            long startMS = Time.NanoTime() / 1000000;
+            long startMS = Time.NanoTime() / Time.MillisecondsPerNanosecond;
             while (targetGen > Interlocked.Read(ref searchingGen))      // LUCENENET specific - reading searchingGen not thread safe, so use Interlocked.Read()
             {
                 if (maxMS < 0)
@@ -258,7 +258,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    long msLeft = (startMS + maxMS) - (Time.NanoTime()) / 1000000;
+                    long msLeft = (startMS + maxMS) - (Time.NanoTime()) / Time.MillisecondsPerNanosecond;
                     if (msLeft <= 0)
                     {
                         return false;
