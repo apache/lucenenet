@@ -96,10 +96,10 @@ namespace Lucene.Net.Codecs.Memory
             long gcd = 0;
             bool missing = false;
             // TODO: more efficient?
-            ISet<long?> uniqueValues = null;
+            ISet<long> uniqueValues = null;
             if (optimizeStorage)
             {
-                uniqueValues = new JCG.HashSet<long?>();
+                uniqueValues = new JCG.HashSet<long>();
 
                 long count = 0;
                 foreach (var nv in values)
@@ -179,14 +179,14 @@ namespace Lucene.Net.Codecs.Memory
                 else
                 {
                     meta.WriteByte(MemoryDocValuesProducer.TABLE_COMPRESSED); // table-compressed
-                    long?[] decode = new long?[uniqueValues.Count];
+                    long[] decode = new long[uniqueValues.Count];
                     uniqueValues.CopyTo(decode, 0);
 
                     var encode = new Dictionary<long?, int?>();
                     data.WriteVInt32(decode.Length);
                     for (int i = 0; i < decode.Length; i++)
                     {
-                        data.WriteInt64(decode[i].Value);
+                        data.WriteInt64(decode[i]);
                         encode[decode[i]] = i;
                     }
 
