@@ -170,7 +170,7 @@ namespace Lucene.Net.Index
         {
             // we put the old SegmentReaders in a map, that allows us
             // to lookup a reader using its segment name
-            IDictionary<string, int?> segmentReaders = new Dictionary<string, int?>();
+            IDictionary<string, int> segmentReaders = new Dictionary<string, int>();
 
             if (oldReaders != null)
             {
@@ -191,7 +191,7 @@ namespace Lucene.Net.Index
             for (int i = infos.Count - 1; i >= 0; i--)
             {
                 // find SegmentReader for this segment
-                if (!segmentReaders.TryGetValue(infos.Info(i).Info.Name, out int? oldReaderIndex) || oldReaderIndex == null)
+                if (!segmentReaders.TryGetValue(infos.Info(i).Info.Name, out int oldReaderIndex))
                 {
                     // this is a new segment, no old SegmentReader can be reused
                     newReaders[i] = null;
@@ -199,7 +199,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     // there is an old reader for this segment - we'll try to reopen it
-                    newReaders[i] = (SegmentReader)oldReaders[(int)oldReaderIndex];
+                    newReaders[i] = (SegmentReader)oldReaders[oldReaderIndex];
                 }
 
                 bool success = false;
