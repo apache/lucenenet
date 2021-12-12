@@ -680,7 +680,7 @@ namespace Lucene.Net.Util.Automaton
             internal PointTransitions[] points = new PointTransitions[5];
 
             private const int HASHMAP_CUTOVER = 30;
-            private readonly Dictionary<int?, PointTransitions> map = new Dictionary<int?, PointTransitions>();
+            private readonly Dictionary<int, PointTransitions> map = new Dictionary<int, PointTransitions>();
             private bool useHash = false;
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -707,11 +707,10 @@ namespace Lucene.Net.Util.Automaton
             {
                 if (useHash)
                 {
-                    int? pi = point;
-                    if (!map.TryGetValue(pi, out PointTransitions p))
+                    if (!map.TryGetValue(point, out PointTransitions p))
                     {
                         p = Next(point);
-                        map[pi] = p;
+                        map[point] = p;
                     }
                     return p;
                 }
