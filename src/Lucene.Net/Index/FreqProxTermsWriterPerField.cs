@@ -441,7 +441,7 @@ namespace Lucene.Net.Index
                 Debugging.Assert(!writeOffsets || writePositions);
             }
 
-            IDictionary<Term, int?> segDeletes;
+            IDictionary<Term, int> segDeletes;
             if (state.SegUpdates != null && state.SegUpdates.terms.Count > 0)
             {
                 segDeletes = state.SegUpdates.terms;
@@ -484,11 +484,11 @@ namespace Lucene.Net.Index
 
                 PostingsConsumer postingsConsumer = termsConsumer.StartTerm(text);
 
-                int? delDocLimit;
+                int delDocLimit;
                 if (segDeletes != null)
                 {
                     protoTerm.Bytes = text;
-                    if (segDeletes.TryGetValue(protoTerm, out int? docIDUpto) && docIDUpto != null)
+                    if (segDeletes.TryGetValue(protoTerm, out int docIDUpto))
                     {
                         delDocLimit = docIDUpto;
                     }

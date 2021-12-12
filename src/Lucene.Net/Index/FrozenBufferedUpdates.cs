@@ -83,20 +83,10 @@ namespace Lucene.Net.Index
             queries = new Query[deletes.queries.Count];
             queryLimits = new int[deletes.queries.Count];
             int upto = 0;
-            foreach (KeyValuePair<Query, int?> ent in deletes.queries)
+            foreach (KeyValuePair<Query, int> ent in deletes.queries)
             {
                 queries[upto] = ent.Key;
-                if (ent.Value.HasValue)
-                {
-                    queryLimits[upto] = ent.Value.Value;
-                }
-                else
-                {
-                    // LUCENENET NOTE: According to this: http://stackoverflow.com/a/13914344
-                    // we are supposed to throw an exception in this case, rather than
-                    // silently fail.
-                    throw new NullReferenceException();
-                }
+                queryLimits[upto] = ent.Value;
                 upto++;
             }
 
