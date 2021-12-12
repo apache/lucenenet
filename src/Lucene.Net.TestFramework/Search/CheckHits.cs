@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
         public static void CheckNoMatchExplanations(Query q, string defaultFieldName, IndexSearcher searcher, int[] results)
         {
             string d = q.ToString(defaultFieldName);
-            JCG.SortedSet<int?> ignore = new JCG.SortedSet<int?>();
+            JCG.SortedSet<int> ignore = new JCG.SortedSet<int>();
             for (int i = 0; i < results.Length; i++)
             {
                 ignore.Add(Convert.ToInt32(results[i], CultureInfo.InvariantCulture));
