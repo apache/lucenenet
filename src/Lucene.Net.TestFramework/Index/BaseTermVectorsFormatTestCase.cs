@@ -253,9 +253,9 @@ namespace Lucene.Net.Index
             internal readonly int[] startOffsets, endOffsets;
             internal readonly BytesRef[] payloads;
 
-            internal readonly IDictionary<string, int?> freqs;
-            internal readonly IDictionary<int?, ISet<int?>> positionToTerms;
-            internal readonly IDictionary<int?, ISet<int?>> startOffsetToTerms;
+            internal readonly IDictionary<string, int> freqs;
+            internal readonly IDictionary<int, ISet<int>> positionToTerms;
+            internal readonly IDictionary<int, ISet<int>> startOffsetToTerms;
 
             internal readonly ICharTermAttribute termAtt;
             internal readonly IPositionIncrementAttribute piAtt;
@@ -325,26 +325,26 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                positionToTerms = new Dictionary<int?, ISet<int?>>(len);
-                startOffsetToTerms = new Dictionary<int?, ISet<int?>>(len);
+                positionToTerms = new Dictionary<int, ISet<int>>(len);
+                startOffsetToTerms = new Dictionary<int, ISet<int>>(len);
                 for (int i = 0; i < len; ++i)
                 {
-                    if (!positionToTerms.TryGetValue(positions[i], out ISet<int?> positionTerms))
+                    if (!positionToTerms.TryGetValue(positions[i], out ISet<int> positionTerms))
                     {
-                        positionToTerms[positions[i]] = positionTerms = new JCG.HashSet<int?>(1);
+                        positionToTerms[positions[i]] = positionTerms = new JCG.HashSet<int>(1);
                     }
                     positionTerms.Add(i);
-                    if (!startOffsetToTerms.TryGetValue(startOffsets[i], out ISet<int?> startOffsetTerms))
+                    if (!startOffsetToTerms.TryGetValue(startOffsets[i], out ISet<int> startOffsetTerms))
                     {
-                        startOffsetToTerms[startOffsets[i]] = startOffsetTerms = new JCG.HashSet<int?>(1);
+                        startOffsetToTerms[startOffsets[i]] = startOffsetTerms = new JCG.HashSet<int>(1);
                     }
                     startOffsetTerms.Add(i);
                 }
 
-                freqs = new Dictionary<string, int?>();
+                freqs = new Dictionary<string, int>();
                 foreach (string term in terms)
                 {
-                    if (freqs.TryGetValue(term, out int? freq))
+                    if (freqs.TryGetValue(term, out int freq))
                     {
                         freqs[term] = freq + 1;
                     }
@@ -551,7 +551,7 @@ namespace Lucene.Net.Index
                 Assert.IsNotNull(docsEnum);
                 Assert.AreEqual(0, docsEnum.NextDoc());
                 Assert.AreEqual(0, docsEnum.DocID);
-                Assert.AreEqual(tk.freqs[termsEnum.Term.Utf8ToString()], (int?)docsEnum.Freq);
+                Assert.AreEqual(tk.freqs[termsEnum.Term.Utf8ToString()], docsEnum.Freq);
                 Assert.AreEqual(DocsEnum.NO_MORE_DOCS, docsEnum.NextDoc());
                 this.docsEnum.Value = docsEnum;
 
@@ -570,13 +570,13 @@ namespace Lucene.Net.Index
                 {
                     Assert.AreEqual(0, docsAndPositionsEnum.NextDoc());
                     int freq = docsAndPositionsEnum.Freq;
-                    Assert.AreEqual(tk.freqs[termsEnum.Term.Utf8ToString()], (int?)freq);
+                    Assert.AreEqual(tk.freqs[termsEnum.Term.Utf8ToString()], freq);
                     if (docsAndPositionsEnum != null)
                     {
                         for (int k = 0; k < freq; ++k)
                         {
                             int position = docsAndPositionsEnum.NextPosition();
-                            ISet<int?> indexes;
+                            ISet<int> indexes;
                             if (terms.HasPositions)
                             {
                                 indexes = tk.positionToTerms[position];
