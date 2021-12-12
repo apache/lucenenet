@@ -184,8 +184,8 @@ namespace Lucene.Net.Index
 
         internal sealed class FieldNumbers
         {
-            private readonly IDictionary<int?, string> numberToName;
-            private readonly IDictionary<string, int?> nameToNumber;
+            private readonly IDictionary<int, string> numberToName;
+            private readonly IDictionary<string, int> nameToNumber;
 
             // We use this to enforce that a given field never
             // changes DV type, even across segments / IndexWriter
@@ -199,8 +199,8 @@ namespace Lucene.Net.Index
 
             internal FieldNumbers()
             {
-                this.nameToNumber = new Dictionary<string, int?>();
-                this.numberToName = new Dictionary<int?, string>();
+                this.nameToNumber = new Dictionary<string, int>();
+                this.numberToName = new Dictionary<int, string>();
                 this.docValuesType = new Dictionary<string, DocValuesType>();
             }
 
@@ -226,9 +226,9 @@ namespace Lucene.Net.Index
                             throw new ArgumentException("cannot change DocValues type from " + currentDVType + " to " + dvType + " for field \"" + fieldName + "\"");
                         }
                     }
-                    if (!nameToNumber.TryGetValue(fieldName, out int? fieldNumber) || fieldNumber == null)
+                    if (!nameToNumber.TryGetValue(fieldName, out int fieldNumber))
                     {
-                        int? preferredBoxed = preferredFieldNumber;
+                        int preferredBoxed = preferredFieldNumber;
 
                         if (preferredFieldNumber != -1 && !numberToName.ContainsKey(preferredBoxed))
                         {
@@ -249,7 +249,7 @@ namespace Lucene.Net.Index
                         nameToNumber[fieldName] = fieldNumber;
                     }
 
-                    return (int)fieldNumber;
+                    return fieldNumber;
                 }
                 finally
                 {
@@ -258,13 +258,13 @@ namespace Lucene.Net.Index
             }
 
             // used by assert
-            internal bool ContainsConsistent(int? number, string name, DocValuesType dvType)
+            internal bool ContainsConsistent(int number, string name, DocValuesType dvType)
             {
                 UninterruptableMonitor.Enter(this);
                 try
                 {
                     numberToName.TryGetValue(number, out string numberToNameStr);
-                    nameToNumber.TryGetValue(name, out int? nameToNumberVal);
+                    nameToNumber.TryGetValue(name, out int nameToNumberVal);
                     this.docValuesType.TryGetValue(name, out DocValuesType docValuesType);
 
                     return name.Equals(numberToNameStr, StringComparison.Ordinal) 
