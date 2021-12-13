@@ -50,7 +50,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
             AtomicReader segment = GetOnlySegmentReader(ir);
             DocsEnum reuse = null;
-            IDictionary<DocsEnum, bool?> allEnums = new JCG.Dictionary<DocsEnum, bool?>(IdentityEqualityComparer<DocsEnum>.Default);
+            IDictionary<DocsEnum, bool> allEnums = new JCG.Dictionary<DocsEnum, bool>(IdentityEqualityComparer<DocsEnum>.Default);
             TermsEnum te = segment.GetTerms("foo").GetEnumerator();
             while (te.MoveNext())
             {
@@ -95,7 +95,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
             AtomicReader segment = GetOnlySegmentReader(ir);
             DocsEnum reuse = null;
-            IDictionary<DocsEnum, bool?> allEnums = new JCG.Dictionary<DocsEnum, bool?>(IdentityEqualityComparer<DocsEnum>.Default);
+            IDictionary<DocsEnum, bool> allEnums = new JCG.Dictionary<DocsEnum, bool>(IdentityEqualityComparer<DocsEnum>.Default);
             TermsEnum te = segment.GetTerms("foo").GetEnumerator();
             while (te.MoveNext())
             {
