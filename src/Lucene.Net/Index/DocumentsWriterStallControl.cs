@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
         private volatile bool stalled;
         private int numWaiting; // only with assert
         private bool wasStalled; // only with assert
-        private readonly IDictionary<ThreadJob, bool?> waiting = new JCG.Dictionary<ThreadJob, bool?>(IdentityEqualityComparer<ThreadJob>.Default); // only with assert
+        private readonly IDictionary<ThreadJob, bool> waiting = new JCG.Dictionary<ThreadJob, bool>(IdentityEqualityComparer<ThreadJob>.Default); // only with assert
 
         /// <summary>
         /// Update the stalled flag status. this method will set the stalled flag to
