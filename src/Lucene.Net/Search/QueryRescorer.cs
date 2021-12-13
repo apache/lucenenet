@@ -146,16 +146,16 @@ namespace Lucene.Net.Search
         {
             Explanation secondPassExplanation = searcher.Explain(query, docID);
 
-            float? secondPassScore = secondPassExplanation.IsMatch ? (float?)secondPassExplanation.Value : null;
+            float? secondPassScore = secondPassExplanation.IsMatch ? secondPassExplanation.Value : null;
 
             float score;
-            if (secondPassScore == null)
+            if (!secondPassScore.HasValue)
             {
                 score = Combine(firstPassExplanation.Value, false, 0.0f);
             }
             else
             {
-                score = Combine(firstPassExplanation.Value, true, (float)secondPassScore);
+                score = Combine(firstPassExplanation.Value, true, secondPassScore.Value);
             }
 
             Explanation result = new Explanation(score, "combined first and second pass score using " + this.GetType());
@@ -165,13 +165,13 @@ namespace Lucene.Net.Search
             result.AddDetail(first);
 
             Explanation second;
-            if (secondPassScore == null)
+            if (!secondPassScore.HasValue)
             {
                 second = new Explanation(0.0f, "no second pass score");
             }
             else
             {
-                second = new Explanation((float)secondPassScore, "second pass score");
+                second = new Explanation(secondPassScore.Value, "second pass score");
             }
             second.AddDetail(secondPassExplanation);
             result.AddDetail(second);

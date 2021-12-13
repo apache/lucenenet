@@ -236,7 +236,7 @@ namespace Lucene.Net.Index.Sorter
             return SortedMergeSpecification(@in.FindMerges(mergeTrigger, segmentInfos));
         }
 
-        public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
+        public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool> segmentsToMerge)
         {
             return SortedMergeSpecification(@in.FindForcedMerges(segmentInfos, maxSegmentCount, segmentsToMerge));
         }

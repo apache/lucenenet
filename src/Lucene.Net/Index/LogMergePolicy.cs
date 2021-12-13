@@ -223,7 +223,7 @@ namespace Lucene.Net.Index
         /// merging is less than or equal to the specified 
         /// <paramref name="maxNumSegments"/>.
         /// </summary>
-        protected virtual bool IsMerged(SegmentInfos infos, int maxNumSegments, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
+        protected virtual bool IsMerged(SegmentInfos infos, int maxNumSegments, IDictionary<SegmentCommitInfo, bool> segmentsToMerge)
         {
             int numSegments = infos.Count;
             int numToMerge = 0;
@@ -232,9 +232,9 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numSegments && numToMerge <= maxNumSegments; i++)
             {
                 SegmentCommitInfo info = infos.Info(i);
-                if (segmentsToMerge.TryGetValue(info, out bool? isOriginal) && isOriginal != null)
+                if (segmentsToMerge.TryGetValue(info, out bool isOriginal))
                 {
-                    segmentIsOriginal = isOriginal.Value;
+                    segmentIsOriginal = isOriginal;
                     numToMerge++;
                     mergeInfo = info;
                 }
@@ -364,7 +364,6 @@ namespace Lucene.Net.Index
             return spec.Merges.Count == 0 ? null : spec;
         }
 
-        // LUCENENET TODO: Get rid of the nullable in IDictionary<SegmentCommitInfo, bool?>, if possible
         /// <summary>
         /// Returns the merges necessary to merge the index down
         /// to a specified number of segments.
@@ -377,7 +376,7 @@ namespace Lucene.Net.Index
         /// (mergeFactor at a time) so the <see cref="MergeScheduler"/>
         /// in use may make use of concurrency.
         /// </summary>
-        public override MergeSpecification FindForcedMerges(SegmentInfos infos, int maxNumSegments, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
+        public override MergeSpecification FindForcedMerges(SegmentInfos infos, int maxNumSegments, IDictionary<SegmentCommitInfo, bool> segmentsToMerge)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(maxNumSegments > 0);
             if (IsVerbose)

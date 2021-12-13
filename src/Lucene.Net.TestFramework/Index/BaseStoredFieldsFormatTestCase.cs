@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
             int docCount = AtLeast(200);
             int fieldCount = TestUtil.NextInt32(rand, 1, 5);
 
-            IList<int?> fieldIDs = new JCG.List<int?>();
+            IList<int> fieldIDs = new JCG.List<int>();
 
             FieldType customType = new FieldType(TextField.TYPE_STORED);
             customType.IsTokenized = false;

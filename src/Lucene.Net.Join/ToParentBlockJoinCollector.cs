@@ -80,7 +80,7 @@ namespace Lucene.Net.Search.Join
 
         // Maps each BlockJoinQuery instance to its "slot" in
         // joinScorers and in OneGroup's cached doc/scores/count:
-        private readonly IDictionary<Query, int?> joinQueryID = new Dictionary<Query, int?>();
+        private readonly IDictionary<Query, int> joinQueryID = new Dictionary<Query, int>();
         private readonly int numParentHits;
         private readonly FieldValueHitQueue<OneGroup> queue;
         private readonly FieldComparer[] comparers;
@@ -318,9 +318,9 @@ namespace Lucene.Net.Search.Join
         private void Enroll(ToParentBlockJoinQuery query, ToParentBlockJoinQuery.BlockJoinScorer scorer)
         {
             scorer.TrackPendingChildHits();
-            if (joinQueryID.TryGetValue(query, out int? slot))
+            if (joinQueryID.TryGetValue(query, out int slot))
             {
-                joinScorers[(int)slot] = scorer;
+                joinScorers[slot] = scorer;
             }
             else
             {
@@ -397,7 +397,7 @@ namespace Lucene.Net.Search.Join
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public virtual ITopGroups<int> GetTopGroups(ToParentBlockJoinQuery query, Sort withinGroupSort, int offset, int maxDocsPerGroup, int withinGroupOffset, bool fillSortFields)
         {
-            if (!joinQueryID.TryGetValue(query, out int? slot))
+            if (!joinQueryID.TryGetValue(query, out int slot))
             {
                 if (totalHitCount == 0)
                 {
@@ -418,7 +418,7 @@ namespace Lucene.Net.Search.Join
                 return null;
             }
 
-            return AccumulateGroups(slot == null ? -1 : (int)slot, offset, maxDocsPerGroup, withinGroupOffset, withinGroupSort, fillSortFields);
+            return AccumulateGroups(slot == null ? -1 : slot, offset, maxDocsPerGroup, withinGroupOffset, withinGroupSort, fillSortFields);
         }
 
         /// <summary>

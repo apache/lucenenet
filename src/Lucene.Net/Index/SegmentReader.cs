@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
 
         private readonly FieldInfos fieldInfos; // LUCENENET specific - since it is readonly, made all internal classes use property
 
-        private readonly IList<long?> dvGens = new JCG.List<long?>();
+        private readonly IList<long> dvGens = new JCG.List<long>();
 
         /// <summary>
         /// Constructs a new <see cref="SegmentReader"/> with a new core. </summary>
@@ -187,15 +187,15 @@ namespace Lucene.Net.Index
         {
             Directory dir = core.cfsReader ?? si.Info.Dir;
             DocValuesFormat dvFormat = codec.DocValuesFormat;
-            IDictionary<long?, IList<FieldInfo>> genInfos = GetGenInfos();
+            IDictionary<long, IList<FieldInfo>> genInfos = GetGenInfos();
 
             //      System.out.println("[" + Thread.currentThread().getName() + "] SR.initDocValuesProducers: segInfo=" + si + "; gens=" + genInfos.keySet());
 
             // TODO: can we avoid iterating over fieldinfos several times and creating maps of all this stuff if dv updates do not exist?
 
-            foreach (KeyValuePair<long?, IList<FieldInfo>> e in genInfos)
+            foreach (KeyValuePair<long, IList<FieldInfo>> e in genInfos)
             {
-                long? gen = e.Key;
+                long gen = e.Key;
                 IList<FieldInfo> infos = e.Value;
                 DocValuesProducer dvp = segDocValues.GetDocValuesProducer(gen, si, IOContext.READ, dir, dvFormat, infos, TermInfosIndexDivisor);
                 foreach (FieldInfo fi in infos)
@@ -245,9 +245,9 @@ namespace Lucene.Net.Index
         }
 
         // returns a gen->List<FieldInfo> mapping. Fields without DV updates have gen=-1
-        private IDictionary<long?, IList<FieldInfo>> GetGenInfos()
+        private IDictionary<long, IList<FieldInfo>> GetGenInfos()
         {
-            IDictionary<long?, IList<FieldInfo>> genInfos = new Dictionary<long?, IList<FieldInfo>>();
+            IDictionary<long, IList<FieldInfo>> genInfos = new Dictionary<long, IList<FieldInfo>>();
             foreach (FieldInfo fi in FieldInfos)
             {
                 if (fi.DocValuesType == DocValuesType.NONE)

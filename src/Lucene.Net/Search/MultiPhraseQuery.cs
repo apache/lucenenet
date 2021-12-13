@@ -386,11 +386,11 @@ namespace Lucene.Net.Search
 
             buffer.Append("\"");
             int k = 0;
-            int? lastPos = -1;
+            int lastPos = -1;
             bool first = true;
             foreach (Term[] terms in termArrays)
             {
-                int? position = positions[k];
+                int position = positions[k];
                 if (first)
                 {
                     first = false;

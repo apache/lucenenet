@@ -74,7 +74,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 AtomicReader indexReader = (AtomicReader)ctx.Reader;
                 Terms terms = indexReader.GetTerms("body");
                 TermsEnum iterator = terms.GetEnumerator();
-                IDictionary<DocsEnum, bool?> enums = new JCG.Dictionary<DocsEnum, bool?>(IdentityEqualityComparer<DocsEnum>.Default);
+                IDictionary<DocsEnum, bool> enums = new JCG.Dictionary<DocsEnum, bool>(IdentityEqualityComparer<DocsEnum>.Default);
                 MatchNoBits bits = new MatchNoBits(indexReader.MaxDoc);
                 while (iterator.MoveNext())
                 {
@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 Terms terms = ((AtomicReader)ctx.Reader).GetTerms("body");
                 TermsEnum iterator = terms.GetEnumerator();
-                IDictionary<DocsEnum, bool?> enums = new JCG.Dictionary<DocsEnum, bool?>(IdentityEqualityComparer<DocsEnum>.Default);
+                IDictionary<DocsEnum, bool> enums = new JCG.Dictionary<DocsEnum, bool>(IdentityEqualityComparer<DocsEnum>.Default);
                 MatchNoBits bits = new MatchNoBits(open.MaxDoc);
                 DocsEnum docs = null;
                 while (iterator.MoveNext())
@@ -159,7 +159,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 Terms terms = ((AtomicReader)ctx.Reader).GetTerms("body");
                 TermsEnum iterator = terms.GetEnumerator();
-                IDictionary<DocsEnum, bool?> enums = new JCG.Dictionary<DocsEnum, bool?>(IdentityEqualityComparer<DocsEnum>.Default);
+                IDictionary<DocsEnum, bool> enums = new JCG.Dictionary<DocsEnum, bool>(IdentityEqualityComparer<DocsEnum>.Default);
                 MatchNoBits bits = new MatchNoBits(firstReader.MaxDoc);
                 iterator = terms.GetEnumerator();
                 DocsEnum docs = null;

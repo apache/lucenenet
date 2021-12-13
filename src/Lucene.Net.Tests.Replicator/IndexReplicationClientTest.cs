@@ -56,7 +56,7 @@ namespace Lucene.Net.Replicator
                 }
             }
 
-            public bool? Call()
+            public void Call()
             {
                 if (reader == null)
                 {
@@ -74,7 +74,6 @@ namespace Lucene.Net.Replicator
                     lastGeneration = newGeneration;
                     TestUtil.CheckIndex(indexDir);
                 }
-                return null;
             }
             public void Dispose()
             {
@@ -261,7 +260,6 @@ namespace Lucene.Net.Replicator
             {
                 if (Random.NextDouble() < 0.2 && failures > 0)
                     throw RuntimeException.Create("random exception from callback");
-                return null;
             });
             client = new ReplicationClientAnonymousClass(this, replicator, handler, sourceDirFactory, failures);
             client.StartUpdateThread(10, "index");

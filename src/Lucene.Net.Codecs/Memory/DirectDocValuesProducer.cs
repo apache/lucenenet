@@ -33,18 +33,18 @@ namespace Lucene.Net.Codecs.Memory
     internal class DirectDocValuesProducer : DocValuesProducer
     {
         // metadata maps (just file pointers and minimal stuff)
-        private readonly IDictionary<int?, NumericEntry> numerics = new Dictionary<int?, NumericEntry>();
-        private readonly IDictionary<int?, BinaryEntry> binaries = new Dictionary<int?, BinaryEntry>();
-        private readonly IDictionary<int?, SortedEntry> sorteds = new Dictionary<int?, SortedEntry>();
-        private readonly IDictionary<int?, SortedSetEntry> sortedSets = new Dictionary<int?, SortedSetEntry>();
+        private readonly IDictionary<int, NumericEntry> numerics = new Dictionary<int, NumericEntry>();
+        private readonly IDictionary<int, BinaryEntry> binaries = new Dictionary<int, BinaryEntry>();
+        private readonly IDictionary<int, SortedEntry> sorteds = new Dictionary<int, SortedEntry>();
+        private readonly IDictionary<int, SortedSetEntry> sortedSets = new Dictionary<int, SortedSetEntry>();
         private readonly IndexInput data;
 
         // ram instances we have already loaded
-        private readonly IDictionary<int?, NumericDocValues> numericInstances = new Dictionary<int?, NumericDocValues>();
-        private readonly IDictionary<int?, BinaryDocValues> binaryInstances = new Dictionary<int?, BinaryDocValues>();
-        private readonly IDictionary<int?, SortedDocValues> sortedInstances = new Dictionary<int?, SortedDocValues>();
-        private readonly IDictionary<int?, SortedSetRawValues> sortedSetInstances = new Dictionary<int?, SortedSetRawValues>();
-        private readonly IDictionary<int?, IBits> docsWithFieldInstances = new Dictionary<int?, IBits>();
+        private readonly IDictionary<int, NumericDocValues> numericInstances = new Dictionary<int, NumericDocValues>();
+        private readonly IDictionary<int, BinaryDocValues> binaryInstances = new Dictionary<int, BinaryDocValues>();
+        private readonly IDictionary<int, SortedDocValues> sortedInstances = new Dictionary<int, SortedDocValues>();
+        private readonly IDictionary<int, SortedSetRawValues> sortedSetInstances = new Dictionary<int, SortedSetRawValues>();
+        private readonly IDictionary<int, IBits> docsWithFieldInstances = new Dictionary<int, IBits>();
 
         private readonly int maxDoc;
         private readonly AtomicInt64 ramBytesUsed;

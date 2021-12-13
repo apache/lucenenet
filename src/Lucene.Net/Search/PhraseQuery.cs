@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
     {
         private string field;
         private readonly IList<Term> terms = new JCG.List<Term>(4); // LUCENENET: marked readonly
-        private readonly IList<int?> positions = new JCG.List<int?>(4); // LUCENENET: marked readonly
+        private readonly IList<int> positions = new JCG.List<int>(4); // LUCENENET: marked readonly
         private int maxPosition = 0;
         private int slop = 0;
 
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
             int position = 0;
             if (positions.Count > 0)
             {
-                position = (int)positions[positions.Count - 1] + 1;
+                position = positions[positions.Count - 1] + 1;
             }
 
             Add(term, position);
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search
             int[] result = new int[positions.Count];
             for (int i = 0; i < positions.Count; i++)
             {
-                result[i] = (int)positions[i];
+                result[i] = positions[i];
             }
             return result;
         }
@@ -372,7 +372,7 @@ namespace Lucene.Net.Search
                         // term does exist, but has no positions
                         throw IllegalStateException.Create("field \"" + t.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + t.Text + ")");
                     }
-                    postingsFreqs[i] = new PostingsAndFreq(postingsEnum, te.DocFreq, (int)outerInstance.positions[i], t);
+                    postingsFreqs[i] = new PostingsAndFreq(postingsEnum, te.DocFreq, outerInstance.positions[i], t);
                 }
 
                 // sort by increasing docFreq order
@@ -455,7 +455,7 @@ namespace Lucene.Net.Search
             string[] pieces = new string[maxPosition + 1];
             for (int i = 0; i < terms.Count; i++)
             {
-                int pos = (int)positions[i];
+                int pos = positions[i];
                 string s = pieces[pos];
                 if (s == null)
                 {

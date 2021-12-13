@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
     internal class SimpleTextFieldsReader : FieldsProducer
     {
-        private readonly JCG.SortedDictionary<string, long?> fields;
+        private readonly JCG.SortedDictionary<string, long> fields;
         private readonly IndexInput input;
         private readonly FieldInfos fieldInfos;
         private readonly int maxDoc;
@@ -78,12 +78,12 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        private static JCG.SortedDictionary<string, long?> ReadFields(IndexInput @in) // LUCENENET specific - marked static
+        private static JCG.SortedDictionary<string, long> ReadFields(IndexInput @in) // LUCENENET specific - marked static
         {
             ChecksumIndexInput input = new BufferedChecksumIndexInput(@in);
             BytesRef scratch = new BytesRef(10);
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-            var fields = new JCG.SortedDictionary<string, long?>(StringComparer.Ordinal);
+            var fields = new JCG.SortedDictionary<string, long>(StringComparer.Ordinal);
 
             while (true)
             {
@@ -691,13 +691,13 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 if (!termsCache.TryGetValue(field, out SimpleTextTerms terms) || terms == null)
                 {
-                    if (!fields.TryGetValue(field, out long? fp) || !fp.HasValue)
+                    if (!fields.TryGetValue(field, out long fp))
                     {
                         return null;
                     }
                     else
                     {
-                        terms = new SimpleTextTerms(this, field, fp.Value, maxDoc);
+                        terms = new SimpleTextTerms(this, field, fp, maxDoc);
                         termsCache[field] = terms;
                     }
                 }

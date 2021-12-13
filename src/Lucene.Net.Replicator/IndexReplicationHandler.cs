@@ -43,7 +43,7 @@ namespace Lucene.Net.Replicator
     /// if the index is never modified by <see cref="IndexWriter"/>, except the one that is
     /// open on the source index, from which you replicate.
     /// <para/>
-    /// This handler notifies the application via a provided <see cref="T:Func{bool?}"/> when an
+    /// This handler notifies the application via a provided <see cref="Action"/> when an
     /// updated index commit was made available for it.
     /// <para/>
     /// @lucene.experimental
@@ -57,7 +57,7 @@ namespace Lucene.Net.Replicator
         public const string INFO_STREAM_COMPONENT = "IndexReplicationHandler";
 
         private readonly Directory indexDirectory;
-        private readonly Func<bool?> callback;
+        private readonly Action callback;
 
         private volatile IDictionary<string, IList<RevisionFile>> currentRevisionFiles;
         private volatile string currentVersion;
@@ -240,7 +240,7 @@ namespace Lucene.Net.Replicator
         /// Constructor with the given index directory and callback to notify when the
         /// indexes were updated.
         /// </summary>
-        public IndexReplicationHandler(Directory indexDirectory, Func<bool?> callback) // LUCENENET TODO: API - shouldn't this be Action ?
+        public IndexReplicationHandler(Directory indexDirectory, Action callback)
         {
             this.InfoStream = InfoStream.Default;
             this.callback = callback;

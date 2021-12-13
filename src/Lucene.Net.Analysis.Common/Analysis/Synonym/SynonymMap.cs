@@ -248,11 +248,11 @@ namespace Lucene.Net.Analysis.Synonym
                 BytesRef scratch = new BytesRef(64);
                 ByteArrayDataOutput scratchOutput = new ByteArrayDataOutput();
 
-                ISet<int?> dedupSet;
+                ISet<int> dedupSet;
 
                 if (dedup)
                 {
-                    dedupSet = new JCG.HashSet<int?>();
+                    dedupSet = new JCG.HashSet<int>();
                 }
                 else
                 {
@@ -292,8 +292,8 @@ namespace Lucene.Net.Analysis.Synonym
                     {
                         if (dedupSet != null)
                         {
-                            // box once
-                            int? ent = output.ords[i];
+                            // LUCENENET specific - no boxing happening here
+                            int ent = output.ords[i];
                             if (dedupSet.Contains(ent))
                             {
                                 continue;

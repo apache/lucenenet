@@ -122,9 +122,9 @@ namespace Lucene.Net.Index
         internal readonly AtomicInt32 numTermDeletes = new AtomicInt32();
         internal readonly AtomicInt32 numNumericUpdates = new AtomicInt32();
         internal readonly AtomicInt32 numBinaryUpdates = new AtomicInt32();
-        internal readonly SCG.IDictionary<Term, int?> terms = new Dictionary<Term, int?>();
-        internal readonly SCG.IDictionary<Query, int?> queries = new Dictionary<Query, int?>();
-        internal readonly SCG.IList<int?> docIDs = new JCG.List<int?>();
+        internal readonly SCG.IDictionary<Term, int> terms = new Dictionary<Term, int>();
+        internal readonly SCG.IDictionary<Query, int> queries = new Dictionary<Query, int>();
+        internal readonly SCG.IList<int> docIDs = new JCG.List<int>();
 
 
         // Map<dvField,Map<updateTerm,NumericUpdate>>
@@ -206,10 +206,10 @@ namespace Lucene.Net.Index
 
         public virtual void AddQuery(Query query, int docIDUpto)
         {
-            queries.TryGetValue(query, out int? prev);
+            bool prevExists = queries.TryGetValue(query, out _);
             queries[query] = docIDUpto;
             // increment bytes used only if the query wasn't added so far.
-            if (prev == null)
+            if (!prevExists)
             {
                 bytesUsed.AddAndGet(BYTES_PER_DEL_QUERY);
             }
@@ -223,8 +223,8 @@ namespace Lucene.Net.Index
 
         public virtual void AddTerm(Term term, int docIDUpto)
         {
-            terms.TryGetValue(term, out int? current);
-            if (current != null && docIDUpto < current)
+            bool currentExists = terms.TryGetValue(term, out int current);
+            if (currentExists && docIDUpto < current)
             {
                 // Only record the new number if it's greater than the
                 // current one.  this is important because if multiple
@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
             // delete on that term, therefore we seem to over-count. this over-counting
             // is done to respect IndexWriterConfig.setMaxBufferedDeleteTerms.
             numTermDeletes.IncrementAndGet();
-            if (current == null)
+            if (!currentExists)
             {
                 bytesUsed.AddAndGet(BYTES_PER_DEL_TERM + term.Bytes.Length + (RamUsageEstimator.NUM_BYTES_CHAR * term.Field.Length));
             }

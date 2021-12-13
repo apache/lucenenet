@@ -62,12 +62,12 @@ namespace Lucene.Net.Facet
 
         private readonly FacetsConfig config;
         private readonly BooleanQuery query;
-        private readonly IDictionary<string, int?> drillDownDims = new JCG.LinkedDictionary<string, int?>();
+        private readonly IDictionary<string, int> drillDownDims = new JCG.LinkedDictionary<string, int>();
 
         /// <summary>
         /// Used by <see cref="Clone"/>
         /// </summary>
-        internal DrillDownQuery(FacetsConfig config, BooleanQuery query, IDictionary<string, int?> drillDownDims)
+        internal DrillDownQuery(FacetsConfig config, BooleanQuery query, IDictionary<string, int> drillDownDims)
         {
             this.query = (BooleanQuery)query.Clone();
             this.drillDownDims.PutAll(drillDownDims);
@@ -99,7 +99,7 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Used by <see cref="DrillSideways"/>
         /// </summary>
-        internal DrillDownQuery(FacetsConfig config, Query baseQuery, IList<Query> clauses, IDictionary<string, int?> drillDownDims)
+        internal DrillDownQuery(FacetsConfig config, Query baseQuery, IList<Query> clauses, IDictionary<string, int> drillDownDims)
         {
             query = new BooleanQuery(true);
             if (baseQuery != null)
@@ -148,9 +148,9 @@ namespace Lucene.Net.Facet
         private void Merge(string dim, string[] path)
         {
             int index = 0;
-            if (drillDownDims.TryGetValue(dim, out int? idx) && idx.HasValue)
+            if (drillDownDims.TryGetValue(dim, out int idx))
             {
-                index = idx.Value;
+                index = idx;
             }
 
             if (query.GetClauses().Length == drillDownDims.Count + 1)
@@ -374,6 +374,6 @@ namespace Lucene.Net.Facet
 
         internal BooleanQuery BooleanQuery => query;
 
-        internal IDictionary<string, int?> Dims => drillDownDims;
+        internal IDictionary<string, int> Dims => drillDownDims;
     }
 }

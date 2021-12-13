@@ -87,14 +87,13 @@ namespace Lucene.Net.Index
             return m_base.FindMerges((MergeTrigger)int.MinValue, segmentInfos);
         }
 
-        public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
+        public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool> segmentsToMerge)
         {
             // first find all old segments
-            IDictionary<SegmentCommitInfo, bool?> oldSegments = new Dictionary<SegmentCommitInfo, bool?>();
+            IDictionary<SegmentCommitInfo, bool> oldSegments = new Dictionary<SegmentCommitInfo, bool>();
             foreach (SegmentCommitInfo si in segmentInfos.Segments)
             {
-                bool? v = segmentsToMerge[si];
-                if (v != null && ShouldUpgradeSegment(si))
+                if (segmentsToMerge.TryGetValue(si, out bool v) && ShouldUpgradeSegment(si))
                 {
                     oldSegments[si] = v;
                 }

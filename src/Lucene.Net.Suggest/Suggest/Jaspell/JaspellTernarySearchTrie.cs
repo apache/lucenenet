@@ -283,7 +283,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 IOUtils.GetDecodingReader(new FileStream(file.FullName, FileMode.Open), Encoding.UTF8);
             string word;
             int pos;
-            float? occur, one = new float?(1);
+            float occur, one = 1f;
             while ((word = @in.ReadLine()) != null)
             {
                 pos = word.IndexOf('\t');
@@ -329,14 +329,14 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                             currentNode = currentNode.relatives[TSTNode.HIKID];
                         }
                     }
-                    float? occur2 = null;
+                    J2N.Numerics.Number occur2 = null; // LUCENENET: Original was using Float, but that may not cast if there is an Int64 in the node. This is safer.
                     if (node != null)
                     {
-                        occur2 = ((float?)(node.data));
+                        occur2 = (J2N.Numerics.Number)node.data;
                     }
                     if (occur2 != null)
                     {
-                        occur += (float)occur2;
+                        occur += occur2.ToSingle();
                     }
                     currentNode = GetOrCreateNode(culture.TextInfo.ToLower(word.Trim()));
                     currentNode.data = occur;

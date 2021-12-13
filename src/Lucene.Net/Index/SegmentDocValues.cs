@@ -37,16 +37,16 @@ namespace Lucene.Net.Index
     /// </summary>
     internal sealed class SegmentDocValues
     {
-        private readonly IDictionary<long?, RefCount<DocValuesProducer>> genDVProducers = new Dictionary<long?, RefCount<DocValuesProducer>>();
+        private readonly IDictionary<long, RefCount<DocValuesProducer>> genDVProducers = new Dictionary<long, RefCount<DocValuesProducer>>();
 
-        private RefCount<DocValuesProducer> NewDocValuesProducer(SegmentCommitInfo si, IOContext context, Directory dir, DocValuesFormat dvFormat, long? gen, IList<FieldInfo> infos, int termsIndexDivisor)
+        private RefCount<DocValuesProducer> NewDocValuesProducer(SegmentCommitInfo si, IOContext context, Directory dir, DocValuesFormat dvFormat, long gen, IList<FieldInfo> infos, int termsIndexDivisor)
         {
             Directory dvDir = dir;
             string segmentSuffix = "";
-            if ((long)gen != -1)
+            if (gen != -1)
             {
                 dvDir = si.Info.Dir; // gen'd files are written outside CFS, so use SegInfo directory
-                segmentSuffix = ((long)gen).ToString(CultureInfo.InvariantCulture);//Convert.ToString((long)gen, Character.MAX_RADIX);
+                segmentSuffix = gen.ToString(CultureInfo.InvariantCulture);//Convert.ToString((long)gen, Character.MAX_RADIX);
             }
 
             // set SegmentReadState to list only the fields that are relevant to that gen
@@ -57,9 +57,9 @@ namespace Lucene.Net.Index
         private class RefCountHelper : RefCount<DocValuesProducer>
         {
             private readonly SegmentDocValues outerInstance;
-            private readonly long? gen; // LUCENENET: marked readonly
+            private readonly long gen; // LUCENENET: marked readonly
 
-            public RefCountHelper(SegmentDocValues outerInstance, DocValuesProducer fieldsProducer, long? gen)
+            public RefCountHelper(SegmentDocValues outerInstance, DocValuesProducer fieldsProducer, long gen)
                 : base(fieldsProducer)
             {
                 this.outerInstance = outerInstance;
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the <see cref="DocValuesProducer"/> for the given generation. </summary>
-        internal DocValuesProducer GetDocValuesProducer(long? gen, SegmentCommitInfo si, IOContext context, Directory dir, DocValuesFormat dvFormat, IList<FieldInfo> infos, int termsIndexDivisor)
+        internal DocValuesProducer GetDocValuesProducer(long gen, SegmentCommitInfo si, IOContext context, Directory dir, DocValuesFormat dvFormat, IList<FieldInfo> infos, int termsIndexDivisor)
         {
             UninterruptableMonitor.Enter(this);
             try
@@ -110,15 +110,15 @@ namespace Lucene.Net.Index
         /// Decrement the reference count of the given <see cref="DocValuesProducer"/>
         /// generations.
         /// </summary>
-        internal void DecRef(IList<long?> dvProducersGens)
+        internal void DecRef(IList<long> dvProducersGens)
         {
             UninterruptableMonitor.Enter(this);
             try
             {
                 Exception t = null;
-                foreach (long? gen in dvProducersGens)
+                foreach (long gen in dvProducersGens)
                 {
-                    RefCount<DocValuesProducer> dvp = genDVProducers[gen];
+                    genDVProducers.TryGetValue(gen, out RefCount<DocValuesProducer> dvp);
                     if (Debugging.AssertsEnabled) Debugging.Assert(dvp != null,"gen={0}", gen);
                     try
                     {

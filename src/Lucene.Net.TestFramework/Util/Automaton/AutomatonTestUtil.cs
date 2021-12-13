@@ -411,7 +411,7 @@ namespace Lucene.Net.Util.Automaton
     /// </summary>
     public class RandomAcceptedStrings
     {
-        private readonly IDictionary<Transition, bool?> leadsToAccept;
+        private readonly IDictionary<Transition, bool> leadsToAccept;
         private readonly Automaton a;
 
         private class ArrivingTransition
@@ -437,7 +437,7 @@ namespace Lucene.Net.Util.Automaton
 
             // must use IdentityHashmap because two Transitions w/
             // different start nodes can be considered the same
-            leadsToAccept = new JCG.Dictionary<Transition, bool?>(IdentityEqualityComparer<Transition>.Default);
+            leadsToAccept = new JCG.Dictionary<Transition, bool>(IdentityEqualityComparer<Transition>.Default);
             IDictionary<State, IList<ArrivingTransition>> allArriving = new Dictionary<State, IList<ArrivingTransition>>();
 
             Queue<State> q = new Queue<State>();

@@ -566,7 +566,7 @@ namespace Lucene.Net.Index
             public override string Explanation => "skew=" + string.Format(CultureInfo.InvariantCulture, "{0:F3}", skew) + " nonDelRatio=" + string.Format(CultureInfo.InvariantCulture, "{0:F3}", nonDelRatio);
         }
 
-        public override MergeSpecification FindForcedMerges(SegmentInfos infos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
+        public override MergeSpecification FindForcedMerges(SegmentInfos infos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool> segmentsToMerge)
         {
             if (Verbose())
             {
@@ -578,10 +578,10 @@ namespace Lucene.Net.Index
             JCG.List<SegmentCommitInfo> eligible = new JCG.List<SegmentCommitInfo>();
             bool forceMergeRunning = false;
             ICollection<SegmentCommitInfo> merging = m_writer.Get().MergingSegments;
-            bool? segmentIsOriginal = false;
+            bool segmentIsOriginal = false;
             foreach (SegmentCommitInfo info in infos.Segments)
             {
-                if (segmentsToMerge.TryGetValue(info, out bool? isOriginal))
+                if (segmentsToMerge.TryGetValue(info, out bool isOriginal))
                 {
                     segmentIsOriginal = isOriginal;
                     if (!merging.Contains(info))

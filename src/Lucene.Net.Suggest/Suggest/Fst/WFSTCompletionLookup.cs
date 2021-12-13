@@ -248,7 +248,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// Returns the weight associated with an input string,
         /// or null if it does not exist.
         /// </summary>
-        public virtual object Get(string key)
+        public virtual long? Get(string key)
         {
             if (fst == null)
             {
@@ -270,7 +270,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
             else
             {
-                return DecodeWeight(result.GetValueOrDefault() + arc.NextFinalOutput.GetValueOrDefault());
+                return DecodeWeight(result.Value + arc.NextFinalOutput.GetValueOrDefault());
             }
         }
 
