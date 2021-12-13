@@ -247,7 +247,7 @@ namespace Lucene.Net.Index
         internal readonly IndexFileDeleter deleter;
 
         // used by forceMerge to note those needing merging
-        private readonly IDictionary<SegmentCommitInfo, bool?> segmentsToMerge = new Dictionary<SegmentCommitInfo, bool?>();
+        private readonly IDictionary<SegmentCommitInfo, bool> segmentsToMerge = new Dictionary<SegmentCommitInfo, bool>();
 
         private int mergeMaxNumSegments;
 

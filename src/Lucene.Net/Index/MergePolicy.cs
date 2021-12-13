@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
     /// <see cref="MergeSpecification"/> instance describing the set of
     /// merges that should be done, or null if no merges are
     /// necessary.  When <see cref="IndexWriter.ForceMerge(int)"/> is called, it calls
-    /// <see cref="FindForcedMerges(SegmentInfos, int, IDictionary{SegmentCommitInfo, bool?})"/> and the <see cref="MergePolicy"/> should
+    /// <see cref="FindForcedMerges(SegmentInfos, int, IDictionary{SegmentCommitInfo, bool})"/> and the <see cref="MergePolicy"/> should
     /// then return the necessary merges.</para>
     ///
     /// <para>Note that the policy can return more than one merge at
@@ -680,7 +680,7 @@ namespace Lucene.Net.Index
         ///          an original segment present in the
         ///          to-be-merged index; else, it was a segment
         ///          produced by a cascaded merge. </param>
-        public abstract MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge);
+        public abstract MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool> segmentsToMerge);
 
         /// <summary>
         /// Determine what set of merge operations is necessary in order to expunge all
