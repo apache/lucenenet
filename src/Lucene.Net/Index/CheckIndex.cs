@@ -676,7 +676,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < numSegments; i++)
             {
-                SegmentCommitInfo info = sis.Info(i);
+                SegmentCommitInfo info = sis[i];
                 int segmentName = 0;
                 try
                 {

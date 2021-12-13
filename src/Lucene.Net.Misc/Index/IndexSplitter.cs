@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
         {
             for (int x = 0; x < Infos.Count; x++)
             {
-                SegmentCommitInfo info = Infos.Info(x);
+                SegmentCommitInfo info = Infos[x];
                 string sizeStr = string.Format(CultureInfo.InvariantCulture, "{0:###,###.###}", info.GetSizeInBytes());
                 Console.WriteLine(info.Info.Name + " " + sizeStr);
             }
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
         {
             for (int x = 0; x < Infos.Count; x++)
             {
-                if (name.Equals(Infos.Info(x).Info.Name, StringComparison.Ordinal))
+                if (name.Equals(Infos[x].Info.Name, StringComparison.Ordinal))
                 {
                     return x;
                 }
@@ -126,9 +126,9 @@ namespace Lucene.Net.Index
         {
             for (int x = 0; x < Infos.Count; x++)
             {
-                if (name.Equals(Infos.Info(x).Info.Name, StringComparison.Ordinal))
+                if (name.Equals(Infos[x].Info.Name, StringComparison.Ordinal))
                 {
-                    return Infos.Info(x);
+                    return Infos[x];
                 }
             }
             return null;

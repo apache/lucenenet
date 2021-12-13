@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
 
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
-            double min = sis.Info(0).GetSizeInBytes();
+            double min = sis[0].GetSizeInBytes();
 
             conf = NewWriterConfig();
             LogByteSizeMergePolicy lmp = new LogByteSizeMergePolicy();
@@ -340,7 +340,7 @@ namespace Lucene.Net.Index
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
             Assert.AreEqual(3, sis.Count);
-            Assert.IsFalse(sis.Info(2).HasDeletions);
+            Assert.IsFalse(sis[2].HasDeletions);
         }
 
         [Test]
@@ -398,7 +398,7 @@ namespace Lucene.Net.Index
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
             Assert.AreEqual(1, sis.Count);
-            Assert.IsTrue(sis.Info(0).HasDeletions);
+            Assert.IsTrue(sis[0].HasDeletions);
         }
     }
 }

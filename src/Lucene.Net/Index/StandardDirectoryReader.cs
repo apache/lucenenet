@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
                     bool success = false;
                     try
                     {
-                        readers[i] = new SegmentReader(sis.Info(i), termInfosIndexDivisor, IOContext.READ);
+                        readers[i] = new SegmentReader(sis[i], termInfosIndexDivisor, IOContext.READ);
                         success = true;
                     }
                     finally
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
                     // segmentInfos here, so that we are passing the
                     // actual instance of SegmentInfoPerCommit in
                     // IndexWriter's segmentInfos:
-                    SegmentCommitInfo info = infos.Info(i);
+                    SegmentCommitInfo info = infos[i];
                     if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Dir == dir);
                     ReadersAndUpdates rld = writer.readerPool.Get(info, true);
                     try
@@ -191,7 +191,7 @@ namespace Lucene.Net.Index
             for (int i = infos.Count - 1; i >= 0; i--)
             {
                 // find SegmentReader for this segment
-                if (!segmentReaders.TryGetValue(infos.Info(i).Info.Name, out int oldReaderIndex))
+                if (!segmentReaders.TryGetValue(infos[i].Info.Name, out int oldReaderIndex))
                 {
                     // this is a new segment, no old SegmentReader can be reused
                     newReaders[i] = null;
@@ -207,16 +207,16 @@ namespace Lucene.Net.Index
                 try
                 {
                     SegmentReader newReader;
-                    if (newReaders[i] == null || infos.Info(i).Info.UseCompoundFile != newReaders[i].SegmentInfo.Info.UseCompoundFile)
+                    if (newReaders[i] == null || infos[i].Info.UseCompoundFile != newReaders[i].SegmentInfo.Info.UseCompoundFile)
                     {
                         // this is a new reader; in case we hit an exception we can close it safely
-                        newReader = new SegmentReader(infos.Info(i), termInfosIndexDivisor, IOContext.READ);
+                        newReader = new SegmentReader(infos[i], termInfosIndexDivisor, IOContext.READ);
                         readerShared[i] = false;
                         newReaders[i] = newReader;
                     }
                     else
                     {
-                        if (newReaders[i].SegmentInfo.DelGen == infos.Info(i).DelGen && newReaders[i].SegmentInfo.FieldInfosGen == infos.Info(i).FieldInfosGen)
+                        if (newReaders[i].SegmentInfo.DelGen == infos[i].DelGen && newReaders[i].SegmentInfo.FieldInfosGen == infos[i].FieldInfosGen)
                         {
                             // No change; this reader will be shared between
                             // the old and the new one, so we must incRef
@@ -231,18 +231,18 @@ namespace Lucene.Net.Index
                             // Steal the ref returned by SegmentReader ctor:
                             if (Debugging.AssertsEnabled)
                             {
-                                Debugging.Assert(infos.Info(i).Info.Dir == newReaders[i].SegmentInfo.Info.Dir);
-                                Debugging.Assert(infos.Info(i).HasDeletions || infos.Info(i).HasFieldUpdates);
+                                Debugging.Assert(infos[i].Info.Dir == newReaders[i].SegmentInfo.Info.Dir);
+                                Debugging.Assert(infos[i].HasDeletions || infos[i].HasFieldUpdates);
                             }
-                            if (newReaders[i].SegmentInfo.DelGen == infos.Info(i).DelGen)
+                            if (newReaders[i].SegmentInfo.DelGen == infos[i].DelGen)
                             {
                                 // only DV updates
-                                newReaders[i] = new SegmentReader(infos.Info(i), newReaders[i], newReaders[i].LiveDocs, newReaders[i].NumDocs);
+                                newReaders[i] = new SegmentReader(infos[i], newReaders[i], newReaders[i].LiveDocs, newReaders[i].NumDocs);
                             }
                             else
                             {
                                 // both DV and liveDocs have changed
-                                newReaders[i] = new SegmentReader(infos.Info(i), newReaders[i]);
+                                newReaders[i] = new SegmentReader(infos[i], newReaders[i]);
                             }
                         }
                     }
