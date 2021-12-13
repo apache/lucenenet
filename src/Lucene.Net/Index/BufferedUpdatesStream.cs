@@ -659,7 +659,9 @@ namespace Lucene.Net.Index
                             {
                                 break; // no more docs that can be updated for this term
                             }
-                            dvUpdates.Add(doc, update.value);
+                            // LUCENENET specific handling - dvUpdates handles getting the value so we don't
+                            // have to deal with boxing/unboxing
+                            dvUpdates.AddFromUpdate(doc, update);
                         }
                     }
                 }

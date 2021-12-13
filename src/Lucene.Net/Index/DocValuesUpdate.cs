@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// An in-place update to a <see cref="DocValues"/> field. </summary>
-    public abstract class DocValuesUpdate
+    internal abstract class DocValuesUpdate
     {
         /* Rough logic: OBJ_HEADER + 3*PTR + INT
          * Term: OBJ_HEADER + 2*PTR
@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
         internal readonly DocValuesFieldUpdatesType type;
         internal readonly Term term;
         internal readonly string field;
-        internal readonly object value;
+        // LUCENENET specific - moved value field to appropriate subclass to avoid object/boxing
         internal int docIDUpto = -1; // unassigned until applied, and confusing that it's here, when it's just used in BufferedDeletes...
 
         /// <summary>
@@ -48,13 +48,12 @@ namespace Lucene.Net.Index
         /// <param name="type"> the <see cref="DocValuesFieldUpdatesType"/> </param>
         /// <param name="term"> the <see cref="Term"/> which determines the documents that will be updated </param>
         /// <param name="field"> the <see cref="NumericDocValuesField"/> to update </param>
-        /// <param name="value"> the updated value </param>
-        protected DocValuesUpdate(DocValuesFieldUpdatesType type, Term term, string field, object value)
+        ///// <param name="value"> the updated value </param>
+        protected DocValuesUpdate(DocValuesFieldUpdatesType type, Term term, string field) // LUCENENET: Removed value (will be stored in subclasses with the strong type)
         {
             this.type = type;
             this.term = term;
             this.field = field;
-            this.value = value;
         }
 
         internal abstract long GetValueSizeInBytes();
@@ -71,44 +70,60 @@ namespace Lucene.Net.Index
 
         public override string ToString()
         {
+            return "term=" + term + ",field=" + field /*+ ",value=" + value*/;
+        }
+    }
+
+    /// <summary>
+    /// An in-place update to a binary <see cref="DocValues"/> field </summary>
+    internal sealed class BinaryDocValuesUpdate : DocValuesUpdate
+    {
+        /* Size of BytesRef: 2*INT + ARRAY_HEADER + PTR */
+        private static readonly long RAW_VALUE_SIZE_IN_BYTES = RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT32 + RamUsageEstimator.NUM_BYTES_OBJECT_REF;
+
+        internal static readonly BytesRef MISSING = new BytesRef();
+
+        internal readonly BytesRef value;
+
+        internal BinaryDocValuesUpdate(Term term, string field, BytesRef value)
+            : base(DocValuesFieldUpdatesType.BINARY, term, field)
+        {
+            this.value = value ?? MISSING;
+        }
+
+        internal override long GetValueSizeInBytes()
+        {
+            return RAW_VALUE_SIZE_IN_BYTES + value.Bytes.Length;
+        }
+
+        public override string ToString()
+        {
             return "term=" + term + ",field=" + field + ",value=" + value;
         }
+    }
 
-        /// <summary>
-        /// An in-place update to a binary <see cref="DocValues"/> field </summary>
-        public sealed class BinaryDocValuesUpdate : DocValuesUpdate
+    /// <summary>
+    /// An in-place update to a numeric <see cref="DocValues"/> field </summary>
+    internal sealed class NumericDocValuesUpdate : DocValuesUpdate
+    {
+        internal static readonly long MISSING = 0;
+
+        internal readonly long value;
+
+        public NumericDocValuesUpdate(Term term, string field, long? value)
+            : base(DocValuesFieldUpdatesType.NUMERIC, term, field)
         {
-            /* Size of BytesRef: 2*INT + ARRAY_HEADER + PTR */
-            private static readonly long RAW_VALUE_SIZE_IN_BYTES = RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT32 + RamUsageEstimator.NUM_BYTES_OBJECT_REF;
-
-            internal static readonly BytesRef MISSING = new BytesRef();
-
-            internal BinaryDocValuesUpdate(Term term, string field, BytesRef value)
-                : base(DocValuesFieldUpdatesType.BINARY, term, field, value ?? MISSING)
-            {
-            }
-
-            internal override long GetValueSizeInBytes()
-            {
-                return RAW_VALUE_SIZE_IN_BYTES + ((BytesRef)value).Bytes.Length;
-            }
+            this.value = !value.HasValue ? MISSING : value.Value;
         }
 
-        /// <summary>
-        /// An in-place update to a numeric <see cref="DocValues"/> field </summary>
-        public sealed class NumericDocValuesUpdate : DocValuesUpdate // LUCENENET NOTE: Made public rather than internal because it is on a public API
+        internal override long GetValueSizeInBytes()
         {
-            internal static readonly long? MISSING = new long?(0);
+            return RamUsageEstimator.NUM_BYTES_INT64;
+        }
 
-            public NumericDocValuesUpdate(Term term, string field, long? value)
-                : base(DocValuesFieldUpdatesType.NUMERIC, term, field, value == null ? MISSING : value)
-            {
-            }
-
-            internal override long GetValueSizeInBytes()
-            {
-                return RamUsageEstimator.NUM_BYTES_INT64;
-            }
+        public override string ToString()
+        {
+            return "term=" + term + ",field=" + field + ",value=" + value;
         }
     }
 }

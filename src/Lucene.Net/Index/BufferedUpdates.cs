@@ -1,5 +1,7 @@
 ﻿using J2N.Collections.Generic;
 using J2N.Threading.Atomic;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
 using JCG = J2N.Collections.Generic;
 using SCG = System.Collections.Generic;
 
@@ -21,12 +23,6 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
-    using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
-    using Query = Lucene.Net.Search.Query;
-    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
-
 
     /// <summary>
     /// Holds buffered deletes and updates, by docID, term or query for a
@@ -148,7 +144,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// NOTE: This was MAX_INT in Lucene
         /// </summary>
-        public static readonly int MAX_INT32 = int.MaxValue;
+        internal static readonly int MAX_INT32 = int.MaxValue; // LUCENENET specific - Made internal rather than public, since this class is intended to be internal but couldn't be because it is exposed through a public API
 
         internal readonly AtomicInt64 bytesUsed;
 
@@ -158,7 +154,7 @@ namespace Lucene.Net.Index
 
         internal long gen;
 
-        internal BufferedUpdates() // LUCENENET NOTE: Made internal rather than public, since this class is intended to be internal but couldn't be because it is exposed through a public API
+        internal BufferedUpdates() // LUCENENET specific - Made internal rather than public, since this class is intended to be internal but couldn't be because it is exposed through a public API
         {
             this.bytesUsed = new AtomicInt64();
         }
@@ -204,7 +200,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual void AddQuery(Query query, int docIDUpto)
+        internal virtual void AddQuery(Query query, int docIDUpto) // LUCENENET specific - Made internal rather than public, since this class is intended to be internal but couldn't be because it is exposed through a public API
         {
             bool prevExists = queries.TryGetValue(query, out _);
             queries[query] = docIDUpto;
@@ -215,13 +211,13 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual void AddDocID(int docID)
+        internal virtual void AddDocID(int docID) // LUCENENET specific - Made internal rather than public, since this class is intended to be internal but couldn't be because it is exposed through a public API
         {
             docIDs.Add(docID);
             bytesUsed.AddAndGet(BYTES_PER_DEL_DOCID);
         }
 
-        public virtual void AddTerm(Term term, int docIDUpto)
+        internal virtual void AddTerm(Term term, int docIDUpto) // LUCENENET specific - Made internal rather than public, since this class is intended to be internal but couldn't be because it is exposed through a public API
         {
             bool currentExists = terms.TryGetValue(term, out int current);
             if (currentExists && docIDUpto < current)
@@ -247,7 +243,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual void AddNumericUpdate(NumericDocValuesUpdate update, int docIDUpto)
+        internal virtual void AddNumericUpdate(NumericDocValuesUpdate update, int docIDUpto) // LUCENENET specific - Made internal rather than public, since this class is intended to be internal but couldn't be because it is exposed through a public API
         {
             if (!numericUpdates.TryGetValue(update.field, out LinkedDictionary<Term, NumericDocValuesUpdate> fieldUpdates))
             {
@@ -280,7 +276,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual void AddBinaryUpdate(BinaryDocValuesUpdate update, int docIDUpto)
+        internal virtual void AddBinaryUpdate(BinaryDocValuesUpdate update, int docIDUpto) // LUCENENET specific - Made internal rather than public, since this class is intended to be internal but couldn't be because it is exposed through a public API
         {
             if (!binaryUpdates.TryGetValue(update.field, out LinkedDictionary<Term, BinaryDocValuesUpdate> fieldUpdates))
             {

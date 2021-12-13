@@ -1,6 +1,8 @@
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
-using System;
-using Lucene.Net.Diagnostics;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Packed;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
@@ -22,14 +24,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
-    using InPlaceMergeSorter = Lucene.Net.Util.InPlaceMergeSorter;
-    using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
-    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
-    using PagedGrowableWriter = Lucene.Net.Util.Packed.PagedGrowableWriter;
-    using PagedMutable = Lucene.Net.Util.Packed.PagedMutable;
-
     /// <summary>
     /// A <see cref="DocValuesFieldUpdates"/> which holds updates of documents, of a single
     /// <see cref="NumericDocValuesField"/>.
@@ -38,7 +32,7 @@ namespace Lucene.Net.Index
     /// </summary>
     internal class NumericDocValuesFieldUpdates : DocValuesFieldUpdates
     {
-        new internal sealed class Iterator : DocValuesFieldUpdates.Iterator
+        internal sealed class Iterator : DocValuesFieldUpdatesIterator<long?>
         {
             private readonly int size;
             private readonly PagedGrowableWriter values;
@@ -56,7 +50,7 @@ namespace Lucene.Net.Index
                 this.docs = docs;
             }
 
-            public override object Value => value;
+            public override long? Value => value;
 
             public override int NextDoc()
             {
@@ -107,7 +101,19 @@ namespace Lucene.Net.Index
             size = 0;
         }
 
-        public override void Add(int doc, object value)
+        // LUCENENET specific: Pass iterator instead of the value, since this class knows the type to retrieve, but the caller does not.
+        public override void AddFromIterator(int doc, DocValuesFieldUpdatesIterator iterator)
+        {
+            Add(doc, ((Iterator)iterator).Value);
+        }
+
+        // LUCENENET specific: Pass DocValuesUpdate instead of the value, since this class knows the type to retrieve, but the caller does not.
+        public override void AddFromUpdate(int doc, DocValuesUpdate update)
+        {
+            Add(doc, ((NumericDocValuesUpdate)update).value);
+        }
+
+        private void Add(int doc, long? value) // LUCENENET specific: Marked private instead of public and changed the value parameter type
         {
             // TODO: if the Sorter interface changes to take long indexes, we can remove that limitation
             if (size == int.MaxValue)
@@ -115,7 +121,7 @@ namespace Lucene.Net.Index
                 throw IllegalStateException.Create("cannot support more than System.Int32.MaxValue doc/value entries");
             }
 
-            long? val = (long?)value;
+            long? val = value;
             if (val == null)
             {
                 val = NumericDocValuesUpdate.MISSING;
@@ -136,11 +142,11 @@ namespace Lucene.Net.Index
             }
 
             docs.Set(size, doc);
-            values.Set(size, (long)val);
+            values.Set(size, val.Value);
             ++size;
         }
 
-        public override DocValuesFieldUpdates.Iterator GetIterator()
+        public override DocValuesFieldUpdatesIterator GetIterator()
         {
             PagedMutable docs = this.docs;
             PagedGrowableWriter values = this.values;
