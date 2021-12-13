@@ -670,6 +670,10 @@ namespace Lucene.Net.Index
             result.NewSegments.Clear();
             result.MaxSegmentName = -1;
 
+            // LUCENENET: We created the segments names wrong in 4.8.0-beta00001 - 4.8.0-beta00015,
+            // so we added a switch to be able to read these indexes in later versions.
+            int segmentRadix = SegmentInfos.useLegacySegmentNames ? 10 : J2N.Character.MaxRadix;
+
             for (int i = 0; i < numSegments; i++)
             {
                 SegmentCommitInfo info = sis.Info(i);
@@ -677,7 +681,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     // LUCENENET: Optimized to not allocate a substring during the parse
-                    segmentName = Integer.Parse(info.Info.Name, 1, info.Info.Name.Length - 1, radix: 10);
+                    segmentName = Integer.Parse(info.Info.Name, 1, info.Info.Name.Length - 1, radix: segmentRadix);
                 }
                 catch
                 {

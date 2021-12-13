@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
@@ -417,6 +419,50 @@ namespace Lucene.Net.Index
 
                 default:
                     return null;
+            }
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestSegmentNumberToStringGeneration()
+        {
+            // We cover the 100 literal values that we return plus an additional 5 to ensure continuation
+            const long MaxSegment = 105;
+
+            bool temp = SegmentInfos.UseLegacySegmentNames;
+            try
+            {
+                // Normal usage
+                SegmentInfos.UseLegacySegmentNames = false;
+                for (long seg = 0; seg < MaxSegment; seg++)
+                {
+                    string expected = J2N.IntegralNumberExtensions.ToString(seg, J2N.Character.MaxRadix);
+                    string actual = SegmentInfos.SegmentNumberToString(seg);
+                    Assert.AreEqual(expected, actual);
+                }
+
+                // This is for places where we were generating the names correctly. We don't want to flip
+                // to radix 10 when the feature is enabled here.
+                SegmentInfos.UseLegacySegmentNames = true;
+                for (long seg = 0; seg < MaxSegment; seg++)
+                {
+                    string expected = J2N.IntegralNumberExtensions.ToString(seg, J2N.Character.MaxRadix);
+                    string actual = SegmentInfos.SegmentNumberToString(seg, allowLegacyNames: false);
+                    Assert.AreEqual(expected, actual);
+                }
+
+                // This is to generate names with radix 10 (to read indexes from beta 1 thru 15 only)
+                SegmentInfos.UseLegacySegmentNames = true;
+                for (long seg = 0; seg < MaxSegment; seg++)
+                {
+                    string expected = seg.ToString(CultureInfo.InvariantCulture);
+                    string actual = SegmentInfos.SegmentNumberToString(seg);
+                    Assert.AreEqual(expected, actual);
+                }
+            }
+            finally
+            {
+                SegmentInfos.UseLegacySegmentNames = temp;
             }
         }
     }

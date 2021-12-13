@@ -1,4 +1,5 @@
-﻿using J2N.Collections.Generic.Extensions;
+﻿using J2N;
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
@@ -46,7 +47,10 @@ namespace Lucene.Net.Index
             if (gen != -1)
             {
                 dvDir = si.Info.Dir; // gen'd files are written outside CFS, so use SegInfo directory
-                segmentSuffix = gen.ToString(CultureInfo.InvariantCulture);//Convert.ToString((long)gen, Character.MAX_RADIX);
+                // LUCENENET specific: We created the segments names wrong in 4.8.0-beta00001 - 4.8.0-beta00015,
+                // so we added a switch to be able to read these indexes in later versions. This logic as well as an
+                // optimization on the first 100 segment values is implmeneted in SegmentInfos.SegmentNumberToString().
+                segmentSuffix = SegmentInfos.SegmentNumberToString(gen);
             }
 
             // set SegmentReadState to list only the fields that are relevant to that gen

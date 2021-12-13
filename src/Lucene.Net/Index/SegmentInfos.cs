@@ -6,6 +6,7 @@ using Lucene.Net.Support.IO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
@@ -139,6 +140,153 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Current format of segments.gen </summary>
         public static readonly int FORMAT_SEGMENTS_GEN_CURRENT = FORMAT_SEGMENTS_GEN_CHECKSUM;
+
+        /// <summary>
+        /// Setting this to true will generate the same file names that were used in 4.8.0-beta00001 through 4.8.0-beta00015.
+        /// When writing more than 10 segments, these segment names were incompatible with prior versions of Lucene.NET and incompatible with Lucene 4.8.0.
+        /// <para/>
+        /// This is only for reading codecs from the affected 4.8.0 beta versions, it is not recommended to use this setting for general use.
+        /// <para/>
+        /// This must be set prior to opening an index at application startup. When setting it at other times the behavior is undefined.
+        /// <para/>
+        /// Note that this property can also be set using the "useLegacySegmentNames" system property to "true" (such as setting the environment variable "lucene:useLegacySegmentNames").
+        /// System properties can also be injected by supplying a <see cref="Configuration.IConfigurationFactory"/> at application startup
+        /// through <see cref="Configuration.ConfigurationSettings.SetConfigurationFactory(Configuration.IConfigurationFactory)"/>.
+        /// </summary>
+        public static bool UseLegacySegmentNames
+        {
+            get => useLegacySegmentNames;
+            set => useLegacySegmentNames = value;
+        }
+        internal static bool useLegacySegmentNames = Util.SystemProperties.GetPropertyAsBoolean("useLegacySegmentNames", defaultValue: false);
+
+        /// <summary>
+        /// Optimized version of <see cref="J2N.IntegralNumberExtensions.ToString(long, int)"/> with a radix of 36, that
+        /// simply does a switch case for the first 100 numbers, which takes only 5% of the time as calculating it.
+        /// We fall back to calling the method after 100 segments.
+        /// <para/>
+        /// This also implements the switch for <see cref="UseLegacySegmentNames"/> so it doesn't have to be dealt with externally.
+        /// </summary>
+        /// <
+        internal static string SegmentNumberToString(long segment, bool allowLegacyNames = true)
+        {
+            switch (segment)
+            {
+                case 0: return "0";
+                case 1: return "1";
+                case 2: return "2";
+                case 3: return "3";
+                case 4: return "4";
+                case 5: return "5";
+                case 6: return "6";
+                case 7: return "7";
+                case 8: return "8";
+                case 9: return "9";
+            }
+
+            if (!allowLegacyNames || !useLegacySegmentNames)
+            {
+                return segment switch
+                {
+                    10 => "a",
+                    11 => "b",
+                    12 => "c",
+                    13 => "d",
+                    14 => "e",
+                    15 => "f",
+                    16 => "g",
+                    17 => "h",
+                    18 => "i",
+                    19 => "j",
+                    20 => "k",
+                    21 => "l",
+                    22 => "m",
+                    23 => "n",
+                    24 => "o",
+                    25 => "p",
+                    26 => "q",
+                    27 => "r",
+                    28 => "s",
+                    29 => "t",
+                    30 => "u",
+                    31 => "v",
+                    32 => "w",
+                    33 => "x",
+                    34 => "y",
+                    35 => "z",
+                    36 => "10",
+                    37 => "11",
+                    38 => "12",
+                    39 => "13",
+                    40 => "14",
+                    41 => "15",
+                    42 => "16",
+                    43 => "17",
+                    44 => "18",
+                    45 => "19",
+                    46 => "1a",
+                    47 => "1b",
+                    48 => "1c",
+                    49 => "1d",
+                    50 => "1e",
+                    51 => "1f",
+                    52 => "1g",
+                    53 => "1h",
+                    54 => "1i",
+                    55 => "1j",
+                    56 => "1k",
+                    57 => "1l",
+                    58 => "1m",
+                    59 => "1n",
+                    60 => "1o",
+                    61 => "1p",
+                    62 => "1q",
+                    63 => "1r",
+                    64 => "1s",
+                    65 => "1t",
+                    66 => "1u",
+                    67 => "1v",
+                    68 => "1w",
+                    69 => "1x",
+                    70 => "1y",
+                    71 => "1z",
+                    72 => "20",
+                    73 => "21",
+                    74 => "22",
+                    75 => "23",
+                    76 => "24",
+                    77 => "25",
+                    78 => "26",
+                    79 => "27",
+                    80 => "28",
+                    81 => "29",
+                    82 => "2a",
+                    83 => "2b",
+                    84 => "2c",
+                    85 => "2d",
+                    86 => "2e",
+                    87 => "2f",
+                    88 => "2g",
+                    89 => "2h",
+                    90 => "2i",
+                    91 => "2j",
+                    92 => "2k",
+                    93 => "2l",
+                    94 => "2m",
+                    95 => "2n",
+                    96 => "2o",
+                    97 => "2p",
+                    98 => "2q",
+                    99 => "2r",
+                    _ => segment.ToString(Character.MaxRadix),
+                };
+            }
+
+            // This is wrong! Unfortunately, this is how the segment names were generated in
+            // beta 1 thru 15, so we end up here if the switch is enabled to read them.
+            // We should actually be using a radix of 36 rather than 10 (which was done correctly in Lucene.NET 3.0.3).
+            return segment.ToString(CultureInfo.InvariantCulture);
+        }
 
         /// <summary>
         /// Used to name new segments. </summary>
