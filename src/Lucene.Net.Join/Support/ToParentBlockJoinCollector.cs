@@ -405,6 +405,7 @@ namespace Lucene.Net.Join
                 {
                     return null;
                 }
+                slot = -1; // LUCENENET: In Java null is converted to -1 for AccumulateGroups()
             }
 
             if (sortedGroups == null)
@@ -420,7 +421,7 @@ namespace Lucene.Net.Join
                 return null;
             }
 
-            return AccumulateGroups(slot == null ? -1 : slot, offset, maxDocsPerGroup, withinGroupOffset, withinGroupSort, fillSortFields);
+            return AccumulateGroups(slot, offset, maxDocsPerGroup, withinGroupOffset, withinGroupSort, fillSortFields);
         }
 
         /// <summary>
