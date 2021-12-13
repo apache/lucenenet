@@ -231,7 +231,7 @@ namespace Lucene.Net.Index
             bool segmentIsOriginal = false;
             for (int i = 0; i < numSegments && numToMerge <= maxNumSegments; i++)
             {
-                SegmentCommitInfo info = infos.Info(i);
+                SegmentCommitInfo info = infos[i];
                 if (segmentsToMerge.TryGetValue(info, out bool isOriginal))
                 {
                     segmentIsOriginal = isOriginal;
@@ -260,7 +260,7 @@ namespace Lucene.Net.Index
             int start = last - 1;
             while (start >= 0)
             {
-                SegmentCommitInfo info = infos.Info(start);
+                SegmentCommitInfo info = infos[start];
                 if (Size(info) > m_maxMergeSizeForForcedMerge || SizeDocs(info) > m_maxMergeDocs)
                 {
                     if (IsVerbose)
@@ -269,7 +269,7 @@ namespace Lucene.Net.Index
                     }
                     // need to skip that segment + add a merge for the 'right' segments,
                     // unless there is only 1 which is merged.
-                    if (last - start - 1 > 1 || (start != last - 1 && !IsMerged(infos, infos.Info(start + 1))))
+                    if (last - start - 1 > 1 || (start != last - 1 && !IsMerged(infos, infos[start + 1])))
                     {
                         // there is more than 1 segment to the right of
                         // this one, or a mergeable single segment.
@@ -288,7 +288,7 @@ namespace Lucene.Net.Index
 
             // Add any left-over segments, unless there is just 1
             // already fully merged
-            if (last > 0 && (++start + 1 < last || !IsMerged(infos, infos.Info(start))))
+            if (last > 0 && (++start + 1 < last || !IsMerged(infos, infos[start])))
             {
                 spec.Add(new OneMerge(segments.GetView(start, last - start))); // LUCENENET: Converted end index to length
             }
@@ -322,7 +322,7 @@ namespace Lucene.Net.Index
                 {
                     // Since we must merge down to 1 segment, the
                     // choice is simple:
-                    if (last > 1 || !IsMerged(infos, infos.Info(0)))
+                    if (last > 1 || !IsMerged(infos, infos[0]))
                     {
                         spec.Add(new OneMerge(segments.GetView(0, last))); // LUCENENET: Converted end index to length
                     }
@@ -349,9 +349,9 @@ namespace Lucene.Net.Index
                         long sumSize = 0;
                         for (int j = 0; j < finalMergeSize; j++)
                         {
-                            sumSize += Size(infos.Info(j + i));
+                            sumSize += Size(infos[j + i]);
                         }
-                        if (i == 0 || (sumSize < 2 * Size(infos.Info(i - 1)) && sumSize < bestSize))
+                        if (i == 0 || (sumSize < 2 * Size(infos[i - 1]) && sumSize < bestSize))
                         {
                             bestStart = i;
                             bestSize = sumSize;
@@ -402,7 +402,7 @@ namespace Lucene.Net.Index
             int last = infos.Count;
             while (last > 0)
             {
-                SegmentCommitInfo info = infos.Info(--last);
+                SegmentCommitInfo info = infos[--last];
                 if (segmentsToMerge.ContainsKey(info))
                 {
                     last++;
@@ -420,7 +420,7 @@ namespace Lucene.Net.Index
             }
 
             // There is only one segment already, and it is merged
-            if (maxNumSegments == 1 && last == 1 && IsMerged(infos, infos.Info(0)))
+            if (maxNumSegments == 1 && last == 1 && IsMerged(infos, infos[0]))
             {
                 if (IsVerbose)
                 {
@@ -433,7 +433,7 @@ namespace Lucene.Net.Index
             bool anyTooLarge = false;
             for (int i = 0; i < last; i++)
             {
-                SegmentCommitInfo info = infos.Info(i);
+                SegmentCommitInfo info = infos[i];
                 if (Size(info) > m_maxMergeSizeForForcedMerge || SizeDocs(info) > m_maxMergeDocs)
                 {
                     anyTooLarge = true;
@@ -472,7 +472,7 @@ namespace Lucene.Net.Index
             if (Debugging.AssertsEnabled) Debugging.Assert(w != null);
             for (int i = 0; i < numSegments; i++)
             {
-                SegmentCommitInfo info = segmentInfos.Info(i);
+                SegmentCommitInfo info = segmentInfos[i];
                 int delCount = w.NumDeletedDocs(info);
                 if (delCount > 0)
                 {
@@ -568,7 +568,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < numSegments; i++)
             {
-                SegmentCommitInfo info = infos.Info(i);
+                SegmentCommitInfo info = infos[i];
                 long size = Size(info);
 
                 // Floor tiny segments

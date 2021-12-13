@@ -138,8 +138,8 @@ namespace Lucene.Net.Index
             /// fsmp.length = 2;
             /// System.out.println("maybeMerge "+writer.SegmentInfos);
             ///
-            /// SegmentInfo info0 = writer.SegmentInfos.Info(0);
-            /// SegmentInfo info1 = writer.SegmentInfos.Info(1);
+            /// SegmentInfo info0 = writer.SegmentInfos[0];
+            /// SegmentInfo info1 = writer.SegmentInfos[1];
             ///
             /// writer.MaybeMerge();
             /// System.out.println("maybeMerge after "+writer.SegmentInfos);
@@ -214,7 +214,7 @@ namespace Lucene.Net.Index
             // deletes for info1, the newly created segment from the
             // merge should have no deletes because they were applied in
             // the merge
-            //SegmentInfo info1 = writer.SegmentInfos.Info(1);
+            //SegmentInfo info1 = writer.SegmentInfos[1];
             //Assert.IsFalse(exists(info1, writer.docWriter.segmentDeletes));
 
             //System.out.println("infos4:"+writer.SegmentInfos);

@@ -167,7 +167,6 @@ namespace Lucene.Net.Index
         /// <para/>
         /// This also implements the switch for <see cref="UseLegacySegmentNames"/> so it doesn't have to be dealt with externally.
         /// </summary>
-        /// <
         internal static string SegmentNumberToString(long segment, bool allowLegacyNames = true)
         {
             switch (segment)
@@ -322,14 +321,19 @@ namespace Lucene.Net.Index
         {
         }
 
-        /// <summary>
-        /// Returns <see cref="SegmentCommitInfo"/> at the provided
-        /// index.
-        /// </summary>
-        public SegmentCommitInfo Info(int i) // LUCENENET TODO: API - add indexer for this class
+        [Obsolete("Use indexer instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        public SegmentCommitInfo Info(int i)
         {
             return segments[i];
         }
+
+        /// <summary>
+        /// Returns <see cref="SegmentCommitInfo"/> at the provided
+        /// index.
+        /// <para/>
+        /// This was info(int) in Lucene.
+        /// </summary>
+        public SegmentCommitInfo this[int index] => segments[index];
 
         /// <summary>
         /// Get the generation of the most recent commit to the
@@ -1296,7 +1300,7 @@ namespace Lucene.Net.Index
             var size = Count;
             for (int i = 0; i < size; i++)
             {
-                var info = Info(i);
+                var info = this[i];
                 if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Dir == dir);
                 if (info.Info.Dir == dir)
                 {
@@ -1413,7 +1417,7 @@ namespace Lucene.Net.Index
                 {
                     buffer.Append(' ');
                 }
-                SegmentCommitInfo info = Info(i);
+                SegmentCommitInfo info = this[i];
                 buffer.Append(info.ToString(directory, 0));
             }
             return buffer.ToString();

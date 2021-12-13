@@ -488,7 +488,7 @@ namespace Lucene.Net.Index
                 {
                     int idx = outerInstance.segmentInfos.IndexOf(info);
                     Debugging.Assert(idx != -1, "info={0} isn't live", info);
-                    Debugging.Assert(outerInstance.segmentInfos.Info(idx) == info, "info={0} doesn't match live info in segmentInfos", info);
+                    Debugging.Assert(outerInstance.segmentInfos[idx] == info, "info={0} doesn't match live info in segmentInfos", info);
                     return true;
                 }
                 finally
@@ -2098,7 +2098,7 @@ namespace Lucene.Net.Index
             {
                 if (i >= 0 && i < segmentInfos.Count)
                 {
-                    return segmentInfos.Info(i).Info.DocCount;
+                    return segmentInfos[i].Info.DocCount;
                 }
                 else
                 {
@@ -5719,7 +5719,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                return segmentInfos.Count > 0 ? segmentInfos.Info(segmentInfos.Count - 1) : null;
+                return segmentInfos.Count > 0 ? segmentInfos[segmentInfos.Count - 1] : null;
             }
             finally
             {
