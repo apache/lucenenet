@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -22,7 +22,6 @@ namespace Lucene.Net.Index
      */
 
     using BinaryDocValuesField = BinaryDocValuesField;
-    using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
@@ -39,7 +38,7 @@ namespace Lucene.Net.Index
     /// </summary>
     internal class BinaryDocValuesFieldUpdates : DocValuesFieldUpdates
     {
-        new internal sealed class Iterator : DocValuesFieldUpdates.Iterator
+        internal sealed class Iterator : DocValuesFieldUpdatesIterator<BytesRef>
         {
             private readonly PagedGrowableWriter offsets;
             private readonly int size;
@@ -61,7 +60,7 @@ namespace Lucene.Net.Index
                 value = (BytesRef)values.Clone();
             }
 
-            public override object Value
+            public override BytesRef Value
             {
                 get
                 {
@@ -135,7 +134,19 @@ namespace Lucene.Net.Index
             size = 0;
         }
 
-        public override void Add(int doc, object value)
+        // LUCENENET specific: Pass iterator instead of the value, since this class knows the type to retrieve, but the caller does not.
+        public override void AddFromIterator(int doc, DocValuesFieldUpdatesIterator iterator)
+        {
+            Add(doc, ((Iterator)iterator).Value);
+        }
+
+        // LUCENENET specific: Pass DocValuesUpdate instead of the value, since this class knows the type to retrieve, but the caller does not.
+        public override void AddFromUpdate(int doc, DocValuesUpdate update)
+        {
+            Add(doc, ((BinaryDocValuesUpdate)update).value);
+        }
+
+        private void Add(int doc, BytesRef value) // LUCENENET specific: Marked private instead of public and changed the value parameter type
         {
             // TODO: if the Sorter interface changes to take long indexes, we can remove that limitation
             if (size == int.MaxValue)
@@ -143,7 +154,7 @@ namespace Lucene.Net.Index
                 throw IllegalStateException.Create("cannot support more than System.Int32.MaxValue doc/value entries");
             }
 
-            BytesRef val = (BytesRef)value;
+            BytesRef val = value;
             if (val == null)
             {
                 val = BinaryDocValuesUpdate.MISSING;
@@ -171,7 +182,7 @@ namespace Lucene.Net.Index
             ++size;
         }
 
-        public override DocValuesFieldUpdates.Iterator GetIterator()
+        public override DocValuesFieldUpdatesIterator GetIterator()
         {
             PagedMutable docs = this.docs;
             PagedGrowableWriter offsets = this.offsets;

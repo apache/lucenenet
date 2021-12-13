@@ -4355,9 +4355,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        private static void SkipDeletedDoc(DocValuesFieldUpdates.Iterator[] updatesIters, int deletedDoc) // LUCENENET: CA1822: Mark members as static
+        private static void SkipDeletedDoc(DocValuesFieldUpdatesIterator[] updatesIters, int deletedDoc) // LUCENENET: CA1822: Mark members as static
         {
-            foreach (DocValuesFieldUpdates.Iterator iter in updatesIters)
+            foreach (DocValuesFieldUpdatesIterator iter in updatesIters)
             {
                 if (iter.Doc == deletedDoc)
                 {
@@ -4396,12 +4396,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void MaybeApplyMergedDVUpdates(MergePolicy.OneMerge merge, MergeState mergeState, int docUpto, MergedDeletesAndUpdates holder, string[] mergingFields, DocValuesFieldUpdates[] dvFieldUpdates, DocValuesFieldUpdates.Iterator[] updatesIters, int curDoc)
+        private void MaybeApplyMergedDVUpdates(MergePolicy.OneMerge merge, MergeState mergeState, int docUpto, MergedDeletesAndUpdates holder, string[] mergingFields, DocValuesFieldUpdates[] dvFieldUpdates, DocValuesFieldUpdatesIterator[] updatesIters, int curDoc)
         {
             int newDoc = -1;
             for (int idx = 0; idx < mergingFields.Length; idx++)
             {
-                DocValuesFieldUpdates.Iterator updatesIter = updatesIters[idx];
+                DocValuesFieldUpdatesIterator updatesIter = updatesIters[idx];
                 if (updatesIter.Doc == curDoc) // document has an update
                 {
                     if (holder.mergedDeletesAndUpdates == null)
@@ -4413,7 +4413,8 @@ namespace Lucene.Net.Index
                         newDoc = holder.docMap.Map(docUpto);
                     }
                     DocValuesFieldUpdates dvUpdates = dvFieldUpdates[idx];
-                    dvUpdates.Add(newDoc, updatesIter.Value);
+                    // LUCENENET specific - dvUpdates handles getting the value so we don't need to deal with boxing/unboxing here.
+                    dvUpdates.AddFromIterator(newDoc, updatesIter);
                     updatesIter.NextDoc(); // advance to next document
                 }
                 else
@@ -4469,7 +4470,7 @@ namespace Lucene.Net.Index
                     IDictionary<string, DocValuesFieldUpdates> mergingFieldUpdates = rld.MergingFieldUpdates;
                     string[] mergingFields;
                     DocValuesFieldUpdates[] dvFieldUpdates;
-                    DocValuesFieldUpdates.Iterator[] updatesIters;
+                    DocValuesFieldUpdatesIterator[] updatesIters;
                     if (mergingFieldUpdates.Count == 0)
                     {
                         mergingFields = null;
@@ -4480,7 +4481,7 @@ namespace Lucene.Net.Index
                     {
                         mergingFields = new string[mergingFieldUpdates.Count];
                         dvFieldUpdates = new DocValuesFieldUpdates[mergingFieldUpdates.Count];
-                        updatesIters = new DocValuesFieldUpdates.Iterator[mergingFieldUpdates.Count];
+                        updatesIters = new DocValuesFieldUpdatesIterator[mergingFieldUpdates.Count];
                         int idx = 0;
                         foreach (KeyValuePair<string, DocValuesFieldUpdates> e in mergingFieldUpdates)
                         {

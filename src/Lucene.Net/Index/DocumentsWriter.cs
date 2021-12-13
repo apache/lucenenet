@@ -28,13 +28,11 @@ namespace Lucene.Net.Index
      */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using FlushedSegment = Lucene.Net.Index.DocumentsWriterPerThread.FlushedSegment;
     using IEvent = Lucene.Net.Index.IndexWriter.IEvent;
     using InfoStream = Lucene.Net.Util.InfoStream;
-    using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
     using Query = Lucene.Net.Search.Query;
     using SegmentFlushTicket = Lucene.Net.Index.DocumentsWriterFlushQueue.SegmentFlushTicket;
     using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
