@@ -2131,7 +2131,7 @@ namespace Lucene.Net.Index
                 // problems at least with ConcurrentMergeScheduler.
                 changeCount++;
                 segmentInfos.Changed();
-                return "_" + (segmentInfos.Counter++).ToString(J2N.Character.MaxRadix);
+                return "_" + SegmentInfos.SegmentNumberToString(segmentInfos.Counter++, allowLegacyNames: false); // LUCENENET specific - we had this right thru all of the betas, so don't change if the legacy feature is enabled
             }
             finally
             {

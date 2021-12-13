@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Text;
@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
                 // to the gen length as string (hopefully an upper limit so SB won't
                 // expand in the middle.
                 StringBuilder res = (new StringBuilder(@base.Length + 6 + ext.Length))
-                    .Append(@base).Append('_').Append(gen.ToString(Character.MaxRadix));
+                    .Append(@base).Append('_').Append(SegmentInfos.SegmentNumberToString(gen, allowLegacyNames: false)); // LUCENENET specific - we had this right thru all of the betas, so don't change if the legacy feature is enabled
                 if (ext.Length > 0)
                 {
                     res.Append('.').Append(ext);
