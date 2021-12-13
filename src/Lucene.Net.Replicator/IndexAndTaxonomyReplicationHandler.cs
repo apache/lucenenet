@@ -50,7 +50,7 @@ namespace Lucene.Net.Replicator
 
         private readonly Directory indexDirectory;
         private readonly Directory taxonomyDirectory;
-        private readonly Func<bool?> callback;
+        private readonly Action callback;
 
         private volatile IDictionary<string, IList<RevisionFile>> currentRevisionFiles;
         private volatile string currentVersion;
@@ -60,7 +60,7 @@ namespace Lucene.Net.Replicator
         /// Constructor with the given index directory and callback to notify when the indexes were updated.
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public IndexAndTaxonomyReplicationHandler(Directory indexDirectory, Directory taxonomyDirectory, Func<bool?> callback)
+        public IndexAndTaxonomyReplicationHandler(Directory indexDirectory, Directory taxonomyDirectory, Action callback)
         {
             this.indexDirectory = indexDirectory;
             this.taxonomyDirectory = taxonomyDirectory;
