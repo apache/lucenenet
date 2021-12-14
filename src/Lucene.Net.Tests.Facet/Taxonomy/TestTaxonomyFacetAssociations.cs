@@ -1,6 +1,8 @@
 ﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
+using System.Globalization;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -124,7 +126,7 @@ namespace Lucene.Net.Facet.Taxonomy
             searcher.Search(new MatchAllDocsQuery(), fc);
 
             Facets facets = new TaxonomyFacetSumInt32Associations("$facets.int", taxoReader, config, fc);
-            Assert.AreEqual("dim=int path=[] value=-1 childCount=2\n  a (200)\n  b (150)\n", facets.GetTopChildren(10, "int").ToString());
+            Assert.AreEqual("dim=int path=[] value=-1 childCount=2\n  a (200)\n  b (150)\n", facets.GetTopChildren(10, "int").ToString(CultureInfo.InvariantCulture));
             Assert.AreEqual(200, (int)facets.GetSpecificValue("int", "a"), "Wrong count for category 'a'!");
             Assert.AreEqual(150, (int)facets.GetSpecificValue("int", "b"), "Wrong count for category 'b'!");
         }
@@ -138,9 +140,10 @@ namespace Lucene.Net.Facet.Taxonomy
             searcher.Search(new MatchAllDocsQuery(), fc);
 
             Facets facets = new TaxonomyFacetSumSingleAssociations("$facets.float", taxoReader, config, fc);
-            Assert.AreEqual("dim=float path=[] value=-1.0 childCount=2\n  a (50.0)\n  b (9.999995)\n", facets.GetTopChildren(10, "float").ToString());
-            Assert.AreEqual(50f, (float)facets.GetSpecificValue("float", "a"), 0.00001, "Wrong count for category 'a'!");
-            Assert.AreEqual(10f, (float)facets.GetSpecificValue("float", "b"), 0.00001, "Wrong count for category 'b'!");
+
+            Assert.AreEqual("dim=float path=[] value=-1.0 childCount=2\n  a (50.0)\n  b (9.999995)\n", facets.GetTopChildren(10, "float").ToString(CultureInfo.InvariantCulture));
+            Assert.AreEqual(50f, (float)facets.GetSpecificValue("float", "a"), 0.00001f, "Wrong count for category 'a'!");
+            Assert.AreEqual(10f, (float)facets.GetSpecificValue("float", "b"), 0.00001f, "Wrong count for category 'b'!");
         }
 
         /// <summary>
@@ -156,8 +159,8 @@ namespace Lucene.Net.Facet.Taxonomy
             searcher.Search(new MatchAllDocsQuery(), fc);
 
             Facets facets = new TaxonomyFacetSumSingleAssociations("$facets.float", taxoReader, config, fc);
-            Assert.AreEqual(50f, (float)facets.GetSpecificValue("float", "a"), 0.00001, "Wrong count for category 'a'!");
-            Assert.AreEqual(10f, (float)facets.GetSpecificValue("float", "b"), 0.00001, "Wrong count for category 'b'!");
+            Assert.AreEqual(50f, (float)facets.GetSpecificValue("float", "a"), 0.00001f, "Wrong count for category 'a'!");
+            Assert.AreEqual(10f, (float)facets.GetSpecificValue("float", "b"), 0.00001f, "Wrong count for category 'b'!");
 
             facets = new TaxonomyFacetSumInt32Associations("$facets.int", taxoReader, config, fc);
             Assert.AreEqual(200, (int)facets.GetSpecificValue("int", "a"), "Wrong count for category 'a'!");
@@ -292,7 +295,7 @@ namespace Lucene.Net.Facet.Taxonomy
             searcher.Search(q, fc);
 
             Facets facets = new TaxonomyFacetSumInt32Associations("$facets.int", taxoReader, config, fc);
-            Assert.AreEqual("dim=int path=[] value=-1 childCount=2\n  b (150)\n  a (100)\n", facets.GetTopChildren(10, "int").ToString());
+            Assert.AreEqual("dim=int path=[] value=-1 childCount=2\n  b (150)\n  a (100)\n", facets.GetTopChildren(10, "int").ToString(CultureInfo.InvariantCulture));
             Assert.AreEqual(100, (int)facets.GetSpecificValue("int", "a"), "Wrong count for category 'a'!");
             Assert.AreEqual(150, (int)facets.GetSpecificValue("int", "b"), "Wrong count for category 'b'!");
         }

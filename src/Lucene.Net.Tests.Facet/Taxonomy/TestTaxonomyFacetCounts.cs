@@ -419,7 +419,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(1, facets.GetSpecificValue("dim", "test\u001Etwo"));
 
             FacetResult result = facets.GetTopChildren(10, "dim");
-            Assert.AreEqual("dim=dim path=[] value=-1 childCount=2\n  test\u001Fone (1)\n  test\u001Etwo (1)\n", result.ToString());
+            Assert.AreEqual("dim=dim path=[] value=-1 childCount=2\n  test\u001Fone (1)\n  test\u001Etwo (1)\n", result.ToString(CultureInfo.InvariantCulture));
             IOUtils.Dispose(writer, taxoWriter, searcher.IndexReader, taxoReader, dir, taxoDir);
         }
 

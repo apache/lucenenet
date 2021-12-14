@@ -2,6 +2,7 @@
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Lucene.Net.Demo.Facet
 {
@@ -29,16 +30,16 @@ namespace Lucene.Net.Demo.Facet
         public void TestExamples()
         {
             IList<FacetResult> res = new AssociationsFacetsExample().RunSumAssociations();
-            assertEquals("Wrong number of results", 2, res.size());
-            assertEquals("dim=tags path=[] value=-1 childCount=2\n  lucene (4)\n  solr (2)\n", res[0].toString());
-            assertEquals("dim=genre path=[] value=-1.0 childCount=2\n  computing (1.62)\n  software (0.34)\n", res[1].toString());
+            assertEquals("Wrong number of results", 2, res.Count);
+            assertEquals("dim=tags path=[] value=-1 childCount=2\n  lucene (4)\n  solr (2)\n", res[0].ToString(CultureInfo.InvariantCulture));
+            assertEquals("dim=genre path=[] value=-1.0 childCount=2\n  computing (1.62)\n  software (0.34)\n", res[1].ToString(CultureInfo.InvariantCulture));
         }
 
         [Test]
         public void TestDrillDown()
         {
             FacetResult result = new AssociationsFacetsExample().RunDrillDown();
-            assertEquals("dim=genre path=[] value=-1.0 childCount=2\n  computing (0.75)\n  software (0.34)\n", result.toString());
+            assertEquals("dim=genre path=[] value=-1.0 childCount=2\n  computing (0.75)\n  software (0.34)\n", result.ToString(CultureInfo.InvariantCulture));
         }
     }
 }
