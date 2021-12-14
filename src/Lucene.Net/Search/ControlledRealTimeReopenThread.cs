@@ -55,8 +55,8 @@ namespace Lucene.Net.Search
         private readonly AtomicInt64 refreshStartGen = new AtomicInt64();
         private readonly AtomicBoolean isDisposed = new AtomicBoolean(false);
 
-        protected readonly EventWaitHandle m_signal = new ManualResetEvent(false);  // LUCENENET specific: used to mimic intrinsic monitor used by java wait and notifyAll keywords.
-        private readonly EventWaitHandle reopenCond = new AutoResetEvent(false);   // LUCENENET NOTE: unlike java, in c# we don't need to lock reopenCond when calling methods on it.
+        protected readonly EventWaitHandle m_notify = new ManualResetEvent(false);  // LUCENENET specific: used to mimic intrinsic monitor used by java wait and notifyAll keywords.
+        private readonly EventWaitHandle reopenCond = new AutoResetEvent(false);    // LUCENENET NOTE: unlike java, in c# we don't need to lock reopenCond when calling methods on it.
 
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
             {
 				// if we're finishing, make it out so that all waiting search threads will return
                 searchingGen = finish ? long.MaxValue : refreshStartGen;
-                m_signal.Set();                        // LUCENENET NOTE:  Will notify all and remain signaled, so it must be reset in WaitForGeneration
+                m_notify.Set();                        // LUCENENET NOTE:  Will notify all and remain signaled, so it must be reset in WaitForGeneration
             }
             finally
             {
@@ -132,8 +132,6 @@ namespace Lucene.Net.Search
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
-
-
 
         /// <summary>
         /// Kills the thread and releases all resources used by the
@@ -170,7 +168,7 @@ namespace Lucene.Net.Search
 
                     // LUCENENET specific: dispose reset events
                     reopenCond.Dispose();
-                    m_signal.Dispose();
+                    m_notify.Dispose();
                 }
             }
         }
@@ -231,7 +229,7 @@ namespace Lucene.Net.Search
                 // stale time
                 waitingGen = Math.Max(waitingGen, targetGen);
                 reopenCond.Set();                                   // LUCENENET NOTE: gives Run() an oppertunity to notice one is now waiting if one wasn't before.
-                m_signal.Reset();                                  // LUCENENET specific: required to "close the door". Java's notifyAll keyword didn't need this.
+                m_notify.Reset();                                   // LUCENENET specific: required to "close the door". Java's notifyAll keyword didn't need this.
             }
             finally
             {
@@ -243,7 +241,7 @@ namespace Lucene.Net.Search
             {
                 if (maxMS < 0)
                 {
-                    m_signal.WaitOne();
+                    m_notify.WaitOne();
                 }
                 else
                 {
@@ -254,7 +252,7 @@ namespace Lucene.Net.Search
                     }
                     else
                     {
-                        m_signal.WaitOne(TimeSpan.FromMilliseconds(msLeft));
+                        m_notify.WaitOne(TimeSpan.FromMilliseconds(msLeft));
                     }
                 }
             }
