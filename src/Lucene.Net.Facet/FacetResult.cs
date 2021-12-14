@@ -71,10 +71,13 @@ namespace Lucene.Net.Facet
         /// print the <paramref name="value"/> as a <see cref="float"/> with at least 1 number after the decimal.
         /// </summary>
         public FacetResult(string dim, string[] path, float value, LabelAndValue[] labelValues, int childCount)
-            : this(dim, path, labelValues, childCount)
         {
+            this.Dim = dim ?? throw new ArgumentNullException(nameof(dim)); // LUCENENET: Added guard clause
+            this.Path = path ?? throw new ArgumentNullException(nameof(path)); // LUCENENET: Added guard clause
             this.Value = value;
             this.TypeOfValue = typeof(float);
+            this.LabelValues = labelValues ?? throw new ArgumentNullException(nameof(labelValues)); // LUCENENET: Added guard clause
+            this.ChildCount = childCount;
         }
 
         /// <summary>
@@ -82,20 +85,12 @@ namespace Lucene.Net.Facet
         /// print the <paramref name="value"/> as an <see cref="int"/> with no decimal.
         /// </summary>
         public FacetResult(string dim, string[] path, int value, LabelAndValue[] labelValues, int childCount)
-            : this(dim, path, labelValues, childCount)
         {
+            this.Dim = dim ?? throw new ArgumentNullException(nameof(dim)); // LUCENENET: Added guard clause
+            this.Path = path ?? throw new ArgumentNullException(nameof(path)); // LUCENENET: Added guard clause
             this.Value = value;
             this.TypeOfValue = typeof(int);
-        }
-
-        /// <summary>
-        /// Private constructor for shared parameters to be called by public constructors.
-        /// </summary>
-        private FacetResult(string dim, string[] path, LabelAndValue[] labelValues, int childCount)
-        {
-            this.Dim = dim;
-            this.Path = path;
-            this.LabelValues = labelValues;
+            this.LabelValues = labelValues ?? throw new ArgumentNullException(nameof(labelValues)); // LUCENENET: Added guard clause
             this.ChildCount = childCount;
         }
 
@@ -144,7 +139,7 @@ namespace Lucene.Net.Facet
 
         string IFormattable.ToString(string? format, IFormatProvider? provider) => ToString(provider);
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if ((other is FacetResult) == false)
             {

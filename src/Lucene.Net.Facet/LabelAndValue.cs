@@ -89,7 +89,7 @@ namespace Lucene.Net.Facet
 
         string IFormattable.ToString(string? format, IFormatProvider? provider) => ToString(provider);
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if ((other is LabelAndValue) == false)
             {
