@@ -132,7 +132,7 @@ namespace Lucene.Net.Facet.Taxonomy
             TaxonomyFacetSumValueSource facets = new TaxonomyFacetSumValueSource(taxoReader, new FacetsConfig(), c, new Int32FieldSource("num"));
 
             // Retrieve & verify results:
-            Assert.AreEqual("dim=Author path=[] value=145.0 childCount=4\n  Lisa (50.0)\n  Frank (45.0)\n  Susan (40.0)\n  Bob (10.0)\n", facets.GetTopChildren(10, "Author").ToString());
+            Assert.AreEqual("dim=Author path=[] value=145.0 childCount=4\n  Lisa (50.0)\n  Frank (45.0)\n  Susan (40.0)\n  Bob (10.0)\n", facets.GetTopChildren(10, "Author").ToString(CultureInfo.InvariantCulture));
 
             taxoReader.Dispose();
             searcher.IndexReader.Dispose();
@@ -203,9 +203,9 @@ namespace Lucene.Net.Facet.Taxonomy
             IList<FacetResult> results = facets.GetAllDims(10);
 
             Assert.AreEqual(3, results.Count);
-            Assert.AreEqual("dim=a path=[] value=60.0 childCount=3\n  foo3 (30.0)\n  foo2 (20.0)\n  foo1 (10.0)\n", results[0].ToString());
-            Assert.AreEqual("dim=b path=[] value=50.0 childCount=2\n  bar2 (30.0)\n  bar1 (20.0)\n", results[1].ToString());
-            Assert.AreEqual("dim=c path=[] value=30.0 childCount=1\n  baz1 (30.0)\n", results[2].ToString());
+            Assert.AreEqual("dim=a path=[] value=60.0 childCount=3\n  foo3 (30.0)\n  foo2 (20.0)\n  foo1 (10.0)\n", results[0].ToString(CultureInfo.InvariantCulture));
+            Assert.AreEqual("dim=b path=[] value=50.0 childCount=2\n  bar2 (30.0)\n  bar1 (20.0)\n", results[1].ToString(CultureInfo.InvariantCulture));
+            Assert.AreEqual("dim=c path=[] value=30.0 childCount=1\n  baz1 (30.0)\n", results[2].ToString(CultureInfo.InvariantCulture));
 
             IOUtils.Dispose(searcher.IndexReader, taxoReader, dir, taxoDir);
         }
@@ -336,7 +336,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetsCollector sfc = new FacetsCollector();
             NewSearcher(r).Search(new MatchAllDocsQuery(), sfc);
             Facets facets = new TaxonomyFacetSumValueSource(taxoReader, config, sfc, new Int64FieldSource("price"));
-            Assert.AreEqual("dim=a path=[] value=10.0 childCount=2\n  1 (6.0)\n  0 (4.0)\n", facets.GetTopChildren(10, "a").ToString());
+            Assert.AreEqual("dim=a path=[] value=10.0 childCount=2\n  1 (6.0)\n  0 (4.0)\n", facets.GetTopChildren(10, "a").ToString(CultureInfo.InvariantCulture));
 
             IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
@@ -370,7 +370,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetsCollector.Search(NewSearcher(r), q, 10, fc);
             Facets facets = new TaxonomyFacetSumValueSource(taxoReader, config, fc, valueSource);
 
-            Assert.AreEqual("dim=a path=[] value=10.0 childCount=2\n  1 (6.0)\n  0 (4.0)\n", facets.GetTopChildren(10, "a").ToString());
+            Assert.AreEqual("dim=a path=[] value=10.0 childCount=2\n  1 (6.0)\n  0 (4.0)\n", facets.GetTopChildren(10, "a").ToString(CultureInfo.InvariantCulture));
 
             IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
@@ -462,7 +462,7 @@ namespace Lucene.Net.Facet.Taxonomy
             NewSearcher(r).Search(new MatchAllDocsQuery(), sfc);
             Facets facets = new TaxonomyFacetSumValueSource(taxoReader, config, sfc, valueSource);
 
-            Assert.AreEqual("dim=a path=[] value=10.0 childCount=2\n  1 (6.0)\n  0 (4.0)\n", facets.GetTopChildren(10, "a").ToString());
+            Assert.AreEqual("dim=a path=[] value=10.0 childCount=2\n  1 (6.0)\n  0 (4.0)\n", facets.GetTopChildren(10, "a").ToString(CultureInfo.InvariantCulture));
 
             IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
