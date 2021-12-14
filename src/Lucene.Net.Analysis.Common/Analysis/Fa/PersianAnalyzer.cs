@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis.Fa
         /// <summary>
         /// Builds an analyzer with the given stop word. If a none-empty stem exclusion set is
         /// provided this analyzer will add a <see cref="SetKeywordMarkerFilter"/> before
-        /// <see cref="ArabicStemFilter"/>.
+        /// <see cref="PersianStemFilter"/>.
         /// </summary>
         /// <param name="matchVersion">
         ///          lucene compatibility version </param>
