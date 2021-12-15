@@ -2,6 +2,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
@@ -41,16 +42,29 @@ namespace Lucene.Net.Facet
     /// A <see cref="Query"/> for drill-down over facet categories. You
     /// should call <see cref="Add(string, string[])"/> for every group of categories you
     /// want to drill-down over.
-    /// <para>
+    /// <para/>
     /// <b>NOTE:</b> if you choose to create your own <see cref="Query"/> by calling
     /// <see cref="Term"/>, it is recommended to wrap it with <see cref="ConstantScoreQuery"/>
     /// and set the <see cref="Query.Boost">boost</see> to <c>0.0f</c>,
     /// so that it does not affect the scores of the documents.
+    /// <para/>
+    /// Collection initializer note: To create and populate a <see cref="DrillDownQuery"/>
+    /// in a single statement, you can use the following example as a guide:
     /// 
+    /// <code>
+    /// var drillDownQuery = new DrillDownQuery(config)
+    /// {
+    ///     { "Publish Date", "2019" },
+    ///     { "Publish Date", "2020" },
+    ///     { "Publish Date", "2021" },
+    ///     { "timestamp", NumericRangeQuery.NewInt64Range("timestamp", range.Min, range.Max, range.MinInclusive, range.MaxInclusive) },
+    ///     { "filter", GetFilter() }
+    /// };
+    /// </code>
+    /// <para/>
     /// @lucene.experimental
-    /// </para>
     /// </summary>
-    public sealed class DrillDownQuery : Query // LUCENENET TODO: Add collection initializer to make populating easier
+    public sealed class DrillDownQuery : Query, IEnumerable<BooleanClause>, IEnumerable<KeyValuePair<string, int>> // LUCENENET specific - Added collection initializer to make populating easier
     {
         /// <summary>
         /// Creates a drill-down term.
@@ -178,7 +192,6 @@ namespace Lucene.Net.Facet
         /// </summary>
         public void Add(string dim, params string[] path)
         {
-
             if (drillDownDims.ContainsKey(dim))
             {
                 Merge(dim, path);
@@ -201,7 +214,6 @@ namespace Lucene.Net.Facet
         /// </summary>
         public void Add(string dim, Query subQuery)
         {
-
             if (drillDownDims.ContainsKey(dim))
             {
                 throw new ArgumentException("dimension \"" + dim + "\" already has a drill-down");
@@ -224,7 +236,6 @@ namespace Lucene.Net.Facet
         /// </summary>
         public void Add(string dim, Filter subFilter)
         {
-
             if (drillDownDims.ContainsKey(dim))
             {
                 throw new ArgumentException("dimension \"" + dim + "\" already has a drill-down");
@@ -375,5 +386,24 @@ namespace Lucene.Net.Facet
         internal BooleanQuery BooleanQuery => query;
 
         internal IDictionary<string, int> Dims => drillDownDims;
+
+        // LUCENENET specific - added for collection initializer to work with Add() methods.
+        IEnumerator IEnumerable.GetEnumerator() => query.GetEnumerator();
+
+        /// <summary>
+        /// Returns an iterator on the clauses in this query. It implements the <see cref="T:IEnumerable{BooleanClause}"/> interface to
+        /// make it possible to do:
+        /// <code>foreach (BooleanClause clause in drillDownQuery) {}</code>
+        /// </summary>
+        public IEnumerator<BooleanClause> GetEnumerator() => query.GetEnumerator();
+
+        /// <summary>
+        /// Returns an iterator on the dims in this query. It implements the <see cref="T:IEnumerable{KeyValuePair{string, int}}"/> interface to
+        /// make it possible to do:
+        /// <code>
+        /// foreach (KeyValuePair&lt;string, int&gt; dimensionAndCount in (IEnumerable&lt;KeyValuePair&lt;string, int&gt;&gt;)drillDownQuery) {}
+        /// </code>
+        /// </summary>
+        IEnumerator<KeyValuePair<string, int>> IEnumerable<KeyValuePair<string, int>>.GetEnumerator() => drillDownDims.GetEnumerator();
     }
 }
