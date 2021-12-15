@@ -42,13 +42,21 @@ namespace Lucene.Net.Documents
     /// </summary>
     public static class DateTools
     {
-        private const string YEAR_FORMAT = "yyyy";
-        private const string MONTH_FORMAT = "yyyyMM";
-        private const string DAY_FORMAT = "yyyyMMdd";
-        private const string HOUR_FORMAT = "yyyyMMddHH";
-        private const string MINUTE_FORMAT = "yyyyMMddHHmm";
-        private const string SECOND_FORMAT = "yyyyMMddHHmmss";
-        private const string MILLISECOND_FORMAT = "yyyyMMddHHmmssfff";
+        /// <summary>
+        /// Returns the date format string for the specified <paramref name="resolution"/>
+        /// or <c>null</c> if the resolution is invalid.
+        /// </summary>
+        private static string ToDateFormat(Resolution resolution) => resolution switch
+        {
+            Resolution.YEAR =>        "yyyy",
+            Resolution.MONTH =>       "yyyyMM",
+            Resolution.DAY =>         "yyyyMMdd",
+            Resolution.HOUR =>        "yyyyMMddHH",
+            Resolution.MINUTE =>      "yyyyMMddHHmm",
+            Resolution.SECOND =>      "yyyyMMddHHmmss",
+            Resolution.MILLISECOND => "yyyyMMddHHmmssfff",
+            _ => null, // Invalid option
+        };
 
         // LUCENENET - not used
         //private static readonly System.Globalization.Calendar calInstance = new System.Globalization.GregorianCalendar();
@@ -76,38 +84,12 @@ namespace Lucene.Net.Documents
         /// depending on <paramref name="resolution"/>; using GMT as timezone </returns>
         public static string TimeToString(long time, Resolution resolution)
         {
-            DateTime date = new DateTime(Round(time, resolution));
+            DateTime date = new DateTime(Round(time, resolution), DateTimeKind.Utc);
+            string format = ToDateFormat(resolution);
+            if (format is null)
+                throw new ArgumentException("unknown resolution " + resolution);
 
-            if (resolution == Resolution.YEAR)
-            {
-                return date.ToString(YEAR_FORMAT, CultureInfo.InvariantCulture);
-            }
-            else if (resolution == Resolution.MONTH)
-            {
-                return date.ToString(MONTH_FORMAT, CultureInfo.InvariantCulture);
-            }
-            else if (resolution == Resolution.DAY)
-            {
-                return date.ToString(DAY_FORMAT, CultureInfo.InvariantCulture);
-            }
-            else if (resolution == Resolution.HOUR)
-            {
-                return date.ToString(HOUR_FORMAT, CultureInfo.InvariantCulture);
-            }
-            else if (resolution == Resolution.MINUTE)
-            {
-                return date.ToString(MINUTE_FORMAT, CultureInfo.InvariantCulture);
-            }
-            else if (resolution == Resolution.SECOND)
-            {
-                return date.ToString(SECOND_FORMAT, CultureInfo.InvariantCulture);
-            }
-            else if (resolution == Resolution.MILLISECOND)
-            {
-                return date.ToString(MILLISECOND_FORMAT, CultureInfo.InvariantCulture);
-            }
-
-            throw new ArgumentException("unknown resolution " + resolution);
+            return date.ToString(format, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -135,67 +117,11 @@ namespace Lucene.Net.Documents
         /// expected format </exception>
         public static DateTime StringToDate(string dateString)
         {
-            DateTime date;
-            if (dateString.Length == 4)
-            {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
-                    1, 1, 0, 0, 0, 0);
-            }
-            else if (dateString.Length == 6)
-            {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
-                    1, 0, 0, 0, 0);
-            }
-            else if (dateString.Length == 8)
-            {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(6, 2), CultureInfo.InvariantCulture),
-                    0, 0, 0, 0);
-            }
-            else if (dateString.Length == 10)
-            {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(6, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(8, 2), CultureInfo.InvariantCulture),
-                    0, 0, 0);
-            }
-            else if (dateString.Length == 12)
-            {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(6, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(8, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(10, 2), CultureInfo.InvariantCulture),
-                    0, 0);
-            }
-            else if (dateString.Length == 14)
-            {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(6, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(8, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(10, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(12, 2), CultureInfo.InvariantCulture),
-                    0);
-            }
-            else if (dateString.Length == 17)
-            {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(6, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(8, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(10, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(12, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(14, 3), CultureInfo.InvariantCulture));
-            }
-            else
-            {
+            string format = ToDateFormat((Resolution)dateString.Length);
+            if (format is null || !DateTimeOffset.TryParseExact(dateString, format, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AssumeUniversal, out DateTimeOffset dateOffset))
                 throw new ParseException("Input is not valid date string: " + dateString, 0);
-            }
-            return date;
+
+            return dateOffset.DateTime;
         }
 
         /// <summary>
@@ -225,7 +151,9 @@ namespace Lucene.Net.Documents
         /// (also known as the "epoch")</returns>
         public static long Round(long time, Resolution resolution)
         {
-            DateTime dt = new DateTime(time * TimeSpan.TicksPerMillisecond);
+            DateTimeOffset dt = new DateTimeOffset(time * TimeSpan.TicksPerMillisecond, TimeSpan.Zero);
+            // Remove extra ticks beyond milliseconds
+            dt = new DateTimeOffset(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Millisecond, TimeSpan.Zero);
 
             if (resolution == Resolution.YEAR)
             {
