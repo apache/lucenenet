@@ -67,23 +67,23 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         private static readonly string[] DATE_FORMATS = {
             // LUCENENET specific: in JAVA, they don't care if it is an abbreviated or a full month name when parsing
             // so we provide definitions for both ways.
-            "ddd, dd MMM yyyy hh:mm:ss K",   // Tue, 09 Dec 2003 22:39:08 GMT
-            "ddd, dd MMMM yyyy hh:mm:ss K",  // Tue, 09 December 2003 22:39:08 GMT
-            "ddd MMM dd hh:mm:ss yyyy K",    // Tue Dec 09 16:45:08 2003 EST
-            "ddd MMMM dd hh:mm:ss yyyy K",   // Tue December 09 16:45:08 2003 EST
-            "ddd, dd-MMM-':'y hh:mm:ss K",   // Tue, 09 Dec 2003 22:39:08 GMT
-            "ddd, dd-MMMM-':'y hh:mm:ss K",  // Tue, 09 December 2003 22:39:08 GMT
-            "ddd, dd-MMM-yyy hh:mm:ss K",    // Tue, 09 Dec 2003 22:39:08 GMT
-            "ddd, dd-MMMM-yyy hh:mm:ss K",   // Tue, 09 December 2003 22:39:08 GMT
-            "ddd MMM dd hh:mm:ss yyyy",      // Tue Dec 09 16:45:08 2003
-            "ddd MMMM dd hh:mm:ss yyyy",     // Tue December 09 16:45:08 2003
-            "dd MMM yyyy",                   // 1 Mar 1994
-            "dd MMMM yyyy",                  // 1 March 1994
-            "MMM dd, yyyy",                  // Feb 3, 1994
-            "MMMM dd, yyyy",                 // February 3, 1994
-            "yyMMdd",                        // 910513
-            "hhmm K.K.K. MMM dd, yyyy",      // 0901 u.t.c. Apr 28, 1994
-            "hhmm K.K.K. MMMM dd, yyyy",     // 0901 u.t.c. April 28, 1994
+            "ddd, dd MMM yyyy hh:mm:ss zzz",   // Tue, 09 Dec 2003 22:39:08 GMT (format not supported in .NET, must specify +0:00 instead of GMT)
+            "ddd, dd MMMM yyyy hh:mm:ss zzz",  // Tue, 09 December 2003 22:39:08 GMT (format not supported in .NET, must specify +0:00 instead of GMT)
+            "ddd MMM dd hh:mm:ss yyyy zzz",    // Tue Dec 09 16:45:08 2003 EST (format not supported in .NET, must specify +5:00/+4:00 instead of EST)
+            "ddd MMMM dd hh:mm:ss yyyy zzz",   // Tue December 09 16:45:08 2003 EST (format not supported in .NET, must specify +5:00/+4:00 instead of EST)
+            "ddd, dd-MMM-':'y hh:mm:ss zzz",   // Tue, 09 Dec 2003 22:39:08 GMT (format not supported in .NET, must specify +0:00 instead of GMT)
+            "ddd, dd-MMMM-':'y hh:mm:ss zzz",  // Tue, 09 December 2003 22:39:08 GMT (format not supported in .NET, must specify +0:00 instead of GMT)
+            "ddd, dd-MMM-yyy hh:mm:ss zzz",    // Tue, 09 Dec 2003 22:39:08 GMT (format not supported in .NET, must specify +0:00 instead of GMT)
+            "ddd, dd-MMMM-yyy hh:mm:ss zzz",   // Tue, 09 December 2003 22:39:08 GMT (format not supported in .NET, must specify +0:00 instead of GMT)
+            "ddd MMM dd hh:mm:ss yyyy",        // Tue Dec 09 16:45:08 2003
+            "ddd MMMM dd hh:mm:ss yyyy",       // Tue December 09 16:45:08 2003
+            "dd MMM yyyy",                     // 1 Mar 1994
+            "dd MMMM yyyy",                    // 1 March 1994
+            "MMM dd, yyyy",                    // Feb 3, 1994
+            "MMMM dd, yyyy",                   // February 3, 1994
+            "yyMMdd",                          // 910513
+            "hhmm zzz MMM dd, yyyy",           // 0901 u.t.c. Apr 28, 1994 (format not supported in .NET, must specify +0:00 instead of u.t.c.)
+            "hhmm zzz MMMM dd, yyyy",          // 0901 u.t.c. April 28, 1994 (format not supported in .NET, must specify +0:00 instead of u.t.c.)
         };
 
         private readonly DisposableThreadLocal<StringBuilder> trecDocBuffer = new DisposableThreadLocal<StringBuilder>();
@@ -203,11 +203,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             dateStr = dateStr.Trim();
             if (DateTime.TryParseExact(dateStr, DATE_FORMATS, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
             {
-                return d;
+                return d.ToUniversalTime();
             }
             else if (DateTime.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.None, out d))
             {
-                return d;
+                return d.ToUniversalTime();
             }
 
             // do not fail test just because a date could not be parsed

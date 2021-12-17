@@ -27,6 +27,10 @@
     <AssemblyTitle>Lucene.Net.Tests._A-D</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TimeZoneConverter" Version="$(TimeZoneConverterPackageVersion)" />
+  </ItemGroup>
   
   <ItemGroup>
     <Compile Include="..\Lucene.Net.Tests\Properties\AssemblyInfo.cs" Link="Properties\AssemblyInfo.cs" />

@@ -54,7 +54,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             Set(ConfigurationKeys.FUZZY_CONFIG, new FuzzyConfig());
             Set(ConfigurationKeys.LOCALE, null);
             Set(ConfigurationKeys.MULTI_TERM_REWRITE_METHOD, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
-            Set(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, new JCG.Dictionary<string, DateTools.Resolution?>());
+            Set(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, new JCG.Dictionary<string, DateResolution?>());
         }
 
         /// <summary>
@@ -137,11 +137,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         public readonly static ConfigurationKey<IDictionary<string, float?>> FIELD_BOOST_MAP = ConfigurationKey.NewInstance<IDictionary<string, float?>>();
 
         /// <summary>
-        /// Key used to set a field to <see cref="DateTools.Resolution"/> map that is used
+        /// Key used to set a field to <see cref="DateResolution"/> map that is used
         /// to normalize each date field value.
         /// </summary>
         /// <seealso cref="StandardQueryParser.DateResolutionMap"/>
-        public readonly static ConfigurationKey<IDictionary<string, DateTools.Resolution?>> FIELD_DATE_RESOLUTION_MAP = ConfigurationKey.NewInstance<IDictionary<string, DateTools.Resolution?>>();
+        public readonly static ConfigurationKey<IDictionary<string, DateResolution?>> FIELD_DATE_RESOLUTION_MAP = ConfigurationKey.NewInstance<IDictionary<string, DateResolution?>>();
 
         /// <summary>
         /// Key used to set the <see cref="FuzzyConfig"/> used to create fuzzy queries.
@@ -151,11 +151,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         public readonly static ConfigurationKey<FuzzyConfig> FUZZY_CONFIG = ConfigurationKey.NewInstance<FuzzyConfig>();
 
         /// <summary>
-        /// Key used to set default <see cref="DateTools.Resolution"/>.
+        /// Key used to set default <see cref="DateResolution"/>.
         /// </summary>
-        /// <seealso cref="StandardQueryParser.SetDateResolution(DateTools.Resolution)"/>
+        /// <seealso cref="StandardQueryParser.SetDateResolution(DateResolution)"/>
         /// <seealso cref="StandardQueryParser.DateResolution"/>
-        public readonly static ConfigurationKey<DateTools.Resolution> DATE_RESOLUTION = ConfigurationKey.NewInstance<DateTools.Resolution>();
+        public readonly static ConfigurationKey<DateResolution> DATE_RESOLUTION = ConfigurationKey.NewInstance<DateResolution>();
 
         /// <summary>
         /// Key used to set the boost value in <see cref="FieldConfig"/> objects.

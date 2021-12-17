@@ -122,11 +122,11 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>
         /// the default date resolution
         /// </summary>
-        private DateTools.Resolution dateResolution = DateTools.Resolution.DAY;
+        private DateResolution dateResolution = DateResolution.DAY;
         /// <summary>
         ///  maps field names to date resolutions
         /// </summary>
-        private IDictionary<string, DateTools.Resolution> fieldToDateResolution = null;
+        private IDictionary<string, DateResolution> fieldToDateResolution = null;
 
         /// <summary>
         /// Whether or not to analyze range terms when constructing RangeQuerys
@@ -315,9 +315,9 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>
         /// Gets or Sets the default date resolution used by RangeQueries for fields for which no
         /// specific date resolutions has been set. Field specific resolutions can be set
-        /// with <see cref="SetDateResolution(string,DateTools.Resolution)"/>.
+        /// with <see cref="SetDateResolution(string, DateResolution)"/>.
         /// </summary>
-        public virtual void SetDateResolution(DateTools.Resolution dateResolution)
+        public virtual void SetDateResolution(DateResolution dateResolution)
         {
             this.dateResolution = dateResolution;
         }
@@ -327,7 +327,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         /// <param name="fieldName">field for which the date resolution is to be set</param>
         /// <param name="dateResolution">date resolution to set</param>
-        public virtual void SetDateResolution(string fieldName, DateTools.Resolution dateResolution)
+        public virtual void SetDateResolution(string fieldName, DateResolution dateResolution)
         {
             if (string.IsNullOrEmpty(fieldName))
             {
@@ -337,7 +337,7 @@ namespace Lucene.Net.QueryParsers.Classic
             if (fieldToDateResolution == null)
             {
                 // lazily initialize Dictionary
-                fieldToDateResolution = new Dictionary<string, DateTools.Resolution>();
+                fieldToDateResolution = new Dictionary<string, DateResolution>();
             }
 
             fieldToDateResolution[fieldName] = dateResolution;
@@ -348,7 +348,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// Returns null, if no default or field specific date resolution has been set 
         /// for the given field.
         /// </summary>
-        public virtual DateTools.Resolution GetDateResolution(string fieldName)
+        public virtual DateResolution GetDateResolution(string fieldName)
         {
             if (string.IsNullOrEmpty(fieldName))
             {
@@ -361,7 +361,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 return this.dateResolution;
             }
 
-            if (!fieldToDateResolution.TryGetValue(fieldName, out DateTools.Resolution resolution))
+            if (!fieldToDateResolution.TryGetValue(fieldName, out DateResolution resolution))
             {
                 // no date resolutions set for the given field; return default date resolution instead
                 return this.dateResolution;
@@ -486,7 +486,7 @@ namespace Lucene.Net.QueryParsers.Classic
             }
 
             string shortDateFormat = Locale.DateTimeFormat.ShortDatePattern;
-            DateTools.Resolution resolution = GetDateResolution(field);
+            DateResolution resolution = GetDateResolution(field);
 
             // LUCENENET specific: This doesn't emulate java perfectly.
             // See LUCENENET-423 - DateRange differences with Java and .NET

@@ -74,5 +74,13 @@ namespace Lucene.Net.Support
             long milliseconds = offset.UtcDateTime.Ticks / TimeSpan.TicksPerMillisecond;
             return milliseconds - UnixEpochMilliseconds;
         }
+
+        public static long ToUnixTimeMilliseconds(long ticks)
+        {
+            // Truncate sub-millisecond precision before offsetting by the Unix Epoch to avoid
+            // the last digit being off by one for dates that result in negative Unix times
+            long milliseconds = ticks / TimeSpan.TicksPerMillisecond;
+            return milliseconds - UnixEpochMilliseconds;
+        }
     }
 }

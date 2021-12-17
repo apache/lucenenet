@@ -40,7 +40,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <see cref="CultureInfo.CurrentCulture"/> will be used.
     /// <para/>
     /// If a <see cref="ConfigurationKeys.DATE_RESOLUTION"/> is defined and the
-    /// <see cref="DateTools.Resolution"/> is not <c>null</c> it will also be used to parse the
+    /// <see cref="DateResolution"/> is not <c>null</c> it will also be used to parse the
     /// date value.
     /// </summary>
     /// <seealso cref="ConfigurationKeys.DATE_RESOLUTION"/>
@@ -61,7 +61,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 FieldQueryNode lower = (FieldQueryNode)termRangeNode.LowerBound;
 
                 // LUCENENET specific - set to 0 (instead of null), since it doesn't correspond to any valid setting
-                DateTools.Resolution dateRes = 0/* = null*/;
+                DateResolution dateRes = 0/* = null*/;
                 bool inclusive = false;
                 CultureInfo locale = GetQueryConfigHandler().Get(ConfigurationKeys.LOCALE);
 

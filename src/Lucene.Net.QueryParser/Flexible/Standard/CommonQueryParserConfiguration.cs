@@ -98,9 +98,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         float FuzzyMinSim { get; set; }
 
         /// <summary>
-        /// Sets the default <see cref="DateTools.Resolution"/> used for certain field when
-        /// no <see cref="DateTools.Resolution"/> is defined for this field.
+        /// Sets the default <see cref="DateResolution"/> used for certain field when
+        /// no <see cref="DateResolution"/> is defined for this field.
         /// </summary>
-        void SetDateResolution(DateTools.Resolution dateResolution);
+        void SetDateResolution(DateResolution dateResolution);
     }
 }

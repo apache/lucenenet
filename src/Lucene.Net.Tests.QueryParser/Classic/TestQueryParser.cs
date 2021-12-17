@@ -109,7 +109,7 @@ namespace Lucene.Net.QueryParsers.Classic
             qp.AutoGeneratePhraseQueries = value;
         }
 
-        public override void SetDateResolution(ICommonQueryParserConfiguration cqpC, string field, DateTools.Resolution value)
+        public override void SetDateResolution(ICommonQueryParserConfiguration cqpC, string field, DateResolution value)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(cqpC is QueryParser);
             QueryParser qp = (QueryParser)cqpC;
