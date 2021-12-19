@@ -1,4 +1,5 @@
 ﻿using J2N;
+using J2N.Globalization;
 using J2N.Numerics;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -872,20 +873,18 @@ namespace Lucene.Net.QueryParsers.Classic
         internal virtual Query HandleBareFuzzy(string qfield, Token fuzzySlop, string termImage)
         {
             Query q;
-            float fms = FuzzyMinSim;
-            try
+            string fuzzySlopStr = fuzzySlop.Image.Substring(1);
+            if (fuzzySlopStr == string.Empty || !J2N.Numerics.Single.TryParse(fuzzySlopStr, NumberStyle.Float, Locale, out float fms))
             {
-                // LUCENENET NOTE: Apparently a "feature" of Lucene is to always
-                // use "." as the decimal specifier for fuzzy slop, even if the culture uses
-                // a different one, such as ",".
-
-                // LUCENENET TODO: It would probably be more intuitive to use
-                // the current Locale to specify the decimal identifier than
-                // to hard code it to be ".", but this would differ from Java Lucene.
-                // Perhaps just make it a non-default option?
-                fms = float.Parse(fuzzySlop.Image.Substring(1), CultureInfo.InvariantCulture);
+                // LUCENENET: Fallback on invariant culture
+                if (fuzzySlopStr == string.Empty || !J2N.Numerics.Single.TryParse(fuzzySlopStr, NumberStyle.Float, CultureInfo.InvariantCulture, out fms))
+                {
+                    fms = FuzzyMinSim;
+                    /* Should this be handled somehow? (defaults to "no boost", if
+                     * boost number is invalid)
+                     */
+                }
             }
-            catch (Exception ignored) when (ignored.IsException()) { }
             if (fms < 0.0f)
             {
                 throw new ParseException("Minimum similarity for a FuzzyQuery has to be between 0.0f and 1.0f !");
@@ -904,19 +903,19 @@ namespace Lucene.Net.QueryParsers.Classic
             int s = PhraseSlop;  // default
             if (fuzzySlop != null)
             {
-                try
+                string fuzzySlopStr = fuzzySlop.Image.Substring(1);
+                if (fuzzySlopStr != string.Empty)
                 {
-                    // LUCENENET NOTE: Apparently a "feature" of Lucene is to always
-                    // use "." as the decimal specifier for fuzzy slop, even if the culture uses
-                    // a different one, such as ",".
-
-                    // LUCENENET TODO: It would probably be more intuitive to use
-                    // the current Locale to specify the decimal identifier than
-                    // to hard code it to be ".", but this would differ from Java Lucene.
-                    // Perhaps just make it a non-default option?
-                    s = (int)float.Parse(fuzzySlop.Image.Substring(1), CultureInfo.InvariantCulture);
+                    if (J2N.Numerics.Single.TryParse(fuzzySlopStr, NumberStyle.Float, Locale, out float f))
+                    {
+                        s = (int)f;
+                    }
+                    // LUCENENET: Fallback on invariant culture
+                    else if (J2N.Numerics.Single.TryParse(fuzzySlopStr, NumberStyle.Float, CultureInfo.InvariantCulture, out f))
+                    {
+                        s = (int)f;
+                    }
                 }
-                catch (Exception ignored) when (ignored.IsException()) { }
             }
             return GetFieldQuery(qfield, DiscardEscapeChar(term.Image.Substring(1, term.Image.Length - 2)), s);
         }
@@ -926,24 +925,16 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (boost != null)
             {
-                float f = (float)1.0;
-                try
+                if (!J2N.Numerics.Single.TryParse(boost.Image, NumberStyle.Float, Locale, out float f))
                 {
-                    // LUCENENET NOTE: Apparently a "feature" of Lucene is to always
-                    // use "." as the decimal specifier for boost, even if the culture uses
-                    // a different one, such as ",".
-
-                    // LUCENENET TODO: It would probably be more intuitive to use
-                    // the current Locale to specify the decimal identifier than
-                    // to hard code it to be ".", but this would differ from Java Lucene.
-                    // Perhaps just make it a non-default option?
-                    f = float.Parse(boost.Image, CultureInfo.InvariantCulture);
-                }
-                catch (Exception ignored) when (ignored.IsException())
-                {
-                    /* Should this be handled somehow? (defaults to "no boost", if
-                     * boost number is invalid)
-                     */
+                    // LUCENENET: Fallback on invariant culture
+                    if (!J2N.Numerics.Single.TryParse(boost.Image, NumberStyle.Float, CultureInfo.InvariantCulture, out f))
+                    {
+                        f = 1.0f;
+                        /* Should this be handled somehow? (defaults to "no boost", if
+                         * boost number is invalid)
+                         */
+                    }
                 }
 
                 // avoid boosting null queries, such as those caused by stop words
