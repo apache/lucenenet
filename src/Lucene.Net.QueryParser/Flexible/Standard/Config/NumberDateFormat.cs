@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Util;
 using System;
 using System.Globalization;
@@ -51,8 +51,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
     /// uses the given <c>dateFormat</c> and <see cref="CultureInfo">locale</see> to parse and format dates, but before, it
     /// converts <see cref="long"/> to <see cref="DateTime"/> objects or vice-versa.
     /// <para/>
-    /// Note that the <see cref="long"/> value the dates are parsed into and out of represent the number of milliseconds
-    /// since January 1, 1970 0:00:00, also known as the "epoch".
+    /// The <see cref="long"/> value the dates are parsed into and out of is specified by changing <see cref="NumericRepresentation"/>.
+    /// The default value is <see cref="Documents.NumericRepresentation.UNIX_TIME_MILLISECONDS"/>, which is the number of milliseconds
+    /// since January 1, 1970 0:00:00 UTC, also known as the "epoch".
     /// </summary>
     public class NumberDateFormat : NumberFormat
     {
@@ -99,6 +100,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             this.timeStyle = timeStyle;
         }
 
+        /// <summary>
+        /// The numeric representation to convert the date into when calling <see cref="Parse(string)"/>
+        /// or convert the date from when calling <see cref="Format(long)"/> overloads.
+        /// </summary>
+        public NumericRepresentation NumericRepresentation { get; set; } = NumericRepresentation.UNIX_TIME_MILLISECONDS;
+
+        /// <summary>
+        /// The time zone to convert dates to when using <see cref="Format(long)"/>
+        /// or from when using <see cref="Parse(string)"/>.
+        /// </summary>
         public virtual TimeZoneInfo TimeZone
         {
             get => this.timeZone;
@@ -107,14 +118,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         public override string Format(double number)
         {
-            DateTimeOffset offset = DateTimeOffsetUtil.FromUnixTimeMilliseconds(Convert.ToInt64(number));
-            DateTimeOffset timeZoneAdjusted = TimeZoneInfo.ConvertTime(offset, TimeZone);
-            return timeZoneAdjusted.ToString(GetDateFormat(), FormatProvider);
+            return Format(Convert.ToInt64(number));
         }
 
         public override string Format(long number)
         {
-            DateTimeOffset offset = DateTimeOffsetUtil.FromUnixTimeMilliseconds(Convert.ToInt64(number));
+            long ticks = NumericRepresentation switch
+            {
+                NumericRepresentation.UNIX_TIME_MILLISECONDS => DateTools.UnixTimeMillisecondsToTicks(number),
+                NumericRepresentation.TICKS => number,
+                NumericRepresentation.TICKS_AS_MILLISECONDS => number * TimeSpan.TicksPerMillisecond,
+                _ => throw new ArgumentException($"'{NumericRepresentation}' is not a valid {nameof(NumericRepresentation)}.")
+            };
+
+            DateTimeOffset offset = new DateTimeOffset(ticks, TimeSpan.Zero); // Always UTC time
             DateTimeOffset timeZoneAdjusted = TimeZoneInfo.ConvertTime(offset, TimeZone);
             return timeZoneAdjusted.ToString(GetDateFormat(), FormatProvider);
         }
@@ -127,14 +144,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
                 timeZoneAdjusted = new DateTimeOffset(parsedDate.DateTime, TimeZoneInfo.ConvertTime(parsedDate.ToUniversalTime(), TimeZone).Offset);
             else
                 timeZoneAdjusted = TimeZoneInfo.ConvertTime(parsedDate, TimeZone);
-            return DateTimeOffsetUtil.ToUnixTimeMilliseconds(timeZoneAdjusted);
+            long ticks = timeZoneAdjusted.UtcDateTime.Ticks;
+            return NumericRepresentation switch
+            {
+                NumericRepresentation.UNIX_TIME_MILLISECONDS => DateTools.TicksToUnixTimeMilliseconds(ticks),
+                NumericRepresentation.TICKS => ticks,
+                NumericRepresentation.TICKS_AS_MILLISECONDS => ticks / TimeSpan.TicksPerMillisecond,
+                _ => throw new ArgumentException($"'{NumericRepresentation}' is not a valid {nameof(NumericRepresentation)}.")
+            };
         }
 
         public override string Format(object number)
         {
-            DateTimeOffset offset = DateTimeOffsetUtil.FromUnixTimeMilliseconds(Convert.ToInt64(number, FormatProvider));
-            DateTimeOffset timeZoneAdjusted = TimeZoneInfo.ConvertTime(offset, TimeZone);
-            return timeZoneAdjusted.ToString(GetDateFormat(), FormatProvider);
+            return Format(Convert.ToInt64(number, FormatProvider));
         }
 
         public void SetDateFormat(string dateFormat)
@@ -155,6 +177,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             return GetDateFormat(dateStyle, timeStyle.Value, FormatProvider);
         }
 
+        /// <summary>
+        /// Gets a date format string similar to Java's SimpleDateFormat using the specified <paramref name="dateStyle"/>,
+        /// <paramref name="timeStyle"/> and <paramref name="provider"/>.
+        /// </summary>
+        /// <param name="dateStyle">The date formatting style. For example, <see cref="DateFormat.SHORT"/> for "M/d/yyyy" in the en-US culture.</param>
+        /// <param name="timeStyle">The time formatting style. For example, <see cref="DateFormat.SHORT"/> for "h:mm tt" in the en-US culture.</param>
+        /// <param name="provider">An object that supplies culture-specific formatting information. If <c>null</c> the culture of the current thread will be used.</param>
+        /// <returns>A date and time format string with a space separator.</returns>
         public static string GetDateFormat(DateFormat dateStyle, DateFormat timeStyle, IFormatProvider? provider)
         {
             DateTimeFormatInfo dateTimeFormat = DateTimeFormatInfo.GetInstance(provider);
@@ -172,6 +202,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             return string.Concat(datePattern, " ", timePattern);
         }
 
+        /// <summary>
+        /// Gets a date format string similar to Java's SimpleDateFormat using the specified <paramref name="dateStyle"/>
+        /// and <paramref name="provider"/>.
+        /// </summary>
+        /// <param name="dateStyle">The date formatting style. For example, <see cref="DateFormat.SHORT"/> for "M/d/yyyy" in the en-US culture.</param>
+        /// <param name="provider">An object that supplies culture-specific formatting information. If <c>null</c> the culture of the current thread will be used.</param>
+        /// <returns>A date format string.</returns>
         public static string GetDateFormat(DateFormat dateStyle, IFormatProvider? provider)
         {
             DateTimeFormatInfo dateTimeFormat = DateTimeFormatInfo.GetInstance(provider);
