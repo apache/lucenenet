@@ -136,7 +136,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             return timeZoneAdjusted.ToString(GetDateFormat(), FormatProvider);
         }
 
-        public override object Parse(string source)
+        public override J2N.Numerics.Number Parse(string source)
         {
             DateTimeOffset parsedDate = DateTimeOffset.ParseExact(source, GetDateFormat(), FormatProvider, DateTimeStyles.None);
             DateTimeOffset timeZoneAdjusted;
@@ -145,13 +145,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             else
                 timeZoneAdjusted = TimeZoneInfo.ConvertTime(parsedDate, TimeZone);
             long ticks = timeZoneAdjusted.UtcDateTime.Ticks;
-            return NumericRepresentation switch
+            long result = NumericRepresentation switch
             {
                 NumericRepresentation.UNIX_TIME_MILLISECONDS => DateTools.TicksToUnixTimeMilliseconds(ticks),
                 NumericRepresentation.TICKS => ticks,
                 NumericRepresentation.TICKS_AS_MILLISECONDS => ticks / TimeSpan.TicksPerMillisecond,
                 _ => throw new ArgumentException($"'{NumericRepresentation}' is not a valid {nameof(NumericRepresentation)}.")
             };
+            return J2N.Numerics.Int64.GetInstance(result);
         }
 
         public override string Format(object number)

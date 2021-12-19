@@ -50,21 +50,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             SetBounds(lower, upper, lowerInclusive, upperInclusive, numericConfig);
         }
 
-        private static NumericType GetNumericDataType(/*Number*/ object number)
+        private static NumericType GetNumericDataType(J2N.Numerics.Number number)
         {
-            if (number is long)
+            if (number is J2N.Numerics.Int64)
             {
                 return NumericType.INT64;
             }
-            else if (number is int)
+            else if (number is J2N.Numerics.Int32)
             {
                 return NumericType.INT32;
             }
-            else if (number is double)
+            else if (number is J2N.Numerics.Double)
             {
                 return NumericType.DOUBLE;
             }
-            else if (number is float)
+            else if (number is J2N.Numerics.Single)
             {
                 return NumericType.SINGLE;
             }
