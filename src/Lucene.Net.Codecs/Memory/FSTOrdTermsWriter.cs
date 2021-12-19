@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -259,7 +260,7 @@ namespace Lucene.Net.Codecs.Memory
             /// NOTE: This was longsSize (field) in Lucene.
             /// </summary>
             public int Int64sSize { get; set; }
-            public FST<long?> Dict { get; set; }
+            public FST<Int64> Dict { get; set; }
 
             // TODO: block encode each part 
 
@@ -280,7 +281,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             private readonly FSTOrdTermsWriter _outerInstance;
 
-            private readonly Builder<long?> _builder;
+            private readonly Builder<Int64> _builder;
             private readonly PositiveInt32Outputs _outputs;
             private readonly FieldInfo _fieldInfo;
             private readonly int _longsSize;
@@ -307,7 +308,7 @@ namespace Lucene.Net.Codecs.Memory
                 _fieldInfo = fieldInfo;
                 _longsSize = outerInstance.postingsWriter.SetField(fieldInfo);
                 _outputs = PositiveInt32Outputs.Singleton;
-                _builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, _outputs);
+                _builder = new Builder<Int64>(FST.INPUT_TYPE.BYTE1, _outputs);
 
                 _lastBlockStatsFp = 0;
                 _lastBlockMetaLongsFp = 0;

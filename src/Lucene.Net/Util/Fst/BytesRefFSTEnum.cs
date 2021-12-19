@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -27,7 +27,7 @@ namespace Lucene.Net.Util.Fst
     ///
     /// @lucene.experimental
     /// </summary>
-    public sealed class BytesRefFSTEnum<T> : FSTEnum<T>
+    public sealed class BytesRefFSTEnum<T> : FSTEnum<T> where T : class // LUCENENET specific - added class constraint, since we compare reference equality
     {
         private readonly BytesRef current = new BytesRef(10);
         private readonly BytesRefFSTEnum.InputOutput<T> result = new BytesRefFSTEnum.InputOutput<T>();

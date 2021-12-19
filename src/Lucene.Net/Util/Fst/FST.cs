@@ -63,6 +63,7 @@ namespace Lucene.Net.Util.Fst
     /// @lucene.experimental
     /// </summary>
     public sealed class FST<T>
+        where T : class // LUCENENET specific - added class constraint, since we compare reference equality
     {
         /*/// <summary>
         /// Specifies allowed range of each int input label for
@@ -2155,7 +2156,7 @@ namespace Lucene.Net.Util.Fst
         /// returns <c>true</c> if the node at this address has any
         /// outgoing arcs
         /// </summary>
-        public static bool TargetHasArcs<T>(Arc<T> arc)
+        public static bool TargetHasArcs<T>(Arc<T> arc) where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             return arc.Target > 0;
         }
@@ -2163,7 +2164,7 @@ namespace Lucene.Net.Util.Fst
         /// <summary>
         /// Reads an automaton from a file.
         /// </summary>
-        public static FST<T> Read<T>(FileInfo file, Outputs<T> outputs)
+        public static FST<T> Read<T>(FileInfo file, Outputs<T> outputs) where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             var bs = new BufferedStream(file.OpenRead());
             bool success = false;
@@ -2220,6 +2221,7 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         /// <typeparam name="T"></typeparam>
         public class Arc<T>
+            where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             public int Label { get; set; }
 
@@ -2307,7 +2309,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        internal class ArcAndState<T>
+        internal class ArcAndState<T> where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             internal Arc<T> Arc { get; private set; }
             internal Int32sRef Chain { get; private set; }

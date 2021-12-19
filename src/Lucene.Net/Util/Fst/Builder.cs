@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -50,6 +50,7 @@ namespace Lucene.Net.Util.Fst
     /// @lucene.experimental
     /// </summary>
     public class Builder<T> : Builder
+        where T : class // LUCENENET specific - added class constraint, since we compare reference equality
     {
         private readonly NodeHash<T> dedupHash;
         private readonly FST<T> fst;
@@ -583,7 +584,7 @@ namespace Lucene.Net.Util.Fst
         /// Expert: this is invoked by Builder whenever a suffix
         ///  is serialized.
         /// </summary>
-        public abstract class FreezeTail<S>
+        public abstract class FreezeTail<S> where S : class // LUCNENET specific - added class constraint because we compare reference equality
         {
             public abstract void Freeze(UnCompiledNode<S>[] frontier, int prefixLenPlus1, Int32sRef prevInput);
         }
@@ -595,7 +596,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Expert: holds a pending (seen but not yet serialized) arc. </summary>
-        public class Arc<S>
+        public class Arc<S> where S : class // LUCENENET specific - added class constraint because we compare reference equality
         {
             public int Label { get; set; } // really an "unsigned" byte
             public INode Target { get; set; }
@@ -613,7 +614,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Expert: holds a pending (seen but not yet serialized) Node. </summary>
-        public sealed class UnCompiledNode<S> : INode
+        public sealed class UnCompiledNode<S> : INode where S : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             internal Builder<S> Owner { get; private set; }
             public int NumArcs { get; set; }

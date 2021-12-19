@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
@@ -28,7 +28,7 @@ namespace Lucene.Net.Util.Fst
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public sealed class Int32sRefFSTEnum<T> : FSTEnum<T>
+    public sealed class Int32sRefFSTEnum<T> : FSTEnum<T> where T : class // LUCENENET specific - added class constraint, since we compare reference equality
     {
         private readonly Int32sRef current = new Int32sRef(10);
         private readonly Int32sRefFSTEnum.InputOutput<T> result = new Int32sRefFSTEnum.InputOutput<T>();
@@ -154,7 +154,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Holds a single input (<see cref="Int32sRef"/>) + output pair. </summary>
-        public class InputOutput<T>
+        public class InputOutput<T> where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             public Int32sRef Input { get; set; }
             public T Output { get; set; }

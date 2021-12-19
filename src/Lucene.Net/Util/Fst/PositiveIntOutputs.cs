@@ -1,6 +1,8 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
+using System.Globalization;
 using System.Runtime.CompilerServices;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -26,15 +28,15 @@ namespace Lucene.Net.Util.Fst
 
     /// <summary>
     /// An FST <see cref="Outputs{T}"/> implementation where each output
-    /// is a non-negative <see cref="T:long?"/> value.
+    /// is a non-negative <see cref="Int64"/> value.
     /// <para/>
     /// NOTE: This was PositiveIntOutputs in Lucene
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public sealed class PositiveInt32Outputs : Outputs<long?>
+    public sealed class PositiveInt32Outputs : Outputs<Int64>
     {
-        private const long NO_OUTPUT = new long();
+        private static readonly Int64 NO_OUTPUT = Int64.GetInstance(0);
 
         private static readonly PositiveInt32Outputs singleton = new PositiveInt32Outputs();
 
@@ -44,7 +46,7 @@ namespace Lucene.Net.Util.Fst
 
         public static PositiveInt32Outputs Singleton => singleton;
 
-        public override long? Common(long? output1, long? output2)
+        public override Int64 Common(Int64 output1, Int64 output2)
         {
             if (Debugging.AssertsEnabled)
             {
@@ -62,11 +64,11 @@ namespace Lucene.Net.Util.Fst
                     Debugging.Assert(output1 > 0);
                     Debugging.Assert(output2 > 0);
                 }
-                return Math.Min(output1.Value, output2.Value);
+                return Math.Min(output1, output2);
             }
         }
 
-        public override long? Subtract(long? output, long? inc)
+        public override Int64 Subtract(Int64 output, Int64 inc)
         {
             if (Debugging.AssertsEnabled)
             {
@@ -89,7 +91,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public override long? Add(long? prefix, long? output)
+        public override Int64 Add(Int64 prefix, Int64 output)
         {
             if (Debugging.AssertsEnabled)
             {
@@ -111,14 +113,14 @@ namespace Lucene.Net.Util.Fst
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override void Write(long? output, DataOutput @out)
+        public override void Write(Int64 output, DataOutput @out)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(Valid(output));
-            @out.WriteVInt64(output.Value);
+            @out.WriteVInt64(output);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override long? Read(DataInput @in)
+        public override Int64 Read(DataInput @in)
         {
             long v = @in.ReadVInt64();
             if (v == 0)
@@ -131,19 +133,19 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private bool Valid(long? o)
+        private bool Valid(Int64 o)
         {
             Debugging.Assert(o != null, "PositiveIntOutput precondition fail");
             Debugging.Assert(o == NO_OUTPUT || o > 0,"o={0}", o);
             return true;
         }
 
-        public override long? NoOutput => NO_OUTPUT;
+        public override Int64 NoOutput => NO_OUTPUT;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override string OutputToString(long? output)
+        public override string OutputToString(Int64 output)
         {
-            return output.ToString(); // LUCENENET TODO: Invariant Culture?
+            return output.ToString(NumberFormatInfo.InvariantInfo);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Codecs.BlockTerms
 {
@@ -118,12 +119,12 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private class IndexEnum : FieldIndexEnum
         {
-            private readonly BytesRefFSTEnum<long?> fstEnum;
-            private BytesRefFSTEnum.InputOutput<long?> current;
+            private readonly BytesRefFSTEnum<Int64> fstEnum;
+            private BytesRefFSTEnum.InputOutput<Int64> current;
 
-            public IndexEnum(FST<long?> fst)
+            public IndexEnum(FST<Int64> fst)
             {
-                fstEnum = new BytesRefFSTEnum<long?>(fst);
+                fstEnum = new BytesRefFSTEnum<Int64>(fst);
             }
 
             public override BytesRef Term
@@ -146,14 +147,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 //System.out.println("VGR: seek field=" + fieldInfo.name + " target=" + target);
                 current = fstEnum.SeekFloor(target);
                 //System.out.println("  got input=" + current.input + " output=" + current.output);
-                if (current.Output.HasValue)
-                {
-                    return current.Output.Value;
-                }
-                else
-                {
-                    throw new NullReferenceException("current.Output is null"); // LUCENENET NOTE: NullReferenceException would be thrown in Java, so doing it here
-                }
+                return current.Output;
             }
 
             public override long Next()
@@ -168,14 +162,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 else
                 {
                     current = fstEnum.Current;
-                    if (current.Output.HasValue)
-                    {
-                        return current.Output.Value;
-                    }
-                    else
-                    {
-                        throw new NullReferenceException("current.Output is null"); // LUCENENET NOTE: NullReferenceException would be thrown in Java, so doing it here
-                    }
+                    return current.Output;
                 }
             }
 
@@ -195,7 +182,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             private readonly long indexStart;
             // Set only if terms index is loaded:
-            internal volatile FST<long?> fst;
+            internal volatile FST<Int64> fst;
 
             public FieldIndexData(VariableGapTermsIndexReader outerInstance, /*FieldInfo fieldInfo, // LUCENENET: Not referenced */ long indexStart)
             {
@@ -216,7 +203,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     using (IndexInput clone = (IndexInput)outerInstance.input.Clone())
                     {
                         clone.Seek(indexStart);
-                        fst = new FST<long?>(clone, outerInstance.fstOutputs);
+                        fst = new FST<Int64>(clone, outerInstance.fstOutputs);
                     } // clone.Dispose();
 
                     /*
@@ -232,9 +219,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                         // subsample
                         Int32sRef scratchIntsRef = new Int32sRef();
                         PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
-                        Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
-                        BytesRefFSTEnum<long?> fstEnum = new BytesRefFSTEnum<long?>(fst);
-                        BytesRefFSTEnum.InputOutput<long?> result;
+                        Builder<Int64> builder = new Builder<Int64>(FST.INPUT_TYPE.BYTE1, outputs);
+                        BytesRefFSTEnum<Int64> fstEnum = new BytesRefFSTEnum<Int64>(fst);
+                        BytesRefFSTEnum.InputOutput<Int64> result;
                         int count = outerInstance.indexDivisor;
                         while (fstEnum.MoveNext())
                         {

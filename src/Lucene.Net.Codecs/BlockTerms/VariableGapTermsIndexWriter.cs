@@ -6,6 +6,7 @@ using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Codecs.BlockTerms
 {
@@ -242,12 +243,12 @@ namespace Lucene.Net.Codecs.BlockTerms
         {
             private readonly VariableGapTermsIndexWriter outerInstance;
 
-            private readonly Builder<long?> fstBuilder;
+            private readonly Builder<Int64> fstBuilder;
             private readonly PositiveInt32Outputs fstOutputs;
             private readonly long startTermsFilePointer;
 
             internal readonly FieldInfo fieldInfo;
-            internal FST<long?> fst;
+            internal FST<Int64> fst;
             internal readonly long indexStart;
 
             private readonly BytesRef lastTerm = new BytesRef();
@@ -259,7 +260,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 this.fieldInfo = fieldInfo;
                 fstOutputs = PositiveInt32Outputs.Singleton;
-                fstBuilder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, fstOutputs);
+                fstBuilder = new Builder<Int64>(FST.INPUT_TYPE.BYTE1, fstOutputs);
                 indexStart = outerInstance.m_output.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 ////System.out.println("VGW: field=" + fieldInfo.name);
 

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -107,7 +108,7 @@ namespace Lucene.Net.Util.Fst
                         {
                             value2 = lastOutput + TestUtil.NextInt32(Random, -100, 1000);
                         }
-                        IList<long> values = new JCG.List<long>();
+                        IList<Int64> values = new JCG.List<Int64>();
                         values.Add(value);
                         values.Add(value2);
                         output = values;
@@ -128,14 +129,14 @@ namespace Lucene.Net.Util.Fst
                         Console.WriteLine("TEST: now test OneOrMoreOutputs");
                     }
                     PositiveInt32Outputs _outputs = PositiveInt32Outputs.Singleton; 
-                    ListOfOutputs<long?> outputs2 = new ListOfOutputs<long?>(_outputs);
+                    ListOfOutputs<Int64> outputs2 = new ListOfOutputs<Int64>(_outputs);
                     IList<InputOutput<object>> pairs2 = new JCG.List<InputOutput<object>>(terms.Length);
                     long lastOutput2 = 0;
                     for (int idx = 0; idx < terms.Length; idx++)
                     {
 
                         int outputCount = TestUtil.NextInt32(Random, 1, 7);
-                        IList<long?> values = new JCG.List<long?>();
+                        IList<Int64> values = new JCG.List<Int64>();
                         for (int i = 0; i < outputCount; i++)
                         {
                             // Sometimes go backwards
@@ -149,7 +150,7 @@ namespace Lucene.Net.Util.Fst
                         }
 
                         object output;
-                        if (values.size() == 1)
+                        if (values.Count == 1)
                         {
                             output = values[0];
                         }
@@ -165,7 +166,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private class FSTTesterHelper<T> : FSTTester<T>
+        private class FSTTesterHelper<T> : FSTTester<T> where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             public FSTTesterHelper(Random random, Directory dir, int inputMode, IList<InputOutput<T>> pairs, Outputs<T> outputs, bool doReverseLookup)
                 : base(random, dir, inputMode, pairs, outputs, doReverseLookup)
@@ -174,13 +175,13 @@ namespace Lucene.Net.Util.Fst
 
             protected override bool OutputsEqual(T output1, T output2)
             {
-                if (output1 is UpToTwoPositiveInt64Outputs.TwoInt64s twoLongs1 && output2 is IEnumerable<long> output2Enumerable)
+                if (output1 is UpToTwoPositiveInt64Outputs.TwoInt64s twoLongs1 && output2 is JCG.List<Int64> output2List)
                 {
-                    return (new long[] { twoLongs1.First, twoLongs1.Second }).SequenceEqual(output2Enumerable);
+                    return output2List.Equals(new Int64[] { twoLongs1.First, twoLongs1.Second });
                 }
-                else if (output2 is UpToTwoPositiveInt64Outputs.TwoInt64s twoLongs2 && output1 is IEnumerable<long> output1Enumerable)
+                else if (output2 is UpToTwoPositiveInt64Outputs.TwoInt64s twoLongs2 && output1 is JCG.List<Int64> output1List)
                 {
-                    return (new long[] { twoLongs2.First, twoLongs2.Second }).SequenceEqual(output1Enumerable);
+                    return output1List.Equals(new Int64[] { twoLongs2.First, twoLongs2.Second });
                 }
 
                 return output1.Equals(output2);
@@ -192,21 +193,21 @@ namespace Lucene.Net.Util.Fst
         public void TestListOfOutputs()
         {
             PositiveInt32Outputs _outputs = PositiveInt32Outputs.Singleton;
-            ListOfOutputs<long?> outputs = new ListOfOutputs<long?>(_outputs);
-            Builder<object> builder = new Builder<object>(Lucene.Net.Util.Fst.FST.INPUT_TYPE.BYTE1, outputs);
+            ListOfOutputs<Int64> outputs = new ListOfOutputs<Int64>(_outputs);
+            Builder<object> builder = new Builder<object>(FST.INPUT_TYPE.BYTE1, outputs);
 
             Int32sRef scratch = new Int32sRef();
             // Add the same input more than once and the outputs
             // are merged:
-            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), 1L);
-            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), 3L);
-            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), 0L);
-            builder.Add(Util.ToInt32sRef(new BytesRef("b"), scratch), 17L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), (Int64)1L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), (Int64)3L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), (Int64)0L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("b"), scratch), (Int64)17L);
             FST<object> fst = builder.Finish();
 
             object output = Util.Get(fst, new BytesRef("a"));
             assertNotNull(output);
-            IList<long?> outputList = outputs.AsList(output);
+            IList<Int64> outputList = outputs.AsList(output);
             assertEquals(3, outputList.size());
             assertEquals(1L, outputList[0]);
             assertEquals(3L, outputList[1]);
@@ -223,25 +224,25 @@ namespace Lucene.Net.Util.Fst
         public void TestListOfOutputsEmptyString()
         {
             PositiveInt32Outputs _outputs = PositiveInt32Outputs.Singleton;
-            ListOfOutputs<long?> outputs = new ListOfOutputs<long?>(_outputs);
+            ListOfOutputs<Int64> outputs = new ListOfOutputs<Int64>(_outputs);
             Builder<object> builder = new Builder<object>(FST.INPUT_TYPE.BYTE1, outputs);
 
             Int32sRef scratch = new Int32sRef();
-            builder.Add(scratch, 0L);
-            builder.Add(scratch, 1L);
-            builder.Add(scratch, 17L);
-            builder.Add(scratch, 1L);
+            builder.Add(scratch, (Int64)0L);
+            builder.Add(scratch, (Int64)1L);
+            builder.Add(scratch, (Int64)17L);
+            builder.Add(scratch, (Int64)1L);
 
-            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), 1L);
-            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), 3L);
-            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), 0L);
-            builder.Add(Util.ToInt32sRef(new BytesRef("b"), scratch), 0L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), (Int64)1L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), (Int64)3L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), (Int64)0L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("b"), scratch), (Int64)0L);
 
             FST<object> fst = builder.Finish();
 
             object output = Util.Get(fst, new BytesRef(""));
             assertNotNull(output);
-            IList<long?> outputList = outputs.AsList(output);
+            IList<Int64> outputList = outputs.AsList(output);
             assertEquals(4, outputList.size());
             assertEquals(0L, outputList[0]);
             assertEquals(1L, outputList[1]);

@@ -3,6 +3,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using System;
 using System.Runtime.CompilerServices;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -100,7 +101,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private static readonly long? NO_OUTPUT = new long?(0);
+        private static readonly Int64 NO_OUTPUT = Int64.GetInstance(0);
 
         private readonly bool doShare;
 
@@ -120,7 +121,7 @@ namespace Lucene.Net.Util.Fst
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This is a shipped public API")]
-        public long? Get(long v)
+        public Int64 Get(long v)
         {
             return v == 0 ? NO_OUTPUT : v;
         }
@@ -139,8 +140,8 @@ namespace Lucene.Net.Util.Fst
                 Debugging.Assert(Valid(output1, false));
                 Debugging.Assert(Valid(output2, false));
             }
-            long? output1_ = (long?)output1;
-            long? output2_ = (long?)output2;
+            Int64 output1_ = (Int64)output1;
+            Int64 output2_ = (Int64)output2;
             if (output1_ == NO_OUTPUT || output2_ == NO_OUTPUT)
             {
                 return NO_OUTPUT;
@@ -152,7 +153,7 @@ namespace Lucene.Net.Util.Fst
                     Debugging.Assert(output1_ > 0);
                     Debugging.Assert(output2_ > 0);
                 }
-                return Math.Min(output1_.GetValueOrDefault(), output2_.GetValueOrDefault());
+                return Int64.GetInstance(Math.Min(output1_, output2_));
             }
             else if (output1_.Equals(output2_))
             {
@@ -171,8 +172,8 @@ namespace Lucene.Net.Util.Fst
                 Debugging.Assert(Valid(output, false));
                 Debugging.Assert(Valid(inc, false));
             }
-            long? output2 = (long?)output;
-            long? inc2 = (long?)inc;
+            Int64 output2 = (Int64)output;
+            Int64 inc2 = (Int64)inc;
             if (Debugging.AssertsEnabled) Debugging.Assert(output2 >= inc2);
 
             if (inc2 == NO_OUTPUT)
@@ -185,7 +186,7 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                return output2 - inc2;
+                return Int64.GetInstance(output2 - inc2);
             }
         }
 
@@ -193,10 +194,9 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(Valid(prefix, false));
             if (Debugging.AssertsEnabled) Debugging.Assert(Valid(output, true));
-            long? prefix2 = (long?)prefix;
-            if (output is long?)
+            Int64 prefix2 = (Int64)prefix;
+            if (output is Int64 output2)
             {
-                long? output2 = (long?)output;
                 if (prefix2 == NO_OUTPUT)
                 {
                     return output2;
@@ -207,13 +207,13 @@ namespace Lucene.Net.Util.Fst
                 }
                 else
                 {
-                    return prefix2 + output2;
+                    return Int64.GetInstance(prefix2 + output2);
                 }
             }
             else
             {
                 TwoInt64s output3 = (TwoInt64s)output;
-                long v = prefix2.Value;
+                long v = prefix2;
                 return new TwoInt64s(output3.First + v, output3.Second + v);
             }
         }
@@ -221,10 +221,9 @@ namespace Lucene.Net.Util.Fst
         public override void Write(object output, DataOutput @out)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(Valid(output, true));
-            if (output is long?)
+            if (output is Int64 output2)
             {
-                long? output2 = (long?)output;
-                @out.WriteVInt64(output2.GetValueOrDefault() << 1);
+                @out.WriteVInt64(output2 << 1);
             }
             else
             {
@@ -247,7 +246,7 @@ namespace Lucene.Net.Util.Fst
                 }
                 else
                 {
-                    return v;
+                    return Int64.GetInstance(v);
                 }
             }
             else
@@ -260,10 +259,10 @@ namespace Lucene.Net.Util.Fst
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool Valid(long? o) // LUCENENET: CA1822: Mark members as static
+        private static bool Valid(Int64 o) // LUCENENET: CA1822: Mark members as static
         {
             Debugging.Assert(o != null);
-            Debugging.Assert(o is long?);
+            Debugging.Assert(o is Int64);
             Debugging.Assert(o == NO_OUTPUT || o > 0);
             return true;
         }
@@ -274,8 +273,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (!allowDouble)
             {
-                Debugging.Assert(o is long?);
-                return Valid((long?)o);
+                Debugging.Assert(o is Int64);
+                return Valid((Int64)o);
             }
             else if (o is TwoInt64s)
             {
@@ -283,7 +282,7 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                return Valid((long?)o);
+                return Valid((Int64)o);
             }
         }
 
@@ -302,7 +301,7 @@ namespace Lucene.Net.Util.Fst
                 Debugging.Assert(Valid(first, false));
                 Debugging.Assert(Valid(second, false));
             }
-            return new TwoInt64s(((long?)first).GetValueOrDefault(), ((long?)second).GetValueOrDefault());
+            return new TwoInt64s((Int64)first, (Int64)second);
         }
     }
 }

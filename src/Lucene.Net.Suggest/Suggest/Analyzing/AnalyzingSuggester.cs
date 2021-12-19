@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -97,7 +98,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// weights are encoded as costs: (<see cref="int.MaxValue"/> - weight)
         /// surface is the original, unanalyzed form.
         /// </summary>
-        private FST<PairOutputs<long?, BytesRef>.Pair> fst = null;
+        private FST<PairOutputs<Int64, BytesRef>.Pair> fst = null;
 
         /// <summary>
         /// Analyzer that will be used for analyzing suggestions at
@@ -511,9 +512,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 reader = new OfflineSorter.ByteSequencesReader(tempSorted);
 
-                var outputs = new PairOutputs<long?, BytesRef>(PositiveInt32Outputs.Singleton,
+                var outputs = new PairOutputs<Int64, BytesRef>(PositiveInt32Outputs.Singleton,
                     ByteSequenceOutputs.Singleton);
-                var builder = new Builder<PairOutputs<long?, BytesRef>.Pair>(FST.INPUT_TYPE.BYTE1, outputs);
+                var builder = new Builder<PairOutputs<Int64, BytesRef>.Pair>(FST.INPUT_TYPE.BYTE1, outputs);
 
                 // Build FST:
                 BytesRef previousAnalyzed = null;
@@ -649,7 +650,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public override bool Load(DataInput input)
         {
             count = input.ReadVInt64();
-            this.fst = new FST<PairOutputs<long?, BytesRef>.Pair>(input, new PairOutputs<long?, BytesRef>(PositiveInt32Outputs.Singleton, ByteSequenceOutputs.Singleton));
+            this.fst = new FST<PairOutputs<Int64, BytesRef>.Pair>(input, new PairOutputs<Int64, BytesRef>(PositiveInt32Outputs.Singleton, ByteSequenceOutputs.Singleton));
             maxAnalyzedPathsForOneInput = input.ReadVInt32();
             hasPayloads = input.ReadByte() == 1;
             return true;
@@ -767,18 +768,18 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 FST.BytesReader bytesReader = fst.GetBytesReader();
 
-                var scratchArc = new FST.Arc<PairOutputs<long?, BytesRef>.Pair>();
+                var scratchArc = new FST.Arc<PairOutputs<Int64, BytesRef>.Pair>();
 
                 IList<LookupResult> results = new JCG.List<LookupResult>();
 
-                IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths =
+                IList<FSTUtil.Path<PairOutputs<Int64, BytesRef>.Pair>> prefixPaths =
                     FSTUtil.IntersectPrefixPaths(ConvertAutomaton(lookupAutomaton), fst);
 
                 if (exactFirst)
                 {
 
                     int count = 0;
-                    foreach (FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair> path in prefixPaths)
+                    foreach (FSTUtil.Path<PairOutputs<Int64, BytesRef>.Pair> path in prefixPaths)
                     {
                         if (fst.FindTargetArc(END_BYTE, path.FstNode, scratchArc, bytesReader) != null)
                         {
@@ -790,8 +791,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                     // Searcher just to find the single exact only
                     // match, if present:
-                    Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair> searcher;
-                    searcher = new Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair>(fst, count * maxSurfaceFormsPerAnalyzedForm,
+                    Util.Fst.Util.TopNSearcher<PairOutputs<Int64, BytesRef>.Pair> searcher;
+                    searcher = new Util.Fst.Util.TopNSearcher<PairOutputs<Int64, BytesRef>.Pair>(fst, count * maxSurfaceFormsPerAnalyzedForm,
                         count * maxSurfaceFormsPerAnalyzedForm, weightComparer);
 
                     // NOTE: we could almost get away with only using
@@ -842,13 +843,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                 }
 
-                Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair> searcher2;
+                Util.Fst.Util.TopNSearcher<PairOutputs<Int64, BytesRef>.Pair> searcher2;
                 searcher2 = new TopNSearcherAnonymousClass(this, fst, num - results.Count,
                     num * maxAnalyzedPathsForOneInput, weightComparer, utf8Key, results);
 
                 prefixPaths = GetFullPrefixPaths(prefixPaths, lookupAutomaton, fst);
 
-                foreach (FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair> path in prefixPaths)
+                foreach (FSTUtil.Path<PairOutputs<Int64, BytesRef>.Pair> path in prefixPaths)
                 {
                     searcher2.AddStartPaths(path.FstNode, path.Output, true, path.Input);
                 }
@@ -856,7 +857,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 var completions2 = searcher2.Search();
                 if (Debugging.AssertsEnabled) Debugging.Assert(completions2.IsComplete);
 
-                foreach (Util.Fst.Util.Result<PairOutputs<long?, BytesRef>.Pair> completion in completions2)
+                foreach (Util.Fst.Util.Result<PairOutputs<Int64, BytesRef>.Pair> completion in completions2)
                 {
 
                     LookupResult result = GetLookupResult(completion.Output.Output1, completion.Output.Output2, spare);
@@ -883,7 +884,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private class TopNSearcherAnonymousClass : Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair>
+        private class TopNSearcherAnonymousClass : Util.Fst.Util.TopNSearcher<PairOutputs<Int64, BytesRef>.Pair>
         {
             private readonly AnalyzingSuggester outerInstance;
 
@@ -892,10 +893,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             public TopNSearcherAnonymousClass(
                 AnalyzingSuggester outerInstance,
-                FST<PairOutputs<long?, BytesRef>.Pair> fst,
+                FST<PairOutputs<Int64, BytesRef>.Pair> fst,
                 int topN,
                 int maxQueueDepth,
-                IComparer<PairOutputs<long?, BytesRef>.Pair> comparer,
+                IComparer<PairOutputs<Int64, BytesRef>.Pair> comparer,
                 BytesRef utf8Key,
                 IList<LookupResult> results)
                 : base(fst, topN, maxQueueDepth, comparer)
@@ -908,7 +909,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             private readonly ISet<BytesRef> seen;
 
-            protected override bool AcceptResult(Int32sRef input, PairOutputs<long?, BytesRef>.Pair output)
+            protected override bool AcceptResult(Int32sRef input, PairOutputs<Int64, BytesRef>.Pair output)
             {
 
                 // Dedup: when the input analyzes to a graph we
@@ -948,9 +949,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// Returns all prefix paths to initialize the search.
         /// </summary>
-        protected internal virtual IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> GetFullPrefixPaths(
-            IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths, Automaton lookupAutomaton,
-            FST<PairOutputs<long?, BytesRef>.Pair> fst)
+        protected virtual IList<FSTUtil.Path<PairOutputs<Int64, BytesRef>.Pair>> GetFullPrefixPaths(
+            IList<FSTUtil.Path<PairOutputs<Int64, BytesRef>.Pair>> prefixPaths, Automaton lookupAutomaton,
+            FST<PairOutputs<Int64, BytesRef>.Pair> fst)
         {
             return prefixPaths;
         }
@@ -1044,7 +1045,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return int.MaxValue - (int)value;
         }
 
-        internal static readonly IComparer<PairOutputs<long?, BytesRef>.Pair> weightComparer =
-            Comparer<PairOutputs<long?, BytesRef>.Pair>.Create((left, right) => Comparer<long?>.Default.Compare(left.Output1, right.Output1));
+        internal static readonly IComparer<PairOutputs<Int64, BytesRef>.Pair> weightComparer =
+            Comparer<PairOutputs<Int64, BytesRef>.Pair>.Create((left, right) => Comparer<Int64>.Default.Compare(left.Output1, right.Output1));
     }
 }
