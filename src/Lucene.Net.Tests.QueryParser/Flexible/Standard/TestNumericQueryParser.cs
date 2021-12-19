@@ -253,7 +253,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             IDictionary<String, Field> numericFieldMap = new JCG.Dictionary<String, Field>();
             qp.NumericConfigMap = (numericConfigMap);
 
-            foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
+            foreach (NumericType type in (NumericType[])Enum.GetValues(typeof(NumericType)))
             {
                 if (type == NumericType.NONE)
                 {
@@ -302,7 +302,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             numericFieldMap.Put(DATE_FIELD_NAME, dateField);
             doc.Add(dateField);
 
-            foreach (NumberType numberType in Enum.GetValues(typeof(NumberType)))
+            foreach (NumberType numberType in (NumberType[])Enum.GetValues(typeof(NumberType)))
             {
                 setFieldValues(numberType, numericFieldMap);
                 if (Verbose) Console.WriteLine("Indexing document: " + doc);
@@ -509,7 +509,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             String lowerInclusiveStr = (lowerInclusive ? "[" : "{");
             String upperInclusiveStr = (upperInclusive ? "]" : "}");
 
-            foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
+            foreach (NumericType type in (NumericType[])Enum.GetValues(typeof(NumericType)))
             {
                 if (type == NumericType.NONE)
                 {
@@ -576,7 +576,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             StringBuilder sb = new StringBuilder();
 
-            foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
+            foreach (NumericType type in (NumericType[])Enum.GetValues(typeof(NumericType)))
             {
                 if (type == NumericType.NONE)
                 {
@@ -607,7 +607,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             StringBuilder sb = new StringBuilder();
 
-            foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
+            foreach (NumericType type in (NumericType[])Enum.GetValues(typeof(NumericType)))
             {
                 if (type == NumericType.NONE)
                 {
