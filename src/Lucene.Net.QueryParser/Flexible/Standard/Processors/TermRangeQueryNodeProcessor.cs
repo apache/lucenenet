@@ -107,7 +107,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                     if (DateTime.TryParseExact(part1, shortDateFormat, locale, DateTimeStyles.None, out DateTime d1))
                     {
-                        part1 = DateTools.DateToString(d1, dateRes);
+                        part1 = DateTools.DateToString(d1, timeZone, dateRes);
                         lower.Text = new StringCharSequence(part1);
                     }
 
@@ -135,7 +135,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                             d2 = cal.AddMilliseconds(d2, 999);
                         }
 
-                        part2 = DateTools.DateToString(d2, dateRes);
+                        part2 = DateTools.DateToString(d2, timeZone, dateRes);
                         upper.Text = new StringCharSequence(part2);
                     }
 

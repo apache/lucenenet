@@ -511,7 +511,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
             if (DateTime.TryParseExact(part1, shortDateFormat, Locale, DateTimeStyles.None, out DateTime d1))
             {
-                part1 = DateTools.DateToString(d1, resolution);
+                part1 = DateTools.DateToString(d1, TimeZone, resolution);
             }
 
             if (DateTime.TryParseExact(part2, shortDateFormat, Locale, DateTimeStyles.None, out DateTime d2))
@@ -530,7 +530,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     d2 = cal.AddMilliseconds(d2, 999);
                 }
 
-                part2 = DateTools.DateToString(d2, resolution);
+                part2 = DateTools.DateToString(d2, TimeZone, resolution);
             }
 
             return NewRangeQuery(field, part1, part2, startInclusive, endInclusive);
