@@ -28,8 +28,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
     /// </summary>
     public enum DateFormat
     {
-        FULL, LONG,
-        MEDIUM, SHORT
+        /// <summary>
+        /// Full style pattern.
+        /// </summary>
+        FULL,
+        /// <summary>
+        /// Long style pattern.
+        /// </summary>
+        LONG,
+        /// <summary>
+        /// Medium style pattern.
+        /// </summary>
+        MEDIUM,
+        /// <summary>
+        /// Short style pattern.
+        /// </summary>
+        SHORT
     }
 
     /// <summary>
@@ -42,34 +56,44 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
     /// </summary>
     public class NumberDateFormat : NumberFormat
     {
-        //private static readonly long serialVersionUID = 964823936071308283L;
-
         private string? dateFormat;
         private readonly DateFormat dateStyle;
-        private readonly DateFormat timeStyle;
+        private readonly DateFormat? timeStyle;
         private TimeZoneInfo timeZone = TimeZoneInfo.Local;
 
         /// <summary>
         /// Constructs a <see cref="NumberDateFormat"/> object using the given <paramref name="dateFormat"/>
-        /// and <paramref name="formatProvider"/>.
+        /// and <paramref name="provider"/>.
         /// </summary>
         /// <param name="dateFormat">Date format used to parse and format dates.</param>
-        /// <param name="formatProvider">An object that supplies culture-specific formatting information.</param>
-        public NumberDateFormat(string? dateFormat, IFormatProvider? formatProvider)
-            : base(formatProvider)
+        /// <param name="provider">An object that supplies culture-specific formatting information.</param>
+        public NumberDateFormat(string? dateFormat, IFormatProvider? provider)
+            : base(provider)
         {
             this.dateFormat = dateFormat;
         }
 
         /// <summary>
-        /// Constructs a <see cref="NumberDateFormat"/> object using the given <paramref name="dateStyle"/>,
-        /// <paramref name="timeStyle"/>, and <paramref name="formatProvider"/>.
+        /// Constructs a <see cref="NumberDateFormat"/> object using the provided <paramref name="dateStyle"/>
+        /// and <paramref name="provider"/>.
         /// </summary>
-        /// <param name="dateStyle"></param>
-        /// <param name="timeStyle"></param>
-        /// <param name="formatProvider">An object that supplies culture-specific formatting information.</param>
-        public NumberDateFormat(DateFormat dateStyle, DateFormat timeStyle, IFormatProvider? formatProvider)
-            : base(formatProvider)
+        /// <param name="dateStyle">The date formatting style. For example, <see cref="DateFormat.SHORT"/> for "M/d/yy" in the en-US culture.</param>
+        /// <param name="provider">An object that supplies culture-specific formatting information.</param>
+        public NumberDateFormat(DateFormat dateStyle, IFormatProvider? provider)
+            : this(GetDateFormat(dateStyle, provider), provider)
+        {
+            this.dateStyle = dateStyle;
+        }
+
+        /// <summary>
+        /// Constructs a <see cref="NumberDateFormat"/> object using the provided <paramref name="dateStyle"/>,
+        /// <paramref name="timeStyle"/>, and <paramref name="provider"/>.
+        /// </summary>
+        /// <param name="dateStyle">The date formatting style. For example, <see cref="DateFormat.SHORT"/> for "M/d/yyyy" in the en-US culture.</param>
+        /// <param name="timeStyle">The time formatting style. For example, <see cref="DateFormat.SHORT"/> for "h:mm tt" in the en-US culture.</param>
+        /// <param name="provider">An object that supplies culture-specific formatting information.</param>
+        public NumberDateFormat(DateFormat dateStyle, DateFormat timeStyle, IFormatProvider? provider)
+            : base(provider)
         {
             this.dateStyle = dateStyle;
             this.timeStyle = timeStyle;
@@ -127,51 +151,41 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         {
             if (dateFormat != null) return dateFormat;
 
-            return GetDateFormat(this.dateStyle, this.timeStyle, FormatProvider);
+            if (!timeStyle.HasValue) return GetDateFormat(dateStyle, FormatProvider);
+            return GetDateFormat(dateStyle, timeStyle.Value, FormatProvider);
         }
 
         public static string GetDateFormat(DateFormat dateStyle, DateFormat timeStyle, IFormatProvider? provider)
         {
-            string datePattern = "", timePattern = "";
-            DateTimeFormatInfo dateTimeFormat = (provider ?? DateTimeFormatInfo.CurrentInfo)
-                .GetFormat(typeof(DateTimeFormatInfo)) as DateTimeFormatInfo ?? DateTimeFormatInfo.CurrentInfo;
+            DateTimeFormatInfo dateTimeFormat = DateTimeFormatInfo.GetInstance(provider);
 
-            switch (dateStyle)
+            string datePattern = GetDateFormat(dateStyle, provider);
+            string timePattern = timeStyle switch
             {
-                case DateFormat.SHORT:
-                    datePattern = dateTimeFormat.ShortDatePattern;
-                    break;
-                case DateFormat.MEDIUM:
-                    datePattern = dateTimeFormat.LongDatePattern
-                        .Replace("dddd, ", "").Replace(", dddd", "") // Remove the day of the week
-                        .Replace("MMMM", "MMM"); // Replace month with abbreviated month
-                    break;
-                case DateFormat.LONG:
-                    datePattern = dateTimeFormat.LongDatePattern
-                        .Replace("dddd, ", "").Replace(", dddd", ""); // Remove the day of the week
-                    break;
-                case DateFormat.FULL:
-                    datePattern = dateTimeFormat.LongDatePattern;
-                    break;
-            }
-
-            switch (timeStyle)
-            {
-                case DateFormat.SHORT:
-                    timePattern = dateTimeFormat.ShortTimePattern;
-                    break;
-                case DateFormat.MEDIUM:
-                    timePattern = dateTimeFormat.LongTimePattern;
-                    break;
-                case DateFormat.LONG:
-                    timePattern = dateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " z";
-                    break;
-                case DateFormat.FULL:
-                    timePattern = dateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " zzz";
-                    break;
-            }
+                DateFormat.SHORT => dateTimeFormat.ShortTimePattern,
+                DateFormat.MEDIUM => dateTimeFormat.LongTimePattern,
+                DateFormat.LONG => dateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " z",
+                DateFormat.FULL => dateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " zzz",
+                _ => throw new ArgumentException($"'{timeStyle}' is not a valid {nameof(DateFormat)}."),
+            };
 
             return string.Concat(datePattern, " ", timePattern);
+        }
+
+        public static string GetDateFormat(DateFormat dateStyle, IFormatProvider? provider)
+        {
+            DateTimeFormatInfo dateTimeFormat = DateTimeFormatInfo.GetInstance(provider);
+            return dateStyle switch
+            {
+                DateFormat.SHORT => dateTimeFormat.ShortDatePattern,
+                DateFormat.MEDIUM => dateTimeFormat.LongDatePattern
+                    .Replace("dddd, ", "").Replace(", dddd", "") // Remove the day of the week
+                    .Replace("MMMM", "MMM"), // Replace month with abbreviated month
+                DateFormat.LONG => dateTimeFormat.LongDatePattern
+                    .Replace("dddd, ", "").Replace(", dddd", ""), // Remove the day of the week
+                DateFormat.FULL => dateTimeFormat.LongDatePattern,
+                _ => throw new ArgumentException($"'{dateStyle}' is not a valid {nameof(DateFormat)}."),
+            };
         }
     }
 }
