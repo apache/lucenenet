@@ -2,6 +2,7 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -244,6 +245,14 @@ namespace Lucene.Net.Search
                     return value >= inclusiveLowerPoint && value <= inclusiveUpperPoint;
                 });
             }
+
+            // LUCENENET specific - since we use value types, we need to use special handling to avoid boxing.
+            protected override bool Equals(sbyte? objA, sbyte? objB)
+            {
+                if (!objA.HasValue) return !objB.HasValue;
+                else if (!objB.HasValue) return false;
+                return JCG.EqualityComparer<sbyte>.Default.Equals(objA.Value, objB.Value);
+            }
         }
 
         private class Int16FieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<short?>
@@ -294,6 +303,14 @@ namespace Lucene.Net.Search
                     return value >= inclusiveLowerPoint && value <= inclusiveUpperPoint;
                 });
             }
+
+            // LUCENENET specific - since we use value types, we need to use special handling to avoid boxing.
+            protected override bool Equals(short? objA, short? objB)
+            {
+                if (!objA.HasValue) return !objB.HasValue;
+                else if (!objB.HasValue) return false;
+                return JCG.EqualityComparer<short>.Default.Equals(objA.Value, objB.Value);
+            }
         }
 
         private class Int32FieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<int?>
@@ -341,6 +358,14 @@ namespace Lucene.Net.Search
                     return value >= inclusiveLowerPoint && value <= inclusiveUpperPoint;
                 });
             }
+
+            // LUCENENET specific - since we use value types, we need to use special handling to avoid boxing.
+            protected override bool Equals(int? objA, int? objB)
+            {
+                if (!objA.HasValue) return !objB.HasValue;
+                else if (!objB.HasValue) return false;
+                return JCG.EqualityComparer<int>.Default.Equals(objA.Value, objB.Value);
+            }
         }
 
         private class Int64FieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<long?>
@@ -387,6 +412,14 @@ namespace Lucene.Net.Search
                     long value = values.Get(doc);
                     return value >= inclusiveLowerPoint && value <= inclusiveUpperPoint;
                 });
+            }
+
+            // LUCENENET specific - since we use value types, we need to use special handling to avoid boxing.
+            protected override bool Equals(long? objA, long? objB)
+            {
+                if (!objA.HasValue) return !objB.HasValue;
+                else if (!objB.HasValue) return false;
+                return JCG.EqualityComparer<long>.Default.Equals(objA.Value, objB.Value);
             }
         }
 
@@ -440,6 +473,14 @@ namespace Lucene.Net.Search
                     return value >= inclusiveLowerPoint && value <= inclusiveUpperPoint;
                 });
             }
+
+            // LUCENENET specific - since we use value types, we need to use special handling to avoid boxing.
+            protected override bool Equals(float? objA, float? objB)
+            {
+                if (!objA.HasValue) return !objB.HasValue;
+                else if (!objB.HasValue) return false;
+                return JCG.EqualityComparer<float>.Default.Equals(objA.Value, objB.Value);
+            }
         }
 
         private class DoubleFieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<double?>
@@ -491,6 +532,14 @@ namespace Lucene.Net.Search
                     double value = values.Get(doc);
                     return value >= inclusiveLowerPoint && value <= inclusiveUpperPoint;
                 });
+            }
+
+            // LUCENENET specific - since we use value types, we need to use special handling to avoid boxing.
+            protected override bool Equals(double? objA, double? objB)
+            {
+                if (!objA.HasValue) return !objB.HasValue;
+                else if (!objB.HasValue) return false;
+                return JCG.EqualityComparer<double>.Default.Equals(objA.Value, objB.Value);
             }
         }
 
@@ -704,11 +753,13 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            if (this.lowerVal != null ? !this.lowerVal.Equals(other.lowerVal) : other.lowerVal != null)
+            // LUCENENET specific - since we use value types, we need to use special handling to avoid boxing.
+            if (!Equals(this.lowerVal, other.lowerVal))
             {
                 return false;
             }
-            if (this.upperVal != null ? !this.upperVal.Equals(other.upperVal) : other.upperVal != null)
+            // LUCENENET specific - since we use value types, we need to use special handling to avoid boxing.
+            if (!Equals(this.upperVal, other.upperVal))
             {
                 return false;
             }
@@ -717,6 +768,12 @@ namespace Lucene.Net.Search
                 return false;
             }
             return true;
+        }
+        
+        // LUCENENET specific - override this method to eliminate boxing on value types
+        protected virtual bool Equals(T objA, T objB)
+        {
+            return objA != null ? objA.Equals(objB) : objB != null;
         }
 
         public override sealed int GetHashCode()
