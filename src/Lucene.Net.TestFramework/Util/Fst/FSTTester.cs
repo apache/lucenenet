@@ -493,12 +493,13 @@ namespace Lucene.Net.Util.Fst
                     Assert.IsTrue(OutputsEqual(pair.Output, output));
 
                     // verify enum's next
-                    Int32sRefFSTEnum.InputOutput<T> t = fstEnum.Next();
+                    Assert.IsTrue(fstEnum.MoveNext());
+                    Int32sRefFSTEnum.InputOutput<T> t = fstEnum.Current;
                     Assert.IsNotNull(t);
                     Assert.AreEqual(term, t.Input, "expected input=" + InputToString(inputMode, term) + " but fstEnum returned " + InputToString(inputMode, t.Input));
                     Assert.IsTrue(OutputsEqual(pair.Output, t.Output));
                 }
-                Assert.IsNull(fstEnum.Next());
+                Assert.IsFalse(fstEnum.MoveNext());
             }
 
             IDictionary<Int32sRef, T> termsMap = new Dictionary<Int32sRef, T>();
@@ -687,7 +688,7 @@ namespace Lucene.Net.Util.Fst
                         {
                             Console.WriteLine("  do next");
                         }
-                        isDone = fstEnum_.Next() == null;
+                        isDone = fstEnum_.MoveNext() == false;
                     }
                     else if (upto != -1 && upto < 0.75 * pairs.Count && random.NextBoolean())
                     {
@@ -975,8 +976,9 @@ namespace Lucene.Net.Util.Fst
             }
             Int32sRefFSTEnum<T> fstEnum = new Int32sRefFSTEnum<T>(fst);
             Int32sRefFSTEnum.InputOutput<T> current;
-            while ((current = fstEnum.Next()) != null)
+            while (fstEnum.MoveNext())
             {
+                current = fstEnum.Current;
                 if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("  fstEnum.next prefix=" + InputToString(inputMode, current.Input, false) + " output=" + outputs.OutputToString(current.Output));

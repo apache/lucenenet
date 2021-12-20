@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
@@ -50,6 +51,24 @@ namespace Lucene.Net.Util.Fst
 
         public Int32sRefFSTEnum.InputOutput<T> Current => result;
 
+        public bool MoveNext() // LUCENENET specific - replaced Next() with MoveNext()
+        {
+            //System.out.println("  enum.next");
+            DoNext();
+
+            if (m_upto == 0)
+            {
+                return false;
+            }
+            else
+            {
+                current.Length = m_upto - 1;
+                result.Output = m_output[m_upto];
+                return true;
+            }
+        }
+
+        [Obsolete("Use MoveNext() and Current instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public Int32sRefFSTEnum.InputOutput<T> Next()
         {
             //System.out.println("  enum.next");

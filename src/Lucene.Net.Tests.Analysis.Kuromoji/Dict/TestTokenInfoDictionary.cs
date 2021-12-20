@@ -42,8 +42,9 @@ namespace Lucene.Net.Analysis.Ja.Dict
             Int32sRefFSTEnum<Int64> fstEnum = new Int32sRefFSTEnum<Int64>(fst);
             Int32sRefFSTEnum.InputOutput<Int64> mapping;
             Int32sRef scratch = new Int32sRef();
-            while ((mapping = fstEnum.Next()) != null)
+            while (fstEnum.MoveNext())
             {
+                mapping = fstEnum.Current;
                 numTerms++;
                 Int32sRef input = mapping.Input;
                 char[] chars = new char[input.Length];

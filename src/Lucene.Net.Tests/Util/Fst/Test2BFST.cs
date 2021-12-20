@@ -113,13 +113,9 @@ namespace Lucene.Net.Util.Fst
                         Arrays.Fill(ints2, 0);
                         r = new J2N.Randomizer(seed);
                         int upto = 0;
-                        while (true)
+                        while (fstEnum.MoveNext())
                         {
-                            Int32sRefFSTEnum.InputOutput<object> pair = fstEnum.Next();
-                            if (pair == null)
-                            {
-                                break;
-                            }
+                            Int32sRefFSTEnum.InputOutput<object> pair = fstEnum.Current;
                             for (int j = 10; j < ints2.Length; j++)
                             {
                                 ints2[j] = r.Next(256);
@@ -202,13 +198,9 @@ namespace Lucene.Net.Util.Fst
                         Arrays.Fill(ints, 0);
                         r = new J2N.Randomizer(seed);
                         int upto = 0;
-                        while (true)
+                        while (fstEnum.MoveNext())
                         {
-                            Int32sRefFSTEnum.InputOutput<BytesRef> pair = fstEnum.Next();
-                            if (pair == null)
-                            {
-                                break;
-                            }
+                            Int32sRefFSTEnum.InputOutput<BytesRef> pair = fstEnum.Current;
                             Assert.AreEqual(input, pair.Input);
                             r.NextBytes(outputBytes);
                             Assert.AreEqual(output, pair.Output);
@@ -295,13 +287,9 @@ namespace Lucene.Net.Util.Fst
                         r = new J2N.Randomizer(seed);
                         int upto = 0;
                         output = 1;
-                        while (true)
+                        while (fstEnum.MoveNext())
                         {
-                            Int32sRefFSTEnum.InputOutput<Int64> pair = fstEnum.Next();
-                            if (pair == null)
-                            {
-                                break;
-                            }
+                            Int32sRefFSTEnum.InputOutput<J2N.Numerics.Int64> pair = fstEnum.Current;
                             Assert.AreEqual(input, pair.Input);
                             Assert.AreEqual(output, pair.Output);
                             output += 1 + r.Next(10);
