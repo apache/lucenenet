@@ -87,9 +87,11 @@ namespace Lucene.Net.Demo.Facet
             // Aggregate categories by an expression that combines the document's score
             // and its popularity field
             Expression expr = JavascriptCompiler.Compile("_score * sqrt(popularity)");
-            SimpleBindings bindings = new SimpleBindings();
-            bindings.Add(new SortField("_score", SortFieldType.SCORE)); // the score of the document
-            bindings.Add(new SortField("popularity", SortFieldType.INT64)); // the value of the 'popularity' field
+            SimpleBindings bindings = new SimpleBindings
+            {
+                new SortField("_score", SortFieldType.SCORE),     // the score of the document
+                new SortField("popularity", SortFieldType.INT64), // the value of the 'popularity' field
+            };
 
             // Aggregates the facet values
             FacetsCollector fc = new FacetsCollector(true);

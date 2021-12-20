@@ -115,9 +115,11 @@ namespace Lucene.Net.Demo.Facet
             Expression distance = JavascriptCompiler.Compile(
                 string.Format(CultureInfo.InvariantCulture, "haversin({0:R},{1:R},latitude,longitude)", ORIGIN_LATITUDE, ORIGIN_LONGITUDE));
 
-            SimpleBindings bindings = new SimpleBindings();
-            bindings.Add(new SortField("latitude", SortFieldType.DOUBLE));
-            bindings.Add(new SortField("longitude", SortFieldType.DOUBLE));
+            SimpleBindings bindings = new SimpleBindings
+            {
+                new SortField("latitude", SortFieldType.DOUBLE),
+                new SortField("longitude", SortFieldType.DOUBLE),
+            };
 
             return distance.GetValueSource(bindings);
         }
