@@ -354,10 +354,10 @@ namespace Lucene.Net.Facet.SortedSet
                 Facets facets = new SortedSetDocValuesFacetCounts(state, fc);
 
                 // Slow, yet hopefully bug-free, faceting:
-                var expectedCounts = new JCG.List<Dictionary<string, int?>>();
+                var expectedCounts = new JCG.List<Dictionary<string, int>>();
                 for (int i = 0; i < numDims; i++)
                 {
-                    expectedCounts.Add(new Dictionary<string, int?>());
+                    expectedCounts.Add(new Dictionary<string, int>());
                 }
 
                 foreach (TestDoc doc in testDocs)
@@ -368,7 +368,7 @@ namespace Lucene.Net.Facet.SortedSet
                         {
                             if (doc.dims[j] != null)
                             {
-                                if (!expectedCounts[j].TryGetValue(doc.dims[j], out int? v))
+                                if (!expectedCounts[j].TryGetValue(doc.dims[j], out int v))
                                 {
                                     expectedCounts[j][doc.dims[j]] = 1;
                                 }
@@ -386,10 +386,10 @@ namespace Lucene.Net.Facet.SortedSet
                 {
                     JCG.List<LabelAndValue> labelValues = new JCG.List<LabelAndValue>();
                     int totCount = 0;
-                    foreach (KeyValuePair<string, int?> ent in expectedCounts[i])
+                    foreach (KeyValuePair<string, int> ent in expectedCounts[i])
                     {
-                        labelValues.Add(new LabelAndValue(ent.Key, ent.Value.Value));
-                        totCount += ent.Value.Value;
+                        labelValues.Add(new LabelAndValue(ent.Key, ent.Value));
+                        totCount += ent.Value;
                     }
                     SortLabelValues(labelValues);
                     if (totCount > 0)

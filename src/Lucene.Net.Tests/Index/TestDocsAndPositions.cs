@@ -129,13 +129,13 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(47);
             int max = 1051;
             int term = Random.Next(max);
-            int?[][] positionsInDoc = new int?[numDocs][];
+            int[][] positionsInDoc = new int[numDocs][];
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
             customType.OmitNorms = true;
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
-                JCG.List<int?> positions = new JCG.List<int?>();
+                JCG.List<int> positions = new JCG.List<int>();
                 StringBuilder builder = new StringBuilder();
                 int num = AtLeast(131);
                 for (int j = 0; j < num; j++)
@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
                         {
                             break;
                         }
-                        int?[] pos = positionsInDoc[atomicReaderContext.DocBase + docID];
+                        int[] pos = positionsInDoc[atomicReaderContext.DocBase + docID];
                         Assert.AreEqual(pos.Length, docsAndPosEnum.Freq);
                         // number of positions read should be random - don't read all of them
                         // allways

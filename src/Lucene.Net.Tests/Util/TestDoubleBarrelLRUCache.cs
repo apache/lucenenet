@@ -201,9 +201,9 @@ namespace Lucene.Net.Util
 
         protected internal class CloneableInteger : DoubleBarrelLRUCache.CloneableKey
         {
-            internal int? value;
+            internal int value;
 
-            public CloneableInteger(int? value)
+            public CloneableInteger(int value)
             {
                 this.value = value;
             }

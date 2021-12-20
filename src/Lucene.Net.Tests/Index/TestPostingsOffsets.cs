@@ -242,7 +242,7 @@ namespace Lucene.Net.Index
         public virtual void TestRandom()
         {
             // token -> docID -> tokens
-            IDictionary<string, IDictionary<int?, IList<Token>>> actualTokens = new Dictionary<string, IDictionary<int?, IList<Token>>>();
+            IDictionary<string, IDictionary<int, IList<Token>>> actualTokens = new Dictionary<string, IDictionary<int, IList<Token>>>();
 
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, iwc);
@@ -301,9 +301,9 @@ namespace Lucene.Net.Index
                     int tokenOffset = Random.Next(5);
 
                     Token token = MakeToken(text, posIncr, offset + offIncr, offset + offIncr + tokenOffset);
-                    if (!actualTokens.TryGetValue(text, out IDictionary<int?, IList<Token>> postingsByDoc))
+                    if (!actualTokens.TryGetValue(text, out IDictionary<int, IList<Token>> postingsByDoc))
                     {
-                        actualTokens[text] = postingsByDoc = new Dictionary<int?, IList<Token>>();
+                        actualTokens[text] = postingsByDoc = new Dictionary<int, IList<Token>>();
                     }
                     if (!postingsByDoc.TryGetValue(docCount, out IList<Token> postings))
                     {

@@ -349,7 +349,7 @@ namespace Lucene.Net.Search
             internal readonly SortedSetDocValues dv;
             internal readonly int maxDoc;
 
-            internal readonly ISet<long?> ords = new JCG.HashSet<long?>();
+            internal readonly ISet<long> ords = new JCG.HashSet<long>();
             internal readonly SimScorer[] sims;
             internal readonly int minNrShouldMatch;
 

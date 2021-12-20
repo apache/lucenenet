@@ -204,7 +204,7 @@ namespace Lucene.Net.Index
             docs.Dispose();
         }
 
-        private void AddDoc(RandomIndexWriter w, ICollection<string> terms, IDictionary<BytesRef, int?> termToID, int id)
+        private void AddDoc(RandomIndexWriter w, ICollection<string> terms, IDictionary<BytesRef, int> termToID, int id)
         {
             Document doc = new Document();
             doc.Add(new Int32Field("id", id, Field.Store.NO));
@@ -248,7 +248,7 @@ namespace Lucene.Net.Index
 
             ISet<string> terms = new JCG.HashSet<string>();
             ICollection<string> pendingTerms = new JCG.List<string>();
-            IDictionary<BytesRef, int?> termToID = new Dictionary<BytesRef, int?>();
+            IDictionary<BytesRef, int> termToID = new Dictionary<BytesRef, int>();
             int id = 0;
             while (terms.Count != numTerms)
             {

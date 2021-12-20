@@ -86,10 +86,10 @@ namespace Lucene.Net.Index
             }
 
             // Random delete half the docs:
-            ISet<int?> deleted = new JCG.HashSet<int?>();
+            ISet<int> deleted = new JCG.HashSet<int>();
             while (deleted.Count < NUM_DOCS / 2)
             {
-                int? toDelete = Random.Next(NUM_DOCS);
+                int toDelete = Random.Next(NUM_DOCS);
                 if (!deleted.Contains(toDelete))
                 {
                     deleted.Add(toDelete);

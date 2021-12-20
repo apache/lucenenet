@@ -187,14 +187,14 @@ namespace Lucene.Net.Spatial
             assertEquals("" + shape, assertNumFound, results.numFound);
             if (assertIds != null)
             {
-                ISet<int?> resultIds = new JCG.HashSet<int?>();
+                ISet<int> resultIds = new JCG.HashSet<int>();
                 foreach (SearchResult result in results.results)
                 {
-                    resultIds.add(int.Parse(result.document.Get("id"), CultureInfo.InvariantCulture));
+                    resultIds.Add(int.Parse(result.document.Get("id"), CultureInfo.InvariantCulture));
                 }
                 foreach (int assertId in assertIds)
                 {
-                    assertTrue("has " + assertId, resultIds.contains(assertId));
+                    assertTrue("has " + assertId, resultIds.Contains(assertId));
                 }
             }
         }

@@ -104,7 +104,7 @@ namespace Lucene.Net.Util
             int num = AtLeast(2);
             for (int j = 0; j < num; j++)
             {
-                IDictionary<string, int?> strings = new Dictionary<string, int?>();
+                IDictionary<string, int> strings = new Dictionary<string, int>();
                 int uniqueCount = 0;
                 for (int i = 0; i < 797; i++)
                 {
@@ -130,7 +130,7 @@ namespace Lucene.Net.Util
                         Assert.AreEqual(hash.Count, count);
                     }
                 }
-                foreach (KeyValuePair<string, int?> entry in strings)
+                foreach (KeyValuePair<string, int> entry in strings)
                 {
                     @ref.CopyChars(entry.Key);
                     Assert.AreEqual(@ref, hash.Get((int)entry.Value, scratch));

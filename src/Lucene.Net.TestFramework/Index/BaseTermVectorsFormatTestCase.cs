@@ -828,7 +828,7 @@ namespace Lucene.Net.Index
             RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 5, 20);
             int numDocs = AtLeast(100);
             int numDeletes = Random.Next(numDocs);
-            ISet<int?> deletes = new JCG.HashSet<int?>();
+            ISet<int> deletes = new JCG.HashSet<int>();
             while (deletes.Count < numDeletes)
             {
                 deletes.Add(Random.Next(numDocs));

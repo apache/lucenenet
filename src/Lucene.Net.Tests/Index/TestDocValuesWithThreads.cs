@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
 
-            IList<long?> numbers = new JCG.List<long?>();
+            IList<long> numbers = new JCG.List<long>();
             IList<BytesRef> binary = new JCG.List<BytesRef>();
             IList<BytesRef> sorted = new JCG.List<BytesRef>();
             int numDocs = AtLeast(100);
@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
         {
             private readonly TestDocValuesWithThreads outerInstance;
 
-            private readonly IList<long?> numbers;
+            private readonly IList<long> numbers;
             private readonly IList<BytesRef> binary;
             private readonly IList<BytesRef> sorted;
             private readonly int numDocs;
@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
             private readonly CountdownEvent startingGun;
             private readonly Random threadRandom;
 
-            public ThreadAnonymousClass(TestDocValuesWithThreads outerInstance, IList<long?> numbers, IList<BytesRef> binary, IList<BytesRef> sorted, int numDocs, AtomicReader ar, CountdownEvent startingGun, Random threadRandom)
+            public ThreadAnonymousClass(TestDocValuesWithThreads outerInstance, IList<long> numbers, IList<BytesRef> binary, IList<BytesRef> sorted, int numDocs, AtomicReader ar, CountdownEvent startingGun, Random threadRandom)
             {
                 this.outerInstance = outerInstance;
                 this.numbers = numbers;
@@ -143,16 +143,16 @@ namespace Lucene.Net.Index
                         {
 #pragma warning disable 612, 618
                             case 0:
-                                Assert.AreEqual((long)(sbyte)numbers[docID], (sbyte)FieldCache.DEFAULT.GetBytes(ar, "number", false).Get(docID));
+                                Assert.AreEqual((sbyte)numbers[docID], (sbyte)FieldCache.DEFAULT.GetBytes(ar, "number", false).Get(docID));
                                 break;
 
                             case 1:
-                                Assert.AreEqual((long)(short)numbers[docID], FieldCache.DEFAULT.GetInt16s(ar, "number", false).Get(docID));
+                                Assert.AreEqual((short)numbers[docID], FieldCache.DEFAULT.GetInt16s(ar, "number", false).Get(docID));
                                 break;
 #pragma warning restore 612, 618
 
                             case 2:
-                                Assert.AreEqual((long)(int)numbers[docID], FieldCache.DEFAULT.GetInt32s(ar, "number", false).Get(docID));
+                                Assert.AreEqual((int)numbers[docID], FieldCache.DEFAULT.GetInt32s(ar, "number", false).Get(docID));
                                 break;
 
                             case 3:

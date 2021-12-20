@@ -569,7 +569,7 @@ namespace Lucene.Net.Codecs.RAMOnly
         }
 
         // Holds all indexes created, keyed by the ID assigned in fieldsConsumer
-        private readonly IDictionary<int?, RAMPostings> state = new Dictionary<int?, RAMPostings>();
+        private readonly IDictionary<int, RAMPostings> state = new Dictionary<int, RAMPostings>();
 
         private readonly AtomicInt64 nextID = new AtomicInt64();
 
@@ -650,7 +650,7 @@ namespace Lucene.Net.Codecs.RAMOnly
             UninterruptableMonitor.Enter(state);
             try
             {
-                return state[id];
+                return state.TryGetValue(id, out RAMPostings value) ? value : null;
             }
             finally
             {

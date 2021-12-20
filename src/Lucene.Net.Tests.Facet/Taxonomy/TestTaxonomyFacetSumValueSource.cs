@@ -555,10 +555,10 @@ namespace Lucene.Net.Facet.Taxonomy
                 Facets facets = new TaxonomyFacetSumValueSource(tr, config, fc, values);
 
                 // Slow, yet hopefully bug-free, faceting:
-                var expectedValues = new JCG.List<Dictionary<string, float?>>(numDims);
+                var expectedValues = new JCG.List<Dictionary<string, float>>(numDims);
                 for (int i = 0; i < numDims; i++)
                 {
-                    expectedValues.Add(new Dictionary<string, float?>());
+                    expectedValues.Add(new Dictionary<string, float>());
                 }
 
                 foreach (TestDoc doc in testDocs)
@@ -569,7 +569,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         {
                             if (doc.dims[j] != null)
                             {
-                                if (!expectedValues[j].TryGetValue(doc.dims[j], out float? v) || v == null)
+                                if (!expectedValues[j].TryGetValue(doc.dims[j], out float v))
                                 {
                                     expectedValues[j][doc.dims[j]] = doc.value;
                                 }
@@ -587,10 +587,10 @@ namespace Lucene.Net.Facet.Taxonomy
                 {
                     JCG.List<LabelAndValue> labelValues = new JCG.List<LabelAndValue>();
                     float totValue = 0;
-                    foreach (KeyValuePair<string, float?> ent in expectedValues[i])
+                    foreach (KeyValuePair<string, float> ent in expectedValues[i])
                     {
-                        labelValues.Add(new LabelAndValue(ent.Key, ent.Value.Value));
-                        totValue += ent.Value.Value;
+                        labelValues.Add(new LabelAndValue(ent.Key, ent.Value));
+                        totValue += ent.Value;
                     }
                     SortLabelValues(labelValues);
                     if (totValue > 0)

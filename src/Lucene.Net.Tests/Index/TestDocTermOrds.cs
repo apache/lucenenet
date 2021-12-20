@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, conf);
 
             int[][] idToOrds = new int[NUM_DOCS][];
-            ISet<int?> ordsForDocSet = new JCG.HashSet<int?>();
+            ISet<int> ordsForDocSet = new JCG.HashSet<int>();
 
             for (int id = 0; id < NUM_DOCS; id++)
             {
@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, conf);
 
             int[][] idToOrds = new int[NUM_DOCS][];
-            ISet<int?> ordsForDocSet = new JCG.HashSet<int?>();
+            ISet<int> ordsForDocSet = new JCG.HashSet<int>();
 
             for (int id = 0; id < NUM_DOCS; id++)
             {
@@ -296,7 +296,7 @@ namespace Lucene.Net.Index
                 for (int id = 0; id < NUM_DOCS; id++)
                 {
                     int[] docOrds = idToOrds[id];
-                    IList<int?> newOrds = new JCG.List<int?>();
+                    IList<int> newOrds = new JCG.List<int>();
                     foreach (int ord in idToOrds[id])
                     {
                         if (StringHelper.StartsWith(termsArray[ord], prefixRef))
