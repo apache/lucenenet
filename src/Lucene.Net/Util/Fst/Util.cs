@@ -365,8 +365,6 @@ namespace Lucene.Net.Util.Fst
 
             internal JCG.SortedSet<FSTPath<T>> queue = null;
 
-            private readonly object syncLock = new object();
-
             /// <summary>
             /// Creates an unbounded TopNSearcher </summary>
             /// <param name="fst"> the <see cref="Lucene.Net.Util.Fst.FST{T}"/> to search on </param>
@@ -439,19 +437,7 @@ namespace Lucene.Net.Util.Fst
 
                 if (queue.Count == maxQueueDepth + 1)
                 {
-                    // LUCENENET NOTE: SortedSet doesn't have atomic operations,
-                    // so we need to add some thread safety just in case.
-                    // Perhaps it might make sense to wrap SortedSet into a type
-                    // that provides thread safety.
-                    UninterruptableMonitor.Enter(syncLock);
-                    try
-                    {
-                        queue.Remove(queue.Max);
-                    }
-                    finally
-                    {
-                        UninterruptableMonitor.Exit(syncLock);
-                    }
+                    queue.Remove(queue.Max);
                 }
             }
 
@@ -520,26 +506,12 @@ namespace Lucene.Net.Util.Fst
 
                     // Remove top path since we are now going to
                     // pursue it:
-
-                    // LUCENENET NOTE: SortedSet doesn't have atomic operations,
-                    // so we need to add some thread safety just in case.
-                    // Perhaps it might make sense to wrap SortedSet into a type
-                    // that provides thread safety.
-                    UninterruptableMonitor.Enter(syncLock);
-                    try
+                    path = queue.Min;
+                    if (path != null)
                     {
-                        path = queue.Min;
-                        if (path != null)
-                        {
-                            queue.Remove(path);
-                        }
+                        queue.Remove(path);
                     }
-                    finally
-                    {
-                        UninterruptableMonitor.Exit(syncLock);
-                    }
-
-                    if (path == null)
+                    else
                     {
                         // There were less than topN paths available:
                         //System.out.println("  break no more paths");
@@ -817,12 +789,12 @@ namespace Lucene.Net.Util.Fst
                 if (startArc.IsFinal)
                 {
                     isFinal = true;
-                    finalOutput = startArc.NextFinalOutput.Equals(NO_OUTPUT) ? default : startArc.NextFinalOutput;
+                    finalOutput = startArc.NextFinalOutput == NO_OUTPUT ? null : startArc.NextFinalOutput;
                 }
                 else
                 {
                     isFinal = false;
-                    finalOutput = default;
+                    finalOutput = null;
                 }
 
                 EmitDotState(@out, Convert.ToString(startArc.Target), isFinal ? finalStateShape : stateShape, stateColor, finalOutput == null ? "" : fst.Outputs.OutputToString(finalOutput));
@@ -885,7 +857,7 @@ namespace Lucene.Net.Util.Fst
                                 }
 
                                 string finalOutput;
-                                if (arc.NextFinalOutput != null && !arc.NextFinalOutput.Equals(NO_OUTPUT))
+                                if (arc.NextFinalOutput != null && arc.NextFinalOutput != NO_OUTPUT)
                                 {
                                     finalOutput = fst.Outputs.OutputToString(arc.NextFinalOutput);
                                 }
@@ -894,7 +866,7 @@ namespace Lucene.Net.Util.Fst
                                     finalOutput = "";
                                 }
 
-                                EmitDotState(@out, Convert.ToString(arc.Target), stateShape, stateColor, finalOutput);
+                                EmitDotState(@out, Convert.ToString(arc.Target, CultureInfo.InvariantCulture), stateShape, stateColor, finalOutput);
                                 // To see the node address, use this instead:
                                 //emitDotState(out, Integer.toString(arc.target), stateShape, stateColor, String.valueOf(arc.target));
                                 seen.Set((int)arc.Target);
@@ -903,7 +875,7 @@ namespace Lucene.Net.Util.Fst
                             }
 
                             string outs;
-                            if (!arc.Output.Equals(NO_OUTPUT))
+                            if (arc.Output != NO_OUTPUT)
                             {
                                 outs = "/" + fst.Outputs.OutputToString(arc.Output);
                             }
@@ -912,7 +884,7 @@ namespace Lucene.Net.Util.Fst
                                 outs = "";
                             }
 
-                            if (!FST<T>.TargetHasArcs(arc) && arc.IsFinal && !arc.NextFinalOutput.Equals(NO_OUTPUT))
+                            if (!FST<T>.TargetHasArcs(arc) && arc.IsFinal && arc.NextFinalOutput != NO_OUTPUT)
                             {
                                 // Tricky special case: sometimes, due to
                                 // pruning, the builder can [sillily] produce

@@ -451,7 +451,7 @@ namespace Lucene.Net.Util.Fst
                 T commonOutputPrefix;
                 T wordSuffix;
 
-                if (!lastOutput.Equals(NO_OUTPUT))
+                if (lastOutput != NO_OUTPUT)
                 {
                     commonOutputPrefix = fst.Outputs.Common(output, lastOutput);
                     if (Debugging.AssertsEnabled) Debugging.Assert(ValidOutput(commonOutputPrefix));
@@ -490,7 +490,7 @@ namespace Lucene.Net.Util.Fst
 
         internal bool ValidOutput(T output) // Only called from assert
         {
-            return output.Equals(NO_OUTPUT) || !output.Equals(NO_OUTPUT);
+            return output == NO_OUTPUT || !output.Equals(NO_OUTPUT);
         }
 
         /// <summary>
