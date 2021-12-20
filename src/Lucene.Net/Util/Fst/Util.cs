@@ -10,6 +10,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using BitSet = Lucene.Net.Util.OpenBitSet;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Util.Fst
         /// Looks up the output for this input, or <c>null</c> if the
         /// input is not accepted.
         /// </summary>
-        public static T Get<T>(FST<T> fst, Int32sRef input)
+        public static T Get<T>(FST<T> fst, Int32sRef input) where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             // TODO: would be nice not to alloc this on every lookup
             var arc = fst.GetFirstArc(new FST.Arc<T>());
@@ -75,7 +76,7 @@ namespace Lucene.Net.Util.Fst
         /// Looks up the output for this input, or <c>null</c> if the
         /// input is not accepted
         /// </summary>
-        public static T Get<T>(FST<T> fst, BytesRef input)
+        public static T Get<T>(FST<T> fst, BytesRef input) where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(fst.InputType == FST.INPUT_TYPE.BYTE1);
 
@@ -112,21 +113,21 @@ namespace Lucene.Net.Util.Fst
         /// pair where the output is equal to the target, and will
         /// return <c>null</c> if that output does not exist.
         ///
-        /// <para/>NOTE: this only works with <see cref="T:FST{long?}"/>, only
+        /// <para/>NOTE: this only works with <see cref="FST{T}"/>, only
         /// works when the outputs are ascending in order with
         /// the inputs.
         /// For example, simple ordinals (0, 1,
         /// 2, ...), or file offets (when appending to a file)
         /// fit this.
         /// </summary>
-        public static Int32sRef GetByOutput(FST<long?> fst, long targetOutput)
+        public static Int32sRef GetByOutput(FST<Int64> fst, long targetOutput)
         {
             var @in = fst.GetBytesReader();
 
             // TODO: would be nice not to alloc this on every lookup
-            FST.Arc<long?> arc = fst.GetFirstArc(new FST.Arc<long?>());
+            FST.Arc<Int64> arc = fst.GetFirstArc(new FST.Arc<Int64>());
 
-            FST.Arc<long?> scratchArc = new FST.Arc<long?>();
+            FST.Arc<Int64> scratchArc = new FST.Arc<Int64>();
 
             Int32sRef result = new Int32sRef();
 
@@ -134,12 +135,12 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Expert: like <see cref="Util.GetByOutput(FST{long?}, long)"/> except reusing
+        /// Expert: like <see cref="Util.GetByOutput(FST{Int64}, long)"/> except reusing
         /// <see cref="FST.BytesReader"/>, initial and scratch Arc, and result.
         /// </summary>
-        public static Int32sRef GetByOutput(FST<long?> fst, long targetOutput, FST.BytesReader @in, FST.Arc<long?> arc, FST.Arc<long?> scratchArc, Int32sRef result)
+        public static Int32sRef GetByOutput(FST<Int64> fst, long targetOutput, FST.BytesReader @in, FST.Arc<Int64> arc, FST.Arc<Int64> scratchArc, Int32sRef result)
         {
-            long output = arc.Output.Value;
+            long output = arc.Output;
             int upto = 0;
 
             //System.out.println("reverseLookup output=" + targetOutput);
@@ -149,7 +150,7 @@ namespace Lucene.Net.Util.Fst
                 //System.out.println("loop: output=" + output + " upto=" + upto + " arc=" + arc);
                 if (arc.IsFinal)
                 {
-                    long finalOutput = output + arc.NextFinalOutput.Value;
+                    long finalOutput = output + arc.NextFinalOutput;
                     //System.out.println("  isFinal finalOutput=" + finalOutput);
                     if (finalOutput == targetOutput)
                     {
@@ -164,7 +165,7 @@ namespace Lucene.Net.Util.Fst
                     }
                 }
 
-                if (FST<long?>.TargetHasArcs(arc))
+                if (FST<Int64>.TargetHasArcs(arc))
                 {
                     //System.out.println("  targetHasArcs");
                     if (result.Int32s.Length == upto)
@@ -191,7 +192,7 @@ namespace Lucene.Net.Util.Fst
                             long minArcOutput;
                             if ((flags & FST.BIT_ARC_HAS_OUTPUT) != 0)
                             {
-                                long arcOutput = fst.Outputs.Read(@in).Value;
+                                long arcOutput = fst.Outputs.Read(@in);
                                 minArcOutput = output + arcOutput;
                             }
                             else
@@ -228,11 +229,11 @@ namespace Lucene.Net.Util.Fst
 
                         fst.ReadNextRealArc(arc, @in);
                         result.Int32s[upto++] = arc.Label;
-                        output += arc.Output.Value;
+                        output += arc.Output;
                     }
                     else
                     {
-                        FST.Arc<long?> prevArc = null;
+                        FST.Arc<Int64> prevArc = null;
 
                         while (true)
                         {
@@ -240,7 +241,7 @@ namespace Lucene.Net.Util.Fst
 
                             // this is the min output we'd hit if we follow
                             // this arc:
-                            long minArcOutput = output + arc.Output.Value;
+                            long minArcOutput = output + arc.Output;
 
                             if (minArcOutput == targetOutput)
                             {
@@ -262,7 +263,7 @@ namespace Lucene.Net.Util.Fst
                                     // Recurse on previous arc:
                                     arc.CopyFrom(prevArc);
                                     result.Int32s[upto++] = arc.Label;
-                                    output += arc.Output.Value;
+                                    output += arc.Output;
                                     //System.out.println("    recurse prev label=" + (char) arc.label + " output=" + output);
                                     break;
                                 }
@@ -299,7 +300,7 @@ namespace Lucene.Net.Util.Fst
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        public class FSTPath<T>
+        public class FSTPath<T> where T : class  // LUCENENET specific - added class constraint, since we compare reference equality
         {
             public FST.Arc<T> Arc { get; set; }
             public T Cost { get; set; }
@@ -324,7 +325,7 @@ namespace Lucene.Net.Util.Fst
         /// Compares first by the provided comparer, and then
         /// tie breaks by <see cref="FSTPath{T}.Input"/>.
         /// </summary>
-        private class TieBreakByInputComparer<T> : IComparer<FSTPath<T>>
+        private class TieBreakByInputComparer<T> : IComparer<FSTPath<T>> where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             internal readonly IComparer<T> comparer;
 
@@ -351,7 +352,7 @@ namespace Lucene.Net.Util.Fst
         /// Utility class to find top N shortest paths from start
         /// point(s).
         /// </summary>
-        public class TopNSearcher<T>
+        public class TopNSearcher<T> where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             private readonly FST<T> fst;
             private readonly FST.BytesReader bytesReader;
@@ -363,8 +364,6 @@ namespace Lucene.Net.Util.Fst
             internal readonly IComparer<T> comparer;
 
             internal JCG.SortedSet<FSTPath<T>> queue = null;
-
-            private readonly object syncLock = new object();
 
             /// <summary>
             /// Creates an unbounded TopNSearcher </summary>
@@ -438,19 +437,7 @@ namespace Lucene.Net.Util.Fst
 
                 if (queue.Count == maxQueueDepth + 1)
                 {
-                    // LUCENENET NOTE: SortedSet doesn't have atomic operations,
-                    // so we need to add some thread safety just in case.
-                    // Perhaps it might make sense to wrap SortedSet into a type
-                    // that provides thread safety.
-                    UninterruptableMonitor.Enter(syncLock);
-                    try
-                    {
-                        queue.Remove(queue.Max);
-                    }
-                    finally
-                    {
-                        UninterruptableMonitor.Exit(syncLock);
-                    }
+                    queue.Remove(queue.Max);
                 }
             }
 
@@ -519,26 +506,12 @@ namespace Lucene.Net.Util.Fst
 
                     // Remove top path since we are now going to
                     // pursue it:
-
-                    // LUCENENET NOTE: SortedSet doesn't have atomic operations,
-                    // so we need to add some thread safety just in case.
-                    // Perhaps it might make sense to wrap SortedSet into a type
-                    // that provides thread safety.
-                    UninterruptableMonitor.Enter(syncLock);
-                    try
+                    path = queue.Min;
+                    if (path != null)
                     {
-                        path = queue.Min;
-                        if (path != null)
-                        {
-                            queue.Remove(path);
-                        }
+                        queue.Remove(path);
                     }
-                    finally
-                    {
-                        UninterruptableMonitor.Exit(syncLock);
-                    }
-
-                    if (path == null)
+                    else
                     {
                         // There were less than topN paths available:
                         //System.out.println("  break no more paths");
@@ -659,7 +632,7 @@ namespace Lucene.Net.Util.Fst
         /// Holds a single input (<see cref="Int32sRef"/>) + output, returned by
         /// <see cref="ShortestPaths"/>.
         /// </summary>
-        public sealed class Result<T>
+        public sealed class Result<T> where T : class // LUCENENET specific - added class constraint because we compare reference equality
         {
             public Int32sRef Input { get; private set; }
             public T Output { get; private set; }
@@ -674,7 +647,7 @@ namespace Lucene.Net.Util.Fst
         /// <summary>
         /// Holds the results for a top N search using <see cref="TopNSearcher{T}"/>
         /// </summary>
-        public sealed class TopResults<T> : IEnumerable<Result<T>>
+        public sealed class TopResults<T> : IEnumerable<Result<T>> where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             /// <summary>
             /// <c>true</c> iff this is a complete result ie. if
@@ -710,6 +683,7 @@ namespace Lucene.Net.Util.Fst
         /// completions to a final node.
         /// </summary>
         public static TopResults<T> ShortestPaths<T>(FST<T> fst, FST.Arc<T> fromNode, T startOutput, IComparer<T> comparer, int topN, bool allowEmptyString)
+            where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             // All paths are kept, so we can pass topN for
             // maxQueueDepth and the pruning is admissible:
@@ -754,7 +728,7 @@ namespace Lucene.Net.Util.Fst
         ///          If <c>true</c> states will have labels equal to their offsets in their
         ///          binary format. Expands the graph considerably.
         /// </param>
-        public static void ToDot<T>(FST<T> fst, TextWriter @out, bool sameRank, bool labelStates)
+        public static void ToDot<T>(FST<T> fst, TextWriter @out, bool sameRank, bool labelStates) where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             const string expandedNodeColor = "blue";
 
@@ -773,7 +747,7 @@ namespace Lucene.Net.Util.Fst
             //System.out.println("toDot: startArc: " + startArc);
 
             // A list of states on the same level (for ranking).
-            IList<int?> sameLevelStates = new JCG.List<int?>();
+            IList<int> sameLevelStates = new JCG.List<int>();
 
             // A bitset of already seen states (target offset).
             BitSet seen = new BitSet();
@@ -815,12 +789,12 @@ namespace Lucene.Net.Util.Fst
                 if (startArc.IsFinal)
                 {
                     isFinal = true;
-                    finalOutput = startArc.NextFinalOutput.Equals(NO_OUTPUT) ? default : startArc.NextFinalOutput;
+                    finalOutput = startArc.NextFinalOutput == NO_OUTPUT ? null : startArc.NextFinalOutput;
                 }
                 else
                 {
                     isFinal = false;
-                    finalOutput = default;
+                    finalOutput = null;
                 }
 
                 EmitDotState(@out, Convert.ToString(startArc.Target), isFinal ? finalStateShape : stateShape, stateColor, finalOutput == null ? "" : fst.Outputs.OutputToString(finalOutput));
@@ -883,7 +857,7 @@ namespace Lucene.Net.Util.Fst
                                 }
 
                                 string finalOutput;
-                                if (arc.NextFinalOutput != null && !arc.NextFinalOutput.Equals(NO_OUTPUT))
+                                if (arc.NextFinalOutput != null && arc.NextFinalOutput != NO_OUTPUT)
                                 {
                                     finalOutput = fst.Outputs.OutputToString(arc.NextFinalOutput);
                                 }
@@ -892,7 +866,7 @@ namespace Lucene.Net.Util.Fst
                                     finalOutput = "";
                                 }
 
-                                EmitDotState(@out, Convert.ToString(arc.Target), stateShape, stateColor, finalOutput);
+                                EmitDotState(@out, Convert.ToString(arc.Target, CultureInfo.InvariantCulture), stateShape, stateColor, finalOutput);
                                 // To see the node address, use this instead:
                                 //emitDotState(out, Integer.toString(arc.target), stateShape, stateColor, String.valueOf(arc.target));
                                 seen.Set((int)arc.Target);
@@ -901,7 +875,7 @@ namespace Lucene.Net.Util.Fst
                             }
 
                             string outs;
-                            if (!arc.Output.Equals(NO_OUTPUT))
+                            if (arc.Output != NO_OUTPUT)
                             {
                                 outs = "/" + fst.Outputs.OutputToString(arc.Output);
                             }
@@ -910,7 +884,7 @@ namespace Lucene.Net.Util.Fst
                                 outs = "";
                             }
 
-                            if (!FST<T>.TargetHasArcs(arc) && arc.IsFinal && !arc.NextFinalOutput.Equals(NO_OUTPUT))
+                            if (!FST<T>.TargetHasArcs(arc) && arc.IsFinal && arc.NextFinalOutput != NO_OUTPUT)
                             {
                                 // Tricky special case: sometimes, due to
                                 // pruning, the builder can [sillily] produce
@@ -1110,7 +1084,7 @@ namespace Lucene.Net.Util.Fst
         /// <param name="follow"> the arc to follow reading the label from </param>
         /// <param name="arc"> the arc to read into in place </param>
         /// <param name="in"> the fst's <see cref="FST.BytesReader"/> </param>
-        public static FST.Arc<T> ReadCeilArc<T>(int label, FST<T> fst, FST.Arc<T> follow, FST.Arc<T> arc, FST.BytesReader @in)
+        public static FST.Arc<T> ReadCeilArc<T>(int label, FST<T> fst, FST.Arc<T> follow, FST.Arc<T> arc, FST.BytesReader @in) where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             // TODO maybe this is a useful in the FST class - we could simplify some other code like FSTEnum?
             if (label == FST.END_LABEL)

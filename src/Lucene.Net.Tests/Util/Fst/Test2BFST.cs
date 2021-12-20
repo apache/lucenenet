@@ -4,6 +4,7 @@ using RandomizedTesting.Generators;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -112,13 +113,9 @@ namespace Lucene.Net.Util.Fst
                         Arrays.Fill(ints2, 0);
                         r = new J2N.Randomizer(seed);
                         int upto = 0;
-                        while (true)
+                        while (fstEnum.MoveNext())
                         {
-                            Int32sRefFSTEnum.InputOutput<object> pair = fstEnum.Next();
-                            if (pair == null)
-                            {
-                                break;
-                            }
+                            Int32sRefFSTEnum.InputOutput<object> pair = fstEnum.Current;
                             for (int j = 10; j < ints2.Length; j++)
                             {
                                 ints2[j] = r.Next(256);
@@ -201,13 +198,9 @@ namespace Lucene.Net.Util.Fst
                         Arrays.Fill(ints, 0);
                         r = new J2N.Randomizer(seed);
                         int upto = 0;
-                        while (true)
+                        while (fstEnum.MoveNext())
                         {
-                            Int32sRefFSTEnum.InputOutput<BytesRef> pair = fstEnum.Next();
-                            if (pair == null)
-                            {
-                                break;
-                            }
+                            Int32sRefFSTEnum.InputOutput<BytesRef> pair = fstEnum.Current;
                             Assert.AreEqual(input, pair.Input);
                             r.NextBytes(outputBytes);
                             Assert.AreEqual(output, pair.Output);
@@ -237,8 +230,8 @@ namespace Lucene.Net.Util.Fst
                 // size = 3GB
                 {
                     Console.WriteLine("\nTEST: 3 GB size; doPack=" + doPack + " outputs=long");
-                    Outputs<long?> outputs = PositiveInt32Outputs.Singleton;
-                    Builder<long?> b = new Builder<long?>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPack, PackedInt32s.COMPACT, true, 15);
+                    Outputs<Int64> outputs = PositiveInt32Outputs.Singleton;
+                    Builder<Int64> b = new Builder<Int64>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPack, PackedInt32s.COMPACT, true, 15);
 
                     long output = 1;
 
@@ -262,7 +255,7 @@ namespace Lucene.Net.Util.Fst
                         NextInput(r, ints);
                     }
 
-                    FST<long?> fst = b.Finish();
+                    FST<Int64> fst = b.Finish();
 
                     for (int verify = 0; verify < 2; verify++)
                     {
@@ -288,21 +281,17 @@ namespace Lucene.Net.Util.Fst
                         }
 
                         Console.WriteLine("\nTEST: enum all input/outputs");
-                        Int32sRefFSTEnum<long?> fstEnum = new Int32sRefFSTEnum<long?>(fst);
+                        Int32sRefFSTEnum<Int64> fstEnum = new Int32sRefFSTEnum<Int64>(fst);
 
                         Arrays.Fill(ints, 0);
                         r = new J2N.Randomizer(seed);
                         int upto = 0;
                         output = 1;
-                        while (true)
+                        while (fstEnum.MoveNext())
                         {
-                            Int32sRefFSTEnum.InputOutput<long?> pair = fstEnum.Next();
-                            if (pair == null)
-                            {
-                                break;
-                            }
+                            Int32sRefFSTEnum.InputOutput<J2N.Numerics.Int64> pair = fstEnum.Current;
                             Assert.AreEqual(input, pair.Input);
-                            Assert.AreEqual(output, pair.Output.Value);
+                            Assert.AreEqual(output, pair.Output);
                             output += 1 + r.Next(10);
                             upto++;
                             NextInput(r, ints);
@@ -316,7 +305,7 @@ namespace Lucene.Net.Util.Fst
                             fst.Save(@out);
                             @out.Dispose();
                             IndexInput @in = dir.OpenInput("fst", IOContext.DEFAULT);
-                            fst = new FST<long?>(@in, outputs);
+                            fst = new FST<Int64>(@in, outputs);
                             @in.Dispose();
                         }
                         else

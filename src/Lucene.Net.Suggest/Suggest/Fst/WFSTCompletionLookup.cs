@@ -6,6 +6,7 @@ using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {
@@ -46,7 +47,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// </summary>
         // NOTE: like FSTSuggester, this is really a WFSA, if you want to
         // customize the code to add some output you should use PairOutputs.
-        private FST<long?> fst = null;
+        private FST<Int64> fst = null;
 
         /// <summary>
         /// True if exact match suggestions should always be returned first.
@@ -97,7 +98,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             var scratchInts = new Int32sRef();
             BytesRef previous = null;
             var outputs = PositiveInt32Outputs.Singleton;
-            var builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
+            var builder = new Builder<Int64>(FST.INPUT_TYPE.BYTE1, outputs);
             while (iter.MoveNext())
             {
                 scratch = iter.Current;
@@ -134,7 +135,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         public override bool Load(DataInput input)
         {
             count = input.ReadVInt64();
-            this.fst = new FST<long?>(input, PositiveInt32Outputs.Singleton);
+            this.fst = new FST<Int64>(input, PositiveInt32Outputs.Singleton);
             return true;
         }
 
@@ -161,10 +162,10 @@ namespace Lucene.Net.Search.Suggest.Fst
 
             BytesRef scratch = new BytesRef(key);
             int prefixLength = scratch.Length;
-            FST.Arc<long?> arc = new FST.Arc<long?>();
+            FST.Arc<Int64> arc = new FST.Arc<Int64>();
 
             // match the prefix portion exactly
-            long? prefixOutput;
+            Int64 prefixOutput;
             try
             {
                 prefixOutput = LookupPrefix(scratch, arc);
@@ -174,7 +175,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 throw RuntimeException.Create(bogus);
             }
 
-            if (!prefixOutput.HasValue)
+            if (prefixOutput is null)
             {
                 return Collections.EmptyList<LookupResult>();
             }
@@ -185,7 +186,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 spare.Grow(scratch.Length);
                 UnicodeUtil.UTF8toUTF16(scratch, spare);
-                results.Add(new LookupResult(spare.ToString(), DecodeWeight(prefixOutput.GetValueOrDefault() + arc.NextFinalOutput.GetValueOrDefault())));
+                results.Add(new LookupResult(spare.ToString(), DecodeWeight(prefixOutput + arc.NextFinalOutput)));
                 if (--num == 0)
                 {
                     return results; // that was quick
@@ -193,7 +194,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
 
             // complete top-N
-            Util.Fst.Util.TopResults<long?> completions;
+            Util.Fst.Util.TopResults<Int64> completions;
             try
             {
                 completions = Lucene.Net.Util.Fst.Util.ShortestPaths(fst, arc, prefixOutput, weightComparer, num, !exactFirst);
@@ -205,7 +206,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
 
             BytesRef suffix = new BytesRef(8);
-            foreach (Util.Fst.Util.Result<long?> completion in completions)
+            foreach (Util.Fst.Util.Result<Int64> completion in completions)
             {
                 scratch.Length = prefixLength;
                 // append suffix
@@ -213,14 +214,14 @@ namespace Lucene.Net.Search.Suggest.Fst
                 scratch.Append(suffix);
                 spare.Grow(scratch.Length);
                 UnicodeUtil.UTF8toUTF16(scratch, spare);
-                results.Add(new LookupResult(spare.ToString(), DecodeWeight(completion.Output.GetValueOrDefault())));
+                results.Add(new LookupResult(spare.ToString(), DecodeWeight(completion.Output)));
             }
             return results;
         }
 
-        private long? LookupPrefix(BytesRef scratch, FST.Arc<long?> arc) //Bogus
+        private Int64 LookupPrefix(BytesRef scratch, FST.Arc<Int64> arc) //Bogus
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(0 == (long)fst.Outputs.NoOutput);
+            if (Debugging.AssertsEnabled) Debugging.Assert(0 == fst.Outputs.NoOutput);
             long output = 0;
             var bytesReader = fst.GetBytesReader();
 
@@ -237,7 +238,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 }
                 else
                 {
-                    output += (long)arc.Output;
+                    output += arc.Output;
                 }
             }
 
@@ -254,7 +255,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 return null;
             }
-            FST.Arc<long?> arc = new FST.Arc<long?>();
+            FST.Arc<Int64> arc = new FST.Arc<Int64>();
             long? result;
             try
             {
@@ -270,7 +271,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
             else
             {
-                return DecodeWeight(result.Value + arc.NextFinalOutput.GetValueOrDefault());
+                return DecodeWeight(result.Value + arc.NextFinalOutput);
             }
         }
 
@@ -321,7 +322,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
         }
 
-        internal static readonly IComparer<long?> weightComparer = Comparer<long?>.Create((left, right) => Comparer<long?>.Default.Compare(left, right));
+        internal static readonly IComparer<Int64> weightComparer = Comparer<Int64>.Create((left, right) => Comparer<Int64>.Default.Compare(left, right));
         
         /// <summary>
         /// Returns byte size of the underlying FST. </summary>

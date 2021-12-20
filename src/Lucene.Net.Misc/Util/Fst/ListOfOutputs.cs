@@ -180,26 +180,26 @@ namespace Lucene.Net.Util.Fst
         public override object Merge(object first, object second)
         {
             IList<T> outputList = new JCG.List<T>();
-            if (!(first is IList<T> firstList))
+            if (!(first is IList firstList))
             {
                 outputList.Add((T)first);
             }
             else
             {
-                foreach (T value in firstList)
+                foreach (object value in firstList)
                 {
-                    outputList.Add(value);
+                    outputList.Add((T)value);
                 }
             }
-            if (!(second is IList<T> secondList))
+            if (!(second is IList secondList))
             {
                 outputList.Add((T)second);
             }
             else
             {
-                foreach (T value in secondList)
+                foreach (object value in secondList)
                 {
-                    outputList.Add(value);
+                    outputList.Add((T)value);
                 }
             }
             //System.out.println("MERGE: now " + outputList.size() + " first=" + outputToString(first) + " second=" + outputToString(second));

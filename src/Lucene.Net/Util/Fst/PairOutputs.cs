@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
@@ -29,6 +29,8 @@ namespace Lucene.Net.Util.Fst
     /// @lucene.experimental
     /// </summary>
     public class PairOutputs<A, B> : Outputs<PairOutputs<A, B>.Pair>
+        where A : class // LUCENENET specific - added class constraints because we compare reference equality
+        where B : class
     {
         private readonly Pair NO_OUTPUT;
         private readonly Outputs<A> outputs1;
@@ -80,7 +82,7 @@ namespace Lucene.Net.Util.Fst
                 b = outputs2.NoOutput;
             }
 
-            if (a.Equals(outputs1.NoOutput) && b.Equals(outputs2.NoOutput))
+            if (a == outputs1.NoOutput && b == outputs2.NoOutput)
             {
                 return NO_OUTPUT;
             }
@@ -98,26 +100,22 @@ namespace Lucene.Net.Util.Fst
             bool noOutput1 = pair.Output1.Equals(outputs1.NoOutput);
             bool noOutput2 = pair.Output2.Equals(outputs2.NoOutput);
 
-            if (noOutput1 && !pair.Output1.Equals(outputs1.NoOutput))
+            if (noOutput1 && pair.Output1 != outputs1.NoOutput)
             {
                 return false;
             }
 
-            if (noOutput2 && !pair.Output2.Equals(outputs2.NoOutput))
+            if (noOutput2 && pair.Output2 != outputs2.NoOutput)
             {
                 return false;
             }
 
             if (noOutput1 && noOutput2)
             {
-                if (!pair.Equals(NO_OUTPUT))
-                {
+                if (pair != NO_OUTPUT)
                     return false;
-                }
-                else
-                {
-                    return true;
-                }
+
+                return true;
             }
             else
             {
@@ -132,7 +130,8 @@ namespace Lucene.Net.Util.Fst
                 Debugging.Assert(Valid(pair1));
                 Debugging.Assert(Valid(pair2));
             }
-            return NewPair(outputs1.Common(pair1.Output1, pair2.Output1), outputs2.Common(pair1.Output2, pair2.Output2));
+            return NewPair(outputs1.Common(pair1.Output1, pair2.Output1),
+                           outputs2.Common(pair1.Output2, pair2.Output2));
         }
 
         public override Pair Subtract(Pair output, Pair inc)
@@ -142,7 +141,8 @@ namespace Lucene.Net.Util.Fst
                 Debugging.Assert(Valid(output));
                 Debugging.Assert(Valid(inc));
             }
-            return NewPair(outputs1.Subtract(output.Output1, inc.Output1), outputs2.Subtract(output.Output2, inc.Output2));
+            return NewPair(outputs1.Subtract(output.Output1, inc.Output1),
+                           outputs2.Subtract(output.Output2, inc.Output2));
         }
 
         public override Pair Add(Pair prefix, Pair output)
@@ -152,7 +152,8 @@ namespace Lucene.Net.Util.Fst
                 Debugging.Assert(Valid(prefix));
                 Debugging.Assert(Valid(output));
             }
-            return NewPair(outputs1.Add(prefix.Output1, output.Output1), outputs2.Add(prefix.Output2, output.Output2));
+            return NewPair(outputs1.Add(prefix.Output1, output.Output1),
+                           outputs2.Add(prefix.Output2, output.Output2));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

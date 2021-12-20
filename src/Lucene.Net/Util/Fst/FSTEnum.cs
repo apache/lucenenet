@@ -28,6 +28,7 @@ namespace Lucene.Net.Util.Fst
     /// @lucene.experimental
     /// </summary>
     public abstract class FSTEnum<T> // LUCENENET NOTE: changed from internal to public because has public subclasses
+        where T : class // LUCENENET specific - added class constraint, since we compare reference equality
     {
         protected readonly FST<T> m_fst;
 

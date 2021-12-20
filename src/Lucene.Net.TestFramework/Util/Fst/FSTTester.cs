@@ -15,6 +15,7 @@ using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 using Directory = Lucene.Net.Store.Directory;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.Util.Fst
 
     /// <summary>
     /// Holds one input/output pair. </summary>
-    public class InputOutput<T> : IComparable<InputOutput<T>>
+    public class InputOutput<T> : IComparable<InputOutput<T>> where T : class // LUCENENET specific - added class constraint because we compare reference equality
     {
         public Int32sRef Input { get; private set; }
         public T Output { get; private set; }
@@ -56,7 +57,7 @@ namespace Lucene.Net.Util.Fst
 
     /// <summary>
     /// Helper class to test FSTs. </summary>
-    public class FSTTester<T>
+    public class FSTTester<T> where T : class // LUCENENET specific - added class constraint because we compare reference equality
     {
         internal readonly Random random;
         internal readonly IList<InputOutput<T>> pairs;
@@ -341,11 +342,17 @@ namespace Lucene.Net.Util.Fst
 
             foreach (InputOutput<T> pair in pairs)
             {
-                if (pair.Output is IEnumerable)
+                if (pair.Output is IEnumerable<T> values)
+                {
+                    foreach (T value in values)
+                    {
+                        builder.Add(pair.Input, value);
+                    }
+                }
+                else if (pair.Output is IEnumerable objectValues)
                 {
                     Builder<object> builderObject = builder as Builder<object>;
-                    var values = pair.Output as IEnumerable;
-                    foreach (object value in values)
+                    foreach (object value in objectValues)
                     {
                         builderObject.Add(pair.Input, value);
                     }
@@ -421,22 +428,22 @@ namespace Lucene.Net.Util.Fst
         // FST is complete
         private void VerifyUnPruned(int inputMode, FST<T> fst)
         {
-            FST<long?> fstLong;
-            ISet<long?> validOutputs;
+            FST<Int64> fstLong;
+            ISet<Int64> validOutputs;
             long minLong = long.MaxValue;
             long maxLong = long.MinValue;
 
             if (doReverseLookup)
             {
-                FST<long?> fstLong0 = fst as FST<long?>;
+                FST<Int64> fstLong0 = fst as FST<Int64>;
                 fstLong = fstLong0;
-                validOutputs = new JCG.HashSet<long?>();
+                validOutputs = new JCG.HashSet<Int64>();
                 foreach (InputOutput<T> pair in pairs)
                 {
-                    long? output = pair.Output as long?;
-                    maxLong = Math.Max(maxLong, output.Value);
-                    minLong = Math.Min(minLong, output.Value);
-                    validOutputs.Add(output.Value);
+                    Int64 output = (Int64)(object)pair.Output;
+                    maxLong = Math.Max(maxLong, output);
+                    minLong = Math.Min(minLong, output);
+                    validOutputs.Add(output);
                 }
             }
             else
@@ -486,12 +493,13 @@ namespace Lucene.Net.Util.Fst
                     Assert.IsTrue(OutputsEqual(pair.Output, output));
 
                     // verify enum's next
-                    Int32sRefFSTEnum.InputOutput<T> t = fstEnum.Next();
+                    Assert.IsTrue(fstEnum.MoveNext());
+                    Int32sRefFSTEnum.InputOutput<T> t = fstEnum.Current;
                     Assert.IsNotNull(t);
                     Assert.AreEqual(term, t.Input, "expected input=" + InputToString(inputMode, term) + " but fstEnum returned " + InputToString(inputMode, t.Input));
                     Assert.IsTrue(OutputsEqual(pair.Output, t.Output));
                 }
-                Assert.IsNull(fstEnum.Next());
+                Assert.IsFalse(fstEnum.MoveNext());
             }
 
             IDictionary<Int32sRef, T> termsMap = new Dictionary<Int32sRef, T>();
@@ -532,7 +540,7 @@ namespace Lucene.Net.Util.Fst
                 if (doReverseLookup)
                 {
                     //System.out.println("lookup output=" + output + " outs=" + fst.Outputs);
-                    Int32sRef input = Util.GetByOutput(fstLong, (output as long?).Value);
+                    Int32sRef input = Util.GetByOutput(fstLong, (Int64)(object)output);
                     Assert.IsNotNull(input);
                     //System.out.println("  got " + Util.toBytesRef(input, new BytesRef()).utf8ToString());
                     Assert.AreEqual(scratch, input);
@@ -680,7 +688,7 @@ namespace Lucene.Net.Util.Fst
                         {
                             Console.WriteLine("  do next");
                         }
-                        isDone = fstEnum_.Next() == null;
+                        isDone = fstEnum_.MoveNext() == false;
                     }
                     else if (upto != -1 && upto < 0.75 * pairs.Count && random.NextBoolean())
                     {
@@ -968,8 +976,9 @@ namespace Lucene.Net.Util.Fst
             }
             Int32sRefFSTEnum<T> fstEnum = new Int32sRefFSTEnum<T>(fst);
             Int32sRefFSTEnum.InputOutput<T> current;
-            while ((current = fstEnum.Next()) != null)
+            while (fstEnum.MoveNext())
             {
+                current = fstEnum.Current;
                 if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("  fstEnum.next prefix=" + InputToString(inputMode, current.Input, false) + " output=" + outputs.OutputToString(current.Output));

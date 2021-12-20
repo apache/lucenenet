@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -46,7 +47,7 @@ namespace Lucene.Net.Codecs.Memory
         // ram instances we have already loaded
         private readonly IDictionary<int, NumericDocValues> numericInstances = new Dictionary<int, NumericDocValues>();
         private readonly IDictionary<int, BinaryDocValues> binaryInstances = new Dictionary<int, BinaryDocValues>();
-        private readonly IDictionary<int, FST<long?>> fstInstances = new Dictionary<int, FST<long?>>();
+        private readonly IDictionary<int, FST<Int64>> fstInstances = new Dictionary<int, FST<Int64>>();
         private readonly IDictionary<int, IBits> docsWithFieldInstances = new Dictionary<int, IBits>();
 
         private readonly int maxDoc;
@@ -419,14 +420,14 @@ namespace Lucene.Net.Codecs.Memory
             {
                 return DocValues.EMPTY_SORTED;
             }
-            FST<long?> instance;
+            FST<Int64> instance;
             UninterruptableMonitor.Enter(this);
             try
             {
                 if (!fstInstances.TryGetValue(field.Number, out instance))
                 {
                     data.Seek(entry.offset);
-                    instance = new FST<long?>(data, PositiveInt32Outputs.Singleton);
+                    instance = new FST<Int64>(data, PositiveInt32Outputs.Singleton);
                     ramBytesUsed.AddAndGet(instance.GetSizeInBytes());
                     fstInstances[field.Number] = instance;
                 }
@@ -440,10 +441,10 @@ namespace Lucene.Net.Codecs.Memory
 
             // per-thread resources
             var @in = fst.GetBytesReader();
-            var firstArc = new FST.Arc<long?>();
-            var scratchArc = new FST.Arc<long?>();
+            var firstArc = new FST.Arc<Int64>();
+            var scratchArc = new FST.Arc<Int64>();
             var scratchInts = new Int32sRef();
-            var fstEnum = new BytesRefFSTEnum<long?>(fst);
+            var fstEnum = new BytesRefFSTEnum<Int64>(fst);
 
             return new SortedDocValuesAnonymousClass(entry, docToOrd, fst, @in, firstArc, scratchArc,
                 scratchInts, fstEnum);
@@ -453,16 +454,16 @@ namespace Lucene.Net.Codecs.Memory
         {
             private readonly MemoryDocValuesProducer.FSTEntry entry;
             private readonly NumericDocValues docToOrd;
-            private readonly FST<long?> fst;
+            private readonly FST<Int64> fst;
             private readonly FST.BytesReader @in;
-            private readonly FST.Arc<long?> firstArc;
-            private readonly FST.Arc<long?> scratchArc;
+            private readonly FST.Arc<Int64> firstArc;
+            private readonly FST.Arc<Int64> scratchArc;
             private readonly Int32sRef scratchInts;
-            private readonly BytesRefFSTEnum<long?> fstEnum;
+            private readonly BytesRefFSTEnum<Int64> fstEnum;
 
             public SortedDocValuesAnonymousClass(FSTEntry fstEntry,
-                NumericDocValues numericDocValues, FST<long?> fst1, FST.BytesReader @in, FST.Arc<long?> arc, FST.Arc<long?> scratchArc1,
-                Int32sRef intsRef, BytesRefFSTEnum<long?> bytesRefFstEnum)
+                NumericDocValues numericDocValues, FST<Int64> fst1, FST.BytesReader @in, FST.Arc<Int64> arc, FST.Arc<Int64> scratchArc1,
+                Int32sRef intsRef, BytesRefFSTEnum<Int64> bytesRefFstEnum)
             {
                 entry = fstEntry;
                 docToOrd = numericDocValues;
@@ -536,14 +537,14 @@ namespace Lucene.Net.Codecs.Memory
             {
                 return DocValues.EMPTY_SORTED_SET; // empty FST!
             }
-            FST<long?> instance;
+            FST<Int64> instance;
             UninterruptableMonitor.Enter(this);
             try
             {
                 if (!fstInstances.TryGetValue(field.Number, out instance))
                 {
                     data.Seek(entry.offset);
-                    instance = new FST<long?>(data, PositiveInt32Outputs.Singleton);
+                    instance = new FST<Int64>(data, PositiveInt32Outputs.Singleton);
                     ramBytesUsed.AddAndGet(instance.GetSizeInBytes());
                     fstInstances[field.Number] = instance;
                 }
@@ -557,10 +558,10 @@ namespace Lucene.Net.Codecs.Memory
 
             // per-thread resources
             var @in = fst.GetBytesReader();
-            var firstArc = new FST.Arc<long?>();
-            var scratchArc = new FST.Arc<long?>();
+            var firstArc = new FST.Arc<Int64>();
+            var scratchArc = new FST.Arc<Int64>();
             var scratchInts = new Int32sRef();
-            var fstEnum = new BytesRefFSTEnum<long?>(fst);
+            var fstEnum = new BytesRefFSTEnum<Int64>(fst);
             var @ref = new BytesRef();
             var input = new ByteArrayDataInput();
             return new SortedSetDocValuesAnonymousClass(entry, docToOrds, fst, @in, firstArc,
@@ -571,19 +572,19 @@ namespace Lucene.Net.Codecs.Memory
         {
             private readonly MemoryDocValuesProducer.FSTEntry entry;
             private readonly BinaryDocValues docToOrds;
-            private readonly FST<long?> fst;
+            private readonly FST<Int64> fst;
             private readonly FST.BytesReader @in;
-            private readonly FST.Arc<long?> firstArc;
-            private readonly FST.Arc<long?> scratchArc;
+            private readonly FST.Arc<Int64> firstArc;
+            private readonly FST.Arc<Int64> scratchArc;
             private readonly Int32sRef scratchInts;
-            private readonly BytesRefFSTEnum<long?> fstEnum;
+            private readonly BytesRefFSTEnum<Int64> fstEnum;
             private readonly BytesRef @ref;
             private readonly ByteArrayDataInput input;
 
             private long currentOrd;
 
-            public SortedSetDocValuesAnonymousClass(FSTEntry fstEntry, BinaryDocValues binaryDocValues, FST<long?> fst1,
-                FST.BytesReader @in, FST.Arc<long?> arc, FST.Arc<long?> scratchArc1, Int32sRef intsRef, BytesRefFSTEnum<long?> bytesRefFstEnum,
+            public SortedSetDocValuesAnonymousClass(FSTEntry fstEntry, BinaryDocValues binaryDocValues, FST<Int64> fst1,
+                FST.BytesReader @in, FST.Arc<Int64> arc, FST.Arc<Int64> scratchArc1, Int32sRef intsRef, BytesRefFSTEnum<Int64> bytesRefFstEnum,
                 BytesRef @ref, ByteArrayDataInput byteArrayDataInput)
             {
                 entry = fstEntry;
@@ -647,11 +648,11 @@ namespace Lucene.Net.Codecs.Memory
                     }
                     else if (o.Input.Equals(key))
                     {
-                        return o.Output.Value;
+                        return o.Output;
                     }
                     else
                     {
-                        return -o.Output.Value - 1;
+                        return -o.Output - 1;
                     }
                 }
                 catch (Exception bogus) when (bogus.IsIOException())
@@ -759,21 +760,21 @@ namespace Lucene.Net.Codecs.Memory
         // exposes FSTEnum directly as a TermsEnum: avoids binary-search next()
         internal class FSTTermsEnum : TermsEnum
         {
-            private readonly BytesRefFSTEnum<long?> input;
+            private readonly BytesRefFSTEnum<Int64> input;
 
             // this is all for the complicated seek(ord)...
             // maybe we should add a FSTEnum that supports this operation?
-            private readonly FST<long?> fst;
+            private readonly FST<Int64> fst;
             private readonly FST.BytesReader bytesReader;
-            private readonly FST.Arc<long?> firstArc = new FST.Arc<long?>();
-            private readonly FST.Arc<long?> scratchArc = new FST.Arc<long?>();
+            private readonly FST.Arc<Int64> firstArc = new FST.Arc<Int64>();
+            private readonly FST.Arc<Int64> scratchArc = new FST.Arc<Int64>();
             private readonly Int32sRef scratchInts = new Int32sRef();
             private readonly BytesRef scratchBytes = new BytesRef();
 
-            internal FSTTermsEnum(FST<long?> fst)
+            internal FSTTermsEnum(FST<Int64> fst)
             {
                 this.fst = fst;
-                input = new BytesRefFSTEnum<long?>(fst);
+                input = new BytesRefFSTEnum<Int64>(fst);
                 bytesReader = fst.GetBytesReader();
             }
 
@@ -832,7 +833,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override BytesRef Term => input.Current.Input;
 
-            public override long Ord => input.Current.Output.Value;
+            public override long Ord => input.Current.Output;
 
             public override int DocFreq => throw UnsupportedOperationException.Create();
 

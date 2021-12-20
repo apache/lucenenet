@@ -9,6 +9,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Analysis.Ja.Dict
 {
@@ -84,7 +85,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             JCG.List<int[]> segmentations = new JCG.List<int[]>(featureEntries.Count);
 
             PositiveInt32Outputs fstOutput = PositiveInt32Outputs.Singleton;
-            Builder<long?> fstBuilder = new Builder<long?>(Lucene.Net.Util.Fst.FST.INPUT_TYPE.BYTE2, fstOutput);
+            Builder<Int64> fstBuilder = new Builder<Int64>(Lucene.Net.Util.Fst.FST.INPUT_TYPE.BYTE2, fstOutput);
             Int32sRef scratch = new Int32sRef();
             long ord = 0;
 
@@ -141,7 +142,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
             FST.BytesReader fstReader = fst.GetBytesReader();
 
-            FST.Arc<long?> arc = new FST.Arc<long?>();
+            FST.Arc<Int64> arc = new FST.Arc<Int64>();
             int end = off + len;
             for (int startOffset = off; startOffset < end; startOffset++)
             {

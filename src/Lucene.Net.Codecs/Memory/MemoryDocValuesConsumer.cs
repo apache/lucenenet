@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -346,7 +347,7 @@ namespace Lucene.Net.Codecs.Memory
             meta.WriteByte(MemoryDocValuesProducer.FST);
             meta.WriteInt64(data.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
-            var builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
+            var builder = new Builder<Int64>(INPUT_TYPE.BYTE1, outputs);
             var scratch = new Int32sRef();
             long ord = 0;
             foreach (BytesRef v in values)
@@ -354,7 +355,7 @@ namespace Lucene.Net.Codecs.Memory
                 builder.Add(Util.ToInt32sRef(v, scratch), ord);
                 ord++;
             }
-            FST<long?> fst = builder.Finish();
+            FST<Int64> fst = builder.Finish();
             if (fst != null)
             {
                 fst.Save(data);

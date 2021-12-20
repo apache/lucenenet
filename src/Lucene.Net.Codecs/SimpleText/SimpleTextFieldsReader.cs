@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Codecs.SimpleText
 {
@@ -110,13 +111,13 @@ namespace Lucene.Net.Codecs.SimpleText
             private long totalTermFreq;
             private long docsStart;
             //private bool ended; // LUCENENET: Never read
-            private readonly BytesRefFSTEnum<PairOutputs<long?, PairOutputs<long?, long?>.Pair>.Pair> fstEnum;
+            private readonly BytesRefFSTEnum<PairOutputs<Int64, PairOutputs<Int64, Int64>.Pair>.Pair> fstEnum;
 
-            public SimpleTextTermsEnum(SimpleTextFieldsReader outerInstance, FST<PairOutputs<long?, PairOutputs<long?, long?>.Pair>.Pair> fst, IndexOptions indexOptions)
+            public SimpleTextTermsEnum(SimpleTextFieldsReader outerInstance, FST<PairOutputs<Int64, PairOutputs<Int64, Int64>.Pair>.Pair> fst, IndexOptions indexOptions)
             {
                 this.outerInstance = outerInstance;
                 this.indexOptions = indexOptions;
-                fstEnum = new BytesRefFSTEnum<PairOutputs<long?, PairOutputs<long?, long?>.Pair>.Pair>(fst);
+                fstEnum = new BytesRefFSTEnum<PairOutputs<Int64, PairOutputs<Int64, Int64>.Pair>.Pair>(fst);
             }
 
             public override bool SeekExact(BytesRef text)
@@ -126,9 +127,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     var pair1 = result.Output;
                     var pair2 = pair1.Output2;
-                    docsStart = pair1.Output1.Value;
+                    docsStart = pair1.Output1;
                     docFreq = (int)pair2.Output1;
-                    totalTermFreq = pair2.Output2.Value;
+                    totalTermFreq = pair2.Output2;
                     return true;
                 }
                 else
@@ -151,9 +152,9 @@ namespace Lucene.Net.Codecs.SimpleText
                     //System.out.println("  got text=" + term.utf8ToString());
                     var pair1 = result.Output;
                     var pair2 = pair1.Output2;
-                    docsStart = pair1.Output1.Value;
+                    docsStart = pair1.Output1;
                     docFreq = (int)pair2.Output1;
-                    totalTermFreq = pair2.Output2.Value;
+                    totalTermFreq = pair2.Output2;
 
                     if (result.Input.Equals(text))
                     {
@@ -175,9 +176,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     var pair1 = fstEnum.Current.Output;
                     var pair2 = pair1.Output2;
-                    docsStart = pair1.Output1.Value;
+                    docsStart = pair1.Output1;
                     docFreq = (int)pair2.Output1;
-                    totalTermFreq = pair2.Output2.Value;
+                    totalTermFreq = pair2.Output2;
                     return fstEnum.Current.Input != null;
                 }
                 else
@@ -550,12 +551,12 @@ namespace Lucene.Net.Codecs.SimpleText
             private long sumTotalTermFreq;
             private long sumDocFreq;
             private int docCount;
-            private FST<PairOutputs<long?, PairOutputs<long?, long?>.Pair>.Pair> fst;
+            private FST<PairOutputs<Int64, PairOutputs<Int64, Int64>.Pair>.Pair> fst;
             private int termCount;
             private readonly BytesRef scratch = new BytesRef(10);
             private readonly CharsRef scratchUTF16 = new CharsRef(10);
 
-            public SimpleTextTerms(SimpleTextFieldsReader outerInstance, String field, long termsStart, int maxDoc)
+            public SimpleTextTerms(SimpleTextFieldsReader outerInstance, string field, long termsStart, int maxDoc)
             {
                 this.outerInstance = outerInstance;
                 this.maxDoc = maxDoc;
@@ -567,11 +568,10 @@ namespace Lucene.Net.Codecs.SimpleText
             private void LoadTerms()
             {
                 PositiveInt32Outputs posIntOutputs = PositiveInt32Outputs.Singleton;
-                Builder<PairOutputs<long?, PairOutputs<long?, long?>.Pair>.Pair> b;
-                PairOutputs<long?, long?> outputsInner = new PairOutputs<long?, long?>(posIntOutputs, posIntOutputs);
-                PairOutputs<long?, PairOutputs<long?, long?>.Pair> outputs = new PairOutputs<long?, PairOutputs<long?, long?>.Pair>(posIntOutputs,
+                var outputsInner = new PairOutputs<Int64, Int64>(posIntOutputs, posIntOutputs);
+                var outputs = new PairOutputs<Int64, PairOutputs<Int64, Int64>.Pair>(posIntOutputs,
                     outputsInner);
-                b = new Builder<PairOutputs<long?, PairOutputs<long?, long?>.Pair>.Pair>(FST.INPUT_TYPE.BYTE1, outputs);
+                var b = new Builder<PairOutputs<Int64, PairOutputs<Int64, Int64>.Pair>.Pair>(FST.INPUT_TYPE.BYTE1, outputs);
                 IndexInput @in = (IndexInput)outerInstance.input.Clone();
                 @in.Seek(termsStart);
                 BytesRef lastTerm = new BytesRef(10);

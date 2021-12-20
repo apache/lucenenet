@@ -63,6 +63,7 @@ namespace Lucene.Net.Util.Fst
     /// @lucene.experimental
     /// </summary>
     public sealed class FST<T>
+        where T : class // LUCENENET specific - added class constraint, since we compare reference equality
     {
         /*/// <summary>
         /// Specifies allowed range of each int input label for
@@ -698,14 +699,14 @@ namespace Lucene.Net.Util.Fst
                 if (arc.IsFinal)
                 {
                     flags += FST.BIT_FINAL_ARC;
-                    if (!arc.NextFinalOutput.Equals(NO_OUTPUT))
+                    if (arc.NextFinalOutput != NO_OUTPUT)
                     {
                         flags += FST.BIT_ARC_HAS_FINAL_OUTPUT;
                     }
                 }
-                else
+                else if (Debugging.AssertsEnabled)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(arc.NextFinalOutput.Equals(NO_OUTPUT));
+                    Debugging.Assert(arc.NextFinalOutput == NO_OUTPUT);
                 }
 
                 bool targetHasArcs = target.Node > 0;
@@ -719,7 +720,7 @@ namespace Lucene.Net.Util.Fst
                     inCounts.Set((int)target.Node, inCounts.Get((int)target.Node) + 1);
                 }
 
-                if (!arc.Output.Equals(NO_OUTPUT))
+                if (arc.Output != NO_OUTPUT)
                 {
                     flags += FST.BIT_ARC_HAS_OUTPUT;
                 }
@@ -729,14 +730,14 @@ namespace Lucene.Net.Util.Fst
 
                 // System.out.println("  write arc: label=" + (char) arc.Label + " flags=" + flags + " target=" + target.Node + " pos=" + bytes.getPosition() + " output=" + outputs.outputToString(arc.Output));
 
-                if (!arc.Output.Equals(NO_OUTPUT))
+                if (arc.Output != NO_OUTPUT)
                 {
                     Outputs.Write(arc.Output, bytes);
                     //System.out.println("    write output");
                     arcWithOutputCount++;
                 }
 
-                if (!arc.NextFinalOutput.Equals(NO_OUTPUT))
+                if (arc.NextFinalOutput != NO_OUTPUT)
                 {
                     //System.out.println("    write final output");
                     Outputs.WriteFinalOutput(arc.NextFinalOutput, bytes);
@@ -867,11 +868,11 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public FST.Arc<T> GetFirstArc(FST.Arc<T> arc)
         {
-            if (!EqualityComparer<T>.Default.Equals(emptyOutput, default))
+            if (null != emptyOutput) // LUCENENET: intentionally putting null on the left to avoid custom equality overrides
             {
                 arc.Flags = FST.BIT_FINAL_ARC | FST.BIT_LAST_ARC;
                 arc.NextFinalOutput = emptyOutput;
-                if (!emptyOutput.Equals(NO_OUTPUT))
+                if (emptyOutput != NO_OUTPUT)
                 {
                     arc.Flags |= FST.BIT_ARC_HAS_FINAL_OUTPUT;
                 }
@@ -1836,21 +1837,21 @@ namespace Lucene.Net.Util.Fst
                             if (arc.IsFinal)
                             {
                                 flags += (sbyte)FST.BIT_FINAL_ARC;
-                                if (!arc.NextFinalOutput.Equals(NO_OUTPUT))
+                                if (arc.NextFinalOutput != NO_OUTPUT)
                                 {
                                     flags += (sbyte)FST.BIT_ARC_HAS_FINAL_OUTPUT;
                                 }
                             }
                             else
                             {
-                                if (Debugging.AssertsEnabled) Debugging.Assert(arc.NextFinalOutput.Equals(NO_OUTPUT));
+                                if (Debugging.AssertsEnabled) Debugging.Assert(arc.NextFinalOutput == NO_OUTPUT);
                             }
                             if (!TargetHasArcs(arc))
                             {
                                 flags += (sbyte)FST.BIT_STOP_NODE;
                             }
 
-                            if (!arc.Output.Equals(NO_OUTPUT))
+                            if (arc.Output != NO_OUTPUT)
                             {
                                 flags += (sbyte)FST.BIT_ARC_HAS_OUTPUT;
                             }
@@ -1891,7 +1892,7 @@ namespace Lucene.Net.Util.Fst
 
                             fst.WriteLabel(writer, arc.Label);
 
-                            if (!arc.Output.Equals(NO_OUTPUT))
+                            if (arc.Output != NO_OUTPUT)
                             {
                                 Outputs.Write(arc.Output, writer);
                                 if (!retry)
@@ -1899,7 +1900,7 @@ namespace Lucene.Net.Util.Fst
                                     fst.arcWithOutputCount++;
                                 }
                             }
-                            if (!arc.NextFinalOutput.Equals(NO_OUTPUT))
+                            if (arc.NextFinalOutput != NO_OUTPUT)
                             {
                                 Outputs.WriteFinalOutput(arc.NextFinalOutput, writer);
                             }
@@ -2155,7 +2156,7 @@ namespace Lucene.Net.Util.Fst
         /// returns <c>true</c> if the node at this address has any
         /// outgoing arcs
         /// </summary>
-        public static bool TargetHasArcs<T>(Arc<T> arc)
+        public static bool TargetHasArcs<T>(Arc<T> arc) where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             return arc.Target > 0;
         }
@@ -2163,7 +2164,7 @@ namespace Lucene.Net.Util.Fst
         /// <summary>
         /// Reads an automaton from a file.
         /// </summary>
-        public static FST<T> Read<T>(FileInfo file, Outputs<T> outputs)
+        public static FST<T> Read<T>(FileInfo file, Outputs<T> outputs) where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             var bs = new BufferedStream(file.OpenRead());
             bool success = false;
@@ -2220,6 +2221,7 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         /// <typeparam name="T"></typeparam>
         public class Arc<T>
+            where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             public int Label { get; set; }
 
@@ -2307,7 +2309,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        internal class ArcAndState<T>
+        internal class ArcAndState<T> where T : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             internal Arc<T> Arc { get; private set; }
             internal Int32sRef Chain { get; private set; }

@@ -13,6 +13,7 @@ using System.IO;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -91,7 +92,7 @@ namespace Lucene.Net.Analysis.Ja
         private readonly UserDictionary userDictionary;
         private readonly CharacterDefinition characterDefinition;
 
-        private readonly FST.Arc<long?> arc = new FST.Arc<long?>();
+        private readonly FST.Arc<Int64> arc = new FST.Arc<Int64>();
         private readonly FST.BytesReader fstReader;
         private readonly Int32sRef wordIdRef = new Int32sRef();
 

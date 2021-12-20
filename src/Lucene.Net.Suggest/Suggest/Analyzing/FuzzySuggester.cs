@@ -5,6 +5,7 @@ using Lucene.Net.Util.Automaton;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -171,10 +172,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             this.unicodeAware = unicodeAware;
         }
 
-        protected internal override IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> GetFullPrefixPaths(
-            IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths, 
+        protected override IList<FSTUtil.Path<PairOutputs<Int64, BytesRef>.Pair>> GetFullPrefixPaths(
+            IList<FSTUtil.Path<PairOutputs<Int64, BytesRef>.Pair>> prefixPaths, 
             Automaton lookupAutomaton, 
-            FST<PairOutputs<long?, BytesRef>.Pair> fst)
+            FST<PairOutputs<Int64, BytesRef>.Pair> fst)
         {
 
             // TODO: right now there's no penalty for fuzzy/edits,
