@@ -31,17 +31,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <summary>
     /// Obtains <see cref="int"/> field values from <see cref="IFieldCache.GetInt32s(AtomicReader, string, FieldCache.IInt32Parser, bool)"/> and makes
     /// those values available as other numeric types, casting as needed.
-    /// StrVal of the value is not the <see cref="int"/> value, but its <see cref="string"/> (displayed) value
+    /// StrVal of the value is not the <see cref="int"/> value, but its <see cref="string"/> (displayed) value.
     /// </summary>
     public class EnumFieldSource : FieldCacheSource
     {
         private const int DEFAULT_VALUE = -1;
 
         private readonly FieldCache.IInt32Parser parser;
-        private readonly IDictionary<int?, string> enumIntToStringMap;
-        private readonly IDictionary<string, int?> enumStringToIntMap;
+        private readonly IDictionary<int, string> enumIntToStringMap;
+        private readonly IDictionary<string, int> enumStringToIntMap;
 
-        public EnumFieldSource(string field, FieldCache.IInt32Parser parser, IDictionary<int?, string> enumIntToStringMap, IDictionary<string, int?> enumStringToIntMap)
+        public EnumFieldSource(string field, FieldCache.IInt32Parser parser, IDictionary<int, string> enumIntToStringMap, IDictionary<string, int> enumStringToIntMap)
             : base(field)
         {
             this.parser = parser;
@@ -54,15 +54,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
         /// <summary>
         /// NOTE: This was intValueToStringValue() in Lucene
         /// </summary>
-        private string Int32ValueToStringValue(int? intVal)
+        private string Int32ValueToStringValue(int intVal)
         {
-            if (intVal == null)
-            {
-                return null;
-            }
+            // LUCENENET: null value not applicable for value types (it defaults to 0 anyway)
 
-            string enumString = enumIntToStringMap[intVal];
-            if (enumString != null)
+            if (enumIntToStringMap.TryGetValue(intVal, out string enumString))
             {
                 return enumString;
             }
@@ -80,8 +76,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return null;
             }
 
-            int? enumInt = enumStringToIntMap[stringVal];
-            if (enumInt != null) //enum int found for str
+            if (enumStringToIntMap.TryGetValue(stringVal, out int enumInt)) //enum int found for str
             {
                 return enumInt;
             }
@@ -91,8 +86,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 intValue = DEFAULT_VALUE;
             }
-            string enumString = enumIntToStringMap[intValue];
-            if (enumString != null) //has matching str
+            if (enumIntToStringMap.ContainsKey(intValue)) //has matching str
             {
                 return intValue;
             }
@@ -163,7 +157,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override string StrVal(int doc)
             {
-                int? intValue = arr.Get(doc);
+                int intValue = arr.Get(doc);
                 return outerInstance.Int32ValueToStringValue(intValue);
             }
 
@@ -255,11 +249,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             // LUCENENET specific: must use DictionaryEqualityComparer.Equals() to ensure values
             // contained within the dictionaries are compared for equality
-            if (!JCG.DictionaryEqualityComparer<int?, string>.Default.Equals(enumIntToStringMap, that.enumIntToStringMap))
+            if (!JCG.DictionaryEqualityComparer<int, string>.Default.Equals(enumIntToStringMap, that.enumIntToStringMap))
             {
                 return false;
             }
-            if (!JCG.DictionaryEqualityComparer<string, int?>.Default.Equals(enumStringToIntMap, that.enumStringToIntMap))
+            if (!JCG.DictionaryEqualityComparer<string, int>.Default.Equals(enumStringToIntMap, that.enumStringToIntMap))
             {
                 return false;
             }
@@ -277,8 +271,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
             result = 31 * result + parser.GetHashCode();
             // LUCENENET specific: must use DictionaryEqualityComparer.GetHashCode() to ensure values
             // contained within the dictionaries are compared for equality
-            result = 31 * result + JCG.DictionaryEqualityComparer<int?, string>.Default.GetHashCode(enumIntToStringMap);
-            result = 31 * result + JCG.DictionaryEqualityComparer<string, int?>.Default.GetHashCode(enumStringToIntMap);
+            result = 31 * result + JCG.DictionaryEqualityComparer<int, string>.Default.GetHashCode(enumIntToStringMap);
+            result = 31 * result + JCG.DictionaryEqualityComparer<string, int>.Default.GetHashCode(enumStringToIntMap);
             return result;
         }
     }
