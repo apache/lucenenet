@@ -123,7 +123,7 @@ namespace Lucene.Net.Util
         private void TestCase(int itrsWithVal, int specifiedValsOnItr, bool removeDups)
         {
             // Build a random number of lists
-            IList<int?> expected = new JCG.List<int?>();
+            IList<int> expected = new JCG.List<int>();
             Random random = new J2N.Randomizer(Random.NextInt64());
             int numLists = itrsWithVal + random.Next(1000 - itrsWithVal);
             IList<int>[] lists = new IList<int>[numLists];
@@ -166,7 +166,7 @@ namespace Lucene.Net.Util
             try
             {
                 MergedEnumerator<int> mergedItr = new MergedEnumerator<int>(removeDups, itrs);
-                IEnumerator<int?> expectedItr = expected.GetEnumerator();
+                using IEnumerator<int> expectedItr = expected.GetEnumerator();
                 while (expectedItr.MoveNext())
                 {
                     Assert.IsTrue(mergedItr.MoveNext());
@@ -292,7 +292,7 @@ namespace Lucene.Net.Util
         private void TestCaseIterator(int itrsWithVal, int specifiedValsOnItr, bool removeDups)
         {
             // Build a random number of lists
-            IList<int?> expected = new JCG.List<int?>();
+            IList<int> expected = new JCG.List<int>();
             Random random = new J2N.Randomizer(Random.NextInt64());
             int numLists = itrsWithVal + random.Next(1000 - itrsWithVal);
             IList<int>[] lists = new IList<int>[numLists];
@@ -334,7 +334,7 @@ namespace Lucene.Net.Util
             }
 
             MergedIterator<int> mergedItr = new MergedIterator<int>(removeDups, itrs);
-            IEnumerator<int?> expectedItr = expected.GetEnumerator();
+            using IEnumerator<int> expectedItr = expected.GetEnumerator();
             while (expectedItr.MoveNext())
             {
                 Assert.IsTrue(mergedItr.MoveNext());

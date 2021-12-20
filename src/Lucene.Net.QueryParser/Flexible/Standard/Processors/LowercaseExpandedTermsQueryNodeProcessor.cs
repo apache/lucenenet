@@ -43,9 +43,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         public override IQueryNode Process(IQueryNode queryTree)
         {
-            bool? lowercaseExpandedTerms = GetQueryConfigHandler().Get(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS);
-
-            if (lowercaseExpandedTerms != null && lowercaseExpandedTerms.Value)
+            if (GetQueryConfigHandler().TryGetValue(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS, out bool lowercaseExpandedTerms)
+                && lowercaseExpandedTerms)
             {
                 return base.Process(queryTree);
             }

@@ -1114,7 +1114,7 @@ namespace Lucene.Net.Index
 #endif
                 Random, dir);
             int NUM_DOCS = AtLeast(1000);
-            IList<int?> ids = new JCG.List<int?>(NUM_DOCS);
+            IList<int> ids = new JCG.List<int>(NUM_DOCS);
             for (int id = 0; id < NUM_DOCS; id++)
             {
                 ids.Add(id);

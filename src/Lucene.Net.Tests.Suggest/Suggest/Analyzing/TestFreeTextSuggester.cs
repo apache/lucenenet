@@ -420,14 +420,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             sug.Build(new TestRandomInputEnumerator(docs));
 
             // Build inefficient but hopefully correct model:
-            IList<IDictionary<string, int?>> gramCounts = new JCG.List<IDictionary<string, int?>>(grams);
+            IList<IDictionary<string, int>> gramCounts = new JCG.List<IDictionary<string, int>>(grams);
             for (int gram = 0; gram < grams; gram++)
             {
                 if (Verbose)
                 {
                     Console.WriteLine("TEST: build model for gram=" + gram);
                 }
-                IDictionary<string, int?> model = new JCG.Dictionary<string, int?>();
+                IDictionary<string, int> model = new JCG.Dictionary<string, int>();
                 gramCounts.Add(model);
                 foreach (string[] doc in docs)
                 {
@@ -443,7 +443,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             b.append(doc[j]);
                         }
                         string token = b.toString();
-                        if (!model.TryGetValue(token, out int? curCount) || curCount == null)
+                        if (!model.TryGetValue(token, out int curCount))
                         {
                             model.Put(token, 1);
                         }
@@ -453,7 +453,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         }
                         if (Verbose)
                         {
-                            Console.WriteLine("  add '" + token + "' -> count=" + (model.TryGetValue(token, out int? count) ? (count.HasValue ? count.ToString() : "null") : ""));
+                            Console.WriteLine("  add '" + token + "' -> count=" + (model.TryGetValue(token, out int count) ? count.ToString() : ""));
                         }
                     }
                 }
@@ -558,7 +558,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         //int? count = gramCounts.get(i - 1).get(context);
                         var gramCount = gramCounts[i - 1];
-                        if (!gramCount.TryGetValue(context, out int? count) || count == null)
+                        if (!gramCount.TryGetValue(context, out int count))
                         {
                             // We never saw this context:
                             backoff *= FreeTextSuggester.ALPHA;
@@ -568,13 +568,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             }
                             continue;
                         }
-                        contextCount = count.GetValueOrDefault();
+                        contextCount = count;
                     }
                     if (Verbose)
                     {
                         Console.WriteLine("      contextCount=" + contextCount);
                     }
-                    IDictionary<string, int?> model = gramCounts[i];
+                    IDictionary<string, int> model = gramCounts[i];
 
                     // First pass, gather all predictions for this model:
                     if (Verbose)
@@ -600,7 +600,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             }
                             string ngram = (context + " " + term).Trim();
                             //Integer count = model.get(ngram);
-                            if (model.TryGetValue(ngram, out int? count) && count != null)
+                            if (model.TryGetValue(ngram, out int count))
                             {
                                 // LUCENENET NOTE: We need to calculate this as decimal because when using double it can sometimes 
                                 // return numbers that are greater than long.MaxValue, which results in a negative long number.

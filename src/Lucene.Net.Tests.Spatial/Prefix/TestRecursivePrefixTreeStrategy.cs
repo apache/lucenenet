@@ -113,14 +113,14 @@ namespace Lucene.Net.Spatial.Prefix
             assertEquals("" + args, assertNumFound, got.numFound);
             if (assertIds != null)
             {
-                ISet<int?> gotIds = new JCG.HashSet<int?>();
+                ISet<int> gotIds = new JCG.HashSet<int>();
                 foreach (SearchResult result in got.results)
                 {
-                    gotIds.add(int.Parse(result.document.Get("id"), CultureInfo.InvariantCulture));
+                    gotIds.Add(int.Parse(result.document.Get("id"), CultureInfo.InvariantCulture));
                 }
                 foreach (int assertId in assertIds)
                 {
-                    assertTrue("has " + assertId, gotIds.contains(assertId));
+                    assertTrue("has " + assertId, gotIds.Contains(assertId));
                 }
             }
         }

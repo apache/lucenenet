@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
         {
             DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
             int size = 200 + Random.Next(500) * RandomMultiplier;
-            int?[] ids = new int?[size];
+            int[] ids = new int[size];
             for (int i = 0; i < ids.Length; i++)
             {
                 ids[i] = Random.Next();
@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
             ISet<Term> uniqueValues = new JCG.HashSet<Term>();
             for (int j = 0; j < ids.Length; j++)
             {
-                int? i = ids[j];
+                int i = ids[j];
                 // create an array here since we compare identity below against tailItem
                 Term[] term = new Term[] { new Term("id", i.ToString()) };
                 uniqueValues.Add(term[0]);
@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
             return true;
         }
 
-        private void AssertAllBetween(int start, int end, BufferedUpdates deletes, int?[] ids)
+        private void AssertAllBetween(int start, int end, BufferedUpdates deletes, int[] ids)
         {
             for (int i = start; i <= end; i++)
             {
@@ -255,7 +255,7 @@ namespace Lucene.Net.Index
             DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
             ISet<Term> uniqueValues = new JCG.HashSet<Term>();
             int size = 10000 + Random.Next(500) * RandomMultiplier;
-            int?[] ids = new int?[size];
+            int[] ids = new int[size];
             for (int i = 0; i < ids.Length; i++)
             {
                 ids[i] = Random.Next();
@@ -301,12 +301,12 @@ namespace Lucene.Net.Index
         {
             internal readonly DocumentsWriterDeleteQueue queue;
             internal readonly AtomicInt32 index;
-            internal readonly int?[] ids;
+            internal readonly int[] ids;
             internal readonly DeleteSlice slice;
             internal readonly BufferedUpdates deletes;
             internal readonly CountdownEvent latch;
 
-            protected internal UpdateThread(DocumentsWriterDeleteQueue queue, AtomicInt32 index, int?[] ids, CountdownEvent latch)
+            protected internal UpdateThread(DocumentsWriterDeleteQueue queue, AtomicInt32 index, int[] ids, CountdownEvent latch)
             {
                 this.queue = queue;
                 this.index = index;

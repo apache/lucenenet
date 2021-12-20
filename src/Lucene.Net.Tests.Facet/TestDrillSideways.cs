@@ -796,7 +796,7 @@ namespace Lucene.Net.Facet
                 DrillSidewaysResult actual = ds.Search(ddq, filter, null, numDocs, sort, true, true);
 
                 TopDocs hits = s.Search(baseQuery, numDocs);
-                IDictionary<string, float?> scores = new Dictionary<string, float?>();
+                IDictionary<string, float> scores = new Dictionary<string, float>();
                 foreach (ScoreDoc sd in hits.ScoreDocs)
                 {
                     scores[s.Doc(sd.Doc).Get("id")] = sd.Score;
@@ -1135,7 +1135,7 @@ namespace Lucene.Net.Facet
             }
             //nextDocBreak:// Not referenced
 
-            IDictionary<string, int?> idToDocID = new Dictionary<string, int?>();
+            IDictionary<string, int> idToDocID = new Dictionary<string, int>();
             for (int i = 0; i < s.IndexReader.MaxDoc; i++)
             {
                 idToDocID[s.Doc(i).Get("id")] = i;
@@ -1171,7 +1171,7 @@ namespace Lucene.Net.Facet
             return res;
         }
 
-        internal virtual void VerifyEquals(string[][] dimValues, IndexSearcher s, TestFacetResult expected, DrillSidewaysResult actual, IDictionary<string, float?> scores, bool isSortedSetDV)
+        internal virtual void VerifyEquals(string[][] dimValues, IndexSearcher s, TestFacetResult expected, DrillSidewaysResult actual, IDictionary<string, float> scores, bool isSortedSetDV)
         {
             if (Verbose)
             {
@@ -1187,7 +1187,7 @@ namespace Lucene.Net.Facet
                 }
                 Assert.AreEqual(expected.Hits[i].id, s.Doc(actual.Hits.ScoreDocs[i].Doc).Get("id"));
                 // Score should be IDENTICAL:
-                Assert.AreEqual(scores[expected.Hits[i].id].GetValueOrDefault(), actual.Hits.ScoreDocs[i].Score, 0.0f);
+                Assert.AreEqual(scores[expected.Hits[i].id], actual.Hits.ScoreDocs[i].Score, 0.0f);
             }
 
             for (int dim = 0; dim < expected.Counts.Length; dim++)
@@ -1201,7 +1201,7 @@ namespace Lucene.Net.Facet
                 }
 
                 int idx = 0;
-                IDictionary<string, int?> actualValues = new Dictionary<string, int?>();
+                IDictionary<string, int> actualValues = new Dictionary<string, int>();
 
                 if (fr != null)
                 {

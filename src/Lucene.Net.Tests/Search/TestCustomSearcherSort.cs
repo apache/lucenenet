@@ -126,7 +126,7 @@ namespace Lucene.Net.Search
             // make a query without sorting first
             ScoreDoc[] hitsByRank = searcher.Search(query, null, int.MaxValue).ScoreDocs;
             CheckHits(hitsByRank, "Sort by rank: "); // check for duplicates
-            IDictionary<int?, int?> resultMap = new JCG.SortedDictionary<int?, int?>();
+            IDictionary<int, int> resultMap = new JCG.SortedDictionary<int, int>();
             // store hits in TreeMap - TreeMap does not allow duplicates; existing
             // entries are silently overwritten
             for (int hitid = 0; hitid < hitsByRank.Length; ++hitid)
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
             // besides the sorting both sets of hits must be identical
             for (int hitid = 0; hitid < resultSort.Length; ++hitid)
             {
-                int? idHitDate = Convert.ToInt32(resultSort[hitid].Doc); // document ID
+                int idHitDate = Convert.ToInt32(resultSort[hitid].Doc); // document ID
                 // from sorted
                 // search
                 if (!resultMap.ContainsKey(idHitDate))
@@ -175,13 +175,11 @@ namespace Lucene.Net.Search
         {
             if (hits != null)
             {
-                IDictionary<int?, int?> idMap = new JCG.SortedDictionary<int?, int?>();
+                IDictionary<int, int> idMap = new JCG.SortedDictionary<int, int>();
                 for (int docnum = 0; docnum < hits.Length; ++docnum)
                 {
-                    int? luceneId = null;
-
-                    luceneId = Convert.ToInt32(hits[docnum].Doc);
-                    if (idMap.TryGetValue(luceneId, out int? value))
+                    int luceneId = Convert.ToInt32(hits[docnum].Doc);
+                    if (idMap.TryGetValue(luceneId, out int value))
                     {
                         StringBuilder message = new StringBuilder(prefix);
                         message.Append("Duplicate key for hit index = ");

@@ -48,11 +48,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                     if (fieldConfig != null)
                     {
-                        float? boost = fieldConfig.Get(ConfigurationKeys.BOOST);
-
-                        if (boost != null)
+                        if (fieldConfig.TryGetValue(ConfigurationKeys.BOOST, out float boost))
                         {
-                            return new BoostQueryNode(node, boost.Value);
+                            return new BoostQueryNode(node, boost);
                         }
                     }
                 }

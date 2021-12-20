@@ -592,7 +592,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 // find expected children by looking at all expectedCategories
                 // for children
-                JCG.List<int?> expectedChildren = new JCG.List<int?>();
+                JCG.List<int> expectedChildren = new JCG.List<int>();
                 for (int j = ExpectedCategories.Length - 1; j >= 0; j--)
                 {
                     if (ExpectedCategories[j].Length != ExpectedCategories[i].Length + 1)
@@ -622,11 +622,11 @@ namespace Lucene.Net.Facet.Taxonomy
                 else
                 {
                     int child = youngestChildArray[i];
-                    Assert.AreEqual((int)expectedChildren[0], child);
+                    Assert.AreEqual(expectedChildren[0], child);
                     for (int j = 1; j < expectedChildren.Count; j++)
                     {
                         child = olderSiblingArray[child];
-                        Assert.AreEqual((int)expectedChildren[j], child);
+                        Assert.AreEqual(expectedChildren[j], child);
                         // if child is INVALID_ORDINAL we should stop, but
                         // AssertEquals would fail in this case anyway.
                     }

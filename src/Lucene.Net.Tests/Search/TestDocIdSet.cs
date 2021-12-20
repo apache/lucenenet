@@ -47,7 +47,7 @@ namespace Lucene.Net.Search
             DocIdSet filteredSet = new FilteredDocIdSetAnonymousClass(this, innerSet);
 
             DocIdSetIterator iter = filteredSet.GetIterator();
-            IList<int?> list = new JCG.List<int?>();
+            IList<int> list = new JCG.List<int>();
             int doc = iter.Advance(3);
             if (doc != DocIdSetIterator.NO_MORE_DOCS)
             {
@@ -60,10 +60,10 @@ namespace Lucene.Net.Search
 
             int[] docs = new int[list.Count];
             int c = 0;
-            IEnumerator<int?> intIter = list.GetEnumerator();
+            using IEnumerator<int> intIter = list.GetEnumerator();
             while (intIter.MoveNext())
             {
-                docs[c++] = (int)intIter.Current;
+                docs[c++] = intIter.Current;
             }
             int[] answer = new int[] { 4, 6, 8 };
             bool same = Arrays.Equals(answer, docs);

@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
             private readonly ICollector other;
             private int docBase;
 
-            public IDictionary<int?, IDictionary<Query, float?>> DocCounts { get; } = new Dictionary<int?, IDictionary<Query, float?>>();
+            public IDictionary<int, IDictionary<Query, float>> DocCounts { get; } = new Dictionary<int, IDictionary<Query, float>>();
 
             private readonly IDictionary<Query, Scorer> subScorers = new Dictionary<Query, Scorer>();
             private readonly ISet<string> relationships;
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search
 
             public virtual void Collect(int doc)
             {
-                IDictionary<Query, float?> freqs = new Dictionary<Query, float?>();
+                IDictionary<Query, float> freqs = new Dictionary<Query, float>();
                 foreach (KeyValuePair<Query, Scorer> ent in subScorers)
                 {
                     Scorer value = ent.Value;
@@ -145,13 +145,13 @@ namespace Lucene.Net.Search
             Assert.AreEqual(maxDocs, c.DocCounts.Count);
             for (int i = 0; i < maxDocs; i++)
             {
-                IDictionary<Query, float?> doc0 = c.DocCounts[i];
+                IDictionary<Query, float> doc0 = c.DocCounts[i];
                 Assert.AreEqual(1, doc0.Count);
-                Assert.AreEqual(4.0F, doc0[q].GetValueOrDefault(), FLOAT_TOLERANCE);
+                Assert.AreEqual(4.0F, doc0[q], FLOAT_TOLERANCE);
 
-                IDictionary<Query, float?> doc1 = c.DocCounts[++i];
+                IDictionary<Query, float> doc1 = c.DocCounts[++i];
                 Assert.AreEqual(1, doc1.Count);
-                Assert.AreEqual(1.0F, doc1[q].GetValueOrDefault(), FLOAT_TOLERANCE);
+                Assert.AreEqual(1.0F, doc1[q], FLOAT_TOLERANCE);
             }
         }
 
@@ -185,22 +185,22 @@ namespace Lucene.Net.Search
                 bool includeOptional = occur.Contains("SHOULD");
                 for (int i = 0; i < maxDocs; i++)
                 {
-                    IDictionary<Query, float?> doc0 = c.DocCounts[i];
+                    IDictionary<Query, float> doc0 = c.DocCounts[i];
                     Assert.AreEqual(includeOptional ? 5 : 4, doc0.Count);
-                    Assert.AreEqual(1.0F, doc0[aQuery].GetValueOrDefault(), FLOAT_TOLERANCE);
-                    Assert.AreEqual(4.0F, doc0[dQuery].GetValueOrDefault(), FLOAT_TOLERANCE);
+                    Assert.AreEqual(1.0F, doc0[aQuery], FLOAT_TOLERANCE);
+                    Assert.AreEqual(4.0F, doc0[dQuery], FLOAT_TOLERANCE);
                     if (includeOptional)
                     {
-                        Assert.AreEqual(3.0F, doc0[cQuery].GetValueOrDefault(), FLOAT_TOLERANCE);
+                        Assert.AreEqual(3.0F, doc0[cQuery], FLOAT_TOLERANCE);
                     }
 
-                    IDictionary<Query, float?> doc1 = c.DocCounts[++i];
+                    IDictionary<Query, float> doc1 = c.DocCounts[++i];
                     Assert.AreEqual(includeOptional ? 5 : 4, doc1.Count);
-                    Assert.AreEqual(1.0F, doc1[aQuery].GetValueOrDefault(), FLOAT_TOLERANCE);
-                    Assert.AreEqual(1.0F, doc1[dQuery].GetValueOrDefault(), FLOAT_TOLERANCE);
+                    Assert.AreEqual(1.0F, doc1[aQuery], FLOAT_TOLERANCE);
+                    Assert.AreEqual(1.0F, doc1[dQuery], FLOAT_TOLERANCE);
                     if (includeOptional)
                     {
-                        Assert.AreEqual(1.0F, doc1[cQuery].GetValueOrDefault(), FLOAT_TOLERANCE);
+                        Assert.AreEqual(1.0F, doc1[cQuery], FLOAT_TOLERANCE);
                     }
                 }
             }
@@ -218,13 +218,13 @@ namespace Lucene.Net.Search
             Assert.AreEqual(maxDocs, c.DocCounts.Count);
             for (int i = 0; i < maxDocs; i++)
             {
-                IDictionary<Query, float?> doc0 = c.DocCounts[i];
+                IDictionary<Query, float> doc0 = c.DocCounts[i];
                 Assert.AreEqual(1, doc0.Count);
-                Assert.AreEqual(2.0F, doc0[q].GetValueOrDefault(), FLOAT_TOLERANCE);
+                Assert.AreEqual(2.0F, doc0[q], FLOAT_TOLERANCE);
 
-                IDictionary<Query, float?> doc1 = c.DocCounts[++i];
+                IDictionary<Query, float> doc1 = c.DocCounts[++i];
                 Assert.AreEqual(1, doc1.Count);
-                Assert.AreEqual(1.0F, doc1[q].GetValueOrDefault(), FLOAT_TOLERANCE);
+                Assert.AreEqual(1.0F, doc1[q], FLOAT_TOLERANCE);
             }
         }
     }

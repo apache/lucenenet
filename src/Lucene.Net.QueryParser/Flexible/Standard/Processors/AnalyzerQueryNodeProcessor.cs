@@ -68,23 +68,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         public override IQueryNode Process(IQueryNode queryTree)
         {
-            Analyzer analyzer = GetQueryConfigHandler().Get(ConfigurationKeys.ANALYZER);
+            var queryConfigHandler = GetQueryConfigHandler();
+            Analyzer analyzer = queryConfigHandler.Get(ConfigurationKeys.ANALYZER);
 
             if (analyzer != null)
             {
                 this.analyzer = analyzer;
                 this.positionIncrementsEnabled = false;
-                bool? positionIncrementsEnabled = GetQueryConfigHandler().Get(ConfigurationKeys.ENABLE_POSITION_INCREMENTS);
 
                 // LUCENENET specific - rather than using null, we are relying on the behavior that the default
                 // value for an enum is 0 (OR in this case).
-                //var defaultOperator = GetQueryConfigHandler().Get(ConfigurationKeys.DEFAULT_OPERATOR);
-                //this.defaultOperator = defaultOperator != null ? defaultOperator.Value : Operator.OR;
                 this.defaultOperator = GetQueryConfigHandler().Get(ConfigurationKeys.DEFAULT_OPERATOR);
 
-                if (positionIncrementsEnabled != null)
+                // LUCENENET: Use TryGetValue() to determine if the value exists
+                if (GetQueryConfigHandler().TryGetValue(ConfigurationKeys.ENABLE_POSITION_INCREMENTS, out bool positionIncrementsEnabled))
                 {
-                    this.positionIncrementsEnabled = positionIncrementsEnabled.Value;
+                    this.positionIncrementsEnabled = positionIncrementsEnabled;
                 }
 
                 if (this.analyzer != null)
