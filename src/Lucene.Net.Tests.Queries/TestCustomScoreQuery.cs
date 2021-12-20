@@ -395,7 +395,7 @@ namespace Lucene.Net.Tests.Queries
             }
         }
         
-        private void LogResult(string msg, IndexSearcher s, Query q, int doc, float? score1)
+        private void LogResult(string msg, IndexSearcher s, Query q, int doc, float score1)
         {
             Log(msg + " " + score1);
             Log("Explain by: " + q);

@@ -133,7 +133,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            var h = parser == null ? typeof(short?).GetHashCode() : parser.GetType().GetHashCode();
+            var h = parser == null ? typeof(short).GetHashCode() : parser.GetType().GetHashCode();
             h += base.GetHashCode();
             return h;
         }
