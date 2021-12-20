@@ -39,6 +39,32 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
         }
 
         /// <summary>
+        /// Gets the value associated with the specified key. 
+        /// </summary>
+        /// <typeparam name="T">the value's type</typeparam>
+        /// <param name="key">the key, cannot be <c>null</c></param>
+        /// <param name="value">When this method returns, contains the value associated with the specified key,
+        /// if the key is found; otherwise, the default value for the type of the <paramref name="value"/> parameter.
+        /// This parameter is passed uninitialized.</param>
+        /// <returns><c>true</c> if the configuration contains an element with the specified <paramref name="key"/>; otherwise, <c>false</c>.</returns>
+        // LUCENENET specific - using this method allows us to store non-nullable value types
+        public virtual bool TryGetValue<T>(ConfigurationKey<T> key, out T value)
+        {
+            if (key is null)
+                throw new ArgumentNullException(nameof(key), "key cannot be null!");
+            if (this.configMap.TryGetValue(key, out object resultObj))
+            {
+                if (typeof(T).IsValueType)
+                    value = ((T[])resultObj)[0]; // LUCENENET: Retrieve a 1 dimensionsal array for value types to avoid unboxing
+                else
+                    value = (T)resultObj;
+                return true;
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
         /// Returns the value held by the given key.
         /// </summary>
         /// <typeparam name="T">the value's type</typeparam>
@@ -50,8 +76,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
             {
                 throw new ArgumentNullException(nameof(key), "key cannot be null!"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            this.configMap.TryGetValue(key, out object result);
-            return result == null ? default : (T)result;
+            return !this.configMap.TryGetValue(key, out object result) || result is null ? default :
+                // LUCENENET: Retrieve a 1 dimensionsal array for value types to avoid unboxing
+                (typeof(T).IsValueType ? ((T[])result)[0] : (T)result);
         }
 
         /// <summary>
@@ -86,6 +113,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
             if (value == null)
             {
                 Unset(key);
+            }
+            else if (typeof(T).IsValueType)
+            {
+                this.configMap[key] = new T[] { value }; // LUCENENET: Store a 1 dimensionsal array for value types to avoid boxing
             }
             else
             {

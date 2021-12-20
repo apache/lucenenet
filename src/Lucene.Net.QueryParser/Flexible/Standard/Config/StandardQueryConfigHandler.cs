@@ -50,11 +50,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             Set(ConfigurationKeys.PHRASE_SLOP, 0); //default value 2.4
             Set(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS, true); //default value 2.4
             Set(ConfigurationKeys.ENABLE_POSITION_INCREMENTS, false); //default value 2.4
-            Set(ConfigurationKeys.FIELD_BOOST_MAP, new JCG.LinkedDictionary<string, float?>());
+            Set(ConfigurationKeys.FIELD_BOOST_MAP, new JCG.LinkedDictionary<string, float>());
             Set(ConfigurationKeys.FUZZY_CONFIG, new FuzzyConfig());
             Set(ConfigurationKeys.LOCALE, null);
             Set(ConfigurationKeys.MULTI_TERM_REWRITE_METHOD, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
-            Set(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, new JCG.Dictionary<string, DateResolution?>());
+            Set(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, new JCG.Dictionary<string, DateResolution>());
         }
 
         /// <summary>
@@ -76,19 +76,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// Key used to set whether position increments is enabled
         /// </summary>
         /// <seealso cref="StandardQueryParser.EnablePositionIncrements"/>
-        public readonly static ConfigurationKey<bool?> ENABLE_POSITION_INCREMENTS = ConfigurationKey.NewInstance<bool?>();
+        public readonly static ConfigurationKey<bool> ENABLE_POSITION_INCREMENTS = ConfigurationKey.NewInstance<bool>();
 
         /// <summary>
         /// Key used to set whether expanded terms should be lower-cased
         /// </summary>
         /// <seealso cref="StandardQueryParser.LowercaseExpandedTerms"/>
-        public readonly static ConfigurationKey<bool?> LOWERCASE_EXPANDED_TERMS = ConfigurationKey.NewInstance<bool?>();
+        public readonly static ConfigurationKey<bool> LOWERCASE_EXPANDED_TERMS = ConfigurationKey.NewInstance<bool>();
 
         /// <summary>
         /// Key used to set whether leading wildcards are supported
         /// </summary>
         /// <seealso cref="StandardQueryParser.AllowLeadingWildcard"/>
-        public readonly static ConfigurationKey<bool?> ALLOW_LEADING_WILDCARD = ConfigurationKey.NewInstance<bool?>();
+        public readonly static ConfigurationKey<bool> ALLOW_LEADING_WILDCARD = ConfigurationKey.NewInstance<bool>();
 
         /// <summary>
         /// Key used to set the <see cref="Analyzer"/> used for terms found in the query
@@ -106,7 +106,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// Key used to set the default phrase slop
         /// </summary>
         /// <seealso cref="StandardQueryParser.PhraseSlop"/>
-        public readonly static ConfigurationKey<int?> PHRASE_SLOP = ConfigurationKey.NewInstance<int?>();
+        public readonly static ConfigurationKey<int> PHRASE_SLOP = ConfigurationKey.NewInstance<int>();
 
         /// <summary>
         ///  Key used to set the <see cref="CultureInfo">locale</see> used when parsing the query
@@ -134,14 +134,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// Key used to set a field to boost map that is used to set the boost for each field
         /// </summary>
         /// <seealso cref="StandardQueryParser.FieldsBoost"/>
-        public readonly static ConfigurationKey<IDictionary<string, float?>> FIELD_BOOST_MAP = ConfigurationKey.NewInstance<IDictionary<string, float?>>();
+        public readonly static ConfigurationKey<IDictionary<string, float>> FIELD_BOOST_MAP = ConfigurationKey.NewInstance<IDictionary<string, float>>();
 
         /// <summary>
         /// Key used to set a field to <see cref="DateResolution"/> map that is used
         /// to normalize each date field value.
         /// </summary>
         /// <seealso cref="StandardQueryParser.DateResolutionMap"/>
-        public readonly static ConfigurationKey<IDictionary<string, DateResolution?>> FIELD_DATE_RESOLUTION_MAP = ConfigurationKey.NewInstance<IDictionary<string, DateResolution?>>();
+        public readonly static ConfigurationKey<IDictionary<string, DateResolution>> FIELD_DATE_RESOLUTION_MAP = ConfigurationKey.NewInstance<IDictionary<string, DateResolution>>();
 
         /// <summary>
         /// Key used to set the <see cref="FuzzyConfig"/> used to create fuzzy queries.
@@ -161,7 +161,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// Key used to set the boost value in <see cref="FieldConfig"/> objects.
         /// </summary>
         /// <seealso cref="StandardQueryParser.FieldsBoost"/>
-        public readonly static ConfigurationKey<float?> BOOST = ConfigurationKey.NewInstance<float?>();
+        public readonly static ConfigurationKey<float> BOOST = ConfigurationKey.NewInstance<float>();
 
         /// <summary>
         /// Key used to set a field to its <see cref="NumericConfig"/>.

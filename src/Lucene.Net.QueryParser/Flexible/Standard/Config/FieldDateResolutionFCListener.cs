@@ -42,22 +42,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         public virtual void BuildFieldConfig(FieldConfig fieldConfig)
         {
-            DateResolution? dateRes = null;
-            IDictionary<string, DateResolution?> dateResMap = this.config.Get(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP);
-
-            if (dateResMap != null)
+            // LUCENENET: Simplified logic using TryGetValue
+            if ((this.config.TryGetValue(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, out IDictionary<string, DateResolution> dateResMap)
+                && dateResMap.TryGetValue(fieldConfig.Field, out DateResolution dateRes))
+                || this.config.TryGetValue(ConfigurationKeys.DATE_RESOLUTION, out dateRes))
             {
-                dateResMap.TryGetValue(fieldConfig.Field, out dateRes);
-            }
-
-            if (dateRes == null)
-            {
-                dateRes = this.config.Get(ConfigurationKeys.DATE_RESOLUTION);
-            }
-
-            if (dateRes != null)
-            {
-                fieldConfig.Set(ConfigurationKeys.DATE_RESOLUTION, dateRes.Value);
+                fieldConfig.Set(ConfigurationKeys.DATE_RESOLUTION, dateRes);
             }
         }
     }

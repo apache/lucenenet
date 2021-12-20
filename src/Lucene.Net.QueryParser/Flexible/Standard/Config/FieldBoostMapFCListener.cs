@@ -41,15 +41,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         public virtual void BuildFieldConfig(FieldConfig fieldConfig)
         {
-            IDictionary<string, float?> fieldBoostMap = this.config.Get(ConfigurationKeys.FIELD_BOOST_MAP);
-
-            if (fieldBoostMap != null)
-            {
-                if (fieldBoostMap.TryGetValue(fieldConfig.Field, out float? boost) && boost != null)
-                {
+            if (this.config.TryGetValue(ConfigurationKeys.FIELD_BOOST_MAP, out IDictionary<string, float> fieldBoostMap)
+                && fieldBoostMap.TryGetValue(fieldConfig.Field, out float boost))
                     fieldConfig.Set(ConfigurationKeys.BOOST, boost);
-                }
-            }
         }
     }
 }

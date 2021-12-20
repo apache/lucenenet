@@ -51,11 +51,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
             if (queryConfig != null)
             {
-                int? defaultPhraseSlop = queryConfig.Get(ConfigurationKeys.PHRASE_SLOP);
-
-                if (defaultPhraseSlop != null)
+                if (queryConfig.TryGetValue(ConfigurationKeys.PHRASE_SLOP, out int defaultPhraseSlop))
                 {
-                    this.defaultPhraseSlop = defaultPhraseSlop.Value;
+                    this.defaultPhraseSlop = defaultPhraseSlop;
 
                     return base.Process(queryTree);
                 }

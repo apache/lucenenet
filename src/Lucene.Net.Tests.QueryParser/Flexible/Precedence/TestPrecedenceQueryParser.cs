@@ -483,7 +483,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             String hourField = "hour";
             PrecedenceQueryParser qp = new PrecedenceQueryParser(new MockAnalyzer(Random));
 
-            IDictionary<string, DateResolution?> fieldMap = new JCG.Dictionary<string, DateResolution?>();
+            IDictionary<string, DateResolution> fieldMap = new JCG.Dictionary<string, DateResolution>();
             // set a field specific date resolution
             fieldMap.Put(monthField, DateResolution.MONTH);
 #pragma warning disable 612, 618

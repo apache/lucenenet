@@ -799,7 +799,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             String hourField = "hour";
             StandardQueryParser qp = new StandardQueryParser();
 
-            IDictionary<string, DateResolution?> dateRes = new Dictionary<string, DateResolution?>();
+            IDictionary<string, DateResolution> dateRes = new Dictionary<string, DateResolution>();
 
             // set a field specific date resolution    
             dateRes.Put(monthField, DateResolution.MONTH);

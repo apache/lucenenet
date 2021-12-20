@@ -160,7 +160,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// </summary>
         public virtual Operator DefaultOperator
         {
-            get => QueryConfigHandler.Get(ConfigurationKeys.DEFAULT_OPERATOR);
+            get => QueryConfigHandler.Get(ConfigurationKeys.DEFAULT_OPERATOR); // LUCENENET: The default value is OR, so we just rely on the compiler if it doesn't exist
             set => QueryConfigHandler.Set(ConfigurationKeys.DEFAULT_OPERATOR, value);
         }
 
@@ -175,7 +175,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// </summary>
         public virtual bool LowercaseExpandedTerms
         {
-            get => QueryConfigHandler.Get(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS) ?? true;
+            get => QueryConfigHandler.TryGetValue(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS, out bool value) ? value : true;
             set => QueryConfigHandler.Set(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS, value);
         }
 
@@ -190,7 +190,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// </summary>
         public virtual bool AllowLeadingWildcard
         {
-            get => QueryConfigHandler.Get(ConfigurationKeys.ALLOW_LEADING_WILDCARD) ?? false;
+            get => QueryConfigHandler.Get(ConfigurationKeys.ALLOW_LEADING_WILDCARD); // LUCENENET: The default value is false, so we just rely on the compiler if it doesn't exist
             set => QueryConfigHandler.Set(ConfigurationKeys.ALLOW_LEADING_WILDCARD, value);
         }
 
@@ -205,7 +205,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// </summary>
         public virtual bool EnablePositionIncrements
         {
-            get => QueryConfigHandler.Get(ConfigurationKeys.ENABLE_POSITION_INCREMENTS) ?? false;
+            get => QueryConfigHandler.Get(ConfigurationKeys.ENABLE_POSITION_INCREMENTS); // LUCENENET: The default value is false, so we just rely on the compiler if it doesn't exist
             set => QueryConfigHandler.Set(ConfigurationKeys.ENABLE_POSITION_INCREMENTS, value);
         }
 
@@ -333,7 +333,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// </summary>
         public virtual int PhraseSlop
         {
-            get => QueryConfigHandler.Get(ConfigurationKeys.PHRASE_SLOP) ?? 0;
+            get => QueryConfigHandler.Get(ConfigurationKeys.PHRASE_SLOP); // LUCENENET: The default value is 0, so we just rely on the compiler if it doesn't exist
             set => QueryConfigHandler.Set(ConfigurationKeys.PHRASE_SLOP, value);
         }
 
@@ -369,7 +369,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// <summary>
         ///  Gets or Sets the field to boost map used to set boost for each field.
         /// </summary>
-        public virtual IDictionary<string, float?> FieldsBoost
+        public virtual IDictionary<string, float> FieldsBoost
         {
             get => QueryConfigHandler.Get(ConfigurationKeys.FIELD_BOOST_MAP);
             set => QueryConfigHandler.Set(ConfigurationKeys.FIELD_BOOST_MAP, value);
@@ -390,22 +390,23 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// Gets the default <see cref="Documents.DateResolution"/> used for certain field when
         /// no <see cref="Documents.DateResolution"/> is defined for this field.
         /// </summary>
-        public virtual DateResolution DateResolution => QueryConfigHandler.Get(ConfigurationKeys.DATE_RESOLUTION);
+        [ExceptionToNullableEnumConvention]
+        public virtual DateResolution? DateResolution => QueryConfigHandler.TryGetValue(ConfigurationKeys.DATE_RESOLUTION, out DateResolution value) ? value : null;
 
         /// <summary>
         /// Sets the <see cref="Documents.DateResolution"/> used for each field
         /// </summary>
         /// <param name="dateRes">a collection that maps a field to its <see cref="Documents.DateResolution"/></param>
         [Obsolete("Use DateResolutionMap property instead.")]
-        public virtual void SetDateResolution(IDictionary<string, DateResolution?> dateRes)
+        public virtual void SetDateResolution(IDictionary<string, DateResolution> dateRes)
         {
             DateResolutionMap = dateRes;
         }
 
         /// <summary>
-        /// Gets or Sets the field to <see cref="T:DateResolution?"/> map used to normalize each date field.
+        /// Gets or Sets the field to <see cref="Documents.DateResolution"/> map used to normalize each date field.
         /// </summary>
-        public virtual IDictionary<string, DateResolution?> DateResolutionMap
+        public virtual IDictionary<string, DateResolution> DateResolutionMap
         {
             get => QueryConfigHandler.Get(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP);
             set => QueryConfigHandler.Set(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, value);
