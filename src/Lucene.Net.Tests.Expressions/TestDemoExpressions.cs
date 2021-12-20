@@ -96,9 +96,11 @@ namespace Lucene.Net.Expressions
             // compile an expression:
             var expr = JavascriptCompiler.Compile("sqrt(_score) + ln(popularity)");
             // we use SimpleBindings: which just maps variables to SortField instances
-            SimpleBindings bindings = new SimpleBindings();
-            bindings.Add(new SortField("_score", SortFieldType.SCORE));
-            bindings.Add(new SortField("popularity", SortFieldType.INT32));
+            SimpleBindings bindings = new SimpleBindings
+            {
+                new SortField("_score", SortFieldType.SCORE),
+                new SortField("popularity", SortFieldType.INT32),
+            };
             // create a sort field and sort by it (reverse order)
             Sort sort = new Sort(expr.GetSortField(bindings, true));
             Query query = new TermQuery(new Term("body", "contents"));
@@ -150,9 +152,11 @@ namespace Lucene.Net.Expressions
         {
             var expr1 = JavascriptCompiler.Compile("_score");
             var expr2 = JavascriptCompiler.Compile("2*expr1");
-            var bindings = new SimpleBindings();
-            bindings.Add(new SortField("_score", SortFieldType.SCORE));
-            bindings.Add("expr1", expr1);
+            var bindings = new SimpleBindings
+            {
+                new SortField("_score", SortFieldType.SCORE),
+                { "expr1", expr1 },
+            };
             Sort sort = new Sort(expr2.GetSortField(bindings, true));
             Query query = new TermQuery(new Term("body", "contents"));
             TopFieldDocs td = searcher.Search(query, null, 3, sort, true, true);

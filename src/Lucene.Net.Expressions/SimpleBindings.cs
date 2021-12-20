@@ -2,6 +2,7 @@
 using Lucene.Net.Queries.Function.ValueSources;
 using Lucene.Net.Search;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Expressions
@@ -30,19 +31,21 @@ namespace Lucene.Net.Expressions
     /// <para/>
     /// Example usage:
     /// <code>
-    /// SimpleBindings bindings = new SimpleBindings();
-    /// // document's text relevance score
-    /// bindings.Add(new SortField("_score", SortFieldType.SCORE));
-    /// // integer NumericDocValues field (or from FieldCache)
-    /// bindings.Add(new SortField("popularity", SortFieldType.INT));
-    /// // another expression
-    /// bindings.Add("recency", myRecencyExpression);
+    /// SimpleBindings bindings = new SimpleBindings
+    /// {
+    ///     // document's text relevance score
+    ///     new SortField("_score", SortFieldType.SCORE),
+    ///     // integer NumericDocValues field (or from FieldCache)
+    ///     new SortField("popularity", SortFieldType.INT),
+    ///     // another expression
+    ///     { "recency", myRecencyExpression },
+    /// };
     /// // create a sort field in reverse order
     /// Sort sort = new Sort(expr.GetSortField(bindings, true));
     /// </code>
     /// @lucene.experimental
     /// </summary>
-    public sealed class SimpleBindings : Bindings // LUCENENET TODO: Implement collection initializer to make populating easier
+    public sealed class SimpleBindings : Bindings, IEnumerable<KeyValuePair<string, object>> // LUCENENET specific - Added collection initializer to make populating easier
     {
         internal readonly IDictionary<string, object> map = new Dictionary<string, object>();
 
@@ -143,5 +146,9 @@ namespace Lucene.Net.Expressions
                 }
             }
         }
+
+        // LUCENENET specific - implemented IEnumerable<KeyValuePair<string, object>> to take advantage of the collection initializer
+        IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator() => map.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => map.GetEnumerator();
     }
 }
