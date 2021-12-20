@@ -38,7 +38,7 @@ namespace Lucene.Net
         [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
         public override void TestPrivateFieldNames(Type typeFromTargetAssembly)
         {
-            base.TestPrivateFieldNames(typeFromTargetAssembly, @"^Lucene\.Net\.Support\.(?:ConcurrentHashSet|PlatformHelper)|^Lucene\.ExceptionExtensions");
+            base.TestPrivateFieldNames(typeFromTargetAssembly, @"^Lucene\.Net\.Support\.(?:ConcurrentHashSet|PlatformHelper|DateTimeOffsetUtil)|^Lucene\.ExceptionExtensions");
         }
 
         [Test, LuceneNetSpecific]

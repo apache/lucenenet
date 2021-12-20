@@ -77,8 +77,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                             string lowerText = lower.GetTextAsString();
                             string upperText = upper.GetTextAsString();
                             NumberFormat numberFormat = numericConfig.NumberFormat;
-                            /*Number*/
-                            object lowerNumber = null, upperNumber = null;
+                            J2N.Numerics.Number lowerNumber = null, upperNumber = null;
 
                             if (lowerText.Length > 0)
                             {
@@ -113,20 +112,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                             switch (numericConfig.Type)
                             {
                                 case NumericType.INT64:
-                                    if (upperNumber != null) upperNumber = Convert.ToInt64(upperNumber); // LUCENENET TODO: Find a way to pass culture
-                                    if (lowerNumber != null) lowerNumber = Convert.ToInt64(lowerNumber);
+                                    if (upperNumber != null) upperNumber = J2N.Numerics.Int64.GetInstance(upperNumber.ToInt64());
+                                    if (lowerNumber != null) lowerNumber = J2N.Numerics.Int64.GetInstance(lowerNumber.ToInt64());
                                     break;
                                 case NumericType.INT32:
-                                    if (upperNumber != null) upperNumber = Convert.ToInt32(upperNumber); // LUCENENET TODO: Find a way to pass culture
-                                    if (lowerNumber != null) lowerNumber = Convert.ToInt32(lowerNumber);
+                                    if (upperNumber != null) upperNumber = J2N.Numerics.Int32.GetInstance(upperNumber.ToInt32());
+                                    if (lowerNumber != null) lowerNumber = J2N.Numerics.Int32.GetInstance(lowerNumber.ToInt32());
                                     break;
                                 case NumericType.DOUBLE:
-                                    if (upperNumber != null) upperNumber = Convert.ToDouble(upperNumber); // LUCENENET TODO: Find a way to pass culture
-                                    if (lowerNumber != null) lowerNumber = Convert.ToDouble(lowerNumber);
+                                    if (upperNumber != null) upperNumber = J2N.Numerics.Double.GetInstance(upperNumber.ToDouble());
+                                    if (lowerNumber != null) lowerNumber = J2N.Numerics.Double.GetInstance(lowerNumber.ToDouble());
                                     break;
                                 case NumericType.SINGLE:
-                                    if (upperNumber != null) upperNumber = Convert.ToSingle(upperNumber); // LUCENENET TODO: Find a way to pass culture
-                                    if (lowerNumber != null) lowerNumber = Convert.ToSingle(lowerNumber);
+                                    if (upperNumber != null) upperNumber = J2N.Numerics.Single.GetInstance(upperNumber.ToSingle());
+                                    if (lowerNumber != null) lowerNumber = J2N.Numerics.Single.GetInstance(lowerNumber.ToSingle());
                                     break;
                             }
 

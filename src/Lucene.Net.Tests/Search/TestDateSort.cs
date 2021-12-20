@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 
 namespace Lucene.Net.Search
@@ -117,7 +117,7 @@ namespace Lucene.Net.Search
             document.Add(textField);
 
             // Add the date/time field.
-            string dateTimeString = DateTools.TimeToString(time, DateTools.Resolution.SECOND);
+            string dateTimeString = DateTools.TimeToString(time, DateResolution.SECOND);
             Field dateTimeField = NewStringField(DATE_TIME_FIELD, dateTimeString, Field.Store.YES);
             document.Add(dateTimeField);
 

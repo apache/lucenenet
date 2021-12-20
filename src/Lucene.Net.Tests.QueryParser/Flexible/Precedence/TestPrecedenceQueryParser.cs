@@ -429,10 +429,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         {
             // we use the default Locale since LuceneTestCase randomizes it
             //DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
-            //return DateTools.DateToString(df.parse(s), DateTools.Resolution.DAY);
+            //return DateTools.DateToString(df.parse(s), DateResolution.DAY);
 
             //DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
-            return DateTools.DateToString(DateTime.Parse(s), DateTools.Resolution.DAY);
+            return DateTools.DateToString(DateTime.Parse(s), DateResolution.DAY);
         }
 
         private String getLocalizedDate(int year, int month, int day,
@@ -483,18 +483,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             String hourField = "hour";
             PrecedenceQueryParser qp = new PrecedenceQueryParser(new MockAnalyzer(Random));
 
-            IDictionary<string, DateTools.Resolution?> fieldMap = new JCG.Dictionary<string, DateTools.Resolution?>();
+            IDictionary<string, DateResolution?> fieldMap = new JCG.Dictionary<string, DateResolution?>();
             // set a field specific date resolution
-            fieldMap.Put(monthField, DateTools.Resolution.MONTH);
+            fieldMap.Put(monthField, DateResolution.MONTH);
 #pragma warning disable 612, 618
             qp.SetDateResolution(fieldMap);
 #pragma warning restore 612, 618
 
             // set default date resolution to MILLISECOND
-            qp.SetDateResolution(DateTools.Resolution.MILLISECOND);
+            qp.SetDateResolution(DateResolution.MILLISECOND);
 
             // set second field specific date resolution
-            fieldMap.Put(hourField, DateTools.Resolution.HOUR);
+            fieldMap.Put(hourField, DateResolution.HOUR);
 #pragma warning disable 612, 618
             qp.SetDateResolution(fieldMap);
 #pragma warning restore 612, 618
@@ -502,18 +502,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             // for this field no field specific date resolution has been set,
             // so verify if the default resolution is used
             assertDateRangeQueryEquals(qp, defaultField, startDate, endDate,
-                endDateExpected, DateTools.Resolution.MILLISECOND);
+                endDateExpected, DateResolution.MILLISECOND);
 
             // verify if field specific date resolutions are used for these two fields
             assertDateRangeQueryEquals(qp, monthField, startDate, endDate,
-                endDateExpected, DateTools.Resolution.MONTH);
+                endDateExpected, DateResolution.MONTH);
 
             assertDateRangeQueryEquals(qp, hourField, startDate, endDate,
-                endDateExpected, DateTools.Resolution.HOUR);
+                endDateExpected, DateResolution.HOUR);
         }
 
         /** for testing DateTools support */
-        private String getDate(String s, DateTools.Resolution resolution)
+        private String getDate(String s, DateResolution resolution)
         {
             // we use the default Locale since LuceneTestCase randomizes it
             //DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
@@ -522,7 +522,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         }
 
         /** for testing DateTools support */
-        private String getDate(DateTime d, DateTools.Resolution resolution)
+        private String getDate(DateTime d, DateResolution resolution)
         {
             return DateTools.DateToString(d, resolution);
         }
@@ -541,7 +541,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
 
         public void assertDateRangeQueryEquals(PrecedenceQueryParser qp, String field,
             String startDate, String endDate, DateTime endDateInclusive,
-            DateTools.Resolution resolution)
+            DateResolution resolution)
         {
             assertQueryEquals(qp, field, field + ":[" + escapeDateString(startDate)
                 + " TO " + escapeDateString(endDate) + "]", "["

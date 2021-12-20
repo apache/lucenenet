@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -257,7 +257,7 @@ namespace Lucene.Net.Search
 
             // Just to generate some different Lucene Date strings
             internal virtual string LuceneDate
-                => DateTools.TimeToString((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + random.Next() - int.MinValue, DateTools.Resolution.DAY);
+                => DateTools.TimeToString((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + random.Next() - int.MinValue, DateResolution.DAY);
         }
     }
 }

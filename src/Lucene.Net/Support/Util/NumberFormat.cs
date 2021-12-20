@@ -31,7 +31,7 @@ namespace Lucene.Net.Util
     // and passing this class around to different methods, that would require some major refactoring.
     // We should probably look into doing that in vNext. We should also look into supporting all of .NET's numeric
     // types instead of just the ones that Java supports, as well.
-    public class NumberFormat
+    public abstract class NumberFormat
     {
         private readonly IFormatProvider formatProvider;
 
@@ -51,7 +51,11 @@ namespace Lucene.Net.Util
         {
             string format = GetNumberFormat();
 
-            if (number is int i)
+            if (number is J2N.Numerics.Number num)
+            {
+                return num.ToString(format, formatProvider);
+            }
+            else if (number is int i)
             {
                 return i.ToString(format, formatProvider);
             }
@@ -65,11 +69,11 @@ namespace Lucene.Net.Util
             }
             else if (number is float f)
             {
-                return f.ToString(format, formatProvider);
+                return J2N.Numerics.Single.ToString(f, format, formatProvider);
             }
             else if (number is double d)
             {
-                return d.ToString(format, formatProvider);
+                return J2N.Numerics.Double.ToString(d, format, formatProvider);
             }
             else if (number is decimal dec)
             {
@@ -82,7 +86,7 @@ namespace Lucene.Net.Util
         public virtual string Format(double number)
         {
             string format = GetNumberFormat();
-            return number.ToString(format, formatProvider);
+            return J2N.Numerics.Double.ToString(number, format, formatProvider);
         }
 
         public virtual string Format(long number)
@@ -102,10 +106,7 @@ namespace Lucene.Net.Util
             return null;
         }
 
-        public virtual /*Number*/ object Parse(string source)
-        {
-            return decimal.Parse(source, formatProvider);
-        }
+        public abstract J2N.Numerics.Number Parse(string source);
 
         public override string ToString()
         {

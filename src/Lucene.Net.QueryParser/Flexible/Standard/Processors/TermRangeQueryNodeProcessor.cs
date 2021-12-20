@@ -40,7 +40,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <see cref="CultureInfo.CurrentCulture"/> will be used.
     /// <para/>
     /// If a <see cref="ConfigurationKeys.DATE_RESOLUTION"/> is defined and the
-    /// <see cref="DateTools.Resolution"/> is not <c>null</c> it will also be used to parse the
+    /// <see cref="DateResolution"/> is not <c>null</c> it will also be used to parse the
     /// date value.
     /// </summary>
     /// <seealso cref="ConfigurationKeys.DATE_RESOLUTION"/>
@@ -61,7 +61,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 FieldQueryNode lower = (FieldQueryNode)termRangeNode.LowerBound;
 
                 // LUCENENET specific - set to 0 (instead of null), since it doesn't correspond to any valid setting
-                DateTools.Resolution dateRes = 0/* = null*/;
+                DateResolution dateRes = 0/* = null*/;
                 bool inclusive = false;
                 CultureInfo locale = GetQueryConfigHandler().Get(ConfigurationKeys.LOCALE);
 
@@ -107,7 +107,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                     if (DateTime.TryParseExact(part1, shortDateFormat, locale, DateTimeStyles.None, out DateTime d1))
                     {
-                        part1 = DateTools.DateToString(d1, dateRes);
+                        part1 = DateTools.DateToString(d1, timeZone, dateRes);
                         lower.Text = new StringCharSequence(part1);
                     }
 
@@ -135,7 +135,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                             d2 = cal.AddMilliseconds(d2, 999);
                         }
 
-                        part2 = DateTools.DateToString(d2, dateRes);
+                        part2 = DateTools.DateToString(d2, timeZone, dateRes);
                         upper.Text = new StringCharSequence(part2);
                     }
 

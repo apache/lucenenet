@@ -376,36 +376,36 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         /// <summary>
-        /// Sets the default <see cref="DateTools.Resolution"/> used for certain field when
-        /// no <see cref="DateTools.Resolution"/> is defined for this field.
+        /// Sets the default <see cref="Documents.DateResolution"/> used for certain field when
+        /// no <see cref="Documents.DateResolution"/> is defined for this field.
         /// </summary>
-        /// <param name="dateResolution">the default <see cref="DateTools.Resolution"/></param>
+        /// <param name="dateResolution">the default <see cref="Documents.DateResolution"/></param>
         // LUCENENET NOTE: This method is required by the ICommonQueryParserConfiguration interface
-        public virtual void SetDateResolution(DateTools.Resolution dateResolution)
+        public virtual void SetDateResolution(DateResolution dateResolution)
         {
             QueryConfigHandler.Set(ConfigurationKeys.DATE_RESOLUTION, dateResolution);
         }
 
         /// <summary>
-        /// Gets the default <see cref="DateTools.Resolution"/> used for certain field when
-        /// no <see cref="DateTools.Resolution"/> is defined for this field.
+        /// Gets the default <see cref="Documents.DateResolution"/> used for certain field when
+        /// no <see cref="Documents.DateResolution"/> is defined for this field.
         /// </summary>
-        public virtual DateTools.Resolution DateResolution => QueryConfigHandler.Get(ConfigurationKeys.DATE_RESOLUTION);
+        public virtual DateResolution DateResolution => QueryConfigHandler.Get(ConfigurationKeys.DATE_RESOLUTION);
 
         /// <summary>
-        /// Sets the <see cref="DateTools.Resolution"/> used for each field
+        /// Sets the <see cref="Documents.DateResolution"/> used for each field
         /// </summary>
-        /// <param name="dateRes">a collection that maps a field to its <see cref="DateTools.Resolution"/></param>
+        /// <param name="dateRes">a collection that maps a field to its <see cref="Documents.DateResolution"/></param>
         [Obsolete("Use DateResolutionMap property instead.")]
-        public virtual void SetDateResolution(IDictionary<string, DateTools.Resolution?> dateRes)
+        public virtual void SetDateResolution(IDictionary<string, DateResolution?> dateRes)
         {
             DateResolutionMap = dateRes;
         }
 
         /// <summary>
-        /// Gets or Sets the field to <see cref="T:DateTools.Resolution?"/> map used to normalize each date field.
+        /// Gets or Sets the field to <see cref="T:DateResolution?"/> map used to normalize each date field.
         /// </summary>
-        public virtual IDictionary<string, DateTools.Resolution?> DateResolutionMap
+        public virtual IDictionary<string, DateResolution?> DateResolutionMap
         {
             get => QueryConfigHandler.Get(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP);
             set => QueryConfigHandler.Set(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, value);

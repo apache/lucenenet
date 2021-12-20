@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Documents;
+﻿using J2N.Numerics;
+using Lucene.Net.Documents;
 using Lucene.Net.QueryParsers.Flexible.Core;
 using Lucene.Net.QueryParsers.Flexible.Core.Config;
 using Lucene.Net.QueryParsers.Flexible.Core.Messages;
@@ -79,8 +80,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         {
                             NumberFormat numberFormat = numericConfig.NumberFormat;
                             string text = fieldNode.GetTextAsString();
-                            /*Number*/
-                            object number; // LUCENENET: IDE0059: Remove unnecessary value assignment
+                            Number number; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
                             if (text.Length > 0)
                             {
@@ -100,16 +100,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 switch (numericConfig.Type)
                                 {
                                     case NumericType.INT64:
-                                        number = Convert.ToInt64(number); // LUCENENET TODO: Find a way to pass culture
+                                        number = J2N.Numerics.Int64.GetInstance(number.ToInt64());
                                         break;
                                     case NumericType.INT32:
-                                        number = Convert.ToInt32(number); // LUCENENET TODO: Find a way to pass culture
+                                        number = J2N.Numerics.Int32.GetInstance(number.ToInt32());
                                         break;
                                     case NumericType.DOUBLE:
-                                        number = Convert.ToDouble(number); // LUCENENET TODO: Find a way to pass culture
+                                        number = J2N.Numerics.Double.GetInstance(number.ToDouble());
                                         break;
                                     case NumericType.SINGLE:
-                                        number = Convert.ToSingle(number); // LUCENENET TODO: Find a way to pass culture
+                                        number = J2N.Numerics.Single.GetInstance(number.ToSingle());
                                         break;
                                 }
 
