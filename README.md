@@ -121,7 +121,7 @@ There are several demos implemented as simple console applications that can be c
 
 There is also a dotnet command line tool available on NuGet. It contains all of the demos as well as tools maintaining your Lucene.NET index, featuring operations such as splitting, merging, listing segment info, fixing, deleting segments, upgrading, etc. Always be sure to back up your index before running any commands against it!
 
-- [Prerequisite: .NET Core 3.1.0 Runtime](https://www.microsoft.com/net/download/core#/runtime)
+- [Prerequisite: .NET 6.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 
 ```
 dotnet tool install lucene-cli -g --version 4.8.0-beta00015
