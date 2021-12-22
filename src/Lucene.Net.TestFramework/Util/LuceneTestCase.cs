@@ -70,7 +70,7 @@ namespace Lucene.Net.Util
     /// static methods annotated with <see cref="OneTimeSetUp"/> and <see cref="OneTimeTearDown"/>. Any
     /// code in these methods is executed within the test framework's control and
     /// ensure proper setup has been made. <b>Try not to use static initializers
-    /// (including complex final field initializers).</b> Static initializers are
+    /// (including complex readonly field initializers).</b> Static initializers are
     /// executed before any setup rules are fired and may cause you (or somebody
     /// else) headaches.
     /// </para>
@@ -87,42 +87,81 @@ namespace Lucene.Net.Util
     /// <para>
     /// Any test method annotated with <see cref="Test"/> is considered a test case.
     /// </para>
+    ///
+    /// <h3>Randomized execution and test facilities</h3>
+    ///
+    /// <para>
+    /// <see cref="LuceneTestCase"/> uses a custom <see cref="TestFixtureAttribute"/> to execute test cases.
+    /// The custom <see cref="TestFixtureAttribute"/> has built-in support for test randomization
+    /// including access to a repeatable <see cref="Random"/> instance. See
+    /// <see cref="Random"/> property. Any test using <see cref="Random"/> acquired from
+    /// <see cref="Random"/> should be fully reproducible (assuming no race conditions
+    /// between threads etc.). The initial seed for a test case is reported in the failure
+    /// test message.
+    /// </para>
+    /// <para>
+    /// The seed can be configured with a RunSettings file, a <c>lucene.testSettings.config</c> JSON file,
+    /// an environment variable, or using <see cref="RandomSeedAttribute"/> at the assembly level.
+    /// It is recommended to configure the culture also, since they are randomly picked from a list
+    /// of cultures installed on a given machine, so the culture will vary from one machine to the next.
+    /// </para>
+    /// 
+    /// <h4><i>.runsettings</i> File Configuration Example</h4>
+    /// 
+    /// <code>
+    /// &lt;RunSettings&gt;
+    ///   &lt;TestRunParameters&gt;
+    ///     &lt;Parameter name="tests:seed" value="0x1ffa1d067056b0e6" /&gt;
+    ///     &lt;Parameter name="tests:culture" value="sw-TZ" /&gt;
+    ///   &lt;/TestRunParameters&gt;
+    /// &lt;/RunSettings&gt;
+    /// </code>
+    /// <para>
+    /// See the <i>.runsettings</i> documentation at: <a href="https://docs.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file">
+    /// https://docs.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file</a>.
+    /// </para>
+    /// 
+    /// <h4>Attribute Configuration Example</h4>
+    /// 
+    /// <code>
+    /// [assembly: Lucene.Net.Util.RandomSeed("0x1ffa1d067056b0e6")]
+    /// [assembly: NUnit.Framework.SetCulture("sw-TZ")]
+    /// </code>
+    ///
+    /// <h4><i>lucene.testSettings.config</i> File Configuration Example</h4>
+    ///
+    /// <para>
+    /// Add a file named <i>lucene.testSettings.config</i> to the executable directory or
+    /// any directory between the executable and the root of the drive with the following contents.
+    /// </para>
+    /// 
+    /// <code>
+    /// {
+    ///	  "tests": {
+    ///     "seed": "0x1ffa1d067056b0e6",
+    ///     "culture": "sw-TZ"
+    ///	  }
+    /// }
+    /// </code>
+    ///
+    /// <h4>Environment Variable Configuration Example</h4>
+    ///
+    /// <list type="table">
+    ///     <listheader>
+    ///         <term>Variable</term>
+    ///         <term>Value</term>
+    ///     </listheader>
+    ///     <item>
+    ///         <term>lucene:tests:seed</term>
+    ///         <term>0x1ffa1d067056b0e6</term>
+    ///     </item>
+    ///     <item>
+    ///         <term>lucene:tests:culture</term>
+    ///         <term>sw-TZ</term>
+    ///     </item>
+    /// </list>
+    /// 
     /// </summary>
-
-    // LUCENENET TODO: Randomized seed
-    ///// <h3>Randomized execution and test facilities</h3>
-    /////
-    ///// <para>
-    ///// <see cref="LuceneTestCase"/> uses <see cref="RandomizedRunner"/> to execute test cases.
-    ///// <see cref="RandomizedRunner"/> has built-in support for tests randomization
-    ///// including access to a repeatable <see cref="Random"/> instance. See
-    ///// <see cref="Random"/> property. Any test using <see cref="Random"/> acquired from
-    ///// <see cref="Random"/> should be fully reproducible (assuming no race conditions
-    ///// between threads etc.). The initial seed for a test case is reported in many
-    ///// ways:
-    ///// <list type="bullet">
-    /////     <item>
-    /////         <description>
-    /////             as part of any exception thrown from its body (inserted as a dummy stack
-    /////             trace entry),
-    /////         </description>
-    /////     </item>
-    /////     <item>
-    /////         <description>
-    /////             as part of the main thread executing the test case (if your test hangs,
-    /////             just dump the stack trace of all threads and you'll see the seed),
-    /////         </description>
-    /////     </item>
-    /////     <item>
-    /////         <description>
-    /////             the master seed can also be accessed manually by getting the current
-    /////             context (<see cref="RandomizedContext.Current"/>) and then calling
-    /////             <see cref="RandomizedContext.RunnerSeed"/>.
-    /////         </description>
-    /////     </item>
-    ///// </list>
-    ///// </para>
-    ///// </summary>
     [TestFixture]
     public abstract partial class LuceneTestCase //: Assert // Wait long for leaked threads to complete before failure. zk needs this. -  See LUCENE-3995 for rationale.
     {

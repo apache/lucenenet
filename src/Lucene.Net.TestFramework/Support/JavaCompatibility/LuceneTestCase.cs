@@ -25,10 +25,10 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-    /// <summary>
-    /// LUCENENET specific extensions to <see cref="LuceneTestCase"/> to make it easier to port tests
-    /// from Java with fewer changes.
-    /// </summary>
+
+    // LUCENENET specific extensions to <see cref="LuceneTestCase"/> to make it easier to port tests
+    // from Java with fewer changes.
+    // LUCENENET NOTE: Don't add xml doc comments here, they must be applied only to the main LuceneTestCase class
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "These methods are for making porting tests from Java simpler")]
     public abstract partial class LuceneTestCase
     {
