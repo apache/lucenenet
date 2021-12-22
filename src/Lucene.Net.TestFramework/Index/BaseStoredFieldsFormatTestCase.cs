@@ -324,7 +324,7 @@ namespace Lucene.Net.Index
 
                 foreach (AtomicReaderContext ctx in r.Leaves)
                 {
-                    AtomicReader sub = ctx.AtomicReader; // LUCENENET TODO: Dispose() ?
+                    AtomicReader sub = ctx.AtomicReader;
                     FieldCache.Int32s ids = FieldCache.DEFAULT.GetInt32s(sub, "id", false);
                     for (int docID = 0; docID < sub.NumDocs; docID++)
                     {
