@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Util;
+using System;
 using System.IO;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -93,12 +94,11 @@ namespace Lucene.Net.Store
                     message += "; wrote " + freeSpace + " of " + len + " bytes";
                 }
                 message += ")";
-                // LUCENENET TODO: Finish implementation
-                /*if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
-                  Console.WriteLine(Thread.CurrentThread.Name + ": MDW: now throw fake disk full");
-                  (new Exception()).printStackTrace(System.out);
-                }*/
+                    Console.WriteLine(Thread.CurrentThread.Name + ": MDW: now throw fake disk full");
+                    Console.WriteLine(Environment.StackTrace);
+                }
                 throw new IOException(message);
             }
         }
