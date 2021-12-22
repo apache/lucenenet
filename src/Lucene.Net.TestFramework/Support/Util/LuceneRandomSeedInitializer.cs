@@ -34,6 +34,7 @@ namespace Lucene.Net.Util
 
         private J2N.Randomizer random;
         private long initialSeed;
+        private long? testSeed;
 
         /// <summary>
         /// Tries to get the random seed from either a <see cref="RandomSeedAttribute"/> or the "tests:seed" system property.
@@ -43,43 +44,63 @@ namespace Lucene.Net.Util
         /// <param name="seed">The random seed for a new <see cref="Random"/> instance.
         /// Note this is a subclass of <see cref="Random"/>, since the default doesn't produce consistent results across platforms.</param>
         /// <returns><c>true</c> if the seed was found in context; <c>false</c> if the seed was generated.</returns>
-        private bool TryGetRandomSeedFromContext(Test test, out long seed)
+        private bool TryGetRandomSeedsFromContext(Test test, out long seed, out long? testSeed)
         {
-            bool generate;
-            seed = 0;
+            //bool generate;
+            seed = default;
+            testSeed = default;
+            string seedAsString;
+
             var randomSeedAttribute = (RandomSeedAttribute)test.TypeInfo.Assembly
                 .GetCustomAttributes(typeof(RandomSeedAttribute), inherit: false)
                 .FirstOrDefault();
             if (randomSeedAttribute != null)
             {
-                seed = randomSeedAttribute.RandomSeed;
-                generate = false;
+                seedAsString = randomSeedAttribute.RandomSeed;
+                //generate = false;
             }
             else
             {
                 // For now, ignore anything NUnit3TestAdapter does, because it is messing up repeatable runs.
-                var seedAsString = SystemProperties.GetProperty("tests:seed", null);
-                if (seedAsString is null || "random".Equals(seedAsString, StringComparison.OrdinalIgnoreCase))
-                {
-                    generate = true;
-                }
-                else if (J2N.Numerics.Int64.TryParse(seedAsString, 16, out seed))
-                {
-                    generate = false;
-                }
-                else
-                {
-                    generate = true;
-                    test.MakeInvalid(RANDOM_SEED_PARAMS_MSG);
-                }
+                seedAsString = SystemProperties.GetProperty("tests:seed", null);
             }
 
-            if (generate)
+            if (seedAsString is null || "random".Equals(seedAsString, StringComparison.OrdinalIgnoreCase))
             {
-                seed = new J2N.Randomizer().NextInt64();
+                //generate = true;
                 return false;
             }
-            return true;
+
+            int colonIndex = seedAsString.IndexOf(':');
+            if (colonIndex  != -1)
+            {
+                if (!J2N.Numerics.Int64.TryParse(seedAsString, 0, colonIndex, radix: 16, out seed))
+                {
+                    test.MakeInvalid(RANDOM_SEED_PARAMS_MSG);
+                    return false;
+                }
+
+                // LUCENENET TODO: For now, we are ignoring anything after a colon in the string, but logically it seems like
+                // a second seed would be to set the a test so the RandomAttribute fails on the first iteration. Lucene uses a compound
+                // seed, but it isn't clear from analyzing the source how it is used, just that it can contain any number of colon delimited
+                // values. If we ignore now, we leave the door open for adding a compound seed in the most sensible way later without breaking
+                // the current version when the change is introduced.
+                //if (!J2N.Numerics.Int64.TryParse(seedAsString, colonIndex + 1, seedAsString.Length - (colonIndex + 1), radix: 16, out long testSeedValue))
+                //{
+                //    test.MakeInvalid(RANDOM_SEED_PARAMS_MSG);
+                //    return false;
+                //}
+
+                //testSeed = testSeedValue;
+                return true;
+            }
+            else if (J2N.Numerics.Int64.TryParse(seedAsString, radix: 16, out seed))
+            {
+                return true;
+            }
+
+            test.MakeInvalid(RANDOM_SEED_PARAMS_MSG);
+            return false;
         }
 
         /// <summary>
@@ -94,7 +115,9 @@ namespace Lucene.Net.Util
             if (fixture is null)
                 throw new ArgumentNullException(nameof(fixture));
 
-            TryGetRandomSeedFromContext(fixture, out initialSeed); // NOTE: This sets the initialSeed field for this class.
+            if (!TryGetRandomSeedsFromContext(fixture, out initialSeed, out testSeed)) // NOTE: This sets the initialSeed and testSeed fields for this class.
+                initialSeed = new J2N.Randomizer().NextInt64(); // Seed not configured or explicitly set to "random", so auto-generate
+
             random = new J2N.Randomizer(initialSeed + seedOffset);
 
             int goodFastHashSeed = (int)initialSeed * 31; // LUCENENET: Multiplying 31 to remove the possility of a collision with the test framework while still using a deterministic number.
@@ -108,7 +131,7 @@ namespace Lucene.Net.Util
             // result when there are filters applied.
 
             // Generate a new long value that is the seed for this specific test.
-            return InitializeTestFixture(fixture, new RandomizedContext(fixture, testAssembly, initialSeed, random.NextInt64()));
+            return InitializeTestFixture(fixture, new RandomizedContext(fixture, testAssembly, initialSeed, testSeed ?? random.NextInt64()));
         }
 
         /// <summary>
@@ -146,7 +169,7 @@ namespace Lucene.Net.Util
             test.Properties.Set(
                 RandomizedContext.RandomizedContextPropertyName,
                 // Generate a new long value that is the seed for this specific test.
-                new RandomizedContext(test, testAssembly, initialSeed, random.NextInt64()));
+                new RandomizedContext(test, testAssembly, initialSeed, testSeed ?? random.NextInt64()));
 
             if (test.HasChildren)
             {
