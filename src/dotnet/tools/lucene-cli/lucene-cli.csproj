@@ -24,9 +24,9 @@
   <Import Project="$(SolutionDir)build/NuGet.props" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 
-    <IsPublishable Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">true</IsPublishable>
+    <IsPublishable Condition=" '$(TargetFramework)' == 'net6.0' ">true</IsPublishable>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>lucene</ToolCommandName>
     

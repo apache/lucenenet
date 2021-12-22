@@ -329,9 +329,9 @@ foreach ($testProject in $TestProjects) {
         $frameworks = @('net5.0')
     }
 
-    # Special case - our CLI tool only supports .NET Core 3.1
+    # Special case - our CLI tool only supports .NET 6.0
     if ($projectName.Contains("Tests.Cli")) {
-        $frameworks = @('netcoreapp3.1')
+        $frameworks = @('net6.0')
     }
 
     # Special case - OpenNLP.NET only supports .NET Framework
