@@ -229,7 +229,7 @@ namespace Lucene.Net.Index
             MockDirectoryWrapper wrapper = directory as MockDirectoryWrapper;
             if (wrapper != null)
             {
-                wrapper.AssertNoUnreferencedFilesOnClose = true;
+                wrapper.AssertNoUnreferencedFilesOnDispose = true;
             }
 
             RunStressTest(directory, new ConcurrentMergeScheduler());

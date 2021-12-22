@@ -896,7 +896,7 @@ namespace Lucene.Net.Store
         // NOTE: this is off by default; see LUCENE-5574
         private bool assertNoUnreferencedFilesOnClose;
 
-        public virtual bool AssertNoUnreferencedFilesOnClose // LUCENENET TODO: Rename AssertNoUnreferencedFilesOnDispose ?
+        public virtual bool AssertNoUnreferencedFilesOnDispose // LUCENENET specific: Renamed from AssertNoUnreferencedFilesOnClose
         {
             get => assertNoUnreferencedFilesOnClose; // LUCENENET specific - added getter (to follow MSDN property guidelines)
             set => assertNoUnreferencedFilesOnClose = value;
