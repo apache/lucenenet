@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
             {
                 // We create unreferenced files (we don't even write
                 // a segments file):
-                wrapper.AssertNoUnreferencedFilesOnClose = false;
+                wrapper.AssertNoUnreferencedFilesOnDispose = false;
             }
 
             IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));
@@ -165,7 +165,7 @@ namespace Lucene.Net.Index
             {
                 // We create unreferenced files (we don't even write
                 // a segments file):
-                wrapper.AssertNoUnreferencedFilesOnClose = false;
+                wrapper.AssertNoUnreferencedFilesOnDispose = false;
             }
 
             writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));

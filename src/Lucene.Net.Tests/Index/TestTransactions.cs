@@ -304,8 +304,8 @@ namespace Lucene.Net.Index
 
             // We throw exceptions in deleteFile, which creates
             // leftover files:
-            dir1.AssertNoUnreferencedFilesOnClose = false;
-            dir2.AssertNoUnreferencedFilesOnClose = false;
+            dir1.AssertNoUnreferencedFilesOnDispose = false;
+            dir2.AssertNoUnreferencedFilesOnDispose = false;
 
             InitIndex(dir1);
             InitIndex(dir2);

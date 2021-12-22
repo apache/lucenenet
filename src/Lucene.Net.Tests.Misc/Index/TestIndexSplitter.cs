@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
             // so the unreferenced files are expected.
             if (fsDir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)fsDir).AssertNoUnreferencedFilesOnClose = (false);
+                ((MockDirectoryWrapper)fsDir).AssertNoUnreferencedFilesOnDispose = (false);
             }
 
             MergePolicy mergePolicy = new LogByteSizeMergePolicy();
