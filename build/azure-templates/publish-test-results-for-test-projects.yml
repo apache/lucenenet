@@ -81,18 +81,18 @@ steps:
     testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
     testResultsFileName: '${{ parameters.testResultsFileName }}'
 
-# Special case: Only supports .netcoreapp3.1
+# Special case: Only supports net6.0
 - template: publish-test-results.yml
   parameters:
     testProjectName: 'Lucene.Net.Tests.Cli'
-    framework: 'netcoreapp3.1' # Since condtions are not supported for templates, we check for the file existence within publish-test-results.yml
+    framework: 'net6.0' # Since condtions are not supported for templates, we check for the file existence within publish-test-results.yml
     vsTestPlatform: '${{ parameters.vsTestPlatform }}'
     osName: '${{ parameters.osName }}'
     testResultsFormat: '${{ parameters.testResultsFormat }}'
     testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
     testResultsFileName: '${{ parameters.testResultsFileName }}'
 
-# Special case: Only supports .net48
+# Special case: Only supports net48
 - template: publish-test-results.yml
   parameters:
     testProjectName: 'Lucene.Net.Tests.Analysis.OpenNLP'

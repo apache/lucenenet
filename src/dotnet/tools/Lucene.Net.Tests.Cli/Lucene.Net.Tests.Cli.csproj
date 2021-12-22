@@ -22,11 +22,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <AssemblyTitle>Lucene.Net.Tests.Cli</AssemblyTitle>
 
     <IsPublishable>false</IsPublishable>
-    <IsPublishable Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">true</IsPublishable>
+    <IsPublishable Condition=" '$(TargetFramework)' == 'net6.0' ">true</IsPublishable>
   </PropertyGroup>
 
   <Import Project="$(SolutionDir)build\Dependencies.props" />

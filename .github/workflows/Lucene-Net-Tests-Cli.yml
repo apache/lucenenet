@@ -70,7 +70,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
-        framework: [netcoreapp3.1]
+        framework: [net6.0]
         platform: [x64]
         configuration: [Release]
         exclude:

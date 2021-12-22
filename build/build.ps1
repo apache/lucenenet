@@ -286,8 +286,8 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
         foreach ($framework in $frameworksToTest) {
             $testName = $testProject.Directory.Name
 
-            # Special case - our CLI tool only supports .NET Core 3.1
-            if ($testName.Contains("Tests.Cli") -and (!$framework.StartsWith("netcoreapp3.1"))) {
+            # Special case - our CLI tool only supports .NET 6.0
+            if ($testName.Contains("Tests.Cli") -and (!$framework.StartsWith("net6."))) {
                 $totalProjects--
                 $remainingProjects--
                 continue
@@ -429,7 +429,7 @@ function Get-FrameworksToTest() {
     foreach ($framework in $frameworks) {
         if ($IsWindows) {
             $frameworksToTest.Add($framework)
-        } elseif ($framework.StartsWith('netcore')) {
+        } elseif ($framework.StartsWith('netcore') -or $framework.StartsWith('net5.') -or $framework.StartsWith('net6.')) {
             $frameworksToTest.Add($framework)
         }
     }
