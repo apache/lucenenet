@@ -651,7 +651,7 @@ namespace Lucene.Net.Analysis
                     CheckRandomData(new J2N.Randomizer(seed), a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw);
                     success = true;
                 }
-                catch (Exception e) when (e.IsException()) // LUCENENET TODO: This catch block can be removed because Rethrow.rethrow() simply does what its name says, but need to get rid of the FirstException functionality and fix ThreadJob so it re-throws ThreadInterruptedExcepetion first.
+                catch (Exception e) when (e.IsException())
                 {
                     //Console.WriteLine("Exception in Thread: " + e);
                     //throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
