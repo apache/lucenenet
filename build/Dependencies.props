@@ -63,8 +63,6 @@
     <MorfologikFsaPackageVersion>2.1.7-beta-0004</MorfologikFsaPackageVersion>
     <MorfologikPolishPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikPolishPackageVersion>
     <MorfologikStemmingPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikStemmingPackageVersion>
-    <MSTestTestFrameworkPackageVersion>2.0.0</MSTestTestFrameworkPackageVersion>
-    <MSTestTestAdapterPackageVersion>$(MSTestTestFrameworkPackageVersion)</MSTestTestAdapterPackageVersion>
     <NETStandardLibrary20PackageVersion>2.0.3</NETStandardLibrary20PackageVersion>
     <NewtonsoftJsonPackageVersion>10.0.1</NewtonsoftJsonPackageVersion>
     <NUnit3TestAdapterPackageVersion>3.17.0</NUnit3TestAdapterPackageVersion>
@@ -83,7 +81,5 @@
     <SystemTextEncodingCodePagesPackageVersion>4.3.0</SystemTextEncodingCodePagesPackageVersion>
     <SystemTextEncodingCodePagesPackageVersion Condition=" '$(TargetFramework)' == 'net461' ">5.0.0</SystemTextEncodingCodePagesPackageVersion>
     <TimeZoneConverterPackageVersion>3.5.0</TimeZoneConverterPackageVersion>
-    <XUnitPackageVersion>2.3.1</XUnitPackageVersion>
-    <XUnitRunnerVisualStudioPackageVersion>$(XUnitPackageVersion)</XUnitRunnerVisualStudioPackageVersion>
   </PropertyGroup>
 </Project>
