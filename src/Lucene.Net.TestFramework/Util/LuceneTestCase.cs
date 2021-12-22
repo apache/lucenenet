@@ -1032,7 +1032,7 @@ namespace Lucene.Net.Util
                 message = result.Message + $"\n\nTo reproduce this test result:\n\n" +
                     $"Option 1:\n\n" +
                     $" Apply the following assembly-level attributes:\n\n" +
-                    $"[assembly: Lucene.Net.Util.RandomSeed({RandomizedContext.CurrentContext.RandomSeedAsHex}L)]\n" +
+                    $"[assembly: Lucene.Net.Util.RandomSeed(\"{RandomizedContext.CurrentContext.RandomSeedAsHex}\")]\n" +
                     $"[assembly: NUnit.Framework.SetCulture(\"{Thread.CurrentThread.CurrentCulture.Name}\")]\n\n" +
                     $"Option 2:\n\n" +
                     $" Use the following .runsettings file:\n\n" +
