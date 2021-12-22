@@ -29,7 +29,7 @@ namespace Lucene.Net.TestFramework
      */
 
     /// <summary>
-    /// Facade for MSTest Assertions
+    /// Facade for NUnit Assertions
     /// </summary>
     internal partial class Assert
     {

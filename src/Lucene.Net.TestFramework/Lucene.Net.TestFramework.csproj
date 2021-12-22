@@ -39,10 +39,6 @@
   </PropertyGroup>
 
   <Import Project="$(SolutionDir)build/Dependencies.props" />
-
-  <ItemGroup>
-    <Compile Include="..\Lucene.Net.TestFramework.NUnit\Support\TestFramework\Assert.cs" Link="Support\TestFramework\Assert.cs" />
-  </ItemGroup>
   
   <ItemGroup>
     <None Remove="Util\europarl.lines.txt.gz" />

@@ -97,9 +97,6 @@
     <InternalsVisibleTo Include="Lucene.Net.Suggest" />
 
     <InternalsVisibleTo Include="Lucene.Net.TestFramework" />
-    <InternalsVisibleTo Include="Lucene.Net.TestFramework.MSTest" />
-    <InternalsVisibleTo Include="Lucene.Net.TestFramework.NUnit" />
-    <InternalsVisibleTo Include="Lucene.Net.TestFramework.xUnit" />
     
     <InternalsVisibleTo Include="Lucene.Net.Tests._A-D" />
     <InternalsVisibleTo Include="Lucene.Net.Tests._E-I" />
