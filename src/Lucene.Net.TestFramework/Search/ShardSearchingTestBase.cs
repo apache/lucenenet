@@ -75,17 +75,7 @@ namespace Lucene.Net.Search
     // LUCENENET specific - Specify to unzip the line file docs
     [UseTempLineDocsFile]
     public abstract class ShardSearchingTestBase : LuceneTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public ShardSearchingTestBase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
-
         // LUCENENET specific - de-nested SearcherExpiredException
 
         internal class FieldAndShardVersion

@@ -563,8 +563,8 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             CountdownEvent oneIWConstructed = new CountdownEvent(1);
 
-            DelayedIndexAndCloseRunnable thread1 = new DelayedIndexAndCloseRunnable(this, dir, oneIWConstructed);
-            DelayedIndexAndCloseRunnable thread2 = new DelayedIndexAndCloseRunnable(this, dir, oneIWConstructed);
+            DelayedIndexAndCloseRunnable thread1 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed);
+            DelayedIndexAndCloseRunnable thread2 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed);
 
 
             thread1.Start();
@@ -605,20 +605,9 @@ namespace Lucene.Net.Index
             internal Exception failure = null;
             internal readonly CountdownEvent startIndexing = new CountdownEvent(1);
             internal CountdownEvent iwConstructed;
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-            private readonly LuceneTestCase outerInstance;
-#endif
 
-            /// <param name="outerInstance">
-            /// LUCENENET specific
-            /// Passed in because this class acceses non-static methods,
-            /// NewTextField and NewIndexWriterConfig
-            /// </param>
-            public DelayedIndexAndCloseRunnable(LuceneTestCase outerInstance, Directory dir, CountdownEvent iwConstructed)
+            public DelayedIndexAndCloseRunnable(Directory dir, CountdownEvent iwConstructed)
             {
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this.outerInstance = outerInstance;
-#endif
                 this.dir = dir;
                 this.iwConstructed = iwConstructed;
             }
@@ -635,11 +624,7 @@ namespace Lucene.Net.Index
                     Document doc = new Document();
                     Field field = NewTextField("field", "testData", Field.Store.YES);
                     doc.Add(field);
-                    using IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                        outerInstance,
-#endif
-                        TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+                    using IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                     if (iwConstructed.CurrentCount > 0)
                     {
                         iwConstructed.Signal();
@@ -682,7 +667,7 @@ namespace Lucene.Net.Index
             ReentrantLock commitLock = new ReentrantLock();
             for (int threadID = 0; threadID < threadCount; threadID++)
             {
-                threads[threadID] = new ThreadAnonymousClass(this, d, writerRef, docs, iters, failed, rollbackLock, commitLock);
+                threads[threadID] = new ThreadAnonymousClass(d, writerRef, docs, iters, failed, rollbackLock, commitLock);
                 threads[threadID].Start();
             }
 
@@ -705,10 +690,6 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousClass : ThreadJob
         {
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-            private readonly TestIndexWriterWithThreads outerInstance;
-#endif
-
             private readonly BaseDirectoryWrapper d;
             private readonly AtomicReference<IndexWriter> writerRef;
             private readonly LineFileDocs docs;
@@ -717,11 +698,8 @@ namespace Lucene.Net.Index
             private readonly ReentrantLock rollbackLock;
             private readonly ReentrantLock commitLock;
 
-            public ThreadAnonymousClass(TestIndexWriterWithThreads outerInstance, BaseDirectoryWrapper d, AtomicReference<IndexWriter> writerRef, LineFileDocs docs, int iters, AtomicBoolean failed, ReentrantLock rollbackLock, ReentrantLock commitLock)
+            public ThreadAnonymousClass(BaseDirectoryWrapper d, AtomicReference<IndexWriter> writerRef, LineFileDocs docs, int iters, AtomicBoolean failed, ReentrantLock rollbackLock, ReentrantLock commitLock)
             {
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this.outerInstance = outerInstance;
-#endif
                 this.d = d;
                 this.writerRef = writerRef;
                 this.docs = docs;
@@ -755,11 +733,7 @@ namespace Lucene.Net.Index
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": rollback done; now open new writer");
                                     }
                                     writerRef.Value = 
-                                        new IndexWriter(d, NewIndexWriterConfig(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                                            outerInstance,
-#endif
-                                            TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+                                        new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                                 }
                                 finally
                                 {

@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -36,11 +36,7 @@ namespace Lucene.Net.Search
         public virtual void TestBasics()
         {
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, indexStore);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore);
             for (int i = 0; i < 5; i++)
             {
                 Document doc = new Document();

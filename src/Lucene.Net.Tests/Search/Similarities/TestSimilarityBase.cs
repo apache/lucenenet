@@ -107,11 +107,7 @@ namespace Lucene.Net.Search.Similarities
             base.SetUp();
 
             dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
 
             for (int i = 0; i < docs.Length; i++)
             {

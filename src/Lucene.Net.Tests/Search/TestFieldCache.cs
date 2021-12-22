@@ -802,11 +802,7 @@ namespace Lucene.Net.Search
         public virtual void TestNonexistantFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             iw.AddDocument(doc);
             DirectoryReader ir = iw.GetReader();
@@ -865,11 +861,7 @@ namespace Lucene.Net.Search
         public virtual void TestNonIndexedFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(new StoredField("bogusbytes", "bogus"));
             doc.Add(new StoredField("bogusshorts", "bogus"));

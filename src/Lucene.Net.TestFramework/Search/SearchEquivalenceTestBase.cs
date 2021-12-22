@@ -38,56 +38,14 @@ namespace Lucene.Net.Search
     /// <see cref="AssertSubsetOf(Query, Query)"/>.
     /// </summary>
     public abstract class SearchEquivalenceTestBase : LuceneTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public SearchEquivalenceTestBase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-            beforeAfter.SetBeforeAfterClassActions(BeforeClass, AfterClass);
-#endif
-        }
-#else
-    {
-#endif
         protected static IndexSearcher m_s1, m_s2;
         protected static Directory m_directory;
         protected static IndexReader m_reader;
         protected static Analyzer m_analyzer;
         protected static string m_stopword; // we always pick a character as a stopword
 
-//#if TESTFRAMEWORK_MSTEST
-//        private static readonly IList<string> initalizationLock = new JCG.List<string>();
-
-//        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
-//        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-//        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
-//        {
-//            UninterruptableMonitor.Enter(initializationLock);
-//            try
-//            {
-//                if (!initalizationLock.Contains(context.FullyQualifiedTestClassName))
-//                    initalizationLock.Add(context.FullyQualifiedTestClassName);
-//                else
-//                    return; // Only allow this class to initialize once (MSTest bug)
-//            }
-//            finally
-//            {
-//                UninterruptableMonitor.Exit(initializationLock);
-//            }
-//#else
-#if TESTFRAMEWORK_NUNIT
         [NUnit.Framework.OneTimeSetUp]
-#endif
-//        new public static void BeforeClass()
-//        {
-//#endif
-
-
-        // LUCENENET specific
-        // Is non-static because ClassEnvRule is no longer static.
-        ////[OneTimeSetUp]
         public override void BeforeClass()
         {
             base.BeforeClass();
@@ -98,11 +56,7 @@ namespace Lucene.Net.Search
             m_stopword = "" + GetRandomChar();
             CharacterRunAutomaton stopset = new CharacterRunAutomaton(BasicAutomata.MakeString(m_stopword));
             m_analyzer = new MockAnalyzer(random, MockTokenizer.WHITESPACE, false, stopset);
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                random, m_directory, m_analyzer);
+            RandomIndexWriter iw = new RandomIndexWriter(random, m_directory, m_analyzer);
             Document doc = new Document();
             Field id = new StringField("id", "", Field.Store.NO);
             Field field = new TextField("field", "", Field.Store.NO);
@@ -139,17 +93,7 @@ namespace Lucene.Net.Search
             iw.Dispose();
         }
 
-
-//#if TESTFRAMEWORK_MSTEST
-//        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
-//        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanup(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-//# el
-#if TESTFRAMEWORK_NUNIT
         [NUnit.Framework.OneTimeTearDown]
-#endif
-//        new public static void AfterClass()
-//#else
-        //[OneTimeTearDown]
         public override void AfterClass()
         {
             m_reader.Dispose();

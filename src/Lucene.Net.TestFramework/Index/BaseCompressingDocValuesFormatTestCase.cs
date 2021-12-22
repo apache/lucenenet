@@ -6,16 +6,8 @@ using Lucene.Net.Util.Packed;
 using System.Collections.Generic;
 using RandomizedTesting.Generators;
 using JCG = J2N.Collections.Generic;
-
-#if TESTFRAMEWORK_MSTEST
-using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-#elif TESTFRAMEWORK_NUNIT
-using Test = NUnit.Framework.TestAttribute;
-#elif TESTFRAMEWORK_XUNIT
-using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
-#endif
-
 using Assert = Lucene.Net.TestFramework.Assert;
+using Test = NUnit.Framework.TestAttribute;
 
 namespace Lucene.Net.Index
 {
@@ -39,16 +31,7 @@ namespace Lucene.Net.Index
     /// <summary>
     /// Extends <see cref="BaseDocValuesFormatTestCase"/> to add compression checks. </summary>
     public abstract class BaseCompressingDocValuesFormatTestCase : BaseDocValuesFormatTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public BaseCompressingDocValuesFormatTestCase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
         internal static long DirSize(Directory d)
         {
             long size = 0;

@@ -555,11 +555,7 @@ namespace Lucene.Net.Search
         public virtual void TestEvilSearcherFactory()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
             w.Commit();
 
             IndexReader other = DirectoryReader.Open(dir);
@@ -594,11 +590,7 @@ namespace Lucene.Net.Search
 
             public override IndexSearcher NewSearcher(IndexReader ignored)
             {
-                return LuceneTestCase.NewSearcher(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    outerInstance,
-#endif
-                    other);
+                return LuceneTestCase.NewSearcher(other);
             }
         }
 

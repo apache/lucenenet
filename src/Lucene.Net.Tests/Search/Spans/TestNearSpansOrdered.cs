@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -84,11 +84,7 @@ namespace Lucene.Net.Search.Spans
         public virtual void TestSpanNearQuery()
         {
             SpanNearQuery q = MakeQuery();
-            CheckHits.DoCheckHits(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q, FIELD, searcher, new int[] { 0, 1 });
+            CheckHits.DoCheckHits(Random, q, FIELD, searcher, new int[] { 0, 1 });
         }
 
         public virtual string s(Spans span)

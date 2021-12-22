@@ -78,8 +78,6 @@ namespace Lucene.Net.Index
         }
 
 
-
-#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         /// <summary>
         /// Create a <see cref="RandomIndexWriter"/> with a random config: Uses <see cref="LuceneTestCase.TEST_VERSION_CURRENT"/> and <see cref="MockAnalyzer"/>.
         /// </summary>
@@ -103,59 +101,6 @@ namespace Lucene.Net.Index
             : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, v, a))
         {
         }
-#else
-        /// <summary>
-        /// Create a <see cref="RandomIndexWriter"/> with a random config: Uses <see cref="LuceneTestCase.TEST_VERSION_CURRENT"/> and <see cref="MockAnalyzer"/>.
-        /// </summary>
-        /// <param name="luceneTestCase">The current test instance.</param>
-        /// <param name="r"></param>
-        /// <param name="dir"></param>
-        // LUCENENET specific
-        // Similarity and TimeZone parameters allow a RandomIndexWriter to be
-        // created without adding a dependency on 
-        // <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
-        // <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
-        public RandomIndexWriter(LuceneTestCase luceneTestCase, Random r, Directory dir)
-            : this(r, dir, luceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(r)))
-        {
-        }
-
-        /// <summary>
-        /// Create a <see cref="RandomIndexWriter"/> with a random config: Uses <see cref="LuceneTestCase.TEST_VERSION_CURRENT"/>.
-        /// </summary>
-        /// <param name="luceneTestCase">The current test instance.</param>
-        /// <param name="r"></param>
-        /// <param name="dir"></param>
-        /// <param name="a"></param>
-        // LUCENENET specific
-        // Similarity and TimeZone parameters allow a RandomIndexWriter to be
-        // created without adding a dependency on 
-        // <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
-        // <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
-        public RandomIndexWriter(LuceneTestCase luceneTestCase, Random r, Directory dir, Analyzer a)
-            : this(r, dir, luceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, a))
-        {
-        }
-
-        /// <summary>
-        /// Creates a <see cref="RandomIndexWriter"/> with a random config.
-        /// </summary>
-        /// <param name="luceneTestCase">The current test instance.</param>
-        /// <param name="r"></param>
-        /// <param name="dir"></param>
-        /// <param name="v"></param>
-        /// <param name="a"></param>
-
-        // LUCENENET specific
-        // Similarity and TimeZone parameters allow a RandomIndexWriter to be
-        // created without adding a dependency on 
-        // <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
-        // <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
-        public RandomIndexWriter(LuceneTestCase luceneTestCase, Random r, Directory dir, LuceneVersion v, Analyzer a)
-            : this(r, dir, luceneTestCase.NewIndexWriterConfig(r, v, a))
-        {
-        }
-#endif
 
         /// <summary>
         /// Creates a <see cref="RandomIndexWriter"/> with the provided config </summary>

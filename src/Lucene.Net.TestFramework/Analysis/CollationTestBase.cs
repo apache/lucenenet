@@ -35,16 +35,7 @@ namespace Lucene.Net.Analysis
     /// Base test class for testing Unicode collation.
     /// </summary>
     public abstract class CollationTestBase : LuceneTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public CollationTestBase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
         protected string m_firstRangeBeginningOriginal = "\u062F";
         protected string m_firstRangeEndOriginal = "\u0698";
 

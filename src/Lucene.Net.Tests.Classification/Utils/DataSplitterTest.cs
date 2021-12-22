@@ -45,11 +45,7 @@ namespace Lucene.Net.Classification
         {
             base.SetUp();
             dir = NewDirectory();
-            indexWriter = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir, new MockAnalyzer(Random));
+            indexWriter = new RandomIndexWriter(Random, dir, new MockAnalyzer(Random));
 
             FieldType ft = new FieldType(TextField.TYPE_STORED);
             ft.StoreTermVectors = true;

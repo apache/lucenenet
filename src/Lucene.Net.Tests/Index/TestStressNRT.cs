@@ -489,11 +489,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            searcher = NewSearcher(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                                outerInstance,
-#endif
-                                r);
+                            searcher = NewSearcher(r);
                             lastReader = r;
                             lastSearcher = searcher;
                         }

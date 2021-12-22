@@ -2,23 +2,14 @@
 // LUCENENET NOTE: This class now exists both here and in Lucene.Net.Tests
 using J2N.Threading;
 using Lucene.Net.Index;
-using Lucene.Net.MockFile;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using RandomizedTesting.Generators;
 using System;
 using System.IO;
 using System.Threading;
-using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Assert = Lucene.Net.TestFramework.Assert;
-using RandomizedTesting.Generators;
-
-#if TESTFRAMEWORK_MSTEST
-using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-#elif TESTFRAMEWORK_NUNIT
 using Test = NUnit.Framework.TestAttribute;
-#elif TESTFRAMEWORK_XUNIT
-using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
-#endif
 
 namespace Lucene.Net.Store
 {
@@ -42,21 +33,8 @@ namespace Lucene.Net.Store
     /// <summary>
     /// Base class for per-Directory tests.
     /// </summary>
-#if TESTFRAMEWORK_MSTEST
-    [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
-#endif
     public abstract class BaseDirectoryTestCase : LuceneTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public BaseDirectoryTestCase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
-
         /// <summary>
         /// A subclass returns the <see cref="Directory"/> to be tested; if it's
         /// an FS-based directory it should point to the specified

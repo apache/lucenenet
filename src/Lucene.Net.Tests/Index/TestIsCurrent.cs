@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -40,11 +40,7 @@ namespace Lucene.Net.Index
 
             // initialize directory
             directory = NewDirectory();
-            writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, directory);
+            writer = new RandomIndexWriter(Random, directory);
 
             // write document
             Document doc = new Document();

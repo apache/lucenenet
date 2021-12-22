@@ -28,14 +28,7 @@ using Double = J2N.Numerics.Double;
 using Int32 = J2N.Numerics.Int32;
 using Int64 = J2N.Numerics.Int64;
 using Single = J2N.Numerics.Single;
-
-#if TESTFRAMEWORK_MSTEST
-using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-#elif TESTFRAMEWORK_NUNIT
 using Test = NUnit.Framework.TestAttribute;
-#elif TESTFRAMEWORK_XUNIT
-using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
-#endif
 
 namespace Lucene.Net.Index
 {
@@ -64,16 +57,7 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
     public abstract class BaseStoredFieldsFormatTestCase : BaseIndexFileFormatTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public BaseStoredFieldsFormatTestCase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
         protected override void AddRandomFields(Document d)
         {
             int numValues = Random.Next(3);
@@ -274,11 +258,7 @@ namespace Lucene.Net.Index
             {
                 var numDocs = AtLeast(500);
                 var answers = new Number[numDocs];
-                using (var w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                        this,
-#endif
-                        Random, dir))
+                using (var w = new RandomIndexWriter(Random, dir))
                 {
                     NumericType[] typeAnswers = new NumericType[numDocs];
                     for (int id = 0; id < numDocs; id++)
@@ -370,11 +350,7 @@ namespace Lucene.Net.Index
             IndexReader r = null;
             try
             {
-                using (RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                        this,
-#endif
-                        Random, dir))
+                using (RandomIndexWriter w = new RandomIndexWriter(Random, dir))
                 {
                     Document doc = new Document();
                     FieldType onlyStored = new FieldType();
@@ -808,11 +784,7 @@ namespace Lucene.Net.Index
                 }
                 w.Commit();
                 w.Dispose();
-                w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                        this,
-#endif
-                        Random, dir);
+                w = new RandomIndexWriter(Random, dir);
                 w.ForceMerge(TestUtil.NextInt32(Random, 1, 3));
                 w.Commit();
             }

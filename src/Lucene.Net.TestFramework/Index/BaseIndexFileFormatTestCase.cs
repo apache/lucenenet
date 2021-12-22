@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -8,14 +8,7 @@ using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using JCG = J2N.Collections.Generic;
-
-#if TESTFRAMEWORK_MSTEST
-using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-#elif TESTFRAMEWORK_NUNIT
 using Test = NUnit.Framework.TestAttribute;
-#elif TESTFRAMEWORK_XUNIT
-using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
-#endif
 
 namespace Lucene.Net.Index
 {
@@ -40,22 +33,10 @@ namespace Lucene.Net.Index
     /// Common tests to all index formats.
     /// </summary>
     public abstract class BaseIndexFileFormatTestCase : LuceneTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        // LUCENENET specific - this class was internal in Java, but we can't mark it that way
-        // because it has public subclasses. So we are creating an internal constructor instead.
-        internal BaseIndexFileFormatTestCase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-
         // LUCENENET specific - this class was internal in Java, but we can't mark it that way
         // because it has public subclasses. So we are creating an internal constructor instead.
         internal BaseIndexFileFormatTestCase() { }
-#endif
 
         /// <summary>
         /// Returns the codec to run tests against </summary>

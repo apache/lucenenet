@@ -317,11 +317,7 @@ namespace Lucene.Net.Analysis
             Analyzer @delegate = new MockAnalyzer(Random);
             Analyzer a = new AnalyzerWrapperAnonymousClass2(this, @delegate.Strategy, positionGap, offsetGap, @delegate);
 
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, NewDirectory());
+            RandomIndexWriter writer = new RandomIndexWriter(Random, NewDirectory());
             Document doc = new Document();
             FieldType ft = new FieldType();
             ft.IsIndexed = true;

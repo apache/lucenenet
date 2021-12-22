@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -42,11 +42,7 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(500);
 
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
 
             Document doc = new Document();
             Field id = NewStringField("id", "", Field.Store.NO);

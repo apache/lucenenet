@@ -1,5 +1,4 @@
-#if TESTFRAMEWORK_NUNIT
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Lucene.Net.Attributes
 {
@@ -35,4 +34,3 @@ namespace Lucene.Net.Attributes
         }
     }
 }
-#endif

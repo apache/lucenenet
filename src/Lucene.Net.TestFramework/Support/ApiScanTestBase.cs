@@ -33,17 +33,8 @@ namespace Lucene.Net.Util
     /// by end users.
     /// </summary>
     public abstract class ApiScanTestBase : LuceneTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
-    {
-        internal ApiScanTestBase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
     {
         internal ApiScanTestBase() { } // LUCENENET: Not for use by end users
-#endif
 
         /// <summary>
         /// Private fields must be upper case separated with underscores, 

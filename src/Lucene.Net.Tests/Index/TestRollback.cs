@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -37,11 +37,7 @@ namespace Lucene.Net.Index
         public virtual void TestRollbackIntegrityWithBufferFlush()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter rw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter rw = new RandomIndexWriter(Random, dir);
             for (int i = 0; i < 5; i++)
             {
                 Document doc = new Document();

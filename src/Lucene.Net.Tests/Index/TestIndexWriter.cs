@@ -1167,11 +1167,7 @@ namespace Lucene.Net.Index
                 // make a little directory for addIndexes
                 // LUCENE-2239: won't work with NIOFS/MMAP
                 adder = new MockDirectoryWrapper(this.random, new RAMDirectory());
-                IndexWriterConfig conf = NewIndexWriterConfig(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    outerInstance,
-#endif
-                    this.random, TEST_VERSION_CURRENT, new MockAnalyzer(this.random));
+                IndexWriterConfig conf = NewIndexWriterConfig(this.random, TEST_VERSION_CURRENT, new MockAnalyzer(this.random));
                 using IndexWriter w = new IndexWriter(adder, conf);
                 Document doc = new Document();
                 doc.Add(NewStringField(this.random, "id", "500", Field.Store.NO));
@@ -1233,11 +1229,7 @@ namespace Lucene.Net.Index
                                 w.Dispose();
                                 w = null;
                             }
-                            IndexWriterConfig conf = NewIndexWriterConfig(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                                outerInstance,
-#endif
-                                random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMaxBufferedDocs(2);
+                            IndexWriterConfig conf = NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMaxBufferedDocs(2);
                             w = new IndexWriter(dir, conf);
 
                             Document doc = new Document();
@@ -2033,11 +2025,7 @@ namespace Lucene.Net.Index
         public virtual void TestWickedLongTerm()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir, new StringSplitAnalyzer());
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, new StringSplitAnalyzer());
 
             char[] chars = new char[DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8];
             Arrays.Fill(chars, 'x');
@@ -2090,11 +2078,7 @@ namespace Lucene.Net.Index
             Field contentField = new Field("content", "", customType);
             doc.Add(contentField);
 
-            w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            w = new RandomIndexWriter(Random, dir);
 
             contentField.SetStringValue("other");
             w.AddDocument(doc);
@@ -2198,11 +2182,7 @@ namespace Lucene.Net.Index
             // somehow "knows" a lock is held against write.lock
             // even if you remove that file:
             d.SetLockFactory(new SimpleFSLockFactory());
-            RandomIndexWriter w1 = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d);
+            RandomIndexWriter w1 = new RandomIndexWriter(Random, d);
             w1.DeleteAll();
             try
             {
@@ -2397,11 +2377,7 @@ namespace Lucene.Net.Index
                 TokenStream stream = new MockTokenFilter(tokenizer, MockTokenFilter.ENGLISH_STOPSET);
                 return new TokenStreamComponents(tokenizer, stream);
             });
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir, a);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, a);
             Document doc = new Document();
             doc.Add(new TextField("body", "just a", Field.Store.NO));
             doc.Add(new TextField("body", "test of gaps", Field.Store.NO));
@@ -2432,11 +2408,7 @@ namespace Lucene.Net.Index
                 stream = new MockTokenFilter(stream, new CharacterRunAutomaton(secondSet));
                 return new TokenStreamComponents(tokenizer, stream);
             });
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir, a);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, a);
             Document doc = new Document();
             doc.Add(new TextField("body", "just a foobar", Field.Store.NO));
             doc.Add(new TextField("body", "test of gaps", Field.Store.NO));
@@ -2949,11 +2921,7 @@ namespace Lucene.Net.Index
                 dir.DeleteFile(fileName);
             }
 
-            w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            w = new RandomIndexWriter(Random, dir);
             w.AddDocument(doc);
             w.Dispose();
             r.Dispose();

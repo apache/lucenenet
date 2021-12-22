@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -46,11 +46,7 @@ namespace Lucene.Net.Search.Spans
             CharacterRunAutomaton stopSet = new CharacterRunAutomaton((new RegExp("the|a|of")).ToAutomaton());
             Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, stopSet);
 
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir, analyzer);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, analyzer);
             Document doc = new Document();
             doc.Add(NewTextField("field", "the quick brown fox", Field.Store.NO));
             writer.AddDocument(doc);

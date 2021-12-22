@@ -4,15 +4,7 @@ using RandomizedTesting.Generators;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 using BitSet = J2N.Collections.BitSet;
-
-
-#if TESTFRAMEWORK_MSTEST
-using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-#elif TESTFRAMEWORK_NUNIT
 using Test = NUnit.Framework.TestAttribute;
-#elif TESTFRAMEWORK_XUNIT
-using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
-#endif
 
 namespace Lucene.Net.Util
 {
@@ -36,19 +28,8 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Base test class for <see cref="DocIdSet"/>s. </summary>
     public abstract class BaseDocIdSetTestCase<T> : LuceneTestCase
-        
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
-        where T : Lucene.Net.Search.DocIdSet
+        where T : DocIdSet
     {
-        public BaseDocIdSetTestCase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-        where T : Lucene.Net.Search.DocIdSet
-    {
-#endif
         /// <summary>
         /// Create a copy of the given <see cref="BitSet"/> which has <paramref name="length"/> bits. </summary>
         public abstract T CopyOf(BitSet bs, int length);
@@ -173,9 +154,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Assert that the content of the <see cref="DocIdSet"/> is the same as the content of the <see cref="BitSet"/>.
         /// </summary>
-#pragma warning disable xUnit1013
         public virtual void AssertEquals(int numBits, BitSet ds1, T ds2)
-#pragma warning restore xUnit1013
         {
             // nextDoc
             DocIdSetIterator it2 = ds2.GetIterator();

@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -41,11 +41,7 @@ namespace Lucene.Net.Search
         public virtual void TestNot_Mem()
         {
             Directory store = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, store);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, store);
 
             Document d1 = new Document();
             d1.Add(NewTextField("field", "a b", Field.Store.YES));

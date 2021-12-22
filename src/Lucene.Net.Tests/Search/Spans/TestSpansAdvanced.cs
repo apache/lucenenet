@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -141,11 +141,7 @@ namespace Lucene.Net.Search.Spans
         /// <param name="expectedScores"> the expected scores of the hits </param>
         protected internal void AssertHits(IndexSearcher s, Query query, string description, string[] expectedIds, float[] expectedScores)
         {
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, query, s);
+            QueryUtils.Check(Random, query, s);
 
             const float tolerance = 1e-5f;
 

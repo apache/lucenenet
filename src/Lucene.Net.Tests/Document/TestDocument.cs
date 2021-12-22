@@ -190,11 +190,7 @@ namespace Lucene.Net.Documents
         public virtual void TestGetValuesForIndexedDocument()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             writer.AddDocument(MakeDocumentWithFields());
             IndexReader reader = writer.GetReader();
 
@@ -227,11 +223,7 @@ namespace Lucene.Net.Documents
         public virtual void TestPositionIncrementMultiFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             writer.AddDocument(MakeDocumentWithFields());
             IndexReader reader = writer.GetReader();
 
@@ -311,11 +303,7 @@ namespace Lucene.Net.Documents
             doc.Add(new StringField("keyword", "test", Field.Store.YES));
 
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             writer.AddDocument(doc);
             field.SetStringValue("id2");
             writer.AddDocument(doc);
@@ -378,11 +366,7 @@ namespace Lucene.Net.Documents
         public virtual void TestTransitionAPI()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
 
             Documents.Document doc = new Documents.Document();
 #pragma warning disable 612, 618
@@ -463,11 +447,7 @@ namespace Lucene.Net.Documents
             Assert.AreEqual(new string[] { "5", "4" }, doc.GetValues("int"));
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
             iw.AddDocument(doc);
             DirectoryReader ir = iw.GetReader();
             Documents.Document sdoc = ir.Document(0);

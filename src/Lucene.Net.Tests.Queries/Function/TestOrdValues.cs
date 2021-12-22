@@ -85,11 +85,7 @@ namespace Lucene.Net.Tests.Queries.Function
 
             Query q = new FunctionQuery(vs);
             Log("test: " + q);
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q, s);
+            QueryUtils.Check(Random, q, s);
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
             assertEquals("All docs should be matched!", N_DOCS, h.Length);
             string prevID = inOrder

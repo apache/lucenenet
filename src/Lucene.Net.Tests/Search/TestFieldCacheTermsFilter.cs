@@ -41,11 +41,7 @@ namespace Lucene.Net.Search
         {
             string fieldName = "field1";
             Directory rd = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, rd);
+            RandomIndexWriter w = new RandomIndexWriter(Random, rd);
             for (int i = 0; i < 100; i++)
             {
                 Document doc = new Document();

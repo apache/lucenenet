@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -145,11 +145,7 @@ namespace Lucene.Net.Search.Payloads
             Reader = DirectoryReader.Open(writer, true);
             writer.Dispose();
 
-            IndexSearcher searcher = LuceneTestCase.NewSearcher(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                null, // LUCENENET: Passing null allows us to bypass similarity, which we are setting here, anyway
-#endif
-                Reader);
+            IndexSearcher searcher = LuceneTestCase.NewSearcher(Reader);
             searcher.Similarity = similarity;
             return searcher;
         }

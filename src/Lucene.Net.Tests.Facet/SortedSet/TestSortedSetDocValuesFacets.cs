@@ -56,11 +56,7 @@ namespace Lucene.Net.Facet.SortedSet
 
             FacetsConfig config = new FacetsConfig();
             config.SetMultiValued("a", true);
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesFacetField("a", "foo"));
@@ -109,11 +105,7 @@ namespace Lucene.Net.Facet.SortedSet
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -161,11 +153,7 @@ namespace Lucene.Net.Facet.SortedSet
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -223,11 +211,7 @@ namespace Lucene.Net.Facet.SortedSet
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -269,11 +253,7 @@ namespace Lucene.Net.Facet.SortedSet
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -312,11 +292,7 @@ namespace Lucene.Net.Facet.SortedSet
             Directory indexDir = NewDirectory();
             Directory taxoDir = NewDirectory();
 
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, indexDir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, indexDir);
             FacetsConfig config = new FacetsConfig();
             int numDocs = AtLeast(1000);
             int numDims = TestUtil.NextInt32(Random, 1, 7);

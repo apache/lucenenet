@@ -24,37 +24,8 @@ namespace Lucene.Net.Codecs.Asserting
     /// <summary>
     /// Test <see cref="AssertingPostingsFormat"/> directly
     /// </summary>
-#if TESTFRAMEWORK_MSTEST
-    [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
-#endif
     public class TestAssertingPostingsFormat : BasePostingsFormatTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public TestAssertingPostingsFormat(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
-
-//#if TESTFRAMEWORK_MSTEST
-//        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute]
-//        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
-//        {
-//            Lucene.Net.Util.LuceneTestCase.BeforeClass(context);
-//            Lucene.Net.Index.BasePostingsFormatTestCase.BeforeClass(context);
-//        }
-
-//        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute]
-//        new public static void AfterClass()
-//        {
-//            Lucene.Net.Index.BasePostingsFormatTestCase.AfterClass();
-//            Lucene.Net.Util.LuceneTestCase.AfterClass();
-//        }
-//#endif
-
         private readonly Codec codec = new AssertingCodec();
         protected override Codec GetCodec()
         {
