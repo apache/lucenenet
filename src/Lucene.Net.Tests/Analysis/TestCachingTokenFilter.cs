@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
 using NUnit.Framework;
@@ -42,11 +42,7 @@ namespace Lucene.Net.Analysis
         public virtual void TestCaching()
         {
             Directory dir = new RAMDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             TokenStream stream = new TokenStreamAnonymousClass(this);
 

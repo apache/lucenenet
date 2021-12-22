@@ -1,6 +1,5 @@
 ﻿using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
-using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -8,14 +7,7 @@ using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;
-
-#if TESTFRAMEWORK_MSTEST
-using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-#elif TESTFRAMEWORK_NUNIT
 using Test = NUnit.Framework.TestAttribute;
-#elif TESTFRAMEWORK_XUNIT
-using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
-#endif
 
 namespace Lucene.Net.Index
 {
@@ -40,16 +32,7 @@ namespace Lucene.Net.Index
     /// Base test case for <see cref="Index.MergePolicy"/>.
     /// </summary>
     public abstract class BaseMergePolicyTestCase : LuceneTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public BaseMergePolicyTestCase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
         /// <summary>
         /// Create a new <see cref="Index.MergePolicy"/> instance. </summary>
         new protected abstract MergePolicy NewMergePolicy(); // LUCENENET specific - renamed from MergePolicy() to be consistent

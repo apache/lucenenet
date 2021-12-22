@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
@@ -46,11 +46,7 @@ namespace Lucene.Net.Search
         public virtual void TestPhrasePrefix()
         {
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, indexStore);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore);
             Document doc1 = new Document();
             Document doc2 = new Document();
             Document doc3 = new Document();

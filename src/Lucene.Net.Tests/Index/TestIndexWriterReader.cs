@@ -485,11 +485,7 @@ namespace Lucene.Net.Index
                 this.numDirs = numDirs;
                 this.mainWriter = mainWriter;
                 addDir = NewDirectory();
-                IndexWriter writer = new IndexWriter(addDir, NewIndexWriterConfig(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    outerInstance,
-#endif
-                    TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
+                IndexWriter writer = new IndexWriter(addDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
                 TestUtil.ReduceOpenFiles(writer);
                 for (int i = 0; i < NUM_INIT_DOCS; i++)
                 {
@@ -1204,11 +1200,7 @@ namespace Lucene.Net.Index
 
             public override void Warm(AtomicReader r)
             {
-                IndexSearcher s = NewSearcher(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    outerInstance,
-#endif
-                    r);
+                IndexSearcher s = NewSearcher(r);
                 TopDocs hits = s.Search(new TermQuery(new Term("foo", "bar")), 10);
                 Assert.AreEqual(20, hits.TotalHits);
                 didWarm.Value = (true);

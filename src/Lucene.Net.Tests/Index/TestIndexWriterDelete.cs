@@ -339,11 +339,7 @@ namespace Lucene.Net.Index
         public virtual void TestDeleteAllNoDeadLock()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter modifier = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter modifier = new RandomIndexWriter(Random, dir);
             int numThreads = AtLeast(2);
             ThreadJob[] threads = new ThreadJob[numThreads];
             CountdownEvent latch = new CountdownEvent(1);
@@ -1108,11 +1104,7 @@ namespace Lucene.Net.Index
         public virtual void TestDeleteAllSlowly()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
             int NUM_DOCS = AtLeast(1000);
             IList<int> ids = new JCG.List<int>(NUM_DOCS);
             for (int id = 0; id < NUM_DOCS; id++)

@@ -48,11 +48,7 @@ namespace Lucene.Net.Search
 
             // create an index
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, indexStore);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore);
 
             long now = J2N.Time.CurrentTimeMilliseconds();
 
@@ -116,11 +112,7 @@ namespace Lucene.Net.Search
         {
             // create an index
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, indexStore);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore);
 
             long now = J2N.Time.CurrentTimeMilliseconds();
 

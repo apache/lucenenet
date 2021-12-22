@@ -52,16 +52,7 @@ namespace Lucene.Net.Index
     // LUCENENET specific - Specify to unzip the line file docs
     [UseTempLineDocsFile]
     public abstract class ThreadedIndexingAndSearchingTestCase : LuceneTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public ThreadedIndexingAndSearchingTestCase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
         protected readonly AtomicBoolean m_failed = new AtomicBoolean();
         protected readonly AtomicInt32 m_addCount = new AtomicInt32();
         protected readonly AtomicInt32 m_delCount = new AtomicInt32();
@@ -825,11 +816,7 @@ namespace Lucene.Net.Index
                         sum += doc.Fields.Count;
                     }
                 }
-                IndexSearcher searcher = 
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    outerInstance.
-#endif
-                    NewSearcher(reader);
+                IndexSearcher searcher = NewSearcher(reader);
 
                 sum += searcher.Search(new TermQuery(new Term("body", "united")), 10).TotalHits;
 

@@ -23,18 +23,6 @@ using Directory = Lucene.Net.Store.Directory;
 using JCG = J2N.Collections.Generic;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 
-
-//#if TESTFRAMEWORK_MSTEST
-//using CollectionAssert = Lucene.Net.TestFramework.Assert;
-//using Assert = Lucene.Net.TestFramework.Assert;
-//#elif TESTFRAMEWORK_NUNIT
-//using CollectionAssert = NUnit.Framework.CollectionAssert;
-//using Assert = NUnit.Framework.Assert;
-//#elif TESTFRAMEWORK_XUNIT
-//using CollectionAssert = Lucene.Net.TestFramework.Assert;
-//using Assert = Lucene.Net.TestFramework.Assert;
-//#endif
-
 namespace Lucene.Net.Util
 {
     /*

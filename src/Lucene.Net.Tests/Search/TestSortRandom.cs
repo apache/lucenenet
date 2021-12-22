@@ -55,11 +55,7 @@ namespace Lucene.Net.Search
 
             int NUM_DOCS = AtLeast(100);
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(random, dir);
             bool allowDups = random.NextBoolean();
             ISet<string> seen = new JCG.HashSet<string>();
             int maxLength = TestUtil.NextInt32(random, 5, 100);
@@ -152,11 +148,7 @@ namespace Lucene.Net.Search
                 Console.WriteLine("  reader=" + r);
             }
 
-            IndexSearcher idxS = NewSearcher(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                r, false);
+            IndexSearcher idxS = NewSearcher(r, false);
             int ITERS = AtLeast(100);
             for (int iter = 0; iter < ITERS; iter++)
             {

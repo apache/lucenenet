@@ -186,11 +186,7 @@ namespace Lucene.Net.Search
             dq.Add(Tq("id", "d1"));
             dq.Add(Tq("dek", "DOES_NOT_EXIST"));
 
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dq, s);
+            QueryUtils.Check(Random, dq, s);
             Assert.IsTrue(s.TopReaderContext is AtomicReaderContext);
             Weight dw = s.CreateNormalizedWeight(dq);
             AtomicReaderContext context = (AtomicReaderContext)s.TopReaderContext;
@@ -209,11 +205,7 @@ namespace Lucene.Net.Search
             dq.Add(Tq("dek", "albino"));
             dq.Add(Tq("dek", "DOES_NOT_EXIST"));
             Assert.IsTrue(s.TopReaderContext is AtomicReaderContext);
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dq, s);
+            QueryUtils.Check(Random, dq, s);
             Weight dw = s.CreateNormalizedWeight(dq);
             AtomicReaderContext context = (AtomicReaderContext)s.TopReaderContext;
             Scorer ds = dw.GetScorer(context, (context.AtomicReader).LiveDocs);
@@ -227,11 +219,7 @@ namespace Lucene.Net.Search
             DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.0f);
             q.Add(Tq("hed", "albino"));
             q.Add(Tq("hed", "elephant"));
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q, s);
+            QueryUtils.Check(Random, q, s);
 
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
@@ -258,11 +246,7 @@ namespace Lucene.Net.Search
             DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.0f);
             q.Add(Tq("dek", "albino"));
             q.Add(Tq("dek", "elephant"));
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q, s);
+            QueryUtils.Check(Random, q, s);
 
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
@@ -290,11 +274,7 @@ namespace Lucene.Net.Search
             q.Add(Tq("hed", "elephant"));
             q.Add(Tq("dek", "albino"));
             q.Add(Tq("dek", "elephant"));
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q, s);
+            QueryUtils.Check(Random, q, s);
 
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
@@ -320,11 +300,7 @@ namespace Lucene.Net.Search
             DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.01f);
             q.Add(Tq("dek", "albino"));
             q.Add(Tq("dek", "elephant"));
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q, s);
+            QueryUtils.Check(Random, q, s);
 
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
@@ -354,29 +330,17 @@ namespace Lucene.Net.Search
                 q1.Add(Tq("hed", "albino"));
                 q1.Add(Tq("dek", "albino"));
                 q.Add(q1, Occur.MUST); // true,false);
-                QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    this,
-#endif
-                    Random, q1, s);
+                QueryUtils.Check(Random, q1, s);
             }
             {
                 DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.0f);
                 q2.Add(Tq("hed", "elephant"));
                 q2.Add(Tq("dek", "elephant"));
                 q.Add(q2, Occur.MUST); // true,false);
-                QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    this,
-#endif
-                    Random, q2, s);
+                QueryUtils.Check(Random, q2, s);
             }
 
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q, s);
+            QueryUtils.Check(Random, q, s);
 
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
@@ -412,11 +376,7 @@ namespace Lucene.Net.Search
                 q2.Add(Tq("dek", "elephant"));
                 q.Add(q2, Occur.SHOULD); // false,false);
             }
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q, s);
+            QueryUtils.Check(Random, q, s);
 
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
@@ -455,11 +415,7 @@ namespace Lucene.Net.Search
                 q2.Add(Tq("dek", "elephant"));
                 q.Add(q2, Occur.SHOULD); // false,false);
             }
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q, s);
+            QueryUtils.Check(Random, q, s);
 
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
@@ -509,11 +465,7 @@ namespace Lucene.Net.Search
                 q2.Add(Tq("dek", "elephant"));
                 q.Add(q2, Occur.SHOULD); // false,false);
             }
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q, s);
+            QueryUtils.Check(Random, q, s);
 
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 

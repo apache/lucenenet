@@ -307,11 +307,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
             int hits;
             using (Directory ramDir = NewDirectory())
             {
-                using (RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    this,
-#endif
-                    Random, ramDir, analyzer))
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, ramDir, analyzer))
                 {
                     Document doc = new Document();
                     FieldType fieldType = new FieldType();

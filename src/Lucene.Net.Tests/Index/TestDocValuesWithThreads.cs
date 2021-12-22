@@ -188,11 +188,7 @@ namespace Lucene.Net.Index
             Random random = Random;
             int NUM_DOCS = AtLeast(100);
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(random, dir);
             bool allowDups = random.NextBoolean();
             ISet<string> seen = new JCG.HashSet<string>();
             if (Verbose)

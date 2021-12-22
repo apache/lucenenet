@@ -30,9 +30,6 @@
 //    * limitations under the License.
 //    */
 
-//#if TESTFRAMEWORK_MSTEST
-//    [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
-//#endif
 //    public class TestCompressingStoredFieldsFormat : BaseStoredFieldsFormatTestCase
 //    {
 //        const long SECOND = 1000L;

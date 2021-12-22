@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
@@ -51,11 +51,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory);
             Document doc = new Document();
             doc.Add(NewTextField(FN, "the quick brown fox jumps over the lazy ??? dog 493432 49344", Field.Store.NO));
             writer.AddDocument(doc);

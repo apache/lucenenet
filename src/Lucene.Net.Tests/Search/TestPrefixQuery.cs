@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -44,11 +44,7 @@ namespace Lucene.Net.Search
             Directory directory = NewDirectory();
 
             string[] categories = new string[] { "/Computers", "/Computers/Mac", "/Computers/Windows" };
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory);
             for (int i = 0; i < categories.Length; i++)
             {
                 Document doc = new Document();

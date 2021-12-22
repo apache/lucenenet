@@ -1,24 +1,10 @@
 ﻿// Lucene version compatibility level 8.2.0
 // LUCENENET NOTE: This class now exists both here and in Lucene.Net.Tests
-using Lucene.Net.Support;
 using Lucene.Net.Util;
-using Lucene.Net.Util.Automaton;
 using System;
 using System.IO;
-using Lucene.Net.TestFramework;
-using Lucene.Net.Documents;
-using Lucene.Net.Index;
-
-#if TESTFRAMEWORK_MSTEST
-using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
 using Assert = Lucene.Net.TestFramework.Assert;
-#elif TESTFRAMEWORK_NUNIT
 using Test = NUnit.Framework.TestAttribute;
-using Assert = Lucene.Net.TestFramework.Assert;
-#elif TESTFRAMEWORK_XUNIT
-using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
-using Assert = Lucene.Net.TestFramework.Assert;
-#endif
 
 namespace Lucene.Net.Store
 {
@@ -40,21 +26,8 @@ namespace Lucene.Net.Store
     */
 
     // See: https://issues.apache.org/jira/browse/SOLR-12028 Tests cannot remove files on Windows machines occasionally
-#if TESTFRAMEWORK_MSTEST
-    [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
-#endif
     public class TestMockDirectoryWrapper : BaseDirectoryTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public TestMockDirectoryWrapper(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
-
         protected override Directory GetDirectory(DirectoryInfo path)
         {
             MockDirectoryWrapper dir;
@@ -142,18 +115,8 @@ namespace Lucene.Net.Store
 //        public void TestMDWinsideOfMDW()
 //        {
 //            // add MDW inside another MDW
-//#if FEATURE_INSTANCE_CODEC_IMPERSONATION
-//            using (Directory dir = new MockDirectoryWrapper(this, Random, NewMockDirectory()))
-//#else
 //            using (Directory dir = new MockDirectoryWrapper(Random, NewMockDirectory()))
-//#endif
-//#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
 //            using (RandomIndexWriter iw = new RandomIndexWriter(Random, dir))
-//#elif FEATURE_INSTANCE_CODEC_IMPERSONATION
-//            using (RandomIndexWriter iw = new RandomIndexWriter(this, Random, dir))
-//#else
-//            using (RandomIndexWriter iw = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
-//#endif
 //            {
 //                for (int i = 0; i < 20; i++)
 //                {
@@ -207,11 +170,7 @@ namespace Lucene.Net.Store
         //                wrapped.AlwaysCorrupt = true;
 
         //                // MDW will only try to corrupt things if it sees an index:
-        //#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-        //                using (RandomIndexWriter iw = new RandomIndexWriter(this, Random, dir))
-        //#else
         //                using (RandomIndexWriter iw = new RandomIndexWriter(Random, dir))
-        //#endif
         //                {
         //                    iw.AddDocument(new Document());
         //                } // iw.close();

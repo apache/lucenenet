@@ -47,11 +47,7 @@ namespace Lucene.Net.Tests.Queries
         {
             string fieldName = @"field1";
             Directory rd = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, rd);
+            RandomIndexWriter w = new RandomIndexWriter(Random, rd);
             Document doc = new Document();
             doc.Add(NewStringField(fieldName, @"value1", Field.Store.NO));
             w.AddDocument(doc);
@@ -80,11 +76,7 @@ namespace Lucene.Net.Tests.Queries
         public void TestRandom()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
             int num = AtLeast(100);
             var terms = new JCG.List<Term>();
             for (int i = 0; i < num; i++)

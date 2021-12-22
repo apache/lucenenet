@@ -409,11 +409,7 @@ namespace Lucene.Net.Index
                             refreshed = r;
                         }
 
-                        IndexSearcher searcher =
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                            outerInstance.
-#endif
-                            NewSearcher(refreshed);
+                        IndexSearcher searcher = NewSearcher(refreshed);
                         ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("field1", "a" + rnd.Next(refreshed.MaxDoc))), null, 1000).ScoreDocs;
                         if (hits.Length > 0)
                         {

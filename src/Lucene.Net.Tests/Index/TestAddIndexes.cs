@@ -1269,11 +1269,7 @@ namespace Lucene.Net.Index
         public virtual void TestFieldNamesChanged()
         {
             Directory d1 = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d1);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d1);
             Document doc = new Document();
             doc.Add(NewStringField("f1", "doc1 field1", Field.Store.YES));
             doc.Add(NewStringField("id", "1", Field.Store.YES));
@@ -1282,11 +1278,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             Directory d2 = NewDirectory();
-            w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d2);
+            w = new RandomIndexWriter(Random, d2);
             doc = new Document();
             doc.Add(NewStringField("f2", "doc2 field2", Field.Store.YES));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
@@ -1295,11 +1287,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             Directory d3 = NewDirectory();
-            w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d3);
+            w = new RandomIndexWriter(Random, d3);
             w.AddIndexes(r1, r2);
             r1.Dispose();
             d1.Dispose();
@@ -1329,11 +1317,7 @@ namespace Lucene.Net.Index
         public virtual void TestAddEmpty()
         {
             Directory d1 = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d1);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d1);
             MultiReader empty = new MultiReader();
             w.AddIndexes(empty);
             w.Dispose();
@@ -1354,20 +1338,12 @@ namespace Lucene.Net.Index
         public virtual void TestFakeAllDeleted()
         {
             Directory src = NewDirectory(), dest = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, src);
+            RandomIndexWriter w = new RandomIndexWriter(Random, src);
             w.AddDocument(new Document());
             IndexReader allDeletedReader = new AllDeletedFilterReader((AtomicReader)w.GetReader().Leaves[0].Reader);
             w.Dispose();
 
-            w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dest);
+            w = new RandomIndexWriter(Random, dest);
             w.AddIndexes(allDeletedReader);
             w.Dispose();
             DirectoryReader dr = DirectoryReader.Open(src);
@@ -1389,11 +1365,7 @@ namespace Lucene.Net.Index
         public virtual void TestLocksBlock()
         {
             Directory src = NewDirectory();
-            RandomIndexWriter w1 = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, src);
+            RandomIndexWriter w1 = new RandomIndexWriter(Random, src);
             w1.AddDocument(new Document());
             w1.Commit();
 

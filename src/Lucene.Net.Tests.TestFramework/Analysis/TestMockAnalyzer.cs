@@ -1,22 +1,10 @@
 ﻿// Lucene version compatibility level 8.2.0
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
+using RandomizedTesting.Generators;
 using System;
 using System.IO;
-using Lucene.Net.TestFramework;
-using RandomizedTesting.Generators;
-
-#if TESTFRAMEWORK_MSTEST
-using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using Assert = Lucene.Net.TestFramework.Assert;
-#elif TESTFRAMEWORK_NUNIT
 using Test = NUnit.Framework.TestAttribute;
-using Assert = NUnit.Framework.Assert;
-#elif TESTFRAMEWORK_XUNIT
-using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
-using Assert = Lucene.Net.TestFramework.Assert;
-#endif
 
 namespace Lucene.Net.Analysis
 {
@@ -37,21 +25,8 @@ namespace Lucene.Net.Analysis
     * limitations under the License.
     */
 
-#if TESTFRAMEWORK_MSTEST
-    [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
-#endif
     public class TestMockAnalyzer : BaseTokenStreamTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public TestMockAnalyzer(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
-
         /** Test a configuration that behaves a lot like WhitespaceAnalyzer */
         [Test]
         public void TestWhitespace()

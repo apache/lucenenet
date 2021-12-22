@@ -37,11 +37,7 @@ namespace Lucene.Net.Search.Spell
         {
             base.SetUp();
             dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true));
 
             for (int i = 900; i < 1112; i++)
             {
@@ -289,11 +285,7 @@ namespace Lucene.Net.Search.Spell
             try
             {
                 dir = NewDirectory();
-                writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    this,
-#endif
-                    Random, dir, new MockAnalyzer(Random,
+                writer = new RandomIndexWriter(Random, dir, new MockAnalyzer(Random,
                     MockTokenizer.WHITESPACE, false));
                 int maxLength = TestUtil.NextInt32(Random, 5, 50);
                 IList<string> originals = new JCG.List<string>(numDocs);

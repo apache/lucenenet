@@ -1,18 +1,7 @@
 ﻿// Lucene version compatibility level 8.2.0
-using System;
-using Lucene.Net.TestFramework;
 using RandomizedTesting.Generators;
-
-#if TESTFRAMEWORK_MSTEST
-using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using Assert = Lucene.Net.TestFramework.Assert;
-#elif TESTFRAMEWORK_NUNIT
+using System;
 using Test = NUnit.Framework.TestAttribute;
-using Assert = NUnit.Framework.Assert;
-#elif TESTFRAMEWORK_XUNIT
-using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
-using Assert = Lucene.Net.TestFramework.Assert;
-#endif
 
 namespace Lucene.Net.Analysis
 {
@@ -33,20 +22,8 @@ namespace Lucene.Net.Analysis
     * limitations under the License.
     */
 
-#if TESTFRAMEWORK_MSTEST
-    [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
-#endif
     public class TestLookaheadTokenFilter : BaseTokenStreamTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public TestLookaheadTokenFilter(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
         [Test]
         public void TestRandomStrings()
         {

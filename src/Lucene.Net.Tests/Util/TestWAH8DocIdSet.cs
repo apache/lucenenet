@@ -131,9 +131,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Assert that the content of the <see cref="DocIdSet"/> is the same as the content of the <see cref="OpenBitSet"/>.
         /// </summary>
-#pragma warning disable xUnit1013
         public virtual void AssertEquals(int numBits, OpenBitSet ds1, WAH8DocIdSet ds2)
-#pragma warning restore xUnit1013
         {
             // nextDoc
             DocIdSetIterator it2 = ds2.GetIterator();

@@ -98,30 +98,7 @@ namespace Lucene.Net.Analysis
     // LUCENENET specific - Specify to unzip the line file docs
     [UseTempLineDocsFile]
     public abstract class BaseTokenStreamTestCase : LuceneTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public BaseTokenStreamTestCase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
-        //#if TESTFRAMEWORK_MSTEST
-        //        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-        //        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
-        //        {
-        //            Lucene.Net.Util.LuceneTestCase.BeforeClass(context);
-        //        }
-
-        //        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-        //        new public static void AfterClass()
-        //        {
-        //            Lucene.Net.Util.LuceneTestCase.AfterClass();
-        //        }
-        //#endif
-
         // some helpers to test Analyzers and TokenStreams:
 
         // LUCENENET specific - de-nested ICheckClearAttributesAttribute
@@ -606,7 +583,6 @@ namespace Lucene.Net.Analysis
             AssertAnalyzesTo(a, input, new string[] { expected });
         }
 
-#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         /// <summary>
         /// Utility method for blasting tokenstreams with data to make sure they don't do anything crazy
         /// </summary>
@@ -631,44 +607,6 @@ namespace Lucene.Net.Analysis
         {
             CheckRandomData(random, a, iterations, 20, simple, true);
         }
-#else
-        /// <summary>
-        /// Utility method for blasting tokenstreams with data to make sure they don't do anything crazy
-        /// <para/>
-        /// LUCENENET specific
-        /// Non-static to reduce the inter-class dependencies due to use of
-        /// static variables
-        /// </summary>
-        public void CheckRandomData(Random random, Analyzer a, int iterations)
-        {
-            CheckRandomData(random, a, iterations, 20, false, true);
-        }
-
-        /// <summary>
-        /// Utility method for blasting tokenstreams with data to make sure they don't do anything crazy
-        /// <para/>
-        /// LUCENENET specific:
-        /// Non-static to reduce the inter-class dependencies due to use of
-        /// static variables
-        /// </summary>
-        public void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength)
-        {
-            CheckRandomData(random, a, iterations, maxWordLength, false, true);
-        }
-
-        /// <summary>
-        /// Utility method for blasting tokenstreams with data to make sure they don't do anything crazy
-        /// <para/>
-        /// LUCENENET specific:
-        /// Non-static to reduce the inter-class dependencies due to use of
-        /// static variables
-        /// </summary>
-        /// <param name="simple"> true if only ascii strings will be used (try to avoid)</param>
-        public void CheckRandomData(Random random, Analyzer a, int iterations, bool simple)
-        {
-            CheckRandomData(random, a, iterations, 20, simple, true);
-        }
-#endif
 
         internal class AnalysisThread : ThreadJob
         {
@@ -732,21 +670,12 @@ namespace Lucene.Net.Analysis
             }
         }
 
-#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         public static void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple)
         {
             CheckRandomData(random, a, iterations, maxWordLength, simple, true);
         }
 
         public static void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple, bool offsetsAreCorrect)
-#else
-        public void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple)
-        {
-            CheckRandomData(random, a, iterations, maxWordLength, simple, true);
-        }
-
-        public void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple, bool offsetsAreCorrect)
-#endif
         {
             CheckResetException(a, "best effort");
             long seed = random.NextInt64();
@@ -760,11 +689,7 @@ namespace Lucene.Net.Analysis
             if (Rarely(random) && codecOk)
             {
                 dir = NewFSDirectory(CreateTempDir("bttc"));
-                iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    this,
-#endif
-                    new J2N.Randomizer(seed), dir, a);
+                iw = new RandomIndexWriter(new J2N.Randomizer(seed), dir, a);
             }
 
             bool success = false;

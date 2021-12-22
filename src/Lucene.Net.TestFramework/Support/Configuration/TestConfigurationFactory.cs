@@ -49,11 +49,8 @@ namespace Lucene.Net.Configuration
         public IConfiguration GetConfiguration()
         {
             string testDirectory = TestDirectory ?? // For mocking
-#if TESTFRAMEWORK_NUNIT
                 NUnit.Framework.TestContext.CurrentContext.TestDirectory;
-#else
-                AppDomain.CurrentDomain.BaseDirectory;
-#endif
+
             // LUCENENET - use Lazy<T> to make the create operation atomic. See #417.
             return configurationCache.GetOrAdd(testDirectory,
                 (key) => new Lazy<IConfigurationRoot>(() =>
@@ -61,9 +58,7 @@ namespace Lucene.Net.Configuration
                 return new ConfigurationBuilder()
                     .AddEnvironmentVariables(EnvironmentVariablePrefix) // Use a custom prefix to only load Lucene.NET settings
                     .AddJsonFilesFromRootDirectoryTo(currentPath: key, JsonTestSettingsFileName)
-#if TESTFRAMEWORK_NUNIT
                     .AddNUnitTestRunSettings()
-#endif
                     .Build();
             })).Value;
         }

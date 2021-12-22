@@ -1,6 +1,5 @@
 ﻿// Lucene version compatibility level 8.2.0
 using Lucene.Net.Index;
-using Lucene.Net.TestFramework;
 
 namespace Lucene.Net.Codecs.Asserting
 {
@@ -24,34 +23,8 @@ namespace Lucene.Net.Codecs.Asserting
     /// <summary>
     /// Test <see cref="AssertingNormsFormat"/> directly
     /// </summary>
-#if TESTFRAMEWORK_MSTEST
-    [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
-#endif
     public class TestAssertingNormsFormat : BaseTermVectorsFormatTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public TestAssertingNormsFormat(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
-//#if TESTFRAMEWORK_MSTEST
-//        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute]
-//        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
-//        {
-//            Lucene.Net.Util.LuceneTestCase.BeforeClass(context);
-//        }
-
-//        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute]
-//        new public static void AfterClass()
-//        {
-//            Lucene.Net.Util.LuceneTestCase.AfterClass();
-//        }
-//#endif
-
         private readonly Codec codec = new AssertingCodec();
 
         protected override Codec GetCodec()

@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 
@@ -38,11 +38,7 @@ namespace Lucene.Net.Index
         public virtual void Test()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter riw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter riw = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(new TextField("eng", new BugReproTokenStream()));
             riw.AddDocument(doc);
@@ -57,11 +53,7 @@ namespace Lucene.Net.Index
         public virtual void TestMoreDocs()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter riw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter riw = new RandomIndexWriter(Random, dir);
             for (int i = 0; i < 100; i++)
             {
                 Document doc = new Document();

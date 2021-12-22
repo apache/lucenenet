@@ -37,11 +37,7 @@ namespace Lucene.Net.Tests.Queries
         {
             base.SetUp();
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, directory, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false));
 
             //Add series of docs with filterable fields : acces rights, prices, dates and "in-stock" flags
             AddDoc(writer, @"admin guest", @"010", @"20040101", @"Y");

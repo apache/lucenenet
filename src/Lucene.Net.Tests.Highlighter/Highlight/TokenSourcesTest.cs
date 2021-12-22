@@ -343,11 +343,7 @@ namespace Lucene.Net.Search.Highlight
         public void TestPayloads()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             FieldType myFieldType = new FieldType(TextField.TYPE_NOT_STORED);
             myFieldType.StoreTermVectors = (true);
             myFieldType.StoreTermVectorOffsets = (true);

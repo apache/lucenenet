@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using NUnit.Framework;
 using System;
 using System.Text;
@@ -61,11 +61,7 @@ namespace Lucene.Net.Documents
             /// add the doc to a ram index </summary>
             Directory dir = NewDirectory();
             Random r = Random;
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                r, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(r, dir);
             writer.AddDocument(doc);
 
             /// <summary>
@@ -102,11 +98,7 @@ namespace Lucene.Net.Documents
             var doc = new Documents.Document {binaryFldCompressed, stringFldCompressed};
 
             using Directory dir = NewDirectory();
-            using RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            using RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             writer.AddDocument(doc);
 
             using IndexReader reader = writer.GetReader();

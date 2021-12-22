@@ -88,11 +88,7 @@ namespace Lucene.Net.Facet
             FacetsConfig config = new FacetsConfig();
             config.SetHierarchical("Publish Date", true);
 
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
 
             Document doc = new Document();
             doc.Add(new FacetField("Author", "Bob"));
@@ -263,11 +259,7 @@ namespace Lucene.Net.Facet
         {
             Directory dir = NewDirectory();
             Directory taxoDir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
 
             // Writes facet ords to a separate directory from the
             // main index:
@@ -323,11 +315,7 @@ namespace Lucene.Net.Facet
         {
             Directory dir = NewDirectory();
             Directory taxoDir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
 
             // Writes facet ords to a separate directory from the
             // main index:
@@ -1301,11 +1289,7 @@ namespace Lucene.Net.Facet
             // LUCENE-5045: make sure DrillSideways works with an empty index
             Directory dir = NewDirectory();
             Directory taxoDir = NewDirectory();
-            var writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            var writer = new RandomIndexWriter(Random, dir);
             var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
             IndexSearcher searcher = NewSearcher(writer.GetReader());
             var taxoReader = new DirectoryTaxonomyReader(taxoWriter);
