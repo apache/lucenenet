@@ -22,7 +22,7 @@
   <PropertyGroup>
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
-  
+
   <!-- IMPORTANT: When these values are changed, the CI counter number should also be reset. -->
   <PropertyGroup Label="Version of Builds">
     <!-- IMPORTANT: VersionPrefix must always be the same as the Lucene version this is based on.
@@ -54,7 +54,7 @@
     <!-- This is the new symbols format (the only one currently supported at NuGet.org) -->
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
-  
+
   <PropertyGroup Label="Copyright Info">
     <Product>Lucene.Net</Product>
     <Company>The Apache Software Foundation</Company>
@@ -64,6 +64,24 @@
     <CopyrightYearRange Condition=" '$(BeginCopyrightYear)' == '$(CurrentYear)' ">$(CurrentYear)</CopyrightYearRange>
     <Copyright>Copyright © $(CopyrightYearRange) $(Company)</Copyright>
   </PropertyGroup>
+
+  <PropertyGroup Label="SourceLink Settings: https://github.com/dotnet/sourcelink/blob/main/README.md">
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(BUILD_REPOSITORY_PROVIDER)' == 'GitHub' And $(BUILD_REPOSITORY_URI.Contains('apache/lucenenet')) " Label="Deterministic builds: https://github.com/clairernovotny/DeterministicBuilds#readme (Only valid when building against main GitHub repo)">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <!-- This is for testing only, we use SourceLink from any Azure DevOps git repo -->
+  <ItemGroup Condition=" '$(BUILD_REPOSITORY_PROVIDER)' == 'TfsGit' " Label="SourceLink Packages (experimental Azure Repos)">
+    <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.1.1" PrivateAssets="All"/>
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(BUILD_REPOSITORY_PROVIDER)' == 'GitHub' " Label="SourceLink Packages (main repo)">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+  </ItemGroup>
 
   <!-- Settings to override the above Version of Builds. These can be used to 
       "freeze" the build number for a release, so whether building within 
