@@ -35,6 +35,7 @@
     <PackageId>lucene-cli</PackageId>
     <Description>The Lucene.Net command line interface (CLI) is a new cross-platform toolchain with utilities for maintaining Lucene.Net and demos for learning basic Lucene.Net functionality. Run 'lucene' to see usage information.</Description>
     <PackageTags>$(PackageTags);maintenance;utility</PackageTags>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     
     
@@ -46,6 +47,7 @@
   <Import Project="$(SolutionDir)build\Dependencies.props" />
 
   <ItemGroup>
+    <None Include="docs\index.md" Pack="true" PackagePath="\readme.md"/>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
