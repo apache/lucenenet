@@ -23,7 +23,6 @@
     <IsPackable>true</IsPackable>
     <PackageTags>lucene.net;core;text;search;information;retrieval;lucene;apache;analysis;index;query</PackageTags>
     <Authors>The Apache Software Foundation</Authors>
-    <RepositoryUrl>https://github.com/apache/lucenenet</RepositoryUrl>
     <PackageProjectUrl>https://lucenenet.apache.org</PackageProjectUrl>
     <PackageIcon>lucene-net-icon-128x128.png</PackageIcon>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
