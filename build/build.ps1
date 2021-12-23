@@ -32,6 +32,9 @@ properties {
     [string]$globalJsonFile = "$base_directory/global.json"
     [string]$versionPropsFile = "$base_directory/Version.props"
     [string]$build_bat = "$base_directory/build.bat"
+    [string]$luceneCLIReadmeFile = "$base_directory/src/dotnet/tools/lucene-cli/docs/index.md"
+    [string]$rootWebsiteUrl = "https://lucenenet.apache.org"
+    [string]$rootDocsWebsiteUrl = "$rootWebsiteUrl/docs"
 
     [string]$buildCounter     = $(if ($buildCounter) { $buildCounter } else { $env:BuildCounter }) #NOTE: Pass in as a parameter (not a property) or environment variable to override
     [string]$preReleaseCounterPattern = $(if ($preReleaseCounterPattern) { $preReleaseCounterPattern } else { if ($env:PreReleaseCounterPattern) { $env:PreReleaseCounterPattern } else { "0000000000" } })  #NOTE: Pass in as a parameter (not a property) or environment variable to override
@@ -165,6 +168,7 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
     Write-Host "##vso[task.setprogress]'Packing'"
     #create the nuget package output directory
     Ensure-Directory-Exists "$nuget_package_directory"
+    Update-LuceneCLI-Readme-For-Pack $packageVersion
 
     try {
         Exec {
@@ -510,6 +514,17 @@ function Update-Constants-Version([string]$version) {
     (Get-Content $constantsFile) | % {
         $_-replace "(?<=LUCENE_VERSION\s*?=\s*?"")([^""]*)", $version
     } | Set-Content $constantsFile -Force
+}
+
+function Update-LuceneCLI-Readme-For-Pack([string]$version) {
+    Backup-File $luceneCLIReadmeFile
+    (Get-Content $luceneCLIReadmeFile) | % {
+        # Replace version in lucene-cli install command
+        $_ -replace "(?<=lucene-cli(?:\s?-{1,2}\w*?)*?\s+--version\s+)(\d+\.\d+\.\d+(?:\.\d+)?(?:-\w*)?)", $version
+    } | % {
+        # Replace markdown file references with website URLs to the correct documentation version
+        $_ -replace "(?<=\()(\w*/index).md(?=\))", "$rootDocsWebsiteUrl/$version/cli/`$1.html"
+    } | Set-Content $luceneCLIReadmeFile -Force
 }
 
 function Generate-Global-Json {
