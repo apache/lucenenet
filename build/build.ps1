@@ -32,6 +32,7 @@ properties {
     [string]$globalJsonFile = "$base_directory/global.json"
     [string]$versionPropsFile = "$base_directory/Version.props"
     [string]$build_bat = "$base_directory/build.bat"
+    [string]$luceneReadmeFile = "$base_directory/src/Lucene.Net/readme-nuget.md"
     [string]$luceneCLIReadmeFile = "$base_directory/src/dotnet/tools/lucene-cli/docs/index.md"
     [string]$rootWebsiteUrl = "https://lucenenet.apache.org"
     [string]$rootDocsWebsiteUrl = "$rootWebsiteUrl/docs"
@@ -168,6 +169,7 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
     Write-Host "##vso[task.setprogress]'Packing'"
     #create the nuget package output directory
     Ensure-Directory-Exists "$nuget_package_directory"
+    Update-Lucene-Readme-For-Pack $packageVersion
     Update-LuceneCLI-Readme-For-Pack $packageVersion
 
     try {
@@ -514,6 +516,20 @@ function Update-Constants-Version([string]$version) {
     (Get-Content $constantsFile) | % {
         $_-replace "(?<=LUCENE_VERSION\s*?=\s*?"")([^""]*)", $version
     } | Set-Content $constantsFile -Force
+}
+
+function Update-Lucene-Readme-For-Pack([string]$version) {
+    Backup-File $luceneReadmeFile
+    (Get-Content $luceneReadmeFile) | % {
+        # Replace version in lucene-cli install command
+        $_ -replace "(?<=lucene-cli(?:\s?-{1,2}\w*?)*?\s+--version\s+)(\d+\.\d+\.\d+(?:\.\d+)?(?:-\w*)?)", $version
+    } | % {
+        # NuGet absoluteLatest package URL references with current version
+        $_ -replace "(?<=https?://(?:[\w/\.]*?))(absoluteLatest)", $version
+    } | % {
+        # Replace doc version number URL with the current version
+        $_ -replace "(?<=https?://(?:[\w/\.]*?)/docs/)(\d+\.\d+\.\d+(?:\.\d+)?(?:-\w*)?)", $version
+    } | Set-Content $luceneReadmeFile -Force
 }
 
 function Update-LuceneCLI-Readme-For-Pack([string]$version) {

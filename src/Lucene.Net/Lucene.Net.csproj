@@ -29,6 +29,7 @@
 
     <AssemblyTitle>Lucene.Net</AssemblyTitle>
     <Description>Lucene.Net is a full-text search engine library capable of advanced text analysis, indexing, and searching. It can be used to easily add search capabilities to applications. Lucene.Net is a C# port of the popular Java Lucene search engine framework from The Apache Software Foundation, targeted at .NET Framework and .NET Core users.</Description>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
@@ -43,6 +44,7 @@
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Package Files">
+    <None Include="readme-nuget.md" Pack="true" PackagePath="\readme.md"/>
     <None Include="$(LuceneNetCodeAnalysisToolsDir)*.ps1" Pack="true" PackagePath="tools" />
     <None Include="$(LuceneNetCodeAnalysisCSAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="$(LuceneNetCodeAnalysisVBAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/vb" Visible="false" />
