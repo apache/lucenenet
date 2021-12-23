@@ -21,6 +21,12 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- These properties must be set prior to importing NuGet.props -->
+  <PropertyGroup>
+    <Description>Geospatial search for the Lucene.NET full-text search engine library from The Apache Software Foundation.</Description>
+    <PackageDocumentationRelativeUrl>spatial/Lucene.Net.Spatial.html</PackageDocumentationRelativeUrl>
+  </PropertyGroup>
+
   <Import Project="$(SolutionDir)build/NuGet.props" />
   
   <PropertyGroup>
@@ -28,7 +34,6 @@
     <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net45</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Spatial</AssemblyTitle>
-    <Description>Geospatial search for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
     <PackageTags>$(PackageTags);spatial;geo;geospatial;2d</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>

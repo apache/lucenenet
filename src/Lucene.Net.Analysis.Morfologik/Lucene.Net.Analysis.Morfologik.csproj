@@ -21,6 +21,12 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- These properties must be set prior to importing NuGet.props -->
+  <PropertyGroup>
+    <Description>Analyzer for dictionary stemming, built-in Polish dictionary for the Lucene.NET full-text search engine library from The Apache Software Foundation.</Description>
+    <PackageDocumentationRelativeUrl>analysis-morfologik/Lucene.Net.Analysis.Morfologik.html</PackageDocumentationRelativeUrl>
+  </PropertyGroup>
+  
   <Import Project="$(SolutionDir)build/NuGet.props" />
 
   <PropertyGroup>
@@ -29,8 +35,7 @@
 
     <AssemblyTitle>Lucene.Net.Analysis.Morfologik</AssemblyTitle>
     <RootNamespace>Lucene.Net.Analysis</RootNamespace>
-    <Description>Japanese Morphological Analyzer for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
-    <PackageTags>$(PackageTags);analysis;japanese</PackageTags>
+    <PackageTags>$(PackageTags);analysis;polish;ukrainian</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>

@@ -21,6 +21,12 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- These properties must be set prior to importing NuGet.props -->
+  <PropertyGroup>
+    <Description>Framework for testing Lucene.NET-based applications using NUnit.</Description>
+    <PackageDocumentationRelativeUrl>test-framework/overview.html</PackageDocumentationRelativeUrl>
+  </PropertyGroup>
+
   <Import Project="$(SolutionDir)build/NuGet.props" />
 
   <PropertyGroup>
@@ -29,7 +35,6 @@
 
     <AssemblyTitle>Lucene.Net.TestFramework</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
-    <Description>Framework for testing third-party code that uses the Lucene.Net API using NUnit.</Description>
     <PackageTags>$(PackageTags);testframework;test;framework;nunit</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     

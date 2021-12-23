@@ -21,6 +21,12 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- These properties must be set prior to importing NuGet.props -->
+  <PropertyGroup>
+    <Description>Single-document in-memory index implementation for the Lucene.NET full-text search engine library from The Apache Software Foundation.</Description>
+    <PackageDocumentationRelativeUrl>memory/Lucene.Net.Index.Memory.html</PackageDocumentationRelativeUrl>
+  </PropertyGroup>
+
   <Import Project="$(SolutionDir)build/NuGet.props" />
   
   <PropertyGroup>
@@ -28,7 +34,6 @@
     <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net45</TargetFrameworks>
     
     <AssemblyTitle>Lucene.Net.Memory</AssemblyTitle>
-    <Description>Single-document in-memory index implementation for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
     <PackageTags>$(PackageTags);memory</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
