@@ -20,6 +20,12 @@
 
 -->
 <Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- These properties must be set prior to importing NuGet.props -->
+  <PropertyGroup>
+    <Description>System for benchmarking the Lucene.NET full-text search engine library from The Apache Software Foundation.</Description>
+    <PackageDocumentationRelativeUrl>benchmark/Lucene.Net.Benchmarks.html</PackageDocumentationRelativeUrl>
+  </PropertyGroup>
   
   <Import Project="$(SolutionDir)build/NuGet.props" />
 
@@ -28,7 +34,6 @@
     <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net451</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Benchmark</AssemblyTitle>
-    <Description>System for benchmarking the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
     <PackageTags>$(PackageTags);benchmark</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
