@@ -34,13 +34,19 @@
           "**.md"
         ],
         "src": "obj/docfx/api/core"
-      },   
+      },
       {
         "files": [
           "toc.yml",
           "core/toc.yml"
         ],
         "src": "toc"
+      },
+      {
+        "files": [
+          "source-stepping.md"
+        ],
+        "src": "../../src/dotnet/docs"
       }
     ],    
     "overwrite": [  
