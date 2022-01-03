@@ -40,7 +40,7 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build/Dependencies.props" />
+  
 
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" />

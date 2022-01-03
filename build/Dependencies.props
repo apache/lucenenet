@@ -60,6 +60,8 @@
     <MicrosoftExtensionsDependencyInjectionPackageVersion>$(MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion)</MicrosoftExtensionsDependencyInjectionPackageVersion>
     <MicrosoftExtensionsOptionsPackageVersion>2.0.0</MicrosoftExtensionsOptionsPackageVersion>
     <MicrosoftNETTestSdkPackageVersion>16.6.1</MicrosoftNETTestSdkPackageVersion>
+    <MicrosoftSourceLinkAzureReposGitPackageReferenceVersion>1.1.1</MicrosoftSourceLinkAzureReposGitPackageReferenceVersion>
+    <MicrosoftSourceLinkGitHubPackageReferenceVersion>$(MicrosoftSourceLinkAzureReposGitPackageReferenceVersion)</MicrosoftSourceLinkGitHubPackageReferenceVersion>
     <MorfologikFsaPackageVersion>2.1.7-beta-0004</MorfologikFsaPackageVersion>
     <MorfologikPolishPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikPolishPackageVersion>
     <MorfologikStemmingPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikStemmingPackageVersion>

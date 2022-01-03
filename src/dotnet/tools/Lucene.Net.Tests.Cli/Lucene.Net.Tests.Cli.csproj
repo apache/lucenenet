@@ -29,8 +29,6 @@
     <IsPublishable Condition=" '$(TargetFramework)' == 'net6.0' ">true</IsPublishable>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build\Dependencies.props" />
-
   <ItemGroup>
     <Compile Remove="SourceCode\TestInputForParser.cs" />
     <None Remove="Configuration\appsettings.json" />
