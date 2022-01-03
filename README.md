@@ -27,7 +27,7 @@ The Apache Lucene.NET web site is at:
 
 ## Status
 
-Latest Stable Version: Lucene.NET 3.0.3
+Latest Release Version: Lucene.NET 3.0.3
 
 Working toward Lucene.NET 4.8.0 (currently in BETA)
 
