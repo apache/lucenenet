@@ -41,7 +41,7 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build/Dependencies.props" />
+  
 
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Grouping\Lucene.Net.Grouping.csproj" />

@@ -43,7 +43,7 @@
     <NoWarn Label="Collection initialization can be simplified">$(NoWarn);IDE0028</NoWarn>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build/Dependencies.props" />
+  
   
   <ItemGroup>
     <None Remove="Util\europarl.lines.txt.gz" />

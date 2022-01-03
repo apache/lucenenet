@@ -20,6 +20,12 @@
 -->
 <Project>
   <PropertyGroup>
+    <!-- According to the docs (https://docs.microsoft.com/en-us/cpp/build/reference/common-macros-for-build-commands-and-properties?view=vs-2019), the 
+      SolutionDir is only available when running in the IDE, so we patch to ensure it also works when using dotnet.exe -->
+    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)</SolutionDir>
+  </PropertyGroup>
+  
+  <PropertyGroup>
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
 
@@ -73,15 +79,6 @@
   <PropertyGroup Condition=" '$(BUILD_REPOSITORY_PROVIDER)' == 'GitHub' Or '$(BUILD_REPOSITORY_PROVIDER)' == 'TfsGit' " Label="Deterministic builds: https://github.com/clairernovotny/DeterministicBuilds#readme">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
-
-  <!-- This is for testing only, we use SourceLink from any Azure DevOps git repo -->
-  <ItemGroup Condition=" '$(BUILD_REPOSITORY_PROVIDER)' == 'TfsGit' " Label="SourceLink Packages (experimental Azure Repos)">
-    <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.1.1" PrivateAssets="All"/>
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(BUILD_REPOSITORY_PROVIDER)' == 'GitHub' " Label="SourceLink Packages (main repo)">
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
-  </ItemGroup>
 
   <!-- Settings to override the above Version of Builds. These can be used to 
       "freeze" the build number for a release, so whether building within 

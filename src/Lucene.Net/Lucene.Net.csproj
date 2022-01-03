@@ -34,7 +34,7 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build/Dependencies.props" />
+  
 
   <PropertyGroup Label="NuGet Package File Paths">
     <LuceneNetDotNetDir>$(SolutionDir)src\dotnet\</LuceneNetDotNetDir>
