@@ -129,7 +129,7 @@ stages:
         version: '$(BuildSDKVersion)'
 
     - pwsh: |
-        Import-Module "$(BuildDirectory)/psake.psm1"
+        Import-Module "$(BuildDirectory)/psake/psake.psm1"
         $generateBuildBat = $env:ISRELEASE
         $primaryCommand = if ($env:RUNPACK -ne 'false') { 'Pack' } else { 'Compile' }
         $parameters = @{}

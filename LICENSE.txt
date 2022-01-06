@@ -1,4 +1,4 @@
-
+﻿
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
@@ -744,8 +744,7 @@ SOFTWARE.
 
 ---
 
-The code in build/psake.cmd, build/psake.ps1, build/psake.psd1, and build/psake.psm1
-falls under the following license:
+The code in build/psake/ falls under the following license:
 
 psake
 Copyright (c) 2012-13 James Kovacs, Damian Hickey and Contributors
