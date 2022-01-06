@@ -30,8 +30,7 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
   
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>
-    <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net45</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net45</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Analysis.Kuromoji</AssemblyTitle>
     <PackageTags>$(PackageTags);analysis;japanese</PackageTags>

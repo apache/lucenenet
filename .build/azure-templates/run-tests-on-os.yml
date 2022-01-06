@@ -33,6 +33,7 @@ parameters:
   maximumParallelJobs: 8
   maximumAllowedFailures: 0
   where: '' # A test filter expression, as defined by dotnet vstest
+  dotNetSdkVersion: '' # The .NET SDK version to install
   
 steps:
 - checkout: none # self represents the repo where the initial Pipelines YAML file was found
@@ -54,6 +55,7 @@ steps:
     EnsureNotNullOrEmpty('${{ parameters.testResultsFileName }}', 'testResultsFileName')
     EnsureNotNullOrEmpty('${{ parameters.maximumParallelJobs }}', 'maximumParallelJobs')
     EnsureNotNullOrEmpty('${{ parameters.maximumAllowedFailures }}', 'maximumAllowedFailures')
+    EnsureNotNullOrEmpty('${{ parameters.dotNetSdkVersion }}', 'dotNetSdkVersion')
   displayName: 'Validate Template Parameters'
 
 
@@ -73,23 +75,9 @@ steps:
 
 #- pwsh: Get-ChildItem -Path $(System.DefaultWorkingDirectory) # Uncomment for debugging
 
-- task: UseDotNet@2
-  displayName: 'Use .NET Core sdk 3.1.412'
-  inputs:
-    version: 3.1.412
-  condition: and(succeeded(), contains('${{ parameters.framework }}', 'netcoreapp3.'))
-
-- task: UseDotNet@2
-  displayName: 'Use .NET sdk 5.0.400'
-  inputs:
-    version: 5.0.400
-  condition: and(succeeded(), contains('${{ parameters.testTargetFrameworks }}', 'net5.'))
-
-- task: UseDotNet@2
-  displayName: 'Use .NET sdk 6.0.100'
-  inputs:
-    packageType: 'sdk'
-    version: '6.0.100'
+- template: 'install-dotnet-sdk.yml'
+  parameters:
+    sdkVersion: '${{ parameters.dotNetSdkVersion }}'
 
 #- template: 'show-all-files.yml' # Uncomment for debugging
 - pwsh: |

@@ -54,7 +54,7 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 variables:
 - name: BuildCounter
   value: $[counter(variables['VersionSuffix'],coalesce(variables['BuildCounterSeed'], 1250))]
-- name: BuildSDKVersion
+- name: DotNetSDKVersion
   value: '6.0.100'
 - name: DocumentationArtifactName
   value: 'docs'
@@ -122,29 +122,24 @@ stages:
         Write-Host "##vso[task.setvariable variable=RunPack;]$runPack"
       displayName: 'Setup Default Variable Values'
 
-    - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk $(BuildSDKVersion)'
-      inputs:
-        packageType: 'sdk'
-        version: '$(BuildSDKVersion)'
+    - template: '.build/azure-templates/install-dotnet-sdk.yml'
+      parameters:
+        sdkVersion: '$(DotNetSDKVersion)'
 
     - pwsh: |
         Import-Module "$(BuildDirectory)/psake/psake.psm1"
-        $generateBuildBat = $env:ISRELEASE
         $primaryCommand = if ($env:RUNPACK -ne 'false') { 'Pack' } else { 'Compile' }
         $parameters = @{}
         $properties = @{
-            backup_files='false';
-            publish_directory='$(PublishTempDirectory)';
-            nuget_package_directory='$(NuGetArtifactDirectory)';
-            # Lock the build.bat so it only builds this version in the release distribution
-            generateBuildBat=$generateBuildBat
+            backupFiles='false';
+            publishDirectory='$(PublishTempDirectory)';
+            nugetPackageDirectory='$(NuGetArtifactDirectory)'
         }
         [string[]]$tasks = @($primaryCommand)
         if ($env:RunTests -ne 'false') {
             [string[]]$tasks = $primaryCommand,'Publish'
         }
-        Invoke-psake $(BuildDirectory)/runbuild.ps1 -Task $tasks -properties $properties -parameters $parameters
+        Invoke-Psake $(BuildDirectory)/runbuild.ps1 -Task $tasks -properties $properties -parameters $parameters
         exit !($psake.build_success)
       displayName: 'PSake Build, Pack, and Publish'
 
@@ -360,6 +355,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net6_0_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
     condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
@@ -394,6 +390,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net5_0_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
@@ -428,6 +425,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net5_0_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
     condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
@@ -462,6 +460,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_netcoreapp3_1_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
@@ -496,6 +495,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_netcoreapp3_1_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
     condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
@@ -530,6 +530,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net461_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
@@ -554,6 +555,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net461_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
     condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
@@ -578,6 +580,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net48_Windows_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
@@ -595,6 +598,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: 8
         maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net48_Windows_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
     condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
@@ -612,6 +616,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: 8
         maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
 
 - stage: Publish_Stage

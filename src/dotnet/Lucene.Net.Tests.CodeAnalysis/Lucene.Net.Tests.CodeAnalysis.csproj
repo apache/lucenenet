@@ -27,6 +27,7 @@
     
     <IsPublishable>false</IsPublishable>
     <IsPublishable Condition=" '$(TargetFramework)' == 'net5.0' ">true</IsPublishable>
+    <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
   
