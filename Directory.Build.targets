@@ -137,6 +137,17 @@
     </ItemGroup>
   </Target>
 
+  <Target Name="PrintTargetFrameworks" Label="Prints the value for the $(TargetFrameworks) property or 'none' if no frameworks apply. Pass TestProjectsOnly=true to get results only if this is a test project.">
+    <PropertyGroup>
+      <DoOutputTargetFrameworks Condition=" '$(TestProjectsOnly)' != 'true' Or ('$(TestProjectsOnly)' == 'true' And '$(IsTestProject)' == 'true')">true</DoOutputTargetFrameworks>
+      <OutputTargetFrameworks Condition=" '$(DoOutputTargetFrameworks)' == 'true' ">$(TargetFramework)</OutputTargetFrameworks>
+      <!-- Fallback to TargetFrameworks field if TargetFramework is empty -->
+      <OutputTargetFrameworks Condition=" '$(DoOutputTargetFrameworks)' == 'true' And '$(OutputTargetFrameworks)' == '' ">$(TargetFrameworks)</OutputTargetFrameworks>
+      <OutputTargetFrameworks Condition=" '$(OutputTargetFrameworks)' == '' ">none</OutputTargetFrameworks>
+    </PropertyGroup>
+    <Message Text="$(OutputTargetFrameworks)" Importance="high"/>
+  </Target>
+
   <!-- Global PackageReferences -->
   <ItemGroup>
     <!-- This is to allow the .NET Framework references to be machine-indepenedent so builds can happen without installing prerequisites -->

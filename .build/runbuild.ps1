@@ -18,20 +18,20 @@
 # -----------------------------------------------------------------------------------
 
 properties {
-    [string]$base_directory   = Resolve-Path "../."
-    [string]$artifactsDirectory  = "$base_directory/_artifacts"
-    [string]$source_directory = "$base_directory"
-    [string]$tools_directory  = "$base_directory/lib"
-    [string]$nuget_package_directory = "$artifactsDirectory/NuGetPackages"
-    [string]$test_results_directory = "$artifactsDirectory/TestResults"
-    [string]$publish_directory = "$artifactsDirectory/Publish"
-    [string]$solutionFile = "$base_directory/Lucene.Net.sln"
+    [string]$baseDirectory   = Resolve-Path "../."
+    [string]$artifactsDirectory  = "$baseDirectory/_artifacts"
+    [string]$sourceDirectory = "$baseDirectory/src"
+    [string]$testDirectory = "$baseDirectory/src"
+    [string]$toolsDirectory  = "$baseDirectory/lib"
+    [string]$nugetPackageDirectory = "$artifactsDirectory/NuGetPackages"
+    [string]$testResultsDirectory = "$artifactsDirectory/TestResults"
+    [string]$publishDirectory = "$artifactsDirectory/Publish"
+    [string]$solutionFile = "$baseDirectory/Lucene.Net.sln"
     [string]$minimumSdkVersion = "6.0.100"
-    [string]$globalJsonFile = "$base_directory/global.json"
-    [string]$versionPropsFile = "$base_directory/version.props"
-    [string]$build_bat = "$base_directory/build.bat"
-    [string]$luceneReadmeFile = "$base_directory/src/Lucene.Net/readme-nuget.md"
-    [string]$luceneCLIReadmeFile = "$base_directory/src/dotnet/tools/lucene-cli/docs/index.md"
+    [string]$globalJsonFile = "$baseDirectory/global.json"
+    [string]$versionPropsFile = "$baseDirectory/version.props"
+    [string]$luceneReadmeFile = "$baseDirectory/src/Lucene.Net/readme-nuget.md"
+    [string]$luceneCLIReadmeFile = "$baseDirectory/src/dotnet/tools/lucene-cli/docs/index.md"
     [string]$rootWebsiteUrl = "https://lucenenet.apache.org"
     [string]$rootDocsWebsiteUrl = "$rootWebsiteUrl/docs"
 
@@ -42,23 +42,19 @@ properties {
     [string]$version          = Get-Version
     [string]$configuration    = $(if ($configuration) { $configuration } else { if ($env:BuildConfiguration) { $env:BuildConfiguration } else { "Release" } })  #NOTE: Pass in as a parameter (not a property) or environment variable to override
     [string]$platform   = $(if ($platform) { $platform } else { if ($env:BuildPlatform) { $env:BuildPlatform } else { "Any CPU" } })  #NOTE: Pass in as a parameter (not a property) or environment variable to override
-    [bool]$backup_files       = $true
+    [bool]$backupFiles       = $true
     [bool]$prepareForBuild    = $true
-    [bool]$generateBuildBat   = $false
     [bool]$zipPublishedArtifacts = $false
     [string]$publishedArtifactZipFileName = "artifact.zip"
 
-    [int]$maximumParalellJobs = 8
+    [int]$maximumParallelJobs = 8
     
-    #test paramters
-    [string]$frameworks_to_test = "net6.0,net5.0,netcoreapp3.1,net48,net461"
+    #test parameters
+    [string]$projectWithAllTestFrameworks = "$baseDirectory/src/Lucene.Net.Tests.Analysis.Common/Lucene.Net.Tests.Analysis.Common.csproj"
     [string]$where = ""
 }
 
 $backedUpFiles = New-Object System.Collections.ArrayList
-if ($IsWindows -eq $null) {
-    $IsWindows = $env:OS.StartsWith('Windows')
-}
 
 task default -depends Pack
 
@@ -66,7 +62,7 @@ task Clean -description "This task cleans up the build directory" {
     Write-Host "##teamcity[progressMessage 'Cleaning']"
     Write-Host "##vso[task.setprogress]'Cleaning'"
     Remove-Item $artifactsDirectory -Force -Recurse -ErrorAction SilentlyContinue
-    Get-ChildItem $base_directory -Include *.bak -Recurse | foreach ($_) {Remove-Item $_.FullName}
+    Get-ChildItem $baseDirectory -Include *.bak -Recurse | foreach ($_) {Remove-Item $_.FullName}
 }
 
 task UpdateLocalSDKVersion -description "Backs up the project.json file and pins the version to $minimumSdkVersion" {
@@ -94,21 +90,22 @@ task Init -depends CheckSDK, UpdateLocalSDKVersion -description "This task makes
     Write-Output "##myget[buildNumber '$packageVersion']"
     Write-Host "##vso[build.updatebuildnumber]$packageVersion"
 
-    & dotnet.exe --version
-    & dotnet.exe --info
-    Write-Host "Base Directory: $base_directory"
-    Write-Host "Release Directory: $artifactsDirectory"
-    Write-Host "Source Directory: $source_directory"
-    Write-Host "Tools Directory: $tools_directory"
-    Write-Host "NuGet Package Directory: $nuget_package_directory"
+    & dotnet --version
+    & dotnet --info
+    Write-Host "Base Directory: $(Normalize-FileSystemSlashes "$baseDirectory")"
+    Write-Host "Release Directory: $(Normalize-FileSystemSlashes "$artifactsDirectory")"
+    Write-Host "Source Directory: $(Normalize-FileSystemSlashes "$sourceDirectory")"
+    Write-Host "Test Directory: $(Normalize-FileSystemSlashes "$testDirectory")"
+    Write-Host "Tools Directory: $(Normalize-FileSystemSlashes "$toolsDirectory")"
+    Write-Host "NuGet Package Directory: $(Normalize-FileSystemSlashes "$nugetPackageDirectory")"
     Write-Host "BuildCounter: $buildCounter"
     Write-Host "PreReleaseCounterPattern: $preReleaseCounterPattern"
     Write-Host "VersionSuffix: $versionSuffix"
     Write-Host "Package Version: $packageVersion"
-    Write-Host "Version: $version"
+    Write-Host "File Version: $version"
     Write-Host "Configuration: $configuration"
     Write-Host "Platform: $platform"
-    Write-Host "MaximumParallelJobs: $($maximumParalellJobs.ToString())"
+    Write-Host "MaximumParallelJobs: $($maximumParallelJobs.ToString())"
     Write-Host "Powershell Version: $($PSVersionTable.PSVersion)"
 
     Ensure-Directory-Exists "$artifactsDirectory"
@@ -118,7 +115,7 @@ task Restore -description "This task restores the dependencies" {
     Write-Host "##teamcity[progressMessage 'Restoring']"
     Write-Host "##vso[task.setprogress]'Restoring'"
     Exec { 
-        & dotnet.exe restore $solutionFile --no-dependencies /p:TestFrameworks=true
+        & dotnet restore $solutionFile --no-dependencies /p:TestFrameworks=true
     }
 }
 
@@ -130,13 +127,9 @@ task Compile -depends Clean, Init, Restore -description "This task compiles the 
             Prepare-For-Build
         }
 
-        $testFrameworks = [string]::Join(';', (Get-FrameworksToTest))
-
-        Write-Host "TestFrameworks set to: $testFrameworks" -ForegroundColor Green
-
         Exec {
             # NOTE: Version information is not passed in at the command line,
-            # instead it is output to the Version.props file. This file is then
+            # instead it is output to the version.props file. This file is then
             # used during a release to "freeze" the build at a specific version
             # so it is always a constant in release distributions.
             & dotnet build "$solutionFile" `
@@ -159,17 +152,17 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
     Write-Host "##teamcity[progressMessage 'Packing']"
     Write-Host "##vso[task.setprogress]'Packing'"
     #create the nuget package output directory
-    Ensure-Directory-Exists "$nuget_package_directory"
+    Ensure-Directory-Exists "$nugetPackageDirectory"
     Update-Lucene-Readme-For-Pack $packageVersion
     Update-LuceneCLI-Readme-For-Pack $packageVersion
 
     try {
         Exec {
             # NOTE: Package version information is not passed in at the command line,
-            # instead it is output to the Version.props file. This file is then
+            # instead it is output to the version.props file. This file is then
             # used during a release to "freeze" the build at a specific version
             # so it is always a constant in release distributions.
-            & dotnet.exe pack $solutionFile --configuration $configuration --output $nuget_package_directory --no-build
+            & dotnet pack $solutionFile --configuration $configuration --output $nugetPackageDirectory --no-build
         }
 
         $success = $true
@@ -177,7 +170,7 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
         #if ($success -ne $true) {
             Restore-Files $backedUpFiles
             #Remove Version.props, as we don't want it to be committed to the repository
-            if ($backup_files -eq $true -and (Test-Path -Path "$versionPropsFile") -eq $true) {
+            if ($backupFiles -eq $true -and (Test-Path -Path "$versionPropsFile") -eq $true) {
                 Remove-Item -Path "$versionPropsFile" -Force
             }
         #}
@@ -193,18 +186,18 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
 
     try {
         $frameworksToTest = Get-FrameworksToTest
-
+        
         if ($zipPublishedArtifacts) {
             $outDirectory = New-TemporaryDirectory
         } else {
-            $outDirectory = $publish_directory
+            $outDirectory = $publishDirectory
         }
         
         foreach ($framework in $frameworksToTest) {
 
             # Pause if we have queued too many parallel jobs
             $running = @(Get-Job | Where-Object { $_.State -eq 'Running' })
-            if ($running.Count -ge $maximumParalellJobs) {
+            if ($running.Count -ge $maximumParallelJobs) {
                 $running | Wait-Job -Any | Out-Null
             }
 
@@ -245,9 +238,9 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
         #Get-Job | Receive-Job
 
         if ($zipPublishedArtifacts) {
-            Ensure-Directory-Exists $publish_directory
+            Ensure-Directory-Exists $publishDirectory
             Add-Type -assembly "System.IO.Compression.Filesystem"
-            [System.IO.Compression.ZipFile]::CreateFromDirectory($outDirectory, "$publish_directory/$publishedArtifactZipFileName")
+            [System.IO.Compression.ZipFile]::CreateFromDirectory($outDirectory, "$publishDirectory/$publishedArtifactZipFileName")
         }
 
         $success = $true
@@ -263,52 +256,51 @@ task Test -depends CheckSDK, UpdateLocalSDKVersion, Restore -description "This t
     Write-Host "##vso[task.setprogress]'Testing'"
     Write-Host "Running tests..." -ForegroundColor DarkCyan
 
-    pushd $base_directory
-    $testProjects = Get-ChildItem -Path "$source_directory/**/*.csproj" -Recurse | ? { $_.Directory.Name.Contains(".Tests") }
+    pushd $baseDirectory
+    $testProjects = Get-ChildItem -Path "$testDirectory/**/*.csproj" -Recurse | ? { $_.Directory.Name.Contains(".Tests") }
     popd
 
     $testProjects = $testProjects | Sort-Object -Property FullName
-
+    
     $frameworksToTest = Get-FrameworksToTest
-
-    Write-Host "frameworksToTest: $frameworksToTest" -ForegroundColor Yellow
 
     [int]$totalProjects = $testProjects.Length * $frameworksToTest.Length
     [int]$remainingProjects = $totalProjects
 
-    Ensure-Directory-Exists $test_results_directory
+    Ensure-Directory-Exists $testResultsDirectory
 
     foreach ($testProject in $testProjects) {
+        $testName = $testProject.Directory.Name
+        
+        # Call the target to get the configured test frameworks for this project. We only read the first line because MSBuild adds extra output.
+        $frameworksString = $(dotnet build "$testProject" --verbosity minimal --nologo --no-restore /t:PrintTargetFrameworks /p:TestProjectsOnly=true /p:TestFrameworks=true)[0].Trim()
 
+        Write-Host ""
+        Write-Host "Frameworks To Test for ${testProject}: $frameworksString" -ForegroundColor Yellow
+
+        if ($frameworksString -eq 'none') {
+            Write-Host ""
+            Write-Host "Skipping project '$testProject' because it is not marked with `<IsTestProject`>true`<`/IsTestProject`> and/or it contains no test frameworks for the current environment." -ForegroundColor DarkYellow
+            continue
+        }
+
+        $frameworks = [System.Collections.Generic.HashSet[string]]::new($frameworksString -split '\s*;\s*')
         foreach ($framework in $frameworksToTest) {
-            $testName = $testProject.Directory.Name
-
-            # Special case - our CLI tool only supports .NET 6.0
-            if ($testName.Contains("Tests.Cli") -and (!$framework.StartsWith("net6."))) {
+            
+            # If the framework is not valid for this configuration, we need to adjust our
+            # initial estimate and skip the combination.
+            if (-not $frameworks.Contains($framework)) {
                 $totalProjects--
                 $remainingProjects--
                 continue
             }
             
-            # Special case - OpenNLP.NET is only tested on .NET Framework 4.8
-            if ($testName.Contains("Tests.Analysis.OpenNLP") -and (!$framework.StartsWith("net48"))) {
-                $totalProjects--
-                $remainingProjects--
-                continue
-            }
-
-            # Special case - Code analysis is only tested on .NET 5
-            if ($testName.Contains("Tests.CodeAnalysis") -and (!$framework.StartsWith("net5."))) {
-                $totalProjects--
-                $remainingProjects--
-                continue
-            }
-
+            Write-Host ""
             Write-Host "  Next Project in Queue: $testName, Framework: $framework" -ForegroundColor Yellow
 
             # Pause if we have queued too many parallel jobs
             $running = @(Get-Job | Where-Object { $_.State -eq 'Running' })
-            if ($running.Count -ge $maximumParalellJobs) {
+            if ($running.Count -ge $maximumParallelJobs) {
                 Write-Host ""
                 Write-Host "  Running tests in parallel on $($running.Count) projects out of approximately $totalProjects total." -ForegroundColor Cyan
                 Write-Host "  $remainingProjects projects are waiting in the queue to run. This will take a bit, please wait..." -ForegroundColor Cyan
@@ -316,11 +308,11 @@ task Test -depends CheckSDK, UpdateLocalSDKVersion, Restore -description "This t
             }
             $remainingProjects -= 1
 
-            $testResultDirectory = "$test_results_directory/$framework/$testName"
+            $testResultDirectory = "$testResultsDirectory/$framework/$testName"
             Ensure-Directory-Exists $testResultDirectory
 
             $testProjectPath = $testProject.FullName
-            $testExpression = "dotnet.exe test $testProjectPath --configuration $configuration --framework $framework --no-build"
+            $testExpression = "dotnet test $testProjectPath --configuration $configuration --framework $framework --no-build"
             $testExpression = "$testExpression --no-restore --blame  --blame-hang --blame-hang-dump-type mini --blame-hang-timeout 15minutes --results-directory $testResultDirectory"
 
             # Breaking change: We need to explicitly set the logger for it to work with TeamCity.
@@ -353,7 +345,7 @@ task Test -depends CheckSDK, UpdateLocalSDKVersion, Restore -description "This t
             #Invoke-Expression $testExpression
             ## fail the build on negative exit codes (NUnit errors - if positive it is a test count or, if 1, it could be a dotnet error)
             #if ($LASTEXITCODE -lt 0) {
-            #	throw "Test execution failed"
+            #   throw "Test execution failed"
             #}
         }
     }
@@ -386,7 +378,7 @@ function Get-Package-Version() {
         return $env:PackageVersion
     } else {
         #Get the version info
-        $versionFile = "$base_directory/Directory.Build.props"
+        $versionFile = "$baseDirectory/Directory.Build.props"
         $xml = [xml](Get-Content $versionFile)
 
         $versionPrefix = ([string]$xml.Project.PropertyGroup.VersionPrefix).Trim()
@@ -421,16 +413,11 @@ function Get-Version() {
 }
 
 function Get-FrameworksToTest() {
-    $frameworksToTest = New-Object Collections.Generic.List[string]
-    $frameworks = $frameworks_to_test -split "\s*?,\s*?"
-    foreach ($framework in $frameworks) {
-        if ($IsWindows) {
-            $frameworksToTest.Add($framework)
-        } elseif ($framework.StartsWith('netcore') -or $framework.StartsWith('net5.') -or $framework.StartsWith('net6.')) {
-            $frameworksToTest.Add($framework)
-        }
-    }
-    return [System.Linq.Enumerable]::ToArray($frameworksToTest)
+    # Call the target to get the configured test frameworks for a project known to contain all of them. We only read the first line because MSBuild adds extra output.
+    $frameworksString = $(dotnet build "$projectWithAllTestFrameworks" --verbosity minimal --nologo --no-restore /t:PrintTargetFrameworks /p:TestProjectsOnly=true /p:TestFrameworks=true)[0].Trim()
+    $frameworksToTest = $frameworksString -split '\s*;\s*'
+    Assert($frameworksToTest.Length -gt 0) "The project at $(Normalize-FileSystemSlashes "$projectWithAllTestFrameworks") contains no target frameworks. Please configure a project that includes all testable target frameworks."
+    return $frameworksToTest
 }
 
 function Prepare-For-Build() {
@@ -443,10 +430,10 @@ function Prepare-For-Build() {
     Write-Host "Assembly version set to: $assemblyVersion" -ForegroundColor Green
 
     $informationalVersion = $packageVersion
-    #check for presense of Git
-    & where.exe git.exe
+
+    # Only update the version if git is present and the command to read the commit succeeds
+    $gitCommit = ((git rev-parse --verify --short=10 head) | Out-String).Trim()
     if ($LASTEXITCODE -eq 0) {
-        $gitCommit = ((git rev-parse --verify --short=10 head) | Out-String).Trim()
         $informationalVersion = "$packageVersion commit:[$gitCommit]"
     }
 
@@ -464,15 +451,10 @@ function Prepare-For-Build() {
         -PackageVersion $packageVersion `
         -File $versionPropsFile
     Update-Constants-Version $packageVersion
-
-    if ($generateBuildBat -eq $true) {
-        Backup-File $build_bat
-        Generate-Build-Bat $build_bat
-    }
 }
 
 function Update-Constants-Version([string]$version) {
-    $constantsFile = "$base_directory/src/Lucene.Net/Util/Constants.cs"
+    $constantsFile = "$baseDirectory/src/Lucene.Net/Util/Constants.cs"
 
     Backup-File $constantsFile
     (Get-Content $constantsFile) | % {
@@ -520,7 +502,7 @@ $fileText = "{
     $dir = [System.IO.Path]::GetDirectoryName($file)
     Ensure-Directory-Exists $dir
 
-    Write-Host "Generating global.json file: $file"
+    Write-Host "Generating global.json file: $(Normalize-FileSystemSlashes "$file")"
     Out-File -filePath $file -encoding UTF8 -inputObject $fileText
 }
 
@@ -560,90 +542,8 @@ $fileText = "<!--
     $dir = [System.IO.Path]::GetDirectoryName($file)
     Ensure-Directory-Exists $dir
 
-    Write-Host "Generating Version.props file: $file"
+    Write-Host "Generating version.props file: $(Normalize-FileSystemSlashes "$file")"
     Out-File -filePath $file -encoding UTF8 -inputObject $fileText
-}
-
-function Generate-Build-Bat {
-param(
-    [string]$file = $(throw "file is a required parameter.")
-)
-  $buildBat = "
-@echo off
-GOTO endcommentblock
-:: -----------------------------------------------------------------------------------
-::
-:: Licensed to the Apache Software Foundation (ASF) under one or more
-:: contributor license agreements.  See the NOTICE file distributed with
-:: this work for additional information regarding copyright ownership.
-:: The ASF licenses this file to You under the Apache License, Version 2.0
-:: (the ""License""); you may not use this file except in compliance with
-:: the License.  You may obtain a copy of the License at
-:: 
-:: http://www.apache.org/licenses/LICENSE-2.0
-:: 
-:: Unless required by applicable law or agreed to in writing, software
-:: distributed under the License is distributed on an ""AS IS"" BASIS,
-:: WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-:: See the License for the specific language governing permissions and
-:: limitations under the License.
-::
-:: -----------------------------------------------------------------------------------
-::
-:: This file will build Lucene.Net and create the NuGet packages.
-::
-:: Syntax:
-::   build[.bat] [<options>]
-::
-:: Available Options:
-::
-::   --Test
-::   -t - Run the tests.
-::
-::   --MaximumParallelJobs
-::   -mp - Set the maxumum number of parallel jobs to run during testing. If not supplied, the default is 8.
-::
-:: -----------------------------------------------------------------------------------
-:endcommentblock
-setlocal enabledelayedexpansion enableextensions
-set runtests=false
-set maximumParallelJobs=8
-FOR %%a IN (%*) DO (
-    FOR /f ""useback tokens=*"" %%a in ('%%a') do (
-        set value=%%~a
-        
-        set test=!value:~0,2!
-        IF /I !test!==-t (
-            set runtests=true
-        )
-        set test=!value:~0,6!
-        IF /I !test!==--test (
-            set runtests=true
-        )
-        set test=!value:~0,4!
-        IF /I !test!==-mp: (
-            set maximumParallelJobs=!value:~4!
-        )
-        set test=!value:~0,22!
-        IF /I !test!==--maximumparalleljobs: (
-            set maximumParallelJobs=!value:~22!
-        )
-    )
-)
-set tasks=""Default""
-if ""!runtests!""==""true"" (
-    set tasks=""Default,Test""
-)
-powershell -ExecutionPolicy Bypass -Command ""& { Import-Module .\.build\psake.psm1; Invoke-Psake .\.build\runbuild.ps1 -Task %tasks% -properties @{prepareForBuild='false';backup_files='false';maximumParalellJobs=%maximumParallelJobs%} }""
-endlocal
-"
-    $dir = [System.IO.Path]::GetDirectoryName($file)
-    Ensure-Directory-Exists $dir
-
-    Write-Host "Generating build.bat file: $file"
-    #Out-File -filePath $file -encoding UTF8 -inputObject $buildBat -Force
-    $Utf8EncodingNoBom = New-Object System.Text.UTF8Encoding $false
-    [System.IO.File]::WriteAllLines($file, $buildBat, $Utf8EncodingNoBom)
 }
 
 function New-CountersObject ([string]$project, [string]$outcome, [int]$total, [int]$executed, [int]$passed, [int]$failed, [int]$warning, [int]$inconclusive) {
@@ -655,9 +555,15 @@ function New-CountersObject ([string]$project, [string]$outcome, [int]$total, [i
 
 function Summarize-Test-Results([string[]]$frameworksToTest) {
 
+    # Workaround for issue when ForeGroundColor cannot be read. https://stackoverflow.com/a/26583010
+    $defaultForeground = (Get-Host).UI.RawUI.ForegroundColor
+    if ($defaultForeground -eq -1) {
+        $defaultForeground = 'White'
+    }
+
     foreach ($framework in $frameworksToTest) {
-        pushd $base_directory
-        $testReports = Get-ChildItem -Path "$test_results_directory/$framework" -Recurse -File -Filter "*.trx" | ForEach-Object {
+        pushd $baseDirectory
+        $testReports = Get-ChildItem -Path "$testResultsDirectory/$framework" -Recurse -File -Filter "*.trx" | ForEach-Object {
             $_.FullName
         }
         popd
@@ -745,16 +651,16 @@ function Summarize-Test-Results([string[]]$frameworksToTest) {
         Write-Host ""
         Write-Host "Total: $totalCountForFramework"
         Write-Host "Executed: $executedCountForFramework"
-        $foreground = if ($failedCountForFramework -gt 0) { 'Green' } else { (Get-Host).UI.RawUI.ForegroundColor }
+        $foreground = if ($failedCountForFramework -gt 0) { 'Green' } else { $defaultForeground }
         Write-Host "Passed: " -NoNewline; Write-Host "$passedCountForFramework" -ForegroundColor $foreground
-        $foreground = if ($failedCountForFramework -gt 0) { 'Red' } else { (Get-Host).UI.RawUI.ForegroundColor }
+        $foreground = if ($failedCountForFramework -gt 0) { 'Red' } else { $defaultForeground }
         Write-Host "Failed: " -NoNewline; Write-Host "$failedCountForFramework" -ForegroundColor $foreground
-        $foreground = if ($failedCountForFramework -gt 0) { 'Yellow' } else { (Get-Host).UI.RawUI.ForegroundColor }
+        $foreground = if ($failedCountForFramework -gt 0) { 'Yellow' } else { $defaultForeground }
         Write-Host "Warning: " -NoNewline; Write-Host "$warningCountForFramework" -ForegroundColor $foreground
-        $foreground = if ($failedCountForFramework -gt 0) { 'Cyan' } else { (Get-Host).UI.RawUI.ForegroundColor }
+        $foreground = if ($failedCountForFramework -gt 0) { 'Cyan' } else { $defaultForeground }
         Write-Host "Inconclusive: " -NoNewline; Write-Host "$inconclusiveCountForFramework" -ForegroundColor $foreground
         Write-Host ""
-        Write-Host "See the .trx logs in $test_results_directory/$framework for more details." -ForegroundColor DarkCyan
+        Write-Host "See the .trx logs in $(Normalize-FileSystemSlashes "$testResultsDirectory/$framework") for more details." -ForegroundColor DarkCyan
     }
 }
 
@@ -765,7 +671,7 @@ function Backup-Files([string[]]$paths) {
 }
 
 function Backup-File([string]$path) {
-    if ($backup_files -eq $true) {
+    if ($backupFiles -eq $true) {
         Copy-Item $path "$path.bak" -Force
         $backedUpFiles.Insert(0, $path)
     } else {
@@ -780,7 +686,7 @@ function Restore-Files([string[]]$paths) {
 }
 
 function Restore-File([string]$path) {
-    if ($backup_files -eq $true) {
+    if ($backupFiles -eq $true) {
         if (Test-Path "$path.bak") {
             Move-Item "$path.bak" $path -Force
         }
@@ -798,4 +704,9 @@ function New-TemporaryDirectory {
     $parent = [System.IO.Path]::GetTempPath()
     [string] $name = [System.Guid]::NewGuid()
     New-Item -ItemType Directory -Path (Join-Path $parent $name)
+}
+
+function Normalize-FileSystemSlashes([string]$path) {
+    $sep = [System.IO.Path]::DirectorySeparatorChar
+    return $($path -replace '/',$sep -replace '\\',$sep)
 }

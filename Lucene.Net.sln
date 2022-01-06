@@ -20,6 +20,7 @@ VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 15.0.26730.8
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "azure-templates", "azure-templates", "{05CE3A39-40D4-452D-AFE0-E57E536A08C6}"
 	ProjectSection(SolutionItems) = preProject
+		.build\azure-templates\install-dotnet-sdk.yml = .build\azure-templates\install-dotnet-sdk.yml
 		.build\azure-templates\publish-nuget-packages.yml = .build\azure-templates\publish-nuget-packages.yml
 		.build\azure-templates\publish-test-binaries.yml = .build\azure-templates\publish-test-binaries.yml
 		.build\azure-templates\publish-test-results-for-test-projects.yml = .build\azure-templates\publish-test-results-for-test-projects.yml
@@ -37,7 +38,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{4016BDAB-6C33-4D1E-9439-57B416EA45D5}"
 	ProjectSection(SolutionItems) = preProject
 		azure-pipelines.yml = azure-pipelines.yml
+		build = build
 		build.bat = build.bat
+		build.ps1 = build.ps1
 		.build\runbuild.ps1 = .build\runbuild.ps1
 		.build\dependencies.props = .build\dependencies.props
 		.build\nuget.props = .build\nuget.props

@@ -32,6 +32,11 @@
 
     <IsPublishable>false</IsPublishable>
     <IsPublishable Condition=" '$(TargetFramework)' == 'net48' ">true</IsPublishable>
+
+    <!-- Workaround since there are no targets on non-Windows OS. We need at least 1 TargetFramework
+        registered or MSBuild's validation will fail, so we explicitly disable it as a test project instead. -->
+    <IsTestProject>false</IsTestProject>
+    <IsTestProject Condition="$([MSBuild]::IsOsPlatform('Windows'))">true</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>

@@ -171,24 +171,34 @@ Before you start working on a pull request, please read our [Contributing](https
 
 ### Command Line
 
-Building on the Command Line is currently only supported on Windows.
-
 ##### Prerequisites
 
-1. [Powershell](https://msdn.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell) 3.0 or higher (see [this question](http://stackoverflow.com/questions/1825585/determine-installed-powershell-version) to check your Powershell version)
+1. [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell) 3.0 or higher (see [this question](http://stackoverflow.com/questions/1825585/determine-installed-powershell-version) to check your PowerShell version)
 2. [.NET 6.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
 
 ##### Execution
 
 > **NOTE:** If the project is open in Visual Studio, its background restore may interfere with these commands. It is recommended to close all instances of Visual Studio that have `Lucene.Net.sln` open before executing.
 
-To build the source, clone or download and unzip the repository. From the repository root, execute the `build.bat` file from a command prompt and include the desired options from the build options table below:
+To build the source, clone or download and unzip the repository. For specific releases, download and unzip the `.src.zip` file from the [download page of the specific version](https://lucenenet.apache.org/download/download.html). From the repository or distribution root, execute the **build** command from a command prompt and include the desired options from the build options table below:
+
+###### Windows
 
 ```
 > build [options]
 ```
 
+###### Linux or macOS
+
+```
+./build [options]
+```
+
+> **NOTE:** The `build` file will need to be given permission to run using the command `chmod u+x build` before the first execution.
+
 ##### Build Options
+
+The following options are case-insensitive. Each option has both a short form indicated by a single `-` and a long form indicated by `--`. The options that require a value must be followed by a space and then the value, similar to running the [dotnet CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/).
 
 <table>
     <tr>
@@ -199,43 +209,51 @@ To build the source, clone or download and unzip the repository. From the reposi
     </tr>
     <tr>
         <td>&#8209;config</td>
-        <td>&#8209;&#8209;Configuration</td>
+        <td>&#8209;&#8209;configuration</td>
         <td>The build configuration ("Release" or "Debug").</td>
-        <td>build&nbsp;&#8209;&#8209;Configuration:Debug</td>
+        <td>build&nbsp;&#8209;&#8209;configuration Debug</td>
     </tr>
     <tr>
         <td>&#8209;mp</td>
-        <td>&#8209;&#8209;MaximumParallelJobs</td>
+        <td>&#8209;&#8209;maximum-parallel-jobs</td>
         <td>The maximum number of parallel jobs to run during testing. If not supplied, the default is 8.</td>
-        <td>build&nbsp;&#8209;t&nbsp;&#8209;mp:10</td>
+        <td>build&nbsp;&#8209;t&nbsp;&#8209;mp 10</td>
     </tr>
     <tr>
         <td>&#8209;pv</td>
-        <td>&#8209;&#8209;PackageVersion</td>
+        <td>&#8209;&#8209;package-version</td>
         <td>The NuGet package version. If not supplied, will use the version from the Version.proj file.</td>
-        <td>build&nbsp;&#8209;pv:4.8.0&#8209;beta00001</td>
+        <td>build&nbsp;&#8209;pv 4.8.0&#8209;beta00001</td>
     </tr>
     <tr>
         <td>&#8209;t</td>
-        <td>&#8209;&#8209;Test</td>
-        <td>Runs the tests after building. Note that testing typically takes around 40 minutes with 8 parallel jobs.</td>
+        <td>&#8209;&#8209;test</td>
+        <td>Runs the tests after building. This option does not require a value. Note that testing typically takes around 40 minutes with 8 parallel jobs.</td>
         <td>build&nbsp;&#8209;t</td>
     </tr>
     <tr>
-        <td>&#8209;v</td>
-        <td>&#8209;&#8209;Version</td>
-        <td>The assembly file version. If not supplied, will use the PackageVersion (excluding any pre-release tag).</td>
-        <td>build&nbsp;&#8209;pv:4.8.0&#8209;beta00001&nbsp;&#8209;v:4.8.0</td>
+        <td>&#8209;fv</td>
+        <td>&#8209;&#8209;file-version</td>
+        <td>The assembly file version. If not supplied, will use the --package-version (excluding any pre-release tag). The assembly version is generated as the major version of this value without the minor, build, or revision compoenents.</td>
+        <td>build&nbsp;&#8209;pv 4.8.0&#8209;beta00001&nbsp;&#8209;fv 4.8.0</td>
     </tr>
 </table>
 
-For example the following command creates a Release build with NuGet package version 4.8.0‑ci00015 and assembly file version 4.8.0:
+For example the following command creates a Release build with NuGet package version 4.8.0‑ci00015 and file version 4.8.0. Assembly version will be equal to the passed in major version (in this case 4.0.0).
+
+###### Windows
 
 ```
-> build ‑‑Configuration:Release ‑pv:4.8.0‑ci00015 ‑v:4.8.0
+> build ‑‑configuration Release ‑pv 4.8.0‑ci00015 ‑fv 4.8.0
 ```
 
-In the above example we are using "ci" in the package version to indicate this is not a publically released beta version but rather the ouput of a continuous integration build from master which occured after beta00014 but before beta00015 was released.  
+###### Linux or macOS
+
+```
+./build ‑‑configuration Release ‑pv 4.8.0‑ci00015 ‑fv 4.8.0
+```
+
+In the above example we are using "ci" in the package version to indicate this is not a publicly released beta version but rather the output of a continuous integration build from master which occurred after beta00014 but before beta00015 was released.
 
 NuGet packages are output by the build to the `/_artifacts/NuGetPackages/` directory. Test results (if applicable) are output to the `/_artifacts/TestResults/` directory.
 
