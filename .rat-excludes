@@ -23,6 +23,7 @@ svn-release/*
 LuceneResourcesWikiPage\.html
 
 # Covered under a different license
+psake/*
 KStemData\d+\.cs
 Snowball/*
 Egothor.Stemmer/*

@@ -46,6 +46,55 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{4016BD
 		TestTargetFramework.props = TestTargetFramework.props
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "psake", "psake", "{4BFE738F-3D99-4408-85D4-E882737F9CEC}"
+	ProjectSection(SolutionItems) = preProject
+		.build\psake\psake = .build\psake\psake
+		.build\psake\psake-config.ps1 = .build\psake\psake-config.ps1
+		.build\psake\psake.cmd = .build\psake\psake.cmd
+		.build\psake\psake.ps1 = .build\psake\psake.ps1
+		.build\psake\psake.psd1 = .build\psake\psake.psd1
+		.build\psake\psake.psm1 = .build\psake\psake.psm1
+		.build\psake\readme.md = .build\psake\readme.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "public", "public", "{DB6B3C48-B1B1-4977-9FB0-333ED71E84E1}"
+	ProjectSection(SolutionItems) = preProject
+		.build\psake\public\Assert.ps1 = .build\psake\public\Assert.ps1
+		.build\psake\public\BuildSetup.ps1 = .build\psake\public\BuildSetup.ps1
+		.build\psake\public\BuildTearDown.ps1 = .build\psake\public\BuildTearDown.ps1
+		.build\psake\public\Exec.ps1 = .build\psake\public\Exec.ps1
+		.build\psake\public\FormatTaskName.ps1 = .build\psake\public\FormatTaskName.ps1
+		.build\psake\public\Framework.ps1 = .build\psake\public\Framework.ps1
+		.build\psake\public\Get-PSakeScriptTasks.ps1 = .build\psake\public\Get-PSakeScriptTasks.ps1
+		.build\psake\public\Include.ps1 = .build\psake\public\Include.ps1
+		.build\psake\public\Invoke-psake.ps1 = .build\psake\public\Invoke-psake.ps1
+		.build\psake\public\Invoke-Task.ps1 = .build\psake\public\Invoke-Task.ps1
+		.build\psake\public\Properties.ps1 = .build\psake\public\Properties.ps1
+		.build\psake\public\Task.ps1 = .build\psake\public\Task.ps1
+		.build\psake\public\TaskSetup.ps1 = .build\psake\public\TaskSetup.ps1
+		.build\psake\public\TaskTearDown.ps1 = .build\psake\public\TaskTearDown.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "private", "private", "{BC910C84-EF7C-4F69-AA76-47C0EC06D809}"
+	ProjectSection(SolutionItems) = preProject
+		.build\psake\private\CleanupEnvironment.ps1 = .build\psake\private\CleanupEnvironment.ps1
+		.build\psake\private\ConfigureBuildEnvironment.ps1 = .build\psake\private\ConfigureBuildEnvironment.ps1
+		.build\psake\private\CreateConfigurationForNewContext.ps1 = .build\psake\private\CreateConfigurationForNewContext.ps1
+		.build\psake\private\ExecuteInBuildFileScope.ps1 = .build\psake\private\ExecuteInBuildFileScope.ps1
+		.build\psake\private\FormatErrorMessage.ps1 = .build\psake\private\FormatErrorMessage.ps1
+		.build\psake\private\Get-DefaultBuildFile.ps1 = .build\psake\private\Get-DefaultBuildFile.ps1
+		.build\psake\private\GetCurrentConfigurationOrDefault.ps1 = .build\psake\private\GetCurrentConfigurationOrDefault.ps1
+		.build\psake\private\GetTasksFromContext.ps1 = .build\psake\private\GetTasksFromContext.ps1
+		.build\psake\private\LoadConfiguration.ps1 = .build\psake\private\LoadConfiguration.ps1
+		.build\psake\private\LoadModules.ps1 = .build\psake\private\LoadModules.ps1
+		.build\psake\private\ResolveError.ps1 = .build\psake\private\ResolveError.ps1
+		.build\psake\private\SelectObjectWithDefault.ps1 = .build\psake\private\SelectObjectWithDefault.ps1
+		.build\psake\private\Test-ModuleVersion.ps1 = .build\psake\private\Test-ModuleVersion.ps1
+		.build\psake\private\WriteColoredOutput.ps1 = .build\psake\private\WriteColoredOutput.ps1
+		.build\psake\private\WriteDocumentation.ps1 = .build\psake\private\WriteDocumentation.ps1
+		.build\psake\private\WriteTaskTimeSummary.ps1 = .build\psake\private\WriteTaskTimeSummary.ps1
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{4DF7EACE-2B25-43F6-B558-8520BF20BD76}"
 	ProjectSection(SolutionItems) = preProject
 		src\dotnet\tools\Directory.Build.props = src\dotnet\tools\Directory.Build.props
@@ -507,6 +556,9 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{05CE3A39-40D4-452D-AFE0-E57E536A08C6} = {4016BDAB-6C33-4D1E-9439-57B416EA45D5}
+		{4BFE738F-3D99-4408-85D4-E882737F9CEC} = {4016BDAB-6C33-4D1E-9439-57B416EA45D5}
+		{DB6B3C48-B1B1-4977-9FB0-333ED71E84E1} = {4BFE738F-3D99-4408-85D4-E882737F9CEC}
+		{BC910C84-EF7C-4F69-AA76-47C0EC06D809} = {4BFE738F-3D99-4408-85D4-E882737F9CEC}
 		{4DF7EACE-2B25-43F6-B558-8520BF20BD76} = {8CA61D33-3590-4024-A304-7B1F75B50653}
 		{EFB2E31A-5917-49D5-A808-FE5061A550B4} = {8CA61D33-3590-4024-A304-7B1F75B50653}
 		{119BBACD-D4DB-4E3B-922F-3DA83E0B29E2} = {4DF7EACE-2B25-43F6-B558-8520BF20BD76}
