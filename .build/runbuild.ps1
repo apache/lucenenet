@@ -26,9 +26,7 @@ properties {
     [string]$test_results_directory = "$artifactsDirectory/TestResults"
     [string]$publish_directory = "$artifactsDirectory/Publish"
     [string]$solutionFile = "$base_directory/Lucene.Net.sln"
-    [string]$sdkPath = "$env:programfiles/dotnet/sdk"
-    [string]$sdkVersion = "6.0.100"
-    [bool]$skipSdkInstallation = $false
+    [string]$minimumSdkVersion = "6.0.100"
     [string]$globalJsonFile = "$base_directory/global.json"
     [string]$versionPropsFile = "$base_directory/version.props"
     [string]$build_bat = "$base_directory/build.bat"
@@ -71,33 +69,26 @@ task Clean -description "This task cleans up the build directory" {
     Get-ChildItem $base_directory -Include *.bak -Recurse | foreach ($_) {Remove-Item $_.FullName}
 }
 
-task UpdateLocalSDKVersion -description "Backs up the project.json file and pins the version to $sdkVersion" {
+task UpdateLocalSDKVersion -description "Backs up the project.json file and pins the version to $minimumSdkVersion" {
     Backup-File $globalJsonFile
     Generate-Global-Json `
-        -sdkVersion $sdkVersion `
+        -sdkVersion $minimumSdkVersion `
         -file $globalJsonFile
 }
 
-task InstallSDK -description "This task makes sure the correct SDK version is installed to build" -ContinueOnError {
-    if (!$skipSdkInstallation) {
-        Write-Host "##teamcity[progressMessage 'Installing SDK $sdkVersion']"
-        Write-Host "##vso[task.setprogress]'Installing SDK $sdkVersion'"
-        $installed = Is-Sdk-Version-Installed $sdkVersion
-        if (!$installed) {
-            Write-Host "Requires SDK version $sdkVersion, installing..." -ForegroundColor Red
-            Invoke-Expression "$base_directory\.build\dotnet-install.ps1 -Version $sdkVersion"
-        }
-
-        # Safety check - this should never happen
-        & where.exe dotnet.exe
-
-        if ($LASTEXITCODE -ne 0) {
-            throw "Could not find dotnet CLI in PATH. Please install the .NET SDK, version $sdkVersion."
-        }
+task CheckSDK -description "This task makes sure the correct SDK version is installed" {
+    # Check prerequisites
+    $sdkVersion = ((& dotnet --version) | Out-String).Trim()
+    if ($LASTEXITCODE -ne 0) {
+        throw "dotnet command was not found. Please install .NET $minimumSdkVersion or higher SDK and make sure it is in your PATH."
+    }
+    $releaseVersion = if ($sdkVersion.Contains('-')) { "$sdkVersion".Substring(0, "$sdkVersion".IndexOf('-')) } else { $sdkVersion }
+    if ([version]$releaseVersion -lt ([version]$minimumSdkVersion)) {
+        throw "Minimum .NET SDK $minimumSdkVersion required. Current SDK version is $releaseVersion. Please install the required SDK before running the command."
     }
 }
 
-task Init -depends InstallSDK, UpdateLocalSDKVersion -description "This task makes sure the build environment is correctly setup" {
+task Init -depends CheckSDK, UpdateLocalSDKVersion -description "This task makes sure the build environment is correctly setup" {
     #Update TeamCity, MyGet, or Azure Pipelines with packageVersion
     Write-Output "##teamcity[buildNumber '$packageVersion']"
     Write-Output "##myget[buildNumber '$packageVersion']"
@@ -267,7 +258,7 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
     }
 }
 
-task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This task runs the tests" {
+task Test -depends CheckSDK, UpdateLocalSDKVersion, Restore -description "This task runs the tests" {
     Write-Host "##teamcity[progressMessage 'Testing']"
     Write-Host "##vso[task.setprogress]'Testing'"
     Write-Host "Running tests..." -ForegroundColor DarkCyan
@@ -440,35 +431,6 @@ function Get-FrameworksToTest() {
         }
     }
     return [System.Linq.Enumerable]::ToArray($frameworksToTest)
-}
-
-function Is-Sdk-Version-Installed([string]$sdkVersion) {
-    & where.exe dotnet.exe | Out-Null
-    if ($LASTEXITCODE -eq 0) {
-        pushd $PSScriptRoot
-        $version = ((& dotnet --version 2>&1) | Out-String).Trim()
-        popd
-
-        # May happen if global.json contains a version that
-        # isn't installed, but we have at least one
-        if ($version.Contains('not found')) {
-            return $false
-        } elseif ([version]$version -eq [version]$sdkVersion) {
-            return $true
-        } elseif ([version]$version -gt [version]"2.1.0") {
-            $availableSdks = ((& dotnet --list-sdks) | Out-String)
-            if ($LASTEXITCODE -eq 0) {
-                if ($availableSdks.Contains($sdkVersion)) {
-                    return $true
-                } else {
-                    return $false
-                }
-            } else {
-                return (Test-Path "$sdkPath/$sdkVersion")
-            }
-        }
-    }
-    return $false
 }
 
 function Prepare-For-Build() {

@@ -138,8 +138,7 @@ stages:
             publish_directory='$(PublishTempDirectory)';
             nuget_package_directory='$(NuGetArtifactDirectory)';
             # Lock the build.bat so it only builds this version in the release distribution
-            generateBuildBat=$generateBuildBat;
-            skipSdkInstallation='true'
+            generateBuildBat=$generateBuildBat
         }
         [string[]]$tasks = @($primaryCommand)
         if ($env:RunTests -ne 'false') {
