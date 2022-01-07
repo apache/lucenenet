@@ -55,7 +55,7 @@
     </ProjectReference>
   </ItemGroup>
 
-  <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
+  <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <Reference Include="System.IO.Compression" />

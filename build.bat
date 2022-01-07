@@ -129,6 +129,6 @@ if "!runtests!"=="true" (
 	set tasks="Default,Test"
 )
 
-powershell -ExecutionPolicy Bypass -Command "& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 %tasks% -properties @{configuration='%configuration%';maximumParalellJobs=%maximumParallelJobs%} -parameters @{ packageVersion='%PackageVersion%';version='%version%' } }"
+powershell -ExecutionPolicy Bypass -Command "& { Import-Module .\.build\psake.psm1; Invoke-Psake .\.build\runbuild.ps1 %tasks% -properties @{configuration='%configuration%';maximumParalellJobs=%maximumParallelJobs%} -parameters @{ packageVersion='%PackageVersion%';version='%version%' } }"
 
 endlocal

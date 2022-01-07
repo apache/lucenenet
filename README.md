@@ -237,7 +237,7 @@ For example the following command creates a Release build with NuGet package ver
 
 In the above example we are using "ci" in the package version to indicate this is not a publically released beta version but rather the ouput of a continuous integration build from master which occured after beta00014 but before beta00015 was released.  
 
-NuGet packages are output by the build to the `/release/NuGetPackages/` directory. Test results (if applicable) are output to the `/release/TestResults/` directory.
+NuGet packages are output by the build to the `/_artifacts/NuGetPackages/` directory. Test results (if applicable) are output to the `/_artifacts/TestResults/` directory.
 
 You can setup Visual Studio to read the NuGet packages like any NuGet feed by following these steps:
 
@@ -245,7 +245,7 @@ You can setup Visual Studio to read the NuGet packages like any NuGet feed by fo
 2. Click the gear icon next to the Package sources dropdown.
 3. Click the `+` icon (for add)
 4. Give the source a name such as `Lucene.Net Local Packages`
-5. Click the `...` button next to the Source field, and choose the `/src/release/NuGetPackages` folder on your local system.
+5. Click the `...` button next to the Source field, and choose the `/src/_artifacts/NuGetPackages` folder on your local system.
 6. Click Ok
 
 Then all you need to do is choose the `Lucene.Net Local Packages` feed from the dropdown (in the NuGet Package Manager) and you can search for, install, and update the NuGet packages just as you can with any Internet-based feed.
@@ -262,7 +262,7 @@ Then all you need to do is choose the `Lucene.Net Local Packages` feed from the 
 #### Execution
 
 1. Open `Lucene.Net.sln` in Visual Studio.
-2. Choose the target framework to test by opening `build/TestTargetFramework.props` and uncommenting the corresponding `<TargetFramework>` (and commenting all others).
+2. Choose the target framework to test by opening `.build/TestTargetFramework.props` and uncommenting the corresponding `<TargetFramework>` (and commenting all others).
 3. Build a project or the entire solution, and wait for Visual Studio to discover the tests - this may take several minutes.
 4. Run or debug the tests in Test Explorer, optionally using the desired filters.
 

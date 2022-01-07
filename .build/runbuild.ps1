@@ -19,18 +19,18 @@
 
 properties {
     [string]$base_directory   = Resolve-Path "../."
-    [string]$release_directory  = "$base_directory/release"
+    [string]$artifactsDirectory  = "$base_directory/_artifacts"
     [string]$source_directory = "$base_directory"
     [string]$tools_directory  = "$base_directory/lib"
-    [string]$nuget_package_directory = "$release_directory/NuGetPackages"
-    [string]$test_results_directory = "$release_directory/TestResults"
-    [string]$publish_directory = "$release_directory/Publish"
+    [string]$nuget_package_directory = "$artifactsDirectory/NuGetPackages"
+    [string]$test_results_directory = "$artifactsDirectory/TestResults"
+    [string]$publish_directory = "$artifactsDirectory/Publish"
     [string]$solutionFile = "$base_directory/Lucene.Net.sln"
     [string]$sdkPath = "$env:programfiles/dotnet/sdk"
     [string]$sdkVersion = "6.0.100"
     [bool]$skipSdkInstallation = $false
     [string]$globalJsonFile = "$base_directory/global.json"
-    [string]$versionPropsFile = "$base_directory/Version.props"
+    [string]$versionPropsFile = "$base_directory/version.props"
     [string]$build_bat = "$base_directory/build.bat"
     [string]$luceneReadmeFile = "$base_directory/src/Lucene.Net/readme-nuget.md"
     [string]$luceneCLIReadmeFile = "$base_directory/src/dotnet/tools/lucene-cli/docs/index.md"
@@ -67,7 +67,7 @@ task default -depends Pack
 task Clean -description "This task cleans up the build directory" {
     Write-Host "##teamcity[progressMessage 'Cleaning']"
     Write-Host "##vso[task.setprogress]'Cleaning'"
-    Remove-Item $release_directory -Force -Recurse -ErrorAction SilentlyContinue
+    Remove-Item $artifactsDirectory -Force -Recurse -ErrorAction SilentlyContinue
     Get-ChildItem $base_directory -Include *.bak -Recurse | foreach ($_) {Remove-Item $_.FullName}
 }
 
@@ -85,7 +85,7 @@ task InstallSDK -description "This task makes sure the correct SDK version is in
         $installed = Is-Sdk-Version-Installed $sdkVersion
         if (!$installed) {
             Write-Host "Requires SDK version $sdkVersion, installing..." -ForegroundColor Red
-            Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version $sdkVersion"
+            Invoke-Expression "$base_directory\.build\dotnet-install.ps1 -Version $sdkVersion"
         }
 
         # Safety check - this should never happen
@@ -106,7 +106,7 @@ task Init -depends InstallSDK, UpdateLocalSDKVersion -description "This task mak
     & dotnet.exe --version
     & dotnet.exe --info
     Write-Host "Base Directory: $base_directory"
-    Write-Host "Release Directory: $release_directory"
+    Write-Host "Release Directory: $artifactsDirectory"
     Write-Host "Source Directory: $source_directory"
     Write-Host "Tools Directory: $tools_directory"
     Write-Host "NuGet Package Directory: $nuget_package_directory"
@@ -120,7 +120,7 @@ task Init -depends InstallSDK, UpdateLocalSDKVersion -description "This task mak
     Write-Host "MaximumParallelJobs: $($maximumParalellJobs.ToString())"
     Write-Host "Powershell Version: $($PSVersionTable.PSVersion)"
 
-    Ensure-Directory-Exists "$release_directory"
+    Ensure-Directory-Exists "$artifactsDirectory"
 }
 
 task Restore -description "This task restores the dependencies" {
@@ -672,7 +672,7 @@ set tasks=""Default""
 if ""!runtests!""==""true"" (
     set tasks=""Default,Test""
 )
-powershell -ExecutionPolicy Bypass -Command ""& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 -Task %tasks% -properties @{prepareForBuild='false';backup_files='false';maximumParalellJobs=%maximumParallelJobs%} }""
+powershell -ExecutionPolicy Bypass -Command ""& { Import-Module .\.build\psake.psm1; Invoke-Psake .\.build\runbuild.ps1 -Task %tasks% -properties @{prepareForBuild='false';backup_files='false';maximumParalellJobs=%maximumParallelJobs%} }""
 endlocal
 "
     $dir = [System.IO.Path]::GetDirectoryName($file)

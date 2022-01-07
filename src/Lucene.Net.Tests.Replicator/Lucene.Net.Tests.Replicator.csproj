@@ -60,7 +60,7 @@
     </ProjectReference>
   </ItemGroup>
   
-  <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
+  <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="$(MicrosoftAspNetCoreTestHostPackageVersion)" />

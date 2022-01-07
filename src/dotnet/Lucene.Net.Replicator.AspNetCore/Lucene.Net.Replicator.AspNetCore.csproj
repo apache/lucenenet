@@ -22,7 +22,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!-- For now, we are not deploying this to NuGet.org -->
-  <!--<Import Project="$(SolutionDir)build/NuGet.props" />-->
+  <!--<Import Project="$(SolutionDir).build/nuget.props" />-->
   
   <PropertyGroup>
     <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>

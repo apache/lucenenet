@@ -49,6 +49,6 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="$(MicrosoftExtensionsConfigurationXmlPackageVersion)" />
   </ItemGroup>
 
-  <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
+  <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
 
 </Project>
