@@ -9,6 +9,8 @@
 lib/*
 obj/*
 bin/*
+_artifacts/*
+_site/*
 
 # Exclude SVN release folders
 svn-dev/*

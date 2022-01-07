@@ -221,8 +221,8 @@ on:
   pull_request:
     paths:
     - '$projectRelativeDirectory/**/*'
-    - 'build/Dependencies.props'
-    - 'build/TestReferences.Common.*'
+    - '.build/dependencies.props'
+    - '.build/TestReferences.Common.*'
     - 'TestTargetFrameworks.*'
     - '*.sln'$directoryBuildPaths
     # Dependencies$dependencyPaths

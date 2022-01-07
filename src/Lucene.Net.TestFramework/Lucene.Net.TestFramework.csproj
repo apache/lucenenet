@@ -21,13 +21,13 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- These properties must be set prior to importing NuGet.props -->
+  <!-- These properties must be set prior to importing nuget.props -->
   <PropertyGroup>
     <Description>Framework for testing Lucene.NET-based applications using NUnit.</Description>
     <PackageDocumentationRelativeUrl>test-framework/overview.html</PackageDocumentationRelativeUrl>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build/NuGet.props" />
+  <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;</TargetFrameworks>

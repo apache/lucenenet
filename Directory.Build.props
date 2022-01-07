@@ -85,5 +85,5 @@
       an IDE or from the commmand line, the version is always what is 
       in Version.props, if it exists and the PrepareForBuild argument 
       passed into build.ps1 is 'false'. -->
-  <Import Project="Version.props" Condition="Exists('Version.props')" />
+  <Import Project="version.props" Condition="Exists('version.props')" />
 </Project>

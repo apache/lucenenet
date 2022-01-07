@@ -51,7 +51,7 @@
     </ProjectReference>
   </ItemGroup>
 
-  <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
+  <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net461' ">
     <PackageReference Include="System.Text.Encoding.CodePages" Version="$(SystemTextEncodingCodePagesPackageVersion)" />

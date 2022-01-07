@@ -85,7 +85,7 @@ variables:
 - name: TestSettingsFileName
   value: 'lucene.testsettings.json'
 - name: BuildDirectory # Where the build scripts and configs are
-  value: '$(System.DefaultWorkingDirectory)/build'
+  value: '$(System.DefaultWorkingDirectory)/.build'
 - name: PublishDirectory # Test binaries directory
   value: '$(Build.ArtifactStagingDirectory)/$(BinaryArtifactName)'
 - name: NuGetArtifactDirectory # NuGet binaries directory
@@ -145,11 +145,11 @@ stages:
         if ($env:RunTests -ne 'false') {
             [string[]]$tasks = $primaryCommand,'Publish'
         }
-        Invoke-psake $(BuildDirectory)/build.ps1 -Task $tasks -properties $properties -parameters $parameters
+        Invoke-psake $(BuildDirectory)/runbuild.ps1 -Task $tasks -properties $properties -parameters $parameters
         exit !($psake.build_success)
       displayName: 'PSake Build, Pack, and Publish'
 
-    #- template: 'build/azure-templates/show-all-environment-variables.yml' # Uncomment for debugging
+    #- template: '.build/azure-templates/show-all-environment-variables.yml' # Uncomment for debugging
         
     - pwsh: |
         $dir = '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
@@ -236,35 +236,35 @@ stages:
         publishLocation: 'pipeline'
       condition: and(succeeded(), ne(variables['ArtifactFeedID'], ''))
 
-    - template: 'build/azure-templates/publish-test-binaries.yml'
+    - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
         framework: 'net6.0'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
-    - template: 'build/azure-templates/publish-test-binaries.yml'
+    - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
         framework: 'net5.0'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
-    - template: 'build/azure-templates/publish-test-binaries.yml'
+    - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
         framework: 'netcoreapp3.1'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
-    - template: 'build/azure-templates/publish-test-binaries.yml'
+    - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
         framework: 'net461'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
-    - template: 'build/azure-templates/publish-test-binaries.yml'
+    - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
         framework: 'net48'
@@ -351,7 +351,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
         framework: 'net6.0'
@@ -385,7 +385,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
         framework: 'net6.0'
@@ -419,7 +419,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
         framework: 'net5.0'
@@ -453,7 +453,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
         framework: 'net5.0'
@@ -487,7 +487,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
         framework: 'netcoreapp3.1'
@@ -521,7 +521,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
         framework: 'netcoreapp3.1'
@@ -545,7 +545,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
         framework: 'net461'
@@ -569,7 +569,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
         framework: 'net461'
@@ -586,7 +586,7 @@ stages:
     pool:
       vmImage: 'windows-2019'
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: 'Windows'
         framework: 'net48'
@@ -603,7 +603,7 @@ stages:
     pool:
       vmImage: 'windows-2019'
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: 'Windows'
         framework: 'net48'
@@ -631,7 +631,7 @@ stages:
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
       fetchDepth: '1'  # the depth of commits to ask Git to fetch
 
-    - template: 'build/azure-templates/show-all-environment-variables.yml'
+    - template: '.build/azure-templates/show-all-environment-variables.yml'
 
     - task: DownloadPipelineArtifact@0
       displayName: 'Download Build Artifacts: $(VersionArtifactName)'
@@ -651,9 +651,9 @@ stages:
         Write-Host "##vso[task.setvariable variable=PackageVersion;]$version"
         Write-Host "##vso[build.updatebuildnumber]$version"
       displayName: 'Read PackageVersion from File to Build.BuildNumber'
-    - template: 'build/azure-templates/show-all-environment-variables.yml'
+    - template: '.build/azure-templates/show-all-environment-variables.yml'
 
-    - template: 'build/azure-templates/publish-nuget-packages.yml'
+    - template: '.build/azure-templates/publish-nuget-packages.yml'
       parameters:
         artifactFeedID: '$(ArtifactFeedID)'
         nugetArtifactName: '$(NuGetArtifactName)'
@@ -673,7 +673,7 @@ stages:
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
       fetchDepth: '1'  # the depth of commits to ask Git to fetch
 
-    - template: 'build/azure-templates/show-all-environment-variables.yml'
+    - template: '.build/azure-templates/show-all-environment-variables.yml'
 
 
     - task: 'DownloadPipelineArtifact@0'
@@ -689,7 +689,7 @@ stages:
         artifactName: '$(VersionArtifactName)'
         targetPath: '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
         
-    - template: 'build/azure-templates/show-all-files.yml' # Uncomment for debugging
+    - template: '.build/azure-templates/show-all-files.yml' # Uncomment for debugging
 
       # NOTE: We are setting Build.BuildNumber here to the NuGet package version to work around the limitation that
       # the version cannot be passed to the Index Sources & Publish Symbols task.
@@ -706,7 +706,7 @@ stages:
             Copy-Item -Path "$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)/$file" -Destination "$(Build.SourcesDirectory)/$file" -Force -ErrorAction Continue
         }
       displayName: 'Update build.bat and Version.props to build only version $(PackageVersion)'
-    - template: 'build/azure-templates/show-all-environment-variables.yml'
+    - template: '.build/azure-templates/show-all-environment-variables.yml'
 
     - task: CopyFiles@2
       displayName: 'Copy Source Code Files to: $(Build.ArtifactStagingDirectory)/srctemp'

@@ -21,13 +21,13 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- These properties must be set prior to importing NuGet.props -->
+  <!-- These properties must be set prior to importing nuget.props -->
   <PropertyGroup>
     <Description>Analyzer for indexing phonetic signatures (for sounds-alike search) for the Lucene.NET full-text search engine library from The Apache Software Foundation.</Description>
     <PackageDocumentationRelativeUrl>analysis-phonetic/Lucene.Net.Analysis.Phonetic.html</PackageDocumentationRelativeUrl>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build/NuGet.props" />
+  <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>

@@ -21,13 +21,13 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- These properties must be set prior to importing NuGet.props -->
+  <!-- These properties must be set prior to importing nuget.props -->
   <PropertyGroup>
     <Description>Index tools and other miscellaneous functionality for the Lucene.NET full-text search engine library from The Apache Software Foundation.</Description>
     <PackageDocumentationRelativeUrl>misc/Lucene.Net.Misc.html</PackageDocumentationRelativeUrl>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build/NuGet.props" />
+  <Import Project="$(SolutionDir).build/nuget.props" />
   
   <PropertyGroup>
     <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>

@@ -21,13 +21,13 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- These properties must be set prior to importing NuGet.props -->
+  <!-- These properties must be set prior to importing nuget.props -->
   <PropertyGroup>
     <Description>International Components for Unicode-based features including Thai analyzer support, an international postings highlighter, and BreakIterator support for the vector highlighter for the Lucene.NET full-text search engine library from The Apache Software Foundation.</Description>
     <PackageDocumentationRelativeUrl>icu/overview.html</PackageDocumentationRelativeUrl>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build/NuGet.props" />
+  <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>

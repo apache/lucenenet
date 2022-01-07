@@ -65,7 +65,7 @@
     </ProjectReference>
   </ItemGroup>
 
-  <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
+  <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
 
   <ItemGroup>
     <Compile Update="Support\Flexible\Core\Messages\MessagesTest.Designer.cs">

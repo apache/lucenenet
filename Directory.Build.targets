@@ -20,7 +20,7 @@
 -->
 <Project>
 
-  <Import Project="$(SolutionDir)build/Dependencies.props" />
+  <Import Project="$(SolutionDir).build/dependencies.props" />
 
   <!-- Features in .NET 5.x and .NET 6.x only -->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) ">
@@ -152,6 +152,6 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubPackageReferenceVersion)" PrivateAssets="All"/>
   </ItemGroup>
 
-  <Import Project="build\Release.targets" Condition="Exists('build\Release.targets')" />
+  <Import Project=".build\release.targets" Condition="Exists('.build\release.targets')" />
 
 </Project>
