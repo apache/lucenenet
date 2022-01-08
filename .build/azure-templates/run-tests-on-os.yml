@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# Downloads test binaries and executes tests using dotnet vstest,
+# Downloads test binaries and executes tests using dotnet test,
 # runs the tests for each project on a background job in parallel,
 # then uploads the results to Azure DevOps pipelines
 
@@ -32,7 +32,7 @@ parameters:
   testResultsFileName: 'TestResults.trx' # The name of the file (not path) of the test results. Default 'TestResults.trx'.
   maximumParallelJobs: 8
   maximumAllowedFailures: 0
-  where: '' # A test filter expression, as defined by dotnet vstest
+  where: '' # A test filter expression, as defined by dotnet test
   dotNetSdkVersion: '' # The .NET SDK version to install
   
 steps:
@@ -162,13 +162,13 @@ steps:
                 Invoke-Expression $testExpression # For running in the foreground
             } else {
     
-                $testExpression += " > ""$testResultDirectory/dotnet-vstest.log"" 2> ""$testResultDirectory/dotnet-vstest-error.log"""
+                $testExpression += " > ""$testResultDirectory/dotnet-test.log"" 2> ""$testResultDirectory/dotnet-test-error.log"""
                 $scriptBlock = {
                     param([string]$testExpression)
                     Invoke-Expression $testExpression
                 }
     
-                # Avoid dotnet vstest collisions by delaying for 500ms
+                # Avoid dotnet test collisions by delaying for 500ms
                 Start-Sleep -Milliseconds 500
     
                 # Execute the jobs in parallel
@@ -198,7 +198,7 @@ steps:
     }
     
     $global:LASTEXITCODE = 0 # Force the script to continue on error
-  displayName: 'dotnet vstest ${{ parameters.framework }},${{ parameters.vsTestPlatform }}'
+  displayName: 'dotnet test ${{ parameters.framework }},${{ parameters.vsTestPlatform }}'
   ignoreLASTEXITCODE: true
 
 #- template: 'show-all-files.yml' # Uncomment for debugging
