@@ -55,6 +55,7 @@ properties {
 }
 
 $backedUpFiles = New-Object System.Collections.ArrayList
+$addedFiles = New-Object System.Collections.ArrayList
 
 task default -depends Pack
 
@@ -143,6 +144,7 @@ task Compile -depends Clean, Init, Restore -description "This task compiles the 
         $success = $true
     } finally {
         if ($success -ne $true) {
+            Delete-Added-Files $addedFiles
             Restore-Files $backedUpFiles
         }
     }
@@ -168,11 +170,8 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
         $success = $true
     } finally {
         #if ($success -ne $true) {
+            Delete-Added-Files $addedFiles
             Restore-Files $backedUpFiles
-            #Remove Version.props, as we don't want it to be committed to the repository
-            if ($backupFiles -eq $true -and (Test-Path -Path "$versionPropsFile") -eq $true) {
-                Remove-Item -Path "$versionPropsFile" -Force
-            }
         #}
     }
 }
@@ -246,6 +245,7 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
         $success = $true
     } finally {
         #if ($success -ne $true) {
+            Delete-Added-Files $addedFiles
             Restore-Files $backedUpFiles
         #}
     }
@@ -503,6 +503,7 @@ $fileText = "{
     Ensure-Directory-Exists $dir
 
     Write-Host "Generating global.json file: $(Normalize-FileSystemSlashes "$file")"
+    Track-Added-File $file
     Out-File -filePath $file -encoding UTF8 -inputObject $fileText
 }
 
@@ -543,6 +544,7 @@ $fileText = "<!--
     Ensure-Directory-Exists $dir
 
     Write-Host "Generating version.props file: $(Normalize-FileSystemSlashes "$file")"
+    Track-Added-File $file
     Out-File -filePath $file -encoding UTF8 -inputObject $fileText
 }
 
@@ -675,7 +677,7 @@ function Backup-File([string]$path) {
         Copy-Item $path "$path.bak" -Force
         $backedUpFiles.Insert(0, $path)
     } else {
-        Write-Host "Ignoring backup of file $path" -ForegroundColor DarkRed
+        Write-Host "Ignoring backup of file $(Normalize-FileSystemSlashes "$path")" -ForegroundColor DarkRed
     }
 }
 
@@ -691,6 +693,35 @@ function Restore-File([string]$path) {
             Move-Item "$path.bak" $path -Force
         }
         $backedUpFiles.Remove($path)
+    }
+}
+
+function Track-Added-Files([string[]]$paths) {
+    foreach ($path in $paths) {
+        Track-Added-File $path
+    }
+}
+
+function Track-Added-File([string]$path) {
+    if ($backupFiles -eq $true) {
+        $addedFiles.Insert(0, $path)
+    } else {
+        Write-Host "Ignoring tracking of file $(Normalize-FileSystemSlashes "$path")" -ForegroundColor DarkRed
+    }
+}
+
+function Delete-Added-Files([string[]]$paths) {
+    foreach ($path in $paths) {
+        Delete-Added-File $path
+    }
+}
+
+function Delete-Added-File([string]$path) {
+    if ($backupFiles -eq $true) {
+        if (Test-Path "$path") {
+            Remove-Item "$path" -Force
+        }
+        $addedFiles.Remove($path)
     }
 }
 
