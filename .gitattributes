@@ -1,8 +1,8 @@
-# Auto detect text files and perform LF normalization
+﻿# Auto detect text files and perform LF normalization
 * text=auto
 
 # Custom for Visual Studio
-*.cs     diff=csharp
+*.cs     eol=crlf diff=csharp
 *.sln    merge=union
 *.csproj merge=union
 *.vbproj merge=union
@@ -20,3 +20,9 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+# Batch Files
+build eol=lf
+*.sh eol=lf
+*.bat eol=crlf
+*.cmd eol=crlf
