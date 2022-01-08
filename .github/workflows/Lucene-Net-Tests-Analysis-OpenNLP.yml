@@ -25,8 +25,8 @@ on:
   pull_request:
     paths:
     - 'src/Lucene.Net.Tests.Analysis.OpenNLP/**/*'
-    - 'build/Dependencies.props'
-    - 'build/TestReferences.Common.*'
+    - '.build/dependencies.props'
+    - '.build/TestReferences.Common.*'
     - 'TestTargetFrameworks.*'
     - '*.sln'
     - 'src/Lucene.Net.Tests.Analysis.OpenNLP/Directory.Build.*'
@@ -76,22 +76,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup .NET 3.1 SDK
+      - name: Setup .NET SDK
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '3.1.412'
-        if: ${{ startswith(matrix.framework, 'netcoreapp3.') }}
-
-      - name: Setup .NET 5 SDK
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '5.0.400'
-        if: ${{ startswith(matrix.framework, 'net5.') }}
-
-      - name: Setup .NET 6 SDK
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '6.0.100'
+          dotnet-version: '6.0.101'
 
       - run: |
           $project_name = [System.IO.Path]::GetFileNameWithoutExtension($env:project_path)
