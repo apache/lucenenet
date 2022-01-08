@@ -1,4 +1,4 @@
-# Licensed to the Apache Software Foundation (ASF) under one
+﻿# Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
 # regarding copyright ownership.  The ASF licenses this file
@@ -14,10 +14,6 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-
-# Downloads test binaries and executes tests using dotnet vstest,
-# runs the tests for each project on a background job in parallel,
-# then uploads the results to Azure DevOps pipelines
 
 # Writes all file names (from the parent directory) to the host (helpful for debugging)
 
