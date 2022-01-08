@@ -51,10 +51,14 @@
  .PARAMETER Configurations
     A string array of build configurations to run the tests on. The default is @('Release').
 
- .PARAMETER DotNetSDKVersion
-    The SDK version of .NET to install on the build agent to be used for building and
-    testing. This SDK is always installed on the build agent. The default is 6.0.101.
+ .PARAMETER DotNet5SDKVersion
+    The SDK version of .NET 5.x to install on the build agent to be used for building and
+    testing. This SDK is always installed on the build agent. The default is 5.0.400.
 
+ .PARAMETER DotNetCore3SDKVersion
+    The SDK version of .NET Core 3.x to install on the build agent to be used for building and
+    testing. This SDK is only installed on the build agent when targeting .NET Core 3.x.
+    The default is 3.1.412.
 #>
 param(
     [string]$OutputDirectory =  $PSScriptRoot,
@@ -69,7 +73,11 @@ param(
 
     [string[]]$Configurations = @('Release'),
 
-    [string]$DotNetSDKVersion = '6.0.101'
+    [string]$DotNet6SDKVersion = '6.0.100',
+
+    [string]$DotNet5SDKVersion = '5.0.400',
+
+    [string]$DotNetCore3SDKVersion = '3.1.412'
 )
 
 
@@ -149,7 +157,9 @@ function Write-TestWorkflow(
     [string[]]$TestFrameworks = @('net5.0', 'net48'),
     [string[]]$TestPlatforms = @('x64'),
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest', 'macos-latest'),
-    [string]$DotNetSDKVersion = $DotNetSDKVersion) {
+    [string]$DotNet6SDKVersion = $DotNet6SDKVersion,
+    [string]$DotNet5SDKVersion = $DotNet5SDKVersion,
+    [string]$DotNetCore3SDKVersion = $DotNetCore3SDKVersion) {
 
     $dependencies = New-Object System.Collections.Generic.HashSet[string]
     Get-ProjectDependencies $ProjectPath $RelativeRoot $dependencies
@@ -246,10 +256,22 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup .NET SDK
+      - name: Setup .NET 3.1 SDK
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '$DotNetSDKVersion'
+          dotnet-version: '$DotNetCore3SDKVersion'
+        if: `${{ startswith(matrix.framework, 'netcoreapp3.') }}
+
+      - name: Setup .NET 5 SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '$DotNet5SDKVersion'
+        if: `${{ startswith(matrix.framework, 'net5.') }}
+
+      - name: Setup .NET 6 SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '$DotNet6SDKVersion'
 
       - run: |
           `$project_name = [System.IO.Path]::GetFileNameWithoutExtension(`$env:project_path)
@@ -294,7 +316,7 @@ try {
     Pop-Location
 }
 
-#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net5.0','netcoreapp3.1') -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNetSDKVersion $DotNetSDKVersion
+#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net5.0','netcoreapp3.1') -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion
 
 #Write-Host $TestProjects
 
@@ -321,5 +343,5 @@ foreach ($testProject in $TestProjects) {
     Write-Host "Frameworks To Test for ${projectName}: $($frameworks -join ';')" -ForegroundColor Cyan
 
     #Write-Host "Project: $projectName"
-    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNetSDKVersion $DotNetSDKVersion
+    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion
 }
