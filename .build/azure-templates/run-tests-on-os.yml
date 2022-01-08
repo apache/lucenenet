@@ -79,6 +79,18 @@ steps:
   parameters:
     sdkVersion: '${{ parameters.dotNetSdkVersion }}'
 
+- task: UseDotNet@2
+  displayName: 'Use .NET Core sdk 3.1.412'
+  inputs:
+    version: 3.1.412
+  condition: and(succeeded(), contains('${{ parameters.framework }}', 'netcoreapp3.'))
+
+- task: UseDotNet@2
+  displayName: 'Use .NET sdk 5.0.400'
+  inputs:
+    version: 5.0.400
+  condition: and(succeeded(), contains('${{ parameters.framework }}', 'net5.'))
+
 #- template: 'show-all-files.yml' # Uncomment for debugging
 - pwsh: |
     $framework = '${{ parameters.framework }}'
