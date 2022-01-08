@@ -185,15 +185,14 @@ stages:
       displayName: 'Persist Test Settings to lucene.testsettings.json'
       condition: and(succeeded(), ne(variables['RunTests'], 'false'))
 
-    # If this is a release pipeline, copy the build.bat and Version.props files as version artifacts, which will 
-    # overwrite the build.bat and Version.props files of the release.
+    # If this is a release pipeline, copy the version.props files as a version artifact, which will
+    # be included in the release.
     - task: CopyFiles@2
-      displayName: 'Copy build.bat and Version.props Files to: /$(VersionArtifactName)'
+      displayName: 'Copy version.props Files to: /$(VersionArtifactName)'
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)'
         Contents: |
-          build.bat
-          Version.props
+          version.props
         TargetFolder: '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
       condition: and(succeeded(), eq(variables['IsRelease'], 'true'))
             
@@ -704,12 +703,14 @@ stages:
         Write-Host "##vso[task.setvariable variable=PackageVersion;]$version"
         Write-Host "##vso[build.updatebuildnumber]$version"
       displayName: 'Build VCS Label and Rehydrate Version Variables'
+
     - pwsh: |
-        $files = 'build.bat','Version.props'
+        [string[]]$files = @('version.props')
         foreach ($file in $files) {
             Copy-Item -Path "$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)/$file" -Destination "$(Build.SourcesDirectory)/$file" -Force -ErrorAction Continue
         }
-      displayName: 'Update build.bat and Version.props to build only version $(PackageVersion)'
+      displayName: 'Update version.props to build only version $(PackageVersion)'
+
     - template: '.build/azure-templates/show-all-environment-variables.yml'
 
     - task: CopyFiles@2
@@ -719,10 +720,12 @@ stages:
         Contents: |
          **
          !.git/**/*
+         !.github/**/*
          !branding/**/*
-         !release/**/*
+         !_artifacts/**/*
          !src/**/bin/**/*
          !src/**/obj/**/*
+         !websites/**/*
          branding/logo/lucene-net-icon-128x128.png
         TargetFolder: '$(Build.ArtifactStagingDirectory)/srctemp'
 
@@ -768,5 +771,3 @@ stages:
         targetPath: '$(Build.ArtifactStagingDirectory)/$(ReleaseArtifactName)'
         artifact:  '$(ReleaseArtifactName)'
         publishLocation: 'pipeline'
-
-# LUCENENET TODO: Write VCS Label (git tag) automatically
