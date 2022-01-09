@@ -34,7 +34,7 @@ on:
     #branches:
     #- master
     paths:
-    - 'websites/site/**'
+    - 'websites/site/**/*'
 
 env:
   # If a tag is specified, the tag will be in the format: Website_4_8_0_beta00013 which

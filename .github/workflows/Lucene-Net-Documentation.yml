@@ -38,8 +38,8 @@ on:
     #branches:
     #- master
     paths:
-    - 'websites/apidocs/**'
-    - 'src/docs/LuceneDocsPlugins/**'
+    - 'websites/apidocs/**/*'
+    - 'src/docs/LuceneDocsPlugins/**/*'
 
 env:
   # If a tag is specified, the tag will be in the format: Docs_4_8_0_beta00013
