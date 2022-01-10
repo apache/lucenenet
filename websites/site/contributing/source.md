@@ -33,7 +33,7 @@ However, it's common for developers to build and test the project using Visual S
 
 Once the solution has been opened in Visual Studio you can build it as you would any solution by selecting "Build Solution" from the "Build" menu. Likewise you can run the unit tests for the solution just like you would for any other solution by selecting "Run All Tests" from the "Tests" menu.
 
-This is a large solution with more than 300K lines of code so it may take a bit longer for Visual Studio to perform these operations then you are use to but it should display progress information while it does it work.
+This is a large solution with more than [644K+ lines](https://lucenenet.apache.org/images/contributing/source/lucenenet-repo-lines-of-code--jan-2022.png) of code so it may take a bit longer for Visual Studio to perform these operations then you are use to but it should display progress information while it does it work.
 
 
 ## Making Changes
