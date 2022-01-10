@@ -1,5 +1,5 @@
 ﻿---
-uid: setupJavaDebugging
+uid: contributing/setup-java-debugging
 ---
 
 # How to Setup Java Lucene 4.8 Debugging
