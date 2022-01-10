@@ -80,8 +80,12 @@ header ul.navbar-nav {
   }	
 }
 
-.article img {
+article img {
     margin:15px 0 30px 0;
+}
+
+article[data-uid="setupJavaDebugging"] img {
+    border: solid 1px #dedcd3
 }
 
 .sidefilter {
