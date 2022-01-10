@@ -1,12 +1,16 @@
-# Apache Lucene.NET
+﻿# Welcome to Apache Lucene.NET 
 
 [![Nuget](https://img.shields.io/nuget/dt/Lucene.Net)](https://www.nuget.org/packages/Lucene.Net)
 [![Azure DevOps builds (master)](https://img.shields.io/azure-devops/build/lucene-net/6ba240c9-9598-47e7-a793-0ed8a4ba2f8b/3/master)](https://dev.azure.com/lucene-net/Lucene.NET/_build?definitionId=3&_a=summary)
 [![GitHub](https://img.shields.io/github/license/apache/lucenenet)](https://github.com/apache/lucenenet/blob/master/LICENSE.txt)
 
-## Full-text search for .NET
+## Powerful Full-text search for .NET
 
-Apache Lucene.NET is a .NET full-text search engine framework, a C# port of the popular Apache Lucene project.  Apache Lucene.NET is not a complete application, but rather a code library and API that can easily be used to add search capabilities to applications.
+Apache Lucene.NET is an open-source full-text search library written in C#. It is a port of the popular Java Apache Lucene project.
+
+Apache Lucene.NET is a .NET library providing powerful indexing and search features, as well as spellchecking, hit highlighting and advanced analysis/tokenization capabilities.
+
+Lucene.NET version 4.8 (still in Beta) runs everywhere .NET runs, including Windows, Unix, MacOS, Android and iOS.
 
 The Apache Lucene.NET web site is at:
   http://lucenenet.apache.org
@@ -104,7 +108,7 @@ PM> Install-Package Lucene.Net -Pre
 
 ## Documentation
 
-We now have some preliminary documentation for Lucene.NET 4.8.0 [on the Lucene.NET Website](https://lucenenet.apache.org/).
+We have preliminary documentation for Lucene.NET 4.8.0 [on the Lucene.NET Website](https://lucenenet.apache.org/).
 
 The API is similar to Java [Lucene 4.8.0](https://lucene.apache.org/core/4_8_0/), which you may also find helpful to review.
 
