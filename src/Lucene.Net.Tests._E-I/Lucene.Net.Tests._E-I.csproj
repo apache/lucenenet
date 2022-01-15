@@ -41,8 +41,8 @@
     <Compile Include="..\Lucene.Net.Tests\Index\TestF*.cs" LinkBase="Index" />
     <Compile Include="..\Lucene.Net.Tests\Index\TestG*.cs" LinkBase="Index" />
     <Compile Include="..\Lucene.Net.Tests\Index\TestH*.cs" LinkBase="Index" />
-    <Compile Include="..\Lucene.Net.Tests\Index\TestI*.cs" LinkBase="Index" />
-    <Compile Include="..\Lucene.Net.Tests\Index\TestJ*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestIndexWriter.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestIndexWriterReader.cs" LinkBase="Index" />
     <EmbeddedResource Include="..\Lucene.Net.Tests\Index\*.zip" LinkBase="Index" />
   </ItemGroup>
 
