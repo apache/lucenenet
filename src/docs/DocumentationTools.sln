@@ -18,11 +18,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # under the License.
 VisualStudioVersion = 16.0.29521.150
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuceneDocsPlugins", "LuceneDocsPlugins\LuceneDocsPlugins.csproj", "{D5D1C256-4A5A-4C57-949D-E9A1FFB6A5D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuceneDocsPlugins", "LuceneDocsPlugins\LuceneDocsPlugins.csproj", "{D5D1C256-4A5A-4C57-949D-E9A1FFB6A5D1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Info", "Info", "{D0D177C8-D797-4850-AB75-E91E3126761C}"
 	ProjectSection(SolutionItems) = preProject
 		convert.ps1 = convert.ps1
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
 		readme.md = readme.md
 	EndProjectSection
 EndProject
