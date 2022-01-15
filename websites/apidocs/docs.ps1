@@ -34,6 +34,7 @@ param (
     [Parameter(Mandatory = $false)]
     [int] $StagingPort = 8080
 )
+$MinimumSdkVersion = "3.1.100" # Minimum Required .NET SDK (must not be a pre-release)
 
 $ErrorActionPreference = "Stop"
 
@@ -80,26 +81,6 @@ if (-not (test-path $DocFxExe)) {
     Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
 }
 
-# ensure we have NuGet
-New-Item "$ToolsFolder\nuget" -type directory -force
-$nuget = "$ToolsFolder\nuget\nuget.exe"
-if (-not (test-path $nuget)) {
-    Write-Host "Download NuGet..."
-    Invoke-WebRequest "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe" -OutFile $nuget -TimeoutSec 60
-}
-
-# ensure we have vswhere
-New-Item "$ToolsFolder\vswhere" -type directory -force
-$vswhere = "$ToolsFolder\vswhere\vswhere.exe"
-if (-not (test-path $vswhere)) {
-    Write-Host "Download VsWhere..."
-    $path = "$ToolsFolder\tmp"
-    &$nuget install vswhere -OutputDirectory $path
-    $dir = Get-ChildItem "$path\vswhere.*" | Sort-Object -property Name -descending | Select-Object -first 1
-    $file = Get-ChildItem -path "$dir" -name vswhere.exe -recurse
-    Move-Item "$dir\$file" $vswhere
-}
-
 Remove-Item  -Recurse -Force "$ToolsFolder\tmp"
 
 # delete anything that already exists
@@ -114,22 +95,24 @@ if ($Clean) {
 # Build our custom docfx tools
 
 if ($DisablePlugins -eq $false) {
-    $MSBuild = &$vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe | select-object -first 1
-    if (-not (test-path $MSBuild)) {
-        throw "MSBuild not found!"
+     # Check prerequisites
+    $SdkVersion = ((& dotnet --version) | Out-String).Trim()
+    if ($LASTEXITCODE -ne 0) {
+        throw "dotnet command was not found. Please install .NET $MinimumSdkVersion or higher SDK and make sure it is in your PATH."
+    }
+    $ReleaseVersion = if ($sdkVersion.Contains('-')) { "$SdkVersion".Substring(0, "$SdkVersion".IndexOf('-')) } else { $SdkVersion }
+    if ([version]$ReleaseVersion -lt ([version]$MinimumSdkVersion)) {
+        throw "Minimum .NET SDK $MinimumSdkVersion required. Current SDK version is $ReleaseVersion. Please install the required SDK before running the command."
     }
 
-    # Build the plugin solution
-    $pluginSln = (Join-Path -Path $RepoRoot "src\docs\DocumentationTools.sln")
-    & $nuget restore $pluginSln
+    $pluginProject = (Join-Path -Path $RepoRoot "src/docs/LuceneDocsPlugins/LuceneDocsPlugins.csproj")
+    $PluginsFolder = (Join-Path -Path $ApiDocsFolder "Templates/LuceneTemplate/plugins")
 
-    if (-not $?) {throw "Failed to restore plugin sln"}
-
-    $PluginsFolder = (Join-Path -Path $ApiDocsFolder "Templates\LuceneTemplate\plugins")
     New-Item $PluginsFolder -type directory -force
-    & $msbuild $pluginSln /target:LuceneDocsPlugins "/p:OutDir=$PluginsFolder"
+    # This will restore, build, and copy all files (including dependencies) to the output folder
+    & dotnet publish "$pluginProject" --configuration Release --output "$PluginsFolder" --verbosity normal
 
-    if (-not $?) {throw "Failed to build plugin sln"}
+    if (-not $?) {throw "Failed to build plugin project"}
 }
 
 # update the docjx.global.json file based
