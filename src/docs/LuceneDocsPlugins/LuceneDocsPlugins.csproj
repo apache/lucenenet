@@ -17,72 +17,54 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup Label="Assembly Signing">
-    <!-- Ensure this doesn't inherit the strong naming since this tool will no work with a signed assembly due to it's references -->
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyTitle>LuceneDocsPlugins</AssemblyTitle>
+    <Product>LuceneDocsPlugins</Product>
   </PropertyGroup>
+  
   <PropertyGroup>
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D5D1C256-4A5A-4C57-949D-E9A1FFB6A5D1}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LuceneDocsPlugins</RootNamespace>
-    <AssemblyName>LuceneDocsPlugins</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+
+  <PropertyGroup Label="Version Info">
+    <Version>1.0.0.0</Version>
+    <FileVersion>$(Version)</FileVersion>
+    <InformationalVersion>$(Version)</InformationalVersion>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\websites\apidocs\lucenetemplate\plugins\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Label="Assembly Publishing">
+    <IsPublishable>true</IsPublishable>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+  
+  <PropertyGroup Label="Assembly Signing">
+    <!-- Ensure this doesn't inherit the strong naming since this tool will no work with a signed assembly due to it's references -->
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Remove="packages\**" />
+    <EmbeddedResource Remove="packages\**" />
+    <None Remove="packages\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Composition" Version="1.0.31" />
+    <PackageReference Include="Microsoft.DocAsCode.Dfm" Version="2.58.0" />
+    <PackageReference Include="YamlDotNet" Version="6.0.0" />
+  </ItemGroup>
+  
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Web" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="EnvironmentVariableInlineRule.cs" />
-    <Compile Include="EnvironmentVariableRendererPart.cs" />
-    <Compile Include="LuceneDfmEngineCustomizer.cs" />
-    <Compile Include="LuceneNoteBlockRule.cs" />
-    <Compile Include="LuceneNoteBlockToken.cs" />
-    <Compile Include="RendererPartProvider.cs" />
-    <Compile Include="LuceneNoteTokenRendererPart.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Composition">
-      <Version>1.0.31</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.DocAsCode.Dfm">
-      <Version>2.58.0</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>
