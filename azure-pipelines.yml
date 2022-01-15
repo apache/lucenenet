@@ -267,9 +267,13 @@ stages:
   - job: Docs
     condition: and(succeeded(), eq(variables['GenerateDocs'], 'true'))
     pool:
-      vmImage: 'vs2017-win2016'
+      vmImage: 'windows-latest'
 
     steps:
+    - template: '.build/azure-templates/install-dotnet-sdk.yml'
+      parameters:
+        sdkVersion: '$(DotNetSDKVersion)'
+
     - pwsh: |
          $(Build.SourcesDirectory)/websites/apidocs/docs.ps1 -LuceneNetVersion $(PackageVersion) -Clean -BaseUrl https://lucenenet.apache.org/docs/
       errorActionPreference: 'continue'
@@ -293,7 +297,7 @@ stages:
   - job: Website
     condition: and(succeeded(), eq(variables['GenerateWebsite'], 'true'))
     pool:
-      vmImage: 'vs2017-win2016'
+      vmImage: 'windows-latest'
 
     steps:
     - pwsh: |
