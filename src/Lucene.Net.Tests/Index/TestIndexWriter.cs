@@ -1959,6 +1959,8 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
+#endif
+
         internal sealed class StringSplitAnalyzer : Analyzer
         {
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
@@ -2017,6 +2019,8 @@ namespace Lucene.Net.Index
                 this.tokens = b.ToString().Split(' ').TrimEnd();
             }
         }
+
+#if FEATURE_INDEXWRITER_TESTS
 
         /// <summary>
         /// Make sure we skip wicked long terms.
