@@ -44,8 +44,8 @@ on:
     - 'src/Lucene.Net.Tests/Index/TestF*.cs'
     - 'src/Lucene.Net.Tests/Index/TestG*.cs'
     - 'src/Lucene.Net.Tests/Index/TestH*.cs'
-    - 'src/Lucene.Net.Tests/Index/TestI*.cs'
-    - 'src/Lucene.Net.Tests/Index/TestJ*.cs'
+    - 'src/Lucene.Net.Tests/Index/TestIndexWriter.cs'
+    - 'src/Lucene.Net.Tests/Index/TestIndexWriterReader.cs'
     - 'src/Lucene.Net.Tests/Index/*.zip'
 
     # Dependencies
