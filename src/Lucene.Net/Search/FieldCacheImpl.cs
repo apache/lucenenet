@@ -289,18 +289,6 @@ namespace Lucene.Net.Search
                 UninterruptableMonitor.Enter(readerCache);
                 try
                 {
-#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-
-                    innerCache = readerCache.GetValue(readerKey, (readerKey) =>
-                    {
-                        // First time this reader is using FieldCache
-                        wrapper.InitReader(reader);
-                        return new Dictionary<TKey, object>
-                        {
-                            [key] = value
-                        };
-                    });
-#else
                     if (!readerCache.TryGetValue(readerKey, out innerCache) || innerCache is null)
                     {
                         // First time this reader is using FieldCache
@@ -308,10 +296,9 @@ namespace Lucene.Net.Search
                         {
                             [key] = value
                         };
-                        readerCache.Add(readerKey, innerCache);
+                        readerCache.AddOrUpdate(readerKey, innerCache);
                         wrapper.InitReader(reader);
                     }
-#endif
                     if (!innerCache.TryGetValue(key, out object temp) || temp is null)
                         innerCache[key] = value;
                     // else if another thread beat us to it, leave the current value
@@ -330,17 +317,6 @@ namespace Lucene.Net.Search
                 UninterruptableMonitor.Enter(readerCache);
                 try
                 {
-#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-                    innerCache = readerCache.GetValue(readerKey, (readerKey) =>
-                    {
-                        // First time this reader is using FieldCache
-                        wrapper.InitReader(reader);
-                        return new Dictionary<TKey, object>
-                        {
-                            [key] = value = new FieldCache.CreationPlaceholder<TValue>()
-                        };
-                    });
-#else
                     if (!readerCache.TryGetValue(readerKey, out innerCache) || innerCache is null)
                     {
                         // First time this reader is using FieldCache
@@ -348,14 +324,15 @@ namespace Lucene.Net.Search
                         {
                             [key] = value = new FieldCache.CreationPlaceholder<TValue>()
                         };
-                        readerCache[readerKey] = innerCache;
+                        readerCache.AddOrUpdate(readerKey, innerCache);
                         wrapper.InitReader(reader);
                     }
-#endif
                     // LUCENENET: The creation steps above will ensure the placehoder already exists by
                     // this point only in the case where the dictionary is being added.
-                    // But we need to cover 1) the case where the cache already has a dictionary but no value and
-                    // 2) the case where the cache already has a dictionary and a value so we diverge a little from Lucene here.
+                    // But we need to cover
+                    // 1) the case where the cache already has a dictionary but no value
+                    // 2) the case where the cache already has a dictionary and a null value
+                    // so we diverge a little from Lucene here.
                     if (value is null)
                     {
                         if (!innerCache.TryGetValue(key, out value) || value is null)
