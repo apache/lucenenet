@@ -312,7 +312,7 @@ namespace Lucene.Net.Search
                         wrapper.InitReader(reader);
                     }
 #endif
-                    if (innerCache.TryGetValue(key, out object temp) || temp is null)
+                    if (!innerCache.TryGetValue(key, out object temp) || temp is null)
                         innerCache[key] = value;
                     // else if another thread beat us to it, leave the current value
                 }
