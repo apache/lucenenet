@@ -162,7 +162,12 @@ namespace Lucene.Net.Support
 
         public TValue this[TKey key]
         {
-            get => _hm[new WeakKey<TKey>(key)];
+            get
+            {
+                if (!this.ContainsKey(key))
+                    return default(TValue);
+                return _hm[new WeakKey<TKey>(key)];
+            }
             set
             {
                 CleanIfNeeded();
