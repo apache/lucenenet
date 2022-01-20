@@ -930,16 +930,17 @@ namespace Lucene.Net.Util
         public static string RandomAnalysisString(Random random, int maxLength, bool simple)
         {
             Assert.True(maxLength >= 0);
+            maxLength = maxLength == 0 ? 0 : random.Next(maxLength); // LUCENENET: Lucene bug - random.Next(int) in Java must be > 0, and so must J2N.Randomizer. So, just pass through 0 as .NET would.
 
             // sometimes just a purely random string
             if (random.Next(31) == 0)
             {
-                return RandomSubString(random, random.Next(maxLength), simple);
+                // LUCENENET specific - We need to pass the value from the random class or 0, just like the remainder of the code
+                return RandomSubString(random, maxLength, simple);
             }
 
             // otherwise, try to make it more realistic with 'words' since most tests use MockTokenizer
             // first decide how big the string will really be: 0..n
-            maxLength = maxLength == 0 ? 0 : random.Next(maxLength); // LUCENENET: Lucene bug - random.Next(int) in Java must be > 0, and so must J2N.Randomizer. So, just pass through 0 as .NET would.
             int avgWordLength = TestUtil.NextInt32(random, 3, 8);
             StringBuilder sb = new StringBuilder();
             while (sb.Length < maxLength)
