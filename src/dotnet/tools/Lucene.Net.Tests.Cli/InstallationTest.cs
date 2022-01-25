@@ -70,12 +70,13 @@ namespace Lucene.Net.Tests.Cli
             }
 
             packageVersion = GetPackageVersion(packageFile.Name);
+            var targetFramework = GetTargetFramework();
 
             // Prepare our temp directory with a tool manifest so it can have local tools (we don't install globally to avoid conflicts with tools on dev machines).
             AssertCommandExitCode(ExitCode.Success, "dotnet", $"new tool-manifest --output \"{tempWork.FullName}\"");
 
             // Now install our tool and verify that the command succeeded.
-            AssertCommandExitCode(ExitCode.Success, "dotnet", $"tool install {LuceneCliToolName} --version {packageVersion} --add-source \"{packageFile.DirectoryName}\" --tool-path  \"{tempWork.FullName}\"");
+            AssertCommandExitCode(ExitCode.Success, "dotnet", $"tool install {LuceneCliToolName} --version {packageVersion} --framework {targetFramework} --add-source \"{packageFile.DirectoryName}\" --tool-path  \"{tempWork.FullName}\"");
         }
 
         public override void AfterClass()
@@ -117,6 +118,14 @@ namespace Lucene.Net.Tests.Cli
         private string GetPackageVersion(string packageFile)
         {
             return packageFile.Replace($"{LuceneCliToolName}.", string.Empty, StringComparison.Ordinal).Replace(".nupkg", string.Empty, StringComparison.Ordinal);
+        }
+
+        private string GetTargetFramework()
+        {
+            var targetFrameworkAttribute = GetType().Assembly.GetAttributes<System.Reflection.AssemblyMetadataAttribute>(inherit: false).Where(a => a.Key == "TargetFramework").FirstOrDefault();
+            if (targetFrameworkAttribute is null)
+                Assert.Fail("TargetFramework metadata not found in this assembly.");
+            return targetFrameworkAttribute.Value;
         }
 
         private string AppendCommandOutput(string message, string stdOut, string stdErr, int exitCode)

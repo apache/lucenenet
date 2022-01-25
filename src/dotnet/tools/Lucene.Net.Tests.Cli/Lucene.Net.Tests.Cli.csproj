@@ -21,13 +21,17 @@
 -->  
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="$(SolutionDir)TestTargetFramework.props" />
+
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <!-- Allow specific target framework to flow in from TestTargetFrameworks.props -->
+    <TargetFrameworks Condition=" '$(TargetFramework)' == '' ">net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
+    <!-- If .NET Frameowrk is specified, just target the latest version -->
+    <TargetFramework Condition=" $(TargetFramework.StartsWith('net4')) ">net6.0</TargetFramework>
     <AssemblyTitle>Lucene.Net.Tests.Cli</AssemblyTitle>
 
-    <IsPublishable>false</IsPublishable>
-    <IsPublishable Condition=" '$(TargetFramework)' == 'net6.0' ">true</IsPublishable>
-    <IsTestProject>true</IsTestProject>
+    <IsPublishable Condition="$(TargetFramework.StartsWith('net4'))">false</IsPublishable>
+    <IsTestProject Condition="$(TargetFramework.StartsWith('net4'))">false</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -43,13 +47,14 @@
     <ProjectReference Include="..\..\..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationPackageVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonPackageVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="$(MicrosoftExtensionsConfigurationXmlPackageVersion)" />
-  </ItemGroup>
-
   <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
+
+  <ItemGroup>
+    <!-- Add the target framework as metadata so our assembly knows which target it is testing -->
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>TargetFramework</_Parameter1>
+      <_Parameter2>$(TargetFramework)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
 
 </Project>
