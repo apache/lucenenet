@@ -2,6 +2,7 @@
 using Lucene.Net.Support.Threading;
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Support.IO
 {
@@ -35,8 +36,7 @@ namespace Lucene.Net.Support.IO
     /// </summary>
     internal static class StreamExtensions
     {
-        private static readonly object readLock = new object();
-
+        private static readonly ConditionalWeakTable<Stream, object> lockCache = new ConditionalWeakTable<Stream, object>();
 
         /// <summary>
         /// Reads a sequence of bytes from a <see cref="Stream"/> to the given <see cref="ByteBuffer"/>, starting at the given position.
@@ -82,6 +82,7 @@ namespace Lucene.Net.Support.IO
                 return 0;
 
             int read = 0;
+            object readLock = lockCache.GetOrCreateValue(stream);
             UninterruptableMonitor.Enter(readLock);
             try
             {
