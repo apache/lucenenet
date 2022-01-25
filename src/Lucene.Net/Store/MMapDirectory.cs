@@ -42,13 +42,14 @@ namespace Lucene.Net.Store
     /// if you have problems with mmap failing because of fragmented
     /// address space. If you get an <see cref="OutOfMemoryException"/>, it is recommended
     /// to reduce the chunk size, until it works.
-    /// <para>
-    /// <b>NOTE:</b> Accessing this class either directly or
-    /// indirectly from a thread while it's interrupted can close the
-    /// underlying channel immediately if at the same time the thread is
-    /// blocked on IO. The channel will remain closed and subsequent access
-    /// to <see cref="MMapDirectory"/> will throw a <see cref="ObjectDisposedException"/>.
-    /// </para>
+    /// <para/>
+    /// <font color="red"><b>NOTE:</b> Unlike in Java, it is not recommended to use
+    /// <see cref="System.Threading.Thread.Interrupt()"/> in .NET
+    /// in conjunction with an open <see cref="FSDirectory"/> because it is not guaranteed to exit atomically.
+    /// Any <c>lock</c> statement or <see cref="System.Threading.Monitor.Enter(object)"/> call can throw a
+    /// <see cref="System.Threading.ThreadInterruptedException"/>, which makes shutting down unpredictable.
+    /// To exit parallel tasks safely, we recommend using <see cref="System.Threading.Tasks.Task"/>s
+    /// and "interrupt" them with <see cref="System.Threading.CancellationToken"/>s.</font>
     /// </summary>
     public class MMapDirectory : FSDirectory
     {
