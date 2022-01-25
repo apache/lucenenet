@@ -24,11 +24,23 @@ namespace Lucene.Net.Store
 
     /// <summary>
     /// A straightforward implementation of <see cref="FSDirectory"/>
-    /// using <see cref="FileStream"/>.  However, this class has
-    /// poor concurrent performance (multiple threads will
+    /// using <see cref="FileStream"/>.
+    /// <para/>
+    /// <see cref="FSDirectory"/> is ideal for use cases where efficient
+    /// writing is required without utilizing too much RAM. However, reading
+    /// is less efficient than when using <see cref="MMapDirectory"/>.
+    /// This class has poor concurrent read performance (multiple threads will
     /// bottleneck) as it synchronizes when multiple threads
-    /// read from the same file.  It's usually better to use
-    /// <see cref="NIOFSDirectory"/> or <see cref="MMapDirectory"/> instead.
+    /// read from the same file. It's usually better to use
+    /// <see cref="MMapDirectory"/> for reading.
+    /// <para/>
+    /// <font color="red"><b>NOTE:</b> Unlike in Java, it is not recommended to use
+    /// <see cref="System.Threading.Thread.Interrupt()"/> in .NET
+    /// in conjunction with an open <see cref="FSDirectory"/> because it is not guaranteed to exit atomically.
+    /// Any <c>lock</c> statement or <see cref="System.Threading.Monitor.Enter(object)"/> call can throw a
+    /// <see cref="System.Threading.ThreadInterruptedException"/>, which makes shutting down unpredictable.
+    /// To exit parallel tasks safely, we recommend using <see cref="System.Threading.Tasks.Task"/>s
+    /// and "interrupt" them with <see cref="System.Threading.CancellationToken"/>s.</font>
     /// </summary>
     public class SimpleFSDirectory : FSDirectory
     {
