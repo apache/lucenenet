@@ -24,9 +24,10 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
 
-    <IsPublishable Condition=" '$(TargetFramework)' == 'net6.0' ">true</IsPublishable>
+    <IsPublishable>true</IsPublishable>
+    <IsPublishable Condition="$(TargetFramework.StartsWith('net4'))">false</IsPublishable>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>lucene</ToolCommandName>
     
@@ -45,7 +46,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="docs\index.md" Pack="true" PackagePath="\readme.md"/>
+    <None Include="docs\index.md" Pack="true" PackagePath="\readme.md" />
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -1,4 +1,4 @@
-﻿Lucene.NET is a full-text search engine library capable of advanced text analysis, indexing, and searching. It can be used to easily add search capabilities to applications. Lucene.NET is a C# port of the popular Java Lucene search engine framework from The Apache Software Foundation, targeting the .NET platform.
+Lucene.NET is a full-text search engine library capable of advanced text analysis, indexing, and searching. It can be used to easily add search capabilities to applications. Lucene.NET is a C# port of the popular Java Lucene search engine framework from The Apache Software Foundation, targeting the .NET platform.
 
 ## Quick Start
 
@@ -133,7 +133,7 @@ There are several demos implemented as simple console applications that can be c
 
 There is also a dotnet command line tool available on NuGet. It contains all of the demos as well as tools maintaining your Lucene.NET index, featuring operations such as splitting, merging, listing segment info, fixing, deleting segments, upgrading, etc. Always be sure to back up your index before running any commands against it!
 
-- [Prerequisite: .NET 6.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+- [Prerequisite: .NET Core 3.1 Runtime or Higher](https://dotnet.microsoft.com/en-us/download/dotnet)
 
 ```
 dotnet tool install lucene-cli -g --version 4.8.0-beta00015
