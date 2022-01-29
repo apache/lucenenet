@@ -4,6 +4,7 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Runtime.CompilerServices;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -461,9 +462,21 @@ namespace Lucene.Net.Index
                                 assertNotNull(source);
                                 if (source.Equals("merge", StringComparison.Ordinal))
                                 {
-                                    assertTrue("sub reader " + sub + " wasn't warmed: warmed=" + outerInstance.warmed + " diagnostics=" + diagnostics + " si=" + segReader.SegmentInfo,
-                                        // LUCENENET: ConditionalWeakTable doesn't have ContainsKey, so we normalize to TryGetValue
-                                        !outerInstance.m_assertMergedSegmentsWarmed || outerInstance.warmed.TryGetValue(segReader.core, out BooleanRef _));
+#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+                                    UninterruptableMonitor.Enter(outerInstance.warmedLock);
+                                    try
+                                    {
+#endif
+                                        assertTrue("sub reader " + sub + " wasn't warmed: warmed=" + outerInstance.warmed + " diagnostics=" + diagnostics + " si=" + segReader.SegmentInfo,
+                                            // LUCENENET: ConditionalWeakTable doesn't have ContainsKey, so we normalize to TryGetValue
+                                            !outerInstance.m_assertMergedSegmentsWarmed || outerInstance.warmed.TryGetValue(segReader.core, out BooleanRef _));
+#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+                                    }
+                                    finally
+                                    {
+                                        UninterruptableMonitor.Exit(outerInstance.warmedLock);
+                                    }
+#endif
                                 }
                             }
                             if (s.IndexReader.NumDocs > 0)
@@ -541,11 +554,10 @@ namespace Lucene.Net.Index
 
         protected bool m_assertMergedSegmentsWarmed = true;
 
-#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
-        private readonly ConditionalWeakTable<SegmentCoreReaders, BooleanRef> warmed = new ConditionalWeakTable<SegmentCoreReaders, BooleanRef>();
-#else
-        private readonly IDictionary<SegmentCoreReaders, BooleanRef> warmed = new WeakDictionary<SegmentCoreReaders, BooleanRef>().AsConcurrent();
+#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+        private readonly object warmedLock = new object();
 #endif
+        private readonly ConditionalWeakTable<SegmentCoreReaders, BooleanRef> warmed = new ConditionalWeakTable<SegmentCoreReaders, BooleanRef>();
 
         public virtual void RunTest(string testName)
         {
@@ -799,10 +811,18 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("TEST: now warm merged reader=" + reader);
                 }
-#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
-                outerInstance.warmed.AddOrUpdate(((SegmentReader)reader).core, true);
-#else
-                outerInstance.warmed[((SegmentReader)reader).core] = true;
+#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+                UninterruptableMonitor.Enter(outerInstance.warmedLock);
+                try
+                {
+#endif
+                    outerInstance.warmed.AddOrUpdate(((SegmentReader)reader).core, true);
+#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(outerInstance.warmedLock);
+                }
 #endif
                 int maxDoc = reader.MaxDoc;
                 IBits liveDocs = reader.LiveDocs;
