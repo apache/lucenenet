@@ -1,10 +1,13 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+using Prism.Events;
+#endif
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using System.Threading;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -65,11 +68,19 @@ namespace Lucene.Net.Facet.Taxonomy
     {
         private readonly OrdinalsReader source;
 
-#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-        private readonly ConditionalWeakTable<object, CachedOrds> ordsCache = new ConditionalWeakTable<object, CachedOrds>();
-#else
-        private readonly WeakDictionary<object, CachedOrds> ordsCache = new WeakDictionary<object, CachedOrds>();
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+        // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use
+        internal class GetRamBytesUsedEventArgs
+        {
+            public long RamBytesUsed { get; set; }
+        }
+
+        internal class GetRamBytesUsedEvent : PubSubEvent<GetRamBytesUsedEventArgs> {}
+
+        private readonly IEventAggregator eventAggregator = new EventAggregator();
 #endif
+
+        private readonly ConditionalWeakTable<object, CachedOrds> ordsCache = new ConditionalWeakTable<object, CachedOrds>();
         private readonly object syncLock = new object();
 
         /// <summary>
@@ -96,6 +107,10 @@ namespace Lucene.Net.Facet.Taxonomy
                     // which also means we don't need conditional compilation because ConditionalWeakTable
                     // doesn't support this[index].
                     ordsCache.Add(cacheKey, ords);
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+                    // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use
+                    ords.SubscribeToGetRamBytesUsedEvent(eventAggregator.GetEvent<GetRamBytesUsedEvent>());
+#endif
                 }
                 return ords;
             }
@@ -191,6 +206,32 @@ namespace Lucene.Net.Facet.Taxonomy
                 }
             }
 
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+            // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
+            // we use a weak event to retrieve the ConditionalWeakTable items
+            [ExcludeFromRamUsageEstimation]
+            private GetRamBytesUsedEvent getRamBytesUsedEvent;
+
+            internal void SubscribeToGetRamBytesUsedEvent(GetRamBytesUsedEvent getRamBytesUsedEvent)
+            {
+                this.getRamBytesUsedEvent = getRamBytesUsedEvent ?? throw new ArgumentNullException(nameof(getRamBytesUsedEvent));
+                getRamBytesUsedEvent.Subscribe(OnGetRamBytesUsed);
+            }
+
+            // LUCENENET specific: Clean up the weak event handler if this class goes out of scope
+            ~CachedOrds()
+            {
+                getRamBytesUsedEvent?.Unsubscribe(OnGetRamBytesUsed);
+                getRamBytesUsedEvent = null;
+            }
+
+            // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use
+            private void OnGetRamBytesUsed(GetRamBytesUsedEventArgs e)
+            {
+                e.RamBytesUsed += RamBytesUsed();
+            }
+#endif
+
             public long RamBytesUsed()
             {
                 long mem = RamUsageEstimator.ShallowSizeOf(this) + RamUsageEstimator.SizeOf(Offsets);
@@ -207,6 +248,7 @@ namespace Lucene.Net.Facet.Taxonomy
             UninterruptableMonitor.Enter(syncLock);
             try
             {
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                 long bytes = 0;
                 foreach (var pair in ordsCache)
                 {
@@ -214,6 +256,12 @@ namespace Lucene.Net.Facet.Taxonomy
                 }
 
                 return bytes;
+#else
+                // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use
+                var e = new GetRamBytesUsedEventArgs();
+                eventAggregator.GetEvent<GetRamBytesUsedEvent>().Publish(e);
+                return e.RamBytesUsed;
+#endif
             }
             finally
             {
