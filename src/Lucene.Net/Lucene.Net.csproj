@@ -43,7 +43,7 @@
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Package Files">
-    <None Include="readme-nuget.md" Pack="true" PackagePath="\readme.md"/>
+    <None Include="readme-nuget.md" Pack="true" PackagePath="\readme.md" />
     <None Include="$(LuceneNetCodeAnalysisToolsDir)*.ps1" Pack="true" PackagePath="tools" />
     <None Include="$(LuceneNetCodeAnalysisCSAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="$(LuceneNetCodeAnalysisVBAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/vb" Visible="false" />
@@ -63,10 +63,12 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
+    <PackageReference Include="Prism.Core" Version="$(PrismCorePackageVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
+    <PackageReference Include="Prism.Core" Version="$(PrismCorePackageVersion)" />
   </ItemGroup>
   
   <ItemGroup>
