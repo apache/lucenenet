@@ -635,6 +635,8 @@ namespace Lucene.Net.Index
             // we use a weak event to retrieve the ConditionalWeakTable items
             getParentReadersEvent?.Unsubscribe(OnGetParentReaders);
             getParentReadersEvent = null;
+            getCacheKeysEvent?.Unsubscribe(OnGetCacheKeys);
+            getCacheKeysEvent = null;
 #endif
         }
 
@@ -647,14 +649,24 @@ namespace Lucene.Net.Index
         // we use a weak event to retrieve the ConditionalWeakTable items
         [ExcludeFromRamUsageEstimation]
         private GetParentReadersEvent getParentReadersEvent;
+        [ExcludeFromRamUsageEstimation]
+        private Search.FieldCacheImpl.GetCacheKeysEvent getCacheKeysEvent;
         internal bool IsSubscribedToGetParentReadersEvent => getParentReadersEvent != null;
-
+        internal bool IsSubscribedToGetCacheKeysEvent => getCacheKeysEvent != null;
         internal void SubscribeToGetParentReadersEvent(GetParentReadersEvent getParentReadersEvent)
         {
             if (this.getParentReadersEvent != null)
                 throw new InvalidOperationException("getParentReadersEvent can only be subscribed once per IndexReader instance.");
             this.getParentReadersEvent = getParentReadersEvent ?? throw new ArgumentNullException(nameof(getParentReadersEvent));
             getParentReadersEvent.Subscribe(OnGetParentReaders);
+        }
+
+        internal void SubscribeToGetCacheKeysEvent(Search.FieldCacheImpl.GetCacheKeysEvent getCacheKeysEvent)
+        {
+            if (this.getCacheKeysEvent != null)
+                throw new InvalidOperationException("getCacheKeysEvent can only be subscribed once per IndexReader instance.");
+            this.getCacheKeysEvent = getCacheKeysEvent ?? throw new ArgumentNullException(nameof(getParentReadersEvent));
+            getCacheKeysEvent.Subscribe(OnGetCacheKeys);
         }
 
         // LUCENENET specific: Clean up the weak event handler if this class goes out of scope
@@ -667,6 +679,11 @@ namespace Lucene.Net.Index
         private void OnGetParentReaders(GetParentReadersEventArgs e)
         {
             e.ParentReaders.Add(this);
+        }
+
+        private void OnGetCacheKeys(Search.FieldCacheImpl.GetCacheKeysEventArgs e)
+        {
+            e.CacheKeys.Add(this.CoreCacheKey);
         }
 #endif
 
@@ -700,7 +717,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Expert: Returns a key for this <see cref="IndexReader"/>, so 
-        /// <see cref="Search.IFieldCache"/>/<see cref="Search.CachingWrapperFilter"/> can find
+        /// <see cref="Search.FieldCache"/>/<see cref="Search.CachingWrapperFilter"/> can find
         /// it again.
         /// This key must not have Equals()/GetHashCode() methods, 
         /// so &quot;equals&quot; means &quot;identical&quot;.

@@ -1,9 +1,14 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Runtime.CompilerServices;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+using Prism.Events;
+#endif
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -163,6 +168,7 @@ namespace Lucene.Net.Search
             UninterruptableMonitor.Enter(cache.readerCache);
             try
             {
+#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
                 foreach (var readerCacheEntry in cache.readerCache)
                 {
                     object readerKey = readerCacheEntry.Key;
@@ -177,6 +183,23 @@ namespace Lucene.Net.Search
                         result.Add(new FieldCache.CacheEntry(readerKey, entry.field, cacheType, entry.Custom, mapEntry.Value));
                     }
                 }
+#else
+                // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
+                // we use a weak event to retrieve the readerKey instances and then lookup the values in the table one by one.
+                var e = new GetCacheKeysEventArgs();
+                eventAggregator.GetEvent<GetCacheKeysEvent>().Publish(e);
+                foreach (object readerKey in e.CacheKeys)
+                {
+                    if (cache.readerCache.TryGetValue(readerKey, out IDictionary<TKey, object> innerCache))
+                    {
+                        foreach (KeyValuePair<TKey, object> mapEntry in innerCache)
+                        {
+                            TKey entry = mapEntry.Key;
+                            result.Add(new FieldCache.CacheEntry(readerKey, entry.field, cacheType, entry.Custom, mapEntry.Value));
+                        }
+                    }
+                }
+#endif
             }
             finally
             {
@@ -242,7 +265,25 @@ namespace Lucene.Net.Search
                     reader.AddReaderClosedListener(purgeReader);
                 }
             }
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+            // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
+            // we use a weak event to retrieve the readerKey instances
+            if (!reader.IsSubscribedToGetCacheKeysEvent)
+                reader.SubscribeToGetCacheKeysEvent(eventAggregator.GetEvent<GetCacheKeysEvent>());
+#endif
         }
+
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+        // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use
+        internal class GetCacheKeysEventArgs
+        {
+            public IList<object> CacheKeys { get; } = new List<object>();
+        }
+
+        internal class GetCacheKeysEvent : PubSubEvent<GetCacheKeysEventArgs> { }
+
+        private readonly IEventAggregator eventAggregator = new EventAggregator();
+#endif
 
         /// <summary>
         /// Expert: Internal cache. </summary>
@@ -255,11 +296,7 @@ namespace Lucene.Net.Search
 
             internal readonly FieldCacheImpl wrapper;
 
-#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
             internal ConditionalWeakTable<object, IDictionary<TKey, object>> readerCache = new ConditionalWeakTable<object, IDictionary<TKey, object>>();
-#else
-            internal WeakDictionary<object, IDictionary<TKey, object>> readerCache = new WeakDictionary<object, IDictionary<TKey, object>>();
-#endif
 
             protected abstract TValue CreateValue(AtomicReader reader, TKey key, bool setDocsWithField);
 
