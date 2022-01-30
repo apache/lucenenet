@@ -627,7 +627,8 @@ namespace Lucene.Net.Util
                     BindingFlags.Static);
                 foreach (FieldInfo f in fields)
                 {
-                    if (!f.IsStatic)
+                    // LUCENENET specific - exclude fields that are marked with the ExcludeFromRamUsageEstimationAttribute
+                    if (!f.IsStatic && f.GetCustomAttribute<ExcludeFromRamUsageEstimationAttribute>(inherit: false) is null)
                     {
                         shallowInstanceSize = AdjustForField(shallowInstanceSize, f);
 
