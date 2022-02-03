@@ -103,8 +103,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     ordsCache.Add(cacheKey, ords);
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                     // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use
-                    if (!context.Reader.IsSubscribedToGetCacheKeysEvent)
-                        context.Reader.SubscribeToGetCacheKeysEvent(eventAggregator.GetEvent<Events.GetCacheKeysEvent>());
+                    context.Reader.SubscribeToGetCacheKeysEvent(eventAggregator.GetEvent<Events.GetCacheKeysEvent>());
 #endif
                 }
                 return ords;

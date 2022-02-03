@@ -268,8 +268,7 @@ namespace Lucene.Net.Search
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
             // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
             // we use a weak event to retrieve the readerKey instances
-            if (!reader.IsSubscribedToGetCacheKeysEvent)
-                reader.SubscribeToGetCacheKeysEvent(eventAggregator.GetEvent<Events.GetCacheKeysEvent>());
+            reader.SubscribeToGetCacheKeysEvent(eventAggregator.GetEvent<Events.GetCacheKeysEvent>());
 #endif
         }
 

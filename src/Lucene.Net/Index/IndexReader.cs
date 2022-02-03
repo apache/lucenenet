@@ -164,8 +164,7 @@ namespace Lucene.Net.Index
                 if (!parentReaders.TryGetValue(key: reader, out _))
                 {
                     parentReaders.Add(key: reader, value: null);
-                    if (!reader.IsSubscribedToGetParentReadersEvent)
-                        reader.SubscribeToGetParentReadersEvent(eventAggregator.GetEvent<Events.GetParentReadersEvent>());
+                    reader.SubscribeToGetParentReadersEvent(eventAggregator.GetEvent<Events.GetParentReadersEvent>());
                 }
 #endif
             }
@@ -626,10 +625,13 @@ namespace Lucene.Net.Index
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
             // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
             // we use a weak event to retrieve the ConditionalWeakTable items
-            getParentReadersEvent?.Unsubscribe(OnGetParentReaders);
-            getParentReadersEvent = null;
-            getCacheKeysEvent?.Unsubscribe(OnGetCacheKeys);
-            getCacheKeysEvent = null;
+            foreach (var getParentReadersEvent in getParentReadersEvents)
+                getParentReadersEvent.Unsubscribe(OnGetParentReaders);
+            getParentReadersEvents.Clear();
+
+            foreach (var getCacheKeysEvent in getCacheKeysEvents)
+                getCacheKeysEvent.Unsubscribe(OnGetCacheKeys);
+            getCacheKeysEvents.Clear();
 #endif
         }
 
@@ -641,25 +643,23 @@ namespace Lucene.Net.Index
         // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
         // we use a weak event to retrieve the ConditionalWeakTable items
         [ExcludeFromRamUsageEstimation]
-        private Events.GetParentReadersEvent getParentReadersEvent;
+        private readonly ISet<Events.GetParentReadersEvent> getParentReadersEvents = new JCG.HashSet<Events.GetParentReadersEvent>();
         [ExcludeFromRamUsageEstimation]
-        private Events.GetCacheKeysEvent getCacheKeysEvent;
-        internal bool IsSubscribedToGetParentReadersEvent => getParentReadersEvent != null;
-        internal bool IsSubscribedToGetCacheKeysEvent => getCacheKeysEvent != null;
+        private readonly ISet<Events.GetCacheKeysEvent> getCacheKeysEvents = new JCG.HashSet<Events.GetCacheKeysEvent>();
         internal void SubscribeToGetParentReadersEvent(Events.GetParentReadersEvent getParentReadersEvent)
         {
-            if (this.getParentReadersEvent != null)
-                throw new InvalidOperationException("getParentReadersEvent can only be subscribed once per IndexReader instance.");
-            this.getParentReadersEvent = getParentReadersEvent ?? throw new ArgumentNullException(nameof(getParentReadersEvent));
-            getParentReadersEvent.Subscribe(OnGetParentReaders);
+            if (getParentReadersEvent is null)
+                throw new ArgumentNullException(nameof(getParentReadersEvent));
+            if (getParentReadersEvents.Add(getParentReadersEvent))
+                getParentReadersEvent.Subscribe(OnGetParentReaders);
         }
 
         internal void SubscribeToGetCacheKeysEvent(Events.GetCacheKeysEvent getCacheKeysEvent)
         {
-            if (this.getCacheKeysEvent != null)
-                throw new InvalidOperationException("getCacheKeysEvent can only be subscribed once per IndexReader instance.");
-            this.getCacheKeysEvent = getCacheKeysEvent ?? throw new ArgumentNullException(nameof(getParentReadersEvent));
-            getCacheKeysEvent.Subscribe(OnGetCacheKeys);
+            if (getCacheKeysEvent is null)
+                throw new ArgumentNullException(nameof(getCacheKeysEvent));
+            if (getCacheKeysEvents.Add(getCacheKeysEvent))
+                getCacheKeysEvent.Subscribe(OnGetCacheKeys);
         }
 
         // LUCENENET specific: Clean up the weak event handler if this class goes out of scope
