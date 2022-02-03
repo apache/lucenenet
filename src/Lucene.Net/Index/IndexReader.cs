@@ -91,13 +91,6 @@ namespace Lucene.Net.Index
 
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
         // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use
-        internal class GetParentReadersEventArgs
-        {
-            public IList<IndexReader> ParentReaders { get; } = new List<IndexReader>();
-        }
-
-        internal class GetParentReadersEvent : PubSubEvent<GetParentReadersEventArgs> { }
-
         private readonly IEventAggregator eventAggregator = new EventAggregator();
 #endif
 
@@ -172,7 +165,7 @@ namespace Lucene.Net.Index
                 {
                     parentReaders.Add(key: reader, value: null);
                     if (!reader.IsSubscribedToGetParentReadersEvent)
-                        reader.SubscribeToGetParentReadersEvent(eventAggregator.GetEvent<GetParentReadersEvent>());
+                        reader.SubscribeToGetParentReadersEvent(eventAggregator.GetEvent<Events.GetParentReadersEvent>());
                 }
 #endif
             }
@@ -226,8 +219,8 @@ namespace Lucene.Net.Index
                 {
                     IndexReader target = kvp.Key;
 #else
-                var e = new GetParentReadersEventArgs();
-                eventAggregator.GetEvent<GetParentReadersEvent>().Publish(e);
+                var e = new Events.GetParentReadersEventArgs();
+                eventAggregator.GetEvent<Events.GetParentReadersEvent>().Publish(e);
                 foreach (var target in e.ParentReaders)
                 {
 #endif
@@ -648,12 +641,12 @@ namespace Lucene.Net.Index
         // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
         // we use a weak event to retrieve the ConditionalWeakTable items
         [ExcludeFromRamUsageEstimation]
-        private GetParentReadersEvent getParentReadersEvent;
+        private Events.GetParentReadersEvent getParentReadersEvent;
         [ExcludeFromRamUsageEstimation]
-        private Search.FieldCacheImpl.GetCacheKeysEvent getCacheKeysEvent;
+        private Events.GetCacheKeysEvent getCacheKeysEvent;
         internal bool IsSubscribedToGetParentReadersEvent => getParentReadersEvent != null;
         internal bool IsSubscribedToGetCacheKeysEvent => getCacheKeysEvent != null;
-        internal void SubscribeToGetParentReadersEvent(GetParentReadersEvent getParentReadersEvent)
+        internal void SubscribeToGetParentReadersEvent(Events.GetParentReadersEvent getParentReadersEvent)
         {
             if (this.getParentReadersEvent != null)
                 throw new InvalidOperationException("getParentReadersEvent can only be subscribed once per IndexReader instance.");
@@ -661,7 +654,7 @@ namespace Lucene.Net.Index
             getParentReadersEvent.Subscribe(OnGetParentReaders);
         }
 
-        internal void SubscribeToGetCacheKeysEvent(Search.FieldCacheImpl.GetCacheKeysEvent getCacheKeysEvent)
+        internal void SubscribeToGetCacheKeysEvent(Events.GetCacheKeysEvent getCacheKeysEvent)
         {
             if (this.getCacheKeysEvent != null)
                 throw new InvalidOperationException("getCacheKeysEvent can only be subscribed once per IndexReader instance.");
@@ -676,12 +669,12 @@ namespace Lucene.Net.Index
         }
 
         // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use
-        private void OnGetParentReaders(GetParentReadersEventArgs e)
+        private void OnGetParentReaders(Events.GetParentReadersEventArgs e)
         {
             e.ParentReaders.Add(this);
         }
 
-        private void OnGetCacheKeys(Search.FieldCacheImpl.GetCacheKeysEventArgs e)
+        private void OnGetCacheKeys(Events.GetCacheKeysEventArgs e)
         {
             e.CacheKeys.Add(this.CoreCacheKey);
         }
