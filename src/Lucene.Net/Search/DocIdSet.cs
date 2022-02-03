@@ -1,5 +1,4 @@
-﻿using Lucene.Net.Util;
-using System;
+﻿using System;
 using System.IO;
 
 namespace Lucene.Net.Search
@@ -241,40 +240,5 @@ namespace Lucene.Net.Search
                 }
             }
         }
-
-#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-        // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
-        // we use a weak event to retrieve the ConditionalWeakTable items
-        [ExcludeFromRamUsageEstimation]
-        private CachingWrapperFilter.GetDocIdSetsEvent getDocIdSetsEvent;
-
-        internal void SubscribeToGetDocIdSetsEvent(CachingWrapperFilter.GetDocIdSetsEvent getDocIdSetsEvent)
-        {
-            this.getDocIdSetsEvent = getDocIdSetsEvent ?? throw new ArgumentNullException(nameof(getDocIdSetsEvent));
-            getDocIdSetsEvent.Subscribe(OnGetDocIdSets);
-        }
-
-        ~DocIdSet()
-        {
-            Dispose(false);
-        }
-
-        /// <summary>
-        /// When overridden in a derived class, disposes all resources used by <see cref="DocIdSet"/>.
-        /// If overriding, be sure to call <c>base.Dispose(disposing);</c> prior to disposing your own resources.
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c>
-        /// to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            getDocIdSetsEvent?.Unsubscribe(OnGetDocIdSets);
-            getDocIdSetsEvent = null;
-        }
-
-        private void OnGetDocIdSets(CachingWrapperFilter.GetDocIdSetsEventArgs e)
-        {
-            e.DocIdSets.Add(this);
-        }
-#endif
     }
 }

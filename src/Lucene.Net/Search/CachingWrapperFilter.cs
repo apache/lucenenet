@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Runtime.CompilerServices;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
 using Prism.Events;
 #endif
@@ -44,12 +45,6 @@ namespace Lucene.Net.Search
 
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
         // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use
-        internal class GetDocIdSetsEventArgs
-        {
-            public IList<DocIdSet> DocIdSets { get; set; }
-        }
-        internal class GetDocIdSetsEvent : PubSubEvent<GetDocIdSetsEventArgs> { }
-
         private readonly IEventAggregator eventAggregator = new EventAggregator();
 #endif
         private readonly ConditionalWeakTable<object, DocIdSet> cache = new ConditionalWeakTable<object, DocIdSet>();
@@ -141,7 +136,8 @@ namespace Lucene.Net.Search
                     cache.AddOrUpdate(key, docIdSet);
                     // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
                     // we use a weak event to retrieve the DocIdSet instances
-                    docIdSet.SubscribeToGetDocIdSetsEvent(eventAggregator.GetEvent<GetDocIdSetsEvent>());
+                    if (!reader.IsSubscribedToGetCacheKeysEvent)
+                        reader.SubscribeToGetCacheKeysEvent(eventAggregator.GetEvent<Events.GetCacheKeysEvent>());
                 }
                 finally
                 {
@@ -202,9 +198,14 @@ namespace Lucene.Net.Search
                     docIdSets.Add(pair.Value);
 #else
                 // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
-                // we use a weak event to retrieve the DocIdSet instances
-                var e = new GetDocIdSetsEventArgs { DocIdSets = docIdSets };
-                eventAggregator.GetEvent<GetDocIdSetsEvent>().Publish(e);
+                // we use a weak event to retrieve the DocIdSet instances. We look each of these up here to avoid the need
+                // to attach events to the DocIdSet instances themselves (thus using the existing IndexReader.Dispose()
+                // method to detach the events rather than using a finalizer in DocIdSet to ensure they are cleaned up).
+                var e = new Events.GetCacheKeysEventArgs();
+                eventAggregator.GetEvent<Events.GetCacheKeysEvent>().Publish(e);
+                foreach (var key in e.CacheKeys)
+                    if (cache.TryGetValue(key, out DocIdSet value))
+                        docIdSets.Add(value);
 #endif
             }
             finally
