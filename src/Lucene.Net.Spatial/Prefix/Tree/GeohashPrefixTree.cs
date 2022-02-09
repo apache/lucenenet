@@ -1,6 +1,6 @@
-﻿using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
-using Spatial4n.Core.Util;
+﻿using Spatial4n.Context;
+using Spatial4n.Shapes;
+using Spatial4n.Util;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         }
 
         /// <summary>Any more than this and there's no point (double lat &amp; lon are the same).</summary>
-        public static int MaxLevelsPossible => GeohashUtils.MAX_PRECISION;
+        public static int MaxLevelsPossible => GeohashUtils.MaxPrecision;
 
         public override int GetLevelForDistance(double dist)
         {

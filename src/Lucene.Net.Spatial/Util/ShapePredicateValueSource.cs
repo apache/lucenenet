@@ -3,7 +3,7 @@ using Lucene.Net.Queries.Function;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Queries;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Shapes;
 using System.Collections;
 
 namespace Lucene.Net.Spatial.Util

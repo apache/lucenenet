@@ -1,9 +1,9 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Util;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -99,10 +99,10 @@ namespace Lucene.Net.Spatial.Prefix
                 SmallDocSet combinedSubResults = null;
                 //   Optimization: use null subCellsFilter when we know cell is within the query shape.
                 IShape subCellsFilter = outerInstance.m_queryShape;
-                if (cell.Level != 0 && ((cell.ShapeRel == SpatialRelation.NOT_SET || cell.ShapeRel == SpatialRelation.WITHIN)))
+                if (cell.Level != 0 && ((cell.ShapeRel == SpatialRelation.None || cell.ShapeRel == SpatialRelation.Within)))
                 {
                     subCellsFilter = null;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(cell.Shape.Relate(outerInstance.m_queryShape) == SpatialRelation.WITHIN);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(cell.Shape.Relate(outerInstance.m_queryShape) == SpatialRelation.Within);
                 }
                 ICollection<Cell> subCells = cell.GetSubCells(subCellsFilter);
                 foreach (Cell subCell in subCells)
@@ -116,7 +116,7 @@ namespace Lucene.Net.Spatial.Prefix
                         combinedSubResults = GetDocs(subCell, acceptContains);
                     }
                     else if (!outerInstance.m_multiOverlappingIndexedShapes && 
-                        subCell.ShapeRel == SpatialRelation.WITHIN)
+                        subCell.ShapeRel == SpatialRelation.Within)
                     {
                         combinedSubResults = GetLeafDocs(subCell, acceptContains); //recursion
                     }

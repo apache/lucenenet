@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Shapes;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -203,13 +203,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             int strlen = str.Length;
             IRectangle rectangle = m_ctx.MakeRectangle(cx - w, cx + w, cy - h, cy + h);
             SpatialRelation v = shape.Relate(rectangle);
-            if (SpatialRelation.CONTAINS == v)
+            if (SpatialRelation.Contains == v)
             {
                 str.Append(c);
                 //str.append(SpatialPrefixGrid.COVER);
                 matches.Add(new QuadCell(this, str.ToString(), v.Transpose()));
             }
-            else if (SpatialRelation.DISJOINT == v)
+            else if (SpatialRelation.Disjoint == v)
             {
                 // nothing
             }

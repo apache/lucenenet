@@ -1,5 +1,5 @@
-﻿using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
+﻿using Spatial4n.Context;
+using Spatial4n.Shapes;
 using System;
 
 namespace Lucene.Net.Spatial.Queries
@@ -73,7 +73,7 @@ namespace Lucene.Net.Spatial.Queries
             // take the closest one (greater precision).
             IPoint ctr = bbox.Center;
             double y = (ctr.Y >= 0 ? bbox.MaxY : bbox.MinY);
-            double diagonalDist = ctx.DistCalc.Distance(ctr, bbox.MaxX, y);
+            double diagonalDist = ctx.DistanceCalculator.Distance(ctr, bbox.MaxX, y);
             return diagonalDist * distErrPct;
         }
 

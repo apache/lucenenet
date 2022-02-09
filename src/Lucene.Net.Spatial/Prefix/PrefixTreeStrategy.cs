@@ -6,7 +6,7 @@ using Lucene.Net.Queries.Function;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Util;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Shapes;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

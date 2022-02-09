@@ -1,8 +1,8 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Util;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Shapes;
 using System.IO;
 
 namespace Lucene.Net.Spatial.Prefix
@@ -88,7 +88,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             protected internal override bool Visit(Cell cell)
             {
-                if (cell.ShapeRel == SpatialRelation.WITHIN || cell.Level == m_outerInstance.m_detailLevel)
+                if (cell.ShapeRel == SpatialRelation.Within || cell.Level == m_outerInstance.m_detailLevel)
                 {
                     CollectDocs(results);
                     return false;

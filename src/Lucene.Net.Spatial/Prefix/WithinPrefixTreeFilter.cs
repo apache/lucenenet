@@ -3,9 +3,9 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Util;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Distance;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Distance;
+using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -180,12 +180,12 @@ namespace Lucene.Net.Spatial.Prefix
                 //cell.relate is based on the bufferedQueryShape; we need to examine what
                 // the relation is against the queryShape
                 visitRelation = cell.Shape.Relate(m_outerInstance.m_queryShape);
-                if (visitRelation == SpatialRelation.WITHIN)
+                if (visitRelation == SpatialRelation.Within)
                 {
                     CollectDocs(inside);
                     return false;
                 }
-                else if (visitRelation == SpatialRelation.DISJOINT)
+                else if (visitRelation == SpatialRelation.Disjoint)
                 {
                     CollectDocs(outside);
                     return false;
@@ -223,7 +223,7 @@ namespace Lucene.Net.Spatial.Prefix
             /// </summary>
             private bool AllCellsIntersectQuery(Cell cell, SpatialRelation relate/*cell to query*/)
             {
-                if (relate == SpatialRelation.NOT_SET)
+                if (relate == SpatialRelation.None)
                 {
                     relate = cell.Shape.Relate(m_outerInstance.m_queryShape);
                 }
@@ -231,11 +231,11 @@ namespace Lucene.Net.Spatial.Prefix
                 {
                     return relate.Intersects();
                 }
-                if (relate == SpatialRelation.WITHIN)
+                if (relate == SpatialRelation.Within)
                 {
                     return true;
                 }
-                if (relate == SpatialRelation.DISJOINT)
+                if (relate == SpatialRelation.Disjoint)
                 {
                     return false;
                 }
@@ -245,7 +245,7 @@ namespace Lucene.Net.Spatial.Prefix
                 ICollection<Cell> subCells = cell.GetSubCells(null);
                 foreach (Cell subCell in subCells)
                 {
-                    if (!AllCellsIntersectQuery(subCell, SpatialRelation.NOT_SET))
+                    if (!AllCellsIntersectQuery(subCell, SpatialRelation.None))
                     {
                         //recursion
                         return false;
@@ -257,7 +257,7 @@ namespace Lucene.Net.Spatial.Prefix
             /// <exception cref="IOException"></exception>
             protected internal override void VisitScanned(Cell cell)
             {
-                if (AllCellsIntersectQuery(cell, SpatialRelation.NOT_SET))
+                if (AllCellsIntersectQuery(cell, SpatialRelation.None))
                 {
                     CollectDocs(inside);
                 }

@@ -1,4 +1,4 @@
-﻿using Spatial4n.Core.Shapes;
+﻿using Spatial4n.Shapes;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 

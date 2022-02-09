@@ -3,9 +3,9 @@ using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Distance;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Distance;
+using Spatial4n.Shapes;
 using System.Collections;
 
 namespace Lucene.Net.Spatial.Util
@@ -50,7 +50,7 @@ namespace Lucene.Net.Spatial.Util
             this.shapeValueSource = shapeValueSource;
             this.queryPoint = queryPoint;
             this.multiplier = multiplier;
-            this.distCalc = ctx.DistCalc;
+            this.distCalc = ctx.DistanceCalculator;
             this.nullValue =
                 (ctx.IsGeo ? 180 * multiplier : double.MaxValue);
         }

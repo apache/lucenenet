@@ -1,4 +1,4 @@
-﻿using Spatial4n.Core.Shapes;
+﻿using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -72,7 +72,7 @@ namespace Lucene.Net.Spatial.Queries
             public override bool Evaluate(IShape indexedShape, IShape queryShape)
             {
                 IRectangle bbox = indexedShape.BoundingBox;
-                return bbox.Relate(queryShape) == SpatialRelation.WITHIN || bbox.Equals(queryShape);
+                return bbox.Relate(queryShape) == SpatialRelation.Within || bbox.Equals(queryShape);
             }
         }
 
@@ -86,7 +86,7 @@ namespace Lucene.Net.Spatial.Queries
 
             public override bool Evaluate(IShape indexedShape, IShape queryShape)
             {
-                return indexedShape.HasArea && indexedShape.Relate(queryShape) == SpatialRelation.CONTAINS || indexedShape.Equals(queryShape);
+                return indexedShape.HasArea && indexedShape.Relate(queryShape) == SpatialRelation.Contains || indexedShape.Equals(queryShape);
             }
         }
 
@@ -142,7 +142,7 @@ namespace Lucene.Net.Spatial.Queries
 
             public override bool Evaluate(IShape indexedShape, IShape queryShape)
             {
-                return queryShape.HasArea && (indexedShape.Relate(queryShape) == SpatialRelation.WITHIN || indexedShape.Equals(queryShape));
+                return queryShape.HasArea && (indexedShape.Relate(queryShape) == SpatialRelation.Within || indexedShape.Equals(queryShape));
             }
         }
 

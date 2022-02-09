@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

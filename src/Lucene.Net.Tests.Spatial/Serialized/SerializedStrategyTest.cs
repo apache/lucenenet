@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.Search;
 using NUnit.Framework;
-using Spatial4n.Core.Context;
+using Spatial4n.Context;
 
 namespace Lucene.Net.Spatial.Serialized
 {
@@ -26,7 +26,7 @@ namespace Lucene.Net.Spatial.Serialized
         public override void SetUp()
         {
             base.SetUp();
-            this.ctx = SpatialContext.GEO;
+            this.ctx = SpatialContext.Geo;
             this.strategy = new SerializedDVStrategy(ctx, "serialized");
         }
 

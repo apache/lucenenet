@@ -4,7 +4,7 @@ using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial;
 using Lucene.Net.Spatial.Queries;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Shapes;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
@@ -29,7 +29,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
     /// <summary>
     /// Reads spatial data from the body field docs from an internally created <see cref="LineDocSource"/>.
-    /// It's parsed by <see cref="Spatial4n.Core.Context.SpatialContext.ReadShapeFromWkt(string)"/> and then
+    /// It's parsed by <see cref="Spatial4n.Context.SpatialContext.ReadShapeFromWkt(string)"/> and then
     /// further manipulated via a configurable <see cref="IShapeConverter"/>. When using point
     /// data, it's likely you'll want to configure the shape converter so that the query shapes actually
     /// cover a region. The queries are all created &amp; cached in advance. This query maker works in

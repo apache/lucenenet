@@ -3,8 +3,8 @@ using Lucene.Net.Queries.Function;
 using Lucene.Net.Queries.Function.ValueSources;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Queries;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Shapes;
 using System;
 
 namespace Lucene.Net.Spatial
@@ -146,7 +146,7 @@ namespace Lucene.Net.Spatial
         public ValueSource MakeRecipDistanceValueSource(IShape queryShape)
         {
             IRectangle bbox = queryShape.BoundingBox;
-            double diagonalDist = m_ctx.DistCalc.Distance(
+            double diagonalDist = m_ctx.DistanceCalculator.Distance(
                 m_ctx.MakePoint(bbox.MinX, bbox.MinY), bbox.MaxX, bbox.MaxY);
             double distToEdge = diagonalDist * 0.5;
             float c = (float)distToEdge * 0.1f; //one tenth

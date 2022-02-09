@@ -1,5 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -106,7 +106,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(Level != 0);
             token = null;
-            m_shapeRel = SpatialRelation.NOT_SET;
+            m_shapeRel = SpatialRelation.None;
             this.bytes = bytes;
             b_off = off;
             b_len = len;
@@ -197,7 +197,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             if (shapeFilter is IPoint point)
             {
                 Cell subCell = GetSubCell(point);
-                subCell.m_shapeRel = SpatialRelation.CONTAINS;
+                subCell.m_shapeRel = SpatialRelation.Contains;
                 return new ReadOnlyCollection<Cell>(new[] { subCell });
             }
 
@@ -211,12 +211,12 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             foreach (Cell cell in cells)
             {
                 SpatialRelation rel = cell.Shape.Relate(shapeFilter);
-                if (rel == SpatialRelation.DISJOINT)
+                if (rel == SpatialRelation.Disjoint)
                 {
                     continue;
                 }
                 cell.m_shapeRel = rel;
-                if (rel == SpatialRelation.WITHIN)
+                if (rel == SpatialRelation.Within)
                 {
                     cell.SetLeaf();
                 }

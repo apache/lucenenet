@@ -5,8 +5,8 @@ using Lucene.Net.Spatial.Serialized;
 using Lucene.Net.Spatial.Vector;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -32,7 +32,7 @@ namespace Lucene.Net.Spatial
 
     public class QueryEqualsHashCodeTest : LuceneTestCase
     {
-        private readonly SpatialContext ctx = SpatialContext.GEO;
+        private readonly SpatialContext ctx = SpatialContext.Geo;
 
         [Test]
         public virtual void TestEqualsHashCode()

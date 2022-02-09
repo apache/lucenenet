@@ -3,8 +3,8 @@ using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
-using Spatial4n.Core.Distance;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Distance;
+using Spatial4n.Shapes;
 using System.Collections;
 using System.Diagnostics;
 
@@ -87,7 +87,7 @@ namespace Lucene.Net.Spatial.Vector
                 validY = FieldCache.DEFAULT.GetDocsWithField(reader, outerInstance.strategy.FieldNameY);
 
                 //from = outerInstance.from; // LUCENENET: Never read
-                calculator = outerInstance.strategy.SpatialContext.DistCalc;
+                calculator = outerInstance.strategy.SpatialContext.DistanceCalculator;
                 nullValue = (outerInstance.strategy.SpatialContext.IsGeo ? 180 * outerInstance.multiplier : double.MaxValue);
             }
 

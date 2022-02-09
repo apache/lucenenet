@@ -1,5 +1,5 @@
-﻿using Spatial4n.Core.Context;
-using Spatial4n.Core.Distance;
+﻿using Spatial4n.Context;
+using Spatial4n.Distance;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -98,7 +98,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                     return;
                 }
                 //let default to max
-                degrees = DistanceUtils.Dist2Degrees(DEFAULT_GEO_MAX_DETAIL_KM, DistanceUtils.EARTH_MEAN_RADIUS_KM);
+                degrees = DistanceUtils.Dist2Degrees(DEFAULT_GEO_MAX_DETAIL_KM, DistanceUtils.EarthMeanRadiusKilometers);
             }
             else
             {
