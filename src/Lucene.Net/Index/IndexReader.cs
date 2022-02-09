@@ -3,6 +3,9 @@ using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+using Prism.Events;
+#endif
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -86,6 +89,11 @@ namespace Lucene.Net.Index
             }
         }
 
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+        // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use
+        private readonly IEventAggregator eventAggregator = new EventAggregator();
+#endif
+
         /// <summary>
         /// A custom listener that's invoked when the <see cref="IndexReader"/>
         /// is closed.
@@ -101,12 +109,9 @@ namespace Lucene.Net.Index
 
         private readonly ISet<IReaderClosedListener> readerClosedListeners = new JCG.LinkedHashSet<IReaderClosedListener>().AsConcurrent();
 
-#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
         private readonly ConditionalWeakTable<IndexReader, object> parentReaders = new ConditionalWeakTable<IndexReader, object>();
-#else
-        private readonly WeakDictionary<IndexReader, object> parentReaders = new WeakDictionary<IndexReader, object>();
-#endif
-        // LUCENENET specific - since neither WeakDictionary nor ConditionalWeakTable synchronize
+
+        // LUCENENET specific - since ConditionalWeakTable doesn't synchronize
         // on the enumerator, we need to do external synchronization to make them threadsafe.
         private readonly object parentReadersLock = new object();
 
@@ -144,16 +149,24 @@ namespace Lucene.Net.Index
         public void RegisterParentReader(IndexReader reader)
         {
             EnsureOpen();
-            // LUCENENET specific - since neither WeakDictionary nor ConditionalWeakTable synchronize
+            // LUCENENET specific - since ConditionalWeakTable doesn't synchronize
             // on the enumerator, we need to do external synchronization to make them threadsafe.
             UninterruptableMonitor.Enter(parentReadersLock);
             try
             {
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                 // LUCENENET: Since there is a set Add operation (unique) in Lucene, the equivalent
                 // operation in .NET is AddOrUpdate, which effectively does nothing if the key exists.
                 // Null is passed as a value, since it is not used anyway and .NET doesn't have a boolean
                 // reference type.
                 parentReaders.AddOrUpdate(key: reader, value: null);
+#else
+                if (!parentReaders.TryGetValue(key: reader, out _))
+                {
+                    parentReaders.Add(key: reader, value: null);
+                    reader.SubscribeToGetParentReadersEvent(eventAggregator.GetEvent<Events.GetParentReadersEvent>());
+                }
+#endif
             }
             finally
             {
@@ -195,15 +208,21 @@ namespace Lucene.Net.Index
 
         private void ReportCloseToParentReaders()
         {
-            // LUCENENET specific - since neither WeakDictionary nor ConditionalWeakTable synchronize
+            // LUCENENET specific - since ConditionalWeakTable doesn't synchronize
             // on the enumerator, we need to do external synchronization to make them threadsafe.
             UninterruptableMonitor.Enter(parentReadersLock);
             try
             {
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                 foreach (var kvp in parentReaders)
                 {
                     IndexReader target = kvp.Key;
-
+#else
+                var e = new Events.GetParentReadersEventArgs();
+                eventAggregator.GetEvent<Events.GetParentReadersEvent>().Publish(e);
+                foreach (var target in e.ParentReaders)
+                {
+#endif
                     // LUCENENET: This probably can't happen, but we are being defensive to avoid exceptions
                     if (target != null)
                     {
@@ -602,11 +621,64 @@ namespace Lucene.Net.Index
                     UninterruptableMonitor.Exit(this);
                 }
             }
+
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+            // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
+            // we use a weak event to retrieve the ConditionalWeakTable items
+            foreach (var getParentReadersEvent in getParentReadersEvents)
+                getParentReadersEvent.Unsubscribe(OnGetParentReaders);
+            getParentReadersEvents.Clear();
+
+            foreach (var getCacheKeysEvent in getCacheKeysEvents)
+                getCacheKeysEvent.Unsubscribe(OnGetCacheKeys);
+            getCacheKeysEvents.Clear();
+#endif
         }
 
         /// <summary>
         /// Implements close. </summary>
         protected internal abstract void DoClose();
+
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+        // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
+        // we use a weak event to retrieve the ConditionalWeakTable items
+        [ExcludeFromRamUsageEstimation]
+        private readonly ISet<Events.GetParentReadersEvent> getParentReadersEvents = new JCG.HashSet<Events.GetParentReadersEvent>();
+        [ExcludeFromRamUsageEstimation]
+        private readonly ISet<Events.GetCacheKeysEvent> getCacheKeysEvents = new JCG.HashSet<Events.GetCacheKeysEvent>();
+        internal void SubscribeToGetParentReadersEvent(Events.GetParentReadersEvent getParentReadersEvent)
+        {
+            if (getParentReadersEvent is null)
+                throw new ArgumentNullException(nameof(getParentReadersEvent));
+            if (getParentReadersEvents.Add(getParentReadersEvent))
+                getParentReadersEvent.Subscribe(OnGetParentReaders);
+        }
+
+        internal void SubscribeToGetCacheKeysEvent(Events.GetCacheKeysEvent getCacheKeysEvent)
+        {
+            if (getCacheKeysEvent is null)
+                throw new ArgumentNullException(nameof(getCacheKeysEvent));
+            if (getCacheKeysEvents.Add(getCacheKeysEvent))
+                getCacheKeysEvent.Subscribe(OnGetCacheKeys);
+        }
+
+        // LUCENENET specific: Clean up the weak event handler if this class goes out of scope
+        ~IndexReader()
+        {
+            Dispose(false);
+        }
+
+        // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use
+        private void OnGetParentReaders(Events.GetParentReadersEventArgs e)
+        {
+            e.ParentReaders.Add(this);
+        }
+
+        private void OnGetCacheKeys(Events.GetCacheKeysEventArgs e)
+        {
+            e.CacheKeys.Add(this.CoreCacheKey);
+        }
+#endif
 
         /// <summary>
         /// Expert: Returns the root <see cref="IndexReaderContext"/> for this
@@ -638,7 +710,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Expert: Returns a key for this <see cref="IndexReader"/>, so 
-        /// <see cref="Search.IFieldCache"/>/<see cref="Search.CachingWrapperFilter"/> can find
+        /// <see cref="Search.FieldCache"/>/<see cref="Search.CachingWrapperFilter"/> can find
         /// it again.
         /// This key must not have Equals()/GetHashCode() methods, 
         /// so &quot;equals&quot; means &quot;identical&quot;.

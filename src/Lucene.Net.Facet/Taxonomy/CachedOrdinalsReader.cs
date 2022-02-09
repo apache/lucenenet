@@ -1,10 +1,14 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+using Prism.Events;
+#endif
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using System.Threading;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -65,11 +69,12 @@ namespace Lucene.Net.Facet.Taxonomy
     {
         private readonly OrdinalsReader source;
 
-#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-        private readonly ConditionalWeakTable<object, CachedOrds> ordsCache = new ConditionalWeakTable<object, CachedOrds>();
-#else
-        private readonly WeakDictionary<object, CachedOrds> ordsCache = new WeakDictionary<object, CachedOrds>();
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+        // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use
+        private readonly IEventAggregator eventAggregator = new EventAggregator();
 #endif
+
+        private readonly ConditionalWeakTable<object, CachedOrds> ordsCache = new ConditionalWeakTable<object, CachedOrds>();
         private readonly object syncLock = new object();
 
         /// <summary>
@@ -96,6 +101,10 @@ namespace Lucene.Net.Facet.Taxonomy
                     // which also means we don't need conditional compilation because ConditionalWeakTable
                     // doesn't support this[index].
                     ordsCache.Add(cacheKey, ords);
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+                    // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use
+                    context.Reader.SubscribeToGetCacheKeysEvent(eventAggregator.GetEvent<Events.GetCacheKeysEvent>());
+#endif
                 }
                 return ords;
             }
@@ -204,21 +213,41 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public virtual long RamBytesUsed()
         {
+            // LUCENENET specific - moved Reflection calls outside of the lock (similar to CachingWrapperFilter) to improve performance.
+
+            // Sync only to pull the current set of values:
+            IList<CachedOrds> cachedOrdsList;
             UninterruptableMonitor.Enter(syncLock);
             try
             {
-                long bytes = 0;
+                cachedOrdsList = new List<CachedOrds>();
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                 foreach (var pair in ordsCache)
-                {
-                    bytes += pair.Value.RamBytesUsed();
-                }
-
-                return bytes;
+                    cachedOrdsList.Add(pair.Value);
+#else
+                // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
+                // we use a weak event to retrieve the CachedOrds instances. We look each of these up here to avoid the need
+                // to attach events to the CachedOrds instances themselves (thus using the existing IndexReader.Dispose()
+                // method to detach the events rather than using a finalizer in CachedOrds to ensure they are cleaned up).
+                var e = new Events.GetCacheKeysEventArgs();
+                eventAggregator.GetEvent<Events.GetCacheKeysEvent>().Publish(e);
+                foreach (var key in e.CacheKeys)
+                    if (ordsCache.TryGetValue(key, out CachedOrds value))
+                        cachedOrdsList.Add(value);
+#endif
             }
             finally
             {
                 UninterruptableMonitor.Exit(syncLock);
             }
+
+            long total = 0;
+            foreach (CachedOrds ord in cachedOrdsList)
+            {
+                total += ord.RamBytesUsed();
+            }
+
+            return total;
         }
     }
 }
