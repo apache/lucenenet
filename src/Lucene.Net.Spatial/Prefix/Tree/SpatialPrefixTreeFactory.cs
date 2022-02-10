@@ -3,6 +3,8 @@ using Spatial4n.Distance;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Reflection;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
@@ -36,8 +38,8 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         public const string MAX_LEVELS = "maxLevels";
         public const string MAX_DIST_ERR = "maxDistErr";
 
-        protected IDictionary<string, string> m_args;
-        protected SpatialContext m_ctx;
+        protected IDictionary<string, string>? m_args;
+        protected SpatialContext? m_ctx;
         protected int? m_maxLevels;
 
         /// <summary>The factory is looked up via "prefixTree" in <paramref name="args"/>, expecting "geohash" or "quad".</summary>
@@ -46,16 +48,27 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// If its neither of these, then "geohash" is chosen for a geo context, otherwise "quad" is chosen.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="args"/> or <paramref name="ctx"/> is <c>null</c>.</exception>
-        public static SpatialPrefixTree MakeSPT(IDictionary<string, string> args, SpatialContext ctx)
+        public static SpatialPrefixTree MakeSPT(IDictionary<string, string> args, SpatialContext ctx) // LUCENENET specific overload for convenience.
+            => MakeSPT(args, null, ctx);
+
+        /// <summary>The factory is looked up via "prefixTree" in <paramref name="args"/>, expecting "geohash" or "quad".</summary>
+        /// <remarks>
+        /// The factory is looked up via "prefixTree" in <paramref name="args"/>, expecting "geohash" or "quad".
+        /// If its neither of these, then "geohash" is chosen for a geo context, otherwise "quad" is chosen.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="args"/> or <paramref name="ctx"/> is <c>null</c>.</exception>
+        public static SpatialPrefixTree MakeSPT(IDictionary<string, string> args, Assembly? assembly, SpatialContext ctx)
         {
             // LUCENENET specific - added guard clauses
             if (args is null)
                 throw new ArgumentNullException(nameof(args));
+            if (assembly is null)
+                assembly = typeof(SpatialPrefixTreeFactory).Assembly;
             if (ctx is null)
                 throw new ArgumentNullException(nameof(ctx));
 
-            SpatialPrefixTreeFactory instance;
-            if (!args.TryGetValue(PREFIX_TREE, out string cname))
+            SpatialPrefixTreeFactory? instance;
+            if (!args.TryGetValue(PREFIX_TREE, out string? cname))
             {
                 cname = ctx.IsGeo ? "geohash" : "quad";
             }
@@ -71,8 +84,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             {
                 try
                 {
-                    Type c = Type.GetType(cname);
-                    instance = (SpatialPrefixTreeFactory)Activator.CreateInstance(c);
+                    Type? c = assembly.GetType(cname) ?? Type.GetType(cname);
+                    if (c is null)
+                        throw RuntimeException.Create($"{cname} not found in {assembly.GetName().FullName} or by using Type.GetType(string).");// LUCENENET specific - .NET doesn't throw when the type is not found.
+                    instance = (SpatialPrefixTreeFactory)Activator.CreateInstance(c)!;
                 }
                 catch (Exception e) when (e.IsException())
                 {
@@ -93,13 +108,16 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         protected internal virtual void InitMaxLevels()
         {
-            if (m_args.TryGetValue(MAX_LEVELS, out string mlStr))
+            if (m_args is null || m_ctx is null)
+                throw new InvalidOperationException($"Init(IDictionary<string, string>, SpatialContext) must be called prior to calling InitMaxLevels()");
+
+            if (m_args.TryGetValue(MAX_LEVELS, out string? mlStr))
             {
                 m_maxLevels = int.Parse(mlStr, CultureInfo.InvariantCulture);
                 return;
             }
             double degrees;
-            if (!m_args.TryGetValue(MAX_DIST_ERR, out string maxDetailDistStr))
+            if (!m_args.TryGetValue(MAX_DIST_ERR, out string? maxDetailDistStr))
             {
                 if (!m_ctx.IsGeo)
                 {
@@ -116,7 +134,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         }
 
         /// <summary>
-        /// Calls <see cref="SpatialPrefixTree.GetLevelForDistance(double)">SpatialPrefixTree.GetLevelForDistance(double)</see>.
+        /// Calls <see cref="SpatialPrefixTree.GetLevelForDistance(double)" />.
         /// </summary>
         protected internal abstract int GetLevelForDistance(double degrees);
 
