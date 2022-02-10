@@ -39,8 +39,8 @@ namespace Lucene.Net.Spatial.Queries
         public SpatialArgs(SpatialOperation operation, IShape shape)
         {
             // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
-            this.Operation = operation ?? throw new ArgumentNullException(nameof(operation), "operation and shape are required");
-            this.Shape = shape ?? throw new ArgumentNullException(nameof(shape), "operation and shape are required");
+            this.operation = operation ?? throw new ArgumentNullException(nameof(operation), "operation and shape are required");
+            this.shape = shape ?? throw new ArgumentNullException(nameof(shape), "operation and shape are required");
         }
 
         /// <summary>
