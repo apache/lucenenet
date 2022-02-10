@@ -4,8 +4,8 @@ using Spatial4n.Context;
 using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using JCG = J2N.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
@@ -118,7 +118,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             return Math.Sqrt(width * width + height * height);
         }
 
-        private Cell worldCell;//cached
+        private Cell? worldCell;//cached
 
         /// <summary>Returns the level 0 cell which encompasses all spatial data.</summary>
         /// <remarks>
@@ -150,7 +150,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         public abstract Cell GetCell(byte[] bytes, int offset, int len);
 
-        public Cell GetCell(byte[] bytes, int offset, int len, Cell target)
+        public Cell GetCell(byte[] bytes, int offset, int len, Cell? target)
         {
             if (target is null)
             {
@@ -180,7 +180,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// This implementation checks if shape is a <see cref="IPoint"/> and if so returns
         /// <see cref="GetCells(IPoint, int, bool)"/>.
         /// </remarks>
-        /// <param name="shape">the shape; non-null</param>
+        /// <param name="shape">the shape</param>
         /// <param name="detailLevel">the maximum detail level to get cells for</param>
         /// <param name="inclParents">
         /// if true then all parent cells of leaves are returned
@@ -192,7 +192,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// ~20-25% fewer cells.
         /// </param>
         /// <returns>a set of cells (no dups), sorted, immutable, non-null</returns>
-        public virtual IList<Cell> GetCells(IShape shape, int detailLevel, bool inclParents, 
+        public virtual IList<Cell> GetCells(IShape? shape, int detailLevel, bool inclParents, 
             bool simplify)
         {
             //TODO consider an on-demand iterator -- it won't build up all cells in memory.
@@ -215,7 +215,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// descends.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="cell"/> is <c>null</c>.</exception>
-        private bool RecursiveGetCells(Cell cell, IShape shape, int detailLevel, 
+        private bool RecursiveGetCells(Cell cell, IShape? shape, int detailLevel, 
             bool inclParents, bool simplify, 
             IList<Cell> result)
         {
