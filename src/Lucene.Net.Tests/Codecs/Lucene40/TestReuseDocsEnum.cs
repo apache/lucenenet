@@ -194,7 +194,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
             AtomicReader indexReader = (AtomicReader)readers[Random.Next(readers.Count)].Reader;
             Terms terms = indexReader.GetTerms(field);
-            if (terms == null)
+            if (terms is null)
             {
                 return null;
             }

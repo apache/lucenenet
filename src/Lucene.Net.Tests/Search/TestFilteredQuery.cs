@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                if (acceptDocs == null)
+                if (acceptDocs is null)
                 {
                     acceptDocs = new Bits.MatchAllBits(5);
                 }
@@ -519,7 +519,7 @@ namespace Lucene.Net.Search
                 bool nullBitset = Random.Next(10) == 5;
                 AtomicReader reader = context.AtomicReader;
                 DocsEnum termDocsEnum = reader.GetTermDocsEnum(new Term("field", "0"));
-                if (termDocsEnum == null)
+                if (termDocsEnum is null)
                 {
                     return null; // no docs -- return null
                 }
@@ -655,7 +655,7 @@ namespace Lucene.Net.Search
                 public override DocIdSetIterator GetIterator()
                 {
                     DocsEnum termDocsEnum = ((AtomicReader)context.Reader).GetTermDocsEnum(new Term("field", "0"));
-                    if (termDocsEnum == null)
+                    if (termDocsEnum is null)
                     {
                         return null;
                     }

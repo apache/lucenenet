@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
             // if the caller asks for in-order scoring or if the weight does not support
             // out-of order scoring then collection will have to happen in-order.
             BulkScorer inScorer = @in.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
-            if (inScorer == null)
+            if (inScorer is null)
             {
                 return null;
             }

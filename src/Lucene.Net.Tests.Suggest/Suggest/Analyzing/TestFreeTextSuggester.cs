@@ -156,7 +156,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     throw RuntimeException.Create(ioe);
                 }
-                if (doc == null)
+                if (doc is null)
                 {
                     Current = null;
                     return false;

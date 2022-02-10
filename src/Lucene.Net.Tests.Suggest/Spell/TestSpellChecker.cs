@@ -636,7 +636,7 @@ namespace Lucene.Net.Search.Spell
         /// </summary>
         private string stackTraceStr(Exception error)
         {
-            if (error == null)
+            if (error is null)
             {
                 return "";
             }

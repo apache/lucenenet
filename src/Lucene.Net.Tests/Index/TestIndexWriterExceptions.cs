@@ -1189,7 +1189,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    if (ioe.InnerException == null)
+                    if (ioe.InnerException is null)
                     {
                         Assert.Fail("forceMerge threw IOException without root cause");
                     }
@@ -2102,7 +2102,7 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("\nTEST: iter=" + iter + " numDocs=" + numDocs + ".DocBase=" + docBase + " delCount=" + deleteCount);
                 }
-                if (w == null)
+                if (w is null)
                 {
                     IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
                     IMergeScheduler ms = iwc.MergeScheduler;
@@ -2245,7 +2245,7 @@ namespace Lucene.Net.Index
                     w = null;
                 }
 
-                if (w == null || Random.NextBoolean())
+                if (w is null || Random.NextBoolean())
                 {
                     // Open non-NRT reader, to make sure the "on
                     // disk" bits are good:
@@ -2281,7 +2281,7 @@ namespace Lucene.Net.Index
                         BinaryDocValues bcf = reader.GetBinaryDocValues("bcf");
                         for (int i = 0; i < reader.MaxDoc; i++)
                         {
-                            if (liveDocs == null || liveDocs.Get(i))
+                            if (liveDocs is null || liveDocs.Get(i))
                             {
                                 Assert.AreEqual(cf.Get(i), f.Get(i) * 2, "doc=" + (docBase + i).ToString());
                                 Assert.AreEqual(TestBinaryDocValuesUpdates.GetValue(bcf, i, scratch), TestBinaryDocValuesUpdates.GetValue(bf, i, scratch) * 2, "doc=" + (docBase + i).ToString());

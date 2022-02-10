@@ -300,7 +300,7 @@ namespace TagSoup
 
         public virtual void StartDTD(string name, string publicid, string systemid)
         {
-            if (name == null)
+            if (name is null)
             {
                 return; // can't cope
             }
@@ -311,7 +311,7 @@ namespace TagSoup
             hasOutputDTD = true;
             Write("<!DOCTYPE ");
             Write(name);
-            if (systemid == null)
+            if (systemid is null)
             {
                 systemid = "";
             }
@@ -324,7 +324,7 @@ namespace TagSoup
             {
                 publicid = overridePublic;
             }
-            if (!(publicid == null || "".Equals(publicid, StringComparison.Ordinal)))
+            if (!(publicid is null || "".Equals(publicid, StringComparison.Ordinal)))
             {
                 char pubquote = (publicid.IndexOf('"') != -1) ? '\'' : '"';
                 Write(" PUBLIC ");
@@ -423,7 +423,7 @@ namespace TagSoup
         /// <seealso cref="Flush" />
         public virtual void SetOutput(TextWriter writer)
         {
-            if (writer == null)
+            if (writer is null)
             {
                 output = new StreamWriter(Console.OpenStandardOutput());
             }
@@ -533,7 +533,7 @@ namespace TagSoup
             if (!("yes".Equals(outputProperties[OMIT_XML_DECLARATION] ?? "no", StringComparison.Ordinal)))
             {
                 Write("<?xml");
-                if (version == null)
+                if (version is null)
                 {
                     Write(" version=\"1.0\"");
                 }
@@ -549,7 +549,7 @@ namespace TagSoup
                     Write(outputEncoding);
                     Write("\"");
                 }
-                if (standalone == null)
+                if (standalone is null)
                 {
                     Write(" standalone=\"yes\"?>\n");
                 }
@@ -1179,7 +1179,7 @@ namespace TagSoup
             {
                 prefix = null;
             }
-            if (prefix == null)
+            if (prefix is null)
             {
                 containsPrefix = prefixTable.ContainsKey(uri);
                 prefix = (string)(containsPrefix ? prefixTable[uri] : null);
@@ -1189,12 +1189,12 @@ namespace TagSoup
                     prefix = null;
                 }
             }
-            if (prefix == null && qName != null && !"".Equals(qName, StringComparison.Ordinal))
+            if (prefix is null && qName != null && !"".Equals(qName, StringComparison.Ordinal))
             {
                 int i = qName.IndexOf(':');
                 if (i == -1)
                 {
-                    if (isElement && defaultNS == null)
+                    if (isElement && defaultNS is null)
                     {
                         prefix = "";
                     }
@@ -1204,7 +1204,7 @@ namespace TagSoup
                     prefix = qName.Substring(0, i);
                 }
             }
-            for (; prefix == null || nsSupport.GetUri(prefix) != null; prefix = "__NS" + ++prefixCounter)
+            for (; prefix is null || nsSupport.GetUri(prefix) != null; prefix = "__NS" + ++prefixCounter)
             {
             }
             nsSupport.DeclarePrefix(prefix, uri);
@@ -1289,7 +1289,7 @@ namespace TagSoup
         private bool BoolAttribute(string localName, string qName, string value)
         {
             string name = localName;
-            if (name == null)
+            if (name is null)
             {
                 int i = qName.IndexOf(':');
                 if (i != -1)
@@ -1387,7 +1387,7 @@ namespace TagSoup
             foreach (string prefix in prefixes)
             {
                 string uri = nsSupport.GetUri(prefix);
-                if (uri == null)
+                if (uri is null)
                 {
                     uri = "";
                 }

@@ -193,7 +193,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             if (disposing)
             {
-                if (blockOut == null) return;
+                if (blockOut is null) return;
 
                 Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
                 try

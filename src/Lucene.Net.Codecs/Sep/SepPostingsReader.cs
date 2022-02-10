@@ -128,7 +128,7 @@ namespace Lucene.Net.Codecs.Sep
             {
                 base.CopyFrom(other);
                 SepTermState other_ = (SepTermState)other;
-                if (docIndex == null)
+                if (docIndex is null)
                 {
                     docIndex = (Int32IndexInput.Index)other_.docIndex.Clone();
                 }
@@ -138,7 +138,7 @@ namespace Lucene.Net.Codecs.Sep
                 }
                 if (other_.freqIndex != null)
                 {
-                    if (freqIndex == null)
+                    if (freqIndex is null)
                     {
                         freqIndex = (Int32IndexInput.Index)other_.freqIndex.Clone();
                     }
@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs.Sep
                 }
                 if (other_.posIndex != null)
                 {
-                    if (posIndex == null)
+                    if (posIndex is null)
                     {
                         posIndex = (Int32IndexInput.Index)other_.posIndex.Clone();
                     }
@@ -376,7 +376,7 @@ namespace Lucene.Net.Codecs.Sep
                         freq = freqReader.Next();
                     }
 
-                    if (liveDocs == null || liveDocs.Get(accum))
+                    if (liveDocs is null || liveDocs.Get(accum))
                     {
                         break;
                     }
@@ -396,7 +396,7 @@ namespace Lucene.Net.Codecs.Sep
                     // There are enough docs in the posting to have
                     // skip data, and its not too close
 
-                    if (skipper == null)
+                    if (skipper is null)
                     {
                         // This DocsEnum has never done any skipping
                         skipper = new SepSkipListReader((IndexInput)outerInstance.skipIn.Clone(),
@@ -565,7 +565,7 @@ namespace Lucene.Net.Codecs.Sep
 
                     pendingPosCount += freq;
 
-                    if (liveDocs == null || liveDocs.Get(accum))
+                    if (liveDocs is null || liveDocs.Get(accum))
                     {
                         break;
                     }
@@ -589,7 +589,7 @@ namespace Lucene.Net.Codecs.Sep
                     // There are enough docs in the posting to have
                     // skip data, and its not too close
 
-                    if (skipper == null)
+                    if (skipper is null)
                     {
                         //System.out.println("  create skipper");
                         // This DocsEnum has never done any skipping
@@ -731,7 +731,7 @@ namespace Lucene.Net.Codecs.Sep
                     payloadIn.Seek(payloadIn.Position + (pendingPayloadBytes - payloadLength)); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
 
-                if (payload == null)
+                if (payload is null)
                 {
                     payload = new BytesRef();
                     payload.Bytes = new byte[payloadLength];

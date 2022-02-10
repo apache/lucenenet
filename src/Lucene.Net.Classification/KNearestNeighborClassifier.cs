@@ -69,7 +69,7 @@ namespace Lucene.Net.Classification
         /// <returns>a <see cref="ClassificationResult{BytesRef}"/> holding assigned class of type <see cref="BytesRef"/> and score</returns>
         public virtual ClassificationResult<BytesRef> AssignClass(string text)
         {
-            if (mlt == null)
+            if (mlt is null)
             {
                 throw new IOException("You must first call Classifier#train");
             }

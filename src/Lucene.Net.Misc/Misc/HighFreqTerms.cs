@@ -97,7 +97,7 @@ namespace Lucene.Net.Misc
             if (field != null)
             {
                 Fields fields = MultiFields.GetFields(reader);
-                if (fields == null)
+                if (fields is null)
                 {
                     throw RuntimeException.Create("field " + field + " not found");
                 }
@@ -112,7 +112,7 @@ namespace Lucene.Net.Misc
             else
             {
                 Fields fields = MultiFields.GetFields(reader);
-                if (fields == null)
+                if (fields is null)
                 {
                     throw RuntimeException.Create("no fields found for this index");
                 }

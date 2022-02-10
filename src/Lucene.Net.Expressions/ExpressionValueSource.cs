@@ -63,7 +63,7 @@ namespace Lucene.Net.Expressions
                     }
                     else
                     {
-                        if (source == null)
+                        if (source is null)
                         {
                             // LUCENENET specific: Changed from RuntimeException to InvalidOperationException to match .NET conventions
                             throw IllegalStateException.Create("Internal error. Variable (" + expression.Variables[i]
@@ -79,7 +79,7 @@ namespace Lucene.Net.Expressions
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             IDictionary<string, FunctionValues> valuesCache = (IDictionary<string, FunctionValues>)context["valuesCache"];
-            if (valuesCache == null)
+            if (valuesCache is null)
             {
                 valuesCache = new Dictionary<string, FunctionValues>();
                 context = new Hashtable(context)
@@ -94,7 +94,7 @@ namespace Lucene.Net.Expressions
                 if (!valuesCache.TryGetValue(externalName, out FunctionValues values))
                 {
                     values = variables[i].GetValues(context, readerContext);
-                    if (values == null)
+                    if (values is null)
                     {
                         // LUCENENET specific: Changed from RuntimeException to InvalidOperationException to match .NET conventions
 #pragma warning disable IDE0016 // Use 'throw' expression
@@ -122,7 +122,7 @@ namespace Lucene.Net.Expressions
         {
             int prime = 31;
             int result = 1;
-            result = prime * result + ((expression == null) ? 0 : expression.GetHashCode());
+            result = prime * result + ((expression is null) ? 0 : expression.GetHashCode());
             result = prime * result + (needsScores ? 1231 : 1237);
             result = prime * result + Arrays.GetHashCode(variables);
             return result;
@@ -134,7 +134,7 @@ namespace Lucene.Net.Expressions
             {
                 return true;
             }
-            if (obj == null)
+            if (obj is null)
             {
                 return false;
             }
@@ -143,7 +143,7 @@ namespace Lucene.Net.Expressions
                 return false;
             }
             ExpressionValueSource other = (ExpressionValueSource)obj;
-            if (expression == null)
+            if (expression is null)
             {
                 if (other.expression != null)
                 {

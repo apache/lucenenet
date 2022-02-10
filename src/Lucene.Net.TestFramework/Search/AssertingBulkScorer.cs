@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
 
         public static BulkScorer Wrap(Random random, BulkScorer other)
         {
-            if (other == null || other is AssertingBulkScorer)
+            if (other is null || other is AssertingBulkScorer)
             {
                 return other;
             }

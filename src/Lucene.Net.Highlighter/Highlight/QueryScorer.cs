@@ -115,7 +115,7 @@ namespace Lucene.Net.Search.Highlight
             foreach (WeightedSpanTerm t in weightedTerms)
             {
                 if (!fieldWeightedSpanTerms.TryGetValue(t.Term, out WeightedSpanTerm existingTerm) ||
-                    (existingTerm == null) ||
+                    (existingTerm is null) ||
                     (existingTerm.Weight < t.Weight))
                 {
                     // if a term is defined more than once, always use the highest
@@ -141,7 +141,7 @@ namespace Lucene.Net.Search.Highlight
             position += posIncAtt.PositionIncrement;
             string termText = termAtt.ToString();
 
-            if (!fieldWeightedSpanTerms.TryGetValue(termText, out WeightedSpanTerm weightedSpanTerm) || weightedSpanTerm == null)
+            if (!fieldWeightedSpanTerms.TryGetValue(termText, out WeightedSpanTerm weightedSpanTerm) || weightedSpanTerm is null)
             {
                 return 0;
             }
@@ -205,7 +205,7 @@ namespace Lucene.Net.Search.Highlight
             qse.SetMaxDocCharsToAnalyze(maxCharsToAnalyze);
             qse.ExpandMultiTermQuery = expandMultiTermQuery;
             qse.SetWrapIfNotCachingTokenFilter(wrapToCaching);
-            if (reader == null)
+            if (reader is null)
             {
                 this.fieldWeightedSpanTerms = qse.GetWeightedSpanTerms(query,
                                                                        tokenStream, field);
@@ -225,7 +225,7 @@ namespace Lucene.Net.Search.Highlight
 
         protected virtual WeightedSpanTermExtractor NewTermExtractor(string defaultField)
         {
-            return defaultField == null ? new WeightedSpanTermExtractor()
+            return defaultField is null ? new WeightedSpanTermExtractor()
                 : new WeightedSpanTermExtractor(defaultField);
         }
 

@@ -110,7 +110,7 @@ namespace Egothor.Stemmer
         public void SetCmd(char way, int cmd)
         {
             Cell c = At(way);
-            if (c == null)
+            if (c is null)
             {
                 c = new Cell();
                 c.cmd = cmd;
@@ -132,7 +132,7 @@ namespace Egothor.Stemmer
         public void SetRef(char way, int @ref)
         {
             Cell c = At(way);
-            if (c == null)
+            if (c is null)
             {
                 c = new Cell();
                 c.@ref = @ref;
@@ -206,7 +206,7 @@ namespace Egothor.Stemmer
         public int GetCmd(char way)
         {
             Cell c = At(way);
-            return (c == null) ? -1 : c.cmd;
+            return (c is null) ? -1 : c.cmd;
         }
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace Egothor.Stemmer
         public int GetCnt(char way)
         {
             Cell c = At(way);
-            return (c == null) ? -1 : c.cnt;
+            return (c is null) ? -1 : c.cnt;
         }
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace Egothor.Stemmer
         public int GetRef(char way)
         {
             Cell c = At(way);
-            return (c == null) ? -1 : c.@ref;
+            return (c is null) ? -1 : c.@ref;
         }
 
         /// <summary>

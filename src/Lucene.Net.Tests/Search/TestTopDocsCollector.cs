@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
 
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
             {
-                if (results == null)
+                if (results is null)
                 {
                     return EMPTY_TOPDOCS;
                 }

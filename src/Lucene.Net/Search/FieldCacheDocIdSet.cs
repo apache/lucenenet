@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public override sealed bool IsCacheable => true;
 
-        public override sealed IBits Bits => (m_acceptDocs == null) ? (IBits)new BitsAnonymousClass(this) : new BitsAnonymousClass2(this);
+        public override sealed IBits Bits => (m_acceptDocs is null) ? (IBits)new BitsAnonymousClass(this) : new BitsAnonymousClass2(this);
 
         private class BitsAnonymousClass : IBits
         {
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
 
         public override sealed DocIdSetIterator GetIterator()
         {
-            if (m_acceptDocs == null)
+            if (m_acceptDocs is null)
             {
                 // Specialization optimization disregard acceptDocs
                 return new DocIdSetIteratorAnonymousClass(this);

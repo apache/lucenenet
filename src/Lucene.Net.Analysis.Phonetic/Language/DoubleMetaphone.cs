@@ -88,7 +88,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         public virtual string GetDoubleMetaphone(string value, bool alternate)
         {
             value = CleanInput(value);
-            if (value == null)
+            if (value is null)
             {
                 return null;
             }
@@ -1117,7 +1117,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         private string CleanInput(string input)
         {
-            if (input == null)
+            if (input is null)
             {
                 return null;
             }

@@ -622,7 +622,7 @@ namespace Lucene.Net.Facet
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void CheckTaxoWriter(ITaxonomyWriter taxoWriter) // LUCENENET: CA1822: Mark members as static
         {
-            if (taxoWriter == null)
+            if (taxoWriter is null)
             {
                 throw new ThreadStateException("a non-null ITaxonomyWriter must be provided when indexing FacetField or AssociationFacetField");
             }

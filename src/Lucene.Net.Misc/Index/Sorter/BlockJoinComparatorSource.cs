@@ -172,7 +172,7 @@ namespace Lucene.Net.Index.Sorter
             {
 
                 DocIdSet parents = outerInstance.parentsFilter.GetDocIdSet(context, null);
-                if (parents == null)
+                if (parents is null)
                 {
                     throw IllegalStateException.Create("AtomicReader " + context.AtomicReader + " contains no parents!");
                 }

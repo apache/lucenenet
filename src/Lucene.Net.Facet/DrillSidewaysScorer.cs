@@ -101,7 +101,7 @@ namespace Lucene.Net.Facet
             for (int dim = 0; dim < numDims; dim++)
             {
                 DocIdSetIterator disi = dims[dim].disi;
-                if (dims[dim].bits == null && disi != null)
+                if (dims[dim].bits is null && disi != null)
                 {
                     drillDownCost += disi.GetCost();
                 }
@@ -138,7 +138,7 @@ namespace Lucene.Net.Facet
             for (int dim = 0; dim < numDims; dim++)
             {
                 DocIdSetIterator disi = dims[dim].disi;
-                if (dims[dim].bits == null)
+                if (dims[dim].bits is null)
                 {
                     disis[disiUpto] = disi;
                     sidewaysCollectors[disiUpto] = dims[dim].sidewaysCollector;
@@ -167,7 +167,7 @@ namespace Lucene.Net.Facet
                 //System.out.println("queryFirst: baseScorer=" + baseScorer + " disis.length=" + disis.length + " bits.length=" + bits.length);
                 DoQueryFirstScoring(collector, disis, sidewaysCollectors, bits, bitsSidewaysCollectors);
             }
-            else if (numDims > 1 && (dims[1].disi == null || drillDownAdvancedCost < baseQueryCost / 10))
+            else if (numDims > 1 && (dims[1].disi is null || drillDownAdvancedCost < baseQueryCost / 10))
             {
                 //System.out.println("drillDownAdvance");
                 DoDrillDownAdvanceScoring(collector, disis, sidewaysCollectors);
@@ -208,7 +208,7 @@ namespace Lucene.Net.Facet
                     {
                         disi.Advance(docID);
                     }
-                    if (disi == null || disi.DocID > docID)
+                    if (disi is null || disi.DocID > docID)
                     {
                         if (failedCollector != null)
                         {
@@ -258,7 +258,7 @@ namespace Lucene.Net.Facet
                 // daat here:
                 collectScore = baseScorer.GetScore();
 
-                if (failedCollector == null)
+                if (failedCollector is null)
                 {
                     // Hit passed all filters, so it's "real":
                     CollectHit(collector, sidewaysCollectors, bitsSidewaysCollectors);
@@ -789,9 +789,9 @@ namespace Lucene.Net.Facet
 
             public virtual int CompareTo(DocsAndCost other)
             {
-                if (disi == null)
+                if (disi is null)
                 {
-                    if (other.disi == null)
+                    if (other.disi is null)
                     {
                         return 0;
                     }
@@ -800,7 +800,7 @@ namespace Lucene.Net.Facet
                         return 1;
                     }
                 }
-                else if (other.disi == null)
+                else if (other.disi is null)
                 {
                     return -1;
                 }

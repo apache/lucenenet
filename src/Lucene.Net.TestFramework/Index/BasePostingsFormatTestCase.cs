@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
                 while (true)
                 {
                     _nextDoc();
-                    if (liveDocs == null || docID == NO_MORE_DOCS || liveDocs.Get(docID))
+                    if (liveDocs is null || docID == NO_MORE_DOCS || liveDocs.Get(docID))
                     {
                         return docID;
                     }
@@ -598,7 +598,7 @@ namespace Lucene.Net.Index
                                     {
                                         if (doPayloads)
                                         {
-                                            Console.WriteLine("      pos=" + pos + " payload=" + (payload == null ? "null" : payload.Length + " bytes"));
+                                            Console.WriteLine("      pos=" + pos + " payload=" + (payload is null ? "null" : payload.Length + " bytes"));
                                         }
                                         else
                                         {
@@ -803,7 +803,7 @@ namespace Lucene.Net.Index
 
             if (Verbose)
             {
-                if (prevDocsEnum == null)
+                if (prevDocsEnum is null)
                 {
                     Console.WriteLine("  got enum=" + docsEnum);
                 }
@@ -993,9 +993,9 @@ namespace Lucene.Net.Index
                             {
                                 if (Verbose)
                                 {
-                                    Console.WriteLine("      now check expectedPayload length=" + (expectedPayload == null ? 0 : expectedPayload.Length));
+                                    Console.WriteLine("      now check expectedPayload length=" + (expectedPayload is null ? 0 : expectedPayload.Length));
                                 }
-                                if (expectedPayload == null || expectedPayload.Length == 0)
+                                if (expectedPayload is null || expectedPayload.Length == 0)
                                 {
                                     Assert.IsNull(docsAndPositionsEnum.GetPayload(), "should not have payload");
                                 }
@@ -1019,7 +1019,7 @@ namespace Lucene.Net.Index
                             {
                                 if (Verbose)
                                 {
-                                    Console.WriteLine("      skip check payload length=" + (expectedPayload == null ? 0 : expectedPayload.Length));
+                                    Console.WriteLine("      skip check payload length=" + (expectedPayload is null ? 0 : expectedPayload.Length));
                                 }
                             }
                         }

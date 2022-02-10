@@ -194,7 +194,7 @@ namespace Lucene.Net.Index
                             {
                                 NumericDocValues values = reader.GetNumericDocValues(field.Name);
                                 IBits bits = reader.GetDocsWithField(field.Name);
-                                if (values == null)
+                                if (values is null)
                                 {
                                     values = DocValues.EMPTY_NUMERIC;
                                     bits = new Lucene.Net.Util.Bits.MatchNoBits(reader.MaxDoc);
@@ -212,7 +212,7 @@ namespace Lucene.Net.Index
                             {
                                 BinaryDocValues values = reader.GetBinaryDocValues(field.Name);
                                 IBits bits = reader.GetDocsWithField(field.Name);
-                                if (values == null)
+                                if (values is null)
                                 {
                                     values = DocValues.EMPTY_BINARY;
                                     bits = new Lucene.Net.Util.Bits.MatchNoBits(reader.MaxDoc);
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
                             foreach (AtomicReader reader in mergeState.Readers)
                             {
                                 SortedDocValues values = reader.GetSortedDocValues(field.Name);
-                                if (values == null)
+                                if (values is null)
                                 {
                                     values = DocValues.EMPTY_SORTED;
                                 }
@@ -242,7 +242,7 @@ namespace Lucene.Net.Index
                             foreach (AtomicReader reader in mergeState.Readers)
                             {
                                 SortedSetDocValues values = reader.GetSortedSetDocValues(field.Name);
-                                if (values == null)
+                                if (values is null)
                                 {
                                     values = DocValues.EMPTY_SORTED_SET;
                                 }
@@ -286,7 +286,7 @@ namespace Lucene.Net.Index
                         foreach (AtomicReader reader in mergeState.Readers)
                         {
                             NumericDocValues norms = reader.GetNormValues(field.Name);
-                            if (norms == null)
+                            if (norms is null)
                             {
                                 norms = DocValues.EMPTY_NUMERIC;
                             }
@@ -338,7 +338,7 @@ namespace Lucene.Net.Index
                     foreach (FieldInfo fi in segmentFieldInfos)
                     {
                         FieldInfo other = mergeState.FieldInfos.FieldInfo(fi.Number);
-                        if (other == null || !other.Name.Equals(fi.Name, StringComparison.Ordinal))
+                        if (other is null || !other.Name.Equals(fi.Name, StringComparison.Ordinal))
                         {
                             same = false;
                             break;

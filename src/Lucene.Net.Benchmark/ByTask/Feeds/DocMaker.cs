@@ -124,7 +124,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     return new Field(name, "", ft);
                 }
 
-                if (!fields.TryGetValue(name, out Field f) || f == null)
+                if (!fields.TryGetValue(name, out Field f) || f is null)
                 {
                     f = new Field(name, "", ft);
                     fields[name] = f;
@@ -144,7 +144,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     f = null;
                 }
 
-                if (f == null)
+                if (f is null)
                 {
                     switch (type)
                     {
@@ -237,7 +237,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             // Set NAME_FIELD
             string name = docData.Name;
-            if (name == null) name = "";
+            if (name is null) name = "";
             name = cnt < 0 ? name : name + "_" + cnt;
             Field nameField = ds.GetField(NAME_FIELD, m_valType);
             nameField.SetStringValue(name);
@@ -272,7 +272,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             dateStringField.SetStringValue(dateString);
             doc.Add(dateStringField);
 
-            if (date == null)
+            if (date is null)
             {
                 // just set to right now
                 date = DateTime.Now; 
@@ -358,7 +358,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         protected virtual DocState GetDocState()
         {
             DocState ds = docState.Value;
-            if (ds == null)
+            if (ds is null)
             {
                 ds = new DocState(m_reuseFields, m_valType, m_bodyValType);
                 docState.Value = ds;
@@ -413,15 +413,15 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         public virtual Document MakeDocument(int size)
         {
             LeftOver lvr = leftovr.Value;
-            if (lvr == null || lvr.DocData == null || lvr.DocData.Body == null
+            if (lvr is null || lvr.DocData is null || lvr.DocData.Body is null
                 || lvr.DocData.Body.Length == 0)
             {
                 ResetLeftovers();
             }
             DocData docData = GetDocState().docData;
-            DocData dd = (lvr == null ? m_source.GetNextDocData(docData) : lvr.DocData);
-            int cnt = (lvr == null ? 0 : lvr.Count);
-            while (dd.Body == null || dd.Body.Length < size)
+            DocData dd = (lvr is null ? m_source.GetNextDocData(docData) : lvr.DocData);
+            int cnt = (lvr is null ? 0 : lvr.Count);
+            while (dd.Body is null || dd.Body.Length < size)
             {
                 DocData dd2 = dd;
                 dd = m_source.GetNextDocData(new DocData());
@@ -429,13 +429,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 dd.Body = (dd2.Body + dd.Body);
             }
             Document doc = CreateDocument(dd, size, cnt);
-            if (dd.Body == null || dd.Body.Length == 0)
+            if (dd.Body is null || dd.Body.Length == 0)
             {
                 ResetLeftovers();
             }
             else
             {
-                if (lvr == null)
+                if (lvr is null)
                 {
                     lvr = new LeftOver();
                     leftovr.Value = lvr;

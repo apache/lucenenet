@@ -98,7 +98,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             Config config = runData.Config;
             m_fname = config.Get("line.file.out", null);
-            if (m_fname == null)
+            if (m_fname is null)
             {
                 throw new ArgumentException("line.file.out must be set");
             }
@@ -108,7 +108,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
             // init fields 
             string f2r = config.Get("line.fields", null);
-            if (f2r == null)
+            if (f2r is null)
             {
                 fieldsToWrite = DEFAULT_FIELDS;
             }
@@ -150,7 +150,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         protected virtual void WriteHeader(TextWriter @out)
         {
             StringBuilder sb = threadBuffer.Value;
-            if (sb == null)
+            if (sb is null)
             {
                 sb = new StringBuilder();
                 threadBuffer.Value = sb;
@@ -182,14 +182,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             Document doc = docSize > 0 ? docMaker.MakeDocument(docSize) : docMaker.MakeDocument();
 
             Regex matcher = threadNormalizer.Value;
-            if (matcher == null)
+            if (matcher is null)
             {
                 matcher = new Regex("[\t\r\n]+", RegexOptions.Compiled);
                 threadNormalizer.Value = matcher;
             }
 
             StringBuilder sb = threadBuffer.Value;
-            if (sb == null)
+            if (sb is null)
             {
                 sb = new StringBuilder();
                 threadBuffer.Value = sb;
@@ -200,7 +200,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             for (int i = 0; i < fieldsToWrite.Length; i++)
             {
                 IIndexableField f = doc.GetField(fieldsToWrite[i]);
-                string text = f == null ? "" : matcher.Replace(f.GetStringValue(), " ").Trim();
+                string text = f is null ? "" : matcher.Replace(f.GetStringValue(), " ").Trim();
                 sb.Append(text).Append(SEP);
                 sufficient |= text.Length > 0 && sufficientFields[i];
             }

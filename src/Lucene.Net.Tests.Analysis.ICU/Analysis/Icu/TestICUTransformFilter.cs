@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Icu
         {
             string rules = "a > b; b > c;"; // convert a's to b's and b's to c's
             Transliterator custom = Transliterator.CreateFromRules("test", rules, Transliterator.Forward);
-            assertTrue(custom.Filter == null);
+            assertTrue(custom.Filter is null);
             new ICUTransformFilter(new KeywordTokenizer(new StringReader("")), custom);
             assertTrue(custom.Filter.Equals(new UnicodeSet("[ab]")));
         }
@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis.Icu
         {
             string rules = "\\U00020087 > x;"; // convert CJK UNIFIED IDEOGRAPH-20087 to an x
             Transliterator custom = Transliterator.CreateFromRules("test", rules, Transliterator.Forward);
-            assertTrue(custom.Filter == null);
+            assertTrue(custom.Filter is null);
             new ICUTransformFilter(new KeywordTokenizer(new StringReader("")), custom);
             assertTrue(custom.Filter.Equals(new UnicodeSet("[\\U00020087]")));
         }

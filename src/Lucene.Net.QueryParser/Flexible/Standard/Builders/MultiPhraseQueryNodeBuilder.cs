@@ -54,7 +54,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                     TermQuery termQuery = (TermQuery)termNode
                         .GetTag(QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID);
 
-                    if (!positionTermMap.TryGetValue(termNode.PositionIncrement, out JCG.List<Term> termList) || termList == null)
+                    if (!positionTermMap.TryGetValue(termNode.PositionIncrement, out JCG.List<Term> termList) || termList is null)
                     {
                         termList = new JCG.List<Term>();
                         positionTermMap[termNode.PositionIncrement] = termList;

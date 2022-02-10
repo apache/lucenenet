@@ -150,7 +150,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             get
             {
-                if (token == null)
+                if (token is null)
                     token = Encoding.UTF8.GetString(bytes, b_off, b_len);
                 return token;
             }
@@ -202,7 +202,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
 
             ICollection<Cell> cells = GetSubCells();
-            if (shapeFilter == null)
+            if (shapeFilter is null)
             {
                 return cells;
             }
@@ -269,7 +269,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         public override bool Equals(object obj)
         {
-            return !(obj == null || !(obj is Cell cell)) &&
+            return !(obj is null || !(obj is Cell cell)) &&
                    TokenString.Equals(cell.TokenString, StringComparison.Ordinal);
         }
 

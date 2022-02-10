@@ -142,7 +142,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
 
         public PrecedenceQueryParser GetParser(Analyzer a)
         {
-            if (a == null)
+            if (a is null)
                 a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             PrecedenceQueryParser qp = new PrecedenceQueryParser();
             qp.Analyzer = (a);
@@ -194,7 +194,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
 
         public Query getQueryDOA(String query, Analyzer a)
         {
-            if (a == null)
+            if (a is null)
                 a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             PrecedenceQueryParser qp = new PrecedenceQueryParser();
             qp.Analyzer = (a);

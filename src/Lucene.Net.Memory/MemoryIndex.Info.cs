@@ -91,7 +91,7 @@ namespace Lucene.Net.Index.Memory
             /// </summary>
             public void SortTerms()
             {
-                if (sortedTerms == null)
+                if (sortedTerms is null)
                 {
                     sortedTerms = terms.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
                 }

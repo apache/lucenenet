@@ -108,7 +108,7 @@ namespace Egothor.Stemmer
                 for (int i = 0; i < m_tries.Count; i++)
                 {
                     string r = m_tries[i].GetFully(lastkey);
-                    if (r == null || (r.Length == 1 && r[0] == EOM))
+                    if (r is null || (r.Length == 1 && r[0] == EOM))
                     {
                         return result.ToString();
                     }
@@ -165,7 +165,7 @@ namespace Egothor.Stemmer
                 for (int i = 0; i < m_tries.Count; i++)
                 {
                     string r = m_tries[i].GetLastOnPath(lastkey);
-                    if (r == null || (r.Length == 1 && r[0] == EOM))
+                    if (r is null || (r.Length == 1 && r[0] == EOM))
                     {
                         return result.ToString();
                     }

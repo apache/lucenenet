@@ -343,7 +343,7 @@ namespace Lucene.Net.Facet.Range
                 {
                     // Our range is fully included in the incoming
                     // range; add to our output list:
-                    if (outputs == null)
+                    if (outputs is null)
                     {
                         outputs = new JCG.List<int>();
                     }
@@ -361,9 +361,9 @@ namespace Lucene.Net.Facet.Range
             internal void ToString(StringBuilder sb, int depth)
             {
                 Indent(sb, depth);
-                if (left == null)
+                if (left is null)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(right == null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(right is null);
                     sb.Append("leaf: " + start + " to " + end);
                 }
                 else

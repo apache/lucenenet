@@ -237,7 +237,7 @@ namespace Lucene.Net.Codecs.Lucene42
             long startFP = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             foreach (BytesRef v in values)
             {
-                int length = v == null ? 0 : v.Length;
+                int length = v is null ? 0 : v.Length;
                 if (length > Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH)
                 {
                     throw new ArgumentException("DocValuesField \"" + field.Name + "\" is too large, must be <= " + Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH);

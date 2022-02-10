@@ -42,7 +42,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         public override int DoLogic()
         {
-            if (name == null || value == null)
+            if (name is null || value is null)
             {
                 throw new Exception(GetName() + " - undefined name or value: name=" + name + " value=" + value);
             }

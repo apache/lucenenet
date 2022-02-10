@@ -174,9 +174,9 @@ namespace Lucene.Net.Search.Grouping
 
         private void CompareGroupValue(string expected, IGroupDocs<object> group)
         {
-            if (expected == null)
+            if (expected is null)
             {
-                if (group.GroupValue == null)
+                if (group.GroupValue is null)
                 {
                     return;
                 }

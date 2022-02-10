@@ -453,7 +453,7 @@ namespace Lucene.Net.Index
         protected virtual void AssertEquals(RandomDocument doc, Fields fields)
         {
             // compare field names
-            Assert.AreEqual(doc == null, fields == null);
+            Assert.AreEqual(doc is null, fields is null);
             Assert.AreEqual(doc.fieldNames.Length, fields.Count);
             ISet<string> fields1 = new JCG.HashSet<string>();
             ISet<string> fields2 = new JCG.HashSet<string>();
@@ -475,9 +475,9 @@ namespace Lucene.Net.Index
 
         new protected internal static bool Equals(object o1, object o2)
         {
-            if (o1 == null)
+            if (o1 is null)
             {
-                return o2 == null;
+                return o2 is null;
             }
             else
             {

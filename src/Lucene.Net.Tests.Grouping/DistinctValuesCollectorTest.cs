@@ -121,15 +121,15 @@ namespace Lucene.Net.Search.Grouping
             w.Dispose();
 
             var cmp = Comparer<AbstractDistinctValuesCollector.IGroupCount<IComparable>>.Create((groupCount1, groupCount2) => {
-                if (groupCount1.GroupValue == null)
+                if (groupCount1.GroupValue is null)
                 {
-                    if (groupCount2.GroupValue == null)
+                    if (groupCount2.GroupValue is null)
                     {
                         return 0;
                     }
                     return -1;
                 }
-                else if (groupCount2.GroupValue == null)
+                else if (groupCount2.GroupValue is null)
                 {
                     return 1;
                 }
@@ -326,7 +326,7 @@ namespace Lucene.Net.Search.Grouping
 
         private void AssertValues(object expected, object actual)
         {
-            if (expected == null)
+            if (expected is null)
             {
                 CompareNull(actual);
             }
@@ -364,7 +364,7 @@ namespace Lucene.Net.Search.Grouping
 
         private void CompareNull(object groupValue)
         {
-            if (groupValue == null)
+            if (groupValue is null)
             {
                 return; // term based impl...
             }
@@ -604,11 +604,11 @@ namespace Lucene.Net.Search.Grouping
                 {
                     return 0;
                 }
-                else if (a == null)
+                else if (a is null)
                 {
                     return -1;
                 }
-                else if (b == null)
+                else if (b is null)
                 {
                     return 1;
                 }

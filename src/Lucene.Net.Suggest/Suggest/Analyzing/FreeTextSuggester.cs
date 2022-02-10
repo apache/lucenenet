@@ -196,7 +196,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Returns byte size of the underlying FST. </summary>
         public override long GetSizeInBytes()
         {
-            if (fst == null)
+            if (fst is null)
             {
                 return 0;
             }
@@ -598,7 +598,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     for (int i = grams - 1; i > 0; i--)
                     {
                         BytesRef token = lastTokens[i - 1];
-                        if (token == null)
+                        if (token is null)
                         {
                             continue;
                         }
@@ -629,7 +629,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     BytesRef token = lastTokens[gram];
                     // Don't make unigram predictions from empty string:
-                    if (token == null || (token.Length == 0 && key.Length > 0))
+                    if (token is null || (token.Length == 0 && key.Length > 0))
                     {
                         // Input didn't have enough tokens:
                         //System.out.println("  gram=" + gram + ": skip: not enough input");
@@ -693,7 +693,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                     BytesRef finalLastToken;
 
-                    if (lastTokenFragment == null)
+                    if (lastTokenFragment is null)
                     {
                         finalLastToken = BytesRef.DeepCopyOf(token);
                     }
@@ -893,7 +893,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             var end = pos + scratch.Length;
             while (pos < end)
             {
-                if (fst.FindTargetArc(bytes[pos++] & 0xff, arc, arc, bytesReader) == null)
+                if (fst.FindTargetArc(bytes[pos++] & 0xff, arc, arc, bytesReader) is null)
                 {
                     return null;
                 }

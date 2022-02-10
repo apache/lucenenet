@@ -127,7 +127,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             {
                 e = e.next;
             }
-            if (e == null)
+            if (e is null)
             {
                 return LabelToOrdinal.INVALID_ORDINAL;
             }
@@ -227,7 +227,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 Entry n = null;
                 if (size != 0) // advance to first entry
                 {
-                    while (i > 0 && (n = t[--i]) == null)
+                    while (i > 0 && (n = t[--i]) is null)
                     {
                         // advance
                     }
@@ -241,7 +241,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             public Entry Next()
             {
                 Entry e = this.next;
-                if (e == null)
+                if (e is null)
                 {
                     throw IllegalStateException.Create(this.GetType() + " cannot get next entry"); ;
                 }
@@ -249,7 +249,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 Entry n = e.next;
                 Entry[] t = ents;
                 int i = this.index;
-                while (n == null && i > 0)
+                while (n is null && i > 0)
                 {
                     n = t[--i];
                 }

@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         public override TermsConsumer AddField(FieldInfo field)
         {
             //System.out.println("\nBTW.addField seg=" + segment + " field=" + field.name);
-            if (Debugging.AssertsEnabled) Debugging.Assert(currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(currentField is null || currentField.Name.CompareToOrdinal(field.Name) < 0);
             currentField = field;
             TermsIndexWriterBase.FieldWriter fieldIndexWriter = termsIndexWriter.AddField(field, m_output.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             return new TermsWriter(this, fieldIndexWriter, field, postingsWriter);

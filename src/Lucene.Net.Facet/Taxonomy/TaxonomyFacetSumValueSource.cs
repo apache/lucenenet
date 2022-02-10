@@ -163,7 +163,7 @@ namespace Lucene.Net.Facet.Taxonomy
             public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
             {
                 Scorer scorer = (Scorer)context["scorer"];
-                if (scorer == null)
+                if (scorer is null)
                 {
                     throw IllegalStateException.Create("scores are missing; be sure to pass keepScores=true to FacetsCollector");
                 }

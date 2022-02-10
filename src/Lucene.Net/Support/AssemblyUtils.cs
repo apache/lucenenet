@@ -116,7 +116,7 @@ namespace Lucene.Net.Support
             /// </summary>
             public static bool IsFrameworkAssembly(AssemblyName assembly)
             {
-                if (assembly == null)
+                if (assembly is null)
                 {
                     return false;
                 }

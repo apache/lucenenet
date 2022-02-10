@@ -444,7 +444,7 @@ namespace Lucene.Net.Analysis.Util
             public override int CodePointAt(string seq, int offset)
             {
                 // LUCENENET specific - added guard clauses
-                if (seq == null)
+                if (seq is null)
                     throw new ArgumentNullException(nameof(seq));
                 if (offset < 0 || offset >= seq.Length)
                     throw new ArgumentOutOfRangeException(nameof(offset));
@@ -455,7 +455,7 @@ namespace Lucene.Net.Analysis.Util
             public override int CodePointAt(ICharSequence seq, int offset)
             {
                 // LUCENENET specific - added guard clauses
-                if (seq == null)
+                if (seq is null)
                     throw new ArgumentNullException(nameof(seq));
                 if (offset < 0 || offset >= seq.Length)
                     throw new ArgumentOutOfRangeException(nameof(offset));
@@ -465,7 +465,7 @@ namespace Lucene.Net.Analysis.Util
 
             public override int CodePointAt(char[] chars, int offset, int limit)
             {
-                if (chars == null)
+                if (chars is null)
                     throw new ArgumentNullException(nameof(chars)); // LUCENENET specific - added null guard clause
                 if (offset >= limit)
                 {

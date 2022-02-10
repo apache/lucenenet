@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Ja
 
                 if (useRomaji)
                 {
-                    if (reading == null)
+                    if (reading is null)
                     {
                         // if its an OOV term, just try the term text
                         buffer.Length = 0;

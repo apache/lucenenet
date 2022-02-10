@@ -233,7 +233,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         public virtual void SetMultiFields(string[] fields)
         {
 
-            if (fields == null)
+            if (fields is null)
             {
                 fields = Arrays.Empty<string>();
             }
@@ -261,7 +261,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             {
                 FuzzyConfig fuzzyConfig = QueryConfigHandler.Get(ConfigurationKeys.FUZZY_CONFIG);
 
-                if (fuzzyConfig == null)
+                if (fuzzyConfig is null)
                 {
                     return FuzzyQuery.DefaultPrefixLength;
                 }
@@ -275,7 +275,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 QueryConfigHandler config = QueryConfigHandler;
                 FuzzyConfig fuzzyConfig = config.Get(ConfigurationKeys.FUZZY_CONFIG);
 
-                if (fuzzyConfig == null)
+                if (fuzzyConfig is null)
                 {
                     fuzzyConfig = new FuzzyConfig();
                     config.Set(ConfigurationKeys.FUZZY_CONFIG, fuzzyConfig);
@@ -356,7 +356,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 QueryConfigHandler config = QueryConfigHandler;
                 FuzzyConfig fuzzyConfig = config.Get(ConfigurationKeys.FUZZY_CONFIG);
 
-                if (fuzzyConfig == null)
+                if (fuzzyConfig is null)
                 {
                     fuzzyConfig = new FuzzyConfig();
                     config.Set(ConfigurationKeys.FUZZY_CONFIG, fuzzyConfig);

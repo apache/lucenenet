@@ -65,7 +65,7 @@ namespace Lucene.Net.Spatial
             {
                 return true;
             }
-            if (o == null || GetType() != o.GetType())
+            if (o is null || GetType() != o.GetType())
             {
                 return false;
             }
@@ -92,7 +92,7 @@ namespace Lucene.Net.Spatial
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             IBits docsWithField;
-            if (field == null)
+            if (field is null)
             {
                 docsWithField = null;
             }

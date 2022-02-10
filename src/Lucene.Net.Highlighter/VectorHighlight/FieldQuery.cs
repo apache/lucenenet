@@ -296,7 +296,7 @@ namespace Lucene.Net.Search.VectorHighlight
         internal QueryPhraseMap GetRootMap(Query query)
         {
             string key = GetKey(query);
-            if (!rootMaps.TryGetValue(key, out QueryPhraseMap map) || map == null)
+            if (!rootMaps.TryGetValue(key, out QueryPhraseMap map) || map is null)
             {
                 map = new QueryPhraseMap(this);
                 rootMaps[key] = map;
@@ -376,7 +376,7 @@ namespace Lucene.Net.Search.VectorHighlight
         private ISet<string> GetTermSet(Query query)
         {
             string key = GetKey(query);
-            if (!termSetMap.TryGetValue(key, out ISet<string> set) || set == null)
+            if (!termSetMap.TryGetValue(key, out ISet<string> set) || set is null)
             {
                 set = new JCG.HashSet<string>();
                 termSetMap[key] = set;
@@ -394,7 +394,7 @@ namespace Lucene.Net.Search.VectorHighlight
         public virtual QueryPhraseMap GetFieldTermMap(string fieldName, string term)
         {
             QueryPhraseMap rootMap = GetRootMap(fieldName);
-            if (rootMap == null) return null;
+            if (rootMap is null) return null;
             rootMap.subMap.TryGetValue(term, out QueryPhraseMap result);
             return result;
         }
@@ -403,7 +403,7 @@ namespace Lucene.Net.Search.VectorHighlight
         public virtual QueryPhraseMap SearchPhrase(string fieldName, IList<TermInfo> phraseCandidate)
         {
             QueryPhraseMap root = GetRootMap(fieldName);
-            if (root == null) return null;
+            if (root is null) return null;
             return root.SearchPhrase(phraseCandidate);
         }
 
@@ -444,7 +444,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
             private QueryPhraseMap GetOrNewMap(IDictionary<string, QueryPhraseMap> subMap, string term)
             {
-                if (!subMap.TryGetValue(term, out QueryPhraseMap map) || map == null)
+                if (!subMap.TryGetValue(term, out QueryPhraseMap map) || map is null)
                 {
                     map = new QueryPhraseMap(fieldQuery);
                     subMap[term] = map;
@@ -508,7 +508,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 {
                     currMap.subMap.TryGetValue(ti.Text, out currMap);
 
-                    if (currMap == null) return null;
+                    if (currMap is null) return null;
                 }
                 return currMap.IsValidTermOrPhrase(phraseCandidate) ? currMap : null;
             }

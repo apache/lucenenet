@@ -175,7 +175,7 @@ namespace Lucene.Net.Replicator
 
                 WriteToInfoStream(string.Format("DoUpdate(): handlerVersion={0} session={1}", version, session));
 
-                if (session == null)
+                if (session is null)
                     return;
 
                 IDictionary<string, IList<RevisionFile>> requiredFiles = RequiredFiles(session.SourceFiles);
@@ -301,7 +301,7 @@ namespace Lucene.Net.Replicator
         protected virtual IDictionary<string, IList<RevisionFile>> RequiredFiles(IDictionary<string, IList<RevisionFile>> newRevisionFiles)
         {
             IDictionary<string, IList<RevisionFile>> handlerRevisionFiles = handler.CurrentRevisionFiles;
-            if (handlerRevisionFiles == null)
+            if (handlerRevisionFiles is null)
                 return newRevisionFiles;
 
             Dictionary<string, IList<RevisionFile>> requiredFiles = new Dictionary<string, IList<RevisionFile>>();
@@ -371,7 +371,7 @@ namespace Lucene.Net.Replicator
                 if (updateThread != null && updateThread.IsAlive)
                     throw IllegalStateException.Create("cannot start an update thread when one is running, must first call 'stopUpdateThread()'");
 
-                threadName = threadName == null ? INFO_STREAM_COMPONENT : "ReplicationThread-" + threadName;
+                threadName = threadName is null ? INFO_STREAM_COMPONENT : "ReplicationThread-" + threadName;
                 updateThread = new ReplicationThread(intervalInMilliseconds, threadName, DoUpdate, HandleUpdateException, updateLock);
                 updateThread.Start();
                 // we rely on isAlive to return true in isUpdateThreadAlive, assert to be on the safe side

@@ -183,7 +183,7 @@ namespace Lucene.Net.Util
                 catch (Exception t) when (t.IsThrowable())
                 {
                     AddSuppressed(priorException ?? th, t);
-                    if (th == null)
+                    if (th is null)
                     {
                         th = t;
                     }
@@ -220,7 +220,7 @@ namespace Lucene.Net.Util
                 catch (Exception t) when (t.IsThrowable())
                 {
                     AddSuppressed(priorException ?? th, t);
-                    if (th == null)
+                    if (th is null)
                     {
                         th = t;
                     }
@@ -263,7 +263,7 @@ namespace Lucene.Net.Util
                 catch (Exception t) when (t.IsThrowable())
                 {
                     AddSuppressed(th, t);
-                    if (th == null)
+                    if (th is null)
                     {
                         th = t;
                     }
@@ -293,7 +293,7 @@ namespace Lucene.Net.Util
                 catch (Exception t) when (t.IsThrowable())
                 {
                     AddSuppressed(th, t);
-                    if (th == null)
+                    if (th is null)
                     {
                         th = t;
                     }

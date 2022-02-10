@@ -196,7 +196,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         public StandardQueryParser GetParser(Analyzer a)
         {
-            if (a == null)
+            if (a is null)
                 a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             StandardQueryParser qp = new StandardQueryParser();
             qp.Analyzer = (a);
@@ -298,7 +298,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         public Query GetQueryDOA(String query, Analyzer a)
         {
-            if (a == null)
+            if (a is null)
                 a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             StandardQueryParser qp = new StandardQueryParser();
             qp.Analyzer = (a);

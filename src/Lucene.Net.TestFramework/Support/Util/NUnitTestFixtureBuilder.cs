@@ -118,7 +118,7 @@ namespace Lucene.Net.Util
             if (typeInfo.ContainsGenericParameters)
             {
                 Type[] typeArgs = testFixtureData.TypeArgs;
-                if (typeArgs == null || typeArgs.Length == 0)
+                if (typeArgs is null || typeArgs.Length == 0)
                 {
                     int cnt = 0;
                     foreach (object o in arguments)
@@ -418,7 +418,7 @@ namespace Lucene.Net.Util
                 return true;
 
             // Look for the marker that indicates from was null
-            if (from == null && (to.GetTypeInfo().IsClass || to.FullName.StartsWith("System.Nullable")))
+            if (from is null && (to.GetTypeInfo().IsClass || to.FullName.StartsWith("System.Nullable")))
                 return true;
 
             if (convertibleValueTypes.ContainsKey(to) && convertibleValueTypes[to].Contains(from))

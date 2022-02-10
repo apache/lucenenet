@@ -841,7 +841,7 @@ namespace Lucene.Net.Search.Join
 
                 if (Verbose)
                 {
-                    Console.WriteLine("\nTEST: block join index gets " + (joinResults == null ? 0 : joinResults.Groups.Length) + " groups; hitsPerGroup=" + hitsPerGroup);
+                    Console.WriteLine("\nTEST: block join index gets " + (joinResults is null ? 0 : joinResults.Groups.Length) + " groups; hitsPerGroup=" + hitsPerGroup);
                     if (joinResults != null)
                     {
                         IGroupDocs<int>[] groups = joinResults.Groups;

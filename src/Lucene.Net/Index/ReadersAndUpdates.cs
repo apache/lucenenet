@@ -175,11 +175,11 @@ namespace Lucene.Net.Index
         /// Returns a <see cref="SegmentReader"/>. </summary>
         public virtual SegmentReader GetReader(IOContext context)
         {
-            if (reader == null)
+            if (reader is null)
             {
                 // We steal returned ref:
                 reader = new SegmentReader(Info, writer.Config.ReaderTermsIndexDivisor, context);
-                if (liveDocs == null)
+                if (liveDocs is null)
                 {
                     liveDocs = reader.LiveDocs;
                 }
@@ -199,7 +199,7 @@ namespace Lucene.Net.Index
             {
                 //System.out.println("  livedocs=" + rld.liveDocs);
 
-                if (mergeReader == null)
+                if (mergeReader is null)
                 {
                     if (reader != null)
                     {
@@ -217,7 +217,7 @@ namespace Lucene.Net.Index
                         //System.out.println(Thread.currentThread().getName() + ": getMergeReader seg=" + info.name);
                         // We steal returned ref:
                         mergeReader = new SegmentReader(Info, -1, context);
-                        if (liveDocs == null)
+                        if (liveDocs is null)
                         {
                             liveDocs = mergeReader.LiveDocs;
                         }
@@ -332,7 +332,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                if (reader == null)
+                if (reader is null)
                 {
                     GetReader(context).DecRef();
                     if (Debugging.AssertsEnabled) Debugging.Assert(reader != null);
@@ -373,7 +373,7 @@ namespace Lucene.Net.Index
                     // instance; must now make a private clone so we can
                     // change it:
                     LiveDocsFormat liveDocsFormat = Info.Info.Codec.LiveDocsFormat;
-                    if (liveDocs == null)
+                    if (liveDocs is null)
                     {
                         //System.out.println("create BV seg=" + info);
                         liveDocs = liveDocsFormat.NewLiveDocs(Info.Info.DocCount);

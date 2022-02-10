@@ -457,7 +457,7 @@ namespace Lucene.Net.Util.Fst
                 }
                 else
                 {
-                    Debugging.Assert(root == null && asserting == null);
+                    Debugging.Assert(root is null && asserting is null);
                 }
             }
             return true;
@@ -1218,7 +1218,7 @@ namespace Lucene.Net.Util.Fst
                 arc.NextArc = @in.Position;
                 // TODO: would be nice to make this lazy -- maybe
                 // caller doesn't need the target and is scanning arcs...
-                if (nodeAddress == null)
+                if (nodeAddress is null)
                 {
                     if (!arc.Flag(FST.BIT_LAST_ARC))
                     {
@@ -1316,7 +1316,7 @@ namespace Lucene.Net.Util.Fst
                 // modified previously returned cached root-arcs:
                 if (Debugging.AssertsEnabled) Debugging.Assert(AssertRootArcs());
                 FST.Arc<T> result = cachedRootArcs[labelToMatch];
-                if (result == null)
+                if (result is null)
                 {
                     return null;
                 }
@@ -1689,7 +1689,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (inCounts.Get(node) >= minInCountDeref)
                 {
-                    if (bottom == null)
+                    if (bottom is null)
                     {
                         q.Add(new FST.NodeAndInCount(node, (int)inCounts.Get(node)));
                         if (q.Count == topN)

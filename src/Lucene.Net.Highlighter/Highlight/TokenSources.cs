@@ -224,7 +224,7 @@ namespace Lucene.Net.Search.Highlight
             while (termsEnum.MoveNext())
             {
                 dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
-                if (dpEnum == null)
+                if (dpEnum is null)
                 {
                     throw new ArgumentException("Required TermVector Offset information was not found");
                 }
@@ -266,7 +266,7 @@ namespace Lucene.Net.Search.Highlight
                     {
                         // tokens NOT stored with positions or not guaranteed contiguous - must
                         // add to list and sort later
-                        if (unsortedTokens == null)
+                        if (unsortedTokens is null)
                         {
                             unsortedTokens = new JCG.List<Token>();
                         }
@@ -302,12 +302,12 @@ namespace Lucene.Net.Search.Highlight
         public static TokenStream GetTokenStreamWithOffsets(IndexReader reader, int docId, string field) 
         {
             Fields vectors = reader.GetTermVectors(docId);
-            if (vectors == null) {
+            if (vectors is null) {
                 return null;
             }
 
             Terms vector = vectors.GetTerms(field);
-            if (vector == null) {
+            if (vector is null) {
                 return null;
             }
 
@@ -330,7 +330,7 @@ namespace Lucene.Net.Search.Highlight
             Analyzer analyzer)
         {
             string contents = doc.Get(field);
-            if (contents == null)
+            if (contents is null)
             {
                 throw new ArgumentException("Field " + field
                     + " in document is not stored and cannot be analyzed");

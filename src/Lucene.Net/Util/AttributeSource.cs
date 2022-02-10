@@ -289,7 +289,7 @@ namespace Lucene.Net.Util
 
             public bool MoveNext()
             {
-                if (state == null)
+                if (state is null)
                 {
                     return false;
                 }
@@ -480,7 +480,7 @@ namespace Lucene.Net.Util
         public virtual State CaptureState()
         {
             State state = this.GetCurrentState();
-            return (state == null) ? null : (State)state.Clone();
+            return (state is null) ? null : (State)state.Clone();
         }
 
         /// <summary>

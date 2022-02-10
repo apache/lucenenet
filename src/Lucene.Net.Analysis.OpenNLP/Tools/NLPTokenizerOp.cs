@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
             UninterruptableMonitor.Enter(this);
             try
             {
-                if (tokenizer == null)
+                if (tokenizer is null)
                 {
                     Span[] span1 = new Span[1];
                     span1[0] = new Span(0, sentence.Length);

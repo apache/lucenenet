@@ -180,7 +180,7 @@ namespace Lucene.Net.Replicator
             try
             {
                 EnsureOpen();
-                if (currentRevision == null)
+                if (currentRevision is null)
                     return null; // no published revisions yet
 
                 if (currentVersion != null && currentRevision.Revision.CompareTo(currentVersion) <= 0)
@@ -264,7 +264,7 @@ namespace Lucene.Net.Replicator
                     session = null;
                 }
                 // session either previously expired, or we just expired it
-                if (session == null)
+                if (session is null)
                 {
                     throw new SessionExpiredException(string.Format("session ({0}) expired while obtaining file: source={1} file={2}", sessionId, source, fileName));
                 }

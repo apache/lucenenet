@@ -168,7 +168,7 @@ namespace Lucene.Net.Analysis.CharFilters
                                 {
                                     break;
                                 }
-                                if ((arc = map.FindTargetArc(ch, arc, scratchArc, fstReader)) == null)
+                                if ((arc = map.FindTargetArc(ch, arc, scratchArc, fstReader)) is null)
                                 {
                                     // Dead end
                                     break;

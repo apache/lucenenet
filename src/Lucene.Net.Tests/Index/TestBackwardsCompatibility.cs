@@ -447,7 +447,7 @@ namespace Lucene.Net.Index
                 {
                     Document d = reader.Document(i);
                     IList<IIndexableField> fields = d.Fields;
-                    bool isProxDoc = d.GetField("content3") == null;
+                    bool isProxDoc = d.GetField("content3") is null;
                     if (isProxDoc)
                     {
                         int numFields = is40Index ? 7 : 5;

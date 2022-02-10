@@ -1092,7 +1092,7 @@ namespace Lucene.Net.Facet.Range
 
             Assert.AreEqual("dim=field path=[] value=3 childCount=6\n  < 1 (0)\n  < 2 (1)\n  < 5 (3)\n  < 10 (3)\n  < 20 (3)\n  < 50 (3)\n",
                 facets.GetTopChildren(10, "field").ToString());
-            Assert.IsTrue(fastMatchFilter == null || filterWasUsed);
+            Assert.IsTrue(fastMatchFilter is null || filterWasUsed);
 
             DrillDownQuery ddq = new DrillDownQuery(config);
             ddq.Add("field", ranges[1].GetFilter(fastMatchFilter, vs));

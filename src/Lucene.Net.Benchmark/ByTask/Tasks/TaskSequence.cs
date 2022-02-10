@@ -55,7 +55,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public TaskSequence(PerfRunData runData, string name, TaskSequence parent, bool parallel)
             : base(runData)
         {
-            collapsable = name == null;
+            collapsable = name is null;
             name = name ?? (parallel ? "Par" : "Seq");
             SetName(name);
             SetSequenceName();
@@ -80,7 +80,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         private void InitTasksArray()
         {
-            if (tasksArray == null)
+            if (tasksArray is null)
             {
                 int numTasks = tasks.Count;
                 tasksArray = new PerfTask[numTasks];
@@ -202,7 +202,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     PerfTask task = tasksArray[l];
                     if (task.RunInBackground)
                     {
-                        if (bgTasks == null)
+                        if (bgTasks is null)
                         {
                             bgTasks = new JCG.List<RunBackgroundTask>();
                         }
@@ -443,7 +443,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 count += t[i].Count;
                 if (t[i].Task is TaskSequence sub && sub.countsByTime != null)
                 {
-                    if (countsByTime == null)
+                    if (countsByTime is null)
                     {
                         countsByTime = new int[sub.countsByTime.Length];
                     }

@@ -235,7 +235,7 @@
 //            {
 //                assertTrue(string.Format(CultureInfo.InvariantCulture,
 //                    "worker thread {0} of {1} failed \n" + workers[i].Error, i, workers.Length),
-//                    workers[i].Error == null);
+//                    workers[i].Error is null);
 //            }
 
 

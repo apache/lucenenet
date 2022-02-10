@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
         public static Terms GetTerms(IndexReader r, string field)
         {
             Fields fields = GetFields(r);
-            if (fields == null)
+            if (fields is null)
             {
                 return null;
             }

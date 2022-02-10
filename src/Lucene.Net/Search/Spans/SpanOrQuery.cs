@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Spans
         /// Adds a <paramref name="clause"/> to this query </summary>
         public void AddClause(SpanQuery clause)
         {
-            if (field == null)
+            if (field is null)
             {
                 field = clause.Field;
             }
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search.Spans
                 SpanQuery query = (SpanQuery)c.Rewrite(reader);
                 if (query != c) // clause rewrote: must clone
                 {
-                    if (clone == null)
+                    if (clone is null)
                     {
                         clone = (SpanOrQuery)this.Clone();
                     }
@@ -152,7 +152,7 @@ namespace Lucene.Net.Search.Spans
             {
                 return true;
             }
-            if (o == null || this.GetType() != o.GetType())
+            if (o is null || this.GetType() != o.GetType())
             {
                 return false;
             }
@@ -251,7 +251,7 @@ namespace Lucene.Net.Search.Spans
 
             public override bool MoveNext()
             {
-                if (queue == null)
+                if (queue is null)
                 {
                     return InitSpanQueue(-1);
                 }
@@ -275,7 +275,7 @@ namespace Lucene.Net.Search.Spans
 
             public override bool SkipTo(int target)
             {
-                if (queue == null)
+                if (queue is null)
                 {
                     return InitSpanQueue(target);
                 }
@@ -329,7 +329,7 @@ namespace Lucene.Net.Search.Spans
 
             public override string ToString()
             {
-                return "spans(" + outerInstance + ")@" + ((queue == null) ? "START" : (queue.Count > 0 ? (Doc + ":" + Start + "-" + End) : "END"));
+                return "spans(" + outerInstance + ")@" + ((queue is null) ? "START" : (queue.Count > 0 ? (Doc + ":" + Start + "-" + End) : "END"));
             }
 
             public override long GetCost()

@@ -67,9 +67,9 @@ namespace Lucene.Net.Search.Grouping
 
             foreach (SearchGroup<TGroupValue> group in groups)
             {
-                //System.out.println("  prep group=" + (group.groupValue == null ? "null" : group.groupValue.utf8ToString()));
+                //System.out.println("  prep group=" + (group.groupValue is null ? "null" : group.groupValue.utf8ToString()));
                 ITopDocsCollector collector;
-                if (withinGroupSort == null)
+                if (withinGroupSort is null)
                 {
                     // Sort by score
                     collector = TopScoreDocCollector.Create(maxDocsPerGroup, true);

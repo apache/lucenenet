@@ -93,7 +93,7 @@ namespace Lucene.Net.Collation
             numeric = Get(args, "numeric");
             variableTop = Get(args, "variableTop");
 
-            if (custom == null && localeID == null)
+            if (custom is null && localeID is null)
                 throw new ArgumentException("Either custom or locale is required.");
 
             if (custom != null && localeID != null)

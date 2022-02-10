@@ -775,7 +775,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 TermAndSkip term = terms[ord - backCount];
                 skipCount++;
-                if (term.Skips == null)
+                if (term.Skips is null)
                 {
                     term.Skips = new int[] {ord};
                 }
@@ -1791,7 +1791,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 // LUCENENET: Refactored to avoid throwing IndexOutOfRangeExcpetion in the normal flow
                 upto++;
-                if (liveDocs == null)
+                if (liveDocs is null)
                 {
                     if (upto < postings.Length)
                     {
@@ -1874,7 +1874,7 @@ namespace Lucene.Net.Codecs.Memory
             public override int NextDoc()
             {
                 upto += 2;
-                if (liveDocs == null)
+                if (liveDocs is null)
                 {
                     if (upto < postings.Length)
                     {
@@ -1967,7 +1967,7 @@ namespace Lucene.Net.Codecs.Memory
                 // if (DEBUG) {
                 //   System.out.println("  nextDoc freq=" + freq + " upto=" + upto + " vs " + postings.length);
                 // }
-                if (liveDocs == null)
+                if (liveDocs is null)
                 {
                     if (upto < postings.Length)
                     {
@@ -2107,7 +2107,7 @@ namespace Lucene.Net.Codecs.Memory
                     upto += posMult*skipPositions;
                 }
 
-                if (liveDocs == null)
+                if (liveDocs is null)
                 {
                     if (upto < postings.Length)
                     {
@@ -2243,7 +2243,7 @@ namespace Lucene.Net.Codecs.Memory
             public override int NextDoc()
             {
                 upto++;
-                if (liveDocs == null)
+                if (liveDocs is null)
                 {
                     // LUCENENET: Proactively check bounds so we don't have to catch and ingore an exception
                     if (upto >= 0 && upto < docIDs.Length)
@@ -2269,7 +2269,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 get
                 {
-                    if (freqs == null)
+                    if (freqs is null)
                     {
                         return 1;
                     }
@@ -2433,7 +2433,7 @@ namespace Lucene.Net.Codecs.Memory
             public override int NextDoc()
             {
                 upto++;
-                if (liveDocs == null)
+                if (liveDocs is null)
                 {
                     if (upto < docIDs.Length)
                     {
@@ -2592,11 +2592,11 @@ namespace Lucene.Net.Codecs.Memory
 
             public override BytesRef GetPayload()
             {
-                if (payloads == null)
+                if (payloads is null)
                     return null;
                 
                 var payloadBytes = payloads[upto][posUpto/(hasOffsets ? 3 : 1)];
-                if (payloadBytes == null)
+                if (payloadBytes is null)
                 {
                     return null;
                 }

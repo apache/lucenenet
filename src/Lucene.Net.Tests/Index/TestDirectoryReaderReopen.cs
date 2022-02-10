@@ -404,7 +404,7 @@ namespace Lucene.Net.Index
                     {
                         // not synchronized
                         DirectoryReader refreshed = DirectoryReader.OpenIfChanged(r);
-                        if (refreshed == null)
+                        if (refreshed is null)
                         {
                             refreshed = r;
                         }
@@ -546,14 +546,14 @@ namespace Lucene.Net.Index
                 try
                 {
                     refreshed = DirectoryReader.OpenIfChanged(reader);
-                    if (refreshed == null)
+                    if (refreshed is null)
                     {
                         refreshed = reader;
                     }
                 }
                 finally
                 {
-                    if (refreshed == null && r != null)
+                    if (refreshed is null && r != null)
                     {
                         // Hit exception -- close opened reader
                         r.Dispose();

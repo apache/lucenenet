@@ -220,7 +220,7 @@ namespace Lucene.Net.Search
             {
                 sb.Append(Field).Append(':');
             }
-            return sb.Append(minInclusive ? '[' : '{').Append((min == null) ? "*" : min.ToString()).Append(" TO ").Append((max == null) ? "*" : max.ToString()).Append(maxInclusive ? ']' : '}').Append(ToStringUtils.Boost(Boost)).ToString();
+            return sb.Append(minInclusive ? '[' : '{').Append((min is null) ? "*" : min.ToString()).Append(" TO ").Append((max is null) ? "*" : max.ToString()).Append(maxInclusive ? ']' : '}').Append(ToStringUtils.Boost(Boost)).ToString();
         }
 
         public override bool Equals(object o)
@@ -457,7 +457,7 @@ namespace Lucene.Net.Search
                 if (Debugging.AssertsEnabled) Debugging.Assert(rangeBounds.Count % 2 == 0);
 
                 currentLowerBound = rangeBounds.Dequeue();
-                if (Debugging.AssertsEnabled) Debugging.Assert(currentUpperBound == null || termComp.Compare(currentUpperBound, currentLowerBound) <= 0, "The current upper bound must be <= the new lower bound");
+                if (Debugging.AssertsEnabled) Debugging.Assert(currentUpperBound is null || termComp.Compare(currentUpperBound, currentLowerBound) <= 0, "The current upper bound must be <= the new lower bound");
 
                 currentUpperBound = rangeBounds.Dequeue();
             }
@@ -485,7 +485,7 @@ namespace Lucene.Net.Search
 
             protected override sealed AcceptStatus Accept(BytesRef term)
             {
-                while (currentUpperBound == null || termComp.Compare(term, currentUpperBound) > 0)
+                while (currentUpperBound is null || termComp.Compare(term, currentUpperBound) > 0)
                 {
                     if (rangeBounds.Count == 0)
                     {

@@ -142,7 +142,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// </summary>
         public virtual int GetMemoryUsage()
         {
-            return cache == null ? 0 : cache.GetMemoryUsage();
+            return cache is null ? 0 : cache.GetMemoryUsage();
         }
     }
 }

@@ -129,7 +129,7 @@ namespace Lucene.Net.Replicator
         public IndexAndTaxonomyRevision(IndexWriter indexWriter, SnapshotDirectoryTaxonomyWriter taxonomyWriter)
         {
             this.indexSdp = indexWriter.Config.IndexDeletionPolicy as SnapshotDeletionPolicy;
-            if (indexSdp == null)
+            if (indexSdp is null)
                 throw new ArgumentException("IndexWriter must be created with SnapshotDeletionPolicy", nameof(indexWriter));
 
             this.indexWriter = indexWriter;
@@ -163,7 +163,7 @@ namespace Lucene.Net.Replicator
 
         public virtual int CompareTo(IRevision other)
         {
-            if (other == null)
+            if (other is null)
                 throw new ArgumentNullException(nameof(other));
 
             if (!(other is IndexAndTaxonomyRevision itr))

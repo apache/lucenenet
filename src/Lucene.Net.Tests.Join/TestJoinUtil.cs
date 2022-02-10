@@ -768,7 +768,7 @@ namespace Lucene.Net.Search.Join
                 while ((ord = docTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                 {
                     docTermOrds.LookupOrd(ord, joinValue);
-                    if (!joinValueToJoinScores.TryGetValue(joinValue, out JoinScore joinScore) || joinScore == null)
+                    if (!joinValueToJoinScores.TryGetValue(joinValue, out JoinScore joinScore) || joinScore is null)
                     {
                         joinValueToJoinScores[BytesRef.DeepCopyOf(joinValue)] = joinScore = new JoinScore();
                     }
@@ -817,7 +817,7 @@ namespace Lucene.Net.Search.Join
                     return;
                 }
 
-                if (!joinValueToJoinScores.TryGetValue(joinValue, out JoinScore joinScore) || joinScore == null)
+                if (!joinValueToJoinScores.TryGetValue(joinValue, out JoinScore joinScore) || joinScore is null)
                 {
                     joinValueToJoinScores[BytesRef.DeepCopyOf(joinValue)] = joinScore = new JoinScore();
                 }
@@ -864,7 +864,7 @@ namespace Lucene.Net.Search.Join
                 while ((ord = docTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                 {
                     docTermOrds.LookupOrd(ord, scratch);
-                    if (!joinValueToJoinScores.TryGetValue(scratch, out JoinScore joinScore) || joinScore == null)
+                    if (!joinValueToJoinScores.TryGetValue(scratch, out JoinScore joinScore) || joinScore is null)
                     {
                         continue;
                     }
@@ -914,7 +914,7 @@ namespace Lucene.Net.Search.Join
             public virtual void Collect(int doc)
             {
                 terms.Get(doc, spare);
-                if (!joinValueToJoinScores.TryGetValue(spare, out JoinScore joinScore) || joinScore == null)
+                if (!joinValueToJoinScores.TryGetValue(spare, out JoinScore joinScore) || joinScore is null)
                 {
                     return;
                 }
@@ -982,7 +982,7 @@ namespace Lucene.Net.Search.Join
             }
 
             FixedBitSet expectedResult = new FixedBitSet(topLevelReader.MaxDoc);
-            if (!randomValueDocs.TryGetValue(queryValue, out IList<RandomDoc> matchingDocs) || matchingDocs == null)
+            if (!randomValueDocs.TryGetValue(queryValue, out IList<RandomDoc> matchingDocs) || matchingDocs is null)
             {
                 return new FixedBitSet(topLevelReader.MaxDoc);
             }
@@ -991,7 +991,7 @@ namespace Lucene.Net.Search.Join
             {
                 foreach (string linkValue in matchingDoc.linkValues)
                 {
-                    if (!linkValueDocuments.TryGetValue(linkValue, out IList<RandomDoc> otherMatchingDocs) || otherMatchingDocs == null)
+                    if (!linkValueDocuments.TryGetValue(linkValue, out IList<RandomDoc> otherMatchingDocs) || otherMatchingDocs is null)
                     {
                         continue;
                     }

@@ -150,7 +150,7 @@ namespace Lucene.Net.Cli.CommandLine
             {
                 var arg = args[index];
                 var processed = false;
-                if (!processed && option == null)
+                if (!processed && option is null)
                 {
                     string[] longOption = null;
                     string[] shortOption = null;
@@ -177,7 +177,7 @@ namespace Lucene.Net.Cli.CommandLine
                         var longOptionName = longOption[0];
                         option = command.GetOptions().SingleOrDefault(opt => string.Equals(opt.LongName, longOptionName, StringComparison.Ordinal));
 
-                        if (option == null)
+                        if (option is null)
                         {
                             if (string.IsNullOrEmpty(longOptionName) && !command._throwOnUnexpectedArg && AllowArgumentSeparator)
                             {
@@ -223,12 +223,12 @@ namespace Lucene.Net.Cli.CommandLine
                         option = command.GetOptions().SingleOrDefault(opt => string.Equals(opt.ShortName, shortOption[0], StringComparison.Ordinal));
 
                         // If not a short option, try symbol option
-                        if (option == null)
+                        if (option is null)
                         {
                             option = command.GetOptions().SingleOrDefault(opt => string.Equals(opt.SymbolName, shortOption[0], StringComparison.Ordinal));
                         }
 
-                        if (option == null)
+                        if (option is null)
                         {
                             HandleUnexpectedArg(command, args, index, argTypeName: "option");
                             break;
@@ -275,7 +275,7 @@ namespace Lucene.Net.Cli.CommandLine
                     option = null;
                 }
 
-                if (!processed && arguments == null)
+                if (!processed && arguments is null)
                 {
                     var currentCommand = command;
                     foreach (var subcommand in command.Commands)
@@ -296,7 +296,7 @@ namespace Lucene.Net.Cli.CommandLine
                 }
                 if (!processed)
                 {
-                    if (arguments == null)
+                    if (arguments is null)
                     {
                         arguments = new CommandArgumentEnumerator(command.Arguments.GetEnumerator());
                     }
@@ -336,7 +336,7 @@ namespace Lucene.Net.Cli.CommandLine
             string shortFormVersion,
             string longFormVersion = null)
         {
-            if (longFormVersion == null)
+            if (longFormVersion is null)
             {
                 return VersionOption(template, () => shortFormVersion);
             }
@@ -390,7 +390,7 @@ namespace Lucene.Net.Cli.CommandLine
 
             CommandLineApplication target;
 
-            if (commandName == null || string.Equals(Name, commandName, StringComparison.OrdinalIgnoreCase))
+            if (commandName is null || string.Equals(Name, commandName, StringComparison.OrdinalIgnoreCase))
             {
                 target = this;
             }
@@ -501,7 +501,7 @@ namespace Lucene.Net.Cli.CommandLine
 
         public virtual string GetFullNameAndVersion()
         {
-            return ShortVersionGetter == null ? FullName : string.Format("{0} {1}", FullName, ShortVersionGetter());
+            return ShortVersionGetter is null ? FullName : string.Format("{0} {1}", FullName, ShortVersionGetter());
         }
 
         public virtual void ShowRootCommandFullNameAndVersion()
@@ -550,7 +550,7 @@ namespace Lucene.Net.Cli.CommandLine
 
             public bool MoveNext()
             {
-                if (Current == null || !Current.MultipleValues)
+                if (Current is null || !Current.MultipleValues)
                 {
                     return _enumerator.MoveNext();
                 }

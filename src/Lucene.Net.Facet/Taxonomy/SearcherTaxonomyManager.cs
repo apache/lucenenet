@@ -80,7 +80,7 @@ namespace Lucene.Net.Facet.Taxonomy
         public SearcherTaxonomyManager(IndexWriter writer, bool applyAllDeletes, 
             SearcherFactory searcherFactory, DirectoryTaxonomyWriter taxoWriter)
         {
-            if (searcherFactory == null)
+            if (searcherFactory is null)
             {
                 searcherFactory = new SearcherFactory();
             }
@@ -103,7 +103,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public SearcherTaxonomyManager(Store.Directory indexDir, Store.Directory taxoDir, SearcherFactory searcherFactory)
         {
-            if (searcherFactory == null)
+            if (searcherFactory is null)
             {
                 searcherFactory = new SearcherFactory();
             }
@@ -152,14 +152,14 @@ namespace Lucene.Net.Facet.Taxonomy
             // taxonomy reader:
             IndexReader r = @ref.Searcher.IndexReader;
             IndexReader newReader = DirectoryReader.OpenIfChanged((DirectoryReader)r);
-            if (newReader == null)
+            if (newReader is null)
             {
                 return null;
             }
             else
             {
                 var tr = TaxonomyReader.OpenIfChanged(@ref.TaxonomyReader);
-                if (tr == null)
+                if (tr is null)
                 {
                     @ref.TaxonomyReader.IncRef();
                     tr = @ref.TaxonomyReader;

@@ -65,14 +65,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 bool inclusive = false;
                 CultureInfo locale = GetQueryConfigHandler().Get(ConfigurationKeys.LOCALE);
 
-                if (locale == null)
+                if (locale is null)
                 {
                     locale = CultureInfo.CurrentCulture; //Locale.getDefault();
                 }
 
                 TimeZoneInfo timeZone = GetQueryConfigHandler().Get(ConfigurationKeys.TIMEZONE);
 
-                if (timeZone == null)
+                if (timeZone is null)
                 {
                     timeZone = TimeZoneInfo.Local; //TimeZone.getDefault();
                 }

@@ -201,7 +201,7 @@ namespace Lucene.Net.Spatial.Vector
                 spatial = MakeDisjoint(bbox);
             }
 
-            if (spatial == null)
+            if (spatial is null)
             {
                 throw new UnsupportedSpatialOperation(args.Operation);
             }

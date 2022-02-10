@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
                         writer.UpdateDocument(new Term("id", "test"), doc);
                         if (Random.Next(3) == 0)
                         {
-                            if (open == null)
+                            if (open is null)
                             {
                                 open = DirectoryReader.Open(writer, true);
                             }

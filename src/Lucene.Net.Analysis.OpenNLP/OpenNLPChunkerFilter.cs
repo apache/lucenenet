@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.OpenNlp
             if (tokenNum == sentenceTokenAttrs.Count)
             {
                 NextSentence();
-                if (sentenceTerms == null)
+                if (sentenceTerms is null)
                 {
                     Clear();
                     return false;

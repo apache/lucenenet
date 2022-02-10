@@ -446,7 +446,7 @@ namespace Lucene.Net.Util.Fst
 
                         if (seekResult == TermsEnum.SeekStatus.END)
                         {
-                            Assert.IsNull(fstSeekResult, "got " + (fstSeekResult == null ? "null" : fstSeekResult.Input.Utf8ToString()) + " but expected null");
+                            Assert.IsNull(fstSeekResult, "got " + (fstSeekResult is null ? "null" : fstSeekResult.Input.Utf8ToString()) + " but expected null");
                         }
                         else
                         {
@@ -498,7 +498,7 @@ namespace Lucene.Net.Util.Fst
 
         private void AssertSame(TermsEnum termsEnum, BytesRefFSTEnum<Int64> fstEnum, bool storeOrd)
         {
-            if (termsEnum.Term == null)
+            if (termsEnum.Term is null)
             {
                 Assert.IsNull(fstEnum.Current);
             }
@@ -552,7 +552,7 @@ namespace Lucene.Net.Util.Fst
                     while (true)
                     {
                         string w = @is.ReadLine();
-                        if (w == null)
+                        if (w is null)
                         {
                             break;
                         }
@@ -577,13 +577,13 @@ namespace Lucene.Net.Util.Fst
                     FST<T> fst = builder.Finish();
                     long tEnd = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     Console.WriteLine(((tEnd - tMid) / 1000.0) + " sec to finish/pack");
-                    if (fst == null)
+                    if (fst is null)
                     {
                         Console.WriteLine("FST was fully pruned!");
                         Environment.Exit(0);
                     }
 
-                    if (dirOut == null)
+                    if (dirOut is null)
                     {
                         return;
                     }
@@ -628,7 +628,7 @@ namespace Lucene.Net.Util.Fst
                             while (true)
                             {
                                 string w = @is.ReadLine();
-                                if (w == null)
+                                if (w is null)
                                 {
                                     break;
                                 }
@@ -637,7 +637,7 @@ namespace Lucene.Net.Util.Fst
                                 {
                                     T expected = GetOutput(intsRef, ord);
                                     T actual = Util.Get(fst, intsRef);
-                                    if (actual == null)
+                                    if (actual is null)
                                     {
                                         throw RuntimeException.Create("unexpected null output on input=" + w);
                                     }
@@ -651,7 +651,7 @@ namespace Lucene.Net.Util.Fst
                                     // Get by output
                                     Int64 output = (Int64)(object)GetOutput(intsRef, ord);
                                     Int32sRef actual = Util.GetByOutput(fst as FST<Int64>, output);
-                                    if (actual == null)
+                                    if (actual is null)
                                     {
                                         throw RuntimeException.Create("unexpected null input from output=" + output);
                                     }
@@ -761,11 +761,11 @@ namespace Lucene.Net.Util.Fst
                 }
                 else
                 {
-                    if (wordsFileIn == null)
+                    if (wordsFileIn is null)
                     {
                         wordsFileIn = args[idx];
                     }
-                    else if (dirOut == null)
+                    else if (dirOut is null)
                     {
                         dirOut = args[idx];
                     }
@@ -778,7 +778,7 @@ namespace Lucene.Net.Util.Fst
                 idx++;
             }
 
-            if (wordsFileIn == null)
+            if (wordsFileIn is null)
             {
                 Console.Error.WriteLine("No input file.");
                 Environment.Exit(-1);
@@ -1147,7 +1147,7 @@ namespace Lucene.Net.Util.Fst
                     }
 
                     TermsEnum.SeekStatus status;
-                    if (nextID == null)
+                    if (nextID is null)
                     {
                         if (termsEnum.SeekExact(new BytesRef(id)))
                         {
@@ -1282,7 +1282,7 @@ namespace Lucene.Net.Util.Fst
                 while (line < lines.Length)
                 {
                     string w = lines[line++];
-                    if (w == null)
+                    if (w is null)
                     {
                         break;
                     }
@@ -1652,7 +1652,7 @@ namespace Lucene.Net.Util.Fst
                 FST.Arc<Int64> arc = fst.GetFirstArc(new FST.Arc<Int64>());
                 for (int idx = 0; idx < prefix.Length; idx++)
                 {
-                    if (fst.FindTargetArc((int)prefix[idx], arc, arc, reader) == null)
+                    if (fst.FindTargetArc((int)prefix[idx], arc, arc, reader) is null)
                     {
                         Assert.Fail();
                     }
@@ -1792,7 +1792,7 @@ namespace Lucene.Net.Util.Fst
                 FST.Arc<Pair> arc = fst.GetFirstArc(new FST.Arc<Pair>());
                 for (int idx = 0; idx < prefix.Length; idx++)
                 {
-                    if (fst.FindTargetArc((int)prefix[idx], arc, arc, reader) == null)
+                    if (fst.FindTargetArc((int)prefix[idx], arc, arc, reader) is null)
                     {
                         Assert.Fail();
                     }

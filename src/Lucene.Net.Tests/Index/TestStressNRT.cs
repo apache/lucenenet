@@ -259,7 +259,7 @@ namespace Lucene.Net.Index
 
                                 // Code below assumes newReader comes w/
                                 // extra ref:
-                                if (newReader == null)
+                                if (newReader is null)
                                 {
                                     oldReader.IncRef();
                                     newReader = oldReader;

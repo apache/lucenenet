@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-            if (o == null)
+            if (o is null)
             {
                 return false;
             }
@@ -95,14 +95,14 @@ namespace Lucene.Net.Search
         {
             AtomicReader reader = (context.AtomicReader);
             Fields fields = reader.Fields;
-            if (fields == null)
+            if (fields is null)
             {
                 // reader has no fields
                 return null;
             }
 
             Terms terms = fields.GetTerms(m_query.m_field);
-            if (terms == null)
+            if (terms is null)
             {
                 // field does not exist
                 return null;

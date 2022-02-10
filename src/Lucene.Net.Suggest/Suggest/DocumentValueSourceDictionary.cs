@@ -138,7 +138,7 @@ namespace Lucene.Net.Search.Suggest
             /// </summary>
             protected internal override long GetWeight(Document doc, int docId)
             {
-                if (currentWeightValues == null)
+                if (currentWeightValues is null)
                 {
                     return 0;
                 }

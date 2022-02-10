@@ -301,7 +301,7 @@ namespace Lucene.Net.Search
             }
             bool doMaxScore = Random.NextBoolean();
             bool doScores = Random.NextBoolean();
-            if (sort == null)
+            if (sort is null)
             {
                 all = searcher.Search(query, filter, maxDoc);
             }
@@ -327,7 +327,7 @@ namespace Lucene.Net.Search
             while (pageStart < all.TotalHits)
             {
                 TopDocs paged;
-                if (sort == null)
+                if (sort is null)
                 {
                     if (isVerbose)
                     {

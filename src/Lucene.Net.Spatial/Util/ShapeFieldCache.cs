@@ -45,7 +45,7 @@ namespace Lucene.Net.Spatial.Util
         public virtual void Add(int docid, T s)
         {
             IList<T> list = cache[docid];
-            if (list == null)
+            if (list is null)
             {
                 list = cache[docid] = new JCG.List<T>(DefaultLength);
             }

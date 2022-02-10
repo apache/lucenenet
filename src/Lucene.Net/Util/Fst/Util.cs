@@ -53,7 +53,7 @@ namespace Lucene.Net.Util.Fst
             T output = fst.Outputs.NoOutput;
             for (int i = 0; i < input.Length; i++)
             {
-                if (fst.FindTargetArc(input.Int32s[input.Offset + i], arc, arc, fstReader) == null)
+                if (fst.FindTargetArc(input.Int32s[input.Offset + i], arc, arc, fstReader) is null)
                 {
                     return default;
                 }
@@ -89,7 +89,7 @@ namespace Lucene.Net.Util.Fst
             T output = fst.Outputs.NoOutput;
             for (int i = 0; i < input.Length; i++)
             {
-                if (fst.FindTargetArc(input.Bytes[i + input.Offset] & 0xFF, arc, arc, fstReader) == null)
+                if (fst.FindTargetArc(input.Bytes[i + input.Offset] & 0xFF, arc, arc, fstReader) is null)
                 {
                     return default;
                 }
@@ -253,7 +253,7 @@ namespace Lucene.Net.Util.Fst
                             }
                             else if (minArcOutput > targetOutput)
                             {
-                                if (prevArc == null)
+                                if (prevArc is null)
                                 {
                                     // Output doesn't exist
                                     return null;
@@ -497,7 +497,7 @@ namespace Lucene.Net.Util.Fst
 
                     FSTPath<T> path;
 
-                    if (queue == null)
+                    if (queue is null)
                     {
                         // Ran out of paths
                         //System.out.println("  break queue=null");
@@ -556,7 +556,7 @@ namespace Lucene.Net.Util.Fst
                             // express it via the comparer compare(output, 0) == 0
                             if (comparer.Compare(NO_OUTPUT, path.Arc.Output) == 0)
                             {
-                                if (queue == null)
+                                if (queue is null)
                                 {
                                     foundZero = true;
                                     break;
@@ -797,7 +797,7 @@ namespace Lucene.Net.Util.Fst
                     finalOutput = null;
                 }
 
-                EmitDotState(@out, Convert.ToString(startArc.Target), isFinal ? finalStateShape : stateShape, stateColor, finalOutput == null ? "" : fst.Outputs.OutputToString(finalOutput));
+                EmitDotState(@out, Convert.ToString(startArc.Target), isFinal ? finalStateShape : stateShape, stateColor, finalOutput is null ? "" : fst.Outputs.OutputToString(finalOutput));
             }
 
             @out.Write("  initial -> " + startArc.Target + "\n");

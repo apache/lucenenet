@@ -48,7 +48,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             base.Setup();
             string inputDirProp = RunData.Config.Get(ADDINDEXES_INPUT_DIR, null);
-            if (inputDirProp == null)
+            if (inputDirProp is null)
             {
                 throw new ArgumentException("config parameter " + ADDINDEXES_INPUT_DIR + " not specified in configuration");
             }

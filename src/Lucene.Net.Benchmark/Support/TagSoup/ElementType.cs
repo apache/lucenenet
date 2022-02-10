@@ -180,7 +180,7 @@ namespace TagSoup
             if (i == -1)
             {
                 name = name.Intern();
-                if (type == null)
+                if (type is null)
                 {
                     type = "CDATA";
                 }
@@ -192,7 +192,7 @@ namespace TagSoup
             }
             else
             {
-                if (type == null)
+                if (type is null)
                 {
                     type = atts.GetType(i);
                 }
@@ -211,7 +211,7 @@ namespace TagSoup
         /// <param name="value">The value to normalize</param>
         public static string Normalize(string value)
         {
-            if (value == null)
+            if (value is null)
             {
                 return null;
             }

@@ -58,7 +58,7 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
         public virtual Query Parse(QualityQuery qq)
         {
             QueryParser qp = queryParser.Value;
-            if (qp == null)
+            if (qp is null)
             {
 #pragma warning disable 612, 618
                 qp = new QueryParser(LuceneVersion.LUCENE_CURRENT, indexField, new StandardAnalyzer(LuceneVersion.LUCENE_CURRENT));

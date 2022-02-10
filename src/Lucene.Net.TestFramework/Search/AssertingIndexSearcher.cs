@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
             {
                 return base.WrapFilter(query, filter);
             }
-            return (filter == null) ? query : new FilteredQuery(query, filter, TestUtil.RandomFilterStrategy(random));
+            return (filter is null) ? query : new FilteredQuery(query, filter, TestUtil.RandomFilterStrategy(random));
         }
 
         protected override void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector)

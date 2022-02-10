@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
         /// </summary>
         protected virtual DocIdSet DocIdSetToCache(DocIdSet docIdSet, AtomicReader reader)
         {
-            if (docIdSet == null)
+            if (docIdSet is null)
             {
                 // this is better than returning null, as the nonnull result can be cached
                 return EMPTY_DOCIDSET;
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
                 // null is allowed to be returned by iterator(),
                 // in this case we wrap with the sentinel set,
                 // which is cacheable.
-                if (it == null)
+                if (it is null)
                 {
                     return EMPTY_DOCIDSET;
                 }

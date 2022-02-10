@@ -68,10 +68,10 @@ namespace Lucene.Net.Analysis.Ja.Dict
                     lastWordId = wordId;
 
                     String baseForm = tid.GetBaseForm(wordId, chars, 0, chars.Length);
-                    assertTrue(baseForm == null || UnicodeUtil.ValidUTF16String(baseForm));
+                    assertTrue(baseForm is null || UnicodeUtil.ValidUTF16String(baseForm));
 
                     String inflectionForm = tid.GetInflectionForm(wordId);
-                    assertTrue(inflectionForm == null || UnicodeUtil.ValidUTF16String(inflectionForm));
+                    assertTrue(inflectionForm is null || UnicodeUtil.ValidUTF16String(inflectionForm));
                     if (inflectionForm != null)
                     {
                         // check that its actually an ipadic inflection form
@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
                     }
 
                     String inflectionType = tid.GetInflectionType(wordId);
-                    assertTrue(inflectionType == null || UnicodeUtil.ValidUTF16String(inflectionType));
+                    assertTrue(inflectionType is null || UnicodeUtil.ValidUTF16String(inflectionType));
                     if (inflectionType != null)
                     {
                         // check that its actually an ipadic inflection type

@@ -384,7 +384,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             FST.BytesReader fstReader = automaton.GetBytesReader();
             for (int i = utf8.Offset; i < max; i++)
             {
-                if (automaton.FindTargetArc(utf8.Bytes[i] & 0xff, arc, arc, fstReader) == null)
+                if (automaton.FindTargetArc(utf8.Bytes[i] & 0xff, arc, arc, fstReader) is null)
                 {
                     // No matching prefixes, return an empty result.
                     return false;

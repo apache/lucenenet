@@ -48,7 +48,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
         private static ICharSequence EscapeChar(ICharSequence str, CultureInfo locale)
         {
-            if (str == null || str.Length == 0)
+            if (str is null || str.Length == 0)
                 return str;
 
             ICharSequence buffer = str;
@@ -76,7 +76,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
         private ICharSequence EscapeQuoted(ICharSequence str, CultureInfo locale)
         {
-            if (str == null || str.Length == 0)
+            if (str is null || str.Length == 0)
                 return str;
 
             ICharSequence buffer = str;
@@ -91,7 +91,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
         private static ICharSequence EscapeTerm(ICharSequence term, CultureInfo locale)
         {
-            if (term == null)
+            if (term is null)
                 return term;
 
             // Escape single Chars
@@ -197,7 +197,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         private static ICharSequence EscapeWhiteChar(ICharSequence str,
             CultureInfo locale)
         {
-            if (str == null || str.Length == 0)
+            if (str is null || str.Length == 0)
                 return str;
 
             ICharSequence buffer = str;
@@ -213,7 +213,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         // LUCENENET specific overload for text as string
         public virtual string Escape(string text, CultureInfo locale, EscapeQuerySyntaxType type)
         {
-            if (text == null || text.Length == 0)
+            if (text is null || text.Length == 0)
                 return text;
 
             return Escape(text.AsCharSequence(), locale, type).ToString();
@@ -221,7 +221,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
         public virtual ICharSequence Escape(ICharSequence text, CultureInfo locale, EscapeQuerySyntaxType type)  
         {
-            if (text == null || text.Length == 0)
+            if (text is null || text.Length == 0)
                 return text;
 
             // escape wildcards and the escape char (this has to be perform before

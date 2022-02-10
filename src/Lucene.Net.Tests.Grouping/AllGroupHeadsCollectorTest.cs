@@ -283,7 +283,7 @@ namespace Lucene.Net.Search.Grouping
 
                     if (Verbose)
                     {
-                        Console.WriteLine("  doc content=" + groupDoc.content + " id=" + i + " group=" + (groupDoc.group == null ? "null" : groupDoc.group.Utf8ToString()) + " sort1=" + groupDoc.sort1.Utf8ToString() + " sort2=" + groupDoc.sort2.Utf8ToString() + " sort3=" + groupDoc.sort3.Utf8ToString());
+                        Console.WriteLine("  doc content=" + groupDoc.content + " id=" + i + " group=" + (groupDoc.group is null ? "null" : groupDoc.group.Utf8ToString()) + " sort1=" + groupDoc.sort1.Utf8ToString() + " sort2=" + groupDoc.sort2.Utf8ToString() + " sort3=" + groupDoc.sort3.Utf8ToString());
                     }
 
                     groupDocs[i] = groupDoc;
@@ -300,7 +300,7 @@ namespace Lucene.Net.Search.Grouping
                     sort3.SetStringValue(groupDoc.sort3.Utf8ToString());
                     content.SetStringValue(groupDoc.content);
                     id.SetInt32Value(groupDoc.id);
-                    if (groupDoc.group == null)
+                    if (groupDoc.group is null)
                     {
                         w.AddDocument(docNoGroup);
                     }
@@ -386,7 +386,7 @@ namespace Lucene.Net.Search.Grouping
                             foreach (int expectedDocId in expectedGroupHeads)
                             {
                                 GroupDoc expectedGroupDoc = groupDocs[expectedDocId];
-                                string expectedGroup = expectedGroupDoc.group == null ? null : expectedGroupDoc.group.Utf8ToString();
+                                string expectedGroup = expectedGroupDoc.group is null ? null : expectedGroupDoc.group.Utf8ToString();
                                 Console.WriteLine(
                                     string.Format(CultureInfo.InvariantCulture,
                                     "Group:{0,10} score{1:0.0#######,5} Sort1:{2,10} Sort2:{3,10} Sort3:{4,10} doc:{5,10}",
@@ -398,7 +398,7 @@ namespace Lucene.Net.Search.Grouping
                             foreach (int actualDocId in actualGroupHeads)
                             {
                                 GroupDoc actualGroupDoc = groupDocs[actualDocId];
-                                string actualGroup = actualGroupDoc.group == null ? null : actualGroupDoc.group.Utf8ToString();
+                                string actualGroup = actualGroupDoc.group is null ? null : actualGroupDoc.group.Utf8ToString();
                                 Console.WriteLine(
                                     string.Format(CultureInfo.InvariantCulture,
                                     "Group:{0,10} score{1:0.0#######,5} Sort1:{2,10} Sort2:{3,10} Sort3:{4,10} doc:{5,10}",

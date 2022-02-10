@@ -80,7 +80,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             UninterruptableMonitor.Enter(syncLock);
             try
             {
-                if (singleInstance == null)
+                if (singleInstance is null)
                 {
                     singleInstance = new WordDictionary();
 
@@ -296,15 +296,15 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                 }
 
                 // Write wordItem_charArrayTable
-                int caDim1 = wordItem_charArrayTable == null ? -1 : wordItem_charArrayTable.Length;
+                int caDim1 = wordItem_charArrayTable is null ? -1 : wordItem_charArrayTable.Length;
                 writer.Write(caDim1);
                 for (int i = 0; i < caDim1; i++)
                 {
-                    int caDim2 = wordItem_charArrayTable[i] == null ? -1 : wordItem_charArrayTable[i].Length;
+                    int caDim2 = wordItem_charArrayTable[i] is null ? -1 : wordItem_charArrayTable[i].Length;
                     writer.Write(caDim2);
                     for (int j = 0; j < caDim2; j++)
                     {
-                        int caDim3 = wordItem_charArrayTable[i][j] == null ? -1 : wordItem_charArrayTable[i][j].Length;
+                        int caDim3 = wordItem_charArrayTable[i][j] is null ? -1 : wordItem_charArrayTable[i][j].Length;
                         writer.Write(caDim3);
                         for (int k = 0; k < caDim3; k++)
                         {
@@ -314,11 +314,11 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                 }
 
                 // Write wordItem_frequencyTable
-                int fDim1 = wordItem_frequencyTable == null ? -1 : wordItem_frequencyTable.Length;
+                int fDim1 = wordItem_frequencyTable is null ? -1 : wordItem_frequencyTable.Length;
                 writer.Write(fDim1);
                 for (int i = 0; i < fDim1; i++)
                 {
-                    int fDim2 = wordItem_frequencyTable[i] == null ? -1 : wordItem_frequencyTable[i].Length;
+                    int fDim2 = wordItem_frequencyTable[i] is null ? -1 : wordItem_frequencyTable[i].Length;
                     writer.Write(fDim2);
                     for (int j = 0; j < fDim2; j++)
                     {
@@ -430,7 +430,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             {
                 char c = wordItem_charArrayTable[delimiterIndex][i][0];
                 int j = GetGB2312Id(c);// the id value of the punctuation
-                if (wordItem_charArrayTable[j] == null)
+                if (wordItem_charArrayTable[j] is null)
                 {
 
                     int k = i;
@@ -475,7 +475,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             int i;
             for (i = 0; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
             {
-                if (wordItem_charArrayTable[i] == null)
+                if (wordItem_charArrayTable[i] is null)
                     continue;
                 int len = 1;
                 for (int j = 1; j < wordItem_charArrayTable[i].Length; j++)
@@ -628,7 +628,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <returns>word location in word array.  If not found, then return -1.</returns>
         private int FindInTable(short knownHashIndex, char[] charArray)
         {
-            if (charArray == null || charArray.Length == 0)
+            if (charArray is null || charArray.Length == 0)
                 return -1;
 
             char[][] items = wordItem_charArrayTable[wordIndexTable[knownHashIndex]];

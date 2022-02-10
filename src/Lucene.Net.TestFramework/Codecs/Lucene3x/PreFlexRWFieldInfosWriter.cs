@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         // only in RW case
                         output.WriteByte((byte)(fi.NormType == Index.DocValuesType.NONE ? 0 : 1));
                     }
-                    if (Debugging.AssertsEnabled) Debugging.Assert(fi.Attributes == null); // not used or supported
+                    if (Debugging.AssertsEnabled) Debugging.Assert(fi.Attributes is null); // not used or supported
                 }
                 success = true;
             }

@@ -318,7 +318,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <returns>The corresponding encoding according to the <i>K&#246;lner Phonetik</i> algorithm</returns>
         public virtual string GetColognePhonetic(string text)
         {
-            if (text == null)
+            if (text is null)
             {
                 return null;
             }

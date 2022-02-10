@@ -66,7 +66,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             internal string[] Next()
             {
-                if (t == null)
+                if (t is null)
                 {
                     threadDone = false;
                     t = new ThreadJob(Run);
@@ -77,7 +77,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 UninterruptableMonitor.Enter(this);
                 try
                 {
-                    while (tuple == null && nmde == null && !threadDone && !stopped)
+                    while (tuple is null && nmde is null && !threadDone && !stopped)
                     {
                         try
                         {
@@ -190,7 +190,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                         break;
                     case ID:
                         //the doc id is the first one in the page.  All other ids after that one can be ignored according to the schema
-                        if (id == null)
+                        if (id is null)
                         {
                             id = contents.ToString();
                         }

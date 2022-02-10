@@ -169,7 +169,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                if (t == null)
+                if (t is null)
                 {
                     return false;
                 }

@@ -259,7 +259,7 @@ namespace Lucene.Net.Index
                     continue;
                 }
                 long gen = fi.DocValuesGen;
-                if (!genInfos.TryGetValue(gen, out IList<FieldInfo> infos) || infos == null)
+                if (!genInfos.TryGetValue(gen, out IList<FieldInfo> infos) || infos is null)
                 {
                     infos = new JCG.List<FieldInfo>();
                     genInfos[gen] = infos;
@@ -364,7 +364,7 @@ namespace Lucene.Net.Index
         public override Fields GetTermVectors(int docID)
         {
             TermVectorsReader termVectorsReader = TermVectorsReader;
-            if (termVectorsReader == null)
+            if (termVectorsReader is null)
             {
                 return null;
             }
@@ -428,7 +428,7 @@ namespace Lucene.Net.Index
         private FieldInfo GetDVField(string field, DocValuesType type)
         {
             FieldInfo fi = FieldInfos.FieldInfo(field);
-            if (fi == null)
+            if (fi is null)
             {
                 // Field does not exist
                 return null;
@@ -451,7 +451,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             FieldInfo fi = GetDVField(field, DocValuesType.NUMERIC);
-            if (fi == null)
+            if (fi is null)
             {
                 return null;
             }
@@ -473,7 +473,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             FieldInfo fi = FieldInfos.FieldInfo(field);
-            if (fi == null)
+            if (fi is null)
             {
                 // Field does not exist
                 return null;
@@ -486,7 +486,7 @@ namespace Lucene.Net.Index
 
             IDictionary<string, IBits> dvFields = docsWithFieldLocal.Value;
 
-            if (!dvFields.TryGetValue(field, out IBits dvs) || dvs == null)
+            if (!dvFields.TryGetValue(field, out IBits dvs) || dvs is null)
             {
                 dvProducersByField.TryGetValue(field, out DocValuesProducer dvProducer);
                 if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer != null);
@@ -501,7 +501,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             FieldInfo fi = GetDVField(field, DocValuesType.BINARY);
-            if (fi == null)
+            if (fi is null)
             {
                 return null;
             }
@@ -523,7 +523,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             FieldInfo fi = GetDVField(field, DocValuesType.SORTED);
-            if (fi == null)
+            if (fi is null)
             {
                 return null;
             }
@@ -545,7 +545,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             FieldInfo fi = GetDVField(field, DocValuesType.SORTED_SET);
-            if (fi == null)
+            if (fi is null)
             {
                 return null;
             }
@@ -567,7 +567,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             FieldInfo fi = FieldInfos.FieldInfo(field);
-            if (fi == null || !fi.HasNorms)
+            if (fi is null || !fi.HasNorms)
             {
                 // Field does not exist or does not index norms
                 return null;

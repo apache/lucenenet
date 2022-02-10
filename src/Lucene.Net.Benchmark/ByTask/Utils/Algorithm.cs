@@ -89,7 +89,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                         {
                             stok.NextToken();
                             string prefix = stok.StringValue;
-                            if (prefix == null || prefix.Length == 0)
+                            if (prefix is null || prefix.Length == 0)
                             {
                                 throw new Exception("named report prefix problem - " + stok.ToString());
                             }
@@ -266,7 +266,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                 else
                                 {
                                     name = stok.StringValue;
-                                    if (stok.TokenType != '"' || name == null || name.Length == 0)
+                                    if (stok.TokenType != '"' || name is null || name.Length == 0)
                                     {
                                         throw new Exception("sequence name problem - " + stok.ToString());
                                     }
@@ -296,7 +296,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                     deltaPri = (int)stok.NumberValue;
                                 }
 
-                                if (prevTask == null)
+                                if (prevTask is null)
                                 {
                                     throw new Exception("& was unexpected");
                                 }
@@ -370,7 +370,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             IEnumerable<string> referencedAssemblies = AssemblyUtils.GetReferencedAssemblies().Select(a => a.GetName().Name);
             result.Add(dfltPkg);
 
-            if (alts == null)
+            if (alts is null)
             {
                 result.UnionWith(referencedAssemblies);
                 return result.ToArray();
@@ -440,11 +440,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
         private void ExtractTasks(IList<PerfTask> extrct, TaskSequence seq)
         {
-            if (seq == null)
+            if (seq is null)
                 return;
             extrct.Add(seq);
             IList<PerfTask> t = sequence.Tasks;
-            if (t == null)
+            if (t is null)
                 return;
             foreach (PerfTask p in t)
             {

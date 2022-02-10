@@ -325,7 +325,7 @@ namespace Lucene.Net.Tartarus.Snowball
                 if (common_i >= w.SearchString.Length)
                 {
                     m_cursor = c + w.SearchString.Length;
-                    if (w.Action == null) return w.Result;
+                    if (w.Action is null) return w.Result;
                     bool res = w.Action.Invoke();
                     m_cursor = c + w.SearchString.Length;
                     if (res) return w.Result;
@@ -395,7 +395,7 @@ namespace Lucene.Net.Tartarus.Snowball
                 if (common_i >= w.SearchString.Length)
                 {
                     m_cursor = c - w.SearchString.Length;
-                    if (w.Action == null) return w.Result;
+                    if (w.Action is null) return w.Result;
 
                     bool res = w.Action.Invoke();
                     m_cursor = c - w.SearchString.Length;

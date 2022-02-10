@@ -210,7 +210,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
                 // no commit data, or no epoch in it means an old taxonomy, so set its epoch to 1, for lack
                 // of a better value.
-                indexEpoch = epochStr == null ? 1 : Convert.ToInt64(epochStr, 16);
+                indexEpoch = epochStr is null ? 1 : Convert.ToInt64(epochStr, 16);
             }
 
             if (openMode == OpenMode.CREATE)
@@ -223,12 +223,12 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             parentStreamField = new Field(Consts.FIELD_PAYLOADS, parentStream, ft);
             fullPathField = new StringField(Consts.FULL, "", Field.Store.YES);
 
-            if (indexWriter == null)
+            if (indexWriter is null)
                 return;
 
             nextID = indexWriter.MaxDoc;
 
-            if (cache == null)
+            if (cache is null)
             {
                 cache = DefaultTaxonomyWriterCache();
             }
@@ -727,7 +727,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 EnsureOpen();
                 // LUCENE-4972: if we always call setCommitData, we create empty commits
                 if (!indexWriter.CommitData.TryGetValue(INDEX_EPOCH, out string epochStr)
-                    || epochStr == null
+                    || epochStr is null
                     || Convert.ToInt64(epochStr, 16) != indexEpoch)
                 {
                     indexWriter.SetCommitData(CombinedCommitData(indexWriter.CommitData));
@@ -772,7 +772,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 EnsureOpen();
                 // LUCENE-4972: if we always call setCommitData, we create empty commits
                 if (!indexWriter.CommitData.TryGetValue(INDEX_EPOCH, out string epochStr)
-                    || epochStr == null
+                    || epochStr is null
                     || Convert.ToInt64(epochStr, 16) != indexEpoch)
                 {
                     indexWriter.SetCommitData(CombinedCommitData(indexWriter.CommitData));

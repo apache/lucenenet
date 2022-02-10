@@ -296,13 +296,13 @@ namespace Lucene.Net.Search
             CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
             DocIdSet originalSet = filter.GetDocIdSet(context, (context.AtomicReader).LiveDocs);
             DocIdSet cachedSet = cacher.GetDocIdSet(context, (context.AtomicReader).LiveDocs);
-            if (originalSet == null)
+            if (originalSet is null)
             {
                 Assert.IsNull(cachedSet);
             }
-            if (cachedSet == null)
+            if (cachedSet is null)
             {
-                Assert.IsTrue(originalSet == null || originalSet.GetIterator() == null);
+                Assert.IsTrue(originalSet is null || originalSet.GetIterator() is null);
             }
             else
             {
@@ -315,7 +315,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    Assert.IsTrue(cachedSet is FixedBitSet || cachedSet == null, "Cached DocIdSet must be an FixedBitSet if the original one was not cacheable");
+                    Assert.IsTrue(cachedSet is FixedBitSet || cachedSet is null, "Cached DocIdSet must be an FixedBitSet if the original one was not cacheable");
                 }
             }
         }

@@ -178,7 +178,7 @@ namespace Lucene.Net.Util
                 {
                     buffer.Append(',');
                 }
-                if (value == null)
+                if (value is null)
                 {
                     buffer.Append(f.Name + "=null");
                 }

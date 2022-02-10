@@ -70,11 +70,11 @@ namespace Lucene.Net.Search.Suggest.Tst
         /// <returns> The new reference to root node of TST </returns>
         public virtual TernaryTreeNode Insert(TernaryTreeNode currentNode, string s, object val, int x)
         {
-            if (s == null || s.Length <= x)
+            if (s is null || s.Length <= x)
             {
                 return currentNode;
             }
-            if (currentNode == null)
+            if (currentNode is null)
             {
                 TernaryTreeNode newNode = new TernaryTreeNode();
                 newNode.splitchar = s[x];
@@ -157,15 +157,15 @@ namespace Lucene.Net.Search.Suggest.Tst
                 }
             }
 
-            if (p == null)
+            if (p is null)
             {
                 return suggest;
             }
-            if (p.eqKid == null && p.token == null)
+            if (p.eqKid is null && p.token is null)
             {
                 return suggest;
             }
-            if (p.eqKid == null && p.token != null)
+            if (p.eqKid is null && p.token != null)
             {
                 suggest.Add(p);
                 return suggest;

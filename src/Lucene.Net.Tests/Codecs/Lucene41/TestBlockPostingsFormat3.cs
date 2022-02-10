@@ -181,7 +181,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
         public virtual void AssertTerms(Terms leftTerms, Terms rightTerms, bool deep)
         {
-            if (leftTerms == null || rightTerms == null)
+            if (leftTerms is null || rightTerms is null)
             {
                 Assert.IsNull(leftTerms);
                 Assert.IsNull(rightTerms);
@@ -400,7 +400,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// </summary>
         public virtual void AssertDocsAndPositionsEnum(DocsAndPositionsEnum leftDocs, DocsAndPositionsEnum rightDocs)
         {
-            if (leftDocs == null || rightDocs == null)
+            if (leftDocs is null || rightDocs is null)
             {
                 Assert.IsNull(leftDocs);
                 Assert.IsNull(rightDocs);
@@ -428,7 +428,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// </summary>
         public virtual void AssertDocsEnum(DocsEnum leftDocs, DocsEnum rightDocs)
         {
-            if (leftDocs == null)
+            if (leftDocs is null)
             {
                 Assert.IsNull(rightDocs);
                 return;
@@ -449,7 +449,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// </summary>
         public virtual void AssertDocsSkipping(int docFreq, DocsEnum leftDocs, DocsEnum rightDocs)
         {
-            if (leftDocs == null)
+            if (leftDocs is null)
             {
                 Assert.IsNull(rightDocs);
                 return;
@@ -487,7 +487,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// </summary>
         public virtual void AssertPositionsSkipping(int docFreq, DocsAndPositionsEnum leftDocs, DocsAndPositionsEnum rightDocs)
         {
-            if (leftDocs == null || rightDocs == null)
+            if (leftDocs is null || rightDocs is null)
             {
                 Assert.IsNull(leftDocs);
                 Assert.IsNull(rightDocs);

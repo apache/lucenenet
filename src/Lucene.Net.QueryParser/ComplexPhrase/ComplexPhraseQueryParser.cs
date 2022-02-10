@@ -421,10 +421,10 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
             {
                 int prime = 31;
                 int result = base.GetHashCode();
-                result = prime * result + ((field == null) ? 0 : field.GetHashCode());
+                result = prime * result + ((field is null) ? 0 : field.GetHashCode());
                 result = prime
                     * result
-                    + ((phrasedQueryStringContents == null) ? 0
+                    + ((phrasedQueryStringContents is null) ? 0
                         : phrasedQueryStringContents.GetHashCode());
                 result = prime * result + slopFactor;
                 result = prime * result + (inOrder ? 1 : 0);
@@ -435,7 +435,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
             {
                 if (this == obj)
                     return true;
-                if (obj == null)
+                if (obj is null)
                     return false;
                 if (GetType() != obj.GetType())
                     return false;
@@ -444,14 +444,14 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                     return false;
                 }
                 ComplexPhraseQuery other = (ComplexPhraseQuery)obj;
-                if (field == null)
+                if (field is null)
                 {
                     if (other.field != null)
                         return false;
                 }
                 else if (!field.Equals(other.field, StringComparison.Ordinal))
                     return false;
-                if (phrasedQueryStringContents == null)
+                if (phrasedQueryStringContents is null)
                 {
                     if (other.phrasedQueryStringContents != null)
                         return false;

@@ -104,7 +104,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 scratch = iter.Current;
                 long cost = iter.Weight;
 
-                if (previous == null)
+                if (previous is null)
                 {
                     previous = new BytesRef();
                 }
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         public override bool Store(DataOutput output)
         {
             output.WriteVInt64(count);
-            if (fst == null)
+            if (fst is null)
             {
                 return false;
             }
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 throw new ArgumentException("this suggester only works with onlyMorePopular=false");
             }
 
-            if (fst == null)
+            if (fst is null)
             {
                 return Collections.EmptyList<LookupResult>();
             }
@@ -232,7 +232,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             int end = pos + scratch.Length;
             while (pos < end)
             {
-                if (fst.FindTargetArc(bytes[pos++] & 0xff, arc, arc, bytesReader) == null)
+                if (fst.FindTargetArc(bytes[pos++] & 0xff, arc, arc, bytesReader) is null)
                 {
                     return null;
                 }
@@ -251,7 +251,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// </summary>
         public virtual long? Get(string key)
         {
-            if (fst == null)
+            if (fst is null)
             {
                 return null;
             }
@@ -328,7 +328,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// Returns byte size of the underlying FST. </summary>
         public override long GetSizeInBytes()
         {
-            return (fst == null) ? 0 : fst.GetSizeInBytes();
+            return (fst is null) ? 0 : fst.GetSizeInBytes();
         }
 
         public override long Count => count;

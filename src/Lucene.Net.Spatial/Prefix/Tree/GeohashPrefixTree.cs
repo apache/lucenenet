@@ -144,7 +144,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             {
                 get
                 {
-                    if (shape == null)
+                    if (shape is null)
                     {
                         shape = GeohashUtils.DecodeBoundary(Geohash, m_outerInstance.m_ctx);
                     }

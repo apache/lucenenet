@@ -220,9 +220,9 @@ namespace Lucene.Net.Search
                 
                 expected.Sort(Comparer<BytesRef>.Create((a,b) =>
                     {
-                        if (a == null)
+                        if (a is null)
                         {
-                            if (b == null)
+                            if (b is null)
                             {
                                 return 0;
                             }
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search
                                 return -1;
                             }
                         }
-                        else if (b == null)
+                        else if (b is null)
                         {
                             if (sortMissingLast)
                             {
@@ -263,11 +263,11 @@ namespace Lucene.Net.Search
                     for (int idx = 0; idx < expected.Count; idx++)
                     {
                         BytesRef br = expected[idx];
-                        if (br == null && missingIsNull == false)
+                        if (br is null && missingIsNull == false)
                         {
                             br = new BytesRef();
                         }
-                        Console.WriteLine("    " + idx + ": " + (br == null ? "<missing>" : br.Utf8ToString()));
+                        Console.WriteLine("    " + idx + ": " + (br is null ? "<missing>" : br.Utf8ToString()));
                         if (idx == hitCount - 1)
                         {
                             break;
@@ -283,14 +283,14 @@ namespace Lucene.Net.Search
                         FieldDoc fd = (FieldDoc)hits.ScoreDocs[hitIDX];
                         BytesRef br = (BytesRef)fd.Fields[0];
 
-                        Console.WriteLine("    " + hitIDX + ": " + (br == null ? "<missing>" : br.Utf8ToString()) + " id=" + idxS.Doc(fd.Doc).Get("id"));
+                        Console.WriteLine("    " + hitIDX + ": " + (br is null ? "<missing>" : br.Utf8ToString()) + " id=" + idxS.Doc(fd.Doc).Get("id"));
                     }
                 }
                 for (int hitIDX = 0; hitIDX < hits.ScoreDocs.Length; hitIDX++)
                 {
                     FieldDoc fd = (FieldDoc)hits.ScoreDocs[hitIDX];
                     BytesRef br = expected[hitIDX];
-                    if (br == null && missingIsNull == false)
+                    if (br is null && missingIsNull == false)
                     {
                         br = new BytesRef();
                     }
@@ -302,7 +302,7 @@ namespace Lucene.Net.Search
                     // that case it will return null!  So we must map
                     // null here, too:
                     BytesRef br2 = (BytesRef)fd.Fields[0];
-                    if (br2 == null && missingIsNull == false)
+                    if (br2 is null && missingIsNull == false)
                     {
                         br2 = new BytesRef();
                     }
@@ -338,7 +338,7 @@ namespace Lucene.Net.Search
                 FixedBitSet bits = new FixedBitSet(maxDoc);
                 for (int docID = 0; docID < maxDoc; docID++)
                 {
-                    if ((float)random.NextDouble() <= density && (acceptDocs == null || acceptDocs.Get(docID)))
+                    if ((float)random.NextDouble() <= density && (acceptDocs is null || acceptDocs.Get(docID)))
                     {
                         bits.Set(docID);
                         //System.out.println("  acc id=" + idSource.Get(docID) + " docID=" + docID + " id=" + idSource.Get(docID) + " v=" + docValues.Get(idSource.Get(docID)).Utf8ToString());

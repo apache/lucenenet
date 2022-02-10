@@ -127,12 +127,12 @@ namespace Lucene.Net.Codecs.SimpleText
                     SimpleTextUtil.WriteNewline(output);
 
                     IDictionary<string, string> atts = fi.Attributes;
-                    int numAtts = atts == null ? 0 : atts.Count;
+                    int numAtts = atts is null ? 0 : atts.Count;
                     SimpleTextUtil.Write(output, NUM_ATTS);
                     SimpleTextUtil.Write(output, numAtts.ToString(CultureInfo.InvariantCulture), scratch);
                     SimpleTextUtil.WriteNewline(output);
 
-                    if (numAtts <= 0 || atts == null) continue;
+                    if (numAtts <= 0 || atts is null) continue;
                     foreach (var entry in atts)
                     {
                         SimpleTextUtil.Write(output, ATT_KEY);

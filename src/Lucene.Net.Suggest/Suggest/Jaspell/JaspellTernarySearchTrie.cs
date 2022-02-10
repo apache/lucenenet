@@ -294,7 +294,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                     word = word.Substring(0, pos);
                 }
                 string key = culture.TextInfo.ToLower(word);
-                if (rootNode == null)
+                if (rootNode is null)
                 {
                     rootNode = new TSTNode(key[0], null);
                 }
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                     int charIndex = 0;
                     while (true)
                     {
-                        if (currentNode == null)
+                        if (currentNode is null)
                         {
                             break;
                         }
@@ -352,7 +352,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <param name="nodeToDelete"> The node to delete. </param>
         private void DeleteNode(TSTNode nodeToDelete)
         {
-            if (nodeToDelete == null)
+            if (nodeToDelete is null)
             {
                 return;
             }
@@ -387,7 +387,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <returns> The next node to be called in deleteNodeRecursion. </returns>
         private TSTNode DeleteNodeRecursion(TSTNode currentNode)
         {
-            if (currentNode == null)
+            if (currentNode is null)
             {
                 return null;
             }
@@ -397,8 +397,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             }
             // can't delete this node if it has a non-null eq kid or data
             TSTNode currentParent = currentNode.relatives[TSTNode.PARENT];
-            bool lokidNull = currentNode.relatives[TSTNode.LOKID] == null;
-            bool hikidNull = currentNode.relatives[TSTNode.HIKID] == null;
+            bool lokidNull = currentNode.relatives[TSTNode.LOKID] is null;
+            bool hikidNull = currentNode.relatives[TSTNode.HIKID] is null;
             int childType;
             if (currentParent.relatives[TSTNode.LOKID] == currentNode)
             {
@@ -485,7 +485,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         public virtual object Get(string key)
         {
             TSTNode node = GetNode(key);
-            if (node == null)
+            if (node is null)
             {
                 return null;
             }
@@ -573,7 +573,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///         inner class named <see cref="TSTNode"/>. </returns>
         protected internal virtual TSTNode GetNode(string key, TSTNode startNode)
         {
-            if (key == null || startNode == null || key.Length == 0)
+            if (key is null || startNode is null || key.Length == 0)
             {
                 return null;
             }
@@ -581,7 +581,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             int charIndex = 0;
             while (true)
             {
-                if (currentNode == null)
+                if (currentNode is null)
                 {
                     return null;
                 }
@@ -628,7 +628,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             {
                 throw new ArgumentException("attempt to get or create node with key of zero length");
             }
-            if (rootNode == null)
+            if (rootNode is null)
             {
                 rootNode = new TSTNode(key[0], null);
             }
@@ -644,7 +644,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                     {
                         return currentNode;
                     }
-                    if (currentNode.relatives[TSTNode.EQKID] == null)
+                    if (currentNode.relatives[TSTNode.EQKID] is null)
                     {
                         currentNode.relatives[TSTNode.EQKID] = new TSTNode(key[charIndex], currentNode);
                     }
@@ -652,7 +652,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 }
                 else if (charComp < 0)
                 {
-                    if (currentNode.relatives[TSTNode.LOKID] == null)
+                    if (currentNode.relatives[TSTNode.LOKID] is null)
                     {
                         currentNode.relatives[TSTNode.LOKID] = new TSTNode(key[charIndex], currentNode);
                     }
@@ -660,7 +660,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 }
                 else
                 {
-                    if (currentNode.relatives[TSTNode.HIKID] == null)
+                    if (currentNode.relatives[TSTNode.HIKID] is null)
                     {
                         currentNode.relatives[TSTNode.HIKID] = new TSTNode(key[charIndex], currentNode);
                     }
@@ -734,7 +734,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <returns> A <see cref="IList{String}"/> with the results. </returns>
         private IList<string> MatchAlmostRecursion(TSTNode currentNode, int charIndex, int d, string matchAlmostKey, int matchAlmostNumReturnValues, IList<string> matchAlmostResult2, bool upTo)
         {
-            if ((currentNode == null) || (matchAlmostNumReturnValues != -1 && matchAlmostResult2.Count >= matchAlmostNumReturnValues) || (d < 0) || (charIndex >= matchAlmostKey.Length))
+            if ((currentNode is null) || (matchAlmostNumReturnValues != -1 && matchAlmostResult2.Count >= matchAlmostNumReturnValues) || (d < 0) || (charIndex >= matchAlmostKey.Length))
             {
                 return matchAlmostResult2;
             }
@@ -784,7 +784,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         {
             IList<string> sortKeysResult = new JCG.List<string>();
             TSTNode startNode = GetNode(prefix);
-            if (startNode == null)
+            if (startNode is null)
             {
                 return sortKeysResult;
             }
@@ -860,7 +860,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <returns> The number of nodes accounted. </returns>
         private int RecursiveNodeCalculator(TSTNode currentNode, bool checkData, int numNodes2)
         {
-            if (currentNode == null)
+            if (currentNode is null)
             {
                 return numNodes2;
             }
@@ -969,7 +969,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <returns> A <see cref="IList{String}"/> with the results. </returns>
         private IList<string> SortKeysRecursion(TSTNode currentNode, int sortKeysNumReturnValues, IList<string> sortKeysResult2)
         {
-            if (currentNode == null)
+            if (currentNode is null)
             {
                 return sortKeysResult2;
             }

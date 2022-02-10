@@ -56,7 +56,7 @@ namespace Lucene.Net.Cli.SourceCode
 
         public ConsolePager(IEnumerable<string> files)
         {
-            if (files == null)
+            if (files is null)
                 throw new ArgumentNullException(nameof(files));
             this.enumerator = new MultipleFileLineEnumerator(files);
         }
@@ -129,7 +129,7 @@ namespace Lucene.Net.Cli.SourceCode
 
             public MultipleFileLineEnumerator(IEnumerable<string> files)
             {
-                if (files == null)
+                if (files is null)
                     throw new ArgumentNullException(nameof(files));
                 this.fileEnumerator = files.GetEnumerator();
                 NextFile();
@@ -161,7 +161,7 @@ namespace Lucene.Net.Cli.SourceCode
             public bool MoveNext()
             {
                 line = this.currentFile.ReadLine();
-                if (line == null)
+                if (line is null)
                 {
                     if (!NextFile())
                     {

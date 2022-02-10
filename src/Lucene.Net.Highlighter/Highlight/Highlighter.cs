@@ -353,18 +353,18 @@ namespace Lucene.Net.Search.Highlight
                     //for each fragment, scan other frags looking for contiguous blocks
                     for (int i = 0; i < frag.Length; i++)
                     {
-                        if (frag[i] == null)
+                        if (frag[i] is null)
                         {
                             continue;
                         }
                         //merge any contiguous blocks 
                         for (int x = 0; x < frag.Length; x++)
                         {
-                            if (frag[x] == null)
+                            if (frag[x] is null)
                             {
                                 continue;
                             }
-                            if (frag[i] == null)
+                            if (frag[i] is null)
                             {
                                 break;
                             }

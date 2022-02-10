@@ -539,7 +539,7 @@ namespace Lucene.Net.Index
                             throw IllegalStateException.Create("Expected 1 hit, got " + topDocs.TotalHits);
                         }
                         Document sdoc = rd.Document(topDocs.ScoreDocs[0].Doc);
-                        if (sdoc == null || sdoc.Get("fld") == null)
+                        if (sdoc is null || sdoc.Get("fld") is null)
                         {
                             throw IllegalStateException.Create("Could not find document " + q);
                         }
@@ -649,7 +649,7 @@ namespace Lucene.Net.Index
                     for (int i = 0; i < ir.MaxDoc; ++i)
                     {
                         Document doc = ir.Document(i);
-                        if (doc == null)
+                        if (doc is null)
                         {
                             continue;
                         }

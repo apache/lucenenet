@@ -478,7 +478,7 @@ namespace Lucene.Net.Codecs.Memory
                 // Update current enum according to FSTEnum
                 private void UpdateEnum(BytesRefFSTEnum.InputOutput<Int64> pair)
                 {
-                    if (pair == null)
+                    if (pair is null)
                     {
                         term = null;
                     }
@@ -535,7 +535,7 @@ namespace Lucene.Net.Codecs.Memory
                 public override SeekStatus SeekCeil(BytesRef target)
                 {
                     UpdateEnum(fstEnum.SeekCeil(target));
-                    if (term == null)
+                    if (term is null)
                     {
                         return SeekStatus.END;
                     }
@@ -625,7 +625,7 @@ namespace Lucene.Net.Codecs.Memory
                     this.decoded = false;
                     this.pending = false;
 
-                    if (startTerm == null)
+                    if (startTerm is null)
                     {
                         pending = IsAccept(TopFrame());
                     }
@@ -720,7 +720,7 @@ namespace Lucene.Net.Codecs.Memory
                         frame = NewFrame();
                         label = target.Bytes[upto] & 0xff;
                         frame = LoadCeilFrame(label, TopFrame(), frame);
-                        if (frame == null || frame.arc.Label != label)
+                        if (frame is null || frame.arc.Label != label)
                         {
                             break;
                         }
@@ -823,7 +823,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     var arc = frame.arc;
                     arc = Util.Fst.Util.ReadCeilArc(label, fst, top.arc, arc, fstReader);
-                    if (arc == null)
+                    if (arc is null)
                     {
                         return null;
                     }
@@ -897,7 +897,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 private BytesRef Grow(int label)
                 {
-                    if (term == null)
+                    if (term is null)
                     {
                         term = new BytesRef(new byte[16], 0, 0);
                     }

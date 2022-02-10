@@ -365,7 +365,7 @@ namespace Lucene.Net.Index
 
                     if (Verbose)
                     {
-                        Console.WriteLine("\nTEST: iter2=" + iter2 + " startTerm=" + (startTerm == null ? "<null>" : startTerm.Utf8ToString()));
+                        Console.WriteLine("\nTEST: iter2=" + iter2 + " startTerm=" + (startTerm is null ? "<null>" : startTerm.Utf8ToString()));
 
                         if (startTerm != null)
                         {
@@ -384,7 +384,7 @@ namespace Lucene.Net.Index
                     TermsEnum te = MultiFields.GetTerms(r, "f").Intersect(c, startTerm);
 
                     int loc;
-                    if (startTerm == null)
+                    if (startTerm is null)
                     {
                         loc = 0;
                     }
@@ -414,7 +414,7 @@ namespace Lucene.Net.Index
                         BytesRef actual = te.Term;
                         if (Verbose)
                         {
-                            Console.WriteLine("TEST:   next() expected=" + expected.Utf8ToString() + " actual=" + (actual == null ? "null" : actual.Utf8ToString()));
+                            Console.WriteLine("TEST:   next() expected=" + expected.Utf8ToString() + " actual=" + (actual is null ? "null" : actual.Utf8ToString()));
                         }
                         Assert.AreEqual(expected, actual);
                         Assert.AreEqual(1, te.DocFreq);

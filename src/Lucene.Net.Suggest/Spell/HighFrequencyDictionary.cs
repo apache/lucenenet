@@ -113,7 +113,7 @@ namespace Lucene.Net.Search.Spell
             {
                 get
                 {
-                    if (termsEnum == null)
+                    if (termsEnum is null)
                     {
                         return null;
                     }

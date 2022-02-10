@@ -71,7 +71,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         /// </summary>
         private int? StringValueToInt32Value(string stringVal)
         {
-            if (stringVal == null)
+            if (stringVal is null)
             {
                 return null;
             }
@@ -184,7 +184,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
                 // instead of using separate comparison functions, adjust the endpoints.
 
-                if (lower == null)
+                if (lower is null)
                 {
                     lower = int.MinValue;
                 }
@@ -196,7 +196,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     }
                 }
 
-                if (upper == null)
+                if (upper is null)
                 {
                     upper = int.MaxValue;
                 }
@@ -236,7 +236,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return true;
             }
-            if (o == null || this.GetType() != o.GetType())
+            if (o is null || this.GetType() != o.GetType())
             {
                 return false;
             }

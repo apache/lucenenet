@@ -75,14 +75,14 @@ namespace Lucene.Net.Search.VectorHighlight
 
                 first = ti = fieldTermStack.Pop();
                 currMap = fieldQuery.GetFieldTermMap(field, ti.Text);
-                while (currMap == null && ti.Next != first)
+                while (currMap is null && ti.Next != first)
                 {
                     ti = ti.Next;
                     currMap = fieldQuery.GetFieldTermMap(field, ti.Text);
                 }
 
                 // if not found, discard top TermInfo from stack, then try next element
-                if (currMap == null) continue;
+                if (currMap is null) continue;
 
                 // if found, search the longest phrase
                 phraseCandidate.Add(ti);
@@ -93,13 +93,13 @@ namespace Lucene.Net.Search.VectorHighlight
                     if (ti != null)
                     {
                         nextMap = currMap.GetTermMap(ti.Text);
-                        while (nextMap == null && ti.Next != first)
+                        while (nextMap is null && ti.Next != first)
                         {
                             ti = ti.Next;
                             nextMap = currMap.GetTermMap(ti.Text);
                         }
                     }
-                    if (ti == null || nextMap == null)
+                    if (ti is null || nextMap is null)
                     {
                         if (ti != null)
                             fieldTermStack.Push(ti);
@@ -435,7 +435,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 {
                     return true;
                 }
-                if (obj == null)
+                if (obj is null)
                 {
                     return false;
                 }
@@ -505,7 +505,7 @@ namespace Lucene.Net.Search.VectorHighlight
                     {
                         return true;
                     }
-                    if (obj == null)
+                    if (obj is null)
                     {
                         return false;
                     }

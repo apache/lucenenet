@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
         public override void ReflectWith(IAttributeReflector reflector)
         {
             string partOfSpeech = GetPartOfSpeech();
-            string partOfSpeechEN = partOfSpeech == null ? null : ToStringUtil.GetPOSTranslation(partOfSpeech);
+            string partOfSpeechEN = partOfSpeech is null ? null : ToStringUtil.GetPOSTranslation(partOfSpeech);
             reflector.Reflect<IPartOfSpeechAttribute>("partOfSpeech", partOfSpeech);
             reflector.Reflect<IPartOfSpeechAttribute>("partOfSpeech (en)", partOfSpeechEN);
         }

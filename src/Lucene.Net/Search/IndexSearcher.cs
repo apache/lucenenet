@@ -141,7 +141,7 @@ namespace Lucene.Net.Search
             this.executor = executor;
             this.m_readerContext = context;
             m_leafContexts = context.Leaves;
-            this.m_leafSlices = executor == null ? null : Slices(m_leafContexts);
+            this.m_leafSlices = executor is null ? null : Slices(m_leafContexts);
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace Lucene.Net.Search
         /// @lucene.internal </summary>
         protected virtual Query WrapFilter(Query query, Filter filter)
         {
-            return (filter == null) ? query : new FilteredQuery(query, filter);
+            return (filter is null) ? query : new FilteredQuery(query, filter);
         }
 
         /// <summary>
@@ -444,7 +444,7 @@ namespace Lucene.Net.Search
             }
             nDocs = Math.Min(nDocs, limit);
 
-            if (executor == null)
+            if (executor is null)
             {
                 return Search(m_leafContexts, weight, after, nDocs);
             }
@@ -538,7 +538,7 @@ namespace Lucene.Net.Search
             }
             nDocs = Math.Min(nDocs, limit);
 
-            if (executor == null)
+            if (executor is null)
             {
                 // use all leaves here!
                 return Search(m_leafContexts, weight, after, nDocs, sort, fillFields, doDocScores, doMaxScore);
@@ -964,7 +964,7 @@ namespace Lucene.Net.Search
             if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
 
             Terms terms = MultiFields.GetTerms(reader, field);
-            if (terms == null)
+            if (terms is null)
             {
                 docCount = 0;
                 sumTotalTermFreq = 0;

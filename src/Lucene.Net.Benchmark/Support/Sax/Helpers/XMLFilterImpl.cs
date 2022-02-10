@@ -564,7 +564,7 @@ namespace Sax.Helpers
         /// </summary>
         private void SetupParse()
         {
-            if (parent == null)
+            if (parent is null)
             {
                 throw new InvalidOperationException("No parent for filter");
             }

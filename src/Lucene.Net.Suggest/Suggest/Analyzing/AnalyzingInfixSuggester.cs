@@ -280,7 +280,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         // LUCENENET specific -Support for LUCENE-5889.
         public void Commit()
         {
-            if (writer == null)
+            if (writer is null)
             {
                 throw IllegalStateException.Create("Cannot commit on an closed writer. Add documents first");
             }
@@ -332,7 +332,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             UninterruptableMonitor.Enter(syncLock);
             try
             {
-                if (writer == null)
+                if (writer is null)
                 {
                     if (m_searcherMgr != null)
                     {
@@ -412,7 +412,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public virtual void Refresh()
         {
-            if (m_searcherMgr == null) // LUCENENET specific -Support for LUCENE-5889.
+            if (m_searcherMgr is null) // LUCENENET specific -Support for LUCENE-5889.
             {
                 throw IllegalStateException.Create("suggester was not built");
             }
@@ -469,7 +469,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public virtual IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, int num, bool allTermsRequired, bool doHighlight)
         {
 
-            if (m_searcherMgr == null)
+            if (m_searcherMgr is null)
             {
                 throw IllegalStateException.Create("suggester was not built");
             }
@@ -861,7 +861,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             get
             {
-                if (m_searcherMgr == null)
+                if (m_searcherMgr is null)
                 {
                     return 0;
                 }

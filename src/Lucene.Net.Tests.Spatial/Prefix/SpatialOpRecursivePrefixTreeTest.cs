@@ -331,7 +331,7 @@ namespace Lucene.Net.Spatial.Prefix
                 {
                     string id = entry.Key;
                     IShape indexedShapeCompare = entry.Value;
-                    if (indexedShapeCompare == null)
+                    if (indexedShapeCompare is null)
                         continue;
                     IShape queryShapeCompare = queryShape;
 
@@ -420,7 +420,7 @@ namespace Lucene.Net.Spatial.Prefix
 
         protected IShape gridSnap(IShape snapMe)
         {
-            if (snapMe == null)
+            if (snapMe is null)
                 return null;
             if (snapMe is ShapePair)
             {

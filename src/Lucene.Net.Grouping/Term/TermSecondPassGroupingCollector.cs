@@ -52,9 +52,9 @@ namespace Lucene.Net.Search.Grouping.Terms
             ordSet.Clear();
             foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<BytesRef> group in m_groupMap.Values)
             {
-                //      System.out.println("  group=" + (group.groupValue == null ? "null" : group.groupValue.utf8ToString()));
-                int ord = group.GroupValue == null ? -1 : index.LookupTerm(group.GroupValue);
-                if (group.GroupValue == null || ord >= 0)
+                //      System.out.println("  group=" + (group.groupValue is null ? "null" : group.groupValue.utf8ToString()));
+                int ord = group.GroupValue is null ? -1 : index.LookupTerm(group.GroupValue);
+                if (group.GroupValue is null || ord >= 0)
                 {
                     m_groupDocs[ordSet.Put(ord)] = group;
                 }

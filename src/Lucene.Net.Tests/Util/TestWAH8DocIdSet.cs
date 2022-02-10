@@ -135,7 +135,7 @@ namespace Lucene.Net.Util
         {
             // nextDoc
             DocIdSetIterator it2 = ds2.GetIterator();
-            if (it2 == null)
+            if (it2 is null)
             {
                 Assert.AreEqual(-1, ds1.NextSetBit(0));
             }
@@ -153,7 +153,7 @@ namespace Lucene.Net.Util
 
             // nextDoc / advance
             it2 = ds2.GetIterator();
-            if (it2 == null)
+            if (it2 is null)
             {
                 Assert.AreEqual(-1, ds1.NextSetBit(0));
             }

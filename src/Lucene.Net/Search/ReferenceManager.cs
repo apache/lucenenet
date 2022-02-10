@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
 
         private void EnsureOpen()
         {
-            if (current == null)
+            if (current is null)
             {
                 throw AlreadyClosedException.Create(this.GetType().FullName, REFERENCE_MANAGER_IS_CLOSED_MSG);
             }
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search
 
             do
             {
-                if ((@ref = current) == null)
+                if ((@ref = current) is null)
                 {
                     throw AlreadyClosedException.Create(this.GetType().FullName, REFERENCE_MANAGER_IS_CLOSED_MSG);
                 }

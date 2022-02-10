@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
 
         private void AssertNext(Scorer expected, Scorer actual)
         {
-            if (actual == null)
+            if (actual is null)
             {
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, expected.NextDoc());
                 return;
@@ -182,7 +182,7 @@ namespace Lucene.Net.Search
 
         private void AssertAdvance(Scorer expected, Scorer actual, int amount)
         {
-            if (actual == null)
+            if (actual is null)
             {
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, expected.NextDoc());
                 return;

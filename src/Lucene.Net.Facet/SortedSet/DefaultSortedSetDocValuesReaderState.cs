@@ -52,7 +52,7 @@ namespace Lucene.Net.Facet.SortedSet
             // per collector:
             topReader = SlowCompositeReaderWrapper.Wrap(reader);
             SortedSetDocValues dv = topReader.GetSortedSetDocValues(field);
-            if (dv == null)
+            if (dv is null)
             {
                 throw new ArgumentException("field \"" + field + "\" was not indexed with SortedSetDocValues");
             }

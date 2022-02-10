@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Join
 
         protected override DocIdSet DocIdSetToCache(DocIdSet docIdSet, AtomicReader reader)
         {
-            if (docIdSet == null)
+            if (docIdSet is null)
             {
                 return EMPTY_DOCIDSET;
             }
@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.Join
             }
 
             DocIdSetIterator it = docIdSet.GetIterator();
-            if (it == null)
+            if (it is null)
             {
                 return EMPTY_DOCIDSET;
             }

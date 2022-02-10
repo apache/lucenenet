@@ -72,8 +72,8 @@ namespace Lucene.Net.Search
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 SortedDocValues fcsi = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, field);
-                int lowerPoint = lowerVal == null ? -1 : fcsi.LookupTerm(new BytesRef(lowerVal));
-                int upperPoint = upperVal == null ? -1 : fcsi.LookupTerm(new BytesRef(upperVal));
+                int lowerPoint = lowerVal is null ? -1 : fcsi.LookupTerm(new BytesRef(lowerVal));
+                int upperPoint = upperVal is null ? -1 : fcsi.LookupTerm(new BytesRef(upperVal));
 
                 int inclusiveLowerPoint, inclusiveUpperPoint;
 
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
                 // * binarySearchLookup returns 0, if value was null.
                 // * the value is <0 if no exact hit was found, the returned value
                 //   is (-(insertion point) - 1)
-                if (lowerPoint == -1 && lowerVal == null)
+                if (lowerPoint == -1 && lowerVal is null)
                 {
                     inclusiveLowerPoint = 0;
                 }
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
                     inclusiveLowerPoint = Math.Max(0, -lowerPoint - 1);
                 }
 
-                if (upperPoint == -1 && upperVal == null)
+                if (upperPoint == -1 && upperVal is null)
                 {
                     inclusiveUpperPoint = int.MaxValue;
                 }
@@ -140,8 +140,8 @@ namespace Lucene.Net.Search
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 SortedDocValues fcsi = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, field);
-                int lowerPoint = lowerVal == null ? -1 : fcsi.LookupTerm(lowerVal);
-                int upperPoint = upperVal == null ? -1 : fcsi.LookupTerm(upperVal);
+                int lowerPoint = lowerVal is null ? -1 : fcsi.LookupTerm(lowerVal);
+                int upperPoint = upperVal is null ? -1 : fcsi.LookupTerm(upperVal);
 
                 int inclusiveLowerPoint, inclusiveUpperPoint;
 
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
                 // * binarySearchLookup returns -1, if value was null.
                 // * the value is <0 if no exact hit was found, the returned value
                 //   is (-(insertion point) - 1)
-                if (lowerPoint == -1 && lowerVal == null)
+                if (lowerPoint == -1 && lowerVal is null)
                 {
                     inclusiveLowerPoint = 0;
                 }
@@ -166,7 +166,7 @@ namespace Lucene.Net.Search
                     inclusiveLowerPoint = Math.Max(0, -lowerPoint - 1);
                 }
 
-                if (upperPoint == -1 && upperVal == null)
+                if (upperPoint == -1 && upperVal is null)
                 {
                     inclusiveUpperPoint = int.MaxValue;
                 }
@@ -734,7 +734,7 @@ namespace Lucene.Net.Search
         public override sealed string ToString()
         {
             StringBuilder sb = (new StringBuilder(field)).Append(":");
-            return sb.Append(includeLower ? '[' : '{').Append((lowerVal == null) ? "*" : lowerVal.ToString()).Append(" TO ").Append((upperVal == null) ? "*" : upperVal.ToString()).Append(includeUpper ? ']' : '}').ToString();
+            return sb.Append(includeLower ? '[' : '{').Append((lowerVal is null) ? "*" : lowerVal.ToString()).Append(" TO ").Append((upperVal is null) ? "*" : upperVal.ToString()).Append(includeUpper ? ']' : '}').ToString();
         }
 
         public override sealed bool Equals(object o)

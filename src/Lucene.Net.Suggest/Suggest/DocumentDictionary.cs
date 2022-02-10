@@ -162,7 +162,7 @@ namespace Lucene.Net.Search.Suggest
                     if (hasPayloads)
                     {
                         IIndexableField payload = doc.GetField(outerInstance.m_payloadField);
-                        if (payload == null || (payload.GetBinaryValue() is null && payload.GetStringValue() is null))
+                        if (payload is null || (payload.GetBinaryValue() is null && payload.GetStringValue() is null))
                         {
                             continue;
                         }
@@ -186,7 +186,7 @@ namespace Lucene.Net.Search.Suggest
                     }
 
                     IIndexableField fieldVal = doc.GetField(outerInstance.field);
-                    if (fieldVal == null || (fieldVal.GetBinaryValue() is null && fieldVal.GetStringValue() is null))
+                    if (fieldVal is null || (fieldVal.GetBinaryValue() is null && fieldVal.GetStringValue() is null))
                     {
                         continue;
                     }

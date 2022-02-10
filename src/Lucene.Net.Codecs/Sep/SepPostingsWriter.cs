@@ -273,7 +273,7 @@ namespace Lucene.Net.Codecs.Sep
 
             if (storePayloads)
             {
-                int payloadLength = payload == null ? 0 : payload.Length;
+                int payloadLength = payload is null ? 0 : payload.Length;
                 if (payloadLength != lastPayloadLength)
                 {
                     lastPayloadLength = payloadLength;

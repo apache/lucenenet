@@ -2630,7 +2630,7 @@ namespace Lucene.Net.Index
                 int maxDoc = ar.MaxDoc;
                 for (int i = 0; i < maxDoc; i++)
                 {
-                    if (liveDocs == null || liveDocs.Get(i))
+                    if (liveDocs is null || liveDocs.Get(i))
                     {
                         Assert.IsTrue(liveIds.Remove(ar.Document(i).Get("id")));
                     }

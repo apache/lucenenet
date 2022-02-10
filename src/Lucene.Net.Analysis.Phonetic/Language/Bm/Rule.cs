@@ -207,7 +207,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             string resName = CreateResourceName(nameType, rt, lang);
             Stream rulesIS = typeof(Languages).FindAndGetManifestResourceStream(resName);
 
-            if (rulesIS == null)
+            if (rulesIS is null)
             {
                 throw new ArgumentException("Unable to load resource: " + resName);
             }
@@ -220,7 +220,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             string resName = string.Format("{0}.txt", lang); 
             Stream rulesIS = typeof(Languages).FindAndGetManifestResourceStream(resName);
 
-            if (rulesIS == null)
+            if (rulesIS is null)
             {
                 throw new ArgumentException("Unable to load resource: " + resName);
             }
@@ -500,7 +500,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                                         Rule r = new RuleAnonymousClass(pat, lCon, rCon, ph, cLine, location);
 
                                         string patternKey = r.pattern.Substring(0, 1 - 0);
-                                        if (!lines.TryGetValue(patternKey, out IList<Rule> rules) || rules == null)
+                                        if (!lines.TryGetValue(patternKey, out IList<Rule> rules) || rules is null)
                                         {
                                             rules = new JCG.List<Rule>();
                                             lines[patternKey] = rules;

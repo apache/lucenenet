@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
             // it's been applied in the merge and now it's gone
             IndexReader r2 = writer.GetReader();
             int[] id2docs = ToDocsArray(new Term("id", "2"), null, r2);
-            Assert.IsTrue(id2docs == null);
+            Assert.IsTrue(id2docs is null);
             r2.Dispose();
 
             /*
@@ -162,7 +162,7 @@ namespace Lucene.Net.Index
             /// int[] docs = toDocsArray(id3, null, r);
             /// System.out.println("id3 docs:"+Arrays.toString(docs));
             /// // there shouldn't be any docs for id:3
-            /// Assert.IsTrue(docs == null);
+            /// Assert.IsTrue(docs is null);
             /// r.Dispose();
             ///
             /// part2(writer, fsmp);
@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
 
         public static void PrintDelDocs(IBits bits)
         {
-            if (bits == null)
+            if (bits is null)
             {
                 return;
             }

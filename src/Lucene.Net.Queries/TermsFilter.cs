@@ -182,7 +182,7 @@ namespace Lucene.Net.Queries
             {
                 currentTerm = iter.Current;
                 currentField = iter.Field;
-                if (currentField == null)
+                if (currentField is null)
                 {
                     throw new ArgumentException("Field must not be null");
                 }
@@ -198,7 +198,7 @@ namespace Lucene.Net.Queries
                     }
                     else
                     {
-                        int _start = lastTermsAndField == null ? 0 : lastTermsAndField.end;
+                        int _start = lastTermsAndField is null ? 0 : lastTermsAndField.end;
                         lastTermsAndField = new TermsAndField(_start, index, previousField);
                         termsAndFields.Add(lastTermsAndField);
                     }
@@ -217,7 +217,7 @@ namespace Lucene.Net.Queries
                 previousField = currentField;
             }
             offsets[index] = lastEndOffset;
-            int start = lastTermsAndField == null ? 0 : lastTermsAndField.end;
+            int start = lastTermsAndField is null ? 0 : lastTermsAndField.end;
             lastTermsAndField = new TermsAndField(start, index, previousField);
             termsAndFields.Add(lastTermsAndField);
             this.termsBytes = ArrayUtil.Shrink(serializedTerms, lastEndOffset);
@@ -231,7 +231,7 @@ namespace Lucene.Net.Queries
             FixedBitSet result = null; // lazy init if needed - no need to create a big bitset ahead of time
             Fields fields = reader.Fields;
             BytesRef spare = new BytesRef(this.termsBytes);
-            if (fields == null)
+            if (fields is null)
             {
                 return result;
             }
@@ -250,7 +250,7 @@ namespace Lucene.Net.Queries
                         if (termsEnum.SeekExact(spare))
                         {
                             docs = termsEnum.Docs(acceptDocs, docs, DocsFlags.NONE); // no freq since we don't need them
-                            if (result == null)
+                            if (result is null)
                             {
                                 if (docs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                                 {
@@ -276,7 +276,7 @@ namespace Lucene.Net.Queries
             {
                 return true;
             }
-            if ((obj == null) || (obj.GetType() != this.GetType()))
+            if ((obj is null) || (obj.GetType() != this.GetType()))
             {
                 return false;
             }
@@ -345,7 +345,7 @@ namespace Lucene.Net.Queries
             {
                 const int prime = 31;
                 int result = 1;
-                result = prime * result + ((field == null) ? 0 : field.GetHashCode());
+                result = prime * result + ((field is null) ? 0 : field.GetHashCode());
                 result = prime * result + end;
                 result = prime * result + start;
                 return result;
@@ -357,7 +357,7 @@ namespace Lucene.Net.Queries
                 {
                     return true;
                 }
-                if (obj == null)
+                if (obj is null)
                 {
                     return false;
                 }
@@ -366,7 +366,7 @@ namespace Lucene.Net.Queries
                     return false;
                 }
                 var other = (TermsAndField)obj;
-                if (field == null)
+                if (field is null)
                 {
                     if (other.field != null)
                     {

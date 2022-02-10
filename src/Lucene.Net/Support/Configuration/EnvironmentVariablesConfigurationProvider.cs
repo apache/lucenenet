@@ -105,7 +105,7 @@ namespace Lucene.Net.Configuration
             IEnumerable<string> earlierKeys,
             string parentPath)
         {
-            var prefix = parentPath == null ? string.Empty : parentPath + ConfigurationPath.KeyDelimiter;
+            var prefix = parentPath is null ? string.Empty : parentPath + ConfigurationPath.KeyDelimiter;
 
             return Data
                 .Where(kv => kv.Key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))

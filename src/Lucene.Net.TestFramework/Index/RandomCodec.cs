@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
 
         public override PostingsFormat GetPostingsFormatForField(string name)
         {
-            if (!previousMappings.TryGetValue(name, out PostingsFormat codec) || codec == null)
+            if (!previousMappings.TryGetValue(name, out PostingsFormat codec) || codec is null)
             {
                 codec = formats[Math.Abs(perFieldSeed ^ name.GetHashCode()) % formats.Count];
                 if (codec is SimpleTextPostingsFormat && perFieldSeed % 5 != 0)
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
 
         public override DocValuesFormat GetDocValuesFormatForField(string name)
         {
-            if (!previousDVMappings.TryGetValue(name, out DocValuesFormat codec) || codec == null)
+            if (!previousDVMappings.TryGetValue(name, out DocValuesFormat codec) || codec is null)
             {
                 codec = dvFormats[Math.Abs(perFieldSeed ^ name.GetHashCode()) % dvFormats.Count];
                 if (codec is SimpleTextDocValuesFormat && perFieldSeed % 5 != 0)

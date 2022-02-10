@@ -260,7 +260,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <returns>A NYSIIS code for the string supplied.</returns>
         public virtual string GetNysiis(string str)
         {
-            if (str == null)
+            if (str is null)
             {
                 return null;
             }

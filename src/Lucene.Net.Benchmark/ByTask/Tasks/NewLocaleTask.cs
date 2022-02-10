@@ -53,7 +53,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         internal static CultureInfo CreateLocale(string culture /*String language, String country, String variant*/)
         {
-            if (culture == null || culture.Length == 0)
+            if (culture is null || culture.Length == 0)
                 return null;
 
             string lang = culture;
@@ -69,7 +69,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             CultureInfo locale = CreateLocale(culture /*language, country, variant*/);
             RunData.Locale = locale;
             Console.WriteLine("Changed Locale to: " +
-                (locale == null ? "null" :
+                (locale is null ? "null" :
                 (locale.EnglishName.Length == 0) ? "root locale" : locale.ToString()));
             return 1;
         }

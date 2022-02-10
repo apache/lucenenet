@@ -344,7 +344,7 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-            if (obj == null)
+            if (obj is null)
             {
                 return false;
             }
@@ -361,7 +361,7 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            return (other.m_field == null ? m_field == null : other.m_field.Equals(m_field, StringComparison.Ordinal));
+            return (other.m_field is null ? m_field is null : other.m_field.Equals(m_field, StringComparison.Ordinal));
         }
     }
 }

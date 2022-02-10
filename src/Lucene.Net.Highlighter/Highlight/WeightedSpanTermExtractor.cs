@@ -171,7 +171,7 @@ namespace Lucene.Net.Search.Highlight
                     {
                         Term[] termArray = termArrays[i];
                         JCG.List<SpanQuery> disjuncts = disjunctLists[positions[i]];
-                        if (disjuncts == null)
+                        if (disjuncts is null)
                         {
                             disjuncts = (disjunctLists[positions[i]] = new JCG.List<SpanQuery>(termArray.Length));
                             ++distinctPositions;
@@ -246,7 +246,7 @@ namespace Lucene.Net.Search.Highlight
         {
             ISet<string> fieldNames;
 
-            if (fieldName == null)
+            if (fieldName is null)
             {
                 fieldNames = new JCG.HashSet<string>();
                 CollectSpanQueryFields(spanQuery, fieldNames);
@@ -317,7 +317,7 @@ namespace Lucene.Net.Search.Highlight
             {
                 if (FieldNameComparer(queryTerm.Field))
                 {
-                    if (!terms.TryGetValue(queryTerm.Text, out WeightedSpanTerm weightedSpanTerm) || weightedSpanTerm == null)
+                    if (!terms.TryGetValue(queryTerm.Text, out WeightedSpanTerm weightedSpanTerm) || weightedSpanTerm is null)
                     {
                         weightedSpanTerm = new WeightedSpanTerm(spanQuery.Boost, queryTerm.Text);
                         weightedSpanTerm.AddPositionSpans(spanPositions);
@@ -363,14 +363,14 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         protected virtual bool FieldNameComparer(string fieldNameToCheck)
         {
-            bool rv = fieldName == null || fieldName.Equals(fieldNameToCheck, StringComparison.Ordinal)
+            bool rv = fieldName is null || fieldName.Equals(fieldNameToCheck, StringComparison.Ordinal)
                       || fieldNameToCheck.Equals(defaultField, StringComparison.Ordinal);
             return rv;
         }
 
         protected virtual AtomicReaderContext GetLeafContext()
         {
-            if (internalReader == null)
+            if (internalReader is null)
             {
                 if (wrapToCaching && !(tokenStream is CachingTokenFilter))
                 {
@@ -641,7 +641,7 @@ namespace Lucene.Net.Search.Highlight
                     wrapped.TryGetValue(key, out WeightedSpanTerm prev);
                     wrapped[key] = value;
 
-                    if (prev == null) return;
+                    if (prev is null) return;
 
                     WeightedSpanTerm prevTerm = prev;
                     WeightedSpanTerm newTerm = value;

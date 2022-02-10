@@ -205,7 +205,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             IList<string> fieldNames;
             fieldNames = OptionalFields();
             q = OrQuery();
-            { if (true) return (fieldNames == null) ? q : GetFieldsQuery(q, fieldNames); }
+            { if (true) return (fieldNames is null) ? q : GetFieldsQuery(q, fieldNames); }
             throw Error.Create("Missing return statement in function");
         }
 
@@ -227,7 +227,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 // to the colon
                 fieldName = Jj_consume_token(RegexpToken.TERM);
                 Jj_consume_token(RegexpToken.COLON);
-                if (fieldNames == null)
+                if (fieldNames is null)
                 {
                     fieldNames = new JCG.List<string>();
                 }
@@ -258,7 +258,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 }
                 oprt = Jj_consume_token(RegexpToken.OR);
                 /* keep only last used operator */
-                if (queries == null)
+                if (queries is null)
                 {
                     queries = new JCG.List<SrndQuery>();
                     queries.Add(q);
@@ -267,7 +267,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 queries.Add(q);
             }
         label_2:
-            { if (true) return (queries == null) ? q : GetOrQuery(queries, true /* infix */, oprt); }
+            { if (true) return (queries is null) ? q : GetOrQuery(queries, true /* infix */, oprt); }
             throw Error.Create("Missing return statement in function");
         }
 
@@ -291,7 +291,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 }
                 oprt = Jj_consume_token(RegexpToken.AND);
                 /* keep only last used operator */
-                if (queries == null)
+                if (queries is null)
                 {
                     queries = new JCG.List<SrndQuery>();
                     queries.Add(q);
@@ -300,7 +300,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 queries.Add(q);
             }
         label_3:
-            { if (true) return (queries == null) ? q : GetAndQuery(queries, true /* infix */, oprt); }
+            { if (true) return (queries is null) ? q : GetAndQuery(queries, true /* infix */, oprt); }
             throw Error.Create("Missing return statement in function");
         }
 
@@ -324,7 +324,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 }
                 oprt = Jj_consume_token(RegexpToken.NOT);
                 /* keep only last used operator */
-                if (queries == null)
+                if (queries is null)
                 {
                     queries = new JCG.List<SrndQuery>();
                     queries.Add(q);
@@ -333,7 +333,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 queries.Add(q);
             }
         label_4:
-            { if (true) return (queries == null) ? q : GetNotQuery(queries, oprt); }
+            { if (true) return (queries is null) ? q : GetNotQuery(queries, oprt); }
             throw Error.Create("Missing return statement in function");
         }
 
@@ -730,7 +730,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             if (jj_scanpos == jj_lastpos)
             {
                 jj_la--;
-                if (jj_scanpos.Next == null)
+                if (jj_scanpos.Next is null)
                 {
                     jj_lastpos = jj_scanpos = jj_scanpos.Next = TokenSource.GetNextToken();
                 }
@@ -778,7 +778,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
 
         private int Jj_ntk()
         {
-            if ((Jj_nt = Token.Next) == null)
+            if ((Jj_nt = Token.Next) is null)
                 return (jj_ntk = (Token.Next = TokenSource.GetNextToken()).Kind);
             else
                 return (jj_ntk = Jj_nt.Kind);
@@ -909,7 +909,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             JJCalls p = jj_2_rtns[index];
             while (p.gen > jj_gen)
             {
-                if (p.next == null) { p = p.next = new JJCalls(); break; }
+                if (p.next is null) { p = p.next = new JJCalls(); break; }
                 p = p.next;
             }
             p.gen = jj_gen + xla - jj_la; p.first = Token; p.arg = xla;

@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
             this.Parent = parent;
             this.DocBaseInParent = docBaseInParent;
             this.OrdInParent = ordInParent;
-            this.IsTopLevel = parent == null;
+            this.IsTopLevel = parent is null;
         }
 
         /// <summary>

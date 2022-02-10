@@ -186,7 +186,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 line = br.ReadLine();
                 assertNotNull(line);
                 String[] parts = line.Split(WriteLineDocTask.SEP).TrimEnd();
-                int numExpParts = expBody == null ? 2 : 3;
+                int numExpParts = expBody is null ? 2 : 3;
                 assertEquals(numExpParts, parts.Length);
                 assertEquals(expTitle, parts[0]);
                 assertEquals(expDate, parts[1]);

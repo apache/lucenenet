@@ -39,7 +39,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             BoostQueryNode boostNode = (BoostQueryNode)queryNode;
             IQueryNode child = boostNode.Child;
 
-            if (child == null)
+            if (child is null)
             {
                 return null;
             }

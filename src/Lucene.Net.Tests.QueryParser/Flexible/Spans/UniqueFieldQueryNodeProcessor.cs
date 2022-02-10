@@ -46,7 +46,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
 
                 QueryConfigHandler queryConfig = GetQueryConfigHandler();
 
-                if (queryConfig == null)
+                if (queryConfig is null)
                 {
                     throw new ArgumentException(
                         "A config handler is expected by the processor UniqueFieldQueryNodeProcessor!");

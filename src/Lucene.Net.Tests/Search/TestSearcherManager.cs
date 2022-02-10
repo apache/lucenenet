@@ -208,7 +208,7 @@ namespace Lucene.Net.Search
                     // etc.)
                     long token = pastSearchers[Random.Next(pastSearchers.Count)];
                     s = lifetimeMGR.Acquire(token);
-                    if (s == null)
+                    if (s is null)
                     {
                         // Searcher was pruned
                         pastSearchers.Remove(token);
@@ -224,7 +224,7 @@ namespace Lucene.Net.Search
                 UninterruptableMonitor.Exit(pastSearchers);
             }
 
-            if (s == null)
+            if (s is null)
             {
                 s = mgr.Acquire();
                 if (s.IndexReader.NumDocs != 0)

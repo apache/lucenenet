@@ -136,7 +136,7 @@ namespace Lucene.Net.Benchmarks.ByTask
                     String contentSource = config.Get("content.source", null);
                     if (contentSource != null)
                     {
-                        if (Type.GetType(contentSource) == null)
+                        if (Type.GetType(contentSource) is null)
                             throw ClassNotFoundException.Create(contentSource);
                     }
                     config.Set("work.dir", CreateTempDir(LuceneTestCase.TestType.Name).FullName);
@@ -144,7 +144,7 @@ namespace Lucene.Net.Benchmarks.ByTask
                     String dir = config.Get("content.source", null);
                     if (dir != null)
                     {
-                        if (Type.GetType(dir) == null)
+                        if (Type.GetType(dir) is null)
                             throw ClassNotFoundException.Create(dir);
                     }
                     config.Set("directory", typeof(RAMDirectory).AssemblyQualifiedName);
@@ -155,7 +155,7 @@ namespace Lucene.Net.Benchmarks.ByTask
                     string queryMaker = config.Get("query.maker", null);
                     if (queryMaker != null)
                     {
-                        if (Type.GetType(queryMaker) == null)
+                        if (Type.GetType(queryMaker) is null)
                             throw ClassNotFoundException.Create(queryMaker);
 
                         config.Set("query.maker", typeof(MockQueryMaker).AssemblyQualifiedName);

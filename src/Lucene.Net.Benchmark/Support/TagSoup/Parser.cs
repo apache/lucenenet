@@ -361,7 +361,7 @@ namespace TagSoup
         {
             if (name.Equals(LEXICAL_HANDLER_PROPERTY, StringComparison.Ordinal))
             {
-                if (value == null)
+                if (value is null)
                 {
                     theLexicalHandler = this;
                 }
@@ -465,15 +465,15 @@ namespace TagSoup
         // Sets up instance variables that haven't been set by setFeature
         private void Setup()
         {
-            if (theSchema == null)
+            if (theSchema is null)
             {
                 theSchema = new HTMLSchema();
             }
-            if (theScanner == null)
+            if (theScanner is null)
             {
                 theScanner = new HTMLScanner();
             }
-            if (theAutoDetector == null)
+            if (theAutoDetector is null)
             {
                 theAutoDetector = new AutoDetectorDelegate(stream => new StreamReader(stream));
             }
@@ -501,9 +501,9 @@ namespace TagSoup
             Encoding encoding = s.Encoding;
             string publicid = s.PublicId;
             string systemid = s.SystemId;
-            if (r == null)
+            if (r is null)
             {
-                if (i == null)
+                if (i is null)
                 {
                     i = GetInputStream(publicid, systemid);
                 }
@@ -511,7 +511,7 @@ namespace TagSoup
                 {
                     i = new BufferedStream(i);
                 }
-                if (encoding == null)
+                if (encoding is null)
                 {
                     r = theAutoDetector.AutoDetectingReader(i);
                 }
@@ -563,7 +563,7 @@ namespace TagSoup
 
         public virtual void Adup(char[] buff, int offset, int length)
         {
-            if (theNewElement == null || theAttributeName == null)
+            if (theNewElement is null || theAttributeName is null)
             {
                 return;
             }
@@ -573,7 +573,7 @@ namespace TagSoup
 
         public virtual void Aname(char[] buff, int offset, int length)
         {
-            if (theNewElement == null)
+            if (theNewElement is null)
             {
                 return;
             }
@@ -585,7 +585,7 @@ namespace TagSoup
 
         public virtual void Aval(char[] buff, int offset, int length)
         {
-            if (theNewElement == null || theAttributeName == null)
+            if (theNewElement is null || theAttributeName is null)
             {
                 return;
             }
@@ -777,7 +777,7 @@ namespace TagSoup
                 name = MakeName(buff, offset, length);
                 //			System.err.println("got etag [" + name + "]");
                 ElementType type = theSchema.GetElementType(name);
-                if (type == null)
+                if (type is null)
                 {
                     return; // mysterious end-tag
                 }
@@ -803,11 +803,11 @@ namespace TagSoup
                 }
             }
 
-            if (sp == null)
+            if (sp is null)
             {
                 return; // Ignore unknown etags
             }
-            if (sp.Next == null || sp.Next.Next == null)
+            if (sp.Next is null || sp.Next.Next is null)
             {
                 return;
             }
@@ -840,7 +840,7 @@ namespace TagSoup
         /// <param name="e"></param>
         private void Restart(Element e)
         {
-            while (theSaved != null && theStack.CanContain(theSaved) && (e == null || theSaved.CanContain(e)))
+            while (theSaved != null && theStack.CanContain(theSaved) && (e is null || theSaved.CanContain(e)))
             {
                 Element next = theSaved.Next;
                 Push(theSaved);
@@ -853,7 +853,7 @@ namespace TagSoup
         /// </summary>
         private void Pop()
         {
-            if (theStack == null)
+            if (theStack is null)
             {
                 return; // empty stack
             }
@@ -1062,7 +1062,7 @@ namespace TagSoup
         // If the string is quoted, trim the quotes.
         private static string TrimQuotes(string value)
         {
-            if (value == null)
+            if (value is null)
             {
                 return null;
             }
@@ -1149,7 +1149,7 @@ namespace TagSoup
         /// <returns></returns>
         private string CleanPublicId(string src)
         {
-            if (src == null)
+            if (src is null)
             {
                 return null;
             }
@@ -1186,12 +1186,12 @@ namespace TagSoup
                 return;
             }
             string name = MakeName(buff, offset, length);
-            if (name == null)
+            if (name is null)
             {
                 return;
             }
             ElementType type = theSchema.GetElementType(name);
-            if (type == null)
+            if (type is null)
             {
                 // Suppress unknown elements if ignore-bogons is on
                 if (ignoreBogons)
@@ -1258,7 +1258,7 @@ namespace TagSoup
 
         public virtual void PI(char[] buff, int offset, int length)
         {
-            if (theNewElement != null || thePITarget == null)
+            if (theNewElement != null || thePITarget is null)
             {
                 return;
             }
@@ -1278,7 +1278,7 @@ namespace TagSoup
         public virtual void STagC(char[] buff, int offset, int length)
         {
             //		System.err.println("%% Start-tag");
-            if (theNewElement == null)
+            if (theNewElement is null)
             {
                 return;
             }
@@ -1293,7 +1293,7 @@ namespace TagSoup
         public virtual void STagE(char[] buff, int offset, int length)
         {
             //		System.err.println("%% Empty-tag");
-            if (theNewElement == null)
+            if (theNewElement is null)
             {
                 return;
             }
@@ -1330,7 +1330,7 @@ namespace TagSoup
                     break;
                 }
                 ElementType parentType = e.Parent;
-                if (parentType == null)
+                if (parentType is null)
                 {
                     break;
                 }
@@ -1339,13 +1339,13 @@ namespace TagSoup
                 parent.Next = e;
                 e = parent;
             }
-            if (sp == null)
+            if (sp is null)
             {
                 return; // don't know what to do
             }
             while (theStack != sp)
             {
-                if (theStack == null || theStack.Next == null || theStack.Next.Next == null)
+                if (theStack is null || theStack.Next is null || theStack.Next.Next is null)
                 {
                     break;
                 }

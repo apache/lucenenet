@@ -42,7 +42,7 @@ namespace Lucene.Net.Expressions
         {
             int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + ((source == null) ? 0 : source.GetHashCode());
+            result = prime * result + ((source is null) ? 0 : source.GetHashCode());
             return result;
         }
 
@@ -61,7 +61,7 @@ namespace Lucene.Net.Expressions
                 return false;
             }
             ExpressionSortField other = (ExpressionSortField)obj;
-            if (source == null)
+            if (source is null)
             {
                 if (other.source != null)
                 {

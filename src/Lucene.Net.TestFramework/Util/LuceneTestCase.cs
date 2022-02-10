@@ -1575,7 +1575,7 @@ namespace Lucene.Net.Util
             // We need to do an explicit check to determine if this type
             // is not a subclass of FSDirectory.
             Type clazz = CommandLineUtil.LoadFSDirectoryClass(fsdirClass);
-            if (clazz == null || !(typeof(FSDirectory).IsAssignableFrom(clazz)))
+            if (clazz is null || !(typeof(FSDirectory).IsAssignableFrom(clazz)))
             {
                 // TEST_DIRECTORY is not a sub-class of FSDirectory, so draw one at random
                 fsdirClass = RandomPicks.RandomFrom(Random, FS_DIRECTORIES);
@@ -1785,7 +1785,7 @@ namespace Lucene.Net.Util
             }
 
             Type clazz = CommandLineUtil.LoadDirectoryClass(clazzName);
-            if (clazz == null)
+            if (clazz is null)
                 throw IllegalStateException.Create($"Type '{clazzName}' could not be instantiated."); // LUCENENET: We don't get an exception in this case, so throwing one for compatibility
             // If it is a FSDirectory type, try its ctor(File)
             if (typeof(FSDirectory).IsAssignableFrom(clazz))
@@ -2167,7 +2167,7 @@ namespace Lucene.Net.Util
         {
             // Fields could be null if there are no postings,
             // but then it must be null for both
-            if (leftFields == null || rightFields == null)
+            if (leftFields is null || rightFields is null)
             {
                 Assert.IsNull(leftFields, info);
                 Assert.IsNull(rightFields, info);
@@ -2203,7 +2203,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual void AssertTermsEquals(string info, IndexReader leftReader, Terms leftTerms, Terms rightTerms, bool deep)
         {
-            if (leftTerms == null || rightTerms == null)
+            if (leftTerms is null || rightTerms is null)
             {
                 Assert.IsNull(leftTerms, info);
                 Assert.IsNull(rightTerms, info);
@@ -2336,7 +2336,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual void AssertDocsAndPositionsEnumEquals(string info, DocsAndPositionsEnum leftDocs, DocsAndPositionsEnum rightDocs)
         {
-            if (leftDocs == null || rightDocs == null)
+            if (leftDocs is null || rightDocs is null)
             {
                 Assert.IsNull(leftDocs);
                 Assert.IsNull(rightDocs);
@@ -2366,7 +2366,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual void AssertDocsEnumEquals(string info, DocsEnum leftDocs, DocsEnum rightDocs, bool hasFreqs)
         {
-            if (leftDocs == null)
+            if (leftDocs is null)
             {
                 Assert.IsNull(rightDocs);
                 return;
@@ -2390,7 +2390,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual void AssertDocsSkippingEquals(string info, IndexReader leftReader, int docFreq, DocsEnum leftDocs, DocsEnum rightDocs, bool hasFreqs)
         {
-            if (leftDocs == null)
+            if (leftDocs is null)
             {
                 Assert.IsNull(rightDocs);
                 return;
@@ -2431,7 +2431,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual void AssertPositionsSkippingEquals(string info, IndexReader leftReader, int docFreq, DocsAndPositionsEnum leftDocs, DocsAndPositionsEnum rightDocs)
         {
-            if (leftDocs == null || rightDocs == null)
+            if (leftDocs is null || rightDocs is null)
             {
                 Assert.IsNull(leftDocs);
                 Assert.IsNull(rightDocs);
@@ -2593,7 +2593,7 @@ namespace Lucene.Net.Util
             Fields rightFields = MultiFields.GetFields(rightReader);
             // Fields could be null if there are no postings,
             // but then it must be null for both
-            if (leftFields == null || rightFields == null)
+            if (leftFields is null || rightFields is null)
             {
                 Assert.IsNull(leftFields, info);
                 Assert.IsNull(rightFields, info);
@@ -2840,7 +2840,7 @@ namespace Lucene.Net.Util
             IBits leftBits = MultiFields.GetLiveDocs(leftReader);
             IBits rightBits = MultiFields.GetLiveDocs(rightReader);
 
-            if (leftBits == null || rightBits == null)
+            if (leftBits is null || rightBits is null)
             {
                 Assert.IsNull(leftBits, info);
                 Assert.IsNull(rightBits, info);
@@ -2984,7 +2984,7 @@ namespace Lucene.Net.Util
             //    }
             //    //f = new FileInfo(Path.Combine(System.IO.Path.GetTempPath(), prefix + "-" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", attempt) + suffix));
             //    f = FileSupport.CreateTempFile(prefix, suffix, new DirectoryInfo(System.IO.Path.GetTempPath()));
-            //} while (f.Create() == null);
+            //} while (f.Create() is null);
 
             RegisterToRemoveAfterSuite(f);
             return f;

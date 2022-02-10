@@ -233,7 +233,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override object Clone()
         {
-            if (_input == null)
+            if (_input is null)
             {
                 throw AlreadyClosedException.Create(this.GetType().FullName, "this TermVectorsReader is disposed.");
             }
@@ -426,7 +426,7 @@ namespace Lucene.Net.Codecs.SimpleText
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
                 var postings = _current.Value;
-                if (postings.positions == null && postings.startOffsets == null)
+                if (postings.positions is null && postings.startOffsets is null)
                     return null;
 
                 // TODO: reuse
@@ -510,7 +510,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override int NextDoc()
             {
-                if (!_didNext && (_liveDocs == null || _liveDocs.Get(0)))
+                if (!_didNext && (_liveDocs is null || _liveDocs.Get(0)))
                 {
                     _didNext = true;
                     return (_doc = 0);
@@ -572,7 +572,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 get
                 {
-                    if (_startOffsets == null)
+                    if (_startOffsets is null)
                     {
                         return -1;
                     }
@@ -585,7 +585,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 get
                 {
-                    if (_endOffsets == null)
+                    if (_endOffsets is null)
                     {
                         return -1;
                     }

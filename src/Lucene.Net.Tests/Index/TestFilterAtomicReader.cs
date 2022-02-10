@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
 
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
                 {
-                    return new TestPositions(base.DocsAndPositions(liveDocs, reuse == null ? null : ((FilterDocsAndPositionsEnum)reuse).m_input, flags));
+                    return new TestPositions(base.DocsAndPositions(liveDocs, reuse is null ? null : ((FilterDocsAndPositionsEnum)reuse).m_input, flags));
                 }
             }
 

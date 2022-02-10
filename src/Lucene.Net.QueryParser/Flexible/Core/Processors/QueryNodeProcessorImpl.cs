@@ -118,7 +118,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
                     {
                         var child2 = ProcessIteration(child);
 
-                        if (child2 == null)
+                        if (child2 is null)
                         {
                             // LUCENENET: Changed from NullPointerException to InvalidOperationException (which isn't caught anywhere outside of tests)
                             throw IllegalStateException.Create($"{this.GetType().Name}.PostProcessNode() must not return 'null'.");
@@ -153,7 +153,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
                 }
             }
 
-            if (list == null)
+            if (list is null)
             {
                 list = new ChildrenList();
                 this.childrenListPool.Add(list);

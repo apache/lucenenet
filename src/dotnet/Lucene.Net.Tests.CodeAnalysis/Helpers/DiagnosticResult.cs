@@ -62,7 +62,7 @@ namespace TestHelper
         {
             get
             {
-                if (this.locations == null)
+                if (this.locations is null)
                 {
                     this.locations = Array.Empty<DiagnosticResultLocation>();
                 }

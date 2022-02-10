@@ -329,7 +329,7 @@ namespace Lucene.Net.Search
                 lastDoc[0] = doc;
                 try
                 {
-                    if (scorer == null)
+                    if (scorer is null)
                     {
                         Weight w = s.CreateNormalizedWeight(q);
                         AtomicReaderContext context = readerContextArray[leafPtr];

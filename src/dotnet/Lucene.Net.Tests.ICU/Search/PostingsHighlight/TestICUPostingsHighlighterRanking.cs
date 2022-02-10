@@ -242,7 +242,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 {
                     return true;
                 }
-                if (obj == null)
+                if (obj is null)
                 {
                     return false;
                 }

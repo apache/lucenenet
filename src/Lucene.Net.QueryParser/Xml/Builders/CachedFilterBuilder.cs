@@ -62,7 +62,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             {
                 XmlElement childElement = DOMUtils.GetFirstChildOrFail(e);
 
-                if (filterCache == null)
+                if (filterCache is null)
                 {
                     filterCache = new LurchTable<object, Filter>(LurchTableOrder.Access, cacheSize);
                 }

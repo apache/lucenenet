@@ -193,8 +193,8 @@ namespace Lucene.Net.Search
         public static string Hits2str(ScoreDoc[] hits1, ScoreDoc[] hits2, int start, int end)
         {
             StringBuilder sb = new StringBuilder();
-            int len1 = hits1 == null ? 0 : hits1.Length;
-            int len2 = hits2 == null ? 0 : hits2.Length;
+            int len1 = hits1 is null ? 0 : hits1.Length;
+            int len2 = hits2 is null ? 0 : hits2.Length;
             if (end <= 0)
             {
                 end = Math.Max(len1, len2);

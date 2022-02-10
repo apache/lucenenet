@@ -666,7 +666,7 @@ namespace Lucene.Net.Facet
                 while (count < numDrillDown)
                 {
                     int dim = Random.Next(numDims);
-                    if (drillDowns[dim] == null)
+                    if (drillDowns[dim] is null)
                     {
                         if (Random.NextBoolean())
                         {
@@ -713,7 +713,7 @@ namespace Lucene.Net.Facet
                 }
 
                 Query baseQuery;
-                if (contentToken == null)
+                if (contentToken is null)
                 {
                     baseQuery = new MatchAllDocsQuery();
                 }
@@ -824,7 +824,7 @@ namespace Lucene.Net.Facet
                 for (int docID = 0; docID < maxDoc; docID++)
                 {
                     // Keeps only the even ids:
-                    if ((acceptDocs == null || acceptDocs.Get(docID)) && (Convert.ToInt32(context.Reader.Document(docID).Get("id")) & 1) == 0)
+                    if ((acceptDocs is null || acceptDocs.Get(docID)) && (Convert.ToInt32(context.Reader.Document(docID).Get("id")) & 1) == 0)
                     {
                         bits.Set(docID);
                     }
@@ -1062,7 +1062,7 @@ namespace Lucene.Net.Facet
                 {
                     continue;
                 }
-                if (contentToken == null || doc.contentToken.Equals(contentToken, StringComparison.Ordinal))
+                if (contentToken is null || doc.contentToken.Equals(contentToken, StringComparison.Ordinal))
                 {
                     int failDim = -1;
                     for (int dim = 0; dim < numDims; dim++)

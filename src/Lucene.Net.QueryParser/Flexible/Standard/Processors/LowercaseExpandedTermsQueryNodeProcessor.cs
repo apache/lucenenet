@@ -55,7 +55,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
             CultureInfo locale = GetQueryConfigHandler().Get(ConfigurationKeys.LOCALE);
-            if (locale == null)
+            if (locale is null)
             {
                 locale = CultureInfo.CurrentCulture; //Locale.getDefault();
             }

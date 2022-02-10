@@ -129,7 +129,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
             while (true)
             {
                 string line = reader.ReadLine();
-                if (line == null)
+                if (line is null)
                 {
                     return null;
                 }

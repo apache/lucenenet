@@ -162,7 +162,7 @@ namespace Lucene.Net.Replicator
             try
             {
                 IndexCommit commit = GetLastCommit(directory);
-                // commit == null means weird IO errors occurred, ignore them
+                // commit is null means weird IO errors occurred, ignore them
                 // if there were any IO errors reading the expected commit point (i.e.
                 // segments files mismatch), then ignore that commit either.
 

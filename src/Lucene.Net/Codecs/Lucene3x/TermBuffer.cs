@@ -100,7 +100,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Set(Term term)
         {
-            if (term == null)
+            if (term is null)
             {
                 Reset();
                 return;
@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Term ToTerm()
         {
-            if (field == null) // unset
+            if (field is null) // unset
             {
                 return null;
             }

@@ -503,7 +503,7 @@ namespace Lucene.Net.Codecs.Memory
                 try
                 {
                     var o = fstEnum.SeekCeil(key);
-                    if (o == null)
+                    if (o is null)
                     {
                         return -ValueCount - 1;
                     }
@@ -642,7 +642,7 @@ namespace Lucene.Net.Codecs.Memory
                 try
                 {
                     var o = fstEnum.SeekCeil(key);
-                    if (o == null)
+                    if (o is null)
                     {
                         return -ValueCount - 1;
                     }
@@ -795,7 +795,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override SeekStatus SeekCeil(BytesRef text)
             {
-                if (input.SeekCeil(text) == null)
+                if (input.SeekCeil(text) is null)
                 {
                     return SeekStatus.END;
                 }

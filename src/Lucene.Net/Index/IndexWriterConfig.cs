@@ -206,7 +206,7 @@ namespace Lucene.Net.Index
             get => openMode;
             set =>
                 // LUCENENET specific - making non-nullable, so we don't need to worry about this.
-                //if (value == null)
+                //if (value is null)
                 //{
                 //    throw new ArgumentException("openMode must not be null");
                 //}

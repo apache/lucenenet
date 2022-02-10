@@ -52,7 +52,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         public virtual QueryParser GetParser(Analyzer a)
         {
-            if (a == null) a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
+            if (a is null) a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, DefaultField, a);
             qp.DefaultOperator = (QueryParserBase.OR_OPERATOR);
             return qp;

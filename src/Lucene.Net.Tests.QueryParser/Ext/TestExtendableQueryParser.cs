@@ -39,9 +39,9 @@ namespace Lucene.Net.QueryParsers.Ext
 
         public Classic.QueryParser GetParser(Analyzer a, Extensions extensions)
         {
-            if (a == null)
+            if (a is null)
                 a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
-            Classic.QueryParser qp = extensions == null ? new ExtendableQueryParser(
+            Classic.QueryParser qp = extensions is null ? new ExtendableQueryParser(
                 TEST_VERSION_CURRENT, DefaultField, a) : new ExtendableQueryParser(
                 TEST_VERSION_CURRENT, DefaultField, a, extensions);
             qp.DefaultOperator = QueryParserBase.OR_OPERATOR;

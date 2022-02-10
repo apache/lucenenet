@@ -115,7 +115,7 @@ namespace Lucene.Net.Tests.Queries
 
                 public override Explanation CustomExplain(int doc, Explanation subQueryExpl, Explanation valSrcExpl)
                 {
-                    float valSrcScore = valSrcExpl == null ? 0 : valSrcExpl.Value;
+                    float valSrcScore = valSrcExpl is null ? 0 : valSrcExpl.Value;
                     Explanation exp = new Explanation(valSrcScore + subQueryExpl.Value, "custom score: sum of:");
                     exp.AddDetail(subQueryExpl);
                     if (valSrcExpl != null)

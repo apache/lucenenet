@@ -152,7 +152,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
                 for (int i = 0; i < remaining; i++)
                 {
                     int ch = chars[startOffset + i];
-                    if (fst.FindTargetArc(ch, arc, arc, i == 0, fstReader) == null)
+                    if (fst.FindTargetArc(ch, arc, arc, i == 0, fstReader) is null)
                     {
                         break; // continue to next position
                     }
@@ -250,7 +250,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
         private string[] GetAllFeaturesArray(int wordId)
         {
             string allFeatures = data[wordId - CUSTOM_DICTIONARY_WORD_ID_OFFSET];
-            if (allFeatures == null)
+            if (allFeatures is null)
             {
                 return null;
             }
@@ -261,7 +261,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
         private string GetFeature(int wordId, params int[] fields)
         {
             string[] allFeatures = GetAllFeaturesArray(wordId);
-            if (allFeatures == null)
+            if (allFeatures is null)
             {
                 return null;
             }

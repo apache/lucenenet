@@ -70,7 +70,7 @@ namespace Lucene.Net.Index.Sorter
 
             public override IList<AtomicReader> GetMergeReaders()
             {
-                if (unsortedReaders == null)
+                if (unsortedReaders is null)
                 {
                     unsortedReaders = base.GetMergeReaders();
                     AtomicReader atomicView;
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index.Sorter
                     sortedView = SortingAtomicReader.Wrap(atomicView, docMap);
                 }
                 // a null doc map means that the readers are already sorted
-                return docMap == null ? unsortedReaders : new JCG.List<AtomicReader>(new AtomicReader[] { sortedView });
+                return docMap is null ? unsortedReaders : new JCG.List<AtomicReader>(new AtomicReader[] { sortedView });
             }
 
             public override SegmentCommitInfo Info
@@ -127,11 +127,11 @@ namespace Lucene.Net.Index.Sorter
 
             public override MergePolicy.DocMap GetDocMap(MergeState mergeState)
             {
-                if (unsortedReaders == null)
+                if (unsortedReaders is null)
                 {
                     throw IllegalStateException.Create();
                 }
-                if (docMap == null)
+                if (docMap is null)
                 {
                     return base.GetDocMap(mergeState);
                 }
@@ -205,7 +205,7 @@ namespace Lucene.Net.Index.Sorter
 
         private MergeSpecification SortedMergeSpecification(MergeSpecification specification)
         {
-            if (specification == null)
+            if (specification is null)
             {
                 return null;
             }

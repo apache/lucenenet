@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis
 
             public sealed override bool IncrementToken()
             {
-                if (tokens == null)
+                if (tokens is null)
                 {
                     FillTokens();
                 }

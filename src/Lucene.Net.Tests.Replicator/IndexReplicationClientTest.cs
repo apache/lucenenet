@@ -58,7 +58,7 @@ namespace Lucene.Net.Replicator
 
             public void Call()
             {
-                if (reader == null)
+                if (reader is null)
                 {
                     reader = DirectoryReader.Open(indexDir);
                     lastGeneration = reader.IndexCommit.Generation;

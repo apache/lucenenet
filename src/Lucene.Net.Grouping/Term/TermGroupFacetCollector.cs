@@ -148,13 +148,13 @@ namespace Lucene.Net.Search.Grouping.Terms
                 segmentGroupedFacetHits.Clear();
                 foreach (GroupedFacetHit groupedFacetHit in groupedFacetHits)
                 {
-                    int facetOrd = groupedFacetHit.facetValue == null ? -1 : facetFieldTermsIndex.LookupTerm(groupedFacetHit.facetValue);
+                    int facetOrd = groupedFacetHit.facetValue is null ? -1 : facetFieldTermsIndex.LookupTerm(groupedFacetHit.facetValue);
                     if (groupedFacetHit.facetValue != null && facetOrd < 0)
                     {
                         continue;
                     }
 
-                    int groupOrd = groupedFacetHit.groupValue == null ? -1 : groupFieldTermsIndex.LookupTerm(groupedFacetHit.groupValue);
+                    int groupOrd = groupedFacetHit.groupValue is null ? -1 : groupFieldTermsIndex.LookupTerm(groupedFacetHit.groupValue);
                     if (groupedFacetHit.groupValue != null && groupOrd < 0)
                     {
                         continue;
@@ -343,7 +343,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                 segmentGroupedFacetHits.Clear();
                 foreach (GroupedFacetHit groupedFacetHit in groupedFacetHits)
                 {
-                    int groupOrd = groupedFacetHit.groupValue == null ? -1 : groupFieldTermsIndex.LookupTerm(groupedFacetHit.groupValue);
+                    int groupOrd = groupedFacetHit.groupValue is null ? -1 : groupFieldTermsIndex.LookupTerm(groupedFacetHit.groupValue);
                     if (groupedFacetHit.groupValue != null && groupOrd < 0)
                     {
                         continue;
@@ -352,7 +352,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                     int facetOrd;
                     if (groupedFacetHit.facetValue != null)
                     {
-                        if (facetOrdTermsEnum == null || !facetOrdTermsEnum.SeekExact(groupedFacetHit.facetValue))
+                        if (facetOrdTermsEnum is null || !facetOrdTermsEnum.SeekExact(groupedFacetHit.facetValue))
                         {
                             continue;
                         }

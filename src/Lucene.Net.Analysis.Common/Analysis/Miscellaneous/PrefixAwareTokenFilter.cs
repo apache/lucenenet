@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             if (!prefixExhausted)
             {
                 nextToken = GetNextPrefixInputToken(reusableToken);
-                if (nextToken == null)
+                if (nextToken is null)
                 {
                     prefixExhausted = true;
                 }
@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
 
             nextToken = GetNextSuffixInputToken(reusableToken);
-            if (nextToken == null)
+            if (nextToken is null)
             {
                 return false;
             }
@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         private void SetCurrentToken(Token token)
         {
-            if (token == null)
+            if (token is null)
             {
                 return;
             }

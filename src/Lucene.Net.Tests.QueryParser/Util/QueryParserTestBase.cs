@@ -223,7 +223,7 @@ namespace Lucene.Net.QueryParsers.Util
 
         public Query GetQueryDOA(string query, Analyzer a)
         {
-            if (a == null)
+            if (a is null)
                 a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             ICommonQueryParserConfiguration qp = GetParserConfig(a);
             SetDefaultOperatorAND(qp);

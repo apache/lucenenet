@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
             /// </summary>
             public virtual IList<AtomicReader> GetMergeReaders()
             {
-                if (this.readers == null)
+                if (this.readers is null)
                 {
                     throw IllegalStateException.Create("IndexWriter has not initialized readers from the segment infos yet");
                 }

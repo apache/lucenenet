@@ -118,7 +118,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             get
             {
-                if (worldCell == null)
+                if (worldCell is null)
                 {
                     worldCell = GetCell(string.Empty);
                 }
@@ -138,7 +138,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         public Cell GetCell(byte[] bytes, int offset, int len, Cell target)
         {
-            if (target == null)
+            if (target is null)
             {
                 return GetCell(bytes, offset, len);
             }

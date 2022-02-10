@@ -402,7 +402,7 @@ namespace Lucene.Net.Search
             return (StringHelper.Equals(other.field, this.field) 
                 && other.type == this.type 
                 && other.reverse == this.reverse 
-                && (other.comparerSource == null ? this.comparerSource == null : other.comparerSource.Equals(this.comparerSource)));
+                && (other.comparerSource is null ? this.comparerSource is null : other.comparerSource.Equals(this.comparerSource)));
         }
 
         /// <summary>

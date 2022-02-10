@@ -142,7 +142,7 @@ namespace Lucene.Net.Util
       {
         if (classEnvRule != null)
         {
-          Console.Error.WriteLine("NOTE: test params are: codec=" + classEnvRule.codec + ", sim=" + classEnvRule.similarity + ", locale=" + classEnvRule.locale + ", timezone=" + (classEnvRule.timeZone == null ? "(null)" : classEnvRule.timeZone.ID));
+          Console.Error.WriteLine("NOTE: test params are: codec=" + classEnvRule.codec + ", sim=" + classEnvRule.similarity + ", locale=" + classEnvRule.locale + ", timezone=" + (classEnvRule.timeZone is null ? "(null)" : classEnvRule.timeZone.ID));
         }
         Console.Error.WriteLine("NOTE: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System.getProperty("os.arch") + "/" + System.getProperty("java.vendor") + " " + System.getProperty("java.version") + " " + (Constants.JRE_IS_64BIT ? "(64-bit)" : "(32-bit)") + "/" + "cpus=" + Runtime.Runtime.availableProcessors() + "," + "threads=" + Thread.activeCount() + "," + "free=" + Runtime.Runtime.freeMemory() + "," + "total=" + Runtime.Runtime.totalMemory());
         Console.Error.WriteLine("NOTE: All tests run in this JVM: " + Arrays.ToString(TestClassesRun.ToArray()));
@@ -228,7 +228,7 @@ namespace Lucene.Net.Util
       /// </summary>
       internal static void AddVmOpt(StringBuilder b, string key, object value)
       {
-        if (value == null)
+        if (value is null)
         {
             return;
         }

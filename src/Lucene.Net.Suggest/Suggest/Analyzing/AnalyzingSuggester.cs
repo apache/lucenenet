@@ -241,7 +241,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Returns byte size of the underlying FST. </summary>
         public override long GetSizeInBytes()
         {
-            return fst == null ? 0 : fst.GetSizeInBytes();
+            return fst is null ? 0 : fst.GetSizeInBytes();
         }
 
         private static void CopyDestTransitions(State from, State to, IList<Transition> transitions) // LUCENENET: CA1822: Mark members as static
@@ -552,7 +552,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         surface.Length = scratch.Length - surface.Offset;
                     }
 
-                    if (previousAnalyzed == null)
+                    if (previousAnalyzed is null)
                     {
                         previousAnalyzed = new BytesRef();
                         previousAnalyzed.CopyBytes(analyzed);
@@ -636,7 +636,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public override bool Store(DataOutput output)
         {
             output.WriteVInt64(count);
-            if (fst == null)
+            if (fst is null)
             {
                 return false;
             }
@@ -730,7 +730,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 throw new ArgumentException("this suggester doesn't support contexts");
             }
-            if (fst == null)
+            if (fst is null)
             {
                 return Collections.EmptyList<LookupResult>();
             }

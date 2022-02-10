@@ -410,7 +410,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public bool IsValid()
         {
-            if (Chars == null)
+            if (Chars is null)
             {
                 throw IllegalStateException.Create("chars is null");
             }

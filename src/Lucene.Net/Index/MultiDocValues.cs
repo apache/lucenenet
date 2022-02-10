@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
                 return leaves[0].AtomicReader.GetNormValues(field);
             }
             FieldInfo fi = MultiFields.GetMergedFieldInfos(r).FieldInfo(field);
-            if (fi == null || fi.HasNorms == false)
+            if (fi is null || fi.HasNorms == false)
             {
                 return null;
             }
@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
             {
                 AtomicReaderContext context = leaves[i];
                 NumericDocValues v = context.AtomicReader.GetNormValues(field);
-                if (v == null)
+                if (v is null)
                 {
                     v = DocValues.EMPTY_NUMERIC;
                 }
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
             {
                 AtomicReaderContext context = leaves[i];
                 NumericDocValues v = context.AtomicReader.GetNumericDocValues(field);
-                if (v == null)
+                if (v is null)
                 {
                     v = DocValues.EMPTY_NUMERIC;
                 }
@@ -212,7 +212,7 @@ namespace Lucene.Net.Index
             {
                 AtomicReaderContext context = leaves[i];
                 IBits v = context.AtomicReader.GetDocsWithField(field);
-                if (v == null)
+                if (v is null)
                 {
                     v = new Lucene.Net.Util.Bits.MatchNoBits(context.Reader.MaxDoc);
                     anyMissing = true;
@@ -272,7 +272,7 @@ namespace Lucene.Net.Index
             {
                 AtomicReaderContext context = leaves[i];
                 BinaryDocValues v = context.AtomicReader.GetBinaryDocValues(field);
-                if (v == null)
+                if (v is null)
                 {
                     v = DocValues.EMPTY_BINARY;
                 }
@@ -341,7 +341,7 @@ namespace Lucene.Net.Index
             {
                 AtomicReaderContext context = leaves[i];
                 SortedDocValues v = context.AtomicReader.GetSortedDocValues(field);
-                if (v == null)
+                if (v is null)
                 {
                     v = DocValues.EMPTY_SORTED;
                 }
@@ -398,7 +398,7 @@ namespace Lucene.Net.Index
             {
                 AtomicReaderContext context = leaves[i];
                 SortedSetDocValues v = context.AtomicReader.GetSortedSetDocValues(field);
-                if (v == null)
+                if (v is null)
                 {
                     v = DocValues.EMPTY_SORTED_SET;
                 }

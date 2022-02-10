@@ -621,13 +621,13 @@ namespace Lucene.Net.Index
             IBits liveDocs2 = MultiFields.GetLiveDocs(index2);
             for (int i = 0; i < index1.MaxDoc; i++)
             {
-                Assert.AreEqual(liveDocs1 == null || !liveDocs1.Get(i), liveDocs2 == null || !liveDocs2.Get(i), "Doc " + i + " only deleted in one index.");
+                Assert.AreEqual(liveDocs1 is null || !liveDocs1.Get(i), liveDocs2 is null || !liveDocs2.Get(i), "Doc " + i + " only deleted in one index.");
             }
 
             // check stored fields
             for (int i = 0; i < index1.MaxDoc; i++)
             {
-                if (liveDocs1 == null || liveDocs1.Get(i))
+                if (liveDocs1 is null || liveDocs1.Get(i))
                 {
                     Document doc1 = index1.Document(i);
                     Document doc2 = index2.Document(i);
@@ -657,7 +657,7 @@ namespace Lucene.Net.Index
                 fenum2.MoveNext();
                 Assert.AreEqual(field1, fenum2.Current, "Different fields");
                 Terms terms1 = fields1.GetTerms(field1);
-                if (terms1 == null)
+                if (terms1 is null)
                 {
                     Assert.IsNull(fields2.GetTerms(field1));
                     continue;
