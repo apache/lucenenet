@@ -5,6 +5,7 @@ using Spatial4n.Shapes;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Util
 {
@@ -45,13 +46,13 @@ namespace Lucene.Net.Spatial.Util
         private readonly ConditionalWeakTable<IndexReader, Lazy<ShapeFieldCache<T>>> sidx =
             new ConditionalWeakTable<IndexReader, Lazy<ShapeFieldCache<T>>>();
 
-        protected internal readonly int m_defaultSize;
-        protected internal readonly string m_shapeField;
+        protected readonly int m_defaultSize;
+        protected readonly string m_shapeField;
 
         protected ShapeFieldCacheProvider(string shapeField, int defaultSize) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             // it may be a List<T> or T
-            this.m_shapeField = shapeField;
+            this.m_shapeField = shapeField ?? throw new ArgumentNullException(nameof(shapeField)); // LUCENENET specific - added guard clause
             this.m_defaultSize = defaultSize;
         }
 
@@ -68,9 +69,9 @@ namespace Lucene.Net.Spatial.Util
                 log.Fine("Building Cache [" + reader.MaxDoc() + "]");*/
                 ShapeFieldCache<T> idx = new ShapeFieldCache<T>(key.MaxDoc, m_defaultSize);
                 int count = 0;
-                DocsEnum docs = null;
+                DocsEnum? docs = null;
                 Terms terms = ((AtomicReader)key).GetTerms(m_shapeField);
-                TermsEnum te = null;
+                TermsEnum? te = null;
                 if (terms != null)
                 {
                     te = terms.GetEnumerator(te);
