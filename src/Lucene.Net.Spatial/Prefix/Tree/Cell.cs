@@ -69,15 +69,23 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// </remarks>
         protected bool m_leaf;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="Cell"/> for the
+        /// <paramref name="spatialPrefixTree"/> with the specified <paramref name="token"/>.
+        /// </summary>
+        /// <param name="spatialPrefixTree">The <see cref="SpatialPrefixTree"/> this instance belongs to.</param>
+        /// <param name="token">The string representation of this <see cref="Cell"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="spatialPrefixTree"/> or <paramref name="token"/> is <c>null</c>.</exception>
         protected Cell(SpatialPrefixTree spatialPrefixTree, string token)
         {
             // LUCENENET specific - set the outer instance here
             // because overrides of Shape may require it
-            this.m_spatialPrefixTree = spatialPrefixTree;
+            // LUCENENET specific - added guard clauses
+            this.m_spatialPrefixTree = spatialPrefixTree ?? throw new ArgumentNullException(nameof(spatialPrefixTree));
 
             //NOTE: must sort before letters & numbers
             //this is the only part of equality
-            this.token = token;
+            this.token = token ?? throw new ArgumentNullException(nameof(token));
             if (token.Length > 0 && token[token.Length - 1] == (char)LEAF_BYTE)
             {
                 this.token = token.Substring(0, (token.Length - 1) - 0);
@@ -89,27 +97,57 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
         }
 
-        protected internal Cell(SpatialPrefixTree spatialPrefixTree, byte[] bytes, int off, int len)
+        /// <summary>
+        /// Initializes a new instance of <see cref="Cell"/> for the
+        /// <paramref name="spatialPrefixTree"/> with the specified <paramref name="bytes"/>, <paramref name="offset"/> and <paramref name="length"/>.
+        /// </summary>
+        /// <param name="spatialPrefixTree">The <see cref="SpatialPrefixTree"/> this instance belongs to.</param>
+        /// <param name="bytes">The representation of this <see cref="Cell"/>.</param>
+        /// <param name="offset">The offset into <paramref name="bytes"/> to use.</param>
+        /// <param name="length">The count of <paramref name="bytes"/> to use.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="spatialPrefixTree"/> or <paramref name="bytes"/> is <c>null</c>.</exception>
+        protected Cell(SpatialPrefixTree spatialPrefixTree, byte[] bytes, int offset, int length)
         {
             // LUCENENET specific - set the outer instance here
             // because overrides of Shape may require it
-            this.m_spatialPrefixTree = spatialPrefixTree;
+            this.m_spatialPrefixTree = spatialPrefixTree ?? throw new ArgumentNullException(nameof(spatialPrefixTree));
 
             //ensure any lazy instantiation completes to make this threadsafe
-            this.bytes = bytes;
-            b_off = off;
-            b_len = len;
+            this.bytes = bytes ?? throw new ArgumentNullException(nameof(bytes));
+
+            // LUCENENET specific - check that the offset and length are in bounds
+            int len = bytes.Length;
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length));
+            if (offset + length > len)
+                throw new ArgumentException($"{nameof(offset)} and {nameof(length)} must refer to a location within the array.");
+
+            b_off = offset;
+            b_len = length;
             B_fixLeaf();
         }
 
-        public virtual void Reset(byte[] bytes, int off, int len)
+        public virtual void Reset(byte[] bytes, int offset, int length)
         {
+            // LUCENENET specific - added guard clauses
+            if (bytes is null)
+                throw new ArgumentNullException(nameof(bytes));
+            int len = bytes.Length;
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length));
+            if (offset + length > len)
+                throw new ArgumentOutOfRangeException(nameof(length), "Offset and length must refer to a location within the array.");
+
             if (Debugging.AssertsEnabled) Debugging.Assert(Level != 0);
             token = null;
             m_shapeRel = SpatialRelation.None;
             this.bytes = bytes;
-            b_off = off;
-            b_len = len;
+            b_off = offset;
+            b_len = length;
             B_fixLeaf();
         }
 
