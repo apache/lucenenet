@@ -1,11 +1,10 @@
-﻿using Lucene.Net.Diagnostics;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Util;
 using Spatial4n.Shapes;
 using System;
-using System.Diagnostics;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Prefix
 {
@@ -45,12 +44,13 @@ namespace Lucene.Net.Spatial.Prefix
             this.m_detailLevel = detailLevel;
         }
 
-        public override bool Equals(object o)
+        public override bool Equals(object? o)
         {
             if (this == o)
             {
                 return true;
             }
+            if (o is null) return false; // LUCENENET specific: null check
             if (!GetType().Equals(o.GetType()))
             {
                 return false;
@@ -107,21 +107,21 @@ namespace Lucene.Net.Spatial.Prefix
     {
         protected readonly AbstractPrefixTreeFilter m_filter;
         protected readonly AtomicReaderContext m_context;
-        protected IBits m_acceptDocs;
+        protected IBits? m_acceptDocs;
         protected readonly int m_maxDoc;
 
-        protected TermsEnum m_termsEnum;//remember to check for null in getDocIdSet
-        protected DocsEnum m_docsEnum;
+        protected TermsEnum? m_termsEnum;//remember to check for null in getDocIdSet
+        protected DocsEnum? m_docsEnum;
 
-        protected BaseTermsEnumTraverser(AbstractPrefixTreeFilter filter, AtomicReaderContext context, IBits acceptDocs) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
+        protected BaseTermsEnumTraverser(AbstractPrefixTreeFilter filter, AtomicReaderContext context, IBits? acceptDocs) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
-            this.m_filter = filter;
-
-            this.m_context = context;
+            // LUCENENET specific - added guard clauses
+            this.m_filter = filter ?? throw new ArgumentNullException(nameof(filter));
+            this.m_context = context ?? throw new ArgumentNullException(nameof(context));
             AtomicReader reader = context.AtomicReader;
             this.m_acceptDocs = acceptDocs;
             m_maxDoc = reader.MaxDoc;
-            Terms terms = reader.GetTerms(filter.m_fieldName);
+            Terms? terms = reader.GetTerms(filter.m_fieldName);
             if (terms != null)
             {
                 m_termsEnum = terms.GetEnumerator();
@@ -130,8 +130,10 @@ namespace Lucene.Net.Spatial.Prefix
 
         protected virtual void CollectDocs(FixedBitSet bitSet)
         {
+            // LUCENENET specific - use guard clause instead of assert
+            if (m_termsEnum is null)
+                throw new InvalidOperationException($"{nameof(m_termsEnum)} must not be null.");
             //WARN: keep this specialization in sync
-            if (Debugging.AssertsEnabled) Debugging.Assert(m_termsEnum != null);
             m_docsEnum = m_termsEnum.Docs(m_acceptDocs, m_docsEnum, DocsFlags.NONE);
             int docid;
             while ((docid = m_docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
