@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Queries
 {
@@ -39,7 +40,7 @@ namespace Lucene.Net.Spatial.Queries
     /// In the future it would be good to support something at least semi-standardized like a
     /// variant of <a href="http://docs.geoserver.org/latest/en/user/filter/ecql_reference.html#spatial-predicate">
     ///   [E]CQL</a>.
-    ///   
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class SpatialArgsParser
@@ -138,8 +139,8 @@ namespace Lucene.Net.Spatial.Queries
             if (nameValPairs is null)
                 throw new ArgumentNullException(nameof(nameValPairs));
 
-            nameValPairs.TryGetValue(DIST_ERR_PCT, out string distErrPctStr);
-            nameValPairs.TryGetValue(DIST_ERR, out string distErrStr);
+            nameValPairs.TryGetValue(DIST_ERR_PCT, out string? distErrPctStr);
+            nameValPairs.TryGetValue(DIST_ERR, out string? distErrStr);
             args.DistErrPct = ReadDouble(distErrPctStr);
             nameValPairs.Remove(DIST_ERR_PCT);
             args.DistErr = ReadDouble(distErrStr);
@@ -159,12 +160,12 @@ namespace Lucene.Net.Spatial.Queries
             return ctx.ReadShapeFromWkt(str);
         }
 
-        protected static double? ReadDouble(string v)
+        protected static double? ReadDouble(string? v)
         {
             return double.TryParse(v, NumberStyles.Float, CultureInfo.InvariantCulture, out double val) ? val : (double?)null;
         }
 
-        protected static bool ReadBool(string v, bool defaultValue)
+        protected static bool ReadBool(string? v, bool defaultValue)
         {
             return bool.TryParse(v, out bool ret) ? ret : defaultValue;
         }
