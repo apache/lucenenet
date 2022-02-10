@@ -6,7 +6,9 @@ using Lucene.Net.Search;
 using Spatial4n.Context;
 using Spatial4n.Distance;
 using Spatial4n.Shapes;
+using System;
 using System.Collections;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Util
 {
@@ -47,8 +49,12 @@ namespace Lucene.Net.Spatial.Util
         public DistanceToShapeValueSource(ValueSource shapeValueSource, IPoint queryPoint,
                                           double multiplier, SpatialContext ctx)
         {
-            this.shapeValueSource = shapeValueSource;
-            this.queryPoint = queryPoint;
+            // LUCENENET specific - added guard clauses
+            this.shapeValueSource = shapeValueSource ?? throw new ArgumentNullException(nameof(shapeValueSource));
+            this.queryPoint = queryPoint ?? throw new ArgumentNullException(nameof(shapeValueSource));
+            if (ctx is null)
+                throw new ArgumentNullException(nameof(ctx));
+
             this.multiplier = multiplier;
             this.distCalc = ctx.DistanceCalculator;
             this.nullValue =
@@ -67,6 +73,10 @@ namespace Lucene.Net.Spatial.Util
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
+            // LUCENENET specific - added guard clause
+            if (readerContext is null)
+                throw new ArgumentNullException(nameof(readerContext));
+
             FunctionValues shapeValues = shapeValueSource.GetValues(context, readerContext);
 
             return new DoubleDocValuesAnonymousClass(this, shapeValues);
@@ -80,8 +90,9 @@ namespace Lucene.Net.Spatial.Util
             public DoubleDocValuesAnonymousClass(DistanceToShapeValueSource outerInstance, FunctionValues shapeValues)
                 : base(outerInstance)
             {
-                this.outerInstance = outerInstance;
-                this.shapeValues = shapeValues;
+                // LUCENENET specific - added guard clauses
+                this.outerInstance = outerInstance ?? throw new ArgumentNullException(nameof(outerInstance));
+                this.shapeValues = shapeValues ?? throw new ArgumentNullException(nameof(shapeValues));
             }
 
             public override double DoubleVal(int doc)
@@ -101,7 +112,7 @@ namespace Lucene.Net.Spatial.Util
             }
         }
 
-        public override bool Equals(object o)
+        public override bool Equals(object? o)
         {
             if (this == o) return true;
             if (o is null || GetType() != o.GetType()) return false;
