@@ -26,7 +26,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// <summary>
     /// Abstract Factory for creating <see cref="SpatialPrefixTree"/> instances with useful
     /// defaults and passed on configurations defined in a <see cref="IDictionary{TKey, TValue}"/>.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class SpatialPrefixTreeFactory
@@ -45,8 +45,15 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// The factory is looked up via "prefixTree" in <paramref name="args"/>, expecting "geohash" or "quad".
         /// If its neither of these, then "geohash" is chosen for a geo context, otherwise "quad" is chosen.
         /// </remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="args"/> or <paramref name="ctx"/> is <c>null</c>.</exception>
         public static SpatialPrefixTree MakeSPT(IDictionary<string, string> args, SpatialContext ctx)
         {
+            // LUCENENET specific - added guard clauses
+            if (args is null)
+                throw new ArgumentNullException(nameof(args));
+            if (ctx is null)
+                throw new ArgumentNullException(nameof(ctx));
+
             SpatialPrefixTreeFactory instance;
             if (!args.TryGetValue(PREFIX_TREE, out string cname))
             {
@@ -78,8 +85,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         protected internal virtual void Init(IDictionary<string, string> args, SpatialContext ctx)
         {
-            this.m_args = args;
-            this.m_ctx = ctx;
+            // LUCENENET specific - added guard clauses
+            this.m_args = args ?? throw new ArgumentNullException(nameof(args));
+            this.m_ctx = ctx ?? throw new ArgumentNullException(nameof(ctx));
             InitMaxLevels();
         }
 
