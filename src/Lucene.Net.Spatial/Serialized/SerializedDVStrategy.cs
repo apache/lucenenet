@@ -11,6 +11,7 @@ using Spatial4n.Shapes;
 using System;
 using System.Collections;
 using System.IO;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Serialized
 {
@@ -52,6 +53,7 @@ namespace Lucene.Net.Spatial.Serialized
         /// <summary>
         /// Constructs the spatial strategy with its mandatory arguments.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="ctx"/> or <paramref name="fieldName"/> is <c>null</c> or <paramref name="fieldName"/> is empty.</exception>
         public SerializedDVStrategy(SpatialContext ctx, string fieldName)
             : base(ctx, fieldName)
         {
@@ -59,6 +61,10 @@ namespace Lucene.Net.Spatial.Serialized
 
         public override Field[] CreateIndexableFields(IShape shape)
         {
+            // LUCENENET specific - added guard clause
+            if (shape is null)
+                throw new ArgumentNullException(nameof(shape));
+
             int bufSize = Math.Max(128, (int)(this.indexLastBufSize * 1.5));//50% headroom over last
             MemoryStream byteStream = new MemoryStream(bufSize);
             BytesRef bytesRef = new BytesRef();//receiver of byteStream's bytes
@@ -83,7 +89,8 @@ namespace Lucene.Net.Spatial.Serialized
 
             public OutputStreamAnonymousClass(BytesRef bytesRef)
             {
-                this.bytesRef = bytesRef;
+                // LUCENENET specific - added guard clause
+                this.bytesRef = bytesRef ?? throw new ArgumentNullException(nameof(bytesRef));
             }
 
             public override void Write(byte[] buffer, int index, int count)
@@ -113,6 +120,10 @@ namespace Lucene.Net.Spatial.Serialized
         /// </summary>
         public override Filter MakeFilter(SpatialArgs args)
         {
+            // LUCENENET specific - added guard clause
+            if (args is null)
+                throw new ArgumentNullException(nameof(args));
+
             ValueSource shapeValueSource = MakeShapeValueSource();
             ShapePredicateValueSource predicateValueSource = new ShapePredicateValueSource(
                 shapeValueSource, args.Operation, args.Shape);
@@ -139,10 +150,11 @@ namespace Lucene.Net.Spatial.Serialized
 
             public PredicateValueSourceFilter(ValueSource predicateValueSource)
             {
-                this.predicateValueSource = predicateValueSource;
+                // LUCENENET specific - added guard clause
+                this.predicateValueSource = predicateValueSource ?? throw new ArgumentNullException(nameof(predicateValueSource));
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits? acceptDocs)
             {
                 return new DocIdSetAnonymousClass(this, context, acceptDocs);
             }
@@ -151,12 +163,13 @@ namespace Lucene.Net.Spatial.Serialized
             {
                 private readonly PredicateValueSourceFilter outerInstance;
                 private readonly AtomicReaderContext context;
-                private readonly IBits acceptDocs;
+                private readonly IBits? acceptDocs;
 
-                public DocIdSetAnonymousClass(PredicateValueSourceFilter outerInstance, AtomicReaderContext context, IBits acceptDocs)
+                public DocIdSetAnonymousClass(PredicateValueSourceFilter outerInstance, AtomicReaderContext context, IBits? acceptDocs)
                 {
-                    this.outerInstance = outerInstance;
-                    this.context = context;
+                    // LUCENENET specific - added guard clauses
+                    this.outerInstance = outerInstance ?? throw new ArgumentNullException(nameof(outerInstance));
+                    this.context = context ?? throw new ArgumentNullException(nameof(context));
                     this.acceptDocs = acceptDocs;
                 }
 
@@ -182,12 +195,13 @@ namespace Lucene.Net.Spatial.Serialized
                 {
                     private readonly FunctionValues predFuncValues;
                     private readonly AtomicReaderContext context;
-                    private readonly IBits acceptDocs;
+                    private readonly IBits? acceptDocs;
 
-                    public BitsAnonymousClass(FunctionValues predFuncValues, AtomicReaderContext context, IBits acceptDocs)
+                    public BitsAnonymousClass(FunctionValues predFuncValues, AtomicReaderContext context, IBits? acceptDocs)
                     {
-                        this.predFuncValues = predFuncValues;
-                        this.context = context;
+                        // LUCENENET specific - added guard clauses
+                        this.predFuncValues = predFuncValues ?? throw new ArgumentNullException(nameof(predFuncValues));
+                        this.context = context ?? throw new ArgumentNullException(nameof(context));
                         this.acceptDocs = acceptDocs;
                     }
 
@@ -202,7 +216,7 @@ namespace Lucene.Net.Spatial.Serialized
                 }
             }
 
-            public override bool Equals(object o)
+            public override bool Equals(object? o)
             {
                 if (this == o) return true;
                 if (o is null || GetType() != o.GetType()) return false;
@@ -232,12 +246,17 @@ namespace Lucene.Net.Spatial.Serialized
 
             internal ShapeDocValueSource(string fieldName, BinaryCodec binaryCodec)
             {
-                this.fieldName = fieldName;
-                this.binaryCodec = binaryCodec;
+                // LUCENENET specific - added guard clauses
+                this.fieldName = fieldName ?? throw new ArgumentNullException(nameof(fieldName));
+                this.binaryCodec = binaryCodec ?? throw new ArgumentNullException(nameof(binaryCodec));
             }
 
             public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
             {
+                // LUCENENET specific - added guard clause
+                if (readerContext is null)
+                    throw new ArgumentNullException(nameof(readerContext));
+
                 BinaryDocValues docValues = readerContext.AtomicReader.GetBinaryDocValues(fieldName);
 
                 return new FuctionValuesAnonymousClass(this, docValues);
@@ -250,8 +269,9 @@ namespace Lucene.Net.Spatial.Serialized
 
                 public FuctionValuesAnonymousClass(ShapeDocValueSource outerInstance, BinaryDocValues docValues)
                 {
-                    this.outerInstance = outerInstance;
-                    this.docValues = docValues;
+                    // LUCENENET specific - added guard clauses
+                    this.outerInstance = outerInstance ?? throw new ArgumentNullException(nameof(outerInstance));
+                    this.docValues = docValues ?? throw new ArgumentNullException(nameof(docValues));
                 }
 
                 private int bytesRefDoc = -1;
@@ -274,6 +294,10 @@ namespace Lucene.Net.Spatial.Serialized
 
                 public override bool BytesVal(int doc, BytesRef target)
                 {
+                    // LUCENENET specific - added guard clause
+                    if (target is null)
+                        throw new ArgumentNullException(nameof(target));
+
                     if (FillBytes(doc))
                     {
                         target.Bytes = bytesRef.Bytes;
@@ -288,7 +312,7 @@ namespace Lucene.Net.Spatial.Serialized
                     }
                 }
 
-                public override object ObjectVal(int docId)
+                public override object? ObjectVal(int docId)
                 {
                     if (!FillBytes(docId))
                         return null;
@@ -315,7 +339,7 @@ namespace Lucene.Net.Spatial.Serialized
                 }
             }
 
-            public override bool Equals(object o)
+            public override bool Equals(object? o)
             {
                 if (this == o) return true;
                 if (o is null || GetType() != o.GetType()) return false;

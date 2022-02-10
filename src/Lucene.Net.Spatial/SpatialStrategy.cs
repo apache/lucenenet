@@ -57,6 +57,7 @@ namespace Lucene.Net.Spatial
         /// <summary>
         /// Constructs the spatial strategy with its mandatory arguments.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="ctx"/> or <paramref name="fieldName"/> is <c>null</c> or <paramref name="fieldName"/> is empty.</exception>
         protected SpatialStrategy(SpatialContext ctx, string fieldName)
         {
             this.m_ctx = ctx ?? throw new ArgumentNullException(nameof(ctx), "ctx is required");// LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
