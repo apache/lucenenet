@@ -35,6 +35,14 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     {
         // LUCENENET specific - de-nested Factory and renamed GeohashPrefixTreeFactory
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="GeohashPrefixTree"/> with the specified
+        /// spatial context (<paramref name="ctx"/>) and <paramref name="maxLevels"/>.
+        /// </summary>
+        /// <param name="ctx">The spatial context.</param>
+        /// <param name="maxLevels">The maximum number of levels in the tree.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="ctx"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxLevels"/> is less than or equal to 0 or greater than <see cref="MaxLevelsPossible"/>.</exception>
         public GeohashPrefixTree(SpatialContext ctx, int maxLevels)
             : base(ctx, maxLevels)
         {
@@ -66,6 +74,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         protected internal override Cell GetCell(IPoint p, int level)
         {
+            // LUCENENET specific - added guard clause
+            if (p is null)
+                throw new ArgumentNullException(nameof(p));
+
             return new GhCell(this, GeohashUtils.EncodeLatLon(p.Y, p.X, level));
         }
 
