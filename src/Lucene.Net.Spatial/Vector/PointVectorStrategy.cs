@@ -6,6 +6,7 @@ using Lucene.Net.Spatial.Util;
 using Spatial4n.Context;
 using Spatial4n.Shapes;
 using System;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Vector
 {
@@ -48,13 +49,13 @@ namespace Lucene.Net.Spatial.Vector
     /// both a search using a Circle and sort will result in calculations for the
     /// spatial distance being done twice -- once for the filter and second for the
     /// sort.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class PointVectorStrategy : SpatialStrategy
     {
-        public static string SUFFIX_X = "__x";
-        public static string SUFFIX_Y = "__y";
+        public const string SUFFIX_X = "__x";
+        public const string SUFFIX_Y = "__y";
 
         private readonly string fieldNameX;
         private readonly string fieldNameY;
@@ -85,6 +86,10 @@ namespace Lucene.Net.Spatial.Vector
 
         public override Field[] CreateIndexableFields(IShape shape)
         {
+            // LUCENENET specific - added guard clause
+            if (shape is null)
+                throw new ArgumentNullException(nameof(shape));
+
             if (shape is IPoint point)
                 return CreateIndexableFields(point);
 
@@ -96,6 +101,10 @@ namespace Lucene.Net.Spatial.Vector
         /// </summary>
         public virtual Field[] CreateIndexableFields(IPoint point)
         {
+            // LUCENENET specific - added guard clause
+            if (point is null)
+                throw new ArgumentNullException(nameof(point));
+
             FieldType doubleFieldType = new FieldType(DoubleField.TYPE_NOT_STORED)
             {
                 NumericPrecisionStep = precisionStep
@@ -115,6 +124,10 @@ namespace Lucene.Net.Spatial.Vector
 
         public override Filter MakeFilter(SpatialArgs args)
         {
+            // LUCENENET specific - added guard clause
+            if (args is null)
+                throw new ArgumentNullException(nameof(args));
+
             //unwrap the CSQ from makeQuery
             ConstantScoreQuery csq = MakeQuery(args);
             Filter filter = csq.Filter;
@@ -126,6 +139,10 @@ namespace Lucene.Net.Spatial.Vector
 
         public override ConstantScoreQuery MakeQuery(SpatialArgs args)
         {
+            // LUCENENET specific - added guard clause
+            if (args is null)
+                throw new ArgumentNullException(nameof(args));
+
             if (!SpatialOperation.Is(args.Operation,
                 SpatialOperation.Intersects,
                 SpatialOperation.IsWithin))
@@ -157,6 +174,10 @@ namespace Lucene.Net.Spatial.Vector
         //TODO this is basically old code that hasn't been verified well and should probably be removed
         public virtual Query MakeQueryDistanceScore(SpatialArgs args)
         {
+            // LUCENENET specific - added guard clause
+            if (args is null)
+                throw new ArgumentNullException(nameof(args));
+
             // For starters, just limit the bbox
             var shape = args.Shape;
             if (!(shape is IRectangle || shape is ICircle))
@@ -169,9 +190,9 @@ namespace Lucene.Net.Spatial.Vector
                 throw UnsupportedOperationException.Create("Crossing dateline not yet supported");
             }
 
-            ValueSource valueSource = null;
+            ValueSource? valueSource = null;
 
-            Query spatial = null;
+            Query? spatial = null;
             SpatialOperation op = args.Operation;
 
             if (SpatialOperation.Is(op,
@@ -227,6 +248,10 @@ namespace Lucene.Net.Spatial.Vector
         /// </summary>
         private Query MakeWithin(IRectangle bbox)
         {
+            // LUCENENET specific - added guard clause
+            if (bbox is null)
+                throw new ArgumentNullException(nameof(bbox));
+
             var bq = new BooleanQuery();
             const Occur MUST = Occur.MUST;
             if (bbox.CrossesDateLine)
@@ -260,6 +285,10 @@ namespace Lucene.Net.Spatial.Vector
         /// </summary>
         private Query MakeDisjoint(IRectangle bbox)
         {
+            // LUCENENET specific - added guard clause
+            if (bbox is null)
+                throw new ArgumentNullException(nameof(bbox));
+
             if (bbox.CrossesDateLine)
                 throw UnsupportedOperationException.Create("MakeDisjoint doesn't handle dateline cross");
             Query qX = RangeQuery(fieldNameX, bbox.MinX, bbox.MaxX);
