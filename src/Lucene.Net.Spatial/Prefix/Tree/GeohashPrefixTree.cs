@@ -130,7 +130,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 return m_spatialPrefixTree.GetCell(p, Level + 1);//not performant!
             }
 
-            private IShape shape;//cache
+            private IShape? shape;//cache
 
             public override IShape Shape
             {
@@ -162,12 +162,20 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     {
         protected internal override int GetLevelForDistance(double degrees)
         {
+            // LUCENENET specific - added guard clause
+            if (m_ctx is null)
+                throw new InvalidOperationException($"{nameof(m_ctx)} must be set prior to calling GetLevelForDistance(double).");
+
             var grid = new GeohashPrefixTree(m_ctx, GeohashPrefixTree.MaxLevelsPossible);
             return grid.GetLevelForDistance(degrees);
         }
 
         protected internal override SpatialPrefixTree NewSPT()
         {
+            // LUCENENET specific - added guard clause
+            if (m_ctx is null)
+                throw new InvalidOperationException($"{nameof(m_ctx)} must be set prior to calling NewSPT().");
+
             return new GeohashPrefixTree(m_ctx, m_maxLevels ?? GeohashPrefixTree.MaxLevelsPossible);
         }
     }
