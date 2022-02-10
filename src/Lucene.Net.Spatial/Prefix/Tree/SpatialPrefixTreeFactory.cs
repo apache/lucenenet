@@ -54,7 +54,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
             if ("geohash".Equals(cname, StringComparison.OrdinalIgnoreCase))
             {
-                instance = new GeohashPrefixTree.Factory();
+                instance = new GeohashPrefixTreeFactory();
             }
             else if ("quad".Equals(cname, StringComparison.OrdinalIgnoreCase))
             {

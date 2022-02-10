@@ -33,27 +33,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// </summary>
     public class GeohashPrefixTree : SpatialPrefixTree
     {
-        #region Nested type: Factory
-
-        /// <summary>
-        /// Factory for creating <see cref="GeohashPrefixTree"/>
-        /// instances with useful defaults
-        /// </summary>
-        public class Factory : SpatialPrefixTreeFactory
-        {
-            protected internal override int GetLevelForDistance(double degrees)
-            {
-                var grid = new GeohashPrefixTree(m_ctx, GeohashPrefixTree.MaxLevelsPossible);
-                return grid.GetLevelForDistance(degrees);
-            }
-
-            protected internal override SpatialPrefixTree NewSPT()
-            {
-                return new GeohashPrefixTree(m_ctx, m_maxLevels ?? GeohashPrefixTree.MaxLevelsPossible);
-            }
-        }
-
-        #endregion
+        // LUCENENET specific - de-nested Factory and renamed GeohashPrefixTreeFactory
 
         public GeohashPrefixTree(SpatialContext ctx, int maxLevels)
             : base(ctx, maxLevels)
@@ -160,5 +140,23 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// Factory for creating <see cref="GeohashPrefixTree"/>
+    /// instances with useful defaults
+    /// </summary>
+    public class GeohashPrefixTreeFactory : SpatialPrefixTreeFactory
+    {
+        protected internal override int GetLevelForDistance(double degrees)
+        {
+            var grid = new GeohashPrefixTree(m_ctx, GeohashPrefixTree.MaxLevelsPossible);
+            return grid.GetLevelForDistance(degrees);
+        }
+
+        protected internal override SpatialPrefixTree NewSPT()
+        {
+            return new GeohashPrefixTree(m_ctx, m_maxLevels ?? GeohashPrefixTree.MaxLevelsPossible);
+        }
     }
 }
