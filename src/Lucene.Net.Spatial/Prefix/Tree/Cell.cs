@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using JCG = J2N.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
@@ -49,11 +50,11 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// Holds a byte[] and/or String representation of the cell. Both are lazy constructed from the other.
         /// Neither contains the trailing leaf byte.
         /// </summary>
-        private byte[] bytes;
+        private byte[]? bytes;
         private int b_off;
         private int b_len;
 
-        private string token;//this is the only part of equality
+        private string? token;//this is the only part of equality
 
         /// <summary>
         /// When set via <see cref="GetSubCells(IShape)">GetSubCells(filter)</see>, it is the relationship between this cell
@@ -154,7 +155,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         private void B_fixLeaf()
         {
             //note that non-point shapes always have the maxLevels cell set with setLeaf
-            if (bytes[b_off + b_len - 1] == LEAF_BYTE)
+            if (bytes![b_off + b_len - 1] == LEAF_BYTE)
             {
                 b_len--;
                 SetLeaf();
@@ -189,7 +190,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             get
             {
                 if (token is null)
-                    token = Encoding.UTF8.GetString(bytes, b_off, b_len);
+                    token = Encoding.UTF8.GetString(bytes!, b_off, b_len);
                 return token;
             }
         }
@@ -206,7 +207,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
             else
             {
-                bytes = Encoding.UTF8.GetBytes(token);
+                bytes = Encoding.UTF8.GetBytes(token!);
                 b_off = 0;
                 b_len = bytes.Length;
             }
@@ -229,7 +230,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// </summary>
         /// <param name="shapeFilter">an optional filter for the returned cells.</param>
         /// <returns>A set of cells (no dups), sorted. Not Modifiable.</returns>
-        public virtual ICollection<Cell> GetSubCells(IShape shapeFilter)
+        public virtual ICollection<Cell> GetSubCells(IShape? shapeFilter)
         {
             //Note: Higher-performing subclasses might override to consider the shape filter to generate fewer cells.
             if (shapeFilter is IPoint point)
@@ -296,19 +297,20 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         #region IComparable<Cell> Members
 
-        public virtual int CompareTo(Cell o)
+        public virtual int CompareTo(Cell? other)
         {
-            return string.CompareOrdinal(TokenString, o.TokenString);
+            if (other is null) return 1; // LUCENENET specific - match other comparers
+            return string.CompareOrdinal(TokenString, other.TokenString);
         }
 
         #endregion
 
         #region Equality overrides
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return !(obj is null || !(obj is Cell cell)) &&
-                   TokenString.Equals(cell.TokenString, StringComparison.Ordinal);
+                TokenString.Equals(cell.TokenString, StringComparison.Ordinal);
         }
 
         public override int GetHashCode()
