@@ -172,14 +172,14 @@ namespace Lucene.Net.Spatial.Prefix
             protected internal override IEnumerator<Cell> FindSubCellsToVisit(Cell cell)
             {
                 //use buffered query shape instead of orig.  Works with null too.
-                return cell.GetSubCells(((WithinPrefixTreeFilter)m_outerInstance).bufferedQueryShape).GetEnumerator();
+                return cell.GetSubCells(((WithinPrefixTreeFilter)m_filter).bufferedQueryShape).GetEnumerator();
             }
 
             protected internal override bool Visit(Cell cell)
             {
                 //cell.relate is based on the bufferedQueryShape; we need to examine what
                 // the relation is against the queryShape
-                visitRelation = cell.Shape.Relate(m_outerInstance.m_queryShape);
+                visitRelation = cell.Shape.Relate(m_filter.m_queryShape);
                 if (visitRelation == SpatialRelation.Within)
                 {
                     CollectDocs(inside);
@@ -190,7 +190,7 @@ namespace Lucene.Net.Spatial.Prefix
                     CollectDocs(outside);
                     return false;
                 }
-                else if (cell.Level == m_outerInstance.m_detailLevel)
+                else if (cell.Level == m_filter.m_detailLevel)
                 {
                     CollectDocs(inside);
                     return false;
@@ -204,8 +204,8 @@ namespace Lucene.Net.Spatial.Prefix
                 //visitRelation is declared as a field, populated by visit() so we don't recompute it
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(m_outerInstance.m_detailLevel != cell.Level);
-                    Debugging.Assert(visitRelation == cell.Shape.Relate(m_outerInstance.m_queryShape));
+                    Debugging.Assert(m_filter.m_detailLevel != cell.Level);
+                    Debugging.Assert(visitRelation == cell.Shape.Relate(m_filter.m_queryShape));
                 }
                 if (AllCellsIntersectQuery(cell, visitRelation))
                 {
@@ -225,9 +225,9 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 if (relate == SpatialRelation.None)
                 {
-                    relate = cell.Shape.Relate(m_outerInstance.m_queryShape);
+                    relate = cell.Shape.Relate(m_filter.m_queryShape);
                 }
-                if (cell.Level == m_outerInstance.m_detailLevel)
+                if (cell.Level == m_filter.m_detailLevel)
                 {
                     return relate.Intersects();
                 }

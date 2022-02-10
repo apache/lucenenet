@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
@@ -148,7 +148,7 @@ namespace Lucene.Net.Spatial.Prefix
                 thisTerm = m_termsEnum.Term;
                 
                 curVNode = new VNode(null);
-                curVNode.Reset(m_outerInstance.m_grid.WorldCell);
+                curVNode.Reset(m_filter.m_grid.WorldCell);
 
                 Start();
 
@@ -207,7 +207,7 @@ namespace Lucene.Net.Spatial.Prefix
                     if (compare > 0)
                     {
                         // leap frog (termsEnum is beyond where we would otherwise seek)
-                        if (Debugging.AssertsEnabled) Debugging.Assert(!m_context.AtomicReader.GetTerms(m_outerInstance.m_fieldName).GetEnumerator().SeekExact(curVNodeTerm), "should be absent");
+                        if (Debugging.AssertsEnabled) Debugging.Assert(!m_context.AtomicReader.GetTerms(m_filter.m_fieldName).GetEnumerator().SeekExact(curVNodeTerm), "should be absent");
                     }
                     else
                     {
@@ -255,7 +255,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(thisTerm != null);
                 Cell cell = curVNode.cell;
-                if (cell.Level >= m_outerInstance.m_detailLevel)
+                if (cell.Level >= m_filter.m_detailLevel)
                 {
                     throw IllegalStateException.Create("Spatial logic error");
                 }
@@ -265,7 +265,7 @@ namespace Lucene.Net.Spatial.Prefix
                     //If the next indexed term just adds a leaf marker ('+') to cell,
                     // then add all of those docs
                     if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(thisTerm, curVNodeTerm));//TODO refactor to use method on curVNode.cell
-                    scanCell = m_outerInstance.m_grid.GetCell(thisTerm.Bytes, thisTerm.Offset, thisTerm.Length, scanCell);
+                    scanCell = m_filter.m_grid.GetCell(thisTerm.Bytes, thisTerm.Offset, thisTerm.Length, scanCell);
                     if (scanCell.Level == cell.Level && scanCell.IsLeaf)
                     {
                         VisitLeaf(scanCell);
@@ -283,7 +283,7 @@ namespace Lucene.Net.Spatial.Prefix
                 // Scanning is a performance optimization trade-off.
 
                 //TODO use termsEnum.docFreq() as heuristic
-                bool scan = cell.Level >= ((AbstractVisitingPrefixTreeFilter)m_outerInstance).m_prefixGridScanLevel;//simple heuristic
+                bool scan = cell.Level >= ((AbstractVisitingPrefixTreeFilter)m_filter).m_prefixGridScanLevel;//simple heuristic
 
                 if (!scan)
                 {
@@ -300,7 +300,7 @@ namespace Lucene.Net.Spatial.Prefix
                 {
                     //Scan (loop of termsEnum.next())
 
-                    Scan(m_outerInstance.m_detailLevel);
+                    Scan(m_filter.m_detailLevel);
                 }
             }
 
@@ -312,7 +312,7 @@ namespace Lucene.Net.Spatial.Prefix
             /// </summary>
             protected internal virtual IEnumerator<Cell> FindSubCellsToVisit(Cell cell)
             {
-                return cell.GetSubCells(m_outerInstance.m_queryShape).GetEnumerator();
+                return cell.GetSubCells(m_filter.m_queryShape).GetEnumerator();
             }
 
             /// <summary>
@@ -331,7 +331,7 @@ namespace Lucene.Net.Spatial.Prefix
                     bool moved;
                     do
                     {
-                        scanCell = m_outerInstance.m_grid.GetCell(thisTerm.Bytes, thisTerm.Offset, thisTerm.Length, scanCell);
+                        scanCell = m_filter.m_grid.GetCell(thisTerm.Bytes, thisTerm.Offset, thisTerm.Length, scanCell);
 
                         int termLevel = scanCell.Level;
                         if (termLevel < scanDetailLevel)

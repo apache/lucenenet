@@ -91,7 +91,7 @@ namespace Lucene.Net.Spatial.Prefix
                     return null;
                 }
 
-                ContainsPrefixTreeFilter outerInstance = (ContainsPrefixTreeFilter)base.m_outerInstance;
+                ContainsPrefixTreeFilter outerInstance = (ContainsPrefixTreeFilter)base.m_filter;
 
                 //Leaf docs match all query shape
                 SmallDocSet leafDocs = GetLeafDocs(cell, acceptContains);
@@ -180,7 +180,7 @@ namespace Lucene.Net.Spatial.Prefix
                     return null;
                 }
                 BytesRef nextTerm = m_termsEnum.Term;
-                nextCell = m_outerInstance.m_grid.GetCell(nextTerm.Bytes, nextTerm.Offset, nextTerm.Length, this.nextCell);
+                nextCell = m_filter.m_grid.GetCell(nextTerm.Bytes, nextTerm.Offset, nextTerm.Length, this.nextCell);
                 if (nextCell.Level == leafCell.Level && nextCell.IsLeaf)
                 {
                     return CollectDocs(acceptContains);

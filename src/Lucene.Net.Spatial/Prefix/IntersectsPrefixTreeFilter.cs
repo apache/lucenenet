@@ -88,7 +88,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             protected internal override bool Visit(Cell cell)
             {
-                if (cell.ShapeRel == SpatialRelation.Within || cell.Level == m_outerInstance.m_detailLevel)
+                if (cell.ShapeRel == SpatialRelation.Within || cell.Level == m_filter.m_detailLevel)
                 {
                     CollectDocs(results);
                     return false;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             protected internal override void VisitScanned(Cell cell)
             {
-                if (m_outerInstance.m_queryShape.Relate(cell.Shape).Intersects())
+                if (m_filter.m_queryShape.Relate(cell.Shape).Intersects())
                 {
                     CollectDocs(results);
                 }

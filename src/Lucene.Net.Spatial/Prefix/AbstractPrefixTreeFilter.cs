@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
@@ -87,7 +87,7 @@ namespace Lucene.Net.Spatial.Prefix
         /// </summary>
         public abstract class BaseTermsEnumTraverser
         {
-            protected readonly AbstractPrefixTreeFilter m_outerInstance;
+            protected readonly AbstractPrefixTreeFilter m_filter;
             protected readonly AtomicReaderContext m_context;
             protected IBits m_acceptDocs;
             protected readonly int m_maxDoc;
@@ -95,15 +95,15 @@ namespace Lucene.Net.Spatial.Prefix
             protected TermsEnum m_termsEnum;//remember to check for null in getDocIdSet
             protected DocsEnum m_docsEnum;
 
-            protected BaseTermsEnumTraverser(AbstractPrefixTreeFilter outerInstance, AtomicReaderContext context, IBits acceptDocs) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
+            protected BaseTermsEnumTraverser(AbstractPrefixTreeFilter filter, AtomicReaderContext context, IBits acceptDocs) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
-                this.m_outerInstance = outerInstance;
+                this.m_filter = filter;
                 
                 this.m_context = context;
                 AtomicReader reader = context.AtomicReader;
                 this.m_acceptDocs = acceptDocs;
                 m_maxDoc = reader.MaxDoc;
-                Terms terms = reader.GetTerms(outerInstance.m_fieldName);
+                Terms terms = reader.GetTerms(filter.m_fieldName);
                 if (terms != null)
                 {
                     m_termsEnum = terms.GetEnumerator();
