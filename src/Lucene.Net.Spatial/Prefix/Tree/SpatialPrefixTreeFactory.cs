@@ -58,7 +58,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
             else if ("quad".Equals(cname, StringComparison.OrdinalIgnoreCase))
             {
-                instance = new QuadPrefixTree.Factory();
+                instance = new QuadPrefixTreeFactory();
             }
             else
             {

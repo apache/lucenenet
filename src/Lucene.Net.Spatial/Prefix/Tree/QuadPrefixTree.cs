@@ -34,26 +34,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// </summary>
     public class QuadPrefixTree : SpatialPrefixTree
     {
-        #region Nested type: Factory
-
-        /// <summary>
-        /// Factory for creating <see cref="QuadPrefixTree"/> instances with useful defaults
-        /// </summary>
-        public class Factory : SpatialPrefixTreeFactory
-        {
-            protected internal override int GetLevelForDistance(double degrees)
-            {
-                var grid = new QuadPrefixTree(m_ctx, MAX_LEVELS_POSSIBLE);
-                return grid.GetLevelForDistance(degrees);
-            }
-
-            protected internal override SpatialPrefixTree NewSPT()
-            {
-                return new QuadPrefixTree(m_ctx, m_maxLevels ?? MAX_LEVELS_POSSIBLE);
-            }
-        }
-
-        #endregion
+        // LUCENENET specific - de-nested Factory and renamed QuadPrefixTreeFactory
 
         public const int MAX_LEVELS_POSSIBLE = 50;//not really sure how big this should be
 
@@ -339,5 +320,22 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         }//QuadCell
 
         #endregion
+    }
+
+    /// <summary>
+    /// Factory for creating <see cref="QuadPrefixTree"/> instances with useful defaults
+    /// </summary>
+    public class QuadPrefixTreeFactory : SpatialPrefixTreeFactory
+    {
+        protected internal override int GetLevelForDistance(double degrees)
+        {
+            var grid = new QuadPrefixTree(m_ctx, QuadPrefixTree.MAX_LEVELS_POSSIBLE);
+            return grid.GetLevelForDistance(degrees);
+        }
+
+        protected internal override SpatialPrefixTree NewSPT()
+        {
+            return new QuadPrefixTree(m_ctx, m_maxLevels ?? QuadPrefixTree.MAX_LEVELS_POSSIBLE);
+        }
     }
 }
