@@ -6,6 +6,7 @@ using Lucene.Net.Spatial.Queries;
 using Spatial4n.Context;
 using Spatial4n.Shapes;
 using System;
+#nullable enable
 
 namespace Lucene.Net.Spatial
 {
@@ -46,7 +47,7 @@ namespace Lucene.Net.Spatial
     /// immaterial to indexing and search.
     /// <para/>
     /// Thread-safe.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class SpatialStrategy
@@ -146,6 +147,10 @@ namespace Lucene.Net.Spatial
         /// </summary>
         public ValueSource MakeRecipDistanceValueSource(IShape queryShape)
         {
+            // LUCENENET specific - added guard clause
+            if (queryShape is null)
+                throw new ArgumentNullException(nameof(queryShape));
+
             IRectangle bbox = queryShape.BoundingBox;
             double diagonalDist = m_ctx.DistanceCalculator.Distance(
                 m_ctx.MakePoint(bbox.MinX, bbox.MinY), bbox.MaxX, bbox.MaxY);
