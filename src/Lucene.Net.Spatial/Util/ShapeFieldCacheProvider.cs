@@ -5,7 +5,6 @@ using Spatial4n.Shapes;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-#nullable enable
 
 namespace Lucene.Net.Spatial.Util
 {

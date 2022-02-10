@@ -10,7 +10,6 @@ using Spatial4n.Shapes;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-#nullable enable
 
 namespace Lucene.Net.Spatial.Prefix
 {

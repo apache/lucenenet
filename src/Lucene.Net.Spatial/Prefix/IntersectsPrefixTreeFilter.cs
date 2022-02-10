@@ -5,7 +5,6 @@ using Lucene.Net.Util;
 using Spatial4n.Shapes;
 using System;
 using System.IO;
-#nullable enable
 
 namespace Lucene.Net.Spatial.Prefix
 {

@@ -3,7 +3,6 @@ using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
-#nullable enable
 
 namespace Lucene.Net.Spatial.Util
 {

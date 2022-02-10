@@ -2,7 +2,6 @@
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
-#nullable enable
 
 namespace Lucene.Net.Spatial.Queries
 {

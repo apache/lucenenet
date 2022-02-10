@@ -6,7 +6,6 @@ using Lucene.Net.Spatial.Util;
 using Spatial4n.Context;
 using Spatial4n.Shapes;
 using System;
-#nullable enable
 
 namespace Lucene.Net.Spatial.Vector
 {

@@ -36,6 +36,7 @@
     <PackageTags>$(PackageTags);spatial;geo;geospatial;2d</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   

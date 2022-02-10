@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-#nullable enable
 
 namespace Lucene.Net.Spatial.Queries
 {

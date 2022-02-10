@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
-#nullable enable
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {

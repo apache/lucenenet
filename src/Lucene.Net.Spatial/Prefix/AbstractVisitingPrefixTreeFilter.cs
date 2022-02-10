@@ -8,7 +8,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-#nullable enable
 
 namespace Lucene.Net.Spatial.Prefix
 {

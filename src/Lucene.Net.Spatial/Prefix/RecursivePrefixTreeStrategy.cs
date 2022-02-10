@@ -3,7 +3,6 @@ using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
 using Spatial4n.Shapes;
 using System;
-#nullable enable
 
 namespace Lucene.Net.Spatial.Prefix
 {

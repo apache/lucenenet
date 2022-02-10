@@ -8,7 +8,6 @@ using Spatial4n.Distance;
 using Spatial4n.Shapes;
 using System;
 using System.Collections;
-#nullable enable
 
 namespace Lucene.Net.Spatial.Util
 {

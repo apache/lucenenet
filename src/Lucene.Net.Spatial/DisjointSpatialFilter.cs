@@ -5,7 +5,6 @@ using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Util;
 using System;
 using System.IO;
-#nullable enable
 
 namespace Lucene.Net.Spatial
 {

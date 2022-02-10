@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using JCG = J2N.Collections.Generic;
-#nullable enable
 
 namespace Lucene.Net.Spatial.Queries
 {

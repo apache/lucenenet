@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using JCG = J2N.Collections.Generic;
-#nullable enable
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {

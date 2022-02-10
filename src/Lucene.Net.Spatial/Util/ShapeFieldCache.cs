@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
-#nullable enable
 
 namespace Lucene.Net.Spatial.Util
 {
