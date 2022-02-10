@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using JCG = J2N.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
@@ -120,7 +121,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// <exception cref="ArgumentNullException"><paramref name="ctx"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxLevels"/> is less than or equal to 0.</exception>
         public QuadPrefixTree(SpatialContext ctx, int maxLevels)
-            : this(ctx, ctx?.WorldBounds, maxLevels)
+            : this(ctx, ctx?.WorldBounds!, maxLevels)
         {
         }
 
@@ -293,7 +294,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 return m_spatialPrefixTree.GetCell(p, Level + 1);//not performant!
             }
 
-            private IShape shape; //cache
+            private IShape? shape; //cache
 
             public override IShape Shape
             {
@@ -365,12 +366,20 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     {
         protected internal override int GetLevelForDistance(double degrees)
         {
+            // LUCENENET specific - added guard clause
+            if (m_ctx is null)
+                throw new InvalidOperationException($"{nameof(m_ctx)} must be set prior to calling GetLevelForDistance(double).");
+
             var grid = new QuadPrefixTree(m_ctx, QuadPrefixTree.MAX_LEVELS_POSSIBLE);
             return grid.GetLevelForDistance(degrees);
         }
 
         protected internal override SpatialPrefixTree NewSPT()
         {
+            // LUCENENET specific - added guard clause
+            if (m_ctx is null)
+                throw new InvalidOperationException($"{nameof(m_ctx)} must be set prior to calling NewSPT().");
+
             return new QuadPrefixTree(m_ctx, m_maxLevels ?? QuadPrefixTree.MAX_LEVELS_POSSIBLE);
         }
     }
