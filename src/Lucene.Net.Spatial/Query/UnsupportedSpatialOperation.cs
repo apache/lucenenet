@@ -2,6 +2,7 @@
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
+#nullable enable
 
 namespace Lucene.Net.Spatial.Queries
 {
@@ -24,7 +25,7 @@ namespace Lucene.Net.Spatial.Queries
 
     /// <summary>
     /// Exception thrown when the <see cref="SpatialStrategy"/> cannot implement the requested operation.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     // LUCENENET: It is no longer good practice to use binary serialization. 
@@ -35,7 +36,7 @@ namespace Lucene.Net.Spatial.Queries
     public class UnsupportedSpatialOperation : NotSupportedException
     {
         public UnsupportedSpatialOperation(SpatialOperation op)
-            : base(op.Name)
+            : base(op?.Name)
         {
         }
 
