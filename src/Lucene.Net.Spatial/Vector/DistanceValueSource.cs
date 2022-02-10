@@ -5,8 +5,9 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 using Spatial4n.Distance;
 using Spatial4n.Shapes;
+using System;
 using System.Collections;
-using System.Diagnostics;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Vector
 {
@@ -30,7 +31,7 @@ namespace Lucene.Net.Spatial.Vector
     /// <summary>
     /// An implementation of the Lucene <see cref="ValueSource"/> model that returns the distance
     /// for a <see cref="PointVectorStrategy"/>.
-    /// 
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public class DistanceValueSource : ValueSource
@@ -42,10 +43,12 @@ namespace Lucene.Net.Spatial.Vector
         /// <summary>
         /// Constructor.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="strategy"/> or <paramref name="from"/> is <c>null</c>.</exception>
         public DistanceValueSource(PointVectorStrategy strategy, IPoint from, double multiplier)
         {
-            this.strategy = strategy;
-            this.from = from;
+            // LUCENENET specific - added guard clauses
+            this.strategy = strategy ?? throw new ArgumentNullException(nameof(strategy));
+            this.from = from ?? throw new ArgumentNullException(nameof(from));
             this.multiplier = multiplier;
         }
 
@@ -62,6 +65,10 @@ namespace Lucene.Net.Spatial.Vector
         /// </summary>
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
+            // LUCENENET specific - added guard clause
+            if (readerContext is null)
+                throw new ArgumentNullException(nameof(readerContext));
+
             return new DistanceFunctionValue(this, readerContext.AtomicReader);
         }
 
@@ -79,7 +86,10 @@ namespace Lucene.Net.Spatial.Vector
 
             public DistanceFunctionValue(DistanceValueSource outerInstance, AtomicReader reader)
             {
-                this.outerInstance = outerInstance;
+                // LUCENENET specific - added guard clauses
+                this.outerInstance = outerInstance ?? throw new ArgumentNullException(nameof(outerInstance));
+                if (reader is null)
+                    throw new ArgumentNullException(nameof(reader));
 
                 ptX = FieldCache.DEFAULT.GetDoubles(reader, outerInstance.strategy.FieldNameX, true);
                 ptY = FieldCache.DEFAULT.GetDoubles(reader, outerInstance.strategy.FieldNameY, true);
@@ -118,7 +128,7 @@ namespace Lucene.Net.Spatial.Vector
 
         #endregion
 
-        public override bool Equals(object o)
+        public override bool Equals(object? o)
         {
             if (this == o) return true;
             if (o is null || GetType() != o.GetType()) return false;
