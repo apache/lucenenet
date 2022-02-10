@@ -126,7 +126,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 IList<Cell> cells = new JCG.List<Cell>(hashes.Length);
                 foreach (string hash in hashes)
                 {
-                    cells.Add(new GhCell((GeohashPrefixTree)m_outerInstance, hash));
+                    cells.Add(new GhCell((GeohashPrefixTree)m_spatialPrefixTree, hash));
                 }
                 return cells;
             }
@@ -135,7 +135,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             public override Cell GetSubCell(IPoint p)
             {
-                return m_outerInstance.GetCell(p, Level + 1);//not performant!
+                return m_spatialPrefixTree.GetCell(p, Level + 1);//not performant!
             }
 
             private IShape shape;//cache
@@ -146,13 +146,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 {
                     if (shape is null)
                     {
-                        shape = GeohashUtils.DecodeBoundary(Geohash, m_outerInstance.m_ctx);
+                        shape = GeohashUtils.DecodeBoundary(Geohash, m_spatialPrefixTree.m_ctx);
                     }
                     return shape;
                 }
             }
 
-            public override IPoint Center => GeohashUtils.Decode(Geohash, m_outerInstance.m_ctx);
+            public override IPoint Center => GeohashUtils.Decode(Geohash, m_spatialPrefixTree.m_ctx);
 
             private string Geohash => TokenString;
 

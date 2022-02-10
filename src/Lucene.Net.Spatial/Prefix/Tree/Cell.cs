@@ -40,7 +40,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// So we need to move the reference here and also set it before running the normal constructor
         /// logic.
         /// </summary>
-        protected readonly SpatialPrefixTree m_outerInstance;
+        protected readonly SpatialPrefixTree m_spatialPrefixTree;
 
 
         public const byte LEAF_BYTE = (byte)('+');//NOTE: must sort before letters & numbers
@@ -69,11 +69,11 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// </remarks>
         protected bool m_leaf;
 
-        protected Cell(SpatialPrefixTree outerInstance, string token)
+        protected Cell(SpatialPrefixTree spatialPrefixTree, string token)
         {
             // LUCENENET specific - set the outer instance here
             // because overrides of Shape may require it
-            this.m_outerInstance = outerInstance;
+            this.m_spatialPrefixTree = spatialPrefixTree;
 
             //NOTE: must sort before letters & numbers
             //this is the only part of equality
@@ -89,11 +89,11 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
         }
 
-        protected internal Cell(SpatialPrefixTree outerInstance, byte[] bytes, int off, int len)
+        protected internal Cell(SpatialPrefixTree spatialPrefixTree, byte[] bytes, int off, int len)
         {
             // LUCENENET specific - set the outer instance here
             // because overrides of Shape may require it
-            this.m_outerInstance = outerInstance;
+            this.m_spatialPrefixTree = spatialPrefixTree;
 
             //ensure any lazy instantiation completes to make this threadsafe
             this.bytes = bytes;

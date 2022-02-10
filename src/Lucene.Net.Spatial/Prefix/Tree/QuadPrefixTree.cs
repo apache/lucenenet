@@ -259,7 +259,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             protected internal override ICollection<Cell> GetSubCells()
             {
-                QuadPrefixTree outerInstance = (QuadPrefixTree)this.m_outerInstance;
+                QuadPrefixTree outerInstance = (QuadPrefixTree)this.m_spatialPrefixTree;
                 return new JCG.List<Cell>(4)
                 {
                     new QuadCell(outerInstance, TokenString + "A"),
@@ -273,7 +273,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             public override Cell GetSubCell(IPoint p)
             {
-                return m_outerInstance.GetCell(p, Level + 1);//not performant!
+                return m_spatialPrefixTree.GetCell(p, Level + 1);//not performant!
             }
 
             private IShape shape; //cache
@@ -292,7 +292,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             private IRectangle MakeShape()
             {
-                QuadPrefixTree outerInstance = (QuadPrefixTree)this.m_outerInstance;
+                QuadPrefixTree outerInstance = (QuadPrefixTree)this.m_spatialPrefixTree;
                 string token = TokenString;
                 double xmin = outerInstance.xmin;
                 double ymin = outerInstance.ymin;
