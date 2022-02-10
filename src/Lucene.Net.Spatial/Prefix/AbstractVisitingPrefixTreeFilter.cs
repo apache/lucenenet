@@ -126,7 +126,7 @@ namespace Lucene.Net.Spatial.Prefix
 
         private BytesRef? thisTerm; //the result of termsEnum.term()
 
-        protected VisitorTemplate(AbstractVisitingPrefixTreeFilter outerInstance, AtomicReaderContext context, IBits acceptDocs,
+        protected VisitorTemplate(AbstractVisitingPrefixTreeFilter outerInstance, AtomicReaderContext context, IBits? acceptDocs,
                                 bool hasIndexedLeaves) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(outerInstance, context, acceptDocs)
         {

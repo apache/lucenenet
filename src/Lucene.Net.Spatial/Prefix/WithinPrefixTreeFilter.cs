@@ -8,8 +8,8 @@ using Spatial4n.Distance;
 using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Prefix
 {
@@ -42,7 +42,7 @@ namespace Lucene.Net.Spatial.Prefix
     /// beyond the query shape's edge.  Even if the indexed shapes are sometimes
     /// comprised of multiple disjoint parts, you might want to use this option with
     /// a large buffer as a faster approximation with minimal false-positives.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class WithinPrefixTreeFilter : AbstractVisitingPrefixTreeFilter
@@ -51,10 +51,10 @@ namespace Lucene.Net.Spatial.Prefix
         //  minimal query buffer by looking in a DocValues cache holding a representative
         //  point of each disjoint component of a document's shape(s).
 
-        private readonly IShape bufferedQueryShape;//if null then the whole world
+        private readonly IShape? bufferedQueryShape;//if null then the whole world
 
         /// <summary>
-        /// See <see cref="AbstractVisitingPrefixTreeFilter.AbstractVisitingPrefixTreeFilter(IShape, string, SpatialPrefixTree, int, int)"/>.
+        /// See <see cref="AbstractVisitingPrefixTreeFilter(IShape, string, SpatialPrefixTree, int, int)"/>.
         /// <c>queryBuffer</c> is the (minimum) distance beyond the query shape edge
         /// where non-matching documents are looked for so they can be excluded. If
         /// -1 is used then the whole world is examined (a good default for correctness).
@@ -78,6 +78,10 @@ namespace Lucene.Net.Spatial.Prefix
         /// </summary>
         protected virtual IShape BufferShape(IShape shape, double distErr)
         {
+            // LUCENENET specific - added guard clause
+            if (shape is null)
+                throw new ArgumentNullException(nameof(shape));
+
             //TODO move this generic code elsewhere?  Spatial4j?
             if (distErr <= 0)
             {
@@ -138,7 +142,7 @@ namespace Lucene.Net.Spatial.Prefix
         }
 
         /// <exception cref="IOException"></exception>
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
+        public override DocIdSet? GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             return new VisitorTemplateAnonymousClass(this, context, acceptDocs, true).GetDocIdSet();
         }
@@ -147,12 +151,12 @@ namespace Lucene.Net.Spatial.Prefix
 
         private sealed class VisitorTemplateAnonymousClass : VisitorTemplate
         {
-            private FixedBitSet inside;
-            private FixedBitSet outside;
+            private FixedBitSet? inside;
+            private FixedBitSet? outside;
             private SpatialRelation visitRelation;
 
             public VisitorTemplateAnonymousClass(WithinPrefixTreeFilter outerInstance, AtomicReaderContext context, 
-                IBits acceptDocs, bool hasIndexedLeaves)
+                IBits? acceptDocs, bool hasIndexedLeaves)
                 : base(outerInstance, context, acceptDocs, hasIndexedLeaves)
             {
             }
@@ -165,34 +169,42 @@ namespace Lucene.Net.Spatial.Prefix
 
             protected override DocIdSet Finish()
             {
-                inside.AndNot(outside);
+                inside!.AndNot(outside!);
                 return inside;
             }
 
             protected override IEnumerator<Cell> FindSubCellsToVisit(Cell cell)
             {
+                // LUCENENET specific - added guard clause
+                if (cell is null)
+                    throw new ArgumentNullException(nameof(cell));
+
                 //use buffered query shape instead of orig.  Works with null too.
                 return cell.GetSubCells(((WithinPrefixTreeFilter)m_filter).bufferedQueryShape).GetEnumerator();
             }
 
             protected override bool Visit(Cell cell)
             {
+                // LUCENENET specific - added guard clause
+                if (cell is null)
+                    throw new ArgumentNullException(nameof(cell));
+
                 //cell.relate is based on the bufferedQueryShape; we need to examine what
                 // the relation is against the queryShape
                 visitRelation = cell.Shape.Relate(m_filter.m_queryShape);
                 if (visitRelation == SpatialRelation.Within)
                 {
-                    CollectDocs(inside);
+                    CollectDocs(inside!);
                     return false;
                 }
                 else if (visitRelation == SpatialRelation.Disjoint)
                 {
-                    CollectDocs(outside);
+                    CollectDocs(outside!);
                     return false;
                 }
                 else if (cell.Level == m_filter.m_detailLevel)
                 {
-                    CollectDocs(inside);
+                    CollectDocs(inside!);
                     return false;
                 }
                 return true;
@@ -201,6 +213,10 @@ namespace Lucene.Net.Spatial.Prefix
             /// <exception cref="IOException"></exception>
             protected override void VisitLeaf(Cell cell)
             {
+                // LUCENENET specific - added guard clause
+                if (cell is null)
+                    throw new ArgumentNullException(nameof(cell));
+
                 //visitRelation is declared as a field, populated by visit() so we don't recompute it
                 if (Debugging.AssertsEnabled)
                 {
@@ -209,11 +225,11 @@ namespace Lucene.Net.Spatial.Prefix
                 }
                 if (AllCellsIntersectQuery(cell, visitRelation))
                 {
-                    CollectDocs(inside);
+                    CollectDocs(inside!);
                 }
                 else
                 {
-                    CollectDocs(outside);
+                    CollectDocs(outside!);
                 }
             }
 
@@ -223,6 +239,10 @@ namespace Lucene.Net.Spatial.Prefix
             /// </summary>
             private bool AllCellsIntersectQuery(Cell cell, SpatialRelation relate/*cell to query*/)
             {
+                // LUCENENET specific - added guard clause
+                if (cell is null)
+                    throw new ArgumentNullException(nameof(cell));
+
                 if (relate == SpatialRelation.None)
                 {
                     relate = cell.Shape.Relate(m_filter.m_queryShape);
@@ -257,13 +277,17 @@ namespace Lucene.Net.Spatial.Prefix
             /// <exception cref="IOException"></exception>
             protected override void VisitScanned(Cell cell)
             {
+                // LUCENENET specific - added guard clause
+                if (cell is null)
+                    throw new ArgumentNullException(nameof(cell));
+
                 if (AllCellsIntersectQuery(cell, SpatialRelation.None))
                 {
-                    CollectDocs(inside);
+                    CollectDocs(inside!);
                 }
                 else
                 {
-                    CollectDocs(outside);
+                    CollectDocs(outside!);
                 }
             }
         }

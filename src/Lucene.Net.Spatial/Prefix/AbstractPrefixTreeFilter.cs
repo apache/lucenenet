@@ -38,9 +38,10 @@ namespace Lucene.Net.Spatial.Prefix
 
         protected AbstractPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, int detailLevel) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
-            this.m_queryShape = queryShape;
-            this.m_fieldName = fieldName;
-            this.m_grid = grid;
+            // LUCENENET specific - added guard clauses
+            this.m_queryShape = queryShape ?? throw new ArgumentNullException(nameof(queryShape));
+            this.m_fieldName = fieldName ?? throw new ArgumentNullException(nameof(fieldName));
+            this.m_grid = grid ?? throw new ArgumentNullException(nameof(grid));
             this.m_detailLevel = detailLevel;
         }
 
