@@ -5,6 +5,7 @@ using Spatial4n.Distance;
 using Spatial4n.Shapes;
 using System;
 using System.Collections;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Util
 {
@@ -43,9 +44,10 @@ namespace Lucene.Net.Spatial.Util
         public ShapeFieldCacheDistanceValueSource(SpatialContext ctx, 
             ShapeFieldCacheProvider<IPoint> provider, IPoint from, double multiplier)
         {
-            this.ctx = ctx;
-            this.from = from;
-            this.provider = provider;
+            // LUCENENET specific - added guard clauses
+            this.ctx = ctx ?? throw new ArgumentNullException(nameof(ctx));
+            this.from = from ?? throw new ArgumentNullException(nameof(from));
+            this.provider = provider ?? throw new ArgumentNullException(nameof(provider));
             this.multiplier = multiplier;
         }
 
@@ -56,25 +58,31 @@ namespace Lucene.Net.Spatial.Util
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            return new CachedDistanceFunctionValue(readerContext.AtomicReader, this);
+            // LUCENENET specific - added guard clause
+            if (readerContext is null)
+                throw new ArgumentNullException(nameof(readerContext));
+
+            return new CachedDistanceFunctionValue(this, readerContext.AtomicReader);
         }
 
         internal class CachedDistanceFunctionValue : FunctionValues
         {
-            private readonly ShapeFieldCacheDistanceValueSource enclosingInstance;
+            private readonly ShapeFieldCacheDistanceValueSource outerInstance;
             private readonly ShapeFieldCache<IPoint> cache;
             private readonly IPoint from;
             private readonly IDistanceCalculator calculator;
             private readonly double nullValue;
 
-            public CachedDistanceFunctionValue(AtomicReader reader, ShapeFieldCacheDistanceValueSource enclosingInstance)
+            public CachedDistanceFunctionValue(ShapeFieldCacheDistanceValueSource outerInstance, AtomicReader reader)
             {
-                cache = enclosingInstance.provider.GetCache(reader);
-                this.enclosingInstance = enclosingInstance;
-
-                from = enclosingInstance.from;
-                calculator = enclosingInstance.ctx.DistanceCalculator;
-                nullValue = (enclosingInstance.ctx.IsGeo ? 180 * enclosingInstance.multiplier : double.MaxValue);
+                // LUCENENET specific - added guard clauses
+                this.outerInstance = outerInstance ?? throw new ArgumentNullException(nameof(outerInstance));
+                if (reader is null)
+                    throw new ArgumentNullException(nameof(reader));
+                cache = outerInstance.provider.GetCache(reader);
+                from = outerInstance.from;
+                calculator = outerInstance.ctx.DistanceCalculator;
+                nullValue = (outerInstance.ctx.IsGeo ? 180 * outerInstance.multiplier : double.MaxValue);
             }
 
             /// <summary>
@@ -95,22 +103,21 @@ namespace Lucene.Net.Spatial.Util
                     {
                         v = Math.Min(v, calculator.Distance(from, vals[i]));
                     }
-                    return v * enclosingInstance.multiplier;
+                    return v * outerInstance.multiplier;
                 }
                 return nullValue;
             }
 
             public override string ToString(int doc)
             {
-                return enclosingInstance.GetDescription() + "=" + SingleVal(doc);
+                return outerInstance.GetDescription() + "=" + SingleVal(doc);
             }
         }
 
-        public override bool Equals(object o)
+        public override bool Equals(object? o)
         {
             if (this == o) return true;
             if (o is null || GetType() != o.GetType()) return false;
-
 
             if (!(o is ShapeFieldCacheDistanceValueSource that)) return false;
             if (!ctx.Equals(that.ctx)) return false;
