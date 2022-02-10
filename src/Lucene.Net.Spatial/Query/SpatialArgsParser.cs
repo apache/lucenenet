@@ -52,6 +52,10 @@ namespace Lucene.Net.Spatial.Queries
         /// </summary>
         public static string WriteSpatialArgs(SpatialArgs args)
         {
+            // LUCENENET specific - added guard clause
+            if (args is null)
+                throw new ArgumentNullException(nameof(args));
+
             var str = new StringBuilder();
             str.Append(args.Operation.Name);
             str.Append('(');
@@ -70,11 +74,18 @@ namespace Lucene.Net.Spatial.Queries
         /// <param name="v">The string to parse. Mandatory.</param>
         /// <param name="ctx">The spatial context. Mandatory.</param>
         /// <returns>Not null.</returns>
-        /// <exception cref="ArgumentException">if the parameters don't make sense or an add-on parameter is unknown</exception>
-        /// <exception cref="Spatial4n.Exceptions.ParseException">If there is a problem parsing the string</exception>
-        /// <exception cref="InvalidShapeException">When the coordinates are invalid for the shape</exception>
+        /// <exception cref="ArgumentException">if the parameters don't make sense or an add-on parameter is unknown.</exception>
+        /// <exception cref="Spatial4n.Exceptions.ParseException">If there is a problem parsing the string.</exception>
+        /// <exception cref="InvalidShapeException">When the coordinates are invalid for the shape.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="v"/> or <paramref name="ctx"/> is <c>null</c>.</exception>
         public virtual SpatialArgs Parse(string v, SpatialContext ctx)
         {
+            // LUCENENET specific - added guard clauses
+            if (v is null)
+                throw new ArgumentNullException(nameof(v));
+            if (ctx is null)
+                throw new ArgumentNullException(nameof(ctx));
+
             int idx = v.IndexOf('(');
             int edx = v.LastIndexOf(')');
 
@@ -118,8 +129,15 @@ namespace Lucene.Net.Spatial.Queries
             return new SpatialArgs(op, shape);
         }
 
+        /// <exception cref="ArgumentNullException"><paramref name="args"/> or <paramref name="nameValPairs"/> is <c>null</c>.</exception>
         protected virtual void ReadNameValuePairs(SpatialArgs args, IDictionary<string, string> nameValPairs)
         {
+            // LUCENENET specific - added guard clause
+            if (args is null)
+                throw new ArgumentNullException(nameof(args));
+            if (nameValPairs is null)
+                throw new ArgumentNullException(nameof(nameValPairs));
+
             nameValPairs.TryGetValue(DIST_ERR_PCT, out string distErrPctStr);
             nameValPairs.TryGetValue(DIST_ERR, out string distErrStr);
             args.DistErrPct = ReadDouble(distErrPctStr);
@@ -128,8 +146,15 @@ namespace Lucene.Net.Spatial.Queries
             nameValPairs.Remove(DIST_ERR);
         }
 
+        /// <exception cref="ArgumentNullException"><paramref name="str"/> or <paramref name="ctx"/> is <c>null</c>.</exception>
         protected virtual IShape ParseShape(string str, SpatialContext ctx) 
         {
+            // LUCENENET specific - added guard clauses
+            if (str is null)
+                throw new ArgumentNullException(nameof(str));
+            if (ctx is null)
+                throw new ArgumentNullException(nameof(ctx));
+            
             //return ctx.readShape(str);//still in Spatial4n 0.4 but will be deleted
             return ctx.ReadShapeFromWkt(str);
         }
@@ -148,8 +173,13 @@ namespace Lucene.Net.Spatial.Queries
         /// Parses "a=b c=d f" (whitespace separated) into name-value pairs. If there
         /// is no '=' as in 'f' above then it's short for f=f.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="body"/> is <c>null</c>.</exception>
         protected static IDictionary<string, string> ParseMap(string body)
         {
+            // LUCENENET specific - added guard clause
+            if (body is null)
+                throw new ArgumentNullException(nameof(body));
+
             var map = new Dictionary<string, string>();
             StringTokenizer st = new StringTokenizer(body, " \n\t");
 
