@@ -157,25 +157,25 @@ namespace Lucene.Net.Spatial.Prefix
             {
             }
 
-            protected internal override void Start()
+            protected override void Start()
             {
                 inside = new FixedBitSet(m_maxDoc);
                 outside = new FixedBitSet(m_maxDoc);
             }
 
-            protected internal override DocIdSet Finish()
+            protected override DocIdSet Finish()
             {
                 inside.AndNot(outside);
                 return inside;
             }
 
-            protected internal override IEnumerator<Cell> FindSubCellsToVisit(Cell cell)
+            protected override IEnumerator<Cell> FindSubCellsToVisit(Cell cell)
             {
                 //use buffered query shape instead of orig.  Works with null too.
                 return cell.GetSubCells(((WithinPrefixTreeFilter)m_filter).bufferedQueryShape).GetEnumerator();
             }
 
-            protected internal override bool Visit(Cell cell)
+            protected override bool Visit(Cell cell)
             {
                 //cell.relate is based on the bufferedQueryShape; we need to examine what
                 // the relation is against the queryShape
@@ -199,7 +199,7 @@ namespace Lucene.Net.Spatial.Prefix
             }
 
             /// <exception cref="IOException"></exception>
-            protected internal override void VisitLeaf(Cell cell)
+            protected override void VisitLeaf(Cell cell)
             {
                 //visitRelation is declared as a field, populated by visit() so we don't recompute it
                 if (Debugging.AssertsEnabled)
@@ -255,7 +255,7 @@ namespace Lucene.Net.Spatial.Prefix
             }
 
             /// <exception cref="IOException"></exception>
-            protected internal override void VisitScanned(Cell cell)
+            protected override void VisitScanned(Cell cell)
             {
                 if (AllCellsIntersectQuery(cell, SpatialRelation.None))
                 {

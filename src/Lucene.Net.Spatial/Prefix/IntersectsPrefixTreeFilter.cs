@@ -76,17 +76,17 @@ namespace Lucene.Net.Spatial.Prefix
             {
             }
 
-            protected internal override void Start()
+            protected override void Start()
             {
                 results = new FixedBitSet(m_maxDoc);
             }
 
-            protected internal override DocIdSet Finish()
+            protected override DocIdSet Finish()
             {
                 return results;
             }
 
-            protected internal override bool Visit(Cell cell)
+            protected override bool Visit(Cell cell)
             {
                 if (cell.ShapeRel == SpatialRelation.Within || cell.Level == m_filter.m_detailLevel)
                 {
@@ -96,12 +96,12 @@ namespace Lucene.Net.Spatial.Prefix
                 return true;
             }
 
-            protected internal override void VisitLeaf(Cell cell)
+            protected override void VisitLeaf(Cell cell)
             {
                 CollectDocs(results);
             }
 
-            protected internal override void VisitScanned(Cell cell)
+            protected override void VisitScanned(Cell cell)
             {
                 if (m_filter.m_queryShape.Relate(cell.Shape).Intersects())
                 {
