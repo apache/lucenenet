@@ -139,17 +139,17 @@ namespace Lucene.Net.Store
             UninterruptableMonitor.Enter(this);
             try
             {
-                if (openFiles == null)
+                if (openFiles is null)
                 {
                     openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
                     openFilesDeleted = new JCG.HashSet<string>(StringComparer.Ordinal);
                 }
 
-                if (createdFiles == null)
+                if (createdFiles is null)
                 {
                     createdFiles = new JCG.HashSet<string>(StringComparer.Ordinal);
                 }
-                if (unSyncedFiles == null)
+                if (unSyncedFiles is null)
                 {
                     unSyncedFiles = new JCG.HashSet<string>(StringComparer.Ordinal);
                 }
@@ -492,9 +492,9 @@ namespace Lucene.Net.Store
             {
                 if (LuceneTestCase.Verbose)
                 {
-                    Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception" + (message == null ? "" : " (" + message + ")"));
+                    Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception" + (message is null ? "" : " (" + message + ")"));
                 }
-                throw new IOException("a random IOException" + (message == null ? "" : " (" + message + ")"));
+                throw new IOException("a random IOException" + (message is null ? "" : " (" + message + ")"));
             }
         }
 
@@ -928,7 +928,7 @@ namespace Lucene.Net.Store
                     // all that matters is that we tried! (they will eventually go away)
                     ISet<string> pendingDeletions = new JCG.HashSet<string>(openFilesDeleted, StringComparer.Ordinal);
                     MaybeYield();
-                    if (openFiles == null)
+                    if (openFiles is null)
                     {
                         openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
                         openFilesDeleted = new JCG.HashSet<string>(StringComparer.Ordinal);
@@ -1177,7 +1177,7 @@ namespace Lucene.Net.Store
             UninterruptableMonitor.Enter(this);
             try
             {
-                if (failures == null)
+                if (failures is null)
                 {
                     failures = new JCG.List<Failure>();
                 }

@@ -140,7 +140,7 @@ namespace Lucene.Net.Search.Suggest
             {
                 this.outerInstance = outerInstance;
                 outerInstance.line = outerInstance.@in.ReadLine();
-                if (outerInstance.line == null)
+                if (outerInstance.line is null)
                 {
                     outerInstance.done = true;
                     IOUtils.Dispose(outerInstance.@in);

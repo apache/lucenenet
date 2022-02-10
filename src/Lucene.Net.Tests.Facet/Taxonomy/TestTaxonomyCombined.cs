@@ -133,7 +133,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public static string Showcat(string[] path)
         {
-            if (path == null)
+            if (path is null)
             {
                 return "<null>";
             }
@@ -931,7 +931,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         private string stackTraceStr(Exception error)
         {
-            if (error == null)
+            if (error is null)
             {
                 return "";
             }

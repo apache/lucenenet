@@ -34,13 +34,13 @@ namespace Lucene.Net.Search
         private readonly IBits acceptDocs;
 
         /// <summary>
-        /// Convenience wrapper method: If <c>acceptDocs == null</c> it returns the original set without wrapping. </summary>
+        /// Convenience wrapper method: If <c>acceptDocs is null</c> it returns the original set without wrapping. </summary>
         /// <param name="set"> Underlying DocIdSet. If <c>null</c>, this method returns <c>null</c> </param>
         /// <param name="acceptDocs"> Allowed docs, all docids not in this set will not be returned by this <see cref="DocIdSet"/>.
         /// If <c>null</c>, this method returns the original set without wrapping. </param>
         public static DocIdSet Wrap(DocIdSet set, IBits acceptDocs)
         {
-            return (set == null || acceptDocs == null) ? set : new BitsFilteredDocIdSet(set, acceptDocs);
+            return (set is null || acceptDocs is null) ? set : new BitsFilteredDocIdSet(set, acceptDocs);
         }
 
         /// <summary>

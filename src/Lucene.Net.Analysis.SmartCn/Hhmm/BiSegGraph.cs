@@ -88,7 +88,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                             }
                             next++;
                         }
-                        if (nextTokens == null)
+                        if (nextTokens is null)
                         {
                             break;
                         }

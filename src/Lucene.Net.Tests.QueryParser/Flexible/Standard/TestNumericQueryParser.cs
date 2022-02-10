@@ -318,7 +318,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         private static Number? GetNumberType(NumberType? numberType, String fieldName)
         {
 
-            if (numberType == null)
+            if (numberType is null)
             {
                 return null;
             }
@@ -655,7 +655,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         private static String NumberToString(/*Number*/ object? number)
         {
-            return number == null ? "*" : ESCAPER.Escape(NUMBER_FORMAT!.Format(number),
+            return number is null ? "*" : ESCAPER.Escape(NUMBER_FORMAT!.Format(number),
                 LOCALE, EscapeQuerySyntaxType.STRING).toString();
         }
 

@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(ch != FST.END_LABEL);
                 FST.Arc<Int64> result = rootCache[ch - 0x3040];
-                if (result == null)
+                if (result is null)
                 {
                     return null;
                 }

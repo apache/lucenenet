@@ -221,7 +221,7 @@ namespace Lucene.Net.Util.Fst
         // of the term prefix that matches
         private static T Run(FST<T> fst, Int32sRef term, int[] prefixLength) // LUCENENET: CA1822: Mark members as static
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(prefixLength == null || prefixLength.Length == 1);
+            if (Debugging.AssertsEnabled) Debugging.Assert(prefixLength is null || prefixLength.Length == 1);
             FST.Arc<T> arc = fst.GetFirstArc(new FST.Arc<T>());
             T NO_OUTPUT = fst.Outputs.NoOutput;
             T output = NO_OUTPUT;
@@ -239,7 +239,7 @@ namespace Lucene.Net.Util.Fst
                     label = term.Int32s[term.Offset + i];
                 }
                 // System.out.println("   loop i=" + i + " label=" + label + " output=" + fst.Outputs.outputToString(output) + " curArc: target=" + arc.target + " isFinal?=" + arc.isFinal());
-                if (fst.FindTargetArc(label, arc, arc, fstReader) == null)
+                if (fst.FindTargetArc(label, arc, arc, fstReader) is null)
                 {
                     // System.out.println("    not found");
                     if (prefixLength != null)
@@ -394,7 +394,7 @@ namespace Lucene.Net.Util.Fst
 
             if (LuceneTestCase.Verbose)
             {
-                if (fst == null)
+                if (fst is null)
                 {
                     Console.WriteLine("  fst has 0 nodes (fully pruned)");
                 }
@@ -520,7 +520,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     long v = TestUtil.NextInt64(random, minLong, maxLong);
                     Int32sRef input = Util.GetByOutput(fstLong, v);
-                    Assert.IsTrue(validOutputs.Contains(v) || input == null);
+                    Assert.IsTrue(validOutputs.Contains(v) || input is null);
                 }
             }
 
@@ -615,7 +615,7 @@ namespace Lucene.Net.Util.Fst
                             {
                                 // seeked before start or beyond end
                                 //System.out.println("seek=" + seekTerm);
-                                Assert.IsNull(seekResult, "expected null but got " + (seekResult == null ? "null" : InputToString(inputMode, seekResult.Input)));
+                                Assert.IsNull(seekResult, "expected null but got " + (seekResult is null ? "null" : InputToString(inputMode, seekResult.Input)));
                                 if (LuceneTestCase.Verbose)
                                 {
                                     Console.WriteLine("    got null");
@@ -710,7 +710,7 @@ namespace Lucene.Net.Util.Fst
                                     {
                                         Console.WriteLine("  do non-exist seekFloor(" + InputToString(inputMode, term) + ")");
                                     }
-                                    isDone = fstEnum_.SeekFloor(term) == null;
+                                    isDone = fstEnum_.SeekFloor(term) is null;
                                 }
                                 else
                                 {
@@ -718,7 +718,7 @@ namespace Lucene.Net.Util.Fst
                                     {
                                         Console.WriteLine("  do non-exist seekCeil(" + InputToString(inputMode, term) + ")");
                                     }
-                                    isDone = fstEnum_.SeekCeil(term) == null;
+                                    isDone = fstEnum_.SeekCeil(term) is null;
                                 }
 
                                 break;
@@ -744,7 +744,7 @@ namespace Lucene.Net.Util.Fst
                             {
                                 Console.WriteLine("  do seekCeil(" + InputToString(inputMode, pairs[upto].Input) + ")");
                             }
-                            isDone = fstEnum_.SeekCeil(pairs[upto].Input) == null;
+                            isDone = fstEnum_.SeekCeil(pairs[upto].Input) is null;
                         }
                         else
                         {
@@ -752,7 +752,7 @@ namespace Lucene.Net.Util.Fst
                             {
                                 Console.WriteLine("  do seekFloor(" + InputToString(inputMode, pairs[upto].Input) + ")");
                             }
-                            isDone = fstEnum_.SeekFloor(pairs[upto].Input) == null;
+                            isDone = fstEnum_.SeekFloor(pairs[upto].Input) is null;
                         }
                     }
                     if (LuceneTestCase.Verbose)
@@ -846,7 +846,7 @@ namespace Lucene.Net.Util.Fst
                 for (int idx = 0; idx <= pair.Input.Length; idx++)
                 {
                     scratch.Length = idx;
-                    if (!prefixes.TryGetValue(scratch, out CountMinOutput<T> cmo) || cmo == null)
+                    if (!prefixes.TryGetValue(scratch, out CountMinOutput<T> cmo) || cmo is null)
                     {
                         cmo = new CountMinOutput<T>();
                         cmo.Count = 1;
@@ -911,7 +911,7 @@ namespace Lucene.Net.Util.Fst
                             scratch.Length = prefix.Length - 1;
                             Array.Copy(prefix.Int32s, prefix.Offset, scratch.Int32s, 0, scratch.Length);
                             keep = prefixes.TryGetValue(scratch, out CountMinOutput<T> cmo2) && cmo2 != null && ((prune2 > 1 && cmo2.Count >= prune2) || (prune2 == 1 && (cmo2.Count >= 2 || prefix.Length <= 1)));
-                            //System.out.println("    parent count = " + (cmo2 == null ? -1 : cmo2.count));
+                            //System.out.println("    parent count = " + (cmo2 is null ? -1 : cmo2.count));
                         }
                         else if (cmo.Count >= prune2)
                         {

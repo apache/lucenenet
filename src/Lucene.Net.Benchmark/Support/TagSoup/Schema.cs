@@ -73,7 +73,7 @@ namespace TagSoup
         public virtual void Attribute(string elemName, string attrName, string type, string value)
         {
             ElementType e = GetElementType(elemName);
-            if (e == null)
+            if (e is null)
             {
                 throw new Exception("Attribute " + attrName + " specified for unknown element type " + elemName);
             }
@@ -89,11 +89,11 @@ namespace TagSoup
         {
             ElementType child = GetElementType(name);
             ElementType parent = GetElementType(parentName);
-            if (child == null)
+            if (child is null)
             {
                 throw new Exception("No child " + name + " for parent " + parentName);
             }
-            if (parent == null)
+            if (parent is null)
             {
 #pragma warning disable IDE0016 // Use 'throw' expression
                 throw new Exception("No parent " + parentName + " for child " + name);

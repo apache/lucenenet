@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.Phonetic
         public virtual void Inform(IResourceLoader loader)
         {
             registry.TryGetValue(name.ToUpperInvariant(), out clazz);
-            if (clazz == null)
+            if (clazz is null)
             {
                 clazz = ResolveEncoder(name, loader);
             }

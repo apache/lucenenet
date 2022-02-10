@@ -39,8 +39,8 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
         public NLPLemmatizerOp(Stream dictionary, LemmatizerModel lemmatizerModel)
         {
             Debug.Assert(dictionary != null || lemmatizerModel != null, "At least one parameter must be non-null");
-            dictionaryLemmatizer = dictionary == null ? null : new DictionaryLemmatizer(new ikvm.io.InputStreamWrapper(dictionary));
-            lemmatizerME = lemmatizerModel == null ? null : new LemmatizerME(lemmatizerModel);
+            dictionaryLemmatizer = dictionary is null ? null : new DictionaryLemmatizer(new ikvm.io.InputStreamWrapper(dictionary));
+            lemmatizerME = lemmatizerModel is null ? null : new LemmatizerME(lemmatizerModel);
         }
 
         public virtual string[] Lemmatize(string[] words, string[] postags)
@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
                     {   // this word is not in the dictionary
                         if (lemmatizerME != null)
                         {  // fall back to the MaxEnt lemmatizer if it's enabled
-                            if (maxEntLemmas == null)
+                            if (maxEntLemmas is null)
                             {
                                 maxEntLemmas = lemmatizerME.lemmatize(words, postags);
                             }

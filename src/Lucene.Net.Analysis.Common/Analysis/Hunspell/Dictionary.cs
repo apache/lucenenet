@@ -244,7 +244,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
         internal virtual Int32sRef Lookup(FST<Int32sRef> fst, char[] word, int offset, int length)
         {
-            if (fst == null)
+            if (fst is null)
             {
                 return null;
             }
@@ -260,7 +260,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 for (int i = offset, cp = 0; i < l; i += Character.CharCount(cp))
                 {
                     cp = Character.CodePointAt(word, i, l);
-                    if (fst.FindTargetArc(cp, arc, arc, bytesReader) == null)
+                    if (fst.FindTargetArc(cp, arc, arc, bytesReader) is null)
                     {
                         return null;
                     }
@@ -269,7 +269,7 @@ namespace Lucene.Net.Analysis.Hunspell
                         output = fst.Outputs.Add(output, arc.Output);
                     }
                 }
-                if (fst.FindTargetArc(FST.END_LABEL, arc, arc, bytesReader) == null)
+                if (fst.FindTargetArc(FST.END_LABEL, arc, arc, bytesReader) is null)
                 {
                     return null;
                 }
@@ -614,7 +614,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     }
                 }
 
-                if (appendFlags == null)
+                if (appendFlags is null)
                 {
                     appendFlags = NOFLAGS;
                 }
@@ -650,7 +650,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     affixArg = new StringBuilder(affixArg).Reverse().ToString();
                 }
 
-                if (!affixes.TryGetValue(affixArg, out IList<int> list) || list == null)
+                if (!affixes.TryGetValue(affixArg, out IList<int> list) || list is null)
                 {
                     affixes[affixArg] = list = new JCG.List<int>();
                 }
@@ -1090,7 +1090,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
                     // LUCENENET NOTE: CompareToOrdinal is an extension method that works similarly to
                     // Java's String.compareTo method.
-                    int cmp = currentEntry == null ? 1 : entry.CompareToOrdinal(currentEntry);
+                    int cmp = currentEntry is null ? 1 : entry.CompareToOrdinal(currentEntry);
                     if (cmp < 0)
                     {
                         throw new ArgumentException("out of order: " + entry + " < " + currentEntry);
@@ -1111,7 +1111,7 @@ namespace Lucene.Net.Analysis.Hunspell
                             words.Add(scratchInts, currentOrds);
                         }
                         // swap current
-                        if (cmp > 0 || currentEntry == null)
+                        if (cmp > 0 || currentEntry is null)
                         {
                             currentEntry = entry;
                             currentOrds = new Int32sRef(); // must be this way
@@ -1178,7 +1178,7 @@ namespace Lucene.Net.Analysis.Hunspell
         private void ParseAlias(string line)
         {
             string[] ruleArgs = whitespacePattern.Split(line).TrimEnd();
-            if (aliases == null)
+            if (aliases is null)
             {
                 //first line should be the aliases count
                 int count = Integer.Parse(ruleArgs[1], radix: 10); // LUCENENET: specify radix 10 to make this culture invariant
@@ -1211,7 +1211,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
         private void ParseMorphAlias(string line)
         {
-            if (morphAliases == null)
+            if (morphAliases is null)
             {
                 //first line should be the aliases count
                 int count = Integer.Parse(line.Substring(3), radix: 10); // LUCENENET: specify radix 10 to make this culture invariant
@@ -1378,7 +1378,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     continue;
                 }
 
-                if (ignoreCase && iconv == null)
+                if (ignoreCase && iconv is null)
                 {
                     // if we have no input conversion mappings, do this on-the-fly
                     ch = CaseFold(ch);
@@ -1455,7 +1455,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 for (int j = i; j < sb.Length; j++)
                 {
                     char ch = sb[j];
-                    if (fst.FindTargetArc(ch, arc, arc, bytesReader) == null)
+                    if (fst.FindTargetArc(ch, arc, arc, bytesReader) is null)
                     {
                         break;
                     }

@@ -92,7 +92,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         {
             this.indexReader = indexReader;
             this.taxoWriter = taxoWriter;
-            this.taxoEpoch = taxoWriter == null ? -1 : taxoWriter.TaxonomyEpoch;
+            this.taxoEpoch = taxoWriter is null ? -1 : taxoWriter.TaxonomyEpoch;
 
             // use the same instance of the cache, note the protective code in getOrdinal and getPath
             this.ordinalCache = ordinalCache ?? new LruDictionary<FacetLabel, Int32Class>(DEFAULT_CACHE_VALUE);
@@ -176,7 +176,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             // This works for both NRT and non-NRT readers (i.e. an NRT reader remains NRT).
             var r2 = DirectoryReader.OpenIfChanged(indexReader);
-            if (r2 == null)
+            if (r2 is null)
             {
                 return null; // no changes, nothing to do
             }
@@ -186,12 +186,12 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             try
             {
                 bool recreated = false;
-                if (taxoWriter == null)
+                if (taxoWriter is null)
                 {
                     // not NRT, check epoch from commit data
                     string t1 = indexReader.IndexCommit.UserData[DirectoryTaxonomyWriter.INDEX_EPOCH];
                     string t2 = r2.IndexCommit.UserData[DirectoryTaxonomyWriter.INDEX_EPOCH];
-                    if (t1 == null)
+                    if (t1 is null)
                     {
                         if (t2 != null)
                         {

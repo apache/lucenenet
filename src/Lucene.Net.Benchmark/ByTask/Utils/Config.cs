@@ -91,7 +91,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             props.LoadProperties(ms);
 
             // make sure work dir is set properly 
-            if (!props.TryGetValue("work.dir", out string temp) || temp == null)
+            if (!props.TryGetValue("work.dir", out string temp) || temp is null)
             {
                 // LUCENENET specific - reformatted with :
                 props["work.dir"] = SystemProperties.GetProperty("benchmark:work:dir", "work");
@@ -170,7 +170,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             {
                 sval = dflt;
             }
-            if (sval == null)
+            if (sval is null)
             {
                 return null;
             }

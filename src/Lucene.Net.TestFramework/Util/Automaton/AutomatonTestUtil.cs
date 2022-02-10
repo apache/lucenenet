@@ -450,7 +450,7 @@ namespace Lucene.Net.Util.Automaton
                 for (int i = 0; i < s.numTransitions; i++)
                 {
                     Transition t = s.TransitionsArray[i];
-                    if (!allArriving.TryGetValue(t.to, out IList<ArrivingTransition> tl) || tl == null)
+                    if (!allArriving.TryGetValue(t.to, out IList<ArrivingTransition> tl) || tl is null)
                     {
                         tl = new JCG.List<ArrivingTransition>();
                         allArriving[t.to] = tl;

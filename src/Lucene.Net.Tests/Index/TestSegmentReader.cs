@@ -196,7 +196,7 @@ namespace Lucene.Net.Index
                 {
                     Assert.AreEqual(reader.GetNormValues(f.Name) != null, !f.IndexableFieldType.OmitNorms);
                     Assert.AreEqual(reader.GetNormValues(f.Name) != null, !DocHelper.NoNorms.ContainsKey(f.Name));
-                    if (reader.GetNormValues(f.Name) == null)
+                    if (reader.GetNormValues(f.Name) is null)
                     {
                         // test for norms of null
                         NumericDocValues norms = MultiDocValues.GetNormValues(reader, f.Name);

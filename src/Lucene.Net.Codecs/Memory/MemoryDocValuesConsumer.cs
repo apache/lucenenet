@@ -106,7 +106,7 @@ namespace Lucene.Net.Codecs.Memory
                 foreach (var nv in values)
                 {
                     long v;
-                    if (nv == null)
+                    if (nv is null)
                     {
                         v = 0;
                         missing = true;
@@ -282,7 +282,7 @@ namespace Lucene.Net.Codecs.Memory
             foreach (var v in values)
             {
                 int length;
-                if (v == null)
+                if (v is null)
                 {
                     length = 0;
                     missing = true;

@@ -265,7 +265,7 @@ namespace Lucene.Net.Store
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(numBytes >= 0,"numBytes={0}", numBytes);
             long left = numBytes;
-            if (copyBuffer == null)
+            if (copyBuffer is null)
             {
                 copyBuffer = new byte[COPY_BUFFER_SIZE];
             }
@@ -296,7 +296,7 @@ namespace Lucene.Net.Store
         /// <param name="map"> Input <see cref="T:IDictionary{string, string}"/>. May be <c>null</c> (equivalent to an empty dictionary) </param>
         public virtual void WriteStringStringMap(IDictionary<string, string> map)
         {
-            if (map == null)
+            if (map is null)
             {
                 WriteInt32(0);
             }
@@ -321,7 +321,7 @@ namespace Lucene.Net.Store
         /// <param name="set"> Input <see cref="T:ISet{string}"/>. May be <c>null</c> (equivalent to an empty set) </param>
         public virtual void WriteStringSet(ISet<string> set)
         {
-            if (set == null)
+            if (set is null)
             {
                 WriteInt32(0);
             }

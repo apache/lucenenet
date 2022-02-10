@@ -97,7 +97,7 @@ namespace Lucene.Net.Queries.Function
         public virtual bool BytesVal(int doc, BytesRef target)
         {
             string s = StrVal(doc);
-            if (s == null)
+            if (s is null)
             {
                 target.Length = 0;
                 return false;
@@ -255,7 +255,7 @@ namespace Lucene.Net.Queries.Function
             float lower;
             float upper;
 
-            if (lowerVal == null)
+            if (lowerVal is null)
             {
                 lower = float.NegativeInfinity;
             }
@@ -263,7 +263,7 @@ namespace Lucene.Net.Queries.Function
             {
                 lower = J2N.Numerics.Single.Parse(lowerVal, NumberStyle.Float, NumberFormatInfo.InvariantInfo);
             }
-            if (upperVal == null)
+            if (upperVal is null)
             {
                 upper = float.PositiveInfinity;
             }

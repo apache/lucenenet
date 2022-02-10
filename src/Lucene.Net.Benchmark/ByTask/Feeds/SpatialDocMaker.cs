@@ -56,7 +56,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         /// </summary>
         public static SpatialStrategy GetSpatialStrategy(int roundNumber)
         {
-            if (!spatialStrategyCache.TryGetValue(roundNumber, out SpatialStrategy result) || result == null)
+            if (!spatialStrategyCache.TryGetValue(roundNumber, out SpatialStrategy result) || result is null)
             {
                 throw IllegalStateException.Create("Strategy should have been init'ed by SpatialDocMaker by now");
             }
@@ -172,7 +172,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         public override void SetConfig(Config config, ContentSource source)
         {
             base.SetConfig(config, source);
-            if (!spatialStrategyCache.TryGetValue(config.RoundNumber, out SpatialStrategy existing) || existing == null)
+            if (!spatialStrategyCache.TryGetValue(config.RoundNumber, out SpatialStrategy existing) || existing is null)
             {
                 //new round; we need to re-initialize
                 strategy = MakeSpatialStrategy(config);

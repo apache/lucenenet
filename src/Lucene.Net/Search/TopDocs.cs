@@ -171,7 +171,7 @@ namespace Lucene.Net.Search
                                 throw new ArgumentException("shard " + shardIDX + " was not sorted by the provided Sort (expected FieldDoc but got ScoreDoc)");
                             }
                             FieldDoc fd = (FieldDoc)sd;
-                            if (fd.Fields == null)
+                            if (fd.Fields is null)
                             {
                                 throw new ArgumentException("shard " + shardIDX + " did not set sort field values (FieldDoc.fields is null); you must pass fillFields=true to IndexSearcher.search on each shard");
                             }
@@ -262,7 +262,7 @@ namespace Lucene.Net.Search
         public static TopDocs Merge(Sort sort, int start, int size, TopDocs[] shardHits)
         {
             Util.PriorityQueue<ShardRef> queue;
-            if (sort == null)
+            if (sort is null)
             {
                 queue = new ScoreMergeSortQueue(shardHits);
             }
@@ -329,7 +329,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            if (sort == null)
+            if (sort is null)
             {
                 return new TopDocs(totalHitCount, hits, maxScore);
             }

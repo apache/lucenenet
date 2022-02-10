@@ -197,7 +197,7 @@ namespace Lucene.Net.Util
         {
             BytesRef spare = new BytesRef();
             int size = Length;
-            int[] indices = comp == null ? null : Sort(comp);
+            int[] indices = comp is null ? null : Sort(comp);
             return new BytesRefIteratorAnonymousClass(this, comp, spare, size, indices);
         }
 
@@ -227,7 +227,7 @@ namespace Lucene.Net.Util
             {
                 if (pos < size)
                 {
-                    return outerInstance.Get(spare, indices == null ? pos++ : indices[pos++]);
+                    return outerInstance.Get(spare, indices is null ? pos++ : indices[pos++]);
                 }
                 return null;
             }
@@ -260,7 +260,7 @@ namespace Lucene.Net.Util
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IBytesRefEnumerator GetEnumerator(IComparer<BytesRef> comparer)
         {
-            int[] indices = comparer == null ? null : Sort(comparer);
+            int[] indices = comparer is null ? null : Sort(comparer);
             return new Enumerator(this, comparer, this.Length, indices);
         }
 
@@ -291,7 +291,7 @@ namespace Lucene.Net.Util
             {
                 if (pos < size)
                 {
-                    Current = bytesRefArray.Get(spare, indices == null ? pos++ : indices[pos++]);
+                    Current = bytesRefArray.Get(spare, indices is null ? pos++ : indices[pos++]);
                     return true;
                 }
                 Current = null;

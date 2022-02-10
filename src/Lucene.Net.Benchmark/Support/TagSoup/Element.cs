@@ -167,7 +167,7 @@ namespace TagSoup
             for (int i = _atts.Length - 1; i >= 0; i--)
             {
                 string name = _atts.GetLocalName(i);
-                if (_atts.GetValue(i) == null || string.IsNullOrEmpty(name))
+                if (_atts.GetValue(i) is null || string.IsNullOrEmpty(name))
                 {
                     _atts.RemoveAttribute(i);
                 }

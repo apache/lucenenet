@@ -157,7 +157,7 @@ namespace Lucene.Net.Index.Memory
             {
                 Terms memTerms = memFields.GetTerms(field);
                 Terms iwTerms = memIndexReader.GetTerms(field);
-                if (iwTerms == null)
+                if (iwTerms is null)
                 {
                     assertNull(memTerms);
                 }

@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
             IBits liveDocs = MultiFields.GetLiveDocs(ir);
             for (int i = 0; i < ir.MaxDoc; i++)
             {
-                if (liveDocs == null || liveDocs.Get(i))
+                if (liveDocs is null || liveDocs.Get(i))
                 {
                     assertEquals(indexname, ir.Document(i).Get("indexname"));
                 }

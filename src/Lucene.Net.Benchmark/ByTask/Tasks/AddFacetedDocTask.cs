@@ -57,7 +57,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public override void Setup()
         {
             base.Setup();
-            if (config == null)
+            if (config is null)
             {
                 bool withFacets = RunData.Config.Get("with.facets", true);
                 if (withFacets)
@@ -71,7 +71,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         protected override string GetLogMessage(int recsCount)
         {
-            if (config == null)
+            if (config is null)
             {
                 return base.GetLogMessage(recsCount);
             }

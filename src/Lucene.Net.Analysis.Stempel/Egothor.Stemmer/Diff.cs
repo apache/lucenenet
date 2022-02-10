@@ -116,7 +116,7 @@ namespace Egothor.Stemmer
             try
             {
 
-                if (diff == null)
+                if (diff is null)
                 {
                     return;
                 }
@@ -176,7 +176,7 @@ namespace Egothor.Stemmer
         /// <returns></returns>
         public string Exec(string a, string b)
         {
-            if (a == null || b == null)
+            if (a is null || b is null)
             {
                 return null;
             }

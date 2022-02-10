@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 SimpleTextUtil.WriteNewline(output);
 
                 IDictionary<string, string> diagnostics = si.Diagnostics;
-                int numDiagnostics = diagnostics == null ? 0 : diagnostics.Count;
+                int numDiagnostics = diagnostics is null ? 0 : diagnostics.Count;
                 SimpleTextUtil.Write(output, SI_NUM_DIAG);
                 SimpleTextUtil.Write(output, Convert.ToString(numDiagnostics, CultureInfo.InvariantCulture), scratch);
                 SimpleTextUtil.WriteNewline(output);
@@ -92,7 +92,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
 
                 var files = si.GetFiles();
-                var numFiles = files == null ? 0 : files.Count;
+                var numFiles = files is null ? 0 : files.Count;
                 SimpleTextUtil.Write(output, SI_NUM_FILES);
                 SimpleTextUtil.Write(output, Convert.ToString(numFiles, CultureInfo.InvariantCulture), scratch);
                 SimpleTextUtil.WriteNewline(output);

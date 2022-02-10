@@ -538,7 +538,7 @@ namespace Lucene.Net.Util.Fst
             {
                 //System.out.println("  cycle target=" + (targetLabel == -1 ? "-1" : (char) targetLabel));
                 FST.Arc<T> nextArc = m_fst.FindTargetArc(targetLabel, arc, GetArc(m_upto), fstReader);
-                if (nextArc == null)
+                if (nextArc is null)
                 {
                     // short circuit
                     //upto--;
@@ -633,7 +633,7 @@ namespace Lucene.Net.Util.Fst
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private FST.Arc<T> GetArc(int idx)
         {
-            if (m_arcs[idx] == null)
+            if (m_arcs[idx] is null)
             {
                 m_arcs[idx] = new FST.Arc<T>();
             }

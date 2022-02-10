@@ -70,7 +70,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         public override void End()
         {
-            if (endState == null)
+            if (endState is null)
             {
                 base.End();
             }

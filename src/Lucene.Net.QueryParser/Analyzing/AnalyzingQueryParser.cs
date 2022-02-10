@@ -73,7 +73,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
         /// <returns>Resulting <see cref="Query"/> built for the term</returns>
         protected internal override Query GetWildcardQuery(string field, string termStr)
         {
-            if (termStr == null)
+            if (termStr is null)
             {
                 //can't imagine this would ever happen
                 throw new ParseException("Passed null value as term to GetWildcardQuery");

@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
                         }
 
                         Document doc = docs.NextDoc();
-                        if (doc == null)
+                        if (doc is null)
                         {
                             break;
                         }
@@ -246,7 +246,7 @@ namespace Lucene.Net.Index
                                 while (docsList.Count < maxDocCount)
                                 {
                                     doc = docs.NextDoc();
-                                    if (doc == null)
+                                    if (doc is null)
                                     {
                                         break;
                                     }
@@ -483,12 +483,12 @@ namespace Lucene.Net.Index
                             {
                                 outerInstance.SmokeTestSearcher(s);
                                 Fields fields = MultiFields.GetFields(s.IndexReader);
-                                if (fields == null)
+                                if (fields is null)
                                 {
                                     continue;
                                 }
                                 Terms terms = fields.GetTerms("body");
-                                if (terms == null)
+                                if (terms is null)
                                 {
                                     continue;
                                 }
@@ -830,7 +830,7 @@ namespace Lucene.Net.Index
                 int inc = Math.Max(1, maxDoc / 50);
                 for (int docID = 0; docID < maxDoc; docID += inc)
                 {
-                    if (liveDocs == null || liveDocs.Get(docID))
+                    if (liveDocs is null || liveDocs.Get(docID))
                     {
                         Document doc = reader.Document(docID);
                         sum += doc.Fields.Count;

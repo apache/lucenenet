@@ -658,7 +658,7 @@ namespace Lucene.Net.Analysis
                     // LUCENENET: Throwing an exception on another thread
                     // is pointless, so we set it to a variable so we can read
                     // it from our main thread (for debugging).
-                    if (FirstException == null)
+                    if (FirstException is null)
                     {
                         FirstException = e;
                     }

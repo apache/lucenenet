@@ -101,7 +101,7 @@ namespace Lucene.Net.Queries.Function.DocValues
         {
             double lower, upper;
 
-            if (lowerVal == null)
+            if (lowerVal is null)
             {
                 lower = double.NegativeInfinity;
             }
@@ -110,7 +110,7 @@ namespace Lucene.Net.Queries.Function.DocValues
                 lower = J2N.Numerics.Double.Parse(lowerVal, NumberStyle.Float, NumberFormatInfo.InvariantInfo);
             }
 
-            if (upperVal == null)
+            if (upperVal is null)
             {
                 upper = double.PositiveInfinity;
             }

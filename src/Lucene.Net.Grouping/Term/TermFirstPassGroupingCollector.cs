@@ -78,7 +78,7 @@ namespace Lucene.Net.Search.Grouping.Terms
 
         protected override BytesRef CopyDocGroupValue(BytesRef groupValue, BytesRef reuse)
         {
-            if (groupValue == null)
+            if (groupValue is null)
             {
                 return null;
             }

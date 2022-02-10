@@ -297,7 +297,7 @@ namespace Lucene.Net.Search.Spell
             IndexSearcher indexSearcher = ObtainSearcher();
             try
             {
-                if (ir == null || field == null)
+                if (ir is null || field is null)
                 {
                     suggestMode = SuggestMode.SUGGEST_ALWAYS;
                 }

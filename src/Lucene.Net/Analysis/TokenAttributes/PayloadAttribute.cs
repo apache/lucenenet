@@ -72,9 +72,9 @@
 
             if (other is PayloadAttribute o)
             {
-                if (o.payload == null || payload == null)
+                if (o.payload is null || payload is null)
                 {
-                    return o.payload == null && payload == null;
+                    return o.payload is null && payload is null;
                 }
 
                 return o.payload.Equals(payload);
@@ -85,13 +85,13 @@
 
         public override int GetHashCode()
         {
-            return (payload == null) ? 0 : payload.GetHashCode();
+            return (payload is null) ? 0 : payload.GetHashCode();
         }
 
         public override void CopyTo(IAttribute target)
         {
             PayloadAttribute t = (PayloadAttribute)target;
-            t.Payload = (payload == null) ? null : (BytesRef)payload.Clone();
+            t.Payload = (payload is null) ? null : (BytesRef)payload.Clone();
         }
     }
 }

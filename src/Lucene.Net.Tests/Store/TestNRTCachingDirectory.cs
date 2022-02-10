@@ -70,7 +70,7 @@ namespace Lucene.Net.Store
                 w.AddDocument(doc);
                 if (Random.Next(20) == 17)
                 {
-                    if (r == null)
+                    if (r is null)
                     {
                         r = DirectoryReader.Open(w.IndexWriter, false);
                     }

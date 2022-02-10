@@ -130,7 +130,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             {
                 list = trie.MatchAlmost(key, count);
             }
-            if (list == null || list.Count == 0)
+            if (list is null || list.Count == 0)
             {
                 return res;
 
@@ -196,7 +196,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
         private void WriteRecursively(DataOutput @out, JaspellTernarySearchTrie.TSTNode node)
         {
-            if (node == null)
+            if (node is null)
             {
                 return;
             }
@@ -232,7 +232,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         {
             output.WriteVInt64(count);
             JaspellTernarySearchTrie.TSTNode root = trie.Root;
-            if (root == null) // empty tree
+            if (root is null) // empty tree
             {
                 return false;
             }

@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.OpenNlp
 
         private static byte[][] ToPayloads(params string[] strings)
         {
-            return strings.Select(s => s == null ? null : Encoding.UTF8.GetBytes(s)).ToArray();
+            return strings.Select(s => s is null ? null : Encoding.UTF8.GetBytes(s)).ToArray();
         }
 
         [Test]

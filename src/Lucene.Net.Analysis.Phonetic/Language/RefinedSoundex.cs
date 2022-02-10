@@ -142,7 +142,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <returns>A soundex code for the string supplied.</returns>
         public virtual string GetSoundex(string str)
         {
-            if (str == null)
+            if (str is null)
             {
                 return null;
             }

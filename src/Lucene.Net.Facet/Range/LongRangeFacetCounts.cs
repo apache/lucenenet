@@ -96,13 +96,13 @@ namespace Lucene.Net.Facet.Range
                 if (m_fastMatchFilter != null)
                 {
                     DocIdSet dis = m_fastMatchFilter.GetDocIdSet(hits.Context, null);
-                    if (dis == null)
+                    if (dis is null)
                     {
                         // No documents match
                         continue;
                     }
                     bits = dis.Bits;
-                    if (bits == null)
+                    if (bits is null)
                     {
                         throw new ArgumentException("fastMatchFilter does not implement DocIdSet.Bits");
                     }

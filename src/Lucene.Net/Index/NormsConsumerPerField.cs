@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
         {
             if (fieldInfo.IsIndexed && !fieldInfo.OmitsNorms)
             {
-                if (consumer == null)
+                if (consumer is null)
                 {
                     fieldInfo.NormType = DocValuesType.NUMERIC;
                     consumer = new NumericDocValuesWriter(fieldInfo, docState.docWriter.bytesUsed, false);
@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
         internal void Flush(SegmentWriteState state, DocValuesConsumer normsWriter)
         {
             int docCount = state.SegmentInfo.DocCount;
-            if (consumer == null)
+            if (consumer is null)
             {
                 return; // null type - not omitted but not written -
                 // meaning the only docs that had
@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
             consumer.Flush(state, normsWriter);
         }
 
-        internal bool IsEmpty => consumer == null;
+        internal bool IsEmpty => consumer is null;
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void Abort()

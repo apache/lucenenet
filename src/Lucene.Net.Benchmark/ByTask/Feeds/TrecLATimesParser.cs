@@ -55,7 +55,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             // title... first try with SUBJECT, them with HEADLINE
             string title = Extract(docBuf, SUBJECT, SUBJECT_END, -1, null);
-            if (title == null)
+            if (title is null)
             {
                 title = Extract(docBuf, HEADLINE, HEADLINE_END, -1, null);
             }

@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
 
         protected override bool IncrementWord()
         {
-            if (tokens == null || !tokens.MoveNext())
+            if (tokens is null || !tokens.MoveNext())
             {
                 return false;
             }

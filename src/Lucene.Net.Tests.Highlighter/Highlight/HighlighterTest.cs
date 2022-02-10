@@ -2102,7 +2102,7 @@ namespace Lucene.Net.Search.Highlight
         public override bool IncrementToken()
         {
 
-            if (currentRealToken == null)
+            if (currentRealToken is null)
             {
                 bool next = realStream.IncrementToken();
                 if (!next)
@@ -2116,8 +2116,8 @@ namespace Lucene.Net.Search.Highlight
                 posIncrAtt.PositionIncrement = (realPosIncrAtt.PositionIncrement);
 
                 //String expansions = synonyms.Get(realTermAtt.toString());
-                //if (expansions == null)
-                if (!synonyms.TryGetValue(realTermAtt.ToString(), out string expansions) || expansions == null)
+                //if (expansions is null)
+                if (!synonyms.TryGetValue(realTermAtt.ToString(), out string expansions) || expansions is null)
                 {
                     return true;
                 }

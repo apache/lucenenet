@@ -197,8 +197,8 @@ namespace Lucene.Net.Index
                 MergePolicy.OneMerge m1 = t1.CurrentMerge;
                 MergePolicy.OneMerge m2 = t2.CurrentMerge;
 
-                int c1 = m1 == null ? int.MaxValue : m1.TotalDocCount;
-                int c2 = m2 == null ? int.MaxValue : m2.TotalDocCount;
+                int c1 = m1 is null ? int.MaxValue : m1.TotalDocCount;
+                int c2 = m2 is null ? int.MaxValue : m2.TotalDocCount;
 
                 return c2 - c1;
             });
@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
                 {
                     MergeThread mergeThread = activeMerges[threadIdx];
                     MergePolicy.OneMerge merge = mergeThread.CurrentMerge;
-                    if (merge == null)
+                    if (merge is null)
                     {
                         continue;
                     }
@@ -486,7 +486,7 @@ namespace Lucene.Net.Index
                     }
 
                     MergePolicy.OneMerge merge = writer.NextMerge();
-                    if (merge == null)
+                    if (merge is null)
                     {
                         if (IsVerbose)
                         {

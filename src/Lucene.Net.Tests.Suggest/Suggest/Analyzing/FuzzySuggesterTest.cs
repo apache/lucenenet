@@ -926,7 +926,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         for (int i = @ref.Offset; i < @ref.Length; i++)
                         {
                             State q = p.Step(@ref.Bytes[i] & 0xff);
-                            if (q == null)
+                            if (q is null)
                             {
                                 break;
                             }

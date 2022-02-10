@@ -56,7 +56,7 @@ namespace Lucene.Net.Store
             base.SetUp();
             //IndexDir = CreateTempDir("RAMDirIndex");
             string tempDir = Path.GetTempPath();
-            if (tempDir == null)
+            if (tempDir is null)
                 throw new IOException("java.io.tmpdir undefined, cannot run test");
             indexDir = new DirectoryInfo(Path.Combine(tempDir, "RAMDirIndex"));
 

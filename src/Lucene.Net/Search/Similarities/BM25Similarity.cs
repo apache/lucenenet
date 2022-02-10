@@ -259,7 +259,7 @@ namespace Lucene.Net.Search.Similarities
             public override float Score(int doc, float freq)
             {
                 // if there are no norms, we act as if b=0
-                float norm = norms == null ? outerInstance.k1 : cache[(sbyte)norms.Get(doc) & 0xFF];
+                float norm = norms is null ? outerInstance.k1 : cache[(sbyte)norms.Get(doc) & 0xFF];
                 return weightValue * freq / (freq + norm);
             }
 
@@ -352,7 +352,7 @@ namespace Lucene.Net.Search.Similarities
             tfNormExpl.Description = "tfNorm, computed from:";
             tfNormExpl.AddDetail(freq);
             tfNormExpl.AddDetail(new Explanation(k1, "parameter k1"));
-            if (norms == null)
+            if (norms is null)
             {
                 tfNormExpl.AddDetail(new Explanation(0, "parameter b (norms omitted for field)"));
                 tfNormExpl.Value = (freq.Value * (k1 + 1)) / (freq.Value + k1);

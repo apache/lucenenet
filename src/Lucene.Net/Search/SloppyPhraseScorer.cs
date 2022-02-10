@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
         {
             this.docScorer = docScorer;
             this.slop = slop;
-            this.numPostings = postings == null ? 0 : postings.Length;
+            this.numPostings = postings is null ? 0 : postings.Length;
             pq = new PhraseQueue(postings.Length);
             // min(cost)
             cost = postings[0].postings.GetCost();

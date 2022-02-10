@@ -972,7 +972,7 @@ namespace Lucene.Net.Index
                         int maxDoc = r.MaxDoc;
                         for (int doc = 0; doc < maxDoc; doc++)
                         {
-                            if (liveDocs == null || liveDocs.Get(doc))
+                            if (liveDocs is null || liveDocs.Get(doc))
                             {
                                 //              System.out.println("doc=" + (doc + context.DocBase) + " f='" + f + "' vslue=" + getValue(bdv, doc, scratch));
                                 if (fieldHasValue[field])
@@ -1264,7 +1264,7 @@ namespace Lucene.Net.Index
                     IBits liveDocs = r.LiveDocs;
                     for (int j = 0; j < r.MaxDoc; j++)
                     {
-                        if (liveDocs == null || liveDocs.Get(j))
+                        if (liveDocs is null || liveDocs.Get(j))
                         {
                             Assert.AreEqual(docsWithBdv.Get(j), docsWithControl.Get(j));
                             if (docsWithBdv.Get(j))
@@ -1359,7 +1359,7 @@ namespace Lucene.Net.Index
 
                         if (random.NextDouble() < 0.1) // reopen NRT reader (apply updates), on average once every 10 updates
                         {
-                            if (reader == null)
+                            if (reader is null)
                             {
                                 //                  System.out.println("[" + Thread.currentThread().getName() + "] open NRT");
                                 reader = DirectoryReader.Open(writer, true);

@@ -135,8 +135,8 @@ namespace Lucene.Net.Spatial.Prefix
 
             public virtual DocIdSet GetDocIdSet()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(curVNode == null, "Called more than once?");
-                if (m_termsEnum == null)
+                if (Debugging.AssertsEnabled) Debugging.Assert(curVNode is null, "Called more than once?");
+                if (m_termsEnum is null)
                 {
                     return null;
                 }
@@ -180,7 +180,7 @@ namespace Lucene.Net.Spatial.Prefix
                         VNode parentVNode = curVNode.parent;
                         while (true)
                         {
-                            if (parentVNode == null)
+                            if (parentVNode is null)
                             {
                                 goto main_break;// all done
                             }
@@ -502,7 +502,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(cell != null);
                 this.cell = cell;
-                if (Debugging.AssertsEnabled) Debugging.Assert(children == null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(children is null);
             }
         }
 

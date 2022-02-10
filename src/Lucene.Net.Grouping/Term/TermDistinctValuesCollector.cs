@@ -116,7 +116,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             ordSet.Clear();
             foreach (GroupCount group in groups)
             {
-                int groupOrd = group.GroupValue == null ? -1 : groupFieldTermIndex.LookupTerm(group.GroupValue);
+                int groupOrd = group.GroupValue is null ? -1 : groupFieldTermIndex.LookupTerm(group.GroupValue);
                 if (group.GroupValue != null && groupOrd < 0)
                 {
                     continue;
@@ -128,8 +128,8 @@ namespace Lucene.Net.Search.Grouping.Terms
                 int i = 0;
                 foreach (BytesRef value2 in group.UniqueValues)
                 {
-                    int countOrd = value2 == null ? -1 : countFieldTermIndex.LookupTerm(value2);
-                    if (value2 == null || countOrd >= 0)
+                    int countOrd = value2 is null ? -1 : countFieldTermIndex.LookupTerm(value2);
+                    if (value2 is null || countOrd >= 0)
                     {
                         group.ords[i++] = countOrd;
                     }

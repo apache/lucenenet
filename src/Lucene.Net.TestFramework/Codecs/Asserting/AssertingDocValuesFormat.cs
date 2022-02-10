@@ -80,7 +80,7 @@ namespace Lucene.Net.Codecs.Asserting
                 int count = 0;
                 foreach (BytesRef b in values)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(b == null || b.IsValid());
+                    if (Debugging.AssertsEnabled) Debugging.Assert(b is null || b.IsValid());
                     count++;
                 }
                 if (Debugging.AssertsEnabled) Debugging.Assert(count == maxDoc);

@@ -85,7 +85,7 @@ namespace Lucene.Net.Spatial.Prefix
             /// <exception cref="IOException"></exception>
             internal SmallDocSet Visit(Cell cell, IBits acceptContains)
             {
-                if (m_termsEnum == null)
+                if (m_termsEnum is null)
                 {
                     //signals all done
                     return null;
@@ -125,7 +125,7 @@ namespace Lucene.Net.Spatial.Prefix
                         combinedSubResults = Visit(subCell, acceptContains);
                     }
                     
-                    if (combinedSubResults == null)
+                    if (combinedSubResults is null)
                     {
                         break;
                     }
@@ -136,7 +136,7 @@ namespace Lucene.Net.Spatial.Prefix
                 // Result: OR the leaf docs with AND of all child results
                 if (combinedSubResults != null)
                 {
-                    if (leafDocs == null)
+                    if (leafDocs is null)
                     {
                         return combinedSubResults;
                     }
@@ -150,7 +150,7 @@ namespace Lucene.Net.Spatial.Prefix
                 if (Debugging.AssertsEnabled) Debugging.Assert(new BytesRef(cell.GetTokenBytes()).CompareTo(termBytes) > 0);
                 this.termBytes.Bytes = cell.GetTokenBytes();
                 this.termBytes.Length = this.termBytes.Bytes.Length;
-                if (m_termsEnum == null)
+                if (m_termsEnum is null)
                     return false;
                 return this.m_termsEnum.SeekExact(termBytes);
             }
@@ -172,7 +172,7 @@ namespace Lucene.Net.Spatial.Prefix
                 }
                 lastLeaf = leafCell;
 
-                if (m_termsEnum == null)
+                if (m_termsEnum is null)
                     return null;
                 if (!m_termsEnum.MoveNext())
                 {
@@ -199,7 +199,7 @@ namespace Lucene.Net.Spatial.Prefix
                 int docid;
                 while ((docid = m_docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    if (set == null)
+                    if (set is null)
                     {
                         int size = this.m_termsEnum.DocFreq;
                         if (size <= 0)

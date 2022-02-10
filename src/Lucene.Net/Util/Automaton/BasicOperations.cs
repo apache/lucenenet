@@ -693,7 +693,7 @@ namespace Lucene.Net.Util.Automaton
                     Array.Resize(ref points, ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_OBJECT_REF));
                 }
                 PointTransitions points0 = points[count];
-                if (points0 == null)
+                if (points0 is null)
                 {
                     points0 = points[count] = new PointTransitions();
                 }
@@ -859,7 +859,7 @@ namespace Lucene.Net.Util.Automaton
 
                         statesSet.ComputeHash();
 
-                        if (!newstate.TryGetValue(statesSet.ToFrozenInt32Set(), out State q) || q == null)
+                        if (!newstate.TryGetValue(statesSet.ToFrozenInt32Set(), out State q) || q is null)
                         {
                             q = new State();
 
@@ -1064,7 +1064,7 @@ namespace Lucene.Net.Util.Automaton
                 for (int i = 0; i < s.Length; i += Character.CharCount(cp))
                 {
                     State q = p.Step(cp = Character.CodePointAt(s, i));
-                    if (q == null)
+                    if (q is null)
                     {
                         return false;
                     }

@@ -100,7 +100,7 @@ namespace Lucene.Net.Search.Grouping
                     {
                         segments.Pop();
                         segmentResult = segments.Top;
-                        if (segmentResult == null)
+                        if (segmentResult is null)
                         {
                             break;
                         }
@@ -255,7 +255,7 @@ namespace Lucene.Net.Search.Grouping
             public override bool Equals(object o)
             {
                 if (this == o) return true;
-                if (o == null || GetType() != o.GetType()) return false;
+                if (o is null || GetType() != o.GetType()) return false;
 
                 FacetEntry that = (FacetEntry)o;
 

@@ -248,7 +248,7 @@ namespace Lucene.Net.Codecs.Memory
         public override void Write(TermData data, DataOutput output)
         {
             int bit0 = AllZero(data.longs) ? 0 : 1;
-            int bit1 = ((data.bytes == null || data.bytes.Length == 0) ? 0 : 1) << 1;
+            int bit1 = ((data.bytes is null || data.bytes.Length == 0) ? 0 : 1) << 1;
             int bit2 = ((data.docFreq == 0) ? 0 : 1) << 2;
             int bits = bit0 | bit1 | bit2;
             if (bit1 > 0) // determine extra length
@@ -360,7 +360,7 @@ namespace Lucene.Net.Codecs.Memory
 
         private static bool BytesEqual(TermData t1, TermData t2)
         {
-            if (t1.bytes == null && t2.bytes == null)
+            if (t1.bytes is null && t2.bytes is null)
             {
                 return true;
             }
@@ -372,7 +372,7 @@ namespace Lucene.Net.Codecs.Memory
         /// </summary>
         private static bool Int64sEqual(TermData t1, TermData t2)
         {
-            if (t1.longs == null && t2.longs == null)
+            if (t1.longs is null && t2.longs is null)
             {
                 return true;
             }

@@ -124,7 +124,7 @@ namespace Lucene.Net.Demo
             QueryParser parser = new QueryParser(LuceneVersion.LUCENE_48, field, analyzer);
             while (true)
             {
-                if (queries == null && queryString == null)
+                if (queries is null && queryString is null)
                 {
                     // prompt the user
                     Console.WriteLine("Enter query (or press Enter to exit): ");
@@ -132,7 +132,7 @@ namespace Lucene.Net.Demo
 
                 string line = queryString ?? input.ReadLine();
 
-                if (line == null || line.Length == 0)
+                if (line is null || line.Length == 0)
                 {
                     break;
                 }
@@ -157,7 +157,7 @@ namespace Lucene.Net.Demo
                     Console.WriteLine("Time: " + (end - start).TotalMilliseconds + "ms");
                 }
 
-                DoPagingSearch(searcher, query, hitsPerPage, raw, queries == null && queryString == null);
+                DoPagingSearch(searcher, query, hitsPerPage, raw, queries is null && queryString is null);
 
                 if (queryString != null)
                 {

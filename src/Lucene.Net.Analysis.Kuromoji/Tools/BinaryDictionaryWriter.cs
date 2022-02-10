@@ -132,7 +132,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             }
 
             string existing = posDict[leftId];
-            if (Debugging.AssertsEnabled) Debugging.Assert(existing == null || existing.Equals(fullPOSData, StringComparison.Ordinal));
+            if (Debugging.AssertsEnabled) Debugging.Assert(existing is null || existing.Equals(fullPOSData, StringComparison.Ordinal));
             posDict[leftId] = fullPOSData;
 
             m_buffer.PutInt16((short)(leftId << 3 | flags));
@@ -333,7 +333,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             @out.WriteVInt32(posDict.Count);
             foreach (string s in posDict)
             {
-                if (s == null)
+                if (s is null)
                 {
                     @out.WriteByte((byte)0);
                     @out.WriteByte((byte)0);

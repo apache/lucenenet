@@ -688,7 +688,7 @@ namespace Lucene.Net.Search.Similarities
             {
                 float raw = outerInstance.Tf(freq) * weightValue; // compute tf(f)*weight
 
-                return norms == null ? raw : raw * outerInstance.DecodeNormValue(norms.Get(doc)); // normalize for field
+                return norms is null ? raw : raw * outerInstance.DecodeNormValue(norms.Get(doc)); // normalize for field
             }
 
             public override float ComputeSlopFactor(int distance)

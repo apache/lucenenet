@@ -448,7 +448,7 @@ namespace Lucene.Net.TestFramework
         private static string FormatErrorMessage(object expected, object actual, string message, params object[] args)
         {
             string failureHeader = string.Format(FailureFormat, expected, actual);
-            string msg = args == null || args.Length == 0 ? message : string.Format(message, args);
+            string msg = args is null || args.Length == 0 ? message : string.Format(message, args);
             return string.Concat(failureHeader, Environment.NewLine, Environment.NewLine, msg);
         }
 
@@ -1213,7 +1213,7 @@ namespace Lucene.Net.TestFramework
             {
                 return ex; // Success
             }
-            string exString = exception == null ? "<null>" : exception.GetType().FullName;
+            string exString = exception is null ? "<null>" : exception.GetType().FullName;
             throw new _NUnit.AssertionException($"Expected one of: {Collections.ToString(expectedExceptionTypes.Select(ex => ex.FullName).ToArray())}\nBut was: {exString}");
         }
     }

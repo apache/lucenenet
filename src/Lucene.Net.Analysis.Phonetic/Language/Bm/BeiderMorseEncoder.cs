@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         public virtual string Encode(string source)
         {
-            if (source == null)
+            if (source is null)
             {
                 return null;
             }

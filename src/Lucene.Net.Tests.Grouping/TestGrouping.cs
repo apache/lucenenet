@@ -298,9 +298,9 @@ namespace Lucene.Net.Search.Grouping
 
         private void CompareGroupValue<T>(string expected, IGroupDocs<T> group)
         {
-            if (expected == null)
+            if (expected is null)
             {
-                if (group.GroupValue == null)
+                if (group.GroupValue is null)
                 {
                     return;
                 }
@@ -343,7 +343,7 @@ namespace Lucene.Net.Search.Grouping
                 // LUCENENET NOTE: This is IEnumerable instead of ICollection because it 
                 // needs to be covariant to mimic the wildcard generics in Java
                 IEnumerable<ISearchGroup<MutableValue>> mutableValueGroups = ((FunctionFirstPassGroupingCollector<MutableValue>)c).GetTopGroups(groupOffset, fillFields);        // LUCENENET Specific type for generic must be specified.
-                if (mutableValueGroups == null)
+                if (mutableValueGroups is null)
                 {
                     return null;
                 }
@@ -516,7 +516,7 @@ namespace Lucene.Net.Search.Grouping
 
         private string GroupToString(BytesRef b)
         {
-            if (b == null)
+            if (b is null)
             {
                 return "null";
             }
@@ -579,7 +579,7 @@ namespace Lucene.Net.Search.Grouping
                     }
                 }
 
-                if (!groups.TryGetValue(d.group, out IList<GroupDoc> l) || l == null)
+                if (!groups.TryGetValue(d.group, out IList<GroupDoc> l) || l is null)
                 {
                     //Console.WriteLine("    add sortedGroup=" + groupToString(d.group));
                     sortedGroups.Add(d.group);
@@ -699,7 +699,7 @@ namespace Lucene.Net.Search.Grouping
             foreach (BytesRef group in groupValues)
             {
                 IList<Document> docs = new JCG.List<Document>();
-                //Console.WriteLine("TEST:   group=" + (group == null ? "null" : group.utf8ToString()));
+                //Console.WriteLine("TEST:   group=" + (group is null ? "null" : group.utf8ToString()));
                 foreach (GroupDoc groupValue in groupMap[group])
                 {
                     Document doc = new Document();
@@ -712,7 +712,7 @@ namespace Lucene.Net.Search.Grouping
                     doc.Add(NewStringField("sort2", groupValue.sort2.Utf8ToString(), Field.Store.NO));
                     doc.Add(new Int32Field("id", groupValue.id, Field.Store.NO));
                     doc.Add(NewTextField("content", groupValue.content, Field.Store.NO));
-                    //Console.WriteLine("TEST:     doc content=" + groupValue.content + " group=" + (groupValue.group == null ? "null" : groupValue.group.utf8ToString()) + " sort1=" + groupValue.sort1.utf8ToString() + " id=" + groupValue.id);
+                    //Console.WriteLine("TEST:     doc content=" + groupValue.content + " group=" + (groupValue.group is null ? "null" : groupValue.group.utf8ToString()) + " sort1=" + groupValue.sort1.utf8ToString() + " id=" + groupValue.id);
                 }
                 // So we can pull filter marking last doc in block:
                 Field groupEnd = NewField("groupend", "x", groupEndType);
@@ -873,7 +873,7 @@ namespace Lucene.Net.Search.Grouping
                                                            contentStrings[Random.nextInt(contentStrings.Length)]);
                     if (Verbose)
                     {
-                        Console.WriteLine("  doc content=" + groupDoc.content + " id=" + i + " group=" + (groupDoc.group == null ? "null" : groupDoc.group.Utf8ToString()) + " sort1=" + groupDoc.sort1.Utf8ToString() + " sort2=" + groupDoc.sort2.Utf8ToString());
+                        Console.WriteLine("  doc content=" + groupDoc.content + " id=" + i + " group=" + (groupDoc.group is null ? "null" : groupDoc.group.Utf8ToString()) + " sort1=" + groupDoc.sort1.Utf8ToString() + " sort2=" + groupDoc.sort2.Utf8ToString());
                     }
 
                     groupDocs[i] = groupDoc;
@@ -896,7 +896,7 @@ namespace Lucene.Net.Search.Grouping
                     sort2.SetStringValue(groupDoc.sort2.Utf8ToString());
                     content.SetStringValue(groupDoc.content);
                     id.SetInt32Value(groupDoc.id);
-                    if (groupDoc.group == null)
+                    if (groupDoc.group is null)
                     {
                         w.AddDocument(docNoGroup);
                     }
@@ -1141,7 +1141,7 @@ namespace Lucene.Net.Search.Grouping
                         if (Verbose)
                         {
                             Console.WriteLine("TEST: first pass topGroups");
-                            if (topGroups == null)
+                            if (topGroups is null)
                             {
                                 Console.WriteLine("  null");
                             }
@@ -1149,7 +1149,7 @@ namespace Lucene.Net.Search.Grouping
                             {
                                 foreach (SearchGroup<BytesRef> searchGroup in topGroups)
                                 {
-                                    Console.WriteLine("  " + (searchGroup.GroupValue == null ? "null" : searchGroup.GroupValue.Utf8ToString()) + ": " + Arrays.ToString(searchGroup.SortValues));
+                                    Console.WriteLine("  " + (searchGroup.GroupValue is null ? "null" : searchGroup.GroupValue.Utf8ToString()) + ": " + Arrays.ToString(searchGroup.SortValues));
                                 }
                             }
                         }
@@ -1168,7 +1168,7 @@ namespace Lucene.Net.Search.Grouping
                                 Console.WriteLine("TEST: topGroups");
                                 foreach (SearchGroup<BytesRef> searchGroup in topGroups)
                                 {
-                                    Console.WriteLine("  " + (searchGroup.GroupValue == null ? "null" : searchGroup.GroupValue.Utf8ToString()) + ": " + Arrays.ToString(searchGroup.SortValues));
+                                    Console.WriteLine("  " + (searchGroup.GroupValue is null ? "null" : searchGroup.GroupValue.Utf8ToString()) + ": " + Arrays.ToString(searchGroup.SortValues));
                                 }
                             }
 
@@ -1221,7 +1221,7 @@ namespace Lucene.Net.Search.Grouping
 
                         if (Verbose)
                         {
-                            if (expectedGroups == null)
+                            if (expectedGroups is null)
                             {
                                 Console.WriteLine("TEST: no expected groups");
                             }
@@ -1230,7 +1230,7 @@ namespace Lucene.Net.Search.Grouping
                                 Console.WriteLine("TEST: expected groups totalGroupedHitCount=" + expectedGroups.TotalGroupedHitCount);
                                 foreach (IGroupDocs<BytesRef> gd in expectedGroups.Groups)
                                 {
-                                    Console.WriteLine("  group=" + (gd.GroupValue == null ? "null" : gd.GroupValue.Utf8ToString()) + " totalHits=" + gd.TotalHits + " scoreDocs.len=" + gd.ScoreDocs.Length);
+                                    Console.WriteLine("  group=" + (gd.GroupValue is null ? "null" : gd.GroupValue.Utf8ToString()) + " totalHits=" + gd.TotalHits + " scoreDocs.len=" + gd.ScoreDocs.Length);
                                     foreach (ScoreDoc sd in gd.ScoreDocs)
                                     {
                                         Console.WriteLine("    id=" + sd.Doc + " score=" + sd.Score);
@@ -1238,7 +1238,7 @@ namespace Lucene.Net.Search.Grouping
                                 }
                             }
 
-                            if (groupsResult == null)
+                            if (groupsResult is null)
                             {
                                 Console.WriteLine("TEST: no matched groups");
                             }
@@ -1247,7 +1247,7 @@ namespace Lucene.Net.Search.Grouping
                                 Console.WriteLine("TEST: matched groups totalGroupedHitCount=" + groupsResult.TotalGroupedHitCount);
                                 foreach (GroupDocs<BytesRef> gd in groupsResult.Groups)
                                 {
-                                    Console.WriteLine("  group=" + (gd.GroupValue == null ? "null" : gd.GroupValue.Utf8ToString()) + " totalHits=" + gd.TotalHits);
+                                    Console.WriteLine("  group=" + (gd.GroupValue is null ? "null" : gd.GroupValue.Utf8ToString()) + " totalHits=" + gd.TotalHits);
                                     foreach (ScoreDoc sd in gd.ScoreDocs)
                                     {
                                         Console.WriteLine("    id=" + docIDToID.Get(sd.Doc) + " score=" + sd.Score);
@@ -1263,7 +1263,7 @@ namespace Lucene.Net.Search.Grouping
                                 }
                             }
 
-                            if (topGroupsShards == null)
+                            if (topGroupsShards is null)
                             {
                                 Console.WriteLine("TEST: no matched-merged groups");
                             }
@@ -1272,7 +1272,7 @@ namespace Lucene.Net.Search.Grouping
                                 Console.WriteLine("TEST: matched-merged groups totalGroupedHitCount=" + topGroupsShards.TotalGroupedHitCount);
                                 foreach (GroupDocs<BytesRef> gd in topGroupsShards.Groups)
                                 {
-                                    Console.WriteLine("  group=" + (gd.GroupValue == null ? "null" : gd.GroupValue.Utf8ToString()) + " totalHits=" + gd.TotalHits);
+                                    Console.WriteLine("  group=" + (gd.GroupValue is null ? "null" : gd.GroupValue.Utf8ToString()) + " totalHits=" + gd.TotalHits);
                                     foreach (ScoreDoc sd in gd.ScoreDocs)
                                     {
                                         Console.WriteLine("    id=" + docIDToID.Get(sd.Doc) + " score=" + sd.Score);
@@ -1290,7 +1290,7 @@ namespace Lucene.Net.Search.Grouping
                             VerifyShards(shards.docStarts, topGroupsShards);
                         }
 
-                        bool needsScores = getScores || getMaxScores || docSort == null;
+                        bool needsScores = getScores || getMaxScores || docSort is null;
                         BlockGroupingCollector c3 = new BlockGroupingCollector(groupSort, groupOffset + topNGroups, needsScores, lastDocInBlock);
                         TermAllGroupsCollector allGroupsCollector2;
                         ICollector c4;
@@ -1323,7 +1323,7 @@ namespace Lucene.Net.Search.Grouping
 
                         if (Verbose)
                         {
-                            if (groupsResultBlocks == null)
+                            if (groupsResultBlocks is null)
                             {
                                 Console.WriteLine("TEST: no block groups");
                             }
@@ -1333,7 +1333,7 @@ namespace Lucene.Net.Search.Grouping
                                 bool first = true;
                                 foreach (GroupDocs<BytesRef> gd in groupsResultBlocks.Groups)
                                 {
-                                    Console.WriteLine("  group=" + (gd.GroupValue == null ? "null" : gd.GroupValue.Utf8ToString()) + " totalHits=" + gd.TotalHits);
+                                    Console.WriteLine("  group=" + (gd.GroupValue is null ? "null" : gd.GroupValue.Utf8ToString()) + " totalHits=" + gd.TotalHits);
                                     foreach (ScoreDoc sd in gd.ScoreDocs)
                                     {
                                         Console.WriteLine("    id=" + docIDToIDBlocks.Get(sd.Doc) + " score=" + sd.Score);
@@ -1485,7 +1485,7 @@ namespace Lucene.Net.Search.Grouping
 
                 // First shard determines whether we use IDV or not;
                 // all other shards match that:
-                if (firstPassCollector == null)
+                if (firstPassCollector is null)
                 {
                     firstPassCollector = CreateRandomFirstPassCollector(groupField, groupSort, groupOffset + topNGroups);
                 }
@@ -1519,7 +1519,7 @@ namespace Lucene.Net.Search.Grouping
             if (Verbose)
             {
                 Console.WriteLine(" top groups merged:");
-                if (mergedTopGroups == null)
+                if (mergedTopGroups is null)
                 {
                     Console.WriteLine("    null");
                 }
@@ -1572,7 +1572,7 @@ namespace Lucene.Net.Search.Grouping
 
         private void AssertEquals(FieldCache.Int32s docIDtoID, ITopGroups<BytesRef> expected, ITopGroups<BytesRef> actual, bool verifyGroupValues, bool verifyTotalGroupCount, bool verifySortValues, bool testScores, bool idvBasedImplsUsed)
         {
-            if (expected == null)
+            if (expected is null)
             {
                 assertNull(actual);
                 return;

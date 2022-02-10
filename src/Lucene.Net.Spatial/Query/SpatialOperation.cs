@@ -180,9 +180,9 @@ namespace Lucene.Net.Spatial.Queries
 
         public static SpatialOperation Get(string v)
         {
-            if (!registry.TryGetValue(v, out SpatialOperation op) || op == null)
+            if (!registry.TryGetValue(v, out SpatialOperation op) || op is null)
             {
-                if (!registry.TryGetValue(CultureInfo.InvariantCulture.TextInfo.ToUpper(v), out op) || op == null)
+                if (!registry.TryGetValue(CultureInfo.InvariantCulture.TextInfo.ToUpper(v), out op) || op is null)
                     throw new ArgumentException($"Unknown Operation: {v}", nameof(v));
             }
             return op;

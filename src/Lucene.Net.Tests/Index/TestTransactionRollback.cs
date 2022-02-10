@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            if (last == null)
+            if (last is null)
             {
                 throw RuntimeException.Create("Couldn't find commit point " + id);
             }
@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
             IBits liveDocs = MultiFields.GetLiveDocs(r);
             for (int i = 0; i < r.MaxDoc; i++)
             {
-                if (liveDocs == null || liveDocs.Get(i))
+                if (liveDocs is null || liveDocs.Get(i))
                 {
                     string sval = r.Document(i).Get(FIELD_RECORD_ID);
                     if (sval != null)

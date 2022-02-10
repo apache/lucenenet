@@ -46,7 +46,7 @@ namespace Lucene.Net.Index.Sorter
             JCG.List<int> values = new JCG.List<int>();
             for (int i = 0; i < reader.MaxDoc; i++)
             {
-                if (liveDocs == null || liveDocs.Get(i))
+                if (liveDocs is null || liveDocs.Get(i))
                 {
                     values.Add(int.Parse(reader.Document(i).Get(ID_FIELD), CultureInfo.InvariantCulture));
                 }

@@ -298,7 +298,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             private void LoadTermsIndex()
             {
-                if (coreIndex == null)
+                if (coreIndex is null)
                 {
                     coreIndex = new CoreFieldIndex(this, indexStart, termsStart, packedIndexStart, packedOffsetsStart, numIndexTerms);
                 }
@@ -447,7 +447,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override FieldIndexEnum GetFieldEnum(FieldInfo fieldInfo)
         {
-            if (!fields.TryGetValue(fieldInfo, out FieldIndexData fieldData) || fieldData == null || fieldData.coreIndex == null)
+            if (!fields.TryGetValue(fieldInfo, out FieldIndexData fieldData) || fieldData is null || fieldData.coreIndex is null)
             {
                 return null;
             }

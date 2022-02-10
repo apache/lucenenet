@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
                     // Without fix for LUCENE-1130: one of the
                     // threads will hang
                     threads[i].Join();
-                    Assert.IsTrue(threads[i].error == null, "hit unexpected Throwable");
+                    Assert.IsTrue(threads[i].error is null, "hit unexpected Throwable");
                 }
 
                 // Make sure once disk space is avail again, we can
@@ -347,7 +347,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
                     threads[i].Join();
-                    Assert.IsTrue(threads[i].error == null, "hit unexpected Throwable");
+                    Assert.IsTrue(threads[i].error is null, "hit unexpected Throwable");
                 }
 
                 bool success = false;
@@ -372,7 +372,7 @@ namespace Lucene.Net.Index
                     IBits delDocs = MultiFields.GetLiveDocs(reader);
                     for (int j = 0; j < reader.MaxDoc; j++)
                     {
-                        if (delDocs == null || !delDocs.Get(j))
+                        if (delDocs is null || !delDocs.Get(j))
                         {
                             reader.Document(j);
                             reader.GetTermVectors(j);

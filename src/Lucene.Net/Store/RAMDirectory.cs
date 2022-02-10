@@ -138,7 +138,7 @@ namespace Lucene.Net.Store
         public override sealed long FileLength(string name)
         {
             EnsureOpen();
-            if (!m_fileMap.TryGetValue(name, out RAMFile file) || file == null)
+            if (!m_fileMap.TryGetValue(name, out RAMFile file) || file is null)
             {
                 throw new FileNotFoundException(name);
             }
@@ -206,7 +206,7 @@ namespace Lucene.Net.Store
         public override IndexInput OpenInput(string name, IOContext context)
         {
             EnsureOpen();
-            if (!m_fileMap.TryGetValue(name, out RAMFile file) || file == null)
+            if (!m_fileMap.TryGetValue(name, out RAMFile file) || file is null)
             {
                 throw new FileNotFoundException(name);
             }

@@ -197,7 +197,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             // Ideally the Analyzer superclass should have a method with the same signature, 
             // with a default impl that simply delegates to the StringReader flavour. 
-            if (reader == null)
+            if (reader is null)
             {
                 reader = new FastStringReader(text);
             }
@@ -379,7 +379,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 {
                     throw IllegalStateException.Create("Consumer did not call Reset().");
                 }
-                if (matcher == null)
+                if (matcher is null)
                 {
                     return false;
                 }
@@ -492,7 +492,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             public override bool IncrementToken()
             {
-                if (str == null)
+                if (str is null)
                 {
                     throw IllegalStateException.Create("Consumer did not call Reset().");
                 }
@@ -541,7 +541,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 } while (text != null && IsStopWord(text));
 
                 pos = i;
-                if (text == null)
+                if (text is null)
                 {
                     return false;
                 }

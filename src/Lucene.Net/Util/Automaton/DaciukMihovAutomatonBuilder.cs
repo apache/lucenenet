@@ -236,7 +236,7 @@ namespace Lucene.Net.Util.Automaton
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(stateRegistry != null, "Automaton already built.");
-                Debugging.Assert(previous == null || comparer.Compare(previous, current) <= 0, "Input must be in sorted UTF-8 order: {0} >= {1}", previous, current);
+                Debugging.Assert(previous is null || comparer.Compare(previous, current) <= 0, "Input must be in sorted UTF-8 order: {0} >= {1}", previous, current);
                 Debugging.Assert(SetPrevious(current));
             }
 
@@ -265,7 +265,7 @@ namespace Lucene.Net.Util.Automaton
         /// <returns> Root automaton state. </returns>
         public State Complete()
         {
-            if (this.stateRegistry == null)
+            if (this.stateRegistry is null)
             {
                 throw IllegalStateException.Create();
             }

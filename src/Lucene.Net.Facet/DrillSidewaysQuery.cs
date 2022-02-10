@@ -168,7 +168,7 @@ namespace Lucene.Net.Facet
                         // MUST'd here
                         DocIdSet dis = filter.GetDocIdSet(context, null);
 
-                        if (dis == null)
+                        if (dis is null)
                         {
                             continue;
                         }
@@ -197,7 +197,7 @@ namespace Lucene.Net.Facet
                         else
                         {
                             DocIdSetIterator disi = dis.GetIterator();
-                            if (disi == null)
+                            if (disi is null)
                             {
                                 nullCount++;
                                 continue;
@@ -208,7 +208,7 @@ namespace Lucene.Net.Facet
                     else
                     {
                         DocIdSetIterator disi = ((Weight)drillDowns[dim]).GetScorer(context, null);
-                        if (disi == null)
+                        if (disi is null)
                         {
                             nullCount++;
                             continue;
@@ -230,7 +230,7 @@ namespace Lucene.Net.Facet
                 // Sort drill-downs by most restrictive first:
                 Array.Sort(dims);
 
-                if (baseScorer == null)
+                if (baseScorer is null)
                 {
                     return null;
                 }
@@ -245,8 +245,8 @@ namespace Lucene.Net.Facet
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + ((baseQuery == null) ? 0 : baseQuery.GetHashCode());
-            result = prime * result + ((drillDownCollector == null) ? 0 : drillDownCollector.GetHashCode());
+            result = prime * result + ((baseQuery is null) ? 0 : baseQuery.GetHashCode());
+            result = prime * result + ((drillDownCollector is null) ? 0 : drillDownCollector.GetHashCode());
             result = prime * result + Arrays.GetHashCode(drillDownQueries);
             result = prime * result + Arrays.GetHashCode(drillSidewaysCollectors);
             return result;
@@ -267,7 +267,7 @@ namespace Lucene.Net.Facet
                 return false;
             }
             DrillSidewaysQuery other = (DrillSidewaysQuery)obj;
-            if (baseQuery == null)
+            if (baseQuery is null)
             {
                 if (other.baseQuery != null)
                 {
@@ -278,7 +278,7 @@ namespace Lucene.Net.Facet
             {
                 return false;
             }
-            if (drillDownCollector == null)
+            if (drillDownCollector is null)
             {
                 if (other.drillDownCollector != null)
                 {

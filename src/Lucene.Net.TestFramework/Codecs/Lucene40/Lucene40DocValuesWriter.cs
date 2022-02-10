@@ -174,7 +174,7 @@ namespace Lucene.Net.Codecs.Lucene40
             foreach (var value in values)
             {
                 BytesRef b = value;
-                if (b == null)
+                if (b is null)
                 {
                     b = new BytesRef(); // 4.0 doesnt distinguish
                 }
@@ -363,7 +363,7 @@ namespace Lucene.Net.Codecs.Lucene40
             JCG.SortedSet<BytesRef> dictionary = new JCG.SortedSet<BytesRef>();
             foreach (BytesRef v in values)
             {
-                dictionary.Add(v == null ? new BytesRef() : BytesRef.DeepCopyOf(v));
+                dictionary.Add(v is null ? new BytesRef() : BytesRef.DeepCopyOf(v));
             }
 
             /* values */
@@ -385,7 +385,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 brefDummy = v;
 
-                if (v == null)
+                if (v is null)
                 {
                     brefDummy = new BytesRef();
                 }
@@ -408,7 +408,7 @@ namespace Lucene.Net.Codecs.Lucene40
             JCG.SortedSet<BytesRef> dictionary = new JCG.SortedSet<BytesRef>();
             foreach (BytesRef v in values)
             {
-                dictionary.Add(v == null ? new BytesRef() : BytesRef.DeepCopyOf(v));
+                dictionary.Add(v is null ? new BytesRef() : BytesRef.DeepCopyOf(v));
             }
 
             /* values */

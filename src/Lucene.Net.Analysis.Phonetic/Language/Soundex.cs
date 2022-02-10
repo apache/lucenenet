@@ -260,7 +260,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <exception cref="ArgumentException">If a character is not mapped.</exception>
         public virtual string GetSoundex(string str)
         {
-            if (str == null)
+            if (str is null)
             {
                 return null;
             }

@@ -205,7 +205,7 @@ namespace Lucene.Net.Spatial.Serialized
             public override bool Equals(object o)
             {
                 if (this == o) return true;
-                if (o == null || GetType() != o.GetType()) return false;
+                if (o is null || GetType() != o.GetType()) return false;
 
                 PredicateValueSourceFilter that = (PredicateValueSourceFilter)o;
 
@@ -318,7 +318,7 @@ namespace Lucene.Net.Spatial.Serialized
             public override bool Equals(object o)
             {
                 if (this == o) return true;
-                if (o == null || GetType() != o.GetType()) return false;
+                if (o is null || GetType() != o.GetType()) return false;
 
                 ShapeDocValueSource that = (ShapeDocValueSource)o;
 

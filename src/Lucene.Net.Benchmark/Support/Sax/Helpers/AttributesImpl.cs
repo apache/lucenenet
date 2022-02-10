@@ -564,7 +564,7 @@ namespace Sax.Helpers
                 return;
             }
             int max;
-            if (data == null || data.Length == 0)
+            if (data is null || data.Length == 0)
             {
                 max = 25;
             }

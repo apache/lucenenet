@@ -376,7 +376,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 /// </remarks>
                 public override SeekStatus SeekCeil(BytesRef target)
                 {
-                    if (indexEnum == null)
+                    if (indexEnum is null)
                     {
                         throw IllegalStateException.Create("terms index was not loaded");
                     }
@@ -384,7 +384,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     //System.out.println("BTR.seek seg=" + segment + " target=" + fieldInfo.name + ":" + target.utf8ToString() + " " + target + " current=" + term().utf8ToString() + " " + term() + " indexIsCurrent=" + indexIsCurrent + " didIndexNext=" + didIndexNext + " seekPending=" + seekPending + " divisor=" + indexReader.getDivisor() + " this="  + this);
                     if (didIndexNext)
                     {
-                        if (nextIndexTerm == null)
+                        if (nextIndexTerm is null)
                         {
                             //System.out.println("  nextIndexTerm=null");
                         }
@@ -422,17 +422,17 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 {
                                     nextIndexTerm = indexEnum.Term;
                                 }
-                                //System.out.println("  now do index next() nextIndexTerm=" + (nextIndexTerm == null ? "null" : nextIndexTerm.utf8ToString()));
+                                //System.out.println("  now do index next() nextIndexTerm=" + (nextIndexTerm is null ? "null" : nextIndexTerm.utf8ToString()));
                                 didIndexNext = true;
                             }
 
-                            if (nextIndexTerm == null || BytesRef.UTF8SortedAsUnicodeComparer.Compare(target, nextIndexTerm) < 0)
+                            if (nextIndexTerm is null || BytesRef.UTF8SortedAsUnicodeComparer.Compare(target, nextIndexTerm) < 0)
                             {
                                 // Optimization: requested term is within the
                                 // same term block we are now in; skip seeking
                                 // (but do scanning):
                                 doSeek = false;
-                                //System.out.println("  skip seek: nextIndexTerm=" + (nextIndexTerm == null ? "null" : nextIndexTerm.utf8ToString()));
+                                //System.out.println("  skip seek: nextIndexTerm=" + (nextIndexTerm is null ? "null" : nextIndexTerm.utf8ToString()));
                             }
                         }
                     }
@@ -825,7 +825,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 public override void SeekExact(long ord)
                 {
                     //System.out.println("BTR.seek by ord ord=" + ord);
-                    if (indexEnum == null)
+                    if (indexEnum is null)
                     {
                         throw IllegalStateException.Create("terms index was not loaded");
                     }
@@ -922,7 +922,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                     // metadata
                     len = input.ReadVInt32();
-                    if (bytes == null)
+                    if (bytes is null)
                     {
                         bytes = new byte[ArrayUtil.Oversize(len, 1)];
                         bytesReader = new ByteArrayDataInput();

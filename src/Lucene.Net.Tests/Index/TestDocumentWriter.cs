@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
             {
                 if (fi.IsIndexed)
                 {
-                    Assert.IsTrue(fi.OmitsNorms == (reader.GetNormValues(fi.Name) == null));
+                    Assert.IsTrue(fi.OmitsNorms == (reader.GetNormValues(fi.Name) is null));
                 }
             }
             reader.Dispose();

@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
         public override Terms GetTerms(string field)
         {
             Terms terms = base.GetTerms(field);
-            return terms == null ? null : new AssertingTerms(terms);
+            return terms is null ? null : new AssertingTerms(terms);
         }
     }
 
@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
         {
             TermsEnum termsEnum = m_input.Intersect(automaton, bytes);
             if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
-            if (Debugging.AssertsEnabled) Debugging.Assert(bytes == null || bytes.IsValid());
+            if (Debugging.AssertsEnabled) Debugging.Assert(bytes is null || bytes.IsValid());
             return new AssertingAtomicReader.AssertingTermsEnum(termsEnum);
         }
 
@@ -383,14 +383,14 @@ namespace Lucene.Net.Index
             get
             {
                 Fields fields = base.Fields;
-                return fields == null ? null : new AssertingFields(fields);
+                return fields is null ? null : new AssertingFields(fields);
             }
         }
 
         public override Fields GetTermVectors(int docID)
         {
             Fields fields = base.GetTermVectors(docID);
-            return fields == null ? null : new AssertingFields(fields);
+            return fields is null ? null : new AssertingFields(fields);
         }
 
         // LUCENENET specific - de-nested AssertingFields
@@ -425,7 +425,7 @@ namespace Lucene.Net.Index
                     reuse = assertingDocsEnum.m_input;
                 }
                 DocsEnum docs = base.Docs(liveDocs, reuse, flags);
-                return docs == null ? null : new AssertingDocsEnum(docs);
+                return docs is null ? null : new AssertingDocsEnum(docs);
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
@@ -439,7 +439,7 @@ namespace Lucene.Net.Index
                     reuse = assertingDocsAndPositionsEnum.m_input;
                 }
                 DocsAndPositionsEnum docs = base.DocsAndPositions(liveDocs, reuse, flags);
-                return docs == null ? null : new AssertingDocsAndPositionsEnum(docs);
+                return docs is null ? null : new AssertingDocsAndPositionsEnum(docs);
             }
 
             public override bool MoveNext()
@@ -502,7 +502,7 @@ namespace Lucene.Net.Index
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(state == State.POSITIONED, "Term called on unpositioned TermsEnum");
                     BytesRef ret = base.Term;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(ret == null || ret.IsValid());
+                    if (Debugging.AssertsEnabled) Debugging.Assert(ret is null || ret.IsValid());
                     return ret;
                 }
             }
@@ -677,7 +677,7 @@ namespace Lucene.Net.Index
                 if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "GetPayload() called after NO_MORE_DOCS");
                 if (Debugging.AssertsEnabled) Debugging.Assert(positionCount > 0, "GetPayload() called before NextPosition()!");
                 BytesRef payload = base.GetPayload();
-                if (Debugging.AssertsEnabled) Debugging.Assert(payload == null || payload.IsValid() && payload.Length > 0, "GetPayload() returned payload with invalid length!");
+                if (Debugging.AssertsEnabled) Debugging.Assert(payload is null || payload.IsValid() && payload.Length > 0, "GetPayload() returned payload with invalid length!");
                 return payload;
             }
         }
@@ -703,7 +703,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(fi == null || fi.DocValuesType != DocValuesType.NUMERIC);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi is null || fi.DocValuesType != DocValuesType.NUMERIC);
                 return null;
             }
         }
@@ -720,7 +720,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(fi == null || fi.DocValuesType != DocValuesType.BINARY);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi is null || fi.DocValuesType != DocValuesType.BINARY);
                 return null;
             }
         }
@@ -737,7 +737,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(fi == null || fi.DocValuesType != DocValuesType.SORTED);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi is null || fi.DocValuesType != DocValuesType.SORTED);
                 return null;
             }
         }
@@ -754,7 +754,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(fi == null || fi.DocValuesType != DocValuesType.SORTED_SET);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi is null || fi.DocValuesType != DocValuesType.SORTED_SET);
                 return null;
             }
         }
@@ -771,7 +771,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(fi == null || fi.HasNorms == false);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi is null || fi.HasNorms == false);
                 return null;
             }
         }
@@ -810,7 +810,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(fi == null || fi.HasDocValues == false);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi is null || fi.HasDocValues == false);
             }
             return docsWithField;
         }

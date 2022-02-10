@@ -112,7 +112,7 @@ namespace Lucene.Net.Spatial
         {
             String path = DATA_RESOURCE_PATH + testDataFile;
             Stream stream = GetType().getResourceAsStream(path);
-            if (stream == null)
+            if (stream is null)
                 throw new FileNotFoundException("classpath resource not found: " + path);
             return SpatialTestData.GetTestData(stream, ctx);//closes the InputStream
         }
@@ -203,7 +203,7 @@ namespace Lucene.Net.Spatial
 
         protected virtual void adoc(String id, String shapeStr)
         {
-            IShape shape = shapeStr == null ? null : ctx.ReadShapeFromWkt(shapeStr);
+            IShape shape = shapeStr is null ? null : ctx.ReadShapeFromWkt(shapeStr);
             AddDocument(newDoc(id, shape));
         }
         protected virtual void adoc(String id, IShape shape)

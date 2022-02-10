@@ -118,7 +118,7 @@ namespace Lucene.Net.Spatial
             {
                 return;
             }
-            if (first == null)
+            if (first is null)
                 return;//unsupported op?
             Object second = generator.gen(args1);//should be the same
             assertEquals(first, second);

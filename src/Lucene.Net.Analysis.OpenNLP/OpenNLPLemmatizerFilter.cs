@@ -67,10 +67,10 @@ namespace Lucene.Net.Analysis.OpenNlp
                 Clear();
                 return false;
             }
-            if (sentenceTokenAttrsIter == null || !sentenceTokenAttrsIter.MoveNext())
+            if (sentenceTokenAttrsIter is null || !sentenceTokenAttrsIter.MoveNext())
             {
                 NextSentence();
-                if (sentenceTokens == null)
+                if (sentenceTokens is null)
                 { // zero non-keyword tokens
                     Clear();
                     return false;

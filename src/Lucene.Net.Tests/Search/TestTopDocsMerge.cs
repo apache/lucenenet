@@ -244,7 +244,7 @@ namespace Lucene.Net.Search
                 int size = -1;
                 // First search on whole index:
                 TopDocs topHits;
-                if (sort == null)
+                if (sort is null)
                 {
                     if (useFrom)
                     {
@@ -307,7 +307,7 @@ namespace Lucene.Net.Search
                     {
                         Console.WriteLine("from=" + from + " size=" + size);
                     }
-                    Console.WriteLine("  top search: " + topHits.TotalHits + " totalHits; hits=" + (topHits.ScoreDocs == null ? "null" : topHits.ScoreDocs.Length + " maxScore=" + topHits.MaxScore));
+                    Console.WriteLine("  top search: " + topHits.TotalHits + " totalHits; hits=" + (topHits.ScoreDocs is null ? "null" : topHits.ScoreDocs.Length + " maxScore=" + topHits.MaxScore));
                     if (topHits.ScoreDocs != null)
                     {
                         for (int hitIDX = 0; hitIDX < topHits.ScoreDocs.Length; hitIDX++)
@@ -326,7 +326,7 @@ namespace Lucene.Net.Search
                 {
                     TopDocs subHits;
                     ShardSearcher subSearcher = subSearchers[shardIDX];
-                    if (sort == null)
+                    if (sort is null)
                     {
                         subHits = subSearcher.Search(w, numHits);
                     }
@@ -340,7 +340,7 @@ namespace Lucene.Net.Search
                     shardHits[shardIDX] = subHits;
                     if (VERBOSE)
                     {
-                        Console.WriteLine("  shard=" + shardIDX + " " + subHits.TotalHits + " totalHits hits=" + (subHits.ScoreDocs == null ? "null" : subHits.ScoreDocs.Length.ToString()));
+                        Console.WriteLine("  shard=" + shardIDX + " " + subHits.TotalHits + " totalHits hits=" + (subHits.ScoreDocs is null ? "null" : subHits.ScoreDocs.Length.ToString()));
                         if (subHits.ScoreDocs != null)
                         {
                             foreach (ScoreDoc sd in subHits.ScoreDocs)

@@ -172,7 +172,7 @@ namespace Sax.Helpers
 
             // Allocate the context if necessary.
             currentContext = contexts[contextPos];
-            if (currentContext == null)
+            if (currentContext is null)
             {
                 contexts[contextPos] = currentContext = new Context(this);
             }
@@ -317,7 +317,7 @@ namespace Sax.Helpers
         public string[] ProcessName(string qName, string[] parts, bool isAttribute)
         {
             string[] myParts = currentContext.ProcessName(qName, isAttribute);
-            if (myParts == null)
+            if (myParts is null)
             {
                 return null;
             }
@@ -585,7 +585,7 @@ namespace Sax.Helpers
                 {
                     CopyTables();
                 }
-                if (declarations == null)
+                if (declarations is null)
                 {
                     declarations = new JCG.List<string>();
                 }
@@ -669,7 +669,7 @@ namespace Sax.Helpers
                             name[0] = "";
                         }
                     }
-                    else if (defaultNs == null)
+                    else if (defaultNs is null)
                     {
                         name[0] = "";
                     }
@@ -694,7 +694,7 @@ namespace Sax.Helpers
                     {
                         uri = (string)prefixTable[prefix];
                     }
-                    if (uri == null || (!isAttribute && "xmlns".Equals(prefix, StringComparison.Ordinal)))
+                    if (uri is null || (!isAttribute && "xmlns".Equals(prefix, StringComparison.Ordinal)))
                     {
                         return null;
                     }
@@ -720,7 +720,7 @@ namespace Sax.Helpers
                 {
                     return defaultNs;
                 }
-                if (prefixTable == null)
+                if (prefixTable is null)
                 {
                     return null;
                 }
@@ -741,7 +741,7 @@ namespace Sax.Helpers
             /// <seealso cref="NamespaceSupport.GetPrefix(string)"/>
             internal string GetPrefix(string uri)
             {
-                if (uriTable == null)
+                if (uriTable is null)
                 {
                     return null;
                 }
@@ -759,7 +759,7 @@ namespace Sax.Helpers
             /// <seealso cref="NamespaceSupport.GetDeclaredPrefixes()"/>
             internal IEnumerable GetDeclaredPrefixes()
             {
-                if (declarations == null)
+                if (declarations is null)
                 {
                     return Collections.EmptyList<object>();
                 }
@@ -776,7 +776,7 @@ namespace Sax.Helpers
             /// <seealso cref="NamespaceSupport.GetPrefixes()"/>
             internal IEnumerable GetPrefixes()
             {
-                if (prefixTable == null)
+                if (prefixTable is null)
                 {
                     return Collections.EmptyList<object>();
                 }

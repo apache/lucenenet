@@ -61,9 +61,9 @@ namespace Lucene.Net.Analysis.Cn.Smart
             int rstartIndex)
         {
 
-            if (larray == null)
+            if (larray is null)
             {
-                if (rarray == null || rstartIndex >= rarray.Length)
+                if (rarray is null || rstartIndex >= rarray.Length)
                     return 0;
                 else
                     return -1;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
             else
             {
                 // larray != null
-                if (rarray == null)
+                if (rarray is null)
                 {
                     if (lstartIndex >= larray.Length)
                         return 0;
@@ -134,9 +134,9 @@ namespace Lucene.Net.Analysis.Cn.Smart
         {
 
             // a null prefix is a prefix of longArray
-            if (shortArray == null)
+            if (shortArray is null)
                 return 0;
-            else if (longArray == null)
+            else if (longArray is null)
                 return (shortIndex < shortArray.Length) ? 1 : 0;
 
             int si = shortIndex, li = longIndex;

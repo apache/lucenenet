@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.VectorHighlight
             string[]
             fragments = CreateFragments(reader, docId, fieldName, fieldFragList, 1,
                 preTags, postTags, encoder);
-            if (fragments == null || fragments.Length == 0) return null;
+            if (fragments is null || fragments.Length == 0) return null;
             return fragments[0];
         }
 

@@ -106,7 +106,7 @@ namespace Lucene.Net.Search.Suggest.Tst
         public virtual object Get(string key)
         {
             IList<TernaryTreeNode> list = autocomplete.PrefixCompletion(root, key, 0);
-            if (list == null || list.Count == 0)
+            if (list is null || list.Count == 0)
             {
                 return null;
             }
@@ -145,7 +145,7 @@ namespace Lucene.Net.Search.Suggest.Tst
             }
             IList<TernaryTreeNode> list = autocomplete.PrefixCompletion(root, key, 0);
             IList<LookupResult> res = new JCG.List<LookupResult>();
-            if (list == null || list.Count == 0)
+            if (list is null || list.Count == 0)
             {
                 return res;
             }

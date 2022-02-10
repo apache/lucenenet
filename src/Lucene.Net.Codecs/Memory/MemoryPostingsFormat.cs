@@ -172,7 +172,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override void AddPosition(int pos, BytesRef payload, int startOffset, int endOffset)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(payload == null || outerInstance.field.HasPayloads);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(payload is null || outerInstance.field.HasPayloads);
 
                     //System.out.println("      addPos pos=" + pos + " payload=" + payload);
 
@@ -184,7 +184,7 @@ namespace Lucene.Net.Codecs.Memory
 
                     if (outerInstance.field.HasPayloads)
                     {
-                        payloadLen = payload == null ? 0 : payload.Length;
+                        payloadLen = payload is null ? 0 : payload.Length;
                         if (payloadLen != lastPayloadLen)
                         {
                             lastPayloadLen = payloadLen;
@@ -494,7 +494,7 @@ namespace Lucene.Net.Codecs.Memory
                         }
                     }
 
-                    if (liveDocs == null || liveDocs.Get(accum))
+                    if (liveDocs is null || liveDocs.Get(accum))
                     {
                         //System.out.println("    return docID=" + accum + " freq=" + freq);
                         return (docID = accum);
@@ -611,7 +611,7 @@ namespace Lucene.Net.Codecs.Memory
                         if (Debugging.AssertsEnabled) Debugging.Assert(freq > 0);
                     }
 
-                    if (liveDocs == null || liveDocs.Get(accum))
+                    if (liveDocs is null || liveDocs.Get(accum))
                     {
                         pos = 0;
                         startOffset = storeOffsets ? 0 : -1;
@@ -778,7 +778,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 //System.out.println("te.seek text=" + field.name + ":" + text.utf8ToString() + " this=" + this);
                 current = fstEnum.SeekCeil(text);
-                if (current == null)
+                if (current is null)
                 {
                     return SeekStatus.END;
                 }

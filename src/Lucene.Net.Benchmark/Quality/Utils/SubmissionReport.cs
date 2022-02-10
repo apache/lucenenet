@@ -57,7 +57,7 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
         /// <see cref="IOException">in case of a problem.</see>
         public virtual void Report(QualityQuery qq, TopDocs td, string docNameField, IndexSearcher searcher)
         {
-            if (logger == null)
+            if (logger is null)
             {
                 return;
             }

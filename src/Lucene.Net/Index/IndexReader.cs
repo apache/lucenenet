@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception t) when (t.IsThrowable())
                     {
-                        if (th == null)
+                        if (th is null)
                         {
                             th = t;
                         }
@@ -505,7 +505,7 @@ namespace Lucene.Net.Index
         public Terms GetTermVector(int docID, string field)
         {
             Fields vectors = GetTermVectors(docID);
-            if (vectors == null)
+            if (vectors is null)
             {
                 return null;
             }

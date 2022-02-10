@@ -335,7 +335,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 throw new ArgumentNullException(nameof(fieldName), "fieldName cannot be null or empty string."); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
-            if (fieldToDateResolution == null)
+            if (fieldToDateResolution is null)
             {
                 // lazily initialize Dictionary
                 fieldToDateResolution = new Dictionary<string, DateResolution>();
@@ -356,7 +356,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 throw new ArgumentNullException(nameof(fieldName), "fieldName cannot be null or empty string."); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
-            if (fieldToDateResolution == null)
+            if (fieldToDateResolution is null)
             {
                 // no field specific date resolutions set; return default date resolution instead
                 return this.dateResolution;
@@ -408,7 +408,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
             // We might have been passed a null query; the term might have been
             // filtered away by the analyzer.
-            if (q == null)
+            if (q is null)
                 return;
 
             if (DefaultOperator == OR_OPERATOR)
@@ -482,8 +482,8 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (LowercaseExpandedTerms)
             {
-                part1 = part1 == null ? null : Locale.TextInfo.ToLower(part1);
-                part2 = part2 == null ? null : Locale.TextInfo.ToLower(part2);
+                part1 = part1 is null ? null : Locale.TextInfo.ToLower(part1);
+                part2 = part2 is null ? null : Locale.TextInfo.ToLower(part2);
             }
 
             string shortDateFormat = Locale.DateTimeFormat.ShortDatePattern;
@@ -596,7 +596,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         protected internal virtual BytesRef AnalyzeMultitermTerm(string field, string part, Analyzer analyzerIn)
         {
-            if (analyzerIn == null) analyzerIn = Analyzer;
+            if (analyzerIn is null) analyzerIn = Analyzer;
 
             TokenStream source = null;
             try
@@ -639,7 +639,7 @@ namespace Lucene.Net.QueryParsers.Classic
             BytesRef start;
             BytesRef end;
 
-            if (part1 == null)
+            if (part1 is null)
             {
                 start = null;
             }
@@ -648,7 +648,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 start = analyzeRangeTerms ? AnalyzeMultitermTerm(field, part1) : new BytesRef(part1);
             }
 
-            if (part2 == null)
+            if (part2 is null)
             {
                 end = null;
             }

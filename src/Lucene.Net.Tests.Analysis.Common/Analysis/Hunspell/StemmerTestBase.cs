@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Hunspell
             }
 
             System.IO.Stream affixStream = typeof(StemmerTestBase).getResourceAsStream(affix);
-            if (affixStream == null)
+            if (affixStream is null)
             {
                 throw new FileNotFoundException("file not found: " + affix);
             }
@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Hunspell
             for (int i = 0; i < dictionaries.Length; i++)
             {
                 dictStreams[i] = typeof(StemmerTestBase).getResourceAsStream(dictionaries[i]);
-                if (dictStreams[i] == null)
+                if (dictStreams[i] is null)
                 {
                     throw new FileNotFoundException("file not found: " + dictStreams[i]);
                 }

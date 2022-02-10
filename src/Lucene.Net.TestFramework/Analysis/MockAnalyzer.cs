@@ -185,7 +185,7 @@ namespace Lucene.Net.Analysis
         /// <param name="fieldName"> Currently not used, the same offset gap is returned for each field. </param>
         public override int GetOffsetGap(string fieldName)
         {
-            return offsetGap == null ? base.GetOffsetGap(fieldName) : offsetGap.Value;
+            return offsetGap is null ? base.GetOffsetGap(fieldName) : offsetGap.Value;
         }
 
         /// <summary>

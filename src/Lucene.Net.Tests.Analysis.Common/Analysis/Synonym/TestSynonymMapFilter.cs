@@ -309,7 +309,7 @@ namespace Lucene.Net.Analysis.Synonym
                     assertTrue(idx % 2 == 0);
                     int matchIDX = idx / 2;
                     assertTrue(syn.@in.Length % 2 == 1);
-                    if (matches[matchIDX] == null)
+                    if (matches[matchIDX] is null)
                     {
                         matches[matchIDX] = syn;
                     }
@@ -344,7 +344,7 @@ namespace Lucene.Net.Analysis.Synonym
             for (int inputIDX = 0; inputIDX < numInputs; inputIDX++)
             {
                 OneSyn syn = matches[inputIDX];
-                if (syn == null)
+                if (syn is null)
                 {
                     continue;
                 }
@@ -361,7 +361,7 @@ namespace Lucene.Net.Analysis.Synonym
                     int synUpto = 0;
                     for (int matchIDX = inputIDX; matchIDX < matchEnd; matchIDX++)
                     {
-                        if (outputs[matchIDX] == null)
+                        if (outputs[matchIDX] is null)
                         {
                             outputs[matchIDX] = synOutputs[synUpto++];
                         }
@@ -397,7 +397,7 @@ namespace Lucene.Net.Analysis.Synonym
             for (int inputIDX = 0; inputIDX < limit; inputIDX++)
             {
                 bool posHasOutput = false;
-                if (inputIDX >= numInputs && outputs[inputIDX] == null)
+                if (inputIDX >= numInputs && outputs[inputIDX] is null)
                 {
                     break;
                 }
@@ -459,7 +459,7 @@ namespace Lucene.Net.Analysis.Synonym
             for (int synIDX = 0; synIDX < numSyn; synIDX++)
             {
                 string synIn = GetRandomString('a', alphabetSize, TestUtil.NextInt32(Random, 1, 5)).Trim();
-                if (!synMap.TryGetValue(synIn, out OneSyn s) || s == null)
+                if (!synMap.TryGetValue(synIn, out OneSyn s) || s is null)
                 {
                     s = new OneSyn();
                     s.@in = synIn;

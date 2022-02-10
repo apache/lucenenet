@@ -194,16 +194,16 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             // PhoneticEngine = NameType + RuleType + concat
             // we use common-codec's defaults: GENERIC + APPROX + true
             args.TryGetValue("nameType", out string nameTypeArg);
-            NameType nameType = (nameTypeArg == null) ? NameType.GENERIC : (NameType)Enum.Parse(typeof(NameType), nameTypeArg, true);
+            NameType nameType = (nameTypeArg is null) ? NameType.GENERIC : (NameType)Enum.Parse(typeof(NameType), nameTypeArg, true);
 
             args.TryGetValue("ruleType", out string ruleTypeArg);
-            RuleType ruleType = (ruleTypeArg == null) ? RuleType.APPROX : (RuleType)Enum.Parse(typeof(RuleType), ruleTypeArg, true);
+            RuleType ruleType = (ruleTypeArg is null) ? RuleType.APPROX : (RuleType)Enum.Parse(typeof(RuleType), ruleTypeArg, true);
 
             engine = new PhoneticEngine(nameType, ruleType, concat);
 
             // LanguageSet: defaults to automagic, otherwise a comma-separated list.
             args.TryGetValue("languageSet", out string languageSetArg);
-            if (languageSetArg == null || languageSetArg.Equals("auto", StringComparison.Ordinal))
+            if (languageSetArg is null || languageSetArg.Equals("auto", StringComparison.Ordinal))
             {
                 languageSet = null;
             }
@@ -215,13 +215,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             /*
                 org/apache/lucene/analysis/phonetic/BeiderMorseFilter.java (lines 96-98) does this:
 
-                encoded = (languages == null)
+                encoded = (languages is null)
                     ? engine.encode(termAtt.toString())
                     : engine.encode(termAtt.toString(), languages);
 
                 Hence our approach, below:
             */
-            if (languageSet == null)
+            if (languageSet is null)
             {
                 return engine.Encode(input);
             }

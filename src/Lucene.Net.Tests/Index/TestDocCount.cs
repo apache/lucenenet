@@ -72,14 +72,14 @@ namespace Lucene.Net.Index
         private void VerifyCount(IndexReader ir)
         {
             Fields fields = MultiFields.GetFields(ir);
-            if (fields == null)
+            if (fields is null)
             {
                 return;
             }
             foreach (string field in fields)
             {
                 Terms terms = fields.GetTerms(field);
-                if (terms == null)
+                if (terms is null)
                 {
                     continue;
                 }

@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Join
             {
 
                 Scorer childScorer = childWeight.GetScorer(readerContext, readerContext.AtomicReader.LiveDocs);
-                if (childScorer == null)
+                if (childScorer is null)
                 {
                     // No matches
                     return null;
@@ -167,7 +167,7 @@ namespace Lucene.Net.Search.Join
                 // acceptDocs when we score:
                 DocIdSet parents = parentsFilter.GetDocIdSet(readerContext, null);
 
-                if (parents == null)
+                if (parents is null)
                 {
                     // No matches
                     return null;
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search.Join
             internal virtual int[] SwapChildDocs(int[] other)
             {
                 int[] ret = _pendingChildDocs;
-                if (other == null)
+                if (other is null)
                 {
                     _pendingChildDocs = new int[5];
                 }
@@ -248,7 +248,7 @@ namespace Lucene.Net.Search.Join
                     throw IllegalStateException.Create("ScoreMode is None; you must pass trackScores=false to ToParentBlockJoinCollector");
                 }
                 float[] ret = _pendingChildScores;
-                if (other == null)
+                if (other is null)
                 {
                     _pendingChildScores = new float[5];
                 }

@@ -331,16 +331,16 @@ namespace Lucene.Net.Index.Sorter
             int prev = -1;
             while ((doc = docs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
             {
-                assertTrue("document " + doc + " marked as deleted", mappedLiveDocs == null || mappedLiveDocs.Get(doc));
+                assertTrue("document " + doc + " marked as deleted", mappedLiveDocs is null || mappedLiveDocs.Get(doc));
                 assertEquals("incorrect value; doc " + doc, sortedValues[doc], int.Parse(reader.Document(doc).Get(ID_FIELD)));
                 while (++prev < doc)
                 {
-                    assertFalse("document " + prev + " not marked as deleted", mappedLiveDocs == null || mappedLiveDocs.Get(prev));
+                    assertFalse("document " + prev + " not marked as deleted", mappedLiveDocs is null || mappedLiveDocs.Get(prev));
                 }
             }
             while (++prev < reader.MaxDoc)
             {
-                assertFalse("document " + prev + " not marked as deleted", mappedLiveDocs == null || mappedLiveDocs.Get(prev));
+                assertFalse("document " + prev + " not marked as deleted", mappedLiveDocs is null || mappedLiveDocs.Get(prev));
             }
 
             DocsEnum reuse = docs;
@@ -353,16 +353,16 @@ namespace Lucene.Net.Index.Sorter
             prev = -1;
             while ((doc = docs.Advance(doc + 1)) != DocIdSetIterator.NO_MORE_DOCS)
             {
-                assertTrue("document " + doc + " marked as deleted", mappedLiveDocs == null || mappedLiveDocs.Get(doc));
+                assertTrue("document " + doc + " marked as deleted", mappedLiveDocs is null || mappedLiveDocs.Get(doc));
                 assertEquals("incorrect value; doc " + doc, sortedValues[doc], int.Parse(reader.Document(doc).Get(ID_FIELD)));
                 while (++prev < doc)
                 {
-                    assertFalse("document " + prev + " not marked as deleted", mappedLiveDocs == null || mappedLiveDocs.Get(prev));
+                    assertFalse("document " + prev + " not marked as deleted", mappedLiveDocs is null || mappedLiveDocs.Get(prev));
                 }
             }
             while (++prev < reader.MaxDoc)
             {
-                assertFalse("document " + prev + " not marked as deleted", mappedLiveDocs == null || mappedLiveDocs.Get(prev));
+                assertFalse("document " + prev + " not marked as deleted", mappedLiveDocs is null || mappedLiveDocs.Get(prev));
             }
         }
 

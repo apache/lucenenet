@@ -381,7 +381,7 @@ namespace Lucene.Net.Store
             {
                 try
                 {
-                    if (buffers == null)
+                    if (buffers is null)
                     {
                         return;
                     }

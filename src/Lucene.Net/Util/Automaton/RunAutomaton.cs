@@ -204,7 +204,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public int Step(int state, int c)
         {
-            if (_classmap == null)
+            if (_classmap is null)
             {
                 return m_transitions[state * _points.Length + GetCharClass(c)];
             }
@@ -231,7 +231,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return true;
             }
-            if (obj == null)
+            if (obj is null)
             {
                 return false;
             }

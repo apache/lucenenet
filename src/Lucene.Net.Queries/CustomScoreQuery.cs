@@ -98,7 +98,7 @@ namespace Lucene.Net.Queries
                 Query v = scoringQueries[i].Rewrite(reader);
                 if (v != scoringQueries[i])
                 {
-                    if (clone == null)
+                    if (clone is null)
                     {
                         clone = (CustomScoreQuery)Clone();
                     }
@@ -270,7 +270,7 @@ namespace Lucene.Net.Queries
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 Scorer subQueryScorer = subQueryWeight.GetScorer(context, acceptDocs);
-                if (subQueryScorer == null)
+                if (subQueryScorer is null)
                 {
                     return null;
                 }

@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
         public override Fields GetTermVectors(int docID)
         {
             Fields f = base.GetTermVectors(docID);
-            if (f == null)
+            if (f is null)
             {
                 return null;
             }
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
             get
             {
                 Fields f = base.Fields;
-                return (f == null) ? null : new FieldFilterFields(this, f);
+                return (f is null) ? null : new FieldFilterFields(this, f);
             }
         }
 

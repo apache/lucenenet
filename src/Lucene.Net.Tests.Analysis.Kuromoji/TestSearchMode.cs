@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Ja
         public void TestSearchSegmentation()
         {
             Stream @is = typeof(TestSearchMode).getResourceAsStream(SEGMENTATION_FILENAME);
-            if (@is == null)
+            if (@is is null)
             {
                 throw new FileNotFoundException("Cannot find " + SEGMENTATION_FILENAME + " in test classpath");
             }

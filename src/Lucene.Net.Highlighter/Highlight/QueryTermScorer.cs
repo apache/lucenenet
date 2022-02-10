@@ -85,7 +85,7 @@ namespace Lucene.Net.Search.Highlight
             for (int i = 0; i < weightedTerms.Length; i++)
             {
                 if (!termsToFind.TryGetValue(weightedTerms[i].Term, out WeightedTerm existingTerm)
-                    || (existingTerm == null)
+                    || (existingTerm is null)
                     || (existingTerm.Weight < weightedTerms[i].Weight))
                 {
                     // if a term is defined more than once, always use the highest scoring
@@ -119,7 +119,7 @@ namespace Lucene.Net.Search.Highlight
         {
             string termText = termAtt.ToString();
 
-            if (!termsToFind.TryGetValue(termText, out WeightedTerm queryTerm) || queryTerm == null)
+            if (!termsToFind.TryGetValue(termText, out WeightedTerm queryTerm) || queryTerm is null)
             {
                 // not a query term - return
                 return 0;

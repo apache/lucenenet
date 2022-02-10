@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         {
             if (this == obj)
                 return true;
-            if (obj == null)
+            if (obj is null)
                 return false;
             if (GetType() != obj.GetType())
                 return false;

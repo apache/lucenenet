@@ -408,7 +408,7 @@ namespace Lucene.Net.Join
                 slot = -1; // LUCENENET: In Java null is converted to -1 for AccumulateGroups()
             }
 
-            if (sortedGroups == null)
+            if (sortedGroups is null)
             {
                 if (offset >= queue.Count)
                 {
@@ -462,7 +462,7 @@ namespace Lucene.Net.Join
 
                 // At this point we hold all docs w/ in each group, unsorted; we now sort them:
                 ICollector collector;
-                if (withinGroupSort == null)
+                if (withinGroupSort is null)
                 {
                     //System.out.println("sort by score");
                     // Sort by score
@@ -509,7 +509,7 @@ namespace Lucene.Net.Join
                 }
 
                 TopDocs topDocs;
-                if (withinGroupSort == null)
+                if (withinGroupSort is null)
                 {
                     var tempCollector = (TopScoreDocCollector)collector;
                     topDocs = tempCollector.GetTopDocs(withinGroupOffset, numDocsInGroup);

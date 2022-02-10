@@ -620,7 +620,7 @@ namespace Lucene.Net.Index.Memory
         /// </summary>
         private void SortFields()
         {
-            if (sortedFields == null)
+            if (sortedFields is null)
             {
                 sortedFields = Sort(fields);
             }

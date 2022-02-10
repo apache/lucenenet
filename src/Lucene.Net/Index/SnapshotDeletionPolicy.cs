@@ -209,7 +209,7 @@ namespace Lucene.Net.Index
                 {
                     throw IllegalStateException.Create("this instance is not being used by IndexWriter; be sure to use the instance returned from writer.Config.IndexDeletionPolicy");
                 }
-                if (m_lastCommit == null)
+                if (m_lastCommit is null)
                 {
                     // No commit yet, eg this is a new IndexWriter:
                     throw IllegalStateException.Create("No index commit to snapshot");

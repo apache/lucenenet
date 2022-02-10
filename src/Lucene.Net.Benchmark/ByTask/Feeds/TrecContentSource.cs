@@ -105,7 +105,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         private StringBuilder GetDocBuffer()
         {
             StringBuilder sb = trecDocBuffer.Value;
-            if (sb == null)
+            if (sb is null)
             {
                 sb = new StringBuilder();
                 trecDocBuffer.Value = sb;
@@ -132,7 +132,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             {
                 string line = reader.ReadLine();
 
-                if (line == null)
+                if (line is null)
                 {
                     OpenNextFile();
                     continue;
@@ -220,7 +220,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         private void DoClose() // LUCENENET specific - separate disposing from closing so those tasks that "reopen" can continue
         {
-            if (reader == null)
+            if (reader is null)
             {
                 return;
             }
@@ -266,7 +266,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             UninterruptableMonitor.Enter(@lock);
             try
             {
-                if (reader == null)
+                if (reader is null)
                 {
                     OpenNextFile();
                 }
@@ -363,7 +363,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 throw RuntimeException.Create(e);
             }
             // encoding
-            if (m_encoding == null)
+            if (m_encoding is null)
             {
                 m_encoding = Encoding.GetEncoding("iso-8859-1"); //StandardCharsets.ISO_8859_1.name();
             }

@@ -161,7 +161,7 @@ namespace Lucene.Net.Search.Grouping
                 totalGroupedHitCount += shard.TotalGroupedHitCount;
                 if (shard.TotalGroupCount != null)
                 {
-                    if (totalGroupCount == null)
+                    if (totalGroupCount is null)
                     {
                         totalGroupCount = 0;
                     }
@@ -187,7 +187,7 @@ namespace Lucene.Net.Search.Grouping
                     //System.out.println("    shard=" + shardIDX);
                     ITopGroups<T> shard = shardGroups[shardIdx];
                     var shardGroupDocs = shard.Groups[groupIDX];
-                    if (groupValue == null)
+                    if (groupValue is null)
                     {
                         if (shardGroupDocs.GroupValue != null)
                         {

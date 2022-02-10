@@ -53,7 +53,7 @@ namespace Lucene.Net.Benchmarks.Utils
 
         public virtual DirectoryInfo Directory(int count, DirectoryInfo directory)
         {
-            if (directory == null)
+            if (directory is null)
             {
                 directory = outputDir;
             }

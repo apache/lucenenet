@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Morfologik
 
         public virtual void Inform(IResourceLoader loader)
         {
-            if (resourceName == null)
+            if (resourceName is null)
             {
                 // Get the dictionary lazily, does not hold up memory.
                 this.dictionary = new PolishStemmer().Dictionary;
@@ -94,7 +94,7 @@ namespace Lucene.Net.Analysis.Morfologik
 
         public override TokenStream Create(TokenStream ts)
         {
-            if (this.dictionary == null)
+            if (this.dictionary is null)
                 throw new ArgumentException("MorfologikFilterFactory was not fully initialized.");
 
             return new MorfologikFilter(ts, dictionary);

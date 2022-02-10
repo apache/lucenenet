@@ -194,7 +194,7 @@ namespace Lucene.Net.Analysis.Synonym
                     //System.out.println("  output=" + output + " new ord=" + ord);
                 }
 
-                if (!workingSet.TryGetValue(input, out MapEntry e) || e == null)
+                if (!workingSet.TryGetValue(input, out MapEntry e) || e is null)
                 {
                     e = new MapEntry();
                     workingSet[CharsRef.DeepCopyOf(input)] = e; // make a copy, since we will keep around in our map

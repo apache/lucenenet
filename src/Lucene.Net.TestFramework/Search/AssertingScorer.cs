@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
 
         public static Scorer Wrap(Random random, Scorer other)
         {
-            if (other == null || other is AssertingScorer)
+            if (other is null || other is AssertingScorer)
             {
                 return other;
             }
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
 
         internal static Scorer GetAssertingScorer(Random random, Scorer other)
         {
-            if (other == null || other is AssertingScorer)
+            if (other is null || other is AssertingScorer)
             {
                 return other;
             }
@@ -75,8 +75,8 @@ namespace Lucene.Net.Search
             try
             {
 #endif
-                if (!assertingInstances.TryGetValue(other, out WeakReference<AssertingScorer> assertingScorerRef) || assertingScorerRef == null ||
-                    !assertingScorerRef.TryGetTarget(out AssertingScorer assertingScorer) || assertingScorer == null)
+                if (!assertingInstances.TryGetValue(other, out WeakReference<AssertingScorer> assertingScorerRef) || assertingScorerRef is null ||
+                    !assertingScorerRef.TryGetTarget(out AssertingScorer assertingScorer) || assertingScorer is null)
                 {
                     // can happen in case of memory pressure or if
                     // scorer1.Score(collector) calls

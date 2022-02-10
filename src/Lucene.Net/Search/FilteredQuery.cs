@@ -110,8 +110,8 @@ namespace Lucene.Net.Search
                 Explanation inner = weight.Explain(ir, i);
                 Filter f = outerInstance.filter;
                 DocIdSet docIdSet = f.GetDocIdSet(ir, ir.AtomicReader.LiveDocs);
-                DocIdSetIterator docIdSetIterator = docIdSet == null ? DocIdSetIterator.GetEmpty() : docIdSet.GetIterator();
-                if (docIdSetIterator == null)
+                DocIdSetIterator docIdSetIterator = docIdSet is null ? DocIdSetIterator.GetEmpty() : docIdSet.GetIterator();
+                if (docIdSetIterator is null)
                 {
                     docIdSetIterator = DocIdSetIterator.GetEmpty();
                 }
@@ -136,7 +136,7 @@ namespace Lucene.Net.Search
                 if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.filter != null);
 
                 DocIdSet filterDocIdSet = outerInstance.filter.GetDocIdSet(context, acceptDocs);
-                if (filterDocIdSet == null)
+                if (filterDocIdSet is null)
                 {
                     // this means the filter does not accept any documents.
                     return null;
@@ -151,7 +151,7 @@ namespace Lucene.Net.Search
                 if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.filter != null);
 
                 DocIdSet filterDocIdSet = outerInstance.filter.GetDocIdSet(context, acceptDocs);
-                if (filterDocIdSet == null)
+                if (filterDocIdSet is null)
                 {
                     // this means the filter does not accept any documents.
                     return null;
@@ -543,7 +543,7 @@ namespace Lucene.Net.Search
             public virtual BulkScorer FilteredBulkScorer(AtomicReaderContext context, Weight weight, bool scoreDocsInOrder, DocIdSet docIdSet)
             {
                 Scorer scorer = FilteredScorer(context, weight, docIdSet);
-                if (scorer == null)
+                if (scorer is null)
                 {
                     return null;
                 }
@@ -566,7 +566,7 @@ namespace Lucene.Net.Search
             public override Scorer FilteredScorer(AtomicReaderContext context, Weight weight, DocIdSet docIdSet)
             {
                 DocIdSetIterator filterIter = docIdSet.GetIterator();
-                if (filterIter == null)
+                if (filterIter is null)
                 {
                     // this means the filter does not accept any documents.
                     return null;
@@ -593,7 +593,7 @@ namespace Lucene.Net.Search
                     // we pass null as acceptDocs, as our filter has already respected acceptDocs, no need to do twice
                     Scorer scorer = weight.GetScorer(context, null);
                     // TODO once we have way to figure out if we use RA or LeapFrog we can remove this scorer
-                    return (scorer == null) ? null : new PrimaryAdvancedLeapFrogScorer(weight, firstFilterDoc, filterIter, scorer);
+                    return (scorer is null) ? null : new PrimaryAdvancedLeapFrogScorer(weight, firstFilterDoc, filterIter, scorer);
                 }
             }
 
@@ -628,14 +628,14 @@ namespace Lucene.Net.Search
             public override Scorer FilteredScorer(AtomicReaderContext context, Weight weight, DocIdSet docIdSet)
             {
                 DocIdSetIterator filterIter = docIdSet.GetIterator();
-                if (filterIter == null)
+                if (filterIter is null)
                 {
                     // this means the filter does not accept any documents.
                     return null;
                 }
                 // we pass null as acceptDocs, as our filter has already respected acceptDocs, no need to do twice
                 Scorer scorer = weight.GetScorer(context, null);
-                if (scorer == null)
+                if (scorer is null)
                 {
                     return null;
                 }
@@ -669,27 +669,27 @@ namespace Lucene.Net.Search
             public override Scorer FilteredScorer(AtomicReaderContext context, Weight weight, DocIdSet docIdSet)
             {
                 IBits filterAcceptDocs = docIdSet.Bits;
-                if (filterAcceptDocs == null)
+                if (filterAcceptDocs is null)
                 {
                     // Filter does not provide random-access Bits; we
                     // must fallback to leapfrog:
                     return LEAP_FROG_QUERY_FIRST_STRATEGY.FilteredScorer(context, weight, docIdSet);
                 }
                 Scorer scorer = weight.GetScorer(context, null);
-                return scorer == null ? null : new QueryFirstScorer(weight, filterAcceptDocs, scorer);
+                return scorer is null ? null : new QueryFirstScorer(weight, filterAcceptDocs, scorer);
             }
 
             public override BulkScorer FilteredBulkScorer(AtomicReaderContext context, Weight weight, bool scoreDocsInOrder, DocIdSet docIdSet) // ignored (we always top-score in order)
             {
                 IBits filterAcceptDocs = docIdSet.Bits;
-                if (filterAcceptDocs == null)
+                if (filterAcceptDocs is null)
                 {
                     // Filter does not provide random-access Bits; we
                     // must fallback to leapfrog:
                     return LEAP_FROG_QUERY_FIRST_STRATEGY.FilteredBulkScorer(context, weight, scoreDocsInOrder, docIdSet);
                 }
                 Scorer scorer = weight.GetScorer(context, null);
-                return scorer == null ? null : new QueryFirstBulkScorer(scorer, filterAcceptDocs);
+                return scorer is null ? null : new QueryFirstBulkScorer(scorer, filterAcceptDocs);
             }
         }
     }

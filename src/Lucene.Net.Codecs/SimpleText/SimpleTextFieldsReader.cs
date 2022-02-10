@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 //System.out.println("seek to text=" + text.utf8ToString());
                 var result = fstEnum.SeekCeil(text);
-                if (result == null)
+                if (result is null)
                 {
                     //System.out.println("  end");
                     return SeekStatus.END;
@@ -283,7 +283,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     SimpleTextUtil.ReadLine(input, scratch);
                     if (StringHelper.StartsWith(scratch, SimpleTextFieldsWriter.DOC))
                     {
-                        if (!first && (liveDocs == null || liveDocs.Get(docID)))
+                        if (!first && (liveDocs is null || liveDocs.Get(docID)))
                         {
                             input.Seek(lineStart);
                             if (!omitTF)
@@ -325,7 +325,7 @@ namespace Lucene.Net.Codecs.SimpleText
                             || StringHelper.StartsWith(scratch, SimpleTextFieldsWriter.FIELD)
                             || StringHelper.StartsWith(scratch, SimpleTextFieldsWriter.END),
                             "scratch={0}", new BytesRefFormatter(scratch, BytesRefFormat.UTF8));
-                        if (!first && (liveDocs == null || liveDocs.Get(docID)))
+                        if (!first && (liveDocs is null || liveDocs.Get(docID)))
                         {
                             input.Seek(lineStart);
                             if (!omitTF)
@@ -413,7 +413,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     //System.out.println("NEXT DOC: " + scratch.utf8ToString());
                     if (StringHelper.StartsWith(scratch, SimpleTextFieldsWriter.DOC))
                     {
-                        if (!first && (liveDocs == null || liveDocs.Get(docID)))
+                        if (!first && (liveDocs is null || liveDocs.Get(docID)))
                         {
                             nextDocStart = lineStart;
                             input.Seek(posStart);
@@ -452,7 +452,7 @@ namespace Lucene.Net.Codecs.SimpleText
                             StringHelper.StartsWith(scratch, SimpleTextFieldsWriter.TERM)
                             || StringHelper.StartsWith(scratch, SimpleTextFieldsWriter.FIELD)
                             || StringHelper.StartsWith(scratch, SimpleTextFieldsWriter.END));
-                        if (!first && (liveDocs == null || liveDocs.Get(docID)))
+                        if (!first && (liveDocs is null || liveDocs.Get(docID)))
                         {
                             nextDocStart = lineStart;
                             input.Seek(posStart);
@@ -689,7 +689,7 @@ namespace Lucene.Net.Codecs.SimpleText
             UninterruptableMonitor.Enter(this);
             try
             {
-                if (!termsCache.TryGetValue(field, out SimpleTextTerms terms) || terms == null)
+                if (!termsCache.TryGetValue(field, out SimpleTextTerms terms) || terms is null)
                 {
                     if (!fields.TryGetValue(field, out long fp))
                     {

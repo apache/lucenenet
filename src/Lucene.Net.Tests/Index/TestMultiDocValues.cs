@@ -260,7 +260,7 @@ namespace Lucene.Net.Index
 
             SortedSetDocValues multi = MultiDocValues.GetSortedSetValues(ir, "bytes");
             SortedSetDocValues single = merged.GetSortedSetDocValues("bytes");
-            if (multi == null)
+            if (multi is null)
             {
                 Assert.IsNull(single);
             }
@@ -337,7 +337,7 @@ namespace Lucene.Net.Index
 
             SortedSetDocValues multi = MultiDocValues.GetSortedSetValues(ir, "bytes");
             SortedSetDocValues single = merged.GetSortedSetDocValues("bytes");
-            if (multi == null)
+            if (multi is null)
             {
                 Assert.IsNull(single);
             }
@@ -413,7 +413,7 @@ namespace Lucene.Net.Index
 
             IBits multi = MultiDocValues.GetDocsWithField(ir, "numbers");
             IBits single = merged.GetDocsWithField("numbers");
-            if (multi == null)
+            if (multi is null)
             {
                 Assert.IsNull(single);
             }

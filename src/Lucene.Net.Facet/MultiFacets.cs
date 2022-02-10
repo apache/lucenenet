@@ -45,7 +45,7 @@ namespace Lucene.Net.Facet
         {
             if (!dimToFacets.TryGetValue(dim, out Facets facets))
             {
-                if (defaultFacets == null)
+                if (defaultFacets is null)
                 {
                     throw new ArgumentException("invalid dim \"" + dim + "\"");
                 }
@@ -59,7 +59,7 @@ namespace Lucene.Net.Facet
         {
             if (!dimToFacets.TryGetValue(dim, out Facets facets))
             {
-                if (defaultFacets == null)
+                if (defaultFacets is null)
                 {
                     throw new ArgumentException("invalid dim \"" + dim + "\"");
                 }

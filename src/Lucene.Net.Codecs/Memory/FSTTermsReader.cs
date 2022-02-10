@@ -347,7 +347,7 @@ namespace Lucene.Net.Codecs.Memory
                 // Update current enum according to FSTEnum
                 internal void UpdateEnum(BytesRefFSTEnum.InputOutput<FSTTermOutputs.TermData> pair)
                 {
-                    if (pair == null)
+                    if (pair is null)
                     {
                         term = null;
                     }
@@ -406,7 +406,7 @@ namespace Lucene.Net.Codecs.Memory
                 public override SeekStatus SeekCeil(BytesRef target)
                 {
                     UpdateEnum(fstEnum.SeekCeil(target));
-                    if (term == null)
+                    if (term is null)
                     {
                         return SeekStatus.END;
                     }
@@ -507,7 +507,7 @@ namespace Lucene.Net.Codecs.Memory
                     this.decoded = false;
                     this.pending = false;
 
-                    if (startTerm == null)
+                    if (startTerm is null)
                     {
                         pending = IsAccept(TopFrame());
                     }
@@ -565,7 +565,7 @@ namespace Lucene.Net.Codecs.Memory
                     decoded = false;
                     term = DoSeekCeil(target);
                     LoadMetaData();
-                    if (term == null)
+                    if (term is null)
                     {
                         return SeekStatus.END;
                     }
@@ -637,7 +637,7 @@ namespace Lucene.Net.Codecs.Memory
                         frame = NewFrame();
                         label = target.Bytes[upto] & 0xff;
                         frame = LoadCeilFrame(label, TopFrame(), frame);
-                        if (frame == null || frame.fstArc.Label != label)
+                        if (frame is null || frame.fstArc.Label != label)
                         {
                             break;
                         }
@@ -737,7 +737,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     FST.Arc<FSTTermOutputs.TermData> arc = frame.fstArc;
                     arc = Util.ReadCeilArc(label, fst, top.fstArc, arc, fstReader);
-                    if (arc == null)
+                    if (arc is null)
                     {
                         return null;
                     }
@@ -812,7 +812,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 private BytesRef Grow(int label)
                 {
-                    if (term == null)
+                    if (term is null)
                     {
                         term = new BytesRef(new byte[16], 0, 0);
                     }
@@ -849,7 +849,7 @@ namespace Lucene.Net.Codecs.Memory
             long ramBytesUsed = 0;
             foreach (TermsReader r in fields.Values)
             {
-                ramBytesUsed += r.dict == null ? 0 : r.dict.GetSizeInBytes();
+                ramBytesUsed += r.dict is null ? 0 : r.dict.GetSizeInBytes();
             }
             return ramBytesUsed;
         }

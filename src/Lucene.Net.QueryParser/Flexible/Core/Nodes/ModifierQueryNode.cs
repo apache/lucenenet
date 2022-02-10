@@ -71,7 +71,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
-            if (GetChild() == null)
+            if (GetChild() is null)
                 return "";
 
             string leftParenthensis = "";

@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <returns>A clean string.</returns>
         public static string Clean(string str)
         {
-            if (str == null || str.Length == 0)
+            if (str is null || str.Length == 0)
             {
                 return str;
             }
@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <returns>The number of characters in the two Soundex encoded strings that are the same.</returns>
         public static int DifferenceEncoded(string es1, string es2)
         {
-            if (es1 == null || es2 == null)
+            if (es1 is null || es2 is null)
             {
                 return 0;
             }

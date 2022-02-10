@@ -94,7 +94,7 @@ namespace Lucene.Net.Tests.Queries
 
         private ChainedFilter GetChainedFilter(Filter[] chain, int[] logic)
         {
-            if (logic == null)
+            if (logic is null)
             {
                 return new ChainedFilter(chain);
             }

@@ -224,7 +224,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override object Clone()
         {
-            if (_input == null)
+            if (_input is null)
             {
                 throw AlreadyClosedException.Create(this.GetType().FullName, "this FieldsReader is disposed.");
             }

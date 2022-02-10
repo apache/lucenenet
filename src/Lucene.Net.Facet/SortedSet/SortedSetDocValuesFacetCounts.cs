@@ -85,7 +85,7 @@ namespace Lucene.Net.Facet.SortedSet
                 throw new ArgumentOutOfRangeException(nameof(path), "path should be 0 length"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             OrdRange ordRange = state.GetOrdRange(dim);
-            if (ordRange == null)
+            if (ordRange is null)
             {
                 throw new ArgumentException("dimension \"" + dim + "\" was not indexed");
             }
@@ -111,7 +111,7 @@ namespace Lucene.Net.Facet.SortedSet
                     childCount++;
                     if (counts[ord] > bottomCount)
                     {
-                        if (q == null)
+                        if (q is null)
                         {
                             // Lazy init, so we don't create this for the
                             // sparse case unnecessarily
@@ -127,7 +127,7 @@ namespace Lucene.Net.Facet.SortedSet
                 }
             }
 
-            if (q == null)
+            if (q is null)
             {
                 return null;
             }
@@ -182,7 +182,7 @@ namespace Lucene.Net.Facet.SortedSet
                 }
 
                 SortedSetDocValues segValues = reader.GetSortedSetDocValues(field);
-                if (segValues == null)
+                if (segValues is null)
                 {
                     continue;
                 }

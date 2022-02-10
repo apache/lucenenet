@@ -121,7 +121,7 @@ namespace Lucene.Net.Search.Grouping
                 return null;
             }
 
-            if (m_orderedGroups == null)
+            if (m_orderedGroups is null)
             {
                 BuildSortedSet();
             }
@@ -135,7 +135,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     continue;
                 }
-                //System.out.println("  group=" + (group.groupValue == null ? "null" : group.groupValue.utf8ToString()));
+                //System.out.println("  group=" + (group.groupValue is null ? "null" : group.groupValue.utf8ToString()));
                 SearchGroup<TGroupValue> searchGroup = new SearchGroup<TGroupValue>();
                 searchGroup.GroupValue = group.GroupValue;
                 if (fillFields)

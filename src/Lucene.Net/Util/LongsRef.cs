@@ -122,7 +122,7 @@ namespace Lucene.Net.Util
 
         public override bool Equals(object obj)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 return false;
             }
@@ -260,7 +260,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public bool IsValid()
         {
-            if (longs == null)
+            if (longs is null)
             {
                 throw IllegalStateException.Create("longs is null");
             }

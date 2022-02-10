@@ -68,7 +68,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             string deletionPolicyName = config.Get("deletion.policy", "Lucene.Net.Index.KeepOnlyLastCommitDeletionPolicy, Lucene.Net");
             Type deletionPolicyType = Type.GetType(deletionPolicyName);
-            if (deletionPolicyType == null)
+            if (deletionPolicyType is null)
             {
                 throw RuntimeException.Create("Unrecognized deletion policy type '" + deletionPolicyName + "'"); // LUCENENET: In .NET we don't get an error here, so throwing one for compatibility
             }
@@ -113,7 +113,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                                      "Lucene.Net.Index.ConcurrentMergeScheduler, Lucene.Net");
 
             Type mergeSchedulerType = Type.GetType(mergeScheduler);
-            if (mergeSchedulerType == null)
+            if (mergeSchedulerType is null)
             {
                 throw RuntimeException.Create("Unrecognized merge scheduler type '" + mergeScheduler + "'"); // LUCENENET: We don't get an exception in this case, so throwing one for compatibility
             }
@@ -159,7 +159,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                                   "Lucene.Net.Index.LogByteSizeMergePolicy, Lucene.Net");
             bool isCompound = config.Get("compound", true);
             Type mergePolicyType = Type.GetType(mergePolicy);
-            if (mergePolicyType == null)
+            if (mergePolicyType is null)
             {
                 throw RuntimeException.Create("Unrecognized merge policy type '" + mergePolicy + "'"); // LUCENENET: We don't get an exception in this case, so throwing one for compatibility
             }

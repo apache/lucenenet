@@ -104,7 +104,7 @@ namespace Lucene.Net.Store
             UninterruptableMonitor.Enter(this);
             try
             {
-                if (dataOut == null)
+                if (dataOut is null)
                 {
                     bool success = false;
                     try
@@ -327,7 +327,7 @@ namespace Lucene.Net.Store
         internal long FileLength(string name)
         {
             FileEntry fileEntry = entries[name];
-            if (fileEntry == null)
+            if (fileEntry is null)
             {
                 throw new FileNotFoundException(name + " does not exist");
             }

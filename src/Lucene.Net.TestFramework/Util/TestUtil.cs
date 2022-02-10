@@ -169,7 +169,7 @@ namespace Lucene.Net.Util
             checker.CrossCheckTermVectors = crossCheckTermVectors;
             checker.InfoStream = new StreamWriter(bos, Encoding.UTF8);
             CheckIndex.Status indexStatus = checker.DoCheckIndex(null);
-            if (indexStatus == null || indexStatus.Clean == false)
+            if (indexStatus is null || indexStatus.Clean == false)
             {
                 Console.WriteLine("CheckIndex failed");
                 checker.FlushInfoStream();
@@ -770,7 +770,7 @@ namespace Lucene.Net.Util
         public static DocsEnum Docs(Random random, IndexReader r, string field, BytesRef term, IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
             Terms terms = MultiFields.GetTerms(r, field);
-            if (terms == null)
+            if (terms is null)
             {
                 return null;
             }

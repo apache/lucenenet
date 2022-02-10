@@ -365,7 +365,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     if (i > 0)
                     {
                         int ch = word[i - 1];
-                        if (fst.FindTargetArc(ch, arc, arc, bytesReader) == null)
+                        if (fst.FindTargetArc(ch, arc, arc, bytesReader) is null)
                         {
                             break;
                         }
@@ -470,7 +470,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     if (i < length)
                     {
                         int ch = word[i];
-                        if (fst.FindTargetArc(ch, arc, arc, bytesReader) == null)
+                        if (fst.FindTargetArc(ch, arc, arc, bytesReader) is null)
                         {
                             break;
                         }

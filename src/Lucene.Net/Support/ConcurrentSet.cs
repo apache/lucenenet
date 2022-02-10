@@ -316,7 +316,7 @@ namespace Lucene.Net.Support
         {
             get
             {
-                if (syncRoot == null)
+                if (syncRoot is null)
                 {
                     if (set is ICollection col)
                         syncRoot = col.SyncRoot;

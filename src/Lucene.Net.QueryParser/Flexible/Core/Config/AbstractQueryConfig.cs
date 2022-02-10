@@ -110,7 +110,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
                 throw new ArgumentNullException(nameof(key), "key cannot be null!"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
-            if (value == null)
+            if (value is null)
             {
                 Unset(key);
             }

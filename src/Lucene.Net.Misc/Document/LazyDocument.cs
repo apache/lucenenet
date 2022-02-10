@@ -102,7 +102,7 @@ namespace Lucene.Net.Documents
             UninterruptableMonitor.Enter(this);
             try
             {
-                if (doc == null)
+                if (doc is null)
                 {
                     try
                     {

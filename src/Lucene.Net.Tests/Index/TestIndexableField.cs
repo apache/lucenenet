@@ -349,7 +349,7 @@ namespace Lucene.Net.Index
                         else
                         {
                             Fields vectors = r.GetTermVectors(docID);
-                            Assert.IsTrue(vectors == null || vectors.GetTerms(name) == null);
+                            Assert.IsTrue(vectors is null || vectors.GetTerms(name) is null);
                         }
 
                         BooleanQuery bq = new BooleanQuery();

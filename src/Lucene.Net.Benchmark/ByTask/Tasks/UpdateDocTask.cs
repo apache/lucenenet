@@ -66,7 +66,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public override int DoLogic()
         {
             string docID = doc.Get(DocMaker.ID_FIELD);
-            if (docID == null)
+            if (docID is null)
             {
                 throw IllegalStateException.Create("document must define the docid field");
             }

@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Ja
             {
                 Stream stream = loader.OpenResource(userDictionaryPath);
                 string encoding = userDictionaryEncoding;
-                if (encoding == null)
+                if (encoding is null)
                 {
                     encoding = Encoding.UTF8.WebName;
                 }

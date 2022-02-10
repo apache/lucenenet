@@ -50,7 +50,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         protected override Document RetrieveDoc(IndexReader ir, int id)
         {
-            if (m_fieldsToLoad == null)
+            if (m_fieldsToLoad is null)
             {
                 return ir.Document(id);
             }

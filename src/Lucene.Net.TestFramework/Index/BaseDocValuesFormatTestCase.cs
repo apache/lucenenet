@@ -2401,7 +2401,7 @@ namespace Lucene.Net.Index
                         docValues.LookupOrd(ord, scratch);
                         Assert.AreEqual(stringValues[j], scratch.Utf8ToString());
                     }
-                    if (Debugging.AssertsEnabled) Debugging.Assert(docValues == null || docValues.NextOrd() == SortedSetDocValues.NO_MORE_ORDS);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(docValues is null || docValues.NextOrd() == SortedSetDocValues.NO_MORE_ORDS);
                 }
             }
         }
@@ -2470,7 +2470,7 @@ namespace Lucene.Net.Index
         {
             // can be null for the segment if no docs actually had any SortedDocValues
             // in this case FC.getDocTermsOrds returns EMPTY
-            if (actual == null)
+            if (actual is null)
             {
                 Assert.AreEqual(DocValues.EMPTY_SORTED_SET, expected);
                 return;

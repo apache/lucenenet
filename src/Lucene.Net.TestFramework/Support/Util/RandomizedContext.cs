@@ -94,7 +94,7 @@ namespace Lucene.Net.Util
         {
             get
             {
-                if (randomGenerator == null)
+                if (randomGenerator is null)
                     randomGenerator = new J2N.Randomizer(testSeed);
                 return randomGenerator;
             }

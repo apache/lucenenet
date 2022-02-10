@@ -45,7 +45,7 @@ namespace Lucene.Net.Util.Automaton
         {
             BytesRef b = new BytesRef(input);
             BytesRef result = c.Floor(b, b);
-            if (expected == null)
+            if (expected is null)
             {
                 Assert.IsNull(result);
             }

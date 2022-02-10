@@ -257,7 +257,7 @@ namespace Egothor.Stemmer
                 i++;
 
                 c = now.At(ch);
-                if (c == null)
+                if (c is null)
                 {
                     return null;
                 }
@@ -365,7 +365,7 @@ namespace Egothor.Stemmer
         /// <param name="cmd">the patch command</param>
         public virtual void Add(string key, string cmd)
         {
-            if (key == null || cmd == null)
+            if (key is null || cmd is null)
             {
                 return;
             }

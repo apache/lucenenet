@@ -54,14 +54,14 @@ namespace Lucene.Net.Search
             foreach (AtomicReaderContext context in topReaderContext.Leaves)
             {
                 Fields fields = context.AtomicReader.Fields;
-                if (fields == null)
+                if (fields is null)
                 {
                     // reader has no fields
                     continue;
                 }
 
                 Terms terms = fields.GetTerms(query.m_field);
-                if (terms == null)
+                if (terms is null)
                 {
                     // field does not exist
                     continue;

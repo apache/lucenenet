@@ -98,7 +98,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
             // instead of using separate comparison functions, adjust the endpoints.
 
-            if (lowerVal == null)
+            if (lowerVal is null)
             {
                 lower = int.MinValue;
             }
@@ -111,7 +111,7 @@ namespace Lucene.Net.Queries.Function.DocValues
                 }
             }
 
-            if (upperVal == null)
+            if (upperVal is null)
             {
                 upper = int.MaxValue;
             }

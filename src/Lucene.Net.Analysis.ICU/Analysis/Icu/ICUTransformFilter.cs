@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Icu
              * If we wanted to use pkg-private APIs we could probably do better.
              */
 #pragma warning disable 612, 618
-            if (transform.Filter == null && transform is RuleBasedTransliterator)
+            if (transform.Filter is null && transform is RuleBasedTransliterator)
 #pragma warning restore 612, 618
             {
                 UnicodeSet sourceSet = transform.GetSourceSet();

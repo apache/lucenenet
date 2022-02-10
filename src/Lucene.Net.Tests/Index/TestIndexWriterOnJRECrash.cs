@@ -60,7 +60,7 @@
 //        public override void TestNRTThreads_Mem()
 //        {
 //            // if we are not the fork
-//            if (System.getProperty("tests.crashmode") == null)
+//            if (System.getProperty("tests.crashmode") is null)
 //            {
 //                // try up to 10 times to create an index
 //                for (int i = 0; i < 10; i++)

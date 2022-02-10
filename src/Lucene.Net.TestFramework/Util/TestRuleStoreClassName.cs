@@ -80,7 +80,7 @@ namespace Lucene.Net.Util
           get
           {
             Description localDescription = Description;
-            if (localDescription == null)
+            if (localDescription is null)
             {
               throw RuntimeException.Create("The rule is not currently executing.");
             }

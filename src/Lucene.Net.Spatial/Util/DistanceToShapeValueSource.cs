@@ -87,7 +87,7 @@ namespace Lucene.Net.Spatial.Util
             public override double DoubleVal(int doc)
             {
                 IShape shape = (IShape)shapeValues.ObjectVal(doc);
-                if (shape == null || shape.IsEmpty)
+                if (shape is null || shape.IsEmpty)
                     return outerInstance.nullValue;
                 IPoint pt = shape.Center;
                 return outerInstance.distCalc.Distance(outerInstance.queryPoint, pt) * outerInstance.multiplier;
@@ -104,7 +104,7 @@ namespace Lucene.Net.Spatial.Util
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || GetType() != o.GetType()) return false;
+            if (o is null || GetType() != o.GetType()) return false;
 
             DistanceToShapeValueSource that = (DistanceToShapeValueSource)o;
 

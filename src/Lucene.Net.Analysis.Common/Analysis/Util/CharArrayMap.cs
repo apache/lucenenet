@@ -754,7 +754,7 @@ namespace Lucene.Net.Analysis.Util
         public override bool Equals(object obj)
         {
             var other = obj as IDictionary<string, TValue>;
-            if (other == null)
+            if (other is null)
                 return false;
 
             if (this.Count != other.Count)
@@ -892,7 +892,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public virtual bool Put(char[] text)
         {
-            return PutImpl(text, PLACEHOLDER) == null;
+            return PutImpl(text, PLACEHOLDER) is null;
         }
 
         /// <summary>
@@ -901,7 +901,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public virtual bool Put(ICharSequence text)
         {
-            return PutImpl(text, PLACEHOLDER) == null;
+            return PutImpl(text, PLACEHOLDER) is null;
         }
 
         /// <summary>
@@ -910,7 +910,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public virtual bool Put(string text)
         {
-            return PutImpl(text, PLACEHOLDER) == null;
+            return PutImpl(text, PLACEHOLDER) is null;
         }
 
         /// <summary>
@@ -919,7 +919,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public virtual bool Put(object o)
         {
-            return PutImpl(o, PLACEHOLDER) == null;
+            return PutImpl(o, PLACEHOLDER) is null;
         }
 
         /// <summary>
@@ -1095,7 +1095,7 @@ namespace Lucene.Net.Analysis.Util
         {
             get
             {
-                if (valueSet == null)
+                if (valueSet is null)
                 {
                     valueSet = new ValueCollection(this);
                 }
@@ -1391,7 +1391,7 @@ namespace Lucene.Net.Analysis.Util
         // extension method that this class needs to override the behavior of.
         public EntrySet_ EntrySet()
         {
-            if (entrySet == null)
+            if (entrySet is null)
             {
                 entrySet = CreateEntrySet();
             }
@@ -1407,7 +1407,7 @@ namespace Lucene.Net.Analysis.Util
         {
             get
             {
-                if (originalKeySet == null)
+                if (originalKeySet is null)
                 {
                     // prevent adding of entries
                     originalKeySet = new KeyCollection(this);
@@ -1424,7 +1424,7 @@ namespace Lucene.Net.Analysis.Util
         {
             get
             {
-                if (keySet == null)
+                if (keySet is null)
                 {
                     // prevent adding of entries
                     keySet = new UnmodifiableCharArraySet(this);
@@ -1480,7 +1480,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 lastPos = pos;
                 pos++;
-                while (pos < outerInstance.keys.Length && outerInstance.keys[pos] == null)
+                while (pos < outerInstance.keys.Length && outerInstance.keys[pos] is null)
                 {
                     pos++;
                 }
@@ -1624,7 +1624,7 @@ namespace Lucene.Net.Analysis.Util
                 string key = e.Key;
                 TValue val = e.Value;
                 TValue v = outerInstance.Get(key);
-                return v == null ? val == null : v.Equals(val);
+                return v is null ? val is null : v.Equals(val);
             }
 
             [Obsolete("Not applicable in this class.")]
@@ -1958,7 +1958,7 @@ namespace Lucene.Net.Analysis.Util
 
             public override bool ContainsKey(char[] text, int offset, int length)
             {
-                if (text == null)
+                if (text is null)
                 {
                     throw new ArgumentNullException(nameof(text));
                 }
@@ -1967,7 +1967,7 @@ namespace Lucene.Net.Analysis.Util
 
             public override bool ContainsKey(char[] text)
             {
-                if (text == null)
+                if (text is null)
                 {
                     throw new ArgumentNullException(nameof(text));
                 }
@@ -1976,7 +1976,7 @@ namespace Lucene.Net.Analysis.Util
 
             public override bool ContainsKey(ICharSequence text)
             {
-                if (text == null)
+                if (text is null)
                 {
                     throw new ArgumentNullException(nameof(text));
                 }
@@ -1985,7 +1985,7 @@ namespace Lucene.Net.Analysis.Util
 
             public override bool ContainsKey(object o)
             {
-                if (o == null)
+                if (o is null)
                 {
                     throw new ArgumentNullException(nameof(o));
                 }
@@ -1994,7 +1994,7 @@ namespace Lucene.Net.Analysis.Util
 
             public override V Get(char[] text, int offset, int length)
             {
-                if (text == null)
+                if (text is null)
                 {
                     throw new ArgumentNullException(nameof(text));
                 }
@@ -2003,7 +2003,7 @@ namespace Lucene.Net.Analysis.Util
 
             public override V Get(char[] text)
             {
-                if (text == null)
+                if (text is null)
                 {
                     throw new ArgumentNullException(nameof(text));
                 }
@@ -2012,7 +2012,7 @@ namespace Lucene.Net.Analysis.Util
 
             public override V Get(ICharSequence text)
             {
-                if (text == null)
+                if (text is null)
                 {
                     throw new ArgumentNullException(nameof(text));
                 }
@@ -2021,7 +2021,7 @@ namespace Lucene.Net.Analysis.Util
 
             public override V Get(object o)
             {
-                if (o == null)
+                if (o is null)
                 {
                     throw new ArgumentNullException(nameof(o));
                 }

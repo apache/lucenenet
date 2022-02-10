@@ -272,7 +272,7 @@ namespace Lucene.Net.Search.Spans
                 {
                     return true;
                 }
-                if (obj == null)
+                if (obj is null)
                 {
                     return false;
                 }

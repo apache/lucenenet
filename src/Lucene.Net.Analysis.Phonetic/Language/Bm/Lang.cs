@@ -149,7 +149,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             IList<LangRule> rules = new JCG.List<LangRule>();
             Stream lRulesIS = typeof(Lang).FindAndGetManifestResourceStream(languageRulesResourceName);
 
-            if (lRulesIS == null)
+            if (lRulesIS is null)
             {
                 throw new InvalidOperationException("Unable to resolve required resource:" + LANGUAGE_RULES_RN);
             }

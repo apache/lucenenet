@@ -232,7 +232,7 @@ namespace Lucene.Net.Index
 
             Console.WriteLine("TEST: open reader");
             IndexReader r = DirectoryReader.Open(dir);
-            if (savedTerms == null)
+            if (savedTerms is null)
             {
                 savedTerms = FindTerms(r);
             }

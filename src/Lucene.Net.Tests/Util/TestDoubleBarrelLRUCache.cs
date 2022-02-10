@@ -104,7 +104,7 @@ namespace Lucene.Net.Util
                     {
                         CloneableObject obj = objs[(int)((count / 2) % limit)];
                         object v = c.Get(obj);
-                        if (v == null)
+                        if (v is null)
                         {
                             c.Put(new CloneableObject(obj), obj);
                             miss++;

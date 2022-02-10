@@ -166,7 +166,7 @@ namespace Lucene.Net.Support.IO
                 throw new ArgumentException(string.Format("Suffix contains invalid characters. You may not use any of '{0}'", string.Join(", ", INVALID_FILENAME_CHARS)));
 
             // If no directory supplied, create one.
-            if (directory == null)
+            if (directory is null)
             {
                 directory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName())));
             }

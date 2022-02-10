@@ -270,7 +270,7 @@ namespace Lucene.Net.Index
             }
             fieldUpdates[update.term] = update;
             numNumericUpdates.IncrementAndGet();
-            if (current == null)
+            if (current is null)
             {
                 bytesUsed.AddAndGet(BYTES_PER_NUMERIC_UPDATE_ENTRY + update.GetSizeInBytes());
             }
@@ -303,7 +303,7 @@ namespace Lucene.Net.Index
             }
             fieldUpdates[update.term] = update;
             numBinaryUpdates.IncrementAndGet();
-            if (current == null)
+            if (current is null)
             {
                 bytesUsed.AddAndGet(BYTES_PER_BINARY_UPDATE_ENTRY + update.GetSizeInBytes());
             }

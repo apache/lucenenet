@@ -74,7 +74,7 @@ namespace Lucene.Net.Codecs.Asserting
             public override Terms GetTerms(string field)
             {
                 Terms terms = @in.GetTerms(field);
-                return terms == null ? null : new AssertingTerms(terms);
+                return terms is null ? null : new AssertingTerms(terms);
             }
 
             public override int Count => @in.Count;
@@ -146,7 +146,7 @@ namespace Lucene.Net.Codecs.Asserting
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(state == TermsConsumerState.INITIAL || state == TermsConsumerState.START && lastPostingsConsumer.docFreq == 0);
                 state = TermsConsumerState.START;
-                if (Debugging.AssertsEnabled) Debugging.Assert(lastTerm == null || @in.Comparer.Compare(text, lastTerm) > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(lastTerm is null || @in.Comparer.Compare(text, lastTerm) > 0);
                 lastTerm = BytesRef.DeepCopyOf(text);
                 return lastPostingsConsumer = new AssertingPostingsConsumer(@in.StartTerm(text), fieldInfo, visitedDocs);
             }

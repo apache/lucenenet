@@ -38,7 +38,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
     {
         public StandardQueryParser GetParser(Analyzer a)
         {
-            if (a == null) a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
+            if (a is null) a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             StandardQueryParser qp = new StandardQueryParser(a);
             qp.DefaultOperator = (Operator.OR);
 

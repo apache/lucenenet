@@ -167,7 +167,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     Write(bytes);
                     NewLine();
                 }
-                else if (field.GetStringValue() == null)
+                else if (field.GetStringValue() is null)
                 {
                     throw new ArgumentException("field " + field.Name +
                                                        " is stored but does not have binaryValue, stringValue nor numericValue");

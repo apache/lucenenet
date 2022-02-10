@@ -109,7 +109,7 @@ namespace Lucene.Net.Codecs
 
             if (indexOptions == IndexOptions.DOCS_ONLY)
             {
-                if (docsEnum == null)
+                if (docsEnum is null)
                 {
                     docsEnum = new MappingMultiDocsEnum();
                 }
@@ -145,7 +145,7 @@ namespace Lucene.Net.Codecs
             }
             else if (indexOptions == IndexOptions.DOCS_AND_FREQS)
             {
-                if (docsAndFreqsEnum == null)
+                if (docsAndFreqsEnum is null)
                 {
                     docsAndFreqsEnum = new MappingMultiDocsEnum();
                 }
@@ -179,7 +179,7 @@ namespace Lucene.Net.Codecs
             }
             else if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
-                if (postingsEnum == null)
+                if (postingsEnum is null)
                 {
                     postingsEnum = new MappingMultiDocsAndPositionsEnum();
                 }
@@ -213,7 +213,7 @@ namespace Lucene.Net.Codecs
             else
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
-                if (postingsEnum == null)
+                if (postingsEnum is null)
                 {
                     postingsEnum = new MappingMultiDocsAndPositionsEnum();
                 }

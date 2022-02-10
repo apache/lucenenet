@@ -357,7 +357,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 // Cannot be null (or move to next field) because at
                 // "worst" it'd seek to the same term we are on now,
                 // unless we are being called from seek
-                if (t2 == null || t2.Field != internedFieldName)
+                if (t2 is null || t2.Field != internedFieldName)
                 {
                     return false;
                 }
@@ -588,7 +588,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 // current term.
 
                 // TODO: can we avoid this copy?
-                if (termEnum.Term() == null || termEnum.Term().Field != internedFieldName)
+                if (termEnum.Term() is null || termEnum.Term().Field != internedFieldName)
                 {
                     scratchTerm.Length = 0;
                 }
@@ -696,7 +696,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                         if (DEBUG_SURROGATES)
                         {
-                            if (t2 == null)
+                            if (t2 is null)
                             {
                                 Console.WriteLine("      hit term=null");
                             }
@@ -781,7 +781,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 internedFieldName = fieldInfo.Name.Intern();
 
                 Term term = new Term(internedFieldName);
-                if (termEnum == null)
+                if (termEnum is null)
                 {
                     termEnum = outerInstance.TermsDict.Terms(term);
                     seekTermEnum = outerInstance.TermsDict.Terms(term);
@@ -855,7 +855,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     current = t.Bytes;
                     return SeekStatus.FOUND;
                 }
-                else if (t == null || t.Field != internedFieldName)
+                else if (t is null || t.Field != internedFieldName)
                 {
                     // TODO: maybe we can handle this like the next()
                     // into null?  set term as prevTerm then dance?
@@ -925,10 +925,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                     SurrogateDance();
 
                     Term t2 = termEnum.Term();
-                    if (t2 == null || t2.Field != internedFieldName)
+                    if (t2 is null || t2.Field != internedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        if (Debugging.AssertsEnabled) Debugging.Assert(t2 == null || !t2.Field.Equals(internedFieldName, StringComparison.Ordinal));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(t2 is null || !t2.Field.Equals(internedFieldName, StringComparison.Ordinal));
                         current = null;
                         return SeekStatus.END;
                     }
@@ -983,7 +983,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         Console.WriteLine("  skipNext=true");
                     }
                     skipNext = false;
-                    if (termEnum.Term() == null)
+                    if (termEnum.Term() is null)
                     {
                         return false;
                         // PreFlex codec interns field names:
@@ -1011,10 +1011,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                     SurrogateDance();
                     Term t = termEnum.Term();
-                    if (t == null || t.Field != internedFieldName)
+                    if (t is null || t.Field != internedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        if (Debugging.AssertsEnabled) Debugging.Assert(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(t is null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
                         current = null;
                         return false;
                     }
@@ -1037,10 +1037,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                     SurrogateDance();
 
                     Term t = termEnum.Term();
-                    if (t == null || t.Field != internedFieldName)
+                    if (t is null || t.Field != internedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        if (Debugging.AssertsEnabled) Debugging.Assert(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(t is null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
                         return false;
                     }
                     else
@@ -1067,7 +1067,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
-                if (reuse == null || !(reuse is PreDocsEnum docsEnum) || docsEnum.FreqStream != outerInstance.FreqStream)
+                if (reuse is null || !(reuse is PreDocsEnum docsEnum) || docsEnum.FreqStream != outerInstance.FreqStream)
                     docsEnum = new PreDocsEnum(outerInstance);
 
                 return docsEnum.Reset(termEnum, liveDocs);

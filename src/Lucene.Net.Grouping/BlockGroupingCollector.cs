@@ -404,7 +404,7 @@ namespace Lucene.Net.Search.Grouping
                 // At this point we hold all docs w/ in each group,
                 // unsorted; we now sort them:
                 ITopDocsCollector collector;
-                if (withinGroupSort == null)
+                if (withinGroupSort is null)
                 {
                     // Sort by score
                     if (!needsScores)

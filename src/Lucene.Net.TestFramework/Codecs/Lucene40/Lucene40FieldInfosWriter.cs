@@ -114,7 +114,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             if (type == DocValuesType.NONE)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(legacyTypeAtt == null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(legacyTypeAtt is null);
                 return 0;
             }
             else

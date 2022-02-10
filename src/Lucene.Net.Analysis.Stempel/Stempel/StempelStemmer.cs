@@ -88,7 +88,7 @@ namespace Lucene.Net.Analysis.Stempel
         {
             string cmd = stemmer.GetLastOnPath(word);
 
-            if (cmd == null)
+            if (cmd is null)
                 return null;
 
             buffer.Length = 0;

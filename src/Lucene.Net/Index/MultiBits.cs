@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
             int reader = ReaderUtil.SubIndex(doc, starts);
             if (Debugging.AssertsEnabled) Debugging.Assert(reader != -1);
             IBits bits = subs[reader];
-            if (bits == null)
+            if (bits is null)
             {
                 return sefaultValue;
             }
@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
                 {
                     b.Append("; ");
                 }
-                if (subs[i] == null)
+                if (subs[i] is null)
                 {
                     b.Append("s=" + starts[i] + " l=null");
                 }

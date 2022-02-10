@@ -203,7 +203,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// </summary>
         public virtual string GetName()
         {
-            if (m_params == null)
+            if (m_params is null)
             {
                 return name;
             }

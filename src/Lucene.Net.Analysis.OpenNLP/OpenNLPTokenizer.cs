@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.OpenNlp
 
         protected override bool IncrementWord()
         {
-            if (termSpans == null || termNum == termSpans.Length)
+            if (termSpans is null || termNum == termSpans.Length)
             {
                 return false;
             }

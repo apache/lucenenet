@@ -305,7 +305,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             try
             {
                 output.WriteVInt64(count);
-                if (this.normalCompletion == null || normalCompletion.FST == null)
+                if (this.normalCompletion is null || normalCompletion.FST is null)
                 {
                     return false;
                 }
@@ -341,7 +341,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 mem += normalCompletion.FST.GetSizeInBytes();
             }
-            if (higherWeightsCompletion != null && (normalCompletion == null || normalCompletion.FST != higherWeightsCompletion.FST))
+            if (higherWeightsCompletion != null && (normalCompletion is null || normalCompletion.FST != higherWeightsCompletion.FST))
             {
                 // the fst should be shared between the 2 completion instances, don't count it twice
                 mem += higherWeightsCompletion.FST.GetSizeInBytes();

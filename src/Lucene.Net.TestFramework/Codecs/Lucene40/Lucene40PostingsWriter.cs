@@ -234,7 +234,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Add a new <paramref name="position"/> &amp; <paramref name="payload"/>. </summary>
         public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
         {
-            //if (DEBUG) System.out.println("SPW:     addPos pos=" + position + " payload=" + (payload == null ? "null" : (payload.Length + " bytes")) + " proxFP=" + proxOut.getFilePointer());
+            //if (DEBUG) System.out.println("SPW:     addPos pos=" + position + " payload=" + (payload is null ? "null" : (payload.Length + " bytes")) + " proxFP=" + proxOut.getFilePointer());
             // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
             if (Debugging.AssertsEnabled) Debugging.Assert(IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0, "invalid indexOptions: {0}", indexOptions);
             if (Debugging.AssertsEnabled) Debugging.Assert(proxOut != null);
@@ -249,7 +249,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             if (storePayloads)
             {
-                payloadLength = payload == null ? 0 : payload.Length;
+                payloadLength = payload is null ? 0 : payload.Length;
 
                 if (payloadLength != lastPayloadLength)
                 {

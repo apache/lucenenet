@@ -87,7 +87,7 @@ namespace Lucene.Net.Spatial.Util
             public override bool BoolVal(int doc)
             {
                 IShape indexedShape = (IShape)shapeValues.ObjectVal(doc);
-                if (indexedShape == null)
+                if (indexedShape is null)
                     return false;
                 return outerInstance.op.Evaluate(indexedShape, outerInstance.queryShape);
             }
@@ -103,7 +103,7 @@ namespace Lucene.Net.Spatial.Util
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || GetType() != o.GetType()) return false;
+            if (o is null || GetType() != o.GetType()) return false;
 
             ShapePredicateValueSource that = (ShapePredicateValueSource)o;
 

@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Payloads
         public NumericPayloadTokenFilter(TokenStream input, float payload, string typeMatch) 
             : base(input)
         {
-            if (typeMatch == null)
+            if (typeMatch is null)
             {
                 throw new ArgumentNullException(nameof(typeMatch), "typeMatch cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }

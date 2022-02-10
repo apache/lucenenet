@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
 
         private DirectoryReader WrapDirectoryReader(DirectoryReader input)
         {
-            return input == null ? null : DoWrapDirectoryReader(input);
+            return input is null ? null : DoWrapDirectoryReader(input);
         }
 
         protected internal override sealed DirectoryReader DoOpenIfChanged()

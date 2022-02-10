@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(lastFieldName == null || info.Name.CompareToOrdinal(lastFieldName) > 0,"fieldName={0} lastFieldName={1}", info.Name, lastFieldName);
+            if (Debugging.AssertsEnabled) Debugging.Assert(lastFieldName is null || info.Name.CompareToOrdinal(lastFieldName) > 0,"fieldName={0} lastFieldName={1}", info.Name, lastFieldName);
             lastFieldName = info.Name;
             if (payloads)
             {
@@ -150,7 +150,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(payload == null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(payload is null);
             if (positions && offsets)
             {
                 // write position delta

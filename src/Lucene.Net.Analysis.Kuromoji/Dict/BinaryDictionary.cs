@@ -188,7 +188,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             if (string.IsNullOrEmpty(DATA_DIR))
             {
                 Stream @is = clazz.FindAndGetManifestResourceStream(fileName);
-                if (@is == null)
+                if (@is is null)
                     throw new FileNotFoundException("Not in assembly: " + clazz.FullName + suffix);
                 return @is;
             }

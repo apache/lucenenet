@@ -127,7 +127,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     clone.WrappedTermState = (BlockTermState)WrappedTermState.Clone();
                     clone.Absolute = Absolute;
 
-                    if (Int64s == null) return clone;
+                    if (Int64s is null) return clone;
 
                     clone.Int64s = new long[Int64s.Length];
                     Array.Copy(Int64s, 0, clone.Int64s, 0, Int64s.Length);
@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 PostingsSize = _other.PostingsSize;
                 if (_other.PostingsSize != -1)
                 {
-                    if (Postings == null || Postings.Length < _other.PostingsSize)
+                    if (Postings is null || Postings.Length < _other.PostingsSize)
                     {
                         Postings = new byte[ArrayUtil.Oversize(_other.PostingsSize, 1)];
                     }
@@ -189,7 +189,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 // but don't decode it now (we only decode when a DocsEnum
                 // or D&PEnum is pulled):
                 termState2.PostingsSize = input.ReadVInt32();
-                if (termState2.Postings == null || termState2.Postings.Length < termState2.PostingsSize)
+                if (termState2.Postings is null || termState2.Postings.Length < termState2.PostingsSize)
                 {
                     termState2.Postings = new byte[ArrayUtil.Oversize(termState2.PostingsSize, 1)];
                 }
@@ -204,8 +204,8 @@ namespace Lucene.Net.Codecs.Pulsing
             else
             {
                 //System.out.println("  not inlined");
-                var longsSize = _fields == null ? 0 : _fields[fieldInfo.Number];
-                if (termState2.Int64s == null)
+                var longsSize = _fields is null ? 0 : _fields[fieldInfo.Number];
+                if (termState2.Int64s is null)
                 {
                     termState2.Int64s = new long[longsSize];
                 }
@@ -343,7 +343,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
                 // Must make a copy of termState's byte[] so that if
                 // app does TermsEnum.next(), this DocsEnum is not affected
-                if (_postingsBytes == null)
+                if (_postingsBytes is null)
                 {
                     _postingsBytes = new byte[termState.PostingsSize];
                 }
@@ -424,7 +424,7 @@ namespace Lucene.Net.Codecs.Pulsing
                         }
                     }
 
-                    if (_liveDocs == null || _liveDocs.Get(_accum))
+                    if (_liveDocs is null || _liveDocs.Get(_accum))
                         return (_docId = _accum);
                 }
             }
@@ -485,7 +485,7 @@ namespace Lucene.Net.Codecs.Pulsing
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(termState.PostingsSize != -1);
 
-                if (_postingsBytes == null)
+                if (_postingsBytes is null)
                 {
                     _postingsBytes = new byte[termState.PostingsSize];
                 }
@@ -605,7 +605,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 if (_storePayloads && _payloadLength > 0)
                 {
                     _payloadRetrieved = true;
-                    if (_payload == null)
+                    if (_payload is null)
                     {
                         _payload = new BytesRef(_payloadLength);
                     }
@@ -646,7 +646,7 @@ namespace Lucene.Net.Codecs.Pulsing
         /// </summary>
         private DocsEnum GetOther(DocsEnum de)
         {
-            if (de == null)
+            if (de is null)
                 return null;
 
             var atts = de.Attributes;

@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             UninterruptableMonitor.Enter(syncLock);
             try
             {
-                if (singleInstance == null)
+                if (singleInstance is null)
                 {
                     singleInstance = new BigramDictionary();
 

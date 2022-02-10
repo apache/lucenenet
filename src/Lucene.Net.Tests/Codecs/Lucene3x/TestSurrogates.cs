@@ -151,7 +151,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                             Console.WriteLine("       exp=" + exp.Field + ":" + UnicodeUtil.ToHexString(exp.Text));
                             Console.WriteLine();
                         }
-                        if (lastText == null)
+                        if (lastText is null)
                         {
                             lastText = BytesRef.DeepCopyOf(text);
                         }
@@ -238,7 +238,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                         if (Verbose)
                         {
-                            Console.WriteLine("  got term=" + (t == null ? null : UnicodeUtil.ToHexString(t.Utf8ToString())));
+                            Console.WriteLine("  got term=" + (t is null ? null : UnicodeUtil.ToHexString(t.Utf8ToString())));
                             Console.WriteLine("       exp=" + UnicodeUtil.ToHexString(term.Text.ToString()));
                         }
 
@@ -329,7 +329,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                                     if (Verbose)
                                     {
-                                        Console.WriteLine("  got term=" + (t == null ? null : UnicodeUtil.ToHexString(t.Utf8ToString())));
+                                        Console.WriteLine("  got term=" + (t is null ? null : UnicodeUtil.ToHexString(t.Utf8ToString())));
                                         Console.WriteLine("       exp=" + UnicodeUtil.ToHexString(term.Text.ToString()));
                                     }
 

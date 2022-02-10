@@ -134,7 +134,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <returns>the term</returns>
         public virtual string GetTextAsString()
         {
-            if (this.m_text == null)
+            if (this.m_text is null)
                 return null;
             else
                 return this.m_text.ToString();
@@ -147,7 +147,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <returns>the field</returns>
         public virtual string GetFieldAsString()
         {
-            if (this.m_field == null)
+            if (this.m_field is null)
                 return null;
             else
                 return this.m_field.ToString();

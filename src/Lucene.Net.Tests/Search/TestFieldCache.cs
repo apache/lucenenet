@@ -294,8 +294,8 @@ namespace Lucene.Net.Search
                     termsIndex.LookupOrd(ord, br);
                     term = br;
                 }
-                string s = term == null ? null : term.Utf8ToString();
-                Assert.IsTrue(unicodeStrings[i] == null || unicodeStrings[i].Equals(s, StringComparison.Ordinal), "for doc " + i + ": " + s + " does not equal: " + unicodeStrings[i]);
+                string s = term is null ? null : term.Utf8ToString();
+                Assert.IsTrue(unicodeStrings[i] is null || unicodeStrings[i].Equals(s, StringComparison.Ordinal), "for doc " + i + ": " + s + " does not equal: " + unicodeStrings[i]);
             }
 
             int nTerms = termsIndex.ValueCount;
@@ -347,8 +347,8 @@ namespace Lucene.Net.Search
                 {
                     term = br;
                 }
-                string s = term == null ? null : term.Utf8ToString();
-                Assert.IsTrue(unicodeStrings[i] == null || unicodeStrings[i].Equals(s, StringComparison.Ordinal), "for doc " + i + ": " + s + " does not equal: " + unicodeStrings[i]);
+                string s = term is null ? null : term.Utf8ToString();
+                Assert.IsTrue(unicodeStrings[i] is null || unicodeStrings[i].Equals(s, StringComparison.Ordinal), "for doc " + i + ": " + s + " does not equal: " + unicodeStrings[i]);
             }
 
             // test bad field
@@ -368,7 +368,7 @@ namespace Lucene.Net.Search
                 ISet<BytesRef> values = new JCG.LinkedHashSet<BytesRef>(multiValued[i]);
                 foreach (BytesRef v in values)
                 {
-                    if (v == null)
+                    if (v is null)
                     {
                         // why does this test use null values... instead of an empty list: confusing
                         break;
@@ -410,11 +410,11 @@ namespace Lucene.Net.Search
             if (i > 0 && Random.Next(3) == 1)
             {
                 // reuse past string -- try to find one that's not null
-                for (int iter = 0; iter < 10 && s == null; iter++)
+                for (int iter = 0; iter < 10 && s is null; iter++)
                 {
                     s = unicodeStrings[Random.Next(i)];
                 }
-                if (s == null)
+                if (s is null)
                 {
                     s = TestUtil.RandomUnicodeString(Random);
                 }

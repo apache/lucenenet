@@ -354,7 +354,7 @@ namespace Lucene.Net.Index
                             catch (Exception ioe2) when (ioe2.IsIOException())
                             {
                                 // Save first exception & throw in the end
-                                if (ioe == null)
+                                if (ioe is null)
                                 {
                                     ioe = ioe2;
                                 }

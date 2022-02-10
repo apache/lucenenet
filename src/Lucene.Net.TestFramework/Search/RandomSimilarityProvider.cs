@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
             try
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
-                if (!previousMappings.TryGetValue(field, out Similarity sim) || sim == null)
+                if (!previousMappings.TryGetValue(field, out Similarity sim) || sim is null)
                 {
                     sim = knownSims[Math.Max(0, Math.Abs(perFieldSeed ^ field.GetHashCode())) % knownSims.Count];
                     previousMappings[field] = sim;

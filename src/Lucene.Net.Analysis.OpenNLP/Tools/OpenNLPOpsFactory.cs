@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public static NLPTokenizerOp GetTokenizer(string modelName)
         {
-            if (modelName == null)
+            if (modelName is null)
             {
                 return new NLPTokenizerOp();
             }
@@ -147,7 +147,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
                 string dictionary = lemmaDictionaries[dictionaryFile];
                 dictionaryInputStream = new MemoryStream(Encoding.UTF8.GetBytes(dictionary));
             }
-            LemmatizerModel lemmatizerModel = lemmatizerModelFile == null ? null : lemmatizerModels[lemmatizerModelFile];
+            LemmatizerModel lemmatizerModel = lemmatizerModelFile is null ? null : lemmatizerModels[lemmatizerModelFile];
             return new NLPLemmatizerOp(dictionaryInputStream, lemmatizerModel);
         }
 

@@ -137,7 +137,7 @@ namespace Lucene.Net.Analysis.Br
             int j;
 
             // be-safe !!!
-            if (value == null)
+            if (value is null)
             {
                 return null;
             }
@@ -196,7 +196,7 @@ namespace Lucene.Net.Analysis.Br
             int j;
 
             // be-safe !!!
-            if (value == null)
+            if (value is null)
             {
                 return null;
             }
@@ -265,7 +265,7 @@ namespace Lucene.Net.Analysis.Br
             string r = "";
 
             // be-safe !!!
-            if (value == null)
+            if (value is null)
             {
                 return null;
             }
@@ -323,7 +323,7 @@ namespace Lucene.Net.Analysis.Br
         {
 
             // be-safe !!!
-            if ((value == null) || (suffix == null))
+            if ((value is null) || (suffix is null))
             {
                 return false;
             }
@@ -345,7 +345,7 @@ namespace Lucene.Net.Analysis.Br
             string vvalue;
 
             // be-safe !!!
-            if ((value == null) || (toReplace == null) || (changeTo == null))
+            if ((value is null) || (toReplace is null) || (changeTo is null))
             {
                 return value;
             }
@@ -369,7 +369,7 @@ namespace Lucene.Net.Analysis.Br
         private string RemoveSuffix(string value, string toRemove)
         {
             // be-safe !!!
-            if ((value == null) || (toRemove == null) || !Suffix(value, toRemove))
+            if ((value is null) || (toRemove is null) || !Suffix(value, toRemove))
             {
                 return value;
             }
@@ -384,7 +384,7 @@ namespace Lucene.Net.Analysis.Br
         private bool SuffixPreceded(string value, string suffix, string preceded)
         {
             // be-safe !!!
-            if ((value == null) || (suffix == null) || (preceded == null) || !Suffix(value, suffix))
+            if ((value is null) || (suffix is null) || (preceded is null) || !Suffix(value, suffix))
             {
                 return false;
             }
@@ -431,7 +431,7 @@ namespace Lucene.Net.Analysis.Br
         /// <returns> false if no ending was removed </returns>
         private bool Step1()
         {
-            if (CT == null)
+            if (CT is null)
             {
                 return false;
             }
@@ -682,7 +682,7 @@ namespace Lucene.Net.Analysis.Br
         /// <returns> false if no ending was removed </returns>
         private bool Step2()
         {
-            if (RV == null)
+            if (RV is null)
             {
                 return false;
             }
@@ -1297,7 +1297,7 @@ namespace Lucene.Net.Analysis.Br
         /// </summary>
         private void Step3()
         {
-            if (RV == null)
+            if (RV is null)
             {
                 return;
             }
@@ -1317,7 +1317,7 @@ namespace Lucene.Net.Analysis.Br
         /// </summary>
         private void Step4()
         {
-            if (RV == null)
+            if (RV is null)
             {
                 return;
             }
@@ -1354,7 +1354,7 @@ namespace Lucene.Net.Analysis.Br
         /// </summary>
         private void Step5()
         {
-            if (RV == null)
+            if (RV is null)
             {
                 return;
             }

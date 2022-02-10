@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 get
                 {
-                    if (current == null)
+                    if (current is null)
                     {
                         return null;
                     }
@@ -198,7 +198,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             private void LoadTermsIndex()
             {
-                if (fst == null)
+                if (fst is null)
                 {
                     using (IndexInput clone = (IndexInput)outerInstance.input.Clone())
                     {
@@ -241,13 +241,13 @@ namespace Lucene.Net.Codecs.BlockTerms
             /// <summary>Returns approximate RAM bytes used.</summary>
             public virtual long RamBytesUsed()
             {
-                return fst == null ? 0 : fst.GetSizeInBytes();
+                return fst is null ? 0 : fst.GetSizeInBytes();
             }
         }
 
         public override FieldIndexEnum GetFieldEnum(FieldInfo fieldInfo)
         {
-            if (!fields.TryGetValue(fieldInfo, out FieldIndexData fieldData) || fieldData == null || fieldData.fst == null)
+            if (!fields.TryGetValue(fieldInfo, out FieldIndexData fieldData) || fieldData is null || fieldData.fst is null)
             {
                 return null;
             }

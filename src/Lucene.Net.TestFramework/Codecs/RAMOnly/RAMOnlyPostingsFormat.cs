@@ -331,7 +331,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                 current.positions[posUpto] = position;
                 if (payload != null && payload.Length > 0)
                 {
-                    if (current.payloads == null)
+                    if (current.payloads is null)
                     {
                         current.payloads = new byte[current.positions.Length][];
                     }
@@ -475,7 +475,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                     if (upto < ramTerm.docs.Count)
                     {
                         current = ramTerm.docs[upto];
-                        if (liveDocs == null || liveDocs.Get(current.docID))
+                        if (liveDocs is null || liveDocs.Get(current.docID))
                         {
                             //posUpto = 0; // LUCENENET: Never read
                             return current.docID;
@@ -526,7 +526,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                     if (upto < ramTerm.docs.Count)
                     {
                         current = ramTerm.docs[upto];
-                        if (liveDocs == null || liveDocs.Get(current.docID))
+                        if (liveDocs is null || liveDocs.Get(current.docID))
                         {
                             posUpto = 0;
                             return current.docID;

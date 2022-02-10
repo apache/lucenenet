@@ -102,7 +102,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                             if ("meta".Equals(localName, StringComparison.OrdinalIgnoreCase))
                             {
                                 string name = atts.GetValue("name");
-                                if (name == null)
+                                if (name is null)
                                 {
                                     name = atts.GetValue("http-equiv");
                                 }
