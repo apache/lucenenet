@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Spatial4n.Context;
 using Spatial4n.Shapes;
 using System;
@@ -34,10 +35,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// at variable lengths corresponding to variable precision.   Each string
     /// corresponds to a rectangular spatial region.  This approach is
     /// also referred to "Grids", "Tiles", and "Spatial Tiers".
-    /// <p/>
+    /// <para/>
     /// Implementations of this class should be thread-safe and immutable once
     /// initialized.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </remarks>
     public abstract class SpatialPrefixTree
@@ -46,9 +47,22 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         protected internal readonly SpatialContext m_ctx;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="SpatialPrefixTree"/> with the
+        /// specified spatial context and <paramref name="maxLevels"/>.
+        /// </summary>
+        /// <param name="ctx">The spatial context.</param>
+        /// <param name="maxLevels">The maximum number of levels in the tree.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="ctx"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxLevels"/> is less than or equal to 0.</exception>
         protected SpatialPrefixTree(SpatialContext ctx, int maxLevels) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(maxLevels > 0);
+            // LUCENENET specific - added guard clauses
+            if (ctx is null)
+                throw new ArgumentNullException(nameof(ctx));
+            if (maxLevels <= 0)
+                throw new ArgumentOutOfRangeException(nameof(maxLevels), $"{nameof(maxLevels)} must be greater than 0.");
+
             this.m_ctx = ctx;
             this.m_maxLevels = maxLevels;
         }
@@ -200,10 +214,15 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// Returns true if cell was added as a leaf. If it wasn't it recursively
         /// descends.
         /// </remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="cell"/> is <c>null</c>.</exception>
         private bool RecursiveGetCells(Cell cell, IShape shape, int detailLevel, 
             bool inclParents, bool simplify, 
             IList<Cell> result)
         {
+            // LUCENENET specific - added guard clause
+            if (cell is null)
+                throw new ArgumentNullException(nameof(cell));
+
             if (cell.Level == detailLevel)
             {
                 cell.SetLeaf();//FYI might already be a leaf
@@ -258,12 +277,17 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// This implementation depends on <see cref="GetCell(string)"/> being fast, as its
         /// called repeatedly when incPlarents is true.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="p"/> is <c>null</c>.</exception>
         public virtual IList<Cell> GetCells(IPoint p, int detailLevel, bool inclParents)
         {
+            // LUCENENET specific - added guard clause
+            if (p is null)
+                throw new ArgumentNullException(nameof(p));
+
             Cell cell = GetCell(p, detailLevel);
             if (!inclParents)
             {
-                return new ReadOnlyCollection<Cell>(new[] { cell });
+                return new[] { cell }.AsReadOnly();
             }
             string endToken = cell.TokenString;
             if (Debugging.AssertsEnabled) Debugging.Assert(endToken.Length == detailLevel);
@@ -280,6 +304,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         [Obsolete("TODO remove; not used and not interesting, don't need collection in & out")]
         public static IList<string> CellsToTokenStrings(ICollection<Cell> cells)
         {
+            if (cells is null)
+                throw new ArgumentNullException(nameof(cells));
+
             IList<string> tokens = new JCG.List<string>((cells.Count));
             foreach (Cell cell in cells)
             {
