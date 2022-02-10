@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Diagnostics;
 using Spatial4n.Context;
 using Spatial4n.Shapes;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -29,7 +30,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// A <see cref="SpatialPrefixTree"/> which uses a
     /// <a href="http://en.wikipedia.org/wiki/Quadtree">quad tree</a> in which an
     /// indexed term will be generated for each cell, 'A', 'B', 'C', 'D'.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class QuadPrefixTree : SpatialPrefixTree
@@ -55,9 +56,22 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         internal readonly int[] levelS; // side
         internal readonly int[] levelN; // number
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="QuadPrefixTree"/> with the specified
+        /// spatial context (<paramref name="ctx"/>), <paramref name="bounds"/> and <paramref name="maxLevels"/>.
+        /// </summary>
+        /// <param name="ctx">The spatial context.</param>
+        /// <param name="bounds">The bounded rectangle.</param>
+        /// <param name="maxLevels">The maximum number of levels in the tree.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="ctx"/> or <paramref name="bounds"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxLevels"/> is less than or equal to 0.</exception>
         public QuadPrefixTree(SpatialContext ctx, IRectangle bounds, int maxLevels)
             : base(ctx, maxLevels)
         {
+            // LUCENENET specific - added guard clause
+            if (bounds is null)
+                throw new ArgumentNullException(nameof(bounds));
+
             xmin = bounds.MinX;
             xmax = bounds.MaxX;
             ymin = bounds.MinY;
@@ -86,23 +100,41 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="QuadPrefixTree"/> with the specified
+        /// spatial context (<paramref name="ctx"/>).
+        /// </summary>
+        /// <param name="ctx">The spatial context.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="ctx"/> is <c>null</c>.</exception>
         public QuadPrefixTree(SpatialContext ctx)
             : this(ctx, DEFAULT_MAX_LEVELS)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="QuadPrefixTree"/> with the specified
+        /// spatial context (<paramref name="ctx"/>) and <paramref name="maxLevels"/>.
+        /// </summary>
+        /// <param name="ctx">The spatial context.</param>
+        /// <param name="maxLevels">The maximum number of levels in the tree.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="ctx"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxLevels"/> is less than or equal to 0.</exception>
         public QuadPrefixTree(SpatialContext ctx, int maxLevels)
-            : this(ctx, ctx.WorldBounds, maxLevels)
+            : this(ctx, ctx?.WorldBounds, maxLevels)
         {
         }
 
-        public virtual void PrintInfo(TextWriter @out)
+        public virtual void PrintInfo(TextWriter output)
         {
+            // LUCENENET specific - added guard clause
+            if (output is null)
+                throw new ArgumentNullException(nameof(output));
+
             // Format the number to min 3 integer digits and exactly 5 fraction digits
             const string FORMAT_STR = @"000.00000";
             for (int i = 0; i < m_maxLevels; i++)
             {
-                @out.WriteLine(i + "]\t" + levelW[i].ToString(FORMAT_STR) + "\t" + levelH[i].ToString(FORMAT_STR) + "\t" +
+                output.WriteLine(i + "]\t" + levelW[i].ToString(FORMAT_STR) + "\t" + levelH[i].ToString(FORMAT_STR) + "\t" +
                                levelS[i] + "\t" + (levelS[i] * levelS[i]));
             }
         }
@@ -126,6 +158,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         protected internal override Cell GetCell(IPoint p, int level)
         {
+            // LUCENENET specific - added guard clause
+            if (p is null)
+                throw new ArgumentNullException(nameof(p));
+
             IList<Cell> cells = new JCG.List<Cell>(1);
             Build(xmid, ymid, 0, cells, new StringBuilder(), m_ctx.MakePoint(p.X, p.Y), level);
             return cells[0];
@@ -137,9 +173,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             return new QuadCell(this, token);
         }
 
-        public override Cell GetCell(byte[] bytes, int offset, int len)
+        public override Cell GetCell(byte[] bytes, int offset, int length)
         {
-            return new QuadCell(this, bytes, offset, len);
+            return new QuadCell(this, bytes, offset, length);
         }
 
         private void Build(
