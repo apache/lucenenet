@@ -79,51 +79,7 @@ namespace Lucene.Net.Spatial.Prefix
             return result;
         }
 
-        #region Nested type: BaseTermsEnumTraverser
-
-        /// <summary>
-        /// Holds transient state and docid collecting utility methods as part of
-        /// traversing a <see cref="TermsEnum">Lucene.Net.Index.TermsEnum</see>.
-        /// </summary>
-        public abstract class BaseTermsEnumTraverser
-        {
-            protected readonly AbstractPrefixTreeFilter m_filter;
-            protected readonly AtomicReaderContext m_context;
-            protected IBits m_acceptDocs;
-            protected readonly int m_maxDoc;
-
-            protected TermsEnum m_termsEnum;//remember to check for null in getDocIdSet
-            protected DocsEnum m_docsEnum;
-
-            protected BaseTermsEnumTraverser(AbstractPrefixTreeFilter filter, AtomicReaderContext context, IBits acceptDocs) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
-            {
-                this.m_filter = filter;
-                
-                this.m_context = context;
-                AtomicReader reader = context.AtomicReader;
-                this.m_acceptDocs = acceptDocs;
-                m_maxDoc = reader.MaxDoc;
-                Terms terms = reader.GetTerms(filter.m_fieldName);
-                if (terms != null)
-                {
-                    m_termsEnum = terms.GetEnumerator();
-                }
-            }
-
-            protected virtual void CollectDocs(FixedBitSet bitSet)
-            {
-                //WARN: keep this specialization in sync
-                if (Debugging.AssertsEnabled) Debugging.Assert(m_termsEnum != null);
-                m_docsEnum = m_termsEnum.Docs(m_acceptDocs, m_docsEnum, DocsFlags.NONE);
-                int docid;
-                while ((docid = m_docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
-                {
-                    bitSet.Set(docid);
-                }
-            }
-        }
-
-        #endregion
+        // LUCENENET specific - de-nested BaseTermsEnumTraverser
 
         /* Eventually uncomment when needed.
 
@@ -141,5 +97,47 @@ namespace Lucene.Net.Spatial.Prefix
           abstract void collect(int docid) throws IOException;
         }
         */
+    }
+
+    /// <summary>
+    /// Holds transient state and docid collecting utility methods as part of
+    /// traversing a <see cref="TermsEnum">Lucene.Net.Index.TermsEnum</see>.
+    /// </summary>
+    public abstract class BaseTermsEnumTraverser
+    {
+        protected readonly AbstractPrefixTreeFilter m_filter;
+        protected readonly AtomicReaderContext m_context;
+        protected IBits m_acceptDocs;
+        protected readonly int m_maxDoc;
+
+        protected TermsEnum m_termsEnum;//remember to check for null in getDocIdSet
+        protected DocsEnum m_docsEnum;
+
+        protected BaseTermsEnumTraverser(AbstractPrefixTreeFilter filter, AtomicReaderContext context, IBits acceptDocs) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
+        {
+            this.m_filter = filter;
+
+            this.m_context = context;
+            AtomicReader reader = context.AtomicReader;
+            this.m_acceptDocs = acceptDocs;
+            m_maxDoc = reader.MaxDoc;
+            Terms terms = reader.GetTerms(filter.m_fieldName);
+            if (terms != null)
+            {
+                m_termsEnum = terms.GetEnumerator();
+            }
+        }
+
+        protected virtual void CollectDocs(FixedBitSet bitSet)
+        {
+            //WARN: keep this specialization in sync
+            if (Debugging.AssertsEnabled) Debugging.Assert(m_termsEnum != null);
+            m_docsEnum = m_termsEnum.Docs(m_acceptDocs, m_docsEnum, DocsFlags.NONE);
+            int docid;
+            while ((docid = m_docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+            {
+                bitSet.Set(docid);
+            }
+        }
     }
 }
