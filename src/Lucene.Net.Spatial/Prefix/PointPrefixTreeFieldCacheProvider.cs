@@ -2,6 +2,9 @@
 using Lucene.Net.Spatial.Util;
 using Lucene.Net.Util;
 using Spatial4n.Shapes;
+using System;
+using System.Diagnostics.CodeAnalysis;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Prefix
 {
@@ -23,7 +26,7 @@ namespace Lucene.Net.Spatial.Prefix
      */
 
     /// <summary>
-    /// Implementation of <see cref="Lucene.Net.Spatial.Util.ShapeFieldCacheProvider{T}"/>
+    /// Implementation of <see cref="ShapeFieldCacheProvider{T}"/>
     /// designed for <see cref="PrefixTreeStrategy">PrefixTreeStrategy</see>s.
     /// 
     /// Note, due to the fragmented representation of Shapes in these Strategies, this implementation
@@ -33,17 +36,19 @@ namespace Lucene.Net.Spatial.Prefix
     /// </summary>
     public class PointPrefixTreeFieldCacheProvider : ShapeFieldCacheProvider<IPoint>
     {
-        internal readonly SpatialPrefixTree grid; //
+        private readonly SpatialPrefixTree grid; //
 
         public PointPrefixTreeFieldCacheProvider(SpatialPrefixTree grid, string shapeField, int defaultSize)
             : base(shapeField, defaultSize)
         {
-            this.grid = grid;
+            // LUCENENT specific - added guard clause
+            this.grid = grid ?? throw new ArgumentNullException(nameof(grid));
         }
 
-        private Cell scanCell = null;//re-used in readShape to save GC
+        private Cell? scanCell = null;//re-used in readShape to save GC
 
-        protected internal override IPoint ReadShape(BytesRef term)
+        [return: MaybeNull]
+        protected override IPoint ReadShape(BytesRef term)
         {
             scanCell = grid.GetCell(term.Bytes, term.Offset, term.Length, scanCell);
             if (scanCell.Level == grid.MaxLevels && !scanCell.IsLeaf)
