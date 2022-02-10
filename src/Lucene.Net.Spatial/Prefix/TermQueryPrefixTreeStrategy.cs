@@ -1,10 +1,12 @@
-using Lucene.Net.Queries;
+﻿using Lucene.Net.Queries;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Util;
 using Spatial4n.Shapes;
+using System;
 using System.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Prefix
 {
@@ -27,14 +29,14 @@ namespace Lucene.Net.Spatial.Prefix
 
     /// <summary>
     /// A basic implementation of <see cref="PrefixTreeStrategy"/> using a large
-    /// <see cref="Lucene.Net.Queries.TermsFilter"/> of all the cells from
-    /// <see cref="Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree.GetCells(IShape, int, bool, bool)"/>. 
+    /// <see cref="TermsFilter"/> of all the cells from
+    /// <see cref="SpatialPrefixTree.GetCells(IShape, int, bool, bool)"/>. 
     /// It only supports the search of indexed Point shapes.
     /// <para/>
     /// The precision of query shapes (DistErrPct) is an important factor in using
     /// this Strategy. If the precision is too precise then it will result in many
     /// terms which will amount to a slower query.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class TermQueryPrefixTreeStrategy : PrefixTreeStrategy
@@ -46,6 +48,10 @@ namespace Lucene.Net.Spatial.Prefix
 
         public override Filter MakeFilter(SpatialArgs args)
         {
+            // LUCENENET specific - added guard clause
+            if (args is null)
+                throw new ArgumentNullException(nameof(args));
+
             SpatialOperation op = args.Operation;
             if (op != SpatialOperation.Intersects)
             {
