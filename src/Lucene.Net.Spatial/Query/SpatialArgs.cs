@@ -1,6 +1,7 @@
 ﻿using Spatial4n.Context;
 using Spatial4n.Shapes;
 using System;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Queries
 {
@@ -54,7 +55,9 @@ namespace Lucene.Net.Spatial.Queries
         /// <returns>A distance (in degrees).</returns>
         public static double CalcDistanceFromErrPct(IShape shape, double distErrPct, SpatialContext ctx)
         {
-            // LUCENENET: Added null guard clause
+            // LUCENENET: Added null guard clauses
+            if (shape is null)
+                throw new ArgumentNullException(nameof(shape));
             if (ctx is null)
                 throw new ArgumentNullException(nameof(ctx));
 
@@ -89,6 +92,9 @@ namespace Lucene.Net.Spatial.Queries
         {
             if (DistErr != null)
                 return DistErr.Value;
+            // LUCENENET specific - added guard clause
+            if (ctx is null)
+                throw new ArgumentNullException(nameof(ctx));
             double distErrPct = (this.distErrPct ?? defaultDistErrPct);
             return CalcDistanceFromErrPct(Shape, distErrPct, ctx);
         }
@@ -121,13 +127,13 @@ namespace Lucene.Net.Spatial.Queries
         public virtual SpatialOperation Operation
         {
             get => operation;
-            set => operation = value;
+            set => operation = value ?? throw new ArgumentNullException(nameof(Operation)); // LUCENENET specific - added guard clause
         }
 
         public virtual IShape Shape
         {
             get => shape;
-            set => shape = value;
+            set => shape = value ?? throw new ArgumentNullException(nameof(Shape)); // LUCENENET specific - added guard clause
         }
 
         /// <summary>
