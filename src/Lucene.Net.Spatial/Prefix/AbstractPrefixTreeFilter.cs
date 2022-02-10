@@ -133,6 +133,8 @@ namespace Lucene.Net.Spatial.Prefix
             // LUCENENET specific - use guard clause instead of assert
             if (m_termsEnum is null)
                 throw new InvalidOperationException($"{nameof(m_termsEnum)} must not be null.");
+            if (bitSet is null)
+                throw new ArgumentNullException(nameof(bitSet));
             //WARN: keep this specialization in sync
             m_docsEnum = m_termsEnum.Docs(m_acceptDocs, m_docsEnum, DocsFlags.NONE);
             int docid;

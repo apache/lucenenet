@@ -3,7 +3,9 @@ using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Util;
 using Spatial4n.Shapes;
+using System;
 using System.IO;
+#nullable enable
 
 namespace Lucene.Net.Spatial.Prefix
 {
@@ -42,7 +44,7 @@ namespace Lucene.Net.Spatial.Prefix
             this.hasIndexedLeaves = hasIndexedLeaves;
         }
 
-        public override bool Equals(object o)
+        public override bool Equals(object? o)
         {
             return base.Equals(o) && hasIndexedLeaves == ((IntersectsPrefixTreeFilter)o).hasIndexedLeaves;
         }
@@ -60,7 +62,7 @@ namespace Lucene.Net.Spatial.Prefix
         }
 
         /// <exception cref="IOException"></exception>
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
+        public override DocIdSet? GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             return new VisitorTemplateAnonymousClass(this, context, acceptDocs, hasIndexedLeaves).GetDocIdSet();
         }
@@ -69,7 +71,7 @@ namespace Lucene.Net.Spatial.Prefix
 
         private sealed class VisitorTemplateAnonymousClass : VisitorTemplate
         {
-            private FixedBitSet results;
+            private FixedBitSet? results;
 
             public VisitorTemplateAnonymousClass(IntersectsPrefixTreeFilter outerInstance, AtomicReaderContext context, IBits acceptDocs, bool hasIndexedLeaves)
                 : base(outerInstance, context, acceptDocs, hasIndexedLeaves)
@@ -83,14 +85,18 @@ namespace Lucene.Net.Spatial.Prefix
 
             protected override DocIdSet Finish()
             {
-                return results;
+                return results!;
             }
 
             protected override bool Visit(Cell cell)
             {
+                // LUCENENET specific - added guard clause
+                if (cell is null)
+                    throw new ArgumentNullException(nameof(cell));
+
                 if (cell.ShapeRel == SpatialRelation.Within || cell.Level == m_filter.m_detailLevel)
                 {
-                    CollectDocs(results);
+                    CollectDocs(results!);
                     return false;
                 }
                 return true;
@@ -98,14 +104,22 @@ namespace Lucene.Net.Spatial.Prefix
 
             protected override void VisitLeaf(Cell cell)
             {
-                CollectDocs(results);
+                // LUCENENET specific - added guard clause
+                if (cell is null)
+                    throw new ArgumentNullException(nameof(cell));
+
+                CollectDocs(results!);
             }
 
             protected override void VisitScanned(Cell cell)
             {
+                // LUCENENET specific - added guard clause
+                if (cell is null)
+                    throw new ArgumentNullException(nameof(cell));
+
                 if (m_filter.m_queryShape.Relate(cell.Shape).Intersects())
                 {
-                    CollectDocs(results);
+                    CollectDocs(results!);
                 }
             }
         }
