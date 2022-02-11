@@ -27,6 +27,8 @@
   
   <PropertyGroup>
     <LangVersion>9.0</LangVersion>
+    <GitHubOrganization>apache</GitHubOrganization>
+    <GitHubProject>lucenenet</GitHubProject>
   </PropertyGroup>
 
   <!-- IMPORTANT: When these values are changed, the CI counter number should also be reset. -->
