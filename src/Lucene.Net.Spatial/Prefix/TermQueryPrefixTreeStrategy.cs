@@ -54,7 +54,7 @@ namespace Lucene.Net.Spatial.Prefix
             SpatialOperation op = args.Operation;
             if (op != SpatialOperation.Intersects)
             {
-                throw new UnsupportedSpatialOperation(op);
+                throw new UnsupportedSpatialOperationException(op);
             }
             IShape shape = args.Shape;
             int detailLevel = m_grid.GetLevelForDistance(args.ResolveDistErr(m_ctx, m_distErrPct));

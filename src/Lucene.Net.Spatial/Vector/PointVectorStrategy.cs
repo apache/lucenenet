@@ -146,7 +146,7 @@ namespace Lucene.Net.Spatial.Vector
                 SpatialOperation.Intersects,
                 SpatialOperation.IsWithin))
             {
-                throw new UnsupportedSpatialOperation(args.Operation);
+                throw new UnsupportedSpatialOperationException(args.Operation);
             }
 
             IShape shape = args.Shape;
@@ -223,7 +223,7 @@ namespace Lucene.Net.Spatial.Vector
 
             if (spatial is null)
             {
-                throw new UnsupportedSpatialOperation(args.Operation);
+                throw new UnsupportedSpatialOperationException(args.Operation);
             }
 
             if (valueSource != null)

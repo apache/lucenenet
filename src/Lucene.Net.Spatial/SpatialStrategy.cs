@@ -117,7 +117,7 @@ namespace Lucene.Net.Spatial
         /// <code>return new ConstantScoreQuery(MakeFilter(args));</code>
         /// </summary>
         /// <exception cref="NotSupportedException">If the strategy does not support the shape in <paramref name="args"/>.</exception>
-        /// <exception cref="UnsupportedSpatialOperation">If the strategy does not support the <see cref="SpatialOperation"/> in <paramref name="args"/>.</exception>
+        /// <exception cref="UnsupportedSpatialOperationException">If the strategy does not support the <see cref="SpatialOperation"/> in <paramref name="args"/>.</exception>
         public virtual ConstantScoreQuery MakeQuery(SpatialArgs args)
         {
             return new ConstantScoreQuery(MakeFilter(args));
@@ -133,7 +133,7 @@ namespace Lucene.Net.Spatial
         /// <code>return new QueryWrapperFilter(MakeQuery(args).Query);</code>
         /// </summary>
         /// <exception cref="NotSupportedException">If the strategy does not support the shape in <paramref name="args"/>.</exception>
-        /// <exception cref="UnsupportedSpatialOperation">If the strategy does not support the <see cref="SpatialOperation"/> in <paramref name="args"/>.</exception>
+        /// <exception cref="UnsupportedSpatialOperationException">If the strategy does not support the <see cref="SpatialOperation"/> in <paramref name="args"/>.</exception>
         public abstract Filter MakeFilter(SpatialArgs args);
 
         /// <summary>

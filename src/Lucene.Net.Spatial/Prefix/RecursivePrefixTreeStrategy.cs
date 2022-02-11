@@ -101,7 +101,7 @@ namespace Lucene.Net.Spatial.Prefix
                 return new ContainsPrefixTreeFilter(shape, FieldName, m_grid, detailLevel, 
                     m_multiOverlappingIndexedShapes);
             }
-            throw new UnsupportedSpatialOperation(op);
+            throw new UnsupportedSpatialOperationException(op);
         }
     }
 }
