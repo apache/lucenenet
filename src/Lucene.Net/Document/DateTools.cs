@@ -181,6 +181,9 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// Converts a string produced by <see cref="TimeToString(long, DateResolution, NumericRepresentation)"/> or
         /// <see cref="DateToString(DateTime, DateResolution)"/> back to a time, represented as a <see cref="long"/>.
+        /// <para/>
+        /// <b>NOTE:</b> For compatibility with Lucene.NET 3.0.3 and Lucene.NET 4.8.0-beta00001 through 4.8.0-beta00015
+        /// specify <paramref name="outputRepresentation"/> as <see cref="NumericRepresentation.TICKS"/>.
         /// </summary>
         /// <param name="dateString"> The date string to be converted. </param>
         /// <param name="outputRepresentation">The numeric representation of the return value.</param>
