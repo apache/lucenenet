@@ -1,5 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -40,7 +40,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// So we need to move the reference here and also set it before running the normal constructor
         /// logic.
         /// </summary>
-        protected readonly SpatialPrefixTree m_outerInstance;
+        protected readonly SpatialPrefixTree m_spatialPrefixTree;
 
 
         public const byte LEAF_BYTE = (byte)('+');//NOTE: must sort before letters & numbers
@@ -49,11 +49,11 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// Holds a byte[] and/or String representation of the cell. Both are lazy constructed from the other.
         /// Neither contains the trailing leaf byte.
         /// </summary>
-        private byte[] bytes;
+        private byte[]? bytes;
         private int b_off;
         private int b_len;
 
-        private string token;//this is the only part of equality
+        private string? token;//this is the only part of equality
 
         /// <summary>
         /// When set via <see cref="GetSubCells(IShape)">GetSubCells(filter)</see>, it is the relationship between this cell
@@ -69,15 +69,23 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// </remarks>
         protected bool m_leaf;
 
-        protected Cell(SpatialPrefixTree outerInstance, string token)
+        /// <summary>
+        /// Initializes a new instance of <see cref="Cell"/> for the
+        /// <paramref name="spatialPrefixTree"/> with the specified <paramref name="token"/>.
+        /// </summary>
+        /// <param name="spatialPrefixTree">The <see cref="SpatialPrefixTree"/> this instance belongs to.</param>
+        /// <param name="token">The string representation of this <see cref="Cell"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="spatialPrefixTree"/> or <paramref name="token"/> is <c>null</c>.</exception>
+        protected Cell(SpatialPrefixTree spatialPrefixTree, string token)
         {
             // LUCENENET specific - set the outer instance here
             // because overrides of Shape may require it
-            this.m_outerInstance = outerInstance;
+            // LUCENENET specific - added guard clauses
+            this.m_spatialPrefixTree = spatialPrefixTree ?? throw new ArgumentNullException(nameof(spatialPrefixTree));
 
             //NOTE: must sort before letters & numbers
             //this is the only part of equality
-            this.token = token;
+            this.token = token ?? throw new ArgumentNullException(nameof(token));
             if (token.Length > 0 && token[token.Length - 1] == (char)LEAF_BYTE)
             {
                 this.token = token.Substring(0, (token.Length - 1) - 0);
@@ -89,34 +97,64 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
         }
 
-        protected internal Cell(SpatialPrefixTree outerInstance, byte[] bytes, int off, int len)
+        /// <summary>
+        /// Initializes a new instance of <see cref="Cell"/> for the
+        /// <paramref name="spatialPrefixTree"/> with the specified <paramref name="bytes"/>, <paramref name="offset"/> and <paramref name="length"/>.
+        /// </summary>
+        /// <param name="spatialPrefixTree">The <see cref="SpatialPrefixTree"/> this instance belongs to.</param>
+        /// <param name="bytes">The representation of this <see cref="Cell"/>.</param>
+        /// <param name="offset">The offset into <paramref name="bytes"/> to use.</param>
+        /// <param name="length">The count of <paramref name="bytes"/> to use.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="spatialPrefixTree"/> or <paramref name="bytes"/> is <c>null</c>.</exception>
+        protected Cell(SpatialPrefixTree spatialPrefixTree, byte[] bytes, int offset, int length)
         {
             // LUCENENET specific - set the outer instance here
             // because overrides of Shape may require it
-            this.m_outerInstance = outerInstance;
+            this.m_spatialPrefixTree = spatialPrefixTree ?? throw new ArgumentNullException(nameof(spatialPrefixTree));
 
             //ensure any lazy instantiation completes to make this threadsafe
-            this.bytes = bytes;
-            b_off = off;
-            b_len = len;
+            this.bytes = bytes ?? throw new ArgumentNullException(nameof(bytes));
+
+            // LUCENENET specific - check that the offset and length are in bounds
+            int len = bytes.Length;
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length));
+            if (offset + length > len)
+                throw new ArgumentException($"{nameof(offset)} and {nameof(length)} must refer to a location within the array.");
+
+            b_off = offset;
+            b_len = length;
             B_fixLeaf();
         }
 
-        public virtual void Reset(byte[] bytes, int off, int len)
+        public virtual void Reset(byte[] bytes, int offset, int length)
         {
+            // LUCENENET specific - added guard clauses
+            if (bytes is null)
+                throw new ArgumentNullException(nameof(bytes));
+            int len = bytes.Length;
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length));
+            if (offset + length > len)
+                throw new ArgumentOutOfRangeException(nameof(length), "Offset and length must refer to a location within the array.");
+
             if (Debugging.AssertsEnabled) Debugging.Assert(Level != 0);
             token = null;
-            m_shapeRel = SpatialRelation.NOT_SET;
+            m_shapeRel = SpatialRelation.None;
             this.bytes = bytes;
-            b_off = off;
-            b_len = len;
+            b_off = offset;
+            b_len = length;
             B_fixLeaf();
         }
 
         private void B_fixLeaf()
         {
             //note that non-point shapes always have the maxLevels cell set with setLeaf
-            if (bytes[b_off + b_len - 1] == LEAF_BYTE)
+            if (bytes![b_off + b_len - 1] == LEAF_BYTE)
             {
                 b_len--;
                 SetLeaf();
@@ -151,7 +189,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             get
             {
                 if (token is null)
-                    token = Encoding.UTF8.GetString(bytes, b_off, b_len);
+                    token = Encoding.UTF8.GetString(bytes!, b_off, b_len);
                 return token;
             }
         }
@@ -168,7 +206,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
             else
             {
-                bytes = Encoding.UTF8.GetBytes(token);
+                bytes = Encoding.UTF8.GetBytes(token!);
                 b_off = 0;
                 b_len = bytes.Length;
             }
@@ -191,13 +229,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// </summary>
         /// <param name="shapeFilter">an optional filter for the returned cells.</param>
         /// <returns>A set of cells (no dups), sorted. Not Modifiable.</returns>
-        public virtual ICollection<Cell> GetSubCells(IShape shapeFilter)
+        public virtual ICollection<Cell> GetSubCells(IShape? shapeFilter)
         {
             //Note: Higher-performing subclasses might override to consider the shape filter to generate fewer cells.
             if (shapeFilter is IPoint point)
             {
                 Cell subCell = GetSubCell(point);
-                subCell.m_shapeRel = SpatialRelation.CONTAINS;
+                subCell.m_shapeRel = SpatialRelation.Contains;
                 return new ReadOnlyCollection<Cell>(new[] { subCell });
             }
 
@@ -211,12 +249,12 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             foreach (Cell cell in cells)
             {
                 SpatialRelation rel = cell.Shape.Relate(shapeFilter);
-                if (rel == SpatialRelation.DISJOINT)
+                if (rel == SpatialRelation.Disjoint)
                 {
                     continue;
                 }
                 cell.m_shapeRel = rel;
-                if (rel == SpatialRelation.WITHIN)
+                if (rel == SpatialRelation.Within)
                 {
                     cell.SetLeaf();
                 }
@@ -258,19 +296,20 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         #region IComparable<Cell> Members
 
-        public virtual int CompareTo(Cell o)
+        public virtual int CompareTo(Cell? other)
         {
-            return string.CompareOrdinal(TokenString, o.TokenString);
+            if (other is null) return 1; // LUCENENET specific - match other comparers
+            return string.CompareOrdinal(TokenString, other.TokenString);
         }
 
         #endregion
 
         #region Equality overrides
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return !(obj is null || !(obj is Cell cell)) &&
-                   TokenString.Equals(cell.TokenString, StringComparison.Ordinal);
+                TokenString.Equals(cell.TokenString, StringComparison.Ordinal);
         }
 
         public override int GetHashCode()

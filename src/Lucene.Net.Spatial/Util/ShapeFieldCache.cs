@@ -1,4 +1,5 @@
-﻿using Spatial4n.Core.Shapes;
+﻿using Spatial4n.Shapes;
+using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
@@ -38,12 +39,22 @@ namespace Lucene.Net.Spatial.Util
 
         public ShapeFieldCache(int length, int defaultLength)
         {
+            // LUCENENET specific - added guard clause
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(length)} must be greater than or equal to 0.");
+
             cache = new IList<T>[length];
             this.DefaultLength = defaultLength;
         }
 
         public virtual void Add(int docid, T s)
         {
+            // LUCENENET specific - added guard clauses
+            if (s is null)
+                throw new ArgumentNullException(nameof(s));
+            if (docid < 0 || docid >= cache.Length)
+                throw new ArgumentOutOfRangeException(nameof(docid), $"{nameof(docid)} must be positive and less than {Math.Max(cache.Length - 1, 0)}.");
+
             IList<T> list = cache[docid];
             if (list is null)
             {
@@ -54,6 +65,10 @@ namespace Lucene.Net.Spatial.Util
 
         public virtual IList<T> GetShapes(int docid)
         {
+            // LUCENENET specific - added guard clause
+            if (docid < 0 || docid >= cache.Length)
+                throw new ArgumentOutOfRangeException(nameof(docid), $"{nameof(docid)} must be positive and less than {Math.Max(cache.Length - 1, 0)}.");
+
             return cache[docid];
         }
     }

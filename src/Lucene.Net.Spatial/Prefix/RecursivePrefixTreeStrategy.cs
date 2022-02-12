@@ -1,7 +1,8 @@
-using Lucene.Net.Search;
+﻿using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Shapes;
+using System;
 
 namespace Lucene.Net.Spatial.Prefix
 {
@@ -28,7 +29,7 @@ namespace Lucene.Net.Spatial.Prefix
     /// Even a query shape with distErrPct=0 (fully precise to the grid) should have
     /// good performance for typical data, unless there is a lot of indexed data
     /// coincident with the shape's edge.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class RecursivePrefixTreeStrategy : PrefixTreeStrategy
@@ -71,6 +72,10 @@ namespace Lucene.Net.Spatial.Prefix
 
         public override Filter MakeFilter(SpatialArgs args)
         {
+            // LUCENENET specific - added guard clause
+            if (args is null)
+                throw new ArgumentNullException(nameof(args));
+
             SpatialOperation op = args.Operation;
             if (op == SpatialOperation.IsDisjointTo)
             {
@@ -96,7 +101,7 @@ namespace Lucene.Net.Spatial.Prefix
                 return new ContainsPrefixTreeFilter(shape, FieldName, m_grid, detailLevel, 
                     m_multiOverlappingIndexedShapes);
             }
-            throw new UnsupportedSpatialOperation(op);
+            throw new UnsupportedSpatialOperationException(op);
         }
     }
 }

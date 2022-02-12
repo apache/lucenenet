@@ -1,5 +1,5 @@
-﻿using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
+﻿using Spatial4n.Context;
+using Spatial4n.Shapes;
 using System;
 
 namespace Lucene.Net.Spatial.Queries
@@ -39,8 +39,8 @@ namespace Lucene.Net.Spatial.Queries
         public SpatialArgs(SpatialOperation operation, IShape shape)
         {
             // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
-            this.Operation = operation ?? throw new ArgumentNullException(nameof(operation), "operation and shape are required");
-            this.Shape = shape ?? throw new ArgumentNullException(nameof(shape), "operation and shape are required");
+            this.operation = operation ?? throw new ArgumentNullException(nameof(operation), "operation and shape are required");
+            this.shape = shape ?? throw new ArgumentNullException(nameof(shape), "operation and shape are required");
         }
 
         /// <summary>
@@ -54,7 +54,9 @@ namespace Lucene.Net.Spatial.Queries
         /// <returns>A distance (in degrees).</returns>
         public static double CalcDistanceFromErrPct(IShape shape, double distErrPct, SpatialContext ctx)
         {
-            // LUCENENET: Added null guard clause
+            // LUCENENET: Added null guard clauses
+            if (shape is null)
+                throw new ArgumentNullException(nameof(shape));
             if (ctx is null)
                 throw new ArgumentNullException(nameof(ctx));
 
@@ -73,7 +75,7 @@ namespace Lucene.Net.Spatial.Queries
             // take the closest one (greater precision).
             IPoint ctr = bbox.Center;
             double y = (ctr.Y >= 0 ? bbox.MaxY : bbox.MinY);
-            double diagonalDist = ctx.DistCalc.Distance(ctr, bbox.MaxX, y);
+            double diagonalDist = ctx.DistanceCalculator.Distance(ctr, bbox.MaxX, y);
             return diagonalDist * distErrPct;
         }
 
@@ -89,6 +91,9 @@ namespace Lucene.Net.Spatial.Queries
         {
             if (DistErr != null)
                 return DistErr.Value;
+            // LUCENENET specific - added guard clause
+            if (ctx is null)
+                throw new ArgumentNullException(nameof(ctx));
             double distErrPct = (this.distErrPct ?? defaultDistErrPct);
             return CalcDistanceFromErrPct(Shape, distErrPct, ctx);
         }
@@ -121,13 +126,13 @@ namespace Lucene.Net.Spatial.Queries
         public virtual SpatialOperation Operation
         {
             get => operation;
-            set => operation = value;
+            set => operation = value ?? throw new ArgumentNullException(nameof(Operation)); // LUCENENET specific - added guard clause
         }
 
         public virtual IShape Shape
         {
             get => shape;
-            set => shape = value;
+            set => shape = value ?? throw new ArgumentNullException(nameof(Shape)); // LUCENENET specific - added guard clause
         }
 
         /// <summary>

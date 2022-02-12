@@ -5,8 +5,8 @@ using Lucene.Net.Spatial.Vector;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -37,7 +37,7 @@ namespace Lucene.Net.Spatial
         {
             IList<Object[]> ctorArgs = new JCG.List<object[]>();
 
-            SpatialContext ctx = SpatialContext.GEO;
+            SpatialContext ctx = SpatialContext.Geo;
             SpatialPrefixTree grid;
             SpatialStrategy strategy;
 
@@ -126,7 +126,7 @@ namespace Lucene.Net.Spatial
             DeleteDoc("999");
             Commit();
 
-            double dist = ctx.DistCalc.Distance(p100, p101);
+            double dist = ctx.DistanceCalculator.Distance(p100, p101);
             IShape queryShape = ctx.MakeCircle(2.01, 0.99, dist);
             CheckValueSource(strategy.MakeRecipDistanceValueSource(queryShape),
             new float[] { 1.00f, 0.10f, 0f }, 0.09f);

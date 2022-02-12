@@ -1,6 +1,6 @@
-﻿using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
-using Spatial4n.Core.Util;
+﻿using Spatial4n.Context;
+using Spatial4n.Shapes;
+using Spatial4n.Util;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -33,28 +33,16 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// </summary>
     public class GeohashPrefixTree : SpatialPrefixTree
     {
-        #region Nested type: Factory
+        // LUCENENET specific - de-nested Factory and renamed GeohashPrefixTreeFactory
 
         /// <summary>
-        /// Factory for creating <see cref="GeohashPrefixTree"/>
-        /// instances with useful defaults
+        /// Initializes a new instance of <see cref="GeohashPrefixTree"/> with the specified
+        /// spatial context (<paramref name="ctx"/>) and <paramref name="maxLevels"/>.
         /// </summary>
-        public class Factory : SpatialPrefixTreeFactory
-        {
-            protected internal override int GetLevelForDistance(double degrees)
-            {
-                var grid = new GeohashPrefixTree(m_ctx, GeohashPrefixTree.MaxLevelsPossible);
-                return grid.GetLevelForDistance(degrees);
-            }
-
-            protected internal override SpatialPrefixTree NewSPT()
-            {
-                return new GeohashPrefixTree(m_ctx, m_maxLevels ?? GeohashPrefixTree.MaxLevelsPossible);
-            }
-        }
-
-        #endregion
-
+        /// <param name="ctx">The spatial context.</param>
+        /// <param name="maxLevels">The maximum number of levels in the tree.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="ctx"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxLevels"/> is less than or equal to 0 or greater than <see cref="MaxLevelsPossible"/>.</exception>
         public GeohashPrefixTree(SpatialContext ctx, int maxLevels)
             : base(ctx, maxLevels)
         {
@@ -71,7 +59,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         }
 
         /// <summary>Any more than this and there's no point (double lat &amp; lon are the same).</summary>
-        public static int MaxLevelsPossible => GeohashUtils.MAX_PRECISION;
+        public static int MaxLevelsPossible => GeohashUtils.MaxPrecision;
 
         public override int GetLevelForDistance(double dist)
         {
@@ -86,6 +74,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         protected internal override Cell GetCell(IPoint p, int level)
         {
+            // LUCENENET specific - added guard clause
+            if (p is null)
+                throw new ArgumentNullException(nameof(p));
+
             return new GhCell(this, GeohashUtils.EncodeLatLon(p.Y, p.X, level));
         }
 
@@ -126,7 +118,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 IList<Cell> cells = new JCG.List<Cell>(hashes.Length);
                 foreach (string hash in hashes)
                 {
-                    cells.Add(new GhCell((GeohashPrefixTree)m_outerInstance, hash));
+                    cells.Add(new GhCell((GeohashPrefixTree)m_spatialPrefixTree, hash));
                 }
                 return cells;
             }
@@ -135,10 +127,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             public override Cell GetSubCell(IPoint p)
             {
-                return m_outerInstance.GetCell(p, Level + 1);//not performant!
+                return m_spatialPrefixTree.GetCell(p, Level + 1);//not performant!
             }
 
-            private IShape shape;//cache
+            private IShape? shape;//cache
 
             public override IShape Shape
             {
@@ -146,13 +138,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 {
                     if (shape is null)
                     {
-                        shape = GeohashUtils.DecodeBoundary(Geohash, m_outerInstance.m_ctx);
+                        shape = GeohashUtils.DecodeBoundary(Geohash, m_spatialPrefixTree.m_ctx);
                     }
                     return shape;
                 }
             }
 
-            public override IPoint Center => GeohashUtils.Decode(Geohash, m_outerInstance.m_ctx);
+            public override IPoint Center => GeohashUtils.Decode(Geohash, m_spatialPrefixTree.m_ctx);
 
             private string Geohash => TokenString;
 
@@ -160,5 +152,31 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// Factory for creating <see cref="GeohashPrefixTree"/>
+    /// instances with useful defaults
+    /// </summary>
+    public class GeohashPrefixTreeFactory : SpatialPrefixTreeFactory
+    {
+        protected internal override int GetLevelForDistance(double degrees)
+        {
+            // LUCENENET specific - added guard clause
+            if (m_ctx is null)
+                throw new InvalidOperationException($"{nameof(m_ctx)} must be set prior to calling GetLevelForDistance(double).");
+
+            var grid = new GeohashPrefixTree(m_ctx, GeohashPrefixTree.MaxLevelsPossible);
+            return grid.GetLevelForDistance(degrees);
+        }
+
+        protected internal override SpatialPrefixTree NewSPT()
+        {
+            // LUCENENET specific - added guard clause
+            if (m_ctx is null)
+                throw new InvalidOperationException($"{nameof(m_ctx)} must be set prior to calling NewSPT().");
+
+            return new GeohashPrefixTree(m_ctx, m_maxLevels ?? GeohashPrefixTree.MaxLevelsPossible);
+        }
     }
 }

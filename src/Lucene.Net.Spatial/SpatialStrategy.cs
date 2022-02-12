@@ -3,8 +3,8 @@ using Lucene.Net.Queries.Function;
 using Lucene.Net.Queries.Function.ValueSources;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Queries;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Shapes;
 using System;
 
 namespace Lucene.Net.Spatial
@@ -46,7 +46,7 @@ namespace Lucene.Net.Spatial
     /// immaterial to indexing and search.
     /// <para/>
     /// Thread-safe.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class SpatialStrategy
@@ -57,6 +57,7 @@ namespace Lucene.Net.Spatial
         /// <summary>
         /// Constructs the spatial strategy with its mandatory arguments.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="ctx"/> or <paramref name="fieldName"/> is <c>null</c> or <paramref name="fieldName"/> is empty.</exception>
         protected SpatialStrategy(SpatialContext ctx, string fieldName)
         {
             this.m_ctx = ctx ?? throw new ArgumentNullException(nameof(ctx), "ctx is required");// LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
@@ -116,7 +117,7 @@ namespace Lucene.Net.Spatial
         /// <code>return new ConstantScoreQuery(MakeFilter(args));</code>
         /// </summary>
         /// <exception cref="NotSupportedException">If the strategy does not support the shape in <paramref name="args"/>.</exception>
-        /// <exception cref="UnsupportedSpatialOperation">If the strategy does not support the <see cref="SpatialOperation"/> in <paramref name="args"/>.</exception>
+        /// <exception cref="UnsupportedSpatialOperationException">If the strategy does not support the <see cref="SpatialOperation"/> in <paramref name="args"/>.</exception>
         public virtual ConstantScoreQuery MakeQuery(SpatialArgs args)
         {
             return new ConstantScoreQuery(MakeFilter(args));
@@ -132,7 +133,7 @@ namespace Lucene.Net.Spatial
         /// <code>return new QueryWrapperFilter(MakeQuery(args).Query);</code>
         /// </summary>
         /// <exception cref="NotSupportedException">If the strategy does not support the shape in <paramref name="args"/>.</exception>
-        /// <exception cref="UnsupportedSpatialOperation">If the strategy does not support the <see cref="SpatialOperation"/> in <paramref name="args"/>.</exception>
+        /// <exception cref="UnsupportedSpatialOperationException">If the strategy does not support the <see cref="SpatialOperation"/> in <paramref name="args"/>.</exception>
         public abstract Filter MakeFilter(SpatialArgs args);
 
         /// <summary>
@@ -145,8 +146,12 @@ namespace Lucene.Net.Spatial
         /// </summary>
         public ValueSource MakeRecipDistanceValueSource(IShape queryShape)
         {
+            // LUCENENET specific - added guard clause
+            if (queryShape is null)
+                throw new ArgumentNullException(nameof(queryShape));
+
             IRectangle bbox = queryShape.BoundingBox;
-            double diagonalDist = m_ctx.DistCalc.Distance(
+            double diagonalDist = m_ctx.DistanceCalculator.Distance(
                 m_ctx.MakePoint(bbox.MinX, bbox.MinY), bbox.MaxX, bbox.MaxY);
             double distToEdge = diagonalDist * 0.5;
             float c = (float)distToEdge * 0.1f; //one tenth

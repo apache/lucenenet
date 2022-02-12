@@ -24,7 +24,7 @@ namespace Lucene.Net.Spatial.Queries
 
     /// <summary>
     /// Exception thrown when the <see cref="SpatialStrategy"/> cannot implement the requested operation.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     // LUCENENET: It is no longer good practice to use binary serialization. 
@@ -32,15 +32,15 @@ namespace Lucene.Net.Spatial.Queries
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    public class UnsupportedSpatialOperation : NotSupportedException
+    public class UnsupportedSpatialOperationException : NotSupportedException
     {
-        public UnsupportedSpatialOperation(SpatialOperation op)
-            : base(op.Name)
+        public UnsupportedSpatialOperationException(SpatialOperation? op)
+            : base(op?.Name)
         {
         }
 
         // For testing
-        internal UnsupportedSpatialOperation(string message)
+        internal UnsupportedSpatialOperationException(string? message)
             : base(message)
         {
         }
@@ -51,7 +51,7 @@ namespace Lucene.Net.Spatial.Queries
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        protected UnsupportedSpatialOperation(SerializationInfo info, StreamingContext context)
+        protected UnsupportedSpatialOperationException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

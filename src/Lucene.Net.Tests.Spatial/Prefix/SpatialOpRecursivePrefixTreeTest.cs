@@ -4,9 +4,8 @@ using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Support;
 using NUnit.Framework;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
-using Spatial4n.Core.Shapes.Impl;
+using Spatial4n.Context;
+using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,20 +62,24 @@ namespace Lucene.Net.Spatial.Prefix
             if (!ctx.IsGeo)
                 ctx2D = ctx;
             //A non-geo version of ctx.
-            FakeSpatialContextFactory ctxFactory = new FakeSpatialContextFactory();
-            ctxFactory.geo = false;
-            ctxFactory.worldBounds = ctx.WorldBounds;
-            ctx2D = ctxFactory.NewSpatialContext();
+            SpatialContextFactory ctxFactory = new SpatialContextFactory
+            {
+                IsGeo = false,
+                WorldBounds = ctx.WorldBounds
+            };
+            ctx2D = ctxFactory.CreateSpatialContext();
         }
 
         private void SetupQuadGrid(int maxLevels)
         {
             //non-geospatial makes this test a little easier (in gridSnap), and using boundary values 2^X raises
             // the prospect of edge conditions we want to test, plus makes for simpler numbers (no decimals).
-            FakeSpatialContextFactory factory = new FakeSpatialContextFactory();
-            factory.geo = false;
-            factory.worldBounds = new Rectangle(0, 256, -128, 128, null);
-            this.ctx = factory.NewSpatialContext();
+            SpatialContextFactory factory = new SpatialContextFactory
+            {
+                IsGeo = false,
+                WorldBounds = new Rectangle(0, 256, -128, 128, null)
+            };
+            this.ctx = factory.CreateSpatialContext();
             //A fairly shallow grid, and default 2.5% distErrPct
             if (maxLevels == -1)
                 maxLevels = randomIntBetween(1, 8);//max 64k cells (4^8), also 256*256
@@ -84,22 +87,9 @@ namespace Lucene.Net.Spatial.Prefix
             this.strategy = new RecursivePrefixTreeStrategy(grid, GetType().Name);
         }
 
-        /// <summary>
-        /// LUCENENET specific class used to gain access to protected internal
-        /// member NewSpatialContext(), since we are not strong-named and
-        /// InternalsVisibleTo is not an option from a strong-named class.
-        /// </summary>
-        private class FakeSpatialContextFactory : SpatialContextFactory
-        {
-            new public SpatialContext NewSpatialContext()
-            {
-                return base.NewSpatialContext();
-            }
-        }
-
         public virtual void SetupGeohashGrid(int maxLevels)
         {
-            this.ctx = SpatialContext.GEO;
+            this.ctx = SpatialContext.Geo;
             //A fairly shallow grid, and default 2.5% distErrPct
             if (maxLevels == -1)
                 maxLevels = randomIntBetween(1, 3);//max 16k cells (32^3)
@@ -190,12 +180,12 @@ namespace Lucene.Net.Spatial.Prefix
         [Test]
         public void TestShapePair()
         {
-            ctx = SpatialContext.GEO;
+            ctx = SpatialContext.Geo;
             SetupCtx2D(ctx);
 
             IShape leftShape = new ShapePair(ctx.MakeRectangle(-74, -56, -8, 1), ctx.MakeRectangle(-180, 134, -90, 90), true, ctx, ctx2D);
             IShape queryShape = ctx.MakeRectangle(-180, 180, -90, 90);
-            assertEquals(SpatialRelation.WITHIN, leftShape.Relate(queryShape));
+            assertEquals(SpatialRelation.Within, leftShape.Relate(queryShape));
         }
 
         //Override so we can index parts of a pair separately, resulting in the detailLevel
@@ -500,11 +490,11 @@ namespace Lucene.Net.Spatial.Prefix
             public override SpatialRelation Relate(IShape other)
             {
                 SpatialRelation r = RelateApprox(other);
-                if (r == SpatialRelation.DISJOINT)
+                if (r == SpatialRelation.Disjoint)
                     return r;
-                if (r == SpatialRelation.CONTAINS)
+                if (r == SpatialRelation.Contains)
                     return r;
-                if (r == SpatialRelation.WITHIN && !biasContainsThenWithin)
+                if (r == SpatialRelation.Within && !biasContainsThenWithin)
                     return r;
 
                 //See if the correct answer is actually Contains, when the indexed shapes are adjacent,
@@ -522,7 +512,7 @@ namespace Lucene.Net.Spatial.Prefix
                     && CornerContainsNonGeo(oRect.MinX, oRect.MaxY)
                     && CornerContainsNonGeo(oRect.MaxX, oRect.MinY)
                     && CornerContainsNonGeo(oRect.MaxX, oRect.MaxY))
-                    return SpatialRelation.CONTAINS;
+                    return SpatialRelation.Contains;
                 return r;
             }
 
@@ -536,23 +526,23 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 if (biasContainsThenWithin)
                 {
-                    if (shape1.Relate(other) == SpatialRelation.CONTAINS || shape1.equals(other)
-                        || shape2.Relate(other) == SpatialRelation.CONTAINS || shape2.equals(other)) return SpatialRelation.CONTAINS;
+                    if (shape1.Relate(other) == SpatialRelation.Contains || shape1.equals(other)
+                        || shape2.Relate(other) == SpatialRelation.Contains || shape2.equals(other)) return SpatialRelation.Contains;
 
-                    if (shape1.Relate(other) == SpatialRelation.WITHIN && shape2.Relate(other) == SpatialRelation.WITHIN) return SpatialRelation.WITHIN;
+                    if (shape1.Relate(other) == SpatialRelation.Within && shape2.Relate(other) == SpatialRelation.Within) return SpatialRelation.Within;
 
                 }
                 else
                 {
-                    if ((shape1.Relate(other) == SpatialRelation.WITHIN || shape1.equals(other))
-                        && (shape2.Relate(other) == SpatialRelation.WITHIN || shape2.equals(other))) return SpatialRelation.WITHIN;
+                    if ((shape1.Relate(other) == SpatialRelation.Within || shape1.equals(other))
+                        && (shape2.Relate(other) == SpatialRelation.Within || shape2.equals(other))) return SpatialRelation.Within;
 
-                    if (shape1.Relate(other) == SpatialRelation.CONTAINS || shape2.Relate(other) == SpatialRelation.CONTAINS) return SpatialRelation.CONTAINS;
+                    if (shape1.Relate(other) == SpatialRelation.Contains || shape2.Relate(other) == SpatialRelation.Contains) return SpatialRelation.Contains;
                 }
 
                 if (shape1.Relate(other).Intersects() || shape2.Relate(other).Intersects())
-                    return SpatialRelation.INTERSECTS;//might actually be 'CONTAINS' if the pair are adjacent but we handle that later
-                return SpatialRelation.DISJOINT;
+                    return SpatialRelation.Intersects;//might actually be 'CONTAINS' if the pair are adjacent but we handle that later
+                return SpatialRelation.Disjoint;
             }
 
             public override String ToString()

@@ -74,8 +74,7 @@
     <PrismCorePackageVersion>7.2.0.1422</PrismCorePackageVersion>
     <RandomizedTestingGeneratorsPackageVersion>2.7.8</RandomizedTestingGeneratorsPackageVersion>
     <SharpZipLibPackageVersion>1.1.0</SharpZipLibPackageVersion>
-    <Spatial4nCorePackageVersion>0.4.1</Spatial4nCorePackageVersion>
-    <Spatial4nCoreNTSPackageVersion>$(Spatial4nCorePackageVersion)</Spatial4nCoreNTSPackageVersion>
+    <Spatial4nPackageVersion>0.4.1.1</Spatial4nPackageVersion>
     <SystemNetPrimitivesPackageVersion>4.3.0</SystemNetPrimitivesPackageVersion>
     <SystemReflectionEmitPackageVersion>4.3.0</SystemReflectionEmitPackageVersion>
     <SystemReflectionEmitILGenerationPackageVersion>4.3.0</SystemReflectionEmitILGenerationPackageVersion>

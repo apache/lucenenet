@@ -3,8 +3,8 @@ using Lucene.Net.Documents;
 using Lucene.Net.Spatial;
 using Lucene.Net.Spatial.Prefix;
 using Lucene.Net.Spatial.Prefix.Tree;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Shapes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -141,12 +141,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                                                       SpatialContext ctx)
         {
             //A factory for the prefix tree grid
-            // LUCENENET: The second argument was ClassLoader in Java, which should be made into
-            // Assembly in .NET. However, Spatial4n currently doesn't support it.
-            // In .NET it makes more logical sense to make 2 overloads and throw ArgumentNullException
-            // if the second argument is null, anyway. So no need to change this once support has been added.
-            // See: https://github.com/NightOwl888/Spatial4n/issues/1
-            SpatialPrefixTree grid = SpatialPrefixTreeFactory.MakeSPT(configMap/*, assembly: null*/, ctx);
+            SpatialPrefixTree grid = SpatialPrefixTreeFactory.MakeSPT(configMap, assembly: null, ctx);
 
             RecursivePrefixTreeStrategy strategy = new RecursivePrefixTreeStrategyAnonymousClass(grid, SPATIAL_FIELD, config);
 

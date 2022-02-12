@@ -25,7 +25,8 @@ namespace Lucene.Net.Spatial.Util
 
     /// <summary>
     /// <see cref="Filter"/> that matches all documents where a <see cref="ValueSource"/> is
-    /// in between a range of <c>min</c> and <c>max</c> inclusive.
+    /// in between a range of <see cref="Min"/> and <see cref="Max"/> inclusive.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public class ValueSourceFilter : Filter
@@ -45,12 +46,12 @@ namespace Lucene.Net.Spatial.Util
             // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             this.startingFilter = startingFilter ?? throw new ArgumentNullException(nameof(startingFilter),
                 "Please provide a non-null startingFilter; you can use QueryWrapperFilter(MatchAllDocsQuery) as a no-op filter");
-            this.source = source;
+            this.source = source ?? throw new ArgumentNullException(nameof(source)); // LUCENENET specific - added guard clause
             this.min = min;
             this.max = max;
         }
 
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits? acceptDocs)
         {
             var values = source.GetValues(null, context);
             return new ValueSourceFilteredDocIdSet(this, startingFilter.GetDocIdSet(context, acceptDocs), values);
@@ -61,11 +62,12 @@ namespace Lucene.Net.Spatial.Util
             private readonly ValueSourceFilter outerInstance;
             private readonly FunctionValues values;
 
-            public ValueSourceFilteredDocIdSet(ValueSourceFilter outerInstance, DocIdSet innerSet, FunctionValues values)
+            public ValueSourceFilteredDocIdSet(ValueSourceFilter outerInstance, DocIdSet? innerSet, FunctionValues values)
                 : base(innerSet)
             {
-                this.outerInstance = outerInstance;
-                this.values = values;
+                // LUCENENET specific - added guard clauses
+                this.outerInstance = outerInstance ?? throw new ArgumentNullException(nameof(outerInstance));
+                this.values = values ?? throw new ArgumentNullException(nameof(values));
             }
 
             protected override bool Match(int doc)

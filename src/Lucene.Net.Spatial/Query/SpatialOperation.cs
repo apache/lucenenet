@@ -1,4 +1,4 @@
-﻿using Spatial4n.Core.Shapes;
+﻿using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -54,6 +54,12 @@ namespace Lucene.Net.Spatial.Queries
 
             public override bool Evaluate(IShape indexedShape, IShape queryShape)
             {
+                // LUCENENET specific - added guard clauses
+                if (indexedShape is null)
+                    throw new ArgumentNullException(nameof(indexedShape));
+                if (queryShape is null)
+                    throw new ArgumentNullException(nameof(queryShape));
+
                 return indexedShape.BoundingBox.Relate(queryShape).Intersects();
             }
         }
@@ -71,8 +77,14 @@ namespace Lucene.Net.Spatial.Queries
 
             public override bool Evaluate(IShape indexedShape, IShape queryShape)
             {
+                // LUCENENET specific - added guard clauses
+                if (indexedShape is null)
+                    throw new ArgumentNullException(nameof(indexedShape));
+                if (queryShape is null)
+                    throw new ArgumentNullException(nameof(queryShape));
+
                 IRectangle bbox = indexedShape.BoundingBox;
-                return bbox.Relate(queryShape) == SpatialRelation.WITHIN || bbox.Equals(queryShape);
+                return bbox.Relate(queryShape) == SpatialRelation.Within || bbox.Equals(queryShape);
             }
         }
 
@@ -86,7 +98,13 @@ namespace Lucene.Net.Spatial.Queries
 
             public override bool Evaluate(IShape indexedShape, IShape queryShape)
             {
-                return indexedShape.HasArea && indexedShape.Relate(queryShape) == SpatialRelation.CONTAINS || indexedShape.Equals(queryShape);
+                // LUCENENET specific - added guard clauses
+                if (indexedShape is null)
+                    throw new ArgumentNullException(nameof(indexedShape));
+                if (queryShape is null)
+                    throw new ArgumentNullException(nameof(queryShape));
+
+                return indexedShape.HasArea && indexedShape.Relate(queryShape) == SpatialRelation.Contains || indexedShape.Equals(queryShape);
             }
         }
 
@@ -100,6 +118,12 @@ namespace Lucene.Net.Spatial.Queries
 
             public override bool Evaluate(IShape indexedShape, IShape queryShape)
             {
+                // LUCENENET specific - added guard clauses
+                if (indexedShape is null)
+                    throw new ArgumentNullException(nameof(indexedShape));
+                if (queryShape is null)
+                    throw new ArgumentNullException(nameof(queryShape));
+
                 return indexedShape.Relate(queryShape).Intersects();
             }
         }
@@ -114,6 +138,12 @@ namespace Lucene.Net.Spatial.Queries
 
             public override bool Evaluate(IShape indexedShape, IShape queryShape)
             {
+                // LUCENENET specific - added guard clauses
+                if (indexedShape is null)
+                    throw new ArgumentNullException(nameof(indexedShape));
+                if (queryShape is null)
+                    throw new ArgumentNullException(nameof(queryShape));
+
                 return indexedShape.Equals(queryShape);
             }
         }
@@ -128,6 +158,12 @@ namespace Lucene.Net.Spatial.Queries
 
             public override bool Evaluate(IShape indexedShape, IShape queryShape)
             {
+                // LUCENENET specific - added guard clauses
+                if (indexedShape is null)
+                    throw new ArgumentNullException(nameof(indexedShape));
+                if (queryShape is null)
+                    throw new ArgumentNullException(nameof(queryShape));
+
                 return !indexedShape.Relate(queryShape).Intersects();
             }
         }
@@ -142,7 +178,13 @@ namespace Lucene.Net.Spatial.Queries
 
             public override bool Evaluate(IShape indexedShape, IShape queryShape)
             {
-                return queryShape.HasArea && (indexedShape.Relate(queryShape) == SpatialRelation.WITHIN || indexedShape.Equals(queryShape));
+                // LUCENENET specific - added guard clauses
+                if (indexedShape is null)
+                    throw new ArgumentNullException(nameof(indexedShape));
+                if (queryShape is null)
+                    throw new ArgumentNullException(nameof(queryShape));
+
+                return queryShape.HasArea && (indexedShape.Relate(queryShape) == SpatialRelation.Within || indexedShape.Equals(queryShape));
             }
         }
 
@@ -156,6 +198,12 @@ namespace Lucene.Net.Spatial.Queries
 
             public override bool Evaluate(IShape indexedShape, IShape queryShape)
             {
+                // LUCENENET specific - added guard clauses
+                if (indexedShape is null)
+                    throw new ArgumentNullException(nameof(indexedShape));
+                if (queryShape is null)
+                    throw new ArgumentNullException(nameof(queryShape));
+
                 return queryShape.HasArea && indexedShape.Relate(queryShape).Intersects();
             }
         }
@@ -180,7 +228,7 @@ namespace Lucene.Net.Spatial.Queries
 
         public static SpatialOperation Get(string v)
         {
-            if (!registry.TryGetValue(v, out SpatialOperation op) || op is null)
+            if (!registry.TryGetValue(v, out SpatialOperation? op) || op is null)
             {
                 if (!registry.TryGetValue(CultureInfo.InvariantCulture.TextInfo.ToUpper(v), out op) || op is null)
                     throw new ArgumentException($"Unknown Operation: {v}", nameof(v));
@@ -204,6 +252,7 @@ namespace Lucene.Net.Spatial.Queries
         /// Returns whether the relationship between <paramref name="indexedShape"/> and <paramref name="queryShape"/> is
         /// satisfied by this operation.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="indexedShape"/> or <paramref name="queryShape"/> is <c>null</c>.</exception>
         public abstract bool Evaluate(IShape indexedShape, IShape queryShape);
 
         // ================================================= Getters / Setters =============================================
