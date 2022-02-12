@@ -1,4 +1,4 @@
-# Note: these patterns are applied to single files or directories, not full paths
+﻿# Note: these patterns are applied to single files or directories, not full paths
 # coverage/* will ignore any coverage dir, but airflow/www/static/coverage/* will match nothing
 
 .rat-excludes
@@ -37,3 +37,4 @@ NullableAttributes\.cs
 ConfigurationReloadToken\.cs
 ConfigurationRoot\.cs
 ConfigurationSection\.cs
+DateTimeOffsetUtil\.cs
