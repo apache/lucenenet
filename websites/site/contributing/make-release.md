@@ -121,20 +121,25 @@ The following steps need only to be performed once.
     - Exclude files that already have license headers
     - Exclude files that are automatically generated
     - Exclude files that don't work properly with license headers included
+  - Review the LICENSE.txt file.
+    - If any new files with an alternate license were flagged by the Apache Release Audit Tool in the last step, add the full path to the files and the full licenses (see the LICENSE.txt file for examples). If the license is not found in the approved license list https://www.apache.org/legal/resolved.html#category-a, the release **must be postponed** until the file is replaced with one that has an acceptable license.
+    - If any files have been removed from the repository, delete the corresponding license.
+    - If any files have been moved or renamed, update the corresponding license to reflect the new path(s).
+    - Check the copyright date and update it if the year has changed since the prior release. Update the date in the NOTICE.txt file, also.
   - Push the changes to the remote `lucenenet` repository (`https://gitbox.apache.org/repos/asf/lucenenet.gif`)
 
     ```powershell
-    git push <remote> master --tags
+    git push <remote> master
     ```
 
 - Execute a complete test locally (it can take around 20 minutes, but you may do the next step in parallel):
 
   ```powershell
-  build -pv:<packageVersion> -t -mp:10
+  build -pv <packageVersion> -t -mp 10
   ```
 
   > [!NOTE]
-  > Adjust the `-mp:` (maximum number of parallel jobs) number as appropriate based on the machine that runs them. In general, a powerful machine should be able to run 10 jobs or more and a weaker machine may only be able to run 7 or 8 jobs in parallel. It may take some experimentation to find the right number on your hardware to execute the tests fastest.
+  > Adjust the `-mp` (maximum number of parallel jobs) number as appropriate based on the machine that runs them. In general, a powerful machine should be able to run 10 jobs or more and a weaker machine may only be able to run 7 or 8 jobs in parallel. It may take some experimentation to find the right number on your hardware to execute the tests fastest.
 
 - Execute a complete test on a temporary Azure DevOps organization (it can take around 40-50 minutes) (see [build instructions on README.md](https://github.com/apache/lucenenet#azure-devops)).
 
