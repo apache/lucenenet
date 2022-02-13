@@ -167,6 +167,12 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
             & dotnet pack $solutionFile --configuration $configuration --output $nugetPackageDirectory --no-build
         }
 
+        # Set the SYSTEM_DEFAULTWORKINGDIRECTORY if we are not on Azure DevOps. This will optimize the lucene-cli
+        # installation test so it doesn't rebuild the NuGet package during a local build.
+        if (-Not (Test-Path 'env:SYSTEM_DEFAULTWORKINGDIRECTORY')) {
+            $env:SYSTEM_DEFAULTWORKINGDIRECTORY = "$baseDirectory"
+        }
+
         $success = $true
     } finally {
         #if ($success -ne $true) {
