@@ -82,6 +82,12 @@ $parameters = @{}
 $properties = @{}
 
 $properties.maximumParallelJobs = $maximumParallelJobs
+
+# If version.props exists, we must not prepare for build or backup, because
+# we assume we are a release distribution.
+$properties.prepareForBuild = -not $versionPropsExists
+$properties.backupFiles = -not $versionPropsExists
+
 if (-not [string]::IsNullOrWhiteSpace($packageVersion)) {
     $properties.packageVersion=$packageVersion
 }
