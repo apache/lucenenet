@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 
@@ -22,8 +22,9 @@ namespace Lucene.Net.Classification
      */
 
     /// <summary>
-    /// A classifier, see <code>http://en.wikipedia.org/wiki/Classifier_(mathematics)</code>, which assign classes of type
-    /// <typeparam name="T"/>
+    /// A classifier, see <a href="http://en.wikipedia.org/wiki/Classifier_(mathematics)">http://en.wikipedia.org/wiki/Classifier_(mathematics)</a>,
+    /// which assign classes of type <typeparam name="T"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public interface IClassifier<T>

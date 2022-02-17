@@ -26,9 +26,10 @@ namespace Lucene.Net.Classification
      */
 
     /// <summary>
-    /// A k-Nearest Neighbor classifier (see <code>http://en.wikipedia.org/wiki/K-nearest_neighbors</code>) based
+    /// A k-Nearest Neighbor classifier (see
+    /// <a href="http://en.wikipedia.org/wiki/K-nearest_neighbors">http://en.wikipedia.org/wiki/K-nearest_neighbors</a>) based
     /// on <see cref="MoreLikeThis"/>
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class KNearestNeighborClassifier : IClassifier<BytesRef>

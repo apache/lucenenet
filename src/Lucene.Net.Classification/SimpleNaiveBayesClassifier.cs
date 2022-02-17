@@ -27,8 +27,9 @@ namespace Lucene.Net.Classification
      */
 
     /// <summary>
-    /// A simplistic Lucene based NaiveBayes classifier, see <code>http://en.wikipedia.org/wiki/Naive_Bayes_classifier</code>
-    ///
+    /// A simplistic Lucene based NaiveBayes classifier, see
+    /// <a href="http://en.wikipedia.org/wiki/Naive_Bayes_classifier">http://en.wikipedia.org/wiki/Naive_Bayes_classifier</a>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class SimpleNaiveBayesClassifier : IClassifier<BytesRef>
