@@ -45,8 +45,12 @@ if ($BaseUrl -eq 'https://lucenenet.apache.org/docs/') {
 $BaseUrl = $BaseUrl.TrimEnd('/') # Remove any trailing slash
 Write-Host "Base URL for xref map set to $BaseUrl"
 
+# Generate the Git tag for the current version
+$VCSLabel = 'Lucene.Net_' + $LuceneNetVersion.Replace('.', '_').Replace('-', '_')
+
 # set env vars that will be replaced in Markdown
 $env:LuceneNetVersion = $LuceneNetVersion
+$env:LuceneNetReleaseTag = $VCSLabel
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
