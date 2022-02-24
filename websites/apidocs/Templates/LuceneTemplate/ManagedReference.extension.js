@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -28,6 +28,10 @@ exports.preTransform = function (model) {
   // otherwise this address is based purely on the git commands remote sources
   if (model && model._gitSource && model.source && model.source.remote && model.source.remote.repo) {
     model.source.remote.repo = model._gitSource;
+  }
+  
+  if (model && model._gitContribute && model._gitContribute.tag && model.source && model.source.remote) {
+    model.source.remote.tag = model._gitContribute.tag;
   }
 
   return model;
