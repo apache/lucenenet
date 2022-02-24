@@ -29,7 +29,7 @@ on some of the conceptual or inner details of Lucene:
 
 ## Reference Documents
 
-- [Changes](https://github.com/apache/lucenenet/releases/tag/<EnvVar:LuceneNetReleaseTag>): List of changes in this release.
+- [Changes](https://github.com/apache/lucenenet/releases/tag/[EnvVar:LuceneNetReleaseTag]): List of changes in this release.
 <!-- - System Requirements: Minimum and supported .NET versions. LUCENENT TODO: Add link -->
 - [Migration Guide](xref:Lucene.Net.Migration.Guide): What changed in Lucene 4; how to migrate code from Lucene 3.x.
 - [Source Stepping](xref:source-stepping): How to use the Visual Studio debugger to step into Lucene.NET source code.
