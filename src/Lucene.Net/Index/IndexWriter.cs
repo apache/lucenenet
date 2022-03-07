@@ -6375,7 +6375,7 @@ namespace Lucene.Net.Index
         /// Each event should only rely on the serializeability within it's process method. All actions that must happen before or after a certain action must be
         /// encoded inside the <see cref="Process(IndexWriter, bool, bool)"/> method.
         /// </summary>
-        public interface IEvent
+        internal interface IEvent
         {
             /// <summary>
             /// Processes the event. this method is called by the <see cref="IndexWriter"/>
