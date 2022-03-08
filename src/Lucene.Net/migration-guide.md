@@ -43,7 +43,7 @@ Several Java conventions were replaced with their .NET counterparts:
 
   * Instead of `Integer` or `GetInteger()` use `Int32` or `GetInt32()`.
 
-  * Instead of `Long` or `GetLong()` use `Int364` or `GetInt64()`.
+  * Instead of `Long` or `GetLong()` use `Int64` or `GetInt64()`.
 
   * Instead of `Float` use `Single`. Note that `Lucene.Net.Queries.Function.ValueSources.SingleFunction` was renamed `Lucene.Net.Queries.Function.ValueSources.SingularFunction` to distinguish it from the `System.Single` data type.
 
