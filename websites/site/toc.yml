@@ -1,7 +1,8 @@
 - name: About
   href: /#about
-- name: Quick start
-  href: /#quick-start
+- name: Quick Start
+  href: quick-start/
+  topicHref: quick-start/index.md
 - name: Download
   href: download/
   topicHref: download/download.md

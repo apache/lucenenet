@@ -98,8 +98,17 @@ article img {
     margin:15px 0 30px 0;
 }
 
-article[data-uid="contributing/setup-java-debugging"] img {
+article[data-uid="contributing/setup-java-debugging"] img,
+article[data-uid="quick-start/tutorial"] img {
     border: solid 1px #dedcd3
+}
+
+article[data-uid="quick-start/introduction"] .diagram{
+    text-align:center;
+}
+
+article[data-uid="quick-start/introduction"] .diagram img{
+    max-width:400px
 }
 
 .sidefilter {
@@ -117,6 +126,10 @@ body .toc {
 
 .sidefilter {
   background-color: rgb(247, 247, 247);
+}
+
+.sideaffix > div.contribution > ul > li > a.contribution-link {
+    opacity:80%;
 }
 
 /* FORK ME ON GITHUB */
