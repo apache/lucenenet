@@ -146,7 +146,7 @@ body .toc {
     right: 0;
     width: 200px;
     overflow: hidden;
-    height: 200px;
+    height: 150px;
     z-index: 9999;
   }
   #forkongithub a {
