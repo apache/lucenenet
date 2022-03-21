@@ -126,13 +126,14 @@ pre.clean {
   margin: 0 0 10px;
   margin-bottom: 2rem;
 }
+
 /* hack for issue with padding disappearing in middle 2 sizes on home page */
 @media screen and (max-width: 1200px) {
   #intro .container {
     margin-top: 80px;
   }
 }
-@media screen and (max-width: 750px) {
+@media screen and (max-width: 768px) {
   #intro {
     margin-top: 0px;
   }
@@ -156,7 +157,7 @@ pre.clean {
         padding-top: 65px;
     }
 }
-@media screen and (max-width: 750px) {
+@media screen and (max-width: 768px) {
     div.body-content, div.contribution {
         margin-top: 0px;
     }
