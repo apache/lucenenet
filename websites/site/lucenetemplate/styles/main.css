@@ -39,15 +39,21 @@
 .btn-primary:hover {
   background-color: #1764aa;
 }
-button,
-a {
+
+article.content {font-size: 15px}
+
+a, a:hover, a:focus {
+  color: #0098ff;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+button {
   color: #1764aa;
-  /* #0095eb */
 }
 button:hover,
-button:focus,
-a:hover,
-a:focus {
+button:focus {
   color: #143653;
   text-decoration: none;
 }
@@ -74,6 +80,14 @@ header ul.navbar-nav {
   float: right;
   font-weight: 600;
 }
+
+.navbar-nav>li>a {
+    color:#177cc8;
+}
+.navbar-nav>li>a:hover, .navbar-nav>li>a:focus {
+    color:#143653;
+}
+
 @media screen and (min-width: 768px) {
   header ul.navbar-nav {
     padding-right: 100px;
