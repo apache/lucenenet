@@ -1,6 +1,6 @@
 ---
-title: Welcome to the Lucene.NET website!
-description: Lucene.NET is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users.
+title: Apache Lucene.NET is a powerful open source .NET search library.
+description: Lucene.NET is a port of the Lucene search library, written in C# and targeted at .NET runtime users.
 documentType: index
 ---
 
@@ -9,7 +9,7 @@ Lucene.NET
 
 <h2 id="about" class="text-center">About the project</h2>
 
-Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users
+Lucene.Net is a port of the Lucene search library, written in C# and targeted at .NET runtime users.
 
 ### Latest Version - Lucene.NET 4.8.0 Beta
 
