@@ -162,3 +162,13 @@ body .toc {
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8);
   }
 }
+
+.home-section.books img {width:300px}
+
+
+@media (min-width: 900px){
+    .home-section.books .col-md-6 { width: 50%; }
+}
+@media (min-width:1200px){
+    .home-section.books .container{width:970px}
+}
