@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
     {
         [Test]
         [Nightly]
-        [Timeout(1500000)] // 25 minutes
+        [Timeout(2_400_000)] // 40 minutes
         public virtual void Test()
         {
             // LUCENENET specific - disable the test if not 64 bit

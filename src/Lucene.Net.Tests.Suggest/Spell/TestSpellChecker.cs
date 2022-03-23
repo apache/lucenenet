@@ -455,7 +455,7 @@ namespace Lucene.Net.Search.Spell
         // LUCENENET: In Java, awaitTermination kills all of the threads forcefully after 60 seconds, which would cause a failure.
         // We attempt to cancel the tasks gracefully after 60 seconds, but if they don't respond within 300 seconds it is a failure.
         // This prevents us from hanging during testing, but still effectively gives us the same result.
-        [Timeout(300000)]
+        [Timeout(300_000)] // 5 minutes
         public async Task TestConcurrentAccess()
         {
             assertEquals(1, searchers.Count);

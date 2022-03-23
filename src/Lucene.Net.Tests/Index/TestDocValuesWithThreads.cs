@@ -182,7 +182,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        [Timeout(600000)]
+        [Timeout(600_000)] // 10 minutes
         public virtual void Test2()
         {
             Random random = Random;

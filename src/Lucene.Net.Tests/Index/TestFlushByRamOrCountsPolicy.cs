@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
 
     // LUCENENET specific - Specify to unzip the line file docs
     [UseTempLineDocsFile]
-    [Timeout(900000)]
+    [Timeout(900_000)] // 15 minutes
     public class TestFlushByRamOrCountsPolicy : LuceneTestCase 
     {
 
