@@ -4,7 +4,7 @@ uid: quick-start/learning-resources
 
 # Learning Resources
 
---
+---
 
 
 ## Lucene.NET Documentation
