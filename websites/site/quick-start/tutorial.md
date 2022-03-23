@@ -31,11 +31,11 @@ PowerShell is cross platform and runs everywhere .NET runs, so we will be using 
 ## Verify dotnet CLI Installed
 Let's use PowerShell now to verify that you have the .NET SDK with the .NET CLI installed.  Launch PowerShell however you do that on your OS, for Windows I'll search for it in the start menu and select it from there. Once you have the PowerShell window open, execute the following command in PowerShell:
 
-`dotnet –info`
+`dotnet --info`
 
 This command will show the latest version of the .NET SDK installed and also show a list of all versions installed. If the .NET SDK is not installed this the command will return an error indicating the command was not found.
 
-Below I show the top of the results for the `dotnet -–info` command ran on my machine. You can see I'm using .NET SDK 6.0.200 on windows for this demo. In my case I had to scroll the screen up to see this info since I have many versions of the .NET SDK installed and it shows info on each version which scrolled the info about the latest version off the screen. Your latest version will likely be different than mine and perhaps you may be running on Unix or Mac. That's fine. But remember **you need .NET SDK 6 or later**. Or you need to modify the examples according to the note above.
+Below I show the top of the results for the `dotnet --info` command ran on my machine. You can see I'm using .NET SDK 6.0.200 on windows for this demo. In my case I had to scroll the screen up to see this info since I have many versions of the .NET SDK installed and it shows info on each version which scrolled the info about the latest version off the screen. Your latest version will likely be different than mine and perhaps you may be running on Unix or Mac. That's fine. But remember **you need .NET SDK 6 or later**. Or you need to modify the examples according to the note above.
  
 <img src='https://lucenenet.apache.org/images/quick-start/tutorial/power-shell01.png'>
 
