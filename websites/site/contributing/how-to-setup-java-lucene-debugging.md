@@ -16,13 +16,13 @@ The Java Lucene 4.8 repository indicates that the following development environm
 + IntelliJ - IntelliJ idea can import the project out of the box.
 + Netbeans - Not tested.
 
-In this document however, we will be using Eclipse because it’s open source and widely used. Because Java Lucene 4.8 uses an old version of the Java JDK that has known security issues, the approach we take here is to setup a virtual machine vis VirtualBox to quarantine our use of the insecure JDK.
+In this document however, we will be using Eclipse because it's open source and widely used. Because Java Lucene 4.8 uses an old version of the Java JDK that has known security issues, the approach we take here is to setup a virtual machine vis VirtualBox to quarantine our use of the insecure JDK.
 
 
 ## Setting up VirtualBox
 
 ### Introduction and Background
-We don’t need to setup network access for VirtualBox for our needs and since the old JVM required to run Lucene 4.8 has security issues, it’s safer not to give VirtualBox network access.  And since VirtualBox can run in a window, it means that when running it that way you will still have access to the internet and a browser on your main OS for doing coding research and such.
+We don't need to setup network access for VirtualBox for our needs and since the old JVM required to run Lucene 4.8 has security issues, it's safer not to give VirtualBox network access.  And since VirtualBox can run in a window, it means that when running it that way you will still have access to the internet and a browser on your main OS for doing coding research and such.
 
 ### Download Virtual Box
 You can get the installer from [https://www.virtualbox.org/wiki/Downloads](https://www.virtualbox.org/wiki/Downloads) . On that page download the binary version for **Windows hosts**.
@@ -54,7 +54,7 @@ Then when the install is done you will see a dialog similar to the one below.
 
 
 ### Configuring VirtualBox
-Clicking the Finished button in the prior dialog will launch VirtualBox, or you can launch it manually via the programs menu in Windows 10 as you would with any other “application.”
+Clicking the Finished button in the prior dialog will launch VirtualBox, or you can launch it manually via the programs menu in Windows 10 as you would with any other "application."
 
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box02.png'>
@@ -65,17 +65,17 @@ To change the location where the machine will be stored, click the Preferences i
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box03.png'>
 
 ### Create Windows 10 Installation Media
-In this walkthrough we will be running Windows 10 in the VM.  Note that to do this one needs a 2nd Windows 10 license other then the one installed on the physical machine.  So two licenses are needed, one for the physical machine OS install and one for the VM OS install.  If you don’t have a spare Windows 10 license to use in the VM you can consider installing ubuntu or other open source OS.  Next to run Windows 10 in the VM we much download and create Windows 10 installation media.  This can be done from https://www.microsoft.com/en-us/software-download/windows10 . Start by downloading the installation media tool.  
+In this walkthrough we will be running Windows 10 in the VM.  Note that to do this one needs a 2nd Windows 10 license other then the one installed on the physical machine.  So two licenses are needed, one for the physical machine OS install and one for the VM OS install.  If you don't have a spare Windows 10 license to use in the VM you can consider installing ubuntu or other open source OS.  Next to run Windows 10 in the VM we much download and create Windows 10 installation media.  This can be done from https://www.microsoft.com/en-us/software-download/windows10 . Start by downloading the installation media tool.  
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box04.png'>
 
-Then run the exe that is downloaded. You need to agree to the terms if they are acceptable to you.  Our goal here is to create an iso file that we can use to install Windows in the VM.  We don’t need that iso file burned to a cd, just having it saved to the computer is fine.
+Then run the exe that is downloaded. You need to agree to the terms if they are acceptable to you.  Our goal here is to create an iso file that we can use to install Windows in the VM.  We don't need that iso file burned to a cd, just having it saved to the computer is fine.
 
-In this dialog select “Create installation media”
+In this dialog select "Create installation media"
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box05.png'>
 
-On this dialog select “ISO file”
+On this dialog select "ISO file"
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box06.png'>
 
@@ -85,7 +85,7 @@ Then in the dialog that comes up pick a place on the computer to save the ISO fi
 
 And then it will begin downloading the file and displaying a progress indicator.  Once the file is downloaded, we have now have the ISO file we need for installing the OS inside of VirtualBox. 
 
-Once that’s done, you can click Finished in the dialog that comes up since we don’t need to burn this ISO file to a dvd.  Having it on the hard drive is fine.
+Once that's done, you can click Finished in the dialog that comes up since we don't need to burn this ISO file to a dvd.  Having it on the hard drive is fine.
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box08.png'>
 
@@ -103,7 +103,7 @@ The default choice below is fine:<br>
 <br>
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box12.png'>
 
-In the following dialog “Dynamically allocated” is fine.  Then in the dialog after that set the max size. 
+In the following dialog "Dynamically allocated" is fine.  Then in the dialog after that set the max size. 
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box13.png'>
  <br>
@@ -115,12 +115,12 @@ In the following dialog “Dynamically allocated” is fine.  Then in the dialog
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box15.png'>
 
-Now click the little disk drop down next to the Optical Drive label.  From that menu select “Chose a Disk File…” and select the windows ISO file you previously downloaded. 
+Now click the little disk drop down next to the Optical Drive label.  From that menu select "Chose a Disk File…" and select the windows ISO file you previously downloaded. 
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box16.png'>
 
 
-Now it’s like that Windows Install DVD is installed on our virtual computer. (See below)
+Now it's like that Windows Install DVD is installed on our virtual computer. (See below)
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box17.png'>
 
@@ -134,12 +134,12 @@ Since by default the VM is setup to boot from the virtual optical drive (as well
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/windows-install01.png'>
 
-Click next in the dialog above, then install now. Then in the window below key in your product key or click I don’t have a product key.
+Click next in the dialog above, then install now. Then in the window below key in your product key or click I don't have a product key.
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/windows-install02.png'>
 
 Click agree on the license terms if you agree.
-Then in the dialog below click “Custom” since this is a new install not an upgrade.
+Then in the dialog below click "Custom" since this is a new install not an upgrade.
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/windows-install03.png'>
 
@@ -163,9 +163,9 @@ And then finally we have windows running in the vm, and in the screenshot below 
 
 ## Installing Eclipse 4.6
 
-Source of download https://wiki.eclipse.org/Older_Versions_Of_Eclipse. We want “Eclipse Neon Packages (2016 - v 4.6.0)”  This version goes by the name “neon r”  and it’s page is here: https://www.eclipse.org/downloads/packages/release/neon/r 
+Source of download https://wiki.eclipse.org/Older_Versions_Of_Eclipse. We want "Eclipse Neon Packages (2016 - v 4.6.0)"  This version goes by the name "neon r"  and it's page is here: https://www.eclipse.org/downloads/packages/release/neon/r 
  
-We want the 2nd package below, “Eclipse IDE for Java Developers”  so download that, in my case the x86_64 link.
+We want the 2nd package below, "Eclipse IDE for Java Developers"  so download that, in my case the x86_64 link.
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/eclipse01.png'>
 
@@ -176,11 +176,11 @@ Once that zip file downloads, then extract the contents into a folder.
 ## Installing Java 8
 
 Lucene 4.8.0 uses Java 8 to run according to the build.xml file but Eclipse needs Java 8.  And Eclipse can use Java 8 to emulate Java 7 when running Lucene.
-So we will need to install “**Java SE Development Kit 8u25**” into our VM which can be downloaded from https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html  You will notice the following warning on that page.  This is why we chose to work inside a VirtualBox.
+So we will need to install "**Java SE Development Kit 8u25**" into our VM which can be downloaded from https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html  You will notice the following warning on that page.  This is why we chose to work inside a VirtualBox.
 
 > **WARNING**: These older versions of the JRE and JDK are provided to help developers debug issues in older systems. **They are not updated with the latest security patches and are not recommended for use in production.**
 
-You will need to scroll down a ways on the page to find “**Java SE Development Kit 8u25**” or better yet search the page for 8u25. Then download the Windows x64 one jre-8u25-windows-x64.exe 
+You will need to scroll down a ways on the page to find "**Java SE Development Kit 8u25**" or better yet search the page for 8u25. Then download the Windows x64 one jre-8u25-windows-x64.exe 
 Download and run that jdk-8u25-windows-x64.exe file that in the VM.
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-java8-01.png'>
@@ -213,11 +213,11 @@ You can get version 1.9.7 here: https://archive.apache.org/dist/ant/binaries/ Th
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-apache-ant02.png'>
 
-You’ll have to unzip the downloaded `apache-ant-1.9.7-bin.zip` file.  
+You'll have to unzip the downloaded `apache-ant-1.9.7-bin.zip` file.  
 
-The unzipped folder will need to be moved to a place of your choosing where you want ant to live.  In my case I created a folder called “Apache Software Foundation” inside the “Program Files” folder and placed it there.  So my path was `c:\Program Files\Apache Software Foundation\apache-ant-1.9.7` Directions for installing Ant are on this page under “The Short Story” https://ant.apache.org/manual/install.html 
+The unzipped folder will need to be moved to a place of your choosing where you want ant to live.  In my case I created a folder called "Apache Software Foundation" inside the "Program Files" folder and placed it there.  So my path was `c:\Program Files\Apache Software Foundation\apache-ant-1.9.7` Directions for installing Ant are on this page under "The Short Story" https://ant.apache.org/manual/install.html 
 
-I typed “Environment Variables” into windows search and used that to open the System Properties window. Then clicked the Environment Variables button.
+I typed "Environment Variables" into windows search and used that to open the System Properties window. Then clicked the Environment Variables button.
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-apache-ant03.png'>
 
@@ -268,7 +268,7 @@ Use version 3.8.1.  https://maven.apache.org/download.cgi The installation proce
 We are going to download `apache-maven-3.8.1-bin.zip` 
 Move the folder out of the zip and into the location by the apache ant folder.
 
-“install” instructions are here: https://maven.apache.org/install.html 
+"install" instructions are here: https://maven.apache.org/install.html 
 
 Add the `bin` directory of  `apache-maven-3.8.1 to` the `PATH` environment variable
 
@@ -286,7 +286,7 @@ https://git-scm.com/download/win
 
   <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-git01.png'>
 
-Of the choices above I chose “64-bit Git for Windows Setup.”  Download and run the installer. Agree to the license, pick a directory to install it in, I kept the default, I also kept the default components in the dialog below:
+Of the choices above I chose "64-bit Git for Windows Setup."  Download and run the installer. Agree to the license, pick a directory to install it in, I kept the default, I also kept the default components in the dialog below:
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-git02.png'>
 
@@ -312,7 +312,7 @@ C:\Users\Ron\source\eclipse_workspaces\lucene_workspace
 C:\Users\Ron\source\repos\lucene
 
 ### Why not clone the code directly from Java Lucene Repo?
-It turns out that it’s no longer possible to directly compile the Lucene 4.8 code obtained from the Java Lucene Repo without modification.  Unlike NuGet which makes old versions available forever and is always online, Maven has lots of mirrors that may cease to exist at some point, and that is what’s happed, so the configuration in the Java Lucene 4.8 Repo is out of date and no longer builds.
+It turns out that it's no longer possible to directly compile the Lucene 4.8 code obtained from the Java Lucene Repo without modification.  Unlike NuGet which makes old versions available forever and is always online, Maven has lots of mirrors that may cease to exist at some point, and that is what's happed, so the configuration in the Java Lucene 4.8 Repo is out of date and no longer builds.
 
 In addition, Java 8 (which we need for Eclipse) detects an error in the code that Java 7 did not, so the build doesn't complete. It is due to some fields that are marked final that are disposed at the end of the constructor (so they really don't need to be fields). Taking the final keyword off of the field removes the error. So, the project has to be modified slightly so all of this can happen. 
 
@@ -323,7 +323,7 @@ There is a fork of the Java Lucene Repo at https://github.com/NightOwl888/lucene
 
 Steps to Clone it into the VM
 
-Open the folder that will contain the clone folder and then right click in there and select “Git Bash Here” from the content menu.
+Open the folder that will contain the clone folder and then right click in there and select "Git Bash Here" from the content menu.
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/where-can-we-get-the-code02.png'>
 
@@ -349,7 +349,7 @@ You can see the name of the branches here:
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/where-can-we-get-the-code05.png'>
 
-Here’s what I looked like when the clone was done;
+Here's what I looked like when the clone was done;
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/where-can-we-get-the-code06.png'>
 
@@ -362,7 +362,7 @@ In windows, this is what the directory looks like:
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/where-can-we-get-the-code08.png'>
 
 
-## Downloading the Project’s Dependencies
+## Downloading the Project's Dependencies
 
 ### Boostrap ant
 First we need to get ant bootstrapped.
@@ -387,7 +387,7 @@ We should now be setup to build.  So run the following Bash command:
 
 `ant eclipse`
 
-Example screenshot while ant is doing it’s work:
+Example screenshot while ant is doing it's work:
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/download-dependencies02.png'>
 
@@ -417,7 +417,7 @@ We can zoom to take up the whole VM screen space.
 Then click the **Create new Java project** in the welcome screen.
 
 1)	Provide a Project name, in my case Lucene4.8.0,  
-2)	Then uncheck the “Use default location” check box.  
+2)	Then uncheck the "Use default location" check box.  
 3)	Then use the browse button to specify the **location of the git repo clone.**  
 
 So the dialog will then look something like this: 
@@ -436,7 +436,7 @@ Then click the Edit button.
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/using-eclipse07.png'>
 
-Then set the System Library radio button to “Workspace default JRE” if it’s not selected already.  Then clicked the Finish button on that dialog, and then click the Finish button on the other dialog.
+Then set the System Library radio button to "Workspace default JRE" if it's not selected already.  Then clicked the Finish button on that dialog, and then click the Finish button on the other dialog.
 
 Then expand the window to take up the whole VM and you will see a build progress indicator in the lower status bar.  The project is now building in the background.
 
@@ -488,7 +488,7 @@ You will get this dialog:
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/debugging-with-eclipse09.png'>
 
-Eclipse has a different "perspective" for debugging than for browsing projects, similar to in VisualStudo. However, it gives you a choice whether you want to use it or not.  Click yes, but don’t choose to remember the setting, because it’s not clear where to find it again.
+Eclipse has a different "perspective" for debugging than for browsing projects, similar to in VisualStudo. However, it gives you a choice whether you want to use it or not.  Click yes, but don't choose to remember the setting, because it's not clear where to find it again.
 
 And it will launch into the debugger layout and be waiting on the breakpoint.
 
@@ -507,7 +507,7 @@ So it works much like VisualStudio but the F key configuration is different.  Yo
 
 <font style="font-weight:bold; font-size: 20px">How cool is that?!</font>
 
- You’re welcome, and a big shout out to NightOwl888 who blazed this trail for us all.
+ You're welcome, and a big shout out to NightOwl888 who blazed this trail for us all.
 
 
 ## Two More Helpful Tips
