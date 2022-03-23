@@ -386,7 +386,7 @@ Remove the old releases from SVN under https://dist.apache.org/repos/dist/releas
 
 The release vote may fail due to an issue discovered in the release candidate. If the vote fails the release should be canceled by:
 
-- Sending an email to [dev@lucenenet.apache.org](mailto:dev@lucenenet.apache.org) on the VOTE thread notifying of the vote’s cancellation.
+- Sending an email to [dev@lucenenet.apache.org](mailto:dev@lucenenet.apache.org) on the VOTE thread notifying of the vote's cancellation.
 
 A new release candidate can now be prepared. When complete, a new VOTE thread can be started as described in the steps above.
 

@@ -12,7 +12,7 @@ Sometimes the best way to learn is just to see some working code. So that's what
 Now let's build a simple console application that can index a few documents, search those documents, and return some results.  Actually, let's build two apps that do that.  The first example will show how to do exact match searches and the 2nd example will show how to do a full text search.  These example console applications will give you some working code that can serve as a great starting point for trying out various Lucene.NET features.
 
 ## Multi-Platform
-It's worth mentioning that Lucene.NET runs everywhere that .NET runs. That means that Lucene.NET can be used in Windows and Unix applications, Asp.NET websites (Windows, Mac or Unix), iOS Apps, Android Apps and even on the Raspberry Pi.
+It's worth mentioning that Lucene.NET runs everywhere that .NET runs. That means that Lucene.NET can be used in Windows and Unix applications, ASP.NET websites (Windows, Mac or Unix), iOS Apps, Android Apps and even on the Raspberry Pi.
 
 ## Why the .NET CLI?
 In these examples we will use the .NET CLI (Command Line Interface) because it's a cross platform way to generate the project file we need and to add references to Nuget packages.  We will be using PowerShell to invoke the .NET CLI because PowerShell provides a command line environment that is also cross platform.
@@ -20,16 +20,16 @@ In these examples we will use the .NET CLI (Command Line Interface) because it's
 However you are totally free to use [Visual Studio](https://visualstudio.microsoft.com/) (Windows/Mac) or [Visual Studio Code](https://code.visualstudio.com/) (Windows/Unix/Max) to create the console application project and to add references to the Nuget packages. Whichever tool you use, you should end up with the same files and you can compare their contents to the contents that we show in the examples.
 
 ## Download and Install the .NET SDK
-First you must install the .NET Core SDK, if it's not already installed on your machine. The .NET Core SDK contains the .NET runtime, .NET Libraries and the .NET CLI. If you haven't installed it yet, download it from https://dotnet.microsoft.com/en-us/download and run the installer. It's a pretty straightforward process. I’ll be using the **.NET 6.0 SDK** in this tutorial.
+First you must install the .NET Core SDK, if it's not already installed on your machine. The .NET Core SDK contains the .NET runtime, .NET Libraries and the .NET CLI. If you haven't installed it yet, download it from https://dotnet.microsoft.com/en-us/download and run the installer. It's a pretty straightforward process. I'll be using the **.NET 6.0 SDK** in this tutorial.
 
 > [!NOTE]
 > The C# code we present **requires the .NET 6.0 SDK or later**.  However, with a few simple modifications it can run on older SDKs including 4.x. To do that, the Program.cs file will need to have a namespace, Program class and a static void main method.  See Microsoft docs [here](https://docs.microsoft.com/en-us/dotnet/core/tutorials/with-visual-studio?pivots=dotnet-5-0#code-try-3) for details.  You will also need to add [braces to the using statements](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/using-statement#example). 
 
 ## Download and Install PowerShell
-PowerShell is cross platform and runs everywhere .NET runs, so we will be using PowerShell for all of our command line work. If you don't already have PowerShell installed you can download and find instructions for installing it on Window, Unix or Mac on this [Installing PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell) page. In my examples I’m using PowerShell 7.2 but the specific version probably doesn’t make a difference.
+PowerShell is cross platform and runs everywhere .NET runs, so we will be using PowerShell for all of our command line work. If you don't already have PowerShell installed you can download and find instructions for installing it on Window, Unix or Mac on this [Installing PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell) page. In my examples I'm using PowerShell 7.2 but the specific version probably doesn't make a difference.
 
 ## Verify dotnet CLI Installed
-Let’s use PowerShell now to verify that you have the .NET SDK with the .NET CLI installed.  Launch PowerShell however you do that on your OS, for Windows I’ll search for it in the start menu and select it from there. Once you have the PowerShell window open, execute the following command in PowerShell:
+Let's use PowerShell now to verify that you have the .NET SDK with the .NET CLI installed.  Launch PowerShell however you do that on your OS, for Windows I'll search for it in the start menu and select it from there. Once you have the PowerShell window open, execute the following command in PowerShell:
 
 `dotnet –info`
 
@@ -49,7 +49,7 @@ This is actually pretty simple to do in Lucene.NET but since this in our very fi
 ### Create a Directory for the Project
 Create a directory where you would like this project to live on your hard drive and call that directory `lucene-example1`. In my case that will be ` C:\Users\Ron\source\repos\lucene-example1` but you can chose any location you like.  Then make that directory the current directory in PowerShell.
 
-In my case, since I’m on Windows, I’ll create the directory using the GUI and use the `cd` command in PowerShell to change directory to the one I created.  So the exact PowerShell command I used was  `cd C:\Users\Ron\source\repos\lucene-example1` but you will need to modify that command to specify the directory you created.
+In my case, since I'm on Windows, I'll create the directory using the GUI and use the `cd` command in PowerShell to change directory to the one I created.  So the exact PowerShell command I used was  `cd C:\Users\Ron\source\repos\lucene-example1` but you will need to modify that command to specify the directory you created.
 
 <img src='https://lucenenet.apache.org/images/quick-start/tutorial/power-shell02.png'>
 
@@ -81,7 +81,7 @@ Our directory looks like this:
 <img src='https://lucenenet.apache.org/images/quick-start/tutorial/directory-files-example1.png'>
 
 ### Viewing the Two Main files
-From here on out, you can use your favorite editor to view and edit files as we walk through the rest of the example.  I’ll be using Visual Studio 2022 on Windows, but you could just as easily use VIM, Visual Studio Code or any other editor and even be doing that on Ubuntu on a Raspberry Pi if you like. Remember, Lucene.NET and the .NET framework both support a wide variety of platforms.
+From here on out, you can use your favorite editor to view and edit files as we walk through the rest of the example.  I'll be using Visual Studio 2022 on Windows, but you could just as easily use VIM, Visual Studio Code or any other editor and even be doing that on Ubuntu on a Raspberry Pi if you like. Remember, Lucene.NET and the .NET framework both support a wide variety of platforms.
 
 Below is what the project file looks like which we created using the dotnet CLI. Notice that it contains package references to the two Lucene.NET Nuget packages we specified.
  
@@ -115,7 +115,7 @@ Now let's look at the `Program.cs` file that got generated.  It looks like:
 
 
 ### Running the Application
-Before going further lets just run this console application and see that it generates the “Hello World!” output we expect.
+Before going further lets just run this console application and see that it generates the "Hello World!" output we expect.
 
 If you are using Visual Studio or Visual Studio Code you can just hit F5 to run it. But what if are using a plain text editor to do your work?  No problem, we can run console application from PowerShell.  Just type this command in PowerShell:
 
@@ -196,9 +196,9 @@ Console.WriteLine($"Title of first result: {title}");
 > As mentioned earlier, if you are not running .NET 6.0 SDK or later you will need to modify the above code in the following two ways: 1) Program.cs file will need to have a namespace, Program class and a static void main method.  See Microsoft docs [here](https://docs.microsoft.com/en-us/dotnet/core/tutorials/with-visual-studio?pivots=dotnet-5-0#code-try-3) for details; and 2) you will need to add [braces to the using statements](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/using-statement#example). 
 
 ### Code Walkthrough
-Before running the code let’s talk about what it does.
+Before running the code let's talk about what it does.
 
-The using declarations at the top of the file specify the various namespaces we are going to use. Then we have this block of code that basically specifies that our Lucene.NET index will be in a subdirectory called “example_index”.
+The using declarations at the top of the file specify the various namespaces we are going to use. Then we have this block of code that basically specifies that our Lucene.NET index will be in a subdirectory called "example_index".
 
  ```c#
 // Specify the compatibility version we want
@@ -213,7 +213,7 @@ using LuceneDirectory indexDir = FSDirectory.Open(indexPath);
 
 Then in the next block we create an `IndexWriter` that will use our `LuceneDirectory`. The `IndexWriter` is a important class in Lucene.NET and is used to write documents to the Index (among other things).
 
-The `IndexWriter` will create our subdirectory for us since it doesn’t yet exist and it will create the index since it also doesn’t yet exist.  By using  `OpenMode.CREATE` we are telling Lucene.NET that we want to recreate the index if it already exists.  This works great for a demo like this since every time  the console app is ran we will be recreating our LuceneIndex which means we will get the same output each time.  
+The `IndexWriter` will create our subdirectory for us since it doesn't yet exist and it will create the index since it also doesn't yet exist.  By using  `OpenMode.CREATE` we are telling Lucene.NET that we want to recreate the index if it already exists.  This works great for a demo like this since every time  the console app is ran we will be recreating our LuceneIndex which means we will get the same output each time.  
 
 ```c#
 //Create an index writer
@@ -226,7 +226,7 @@ Then in the next block we add three documents to the index.  In this example we 
 
 We also specify here that title is a `TextField` which means that want the field to support full text searches, and we specify domain as a `StringField` which means we what to do exact match searches against that field.
 
-It’s worth noting that the documents are buffered in RAM initially and are not written to the index in the `Directory` until we call `writer.Commit();`
+It's worth noting that the documents are buffered in RAM initially and are not written to the index in the `Directory` until we call `writer.Commit();`
 
 ```c#
 //Add three documents to the index
@@ -254,7 +254,7 @@ So now our documents are in the index and we want to see how to read a document 
 In the block of code below we search the index for all the documents that have a domain field value of "lucenenet.apache.org".
 
 > [!NOTE]
-> Note that in the block of code below we specify `applyAllDeletes: true` when getting a Reader. This means that uncommitted deleted documents will be applied to the reader we obtain.  If this value were false then only committed deletes would be applied to the reader. In our example we don't delete any documents but when getting a Reader we must still specify some value for this parameter.
+> Note that in the block of code below we specify `applyAllDeletes: true` when getting a `DirectoryReader`. This means that uncommitted deleted documents will be applied to the reader we obtain.  If this value were false then only committed deletes would be applied to the reader. In our example we don't delete any documents but when getting a `DirectoryReader` we must still specify some value for this parameter.
 
 We happen to specify that we want just the top 2 matching results from the search but based on the data in our example only one result matches and so only that one result will be returned.  The code then writes out to the console the number of matching documents and the title of the first (and in this case only) matching result.
 
@@ -298,7 +298,7 @@ This is exactly what we would expect.
 ### Conclusion - Example 1 
 While this example is not particularly complicated, it will get you started. It provides fully working code that uses Lucne.NET that you now understand.
 
-When looking at this code it’s pretty easy to imagine how one might use a while loop instead of inline code for adding documents and how one could perhaps add 10,000 documents (or a million documents) instead of just three.  And it's pretty easy to imagine how one would add several fields per document rather then just two.
+When looking at this code it's pretty easy to imagine how one might use a while loop instead of inline code for adding documents and how one could perhaps add 10,000 documents (or a million documents) instead of just three.  And it's pretty easy to imagine how one would add several fields per document rather then just two.
 
 I would encourage you to play with this code, modify it (maybe by adding more fields, or changing the field name or field values) and then run it to see the results.  This iterative process is a great way to grow your knowledge of Lucene.NET.
 
@@ -334,7 +334,7 @@ You can use whatever tool you choose for Example 1 to accomplish these steps. In
 Technically the line above to `dotnet add package Lucene.Net --prerelease` is not needed because the `Lucene.Net.Analysis.Common` Nuget package has a dependency on the `Lucene.Net` Nuget package which means that when you execute this line `dotnet add package Lucene.Net.Analysis.Common --prerelease` it will automatically pull that dependency into the project too.  But since this is another introductory example I chose to add each Nuget package explicitly so that I'm not counting on one package being a dependency of the other.  Either way is fine.
 
 ### View the Project Files
-Just like in the prior example the project folder will have two files and an obj directory with some files.  Now use your favorite editor to view the project’s .proj file. It should look like this:
+Just like in the prior example the project folder will have two files and an obj directory with some files.  Now use your favorite editor to view the project's .proj file. It should look like this:
  
 <img src='https://lucenenet.apache.org/images/quick-start/tutorial/example2.csproj.png'>
 
@@ -447,7 +447,7 @@ for (int i = 0; i < topDocs.TotalHits; i++)
 > As mentioned earlier, if you are not running .NET 6.0 SDK or later you will need to modify the above code in the following two ways: 1) Program.cs file will need to have a namespace, Program class and a static void main method.  See Microsoft docs [here](https://docs.microsoft.com/en-us/dotnet/core/tutorials/with-visual-studio?pivots=dotnet-5-0#code-try-3) for details; and 2) you will need to add [braces to the using statements](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/using-statement#example).
 
 ### Code Walkthrough
-Before we run the code let’s talk about what’s different then the code in Example 1.
+Before we run the code let's talk about what's different then the code in Example 1.
 
 As you might guess we have an additional using declaration `using Lucene.Net.QueryParsers.Classic` related to the additional Nuget package we added.  But other than that the rest of the code at beginning and even middle of the code is just like what we already covered in Example1.
 
@@ -464,7 +464,7 @@ Query query = parser.Parse("open source");
 
 These lines allow us to create a query that will perform a full text search. This type of search is similar to what you are use to when doing a google or bing search.
 
-What we are saying in these two lines is that we want to create a query that will search the `title` field of our documents and we want back document that contain “open source” or just “open” or just “source” and we want them sorted by how well they match our “open source” query.  
+What we are saying in these two lines is that we want to create a query that will search the `title` field of our documents and we want back document that contain "open source" or just "open" or just "source" and we want them sorted by how well they match our "open source" query.  
 
 So when the line of code below runs, Lucene.NET will score each of our docs that match the query and return the top 3 matching documents sorted by score.
 
@@ -497,16 +497,16 @@ So now you can hit F5 in Visual Studio or VS Code or you can execute `dotnet run
  
 <img src='https://lucenenet.apache.org/images/quick-start/tutorial/run-example2.png'>
 
-If you go back and review the contents of the `title` field for each document you will see the output from running the code does indeed return the only two documents that that contain “open source” in the title field. 
+If you go back and review the contents of the `title` field for each document you will see the output from running the code does indeed return the only two documents that that contain "open source" in the title field. 
 
 ### Conclusion - Example 2 
-In this Example we saw Lucene.NET’s full text search feature.  But we only scratched the surface.
+In this Example we saw Lucene.NET's full text search feature.  But we only scratched the surface.
 
-It’s the responsibility of the analyzer to tokenize the text and it’s the tokens that are stored in the index as terms.  In our case we used the `StandardAnalyzer` which removes punctuation, lower cases the text so it’s not case sensitive and removes stop words (common words like “a” “an” and “the”).
+It's the responsibility of the analyzer to tokenize the text and it's the tokens that are stored in the index as terms.  In our case we used the `StandardAnalyzer` which removes punctuation, lower cases the text so it's not case sensitive and removes stop words (common words like "a" "an" and "the").
 
-But there are other analyzers we could choose.  For example the `EnglishAnalyzer` does everything the `StandardAnalyzer` does but also “stems” the terms via the Porter Stemming algorithm.  Without going into the details of what the stemmer does, it provides the ability for us to perform a search and match documents that contain other forms of the word we are searching on.
+But there are other analyzers we could choose.  For example the `EnglishAnalyzer` does everything the `StandardAnalyzer` does but also "stems" the terms via the Porter Stemming algorithm.  Without going into the details of what the stemmer does, it provides the ability for us to perform a search and match documents that contain other forms of the word we are searching on.
 
-So for example if we used the `EnglishAnalyzer` both for indexing our documents and searching our documents then if we searched on “run” we could match documents that contained “run”, “runs”, and “running”.  And not only that, Lucene.NET contains Analyzers for 100s of other languages besides English.
+So for example if we used the `EnglishAnalyzer` both for indexing our documents and searching our documents then if we searched on "run" we could match documents that contained "run", "runs", and "running".  And not only that, Lucene.NET contains Analyzers for 100s of other languages besides English.
 
 Based on what you just learned, I suspect you could find some fun ways to change the code in Example2 to further your experimenting and learning.  For example you could add other documents with different field values, or use a different Analyzer and see how the results change.
 
