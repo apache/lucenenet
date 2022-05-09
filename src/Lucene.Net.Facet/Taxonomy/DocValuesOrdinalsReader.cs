@@ -52,7 +52,7 @@ namespace Lucene.Net.Facet.Taxonomy
         public override OrdinalsSegmentReader GetReader(AtomicReaderContext context)
         {
             BinaryDocValues values0 = context.AtomicReader.GetBinaryDocValues(field);
-            if (values0 == null)
+            if (values0 is null)
             {
                 values0 = DocValues.EMPTY_BINARY;
             }

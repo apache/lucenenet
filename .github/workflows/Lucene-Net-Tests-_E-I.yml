@@ -25,8 +25,8 @@ on:
   pull_request:
     paths:
     - 'src/Lucene.Net.Tests._E-I/**/*'
-    - 'build/Dependencies.props'
-    - 'build/TestReferences.Common.*'
+    - '.build/dependencies.props'
+    - '.build/TestReferences.Common.*'
     - 'TestTargetFrameworks.*'
     - '*.sln'
     - 'src/Lucene.Net.Tests._E-I/Directory.Build.*'
@@ -44,8 +44,8 @@ on:
     - 'src/Lucene.Net.Tests/Index/TestF*.cs'
     - 'src/Lucene.Net.Tests/Index/TestG*.cs'
     - 'src/Lucene.Net.Tests/Index/TestH*.cs'
-    - 'src/Lucene.Net.Tests/Index/TestI*.cs'
-    - 'src/Lucene.Net.Tests/Index/TestJ*.cs'
+    - 'src/Lucene.Net.Tests/Index/TestIndexWriter.cs'
+    - 'src/Lucene.Net.Tests/Index/TestIndexWriterReader.cs'
     - 'src/Lucene.Net.Tests/Index/*.zip'
 
     # Dependencies
@@ -70,7 +70,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
-        framework: [net6.0, net5.0, net461, net48]
+        framework: [net6.0, net5.0, net48, net461]
         platform: [x64]
         configuration: [Release]
         exclude:

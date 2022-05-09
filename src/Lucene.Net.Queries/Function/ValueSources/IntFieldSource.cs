@@ -115,7 +115,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override object ObjectVal(int doc)
             {
-                return valid.Get(doc) ? arr.Get(doc) : (int?)null;
+                return valid.Get(doc) ? J2N.Numerics.Int32.GetInstance(arr.Get(doc)) : null; // LUCENENET: In Java, the conversion to instance of java.util.Integer is implicit, but we need to do an explicit conversion
             }
 
             public override bool Exists(int doc)
@@ -142,12 +142,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             if (!(o is Int32FieldSource other))
                 return false;
-            return base.Equals(other) && (this.parser == null ? other.parser == null : this.parser.GetType() == other.parser.GetType());
+            return base.Equals(other) && (this.parser is null ? other.parser is null : this.parser.GetType() == other.parser.GetType());
         }
 
         public override int GetHashCode()
         {
-            int h = parser == null ? typeof(int?).GetHashCode() : parser.GetType().GetHashCode();
+            int h = parser is null ? typeof(int).GetHashCode() : parser.GetType().GetHashCode();
             h += base.GetHashCode();
             return h;
         }

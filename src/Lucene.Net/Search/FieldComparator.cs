@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using System;
 using System.IO;
 using JCG = J2N.Collections.Generic;
+using Number = J2N.Numerics.Number;
 
 namespace Lucene.Net.Search
 {
@@ -62,14 +63,14 @@ namespace Lucene.Net.Search
     ///  <item><term><see cref="CompareBottom(int)"/></term> <description>Compare a new hit (docID)
     ///       against the "weakest" (bottom) entry in the queue.</description></item>
     ///
-    ///  <item><term><see cref="SetTopValue(object)"/></term> <description>This method is called by
+    ///  <item><term><see cref="SetTopValue(T)"/></term> <description>This method is called by
     ///       <see cref="TopFieldCollector"/> to notify the
     ///       <see cref="FieldComparer"/> of the top most value, which is
     ///       used by future calls to <see cref="CompareTop(int)"/>.</description></item>
     ///
     ///  <item><term><see cref="CompareTop(int)"/></term> <description>Compare a new hit (docID)
     ///       against the top value previously set by a call to
-    ///       <see cref="SetTopValue(object)"/>.</description></item>
+    ///       <see cref="SetTopValue(T)"/>.</description></item>
     ///
     ///  <item><term><see cref="Copy(int, int)"/></term> <description>Installs a new hit into the
     ///       priority queue.  The <see cref="FieldValueHitQueue"/>
@@ -81,7 +82,7 @@ namespace Lucene.Net.Search
     ///       comparer, for example retrieving new values from
     ///       the <see cref="IFieldCache"/>.</description></item>
     ///
-    ///  <item><term><see cref="FieldComparer.this[int]"/></term> <description>Return the sort value stored in
+    ///  <item><term><see cref="FieldComparer.GetValue(int)"/></term> <description>Return the sort value stored in
     ///       the specified slot.  This is only called at the end
     ///       of the search, in order to populate
     ///       <see cref="FieldDoc.Fields"/> when returning the top results.</description></item>
@@ -90,6 +91,7 @@ namespace Lucene.Net.Search
     /// @lucene.experimental
     /// </summary>
     public abstract class FieldComparer<T> : FieldComparer
+        where T : class //, IComparable // LUCENENET specific - Enforce reference types to avoid auto boxing
     {
         /// <summary>
         /// Compare hit at <paramref name="slot1"/> with hit at <paramref name="slot2"/>.
@@ -116,7 +118,37 @@ namespace Lucene.Net.Search
         /// use SearchAfter (deep paging), and is called before any
         /// calls to <see cref="SetNextReader(AtomicReaderContext)"/>.
         /// </summary>
-        public abstract override void SetTopValue(object value);
+        /// <param name="value">The <typeparamref name="T"/> value to use as the top value.</param>
+        /// <exception cref="ArgumentException"><paramref name="value"/> does not derive from <typeparamref name="T"/> and is not <c>null</c>.</exception>
+        // LUCENENET specific - since subclasses may use object as the generic closing type,
+        // we define TValue here so this overload doesn't collide with SetTopValue(T value)
+        // when it is defined that way
+        public override void SetTopValue<TValue>(TValue value) where TValue : class
+        {
+            if (value is null || value is T)
+                SetTopValue((T)(object)value);
+            else
+                throw new ArgumentException($"{nameof(value)} must be a type '{typeof(T).FullName}' or be 'null'.");
+        }
+
+        /// <summary>
+        /// Record the top value, for future calls to 
+        /// <see cref="CompareTop(int)"/>.  This is only called for searches that
+        /// use SearchAfter (deep paging), and is called before any
+        /// calls to <see cref="SetNextReader(AtomicReaderContext)"/>.
+        /// </summary>
+        public abstract void SetTopValue(T value);
+
+        /// <inheritdoc/>
+        public override object GetValue(int slot) => this[slot];
+
+        /// <summary>
+        /// Return the actual value in the slot.
+        /// LUCENENET NOTE: This was value(int) in Lucene.
+        /// </summary>
+        /// <param name="slot"> The value </param>
+        /// <returns> Value in this slot </returns>
+        public abstract T this[int slot] { get; }
 
         /// <summary>
         /// Compare the bottom of the queue with this doc.  This will
@@ -137,8 +169,8 @@ namespace Lucene.Net.Search
         public abstract override int CompareBottom(int doc);
 
         /// <summary>
-        /// Compare the top value with this doc.  This will
-        /// only invoked after <see cref="SetTopValue(object)"/> has been called.  This
+        /// Compare the top value with this doc. This will
+        /// only invoked after <see cref="SetTopValue(T)"/> has been called. This
         /// should return the same result as 
         /// <see cref="Compare(int, int)"/> as if topValue were slot1 and the new
         /// document were slot 2.  This is only called for searches that
@@ -174,47 +206,58 @@ namespace Lucene.Net.Search
         public abstract override FieldComparer SetNextReader(AtomicReaderContext context);
 
         /// <summary>
-        /// Returns -1 if first is less than second.  Default
-        /// impl to assume the type implements <see cref="IComparable{T}"/> and
+        /// Returns -1 if first is less than second. Default
+        /// implementation to assume the type implements <see cref="IComparable{T}"/> and
         /// invoke <see cref="IComparable{T}.CompareTo(T)"/>; be sure to override this method if
-        /// your FieldComparer's type isn't a <see cref="IComparable{T}"/> or
-        /// if your values may sometimes be <c>null</c>
+        /// your <see cref="FieldComparer{T}"/>'s type isn't a <see cref="IComparable{T}"/> or
+        /// if you need special <c>null</c> handling.
         /// </summary>
         public virtual int CompareValues(T first, T second)
         {
-            if (object.ReferenceEquals(first, default))
-            {
-                return object.ReferenceEquals(second, default) ? 0 : -1;
-            }
-            else if (object.ReferenceEquals(second, default))
-            {
+            if (first is null)
+                return second is null ? 0 : -1;
+            else if (second is null)
                 return 1;
-            }
-            else
-            {
-                // LUCENENET NOTE: We need to compare using JCG.Comparer<T>.Default
-                // to ensure that if comparing strings we do so in Ordinal sort order
-                return JCG.Comparer<T>.Default.Compare(first, second);
-            }
+
+            // LUCENENET NOTE: We need to compare using JCG.Comparer<T>.Default
+            // to ensure that if comparing strings we do so in Ordinal sort order
+            return JCG.Comparer<T>.Default.Compare(first, second);
         }
 
-        /// <summary>
-        /// Returns -1 if first is less than second.  Default
-        /// impl to assume the type implements <see cref="IComparable{T}"/> and
-        /// invoke <see cref="IComparable{T}.CompareTo(T)"/>; be sure to override this method if
-        /// your FieldComparer's type isn't a <see cref="IComparable{T}"/> or
-        /// if your values may sometimes be <c>null</c>
-        /// </summary>
+        /// <inheritdoc/>
+        /// <exception cref="ArgumentException"><paramref name="first"/> or <paramref name="second"/> does not derive
+        /// from <typeparamref name="T"/> and is not <c>null</c>.</exception>
         public override int CompareValues(object first, object second)
         {
-            return CompareValues((T)first, (T)second);
+            // LUCENENET specific - using the same logic as System.Collections.Generic.Comparer<T> if object doesn't
+            // cast to the correct type or null.
+            if (first is null)
+                return second is null ? 0 : -1;
+            else if (second is null)
+                return 1;
+
+            if (first is T tFirst)
+            {
+                if (second is T tSecond)
+                    return CompareValues(tFirst, tSecond);
+
+                throw new ArgumentException($"{nameof(second)} must be a type '{typeof(T).FullName}' or be 'null'.");
+            }
+            throw new ArgumentException($"{nameof(first)} must be a type '{typeof(T).FullName}' or be 'null'.");
         }
     }
 
-    // .NET Port: Using a non-generic class here so that we avoid having to use the
+    // LUCENENET specific: Using a non-generic class here so that we avoid having to use the
     // type parameter to access these nested types. Also moving non-generic methods here for casting without generics.
     public abstract class FieldComparer
     {
+        /// <summary>
+        /// Returns -1 if first is less than second. Default
+        /// implementation to assume the type implements <see cref="IComparable{T}"/> and
+        /// invoke <see cref="IComparable{T}.CompareTo(T)"/>; be sure to override this method if
+        /// your <see cref="FieldComparer"/>'s type isn't a <see cref="IComparable{T}"/> or
+        /// if you need special <c>null</c> handling.
+        /// </summary>
         public abstract int CompareValues(object first, object second);
 
         //Set up abstract methods
@@ -243,7 +286,7 @@ namespace Lucene.Net.Search
         /// use SearchAfter (deep paging), and is called before any
         /// calls to <see cref="SetNextReader(AtomicReaderContext)"/>.
         /// </summary>
-        public abstract void SetTopValue(object value);
+        public abstract void SetTopValue<TValue>(TValue value) where TValue : class;
 
         /// <summary>
         /// Compare the bottom of the queue with this doc.  This will
@@ -265,7 +308,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Compare the top value with this doc.  This will
-        /// only invoked after <see cref="SetTopValue(object)"/> has been called.  This
+        /// only invoked after <see cref="SetTopValue{TValue}(TValue)"/> has been called.  This
         /// should return the same result as 
         /// <see cref="Compare(int, int)"/> as if topValue were slot1 and the new
         /// document were slot 2.  This is only called for searches that
@@ -318,19 +361,19 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="slot"> The value </param>
         /// <returns> Value in this slot </returns>
-        public abstract IComparable this[int slot] { get; }
+        public abstract object GetValue(int slot);
 
         /// <summary>
         /// Base FieldComparer class for numeric types
         /// </summary>
-        public abstract class NumericComparer<T> : FieldComparer<T>
-            where T : struct
+        public abstract class NumericComparer<TNumber> : FieldComparer<TNumber>
+            where TNumber : Number
         {
-            protected readonly T? m_missingValue;
+            protected readonly TNumber m_missingValue;
             protected readonly string m_field;
             protected IBits m_docsWithField;
 
-            protected NumericComparer(string field, T? missingValue) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
+            protected NumericComparer(string field, TNumber missingValue) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
                 this.m_field = field;
                 this.m_missingValue = missingValue;
@@ -360,15 +403,15 @@ namespace Lucene.Net.Search
         /// <see cref="IFieldCache.GetBytes(Index.AtomicReader, string, FieldCache.IByteParser, bool)"/> and sorts by ascending value
         /// </summary>
         [Obsolete, CLSCompliant(false)] // LUCENENET NOTE: marking non-CLS compliant because of sbyte - it is obsolete, anyway
-        public sealed class ByteComparer : NumericComparer<sbyte>
+        public sealed class ByteComparer : NumericComparer<J2N.Numerics.SByte>
         {
             private readonly sbyte[] values;
-            private readonly FieldCache.IByteParser parser; 
+            private readonly FieldCache.IByteParser parser;
             private FieldCache.Bytes currentReaderValues;
             private sbyte bottom;
             private sbyte topValue;
 
-            internal ByteComparer(int numHits, string field, FieldCache.IParser parser, sbyte? missingValue)
+            internal ByteComparer(int numHits, string field, FieldCache.IParser parser, J2N.Numerics.SByte missingValue)
                 : base(field, missingValue)
             {
                 values = new sbyte[numHits];
@@ -388,7 +431,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
                 {
-                    v2 = m_missingValue.GetValueOrDefault();
+                    v2 = m_missingValue;
                 }
                 // LUCENENET NOTE: Same logic as the Byte.compare() method in Java
                 return JCG.Comparer<sbyte>.Default.Compare(bottom, v2);
@@ -401,7 +444,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
                 {
-                    v2 = m_missingValue.GetValueOrDefault();
+                    v2 = m_missingValue;
                 }
                 values[slot] = v2;
             }
@@ -416,15 +459,15 @@ namespace Lucene.Net.Search
 
             public override void SetBottom(int slot)
             {
-                this.bottom = values[slot];
+                bottom = values[slot];
             }
 
-            public override void SetTopValue(object value)
+            public override void SetTopValue(J2N.Numerics.SByte value)
             {
-                topValue = (sbyte)value;
+                topValue = value ?? throw new ArgumentNullException(nameof(value)); // LUCENENET specific - throw ArgumentNullException rather than getting a cast exception
             }
 
-            public override IComparable this[int slot] => values[slot];
+            public override J2N.Numerics.SByte this[int slot] => values[slot]; // LUCENENET NOTE: Implicit cast will pull SByte reference type from cache
 
             public override int CompareTop(int doc)
             {
@@ -433,7 +476,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && docValue == 0 && !m_docsWithField.Get(doc))
                 {
-                    docValue = m_missingValue.GetValueOrDefault();
+                    docValue = m_missingValue;
                 }
                 // LUCENENET NOTE: Same logic as the Byte.compare() method in Java
                 return JCG.Comparer<sbyte>.Default.Compare(topValue, docValue);
@@ -444,7 +487,7 @@ namespace Lucene.Net.Search
         /// Parses field's values as <see cref="double"/> (using 
         /// <see cref="IFieldCache.GetDoubles(Index.AtomicReader, string, FieldCache.IDoubleParser, bool)"/> and sorts by ascending value
         /// </summary>
-        public sealed class DoubleComparer : NumericComparer<double>
+        public sealed class DoubleComparer : NumericComparer<J2N.Numerics.Double>
         {
             private readonly double[] values;
             private readonly FieldCache.IDoubleParser parser;
@@ -452,7 +495,7 @@ namespace Lucene.Net.Search
             private double bottom;
             private double topValue;
 
-            internal DoubleComparer(int numHits, string field, FieldCache.IParser parser, double? missingValue)
+            internal DoubleComparer(int numHits, string field, FieldCache.IParser parser, J2N.Numerics.Double missingValue)
                 : base(field, missingValue)
             {
                 values = new double[numHits];
@@ -461,13 +504,10 @@ namespace Lucene.Net.Search
 
             public override int Compare(int slot1, int slot2)
             {
-                double v1 = values[slot1];
-                double v2 = values[slot2];
-
                 // LUCENENET specific special case:
                 // In case of zero, we may have a "positive 0" or "negative 0"
                 // to tie-break. So, we use JCG.Comparer<double> to do the comparison.
-                return JCG.Comparer<double>.Default.Compare(v1, v2);
+                return JCG.Comparer<double>.Default.Compare(values[slot1], values[slot2]);
             }
 
             public override int CompareBottom(int doc)
@@ -477,7 +517,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && v2 == 0.0 && !m_docsWithField.Get(doc))
                 {
-                    v2 = m_missingValue.GetValueOrDefault();
+                    v2 = m_missingValue;
                 }
 
                 // LUCENENET specific special case:
@@ -493,7 +533,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && v2 == 0.0 && !m_docsWithField.Get(doc))
                 {
-                    v2 = m_missingValue.GetValueOrDefault();
+                    v2 = m_missingValue;
                 }
 
                 values[slot] = v2;
@@ -509,15 +549,15 @@ namespace Lucene.Net.Search
 
             public override void SetBottom(int slot)
             {
-                this.bottom = values[slot];
+                bottom = values[slot];
             }
 
-            public override void SetTopValue(object value)
+            public override void SetTopValue(J2N.Numerics.Double value)
             {
-                topValue = (double)value;
+                topValue = value ?? throw new ArgumentNullException(nameof(value)); // LUCENENET specific - throw ArgumentNullException rather than getting a cast exception
             }
 
-            public override IComparable this[int slot] => values[slot];
+            public override J2N.Numerics.Double this[int slot] => values[slot]; // LUCENENET NOTE: Implicit cast will instantiate new instance
 
             public override int CompareTop(int doc)
             {
@@ -526,7 +566,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && docValue == 0 && !m_docsWithField.Get(doc))
                 {
-                    docValue = m_missingValue.GetValueOrDefault();
+                    docValue = m_missingValue;
                 }
 
                 // LUCENENET specific special case:
@@ -542,7 +582,7 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: This was FloatComparator in Lucene
         /// </summary>
-        public sealed class SingleComparer : NumericComparer<float>
+        public sealed class SingleComparer : NumericComparer<J2N.Numerics.Single>
         {
             private readonly float[] values;
             private readonly FieldCache.ISingleParser parser;
@@ -550,7 +590,7 @@ namespace Lucene.Net.Search
             private float bottom;
             private float topValue;
 
-            internal SingleComparer(int numHits, string field, FieldCache.IParser parser, float? missingValue)
+            internal SingleComparer(int numHits, string field, FieldCache.IParser parser, J2N.Numerics.Single missingValue)
                 : base(field, missingValue)
             {
                 values = new float[numHits];
@@ -559,13 +599,10 @@ namespace Lucene.Net.Search
 
             public override int Compare(int slot1, int slot2)
             {
-                float v1 = values[slot1];
-                float v2 = values[slot2];
-
                 // LUCENENET specific special case:
                 // In case of zero, we may have a "positive 0" or "negative 0"
                 // to tie-break. So, we use JCG.Comparer<double> to do the comparison.
-                return JCG.Comparer<float>.Default.Compare(v1, v2);
+                return JCG.Comparer<float>.Default.Compare(values[slot1], values[slot2]);
             }
 
             public override int CompareBottom(int doc)
@@ -576,7 +613,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
                 {
-                    v2 = m_missingValue.GetValueOrDefault();
+                    v2 = m_missingValue;
                 }
 
                 // LUCENENET specific special case:
@@ -592,7 +629,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
                 {
-                    v2 = m_missingValue.GetValueOrDefault();
+                    v2 = m_missingValue;
                 }
 
                 values[slot] = v2;
@@ -608,15 +645,15 @@ namespace Lucene.Net.Search
 
             public override void SetBottom(int slot)
             {
-                this.bottom = values[slot];
+                bottom = values[slot];
             }
 
-            public override void SetTopValue(object value)
+            public override void SetTopValue(J2N.Numerics.Single value)
             {
-                topValue = (float)value;
+                topValue = value ?? throw new ArgumentNullException(nameof(value)); // LUCENENET specific - throw ArgumentNullException rather than getting a cast exception
             }
 
-            public override IComparable this[int slot] => values[slot];
+            public override J2N.Numerics.Single this[int slot] => values[slot]; // LUCENENET NOTE: Implicit cast will instantiate new instance
 
             public override int CompareTop(int doc)
             {
@@ -625,7 +662,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && docValue == 0 && !m_docsWithField.Get(doc))
                 {
-                    docValue = m_missingValue.GetValueOrDefault();
+                    docValue = m_missingValue;
                 }
 
                 // LUCENENET specific special case:
@@ -642,7 +679,7 @@ namespace Lucene.Net.Search
         /// NOTE: This was ShortComparator in Lucene
         /// </summary>
         [Obsolete]
-        public sealed class Int16Comparer : NumericComparer<short>
+        public sealed class Int16Comparer : NumericComparer<J2N.Numerics.Int16>
         {
             private readonly short[] values;
             private readonly FieldCache.IInt16Parser parser;
@@ -650,7 +687,7 @@ namespace Lucene.Net.Search
             private short bottom;
             private short topValue;
 
-            internal Int16Comparer(int numHits, string field, FieldCache.IParser parser, short? missingValue)
+            internal Int16Comparer(int numHits, string field, FieldCache.IParser parser, J2N.Numerics.Int16 missingValue)
                 : base(field, missingValue)
             {
                 values = new short[numHits];
@@ -659,7 +696,7 @@ namespace Lucene.Net.Search
 
             public override int Compare(int slot1, int slot2)
             {
-                // LUCENENET NOTE: Same logic as the Byte.compare() method in Java
+                // LUCENENET NOTE: Same logic as the Short.compare() method in Java
                 return JCG.Comparer<short>.Default.Compare(values[slot1], values[slot2]);
             }
 
@@ -670,10 +707,10 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
                 {
-                    v2 = m_missingValue.GetValueOrDefault();
+                    v2 = m_missingValue;
                 }
 
-                // LUCENENET NOTE: Same logic as the Byte.compare() method in Java
+                // LUCENENET NOTE: Same logic as the Short.compare() method in Java
                 return JCG.Comparer<short>.Default.Compare(bottom, v2);
             }
 
@@ -684,7 +721,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
                 {
-                    v2 = m_missingValue.GetValueOrDefault();
+                    v2 = m_missingValue;
                 }
 
                 values[slot] = v2;
@@ -698,17 +735,17 @@ namespace Lucene.Net.Search
                 return base.SetNextReader(context);
             }
 
-            public override void SetBottom(int slot)
+            public override void SetBottom(int slot) 
             {
-                this.bottom = values[slot];
+                bottom = values[slot];
             }
 
-            public override void SetTopValue(object value)
+            public override void SetTopValue(J2N.Numerics.Int16 value)
             {
-                topValue = (short)value;
+                topValue = value ?? throw new ArgumentNullException(nameof(value)); // LUCENENET specific - throw ArgumentNullException rather than getting a cast exception
             }
 
-            public override IComparable this[int slot] => values[slot];
+            public override J2N.Numerics.Int16 this[int slot] => values[slot]; // LUCENENET NOTE: Implicit cast will instantiate new instance or pull reference type from cache
 
             public override int CompareTop(int doc)
             {
@@ -717,7 +754,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && docValue == 0 && !m_docsWithField.Get(doc))
                 {
-                    docValue = m_missingValue.GetValueOrDefault();
+                    docValue = m_missingValue;
                 }
                 return JCG.Comparer<short>.Default.Compare(topValue, docValue);
             }
@@ -729,7 +766,7 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: This was IntComparator in Lucene
         /// </summary>
-        public sealed class Int32Comparer : NumericComparer<int>
+        public sealed class Int32Comparer : NumericComparer<J2N.Numerics.Int32>
         {
             private readonly int[] values;
             private readonly FieldCache.IInt32Parser parser;
@@ -737,7 +774,7 @@ namespace Lucene.Net.Search
             private int bottom; // Value of bottom of queue
             private int topValue;
 
-            internal Int32Comparer(int numHits, string field, FieldCache.IParser parser, int? missingValue)
+            internal Int32Comparer(int numHits, string field, FieldCache.IParser parser, J2N.Numerics.Int32 missingValue)
                 : base(field, missingValue)
             {
                 values = new int[numHits];
@@ -756,7 +793,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
                 {
-                    v2 = m_missingValue.GetValueOrDefault();
+                    v2 = m_missingValue;
                 }
                 return JCG.Comparer<int>.Default.Compare(bottom, v2);
             }
@@ -768,7 +805,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
                 {
-                    v2 = m_missingValue.GetValueOrDefault();
+                    v2 = m_missingValue;
                 }
 
                 values[slot] = v2;
@@ -784,15 +821,15 @@ namespace Lucene.Net.Search
 
             public override void SetBottom(int slot)
             {
-                this.bottom = values[slot];
+                bottom = values[slot];
             }
 
-            public override void SetTopValue(object value)
+            public override void SetTopValue(J2N.Numerics.Int32 value)
             {
-                topValue = (int)value;
+                topValue = value ?? throw new ArgumentNullException(nameof(value)); // LUCENENET specific - throw ArgumentNullException rather than getting a cast exception
             }
 
-            public override IComparable this[int slot] => values[slot];
+            public override J2N.Numerics.Int32 this[int slot] => values[slot]; // LUCENENET NOTE: Implicit cast will instantiate new instance or pull reference type from cache
 
             public override int CompareTop(int doc)
             {
@@ -801,7 +838,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && docValue == 0 && !m_docsWithField.Get(doc))
                 {
-                    docValue = m_missingValue.GetValueOrDefault();
+                    docValue = m_missingValue;
                 }
                 return JCG.Comparer<int>.Default.Compare(topValue, docValue);
             }
@@ -813,7 +850,7 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: This was LongComparator in Lucene
         /// </summary>
-        public sealed class Int64Comparer : NumericComparer<long>
+        public sealed class Int64Comparer : NumericComparer<J2N.Numerics.Int64>
         {
             private readonly long[] values;
             private readonly FieldCache.IInt64Parser parser;
@@ -821,7 +858,7 @@ namespace Lucene.Net.Search
             private long bottom;
             private long topValue;
 
-            internal Int64Comparer(int numHits, string field, FieldCache.IParser parser, long? missingValue)
+            internal Int64Comparer(int numHits, string field, FieldCache.IParser parser, J2N.Numerics.Int64 missingValue)
                 : base(field, missingValue)
             {
                 values = new long[numHits];
@@ -843,7 +880,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
                 {
-                    v2 = m_missingValue.GetValueOrDefault();
+                    v2 = m_missingValue;
                 }
 
                 // LUCENENET NOTE: Same logic as the Long.compare() method in Java
@@ -857,7 +894,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
                 {
-                    v2 = m_missingValue.GetValueOrDefault();
+                    v2 = m_missingValue;
                 }
 
                 values[slot] = v2;
@@ -873,15 +910,15 @@ namespace Lucene.Net.Search
 
             public override void SetBottom(int slot)
             {
-                this.bottom = values[slot];
+                bottom = values[slot];
             }
 
-            public override void SetTopValue(object value)
+            public override void SetTopValue(J2N.Numerics.Int64 value)
             {
-                topValue = (long)value;
+                topValue = value ?? throw new ArgumentNullException(nameof(value)); // LUCENENET specific - throw ArgumentNullException rather than getting a cast exception
             }
 
-            public override IComparable this[int slot] => values[slot];
+            public override J2N.Numerics.Int64 this[int slot] => values[slot]; // LUCENENET NOTE: Implicit cast will instantiate new instance or pull reference type from cache
 
             public override int CompareTop(int doc)
             {
@@ -890,7 +927,7 @@ namespace Lucene.Net.Search
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && docValue == 0 && !m_docsWithField.Get(doc))
                 {
-                    docValue = m_missingValue.GetValueOrDefault();
+                    docValue = m_missingValue;
                 }
                 return JCG.Comparer<long>.Default.Compare(topValue, docValue);
             }
@@ -904,7 +941,7 @@ namespace Lucene.Net.Search
         /// <see cref="IndexSearcher.Search(Query, int)"/> use when no <see cref="Sort"/> is
         /// specified).
         /// </summary>
-        public sealed class RelevanceComparer : FieldComparer<float>
+        public sealed class RelevanceComparer : FieldComparer<J2N.Numerics.Single>
         {
             private readonly float[] scores;
             private float bottom;
@@ -951,9 +988,9 @@ namespace Lucene.Net.Search
                 this.bottom = scores[slot];
             }
 
-            public override void SetTopValue(object value)
+            public override void SetTopValue(J2N.Numerics.Single value)
             {
-                topValue = (float)value;
+                topValue = value ?? throw new ArgumentNullException(nameof(value)); // LUCENENET specific - throw ArgumentNullException rather than getting a cast exception
             }
 
             public override void SetScorer(Scorer scorer)
@@ -971,14 +1008,21 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override IComparable this[int slot] => scores[slot];
+            public override J2N.Numerics.Single this[int slot] => scores[slot]; // LUCENENET NOTE: Implicit cast will instantiate new instance
 
             // Override because we sort reverse of natural Float order:
-            public override int CompareValues(float first, float second)
+            public override int CompareValues(J2N.Numerics.Single first, J2N.Numerics.Single second)
             {
+                // LUCENENET specific - the Lucene 4.8.0 implementation would throw NPE if first was null.
+                // .NET isn't very forgiving if exceptions occur during comparisons, so copying the
+                // same logic as System.Collections.Generic.Comparer<T> for null handling.
+                if (first is null)
+                    return second is null ? 0 : -1;
+                else if (second is null)
+                    return 1;
+
                 // Reversed intentionally because relevance by default
                 // sorts descending:
-
                 // LUCENENET specific special case:
                 // In case of zero, we may have a "positive 0" or "negative 0"
                 // to tie-break. So, we use JCG.Comparer<float> to do the comparison.
@@ -999,7 +1043,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Sorts by ascending docID </summary>
-        public sealed class DocComparer : FieldComparer<int?>
+        public sealed class DocComparer : FieldComparer<J2N.Numerics.Int32>
         {
             private readonly int[] docIDs;
             private int docBase;
@@ -1042,12 +1086,12 @@ namespace Lucene.Net.Search
                 this.bottom = docIDs[slot];
             }
 
-            public override void SetTopValue(object value)
+            public override void SetTopValue(J2N.Numerics.Int32 value)
             {
-                topValue = (int)value;
+                topValue = value ?? throw new ArgumentNullException(nameof(value)); // LUCENENET specific - throw ArgumentNullException rather than getting a cast exception
             }
 
-            public override IComparable this[int slot] => docIDs[slot];
+            public override J2N.Numerics.Int32 this[int slot] => docIDs[slot]; // LUCENENET NOTE: Implicit cast will instantiate new instance or pull reference type from cache
 
             public override int CompareTop(int doc)
             {
@@ -1199,15 +1243,15 @@ namespace Lucene.Net.Search
 
                 BytesRef val1 = values[slot1];
                 BytesRef val2 = values[slot2];
-                if (val1 == null)
+                if (val1 is null)
                 {
-                    if (val2 == null)
+                    if (val2 is null)
                     {
                         return 0;
                     }
                     return missingSortCmp;
                 }
-                else if (val2 == null)
+                else if (val2 is null)
                 {
                     return -missingSortCmp;
                 }
@@ -1251,7 +1295,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(ord >= 0);
-                    if (values[slot] == null)
+                    if (values[slot] is null)
                     {
                         values[slot] = new BytesRef();
                     }
@@ -1316,7 +1360,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    if (bottomValue == null)
+                    if (bottomValue is null)
                     {
                         // missingOrd is null for all segments
                         if (Debugging.AssertsEnabled) Debugging.Assert(ords[bottomSlot] == missingOrd);
@@ -1344,15 +1388,15 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override void SetTopValue(object value)
+            public override void SetTopValue(BytesRef value)
             {
                 // null is fine: it means the last doc of the prior
                 // search was missing this value
-                topValue = (BytesRef)value;
+                topValue = value;
                 //System.out.println("setTopValue " + topValue);
             }
 
-            public override IComparable this[int slot] => values[slot];
+            public override BytesRef this[int slot] => values[slot];
 
             public override int CompareTop(int doc)
             {
@@ -1383,15 +1427,15 @@ namespace Lucene.Net.Search
 
             public override int CompareValues(BytesRef val1, BytesRef val2)
             {
-                if (val1 == null)
+                if (val1 is null)
                 {
-                    if (val2 == null)
+                    if (val2 is null)
                     {
                         return 0;
                     }
                     return missingSortCmp;
                 }
-                else if (val2 == null)
+                else if (val2 is null)
                 {
                     return -missingSortCmp;
                 }
@@ -1460,7 +1504,7 @@ namespace Lucene.Net.Search
 
             public override void Copy(int slot, int doc)
             {
-                if (values[slot] == null)
+                if (values[slot] is null)
                 {
                     values[slot] = new BytesRef();
                 }
@@ -1480,16 +1524,16 @@ namespace Lucene.Net.Search
                 this.bottom = values[slot];
             }
 
-            public override void SetTopValue(object value)
+            public override void SetTopValue(BytesRef value)
             {
                 if (value is null)
                 {
                     throw new ArgumentNullException(nameof(value), "value cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
                 }
-                topValue = (BytesRef)value;
+                topValue = value;
             }
 
-            public override IComparable this[int slot] => values[slot];
+            public override BytesRef this[int slot] => values[slot];
 
             public override int CompareValues(BytesRef val1, BytesRef val2)
             {

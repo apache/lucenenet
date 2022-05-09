@@ -1,9 +1,9 @@
 ﻿using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
 using NUnit.Framework;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Distance;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Distance;
+using Spatial4n.Shapes;
 using System.Collections.Generic;
 using System.Globalization;
 using JCG = J2N.Collections.Generic;
@@ -35,7 +35,7 @@ namespace Lucene.Net.Spatial.Prefix
         private void init(int maxLength)
         {
             this.maxLength = maxLength;
-            this.ctx = SpatialContext.GEO;
+            this.ctx = SpatialContext.Geo;
             GeohashPrefixTree grid = new GeohashPrefixTree(ctx, maxLength);
             this.strategy = new RecursivePrefixTreeStrategy(grid, GetType().Name);
         }
@@ -60,7 +60,7 @@ namespace Lucene.Net.Spatial.Prefix
             init(GeohashPrefixTree.MaxLevelsPossible);
             GeohashPrefixTree grid = (GeohashPrefixTree)((RecursivePrefixTreeStrategy)strategy).Grid;
             //DWS: I know this to be true.  11 is needed for one meter
-            double degrees = DistanceUtils.Dist2Degrees(0.001, DistanceUtils.EARTH_MEAN_RADIUS_KM);
+            double degrees = DistanceUtils.Dist2Degrees(0.001, DistanceUtils.EarthMeanRadiusKilometers);
             assertEquals(11, grid.GetLevelForDistance(degrees));
         }
 
@@ -69,17 +69,17 @@ namespace Lucene.Net.Spatial.Prefix
         {
             init(GeohashPrefixTree.MaxLevelsPossible);
 
-            Spatial4n.Core.Shapes.IPoint iPt = ctx.MakePoint(2.8028712999999925, 48.3708044);//lon, lat
+            IPoint iPt = ctx.MakePoint(2.8028712999999925, 48.3708044);//lon, lat
             AddDocument(newDoc("iPt", iPt));
             Commit();
 
-            Spatial4n.Core.Shapes.IPoint qPt = ctx.MakePoint(2.4632387000000335, 48.6003516);
+            IPoint qPt = ctx.MakePoint(2.4632387000000335, 48.6003516);
 
-            double KM2DEG = DistanceUtils.Dist2Degrees(1, DistanceUtils.EARTH_MEAN_RADIUS_KM);
+            double KM2DEG = DistanceUtils.Dist2Degrees(1, DistanceUtils.EarthMeanRadiusKilometers);
             double DEG2KM = 1 / KM2DEG;
 
             double DIST = 35.75;//35.7499...
-            assertEquals(DIST, ctx.DistCalc.Distance(iPt, qPt) * DEG2KM, 0.001);
+            assertEquals(DIST, ctx.DistanceCalculator.Distance(iPt, qPt) * DEG2KM, 0.001);
 
             //distErrPct will affect the query shape precision. The indexed precision
             // was set to nearly zilch via init(GeohashPrefixTree.getMaxLevelsPossible());
@@ -99,7 +99,7 @@ namespace Lucene.Net.Spatial.Prefix
             checkHits(q(qPt, 34 * KM2DEG, distErrPct), 0, null);
         }
 
-        private SpatialArgs q(Spatial4n.Core.Shapes.IPoint pt, double distDEG, double distErrPct)
+        private SpatialArgs q(IPoint pt, double distDEG, double distErrPct)
         {
             IShape shape = ctx.MakeCircle(pt, distDEG);
             SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, shape);
@@ -113,14 +113,14 @@ namespace Lucene.Net.Spatial.Prefix
             assertEquals("" + args, assertNumFound, got.numFound);
             if (assertIds != null)
             {
-                ISet<int?> gotIds = new JCG.HashSet<int?>();
+                ISet<int> gotIds = new JCG.HashSet<int>();
                 foreach (SearchResult result in got.results)
                 {
-                    gotIds.add(int.Parse(result.document.Get("id"), CultureInfo.InvariantCulture));
+                    gotIds.Add(int.Parse(result.document.Get("id"), CultureInfo.InvariantCulture));
                 }
                 foreach (int assertId in assertIds)
                 {
-                    assertTrue("has " + assertId, gotIds.contains(assertId));
+                    assertTrue("has " + assertId, gotIds.Contains(assertId));
                 }
             }
         }

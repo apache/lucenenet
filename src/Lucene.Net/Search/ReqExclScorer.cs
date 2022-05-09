@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
 
         public override int NextDoc()
         {
-            if (reqScorer == null)
+            if (reqScorer is null)
             {
                 return doc;
             }
@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
                 reqScorer = null; // exhausted, nothing left
                 return doc;
             }
-            if (exclDisi == null)
+            if (exclDisi is null)
             {
                 return doc;
             }
@@ -121,11 +121,11 @@ namespace Lucene.Net.Search
 
         public override int Advance(int target)
         {
-            if (reqScorer == null)
+            if (reqScorer is null)
             {
                 return doc = NO_MORE_DOCS;
             }
-            if (exclDisi == null)
+            if (exclDisi is null)
             {
                 return doc = reqScorer.Advance(target);
             }

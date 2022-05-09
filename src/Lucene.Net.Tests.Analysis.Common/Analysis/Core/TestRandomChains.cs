@@ -205,7 +205,7 @@ namespace Lucene.Net.Analysis.Core
                     var typeInfo = c;
 
                     return !typeInfo.IsAbstract && typeInfo.IsPublic && !typeInfo.IsInterface 
-                        && typeInfo.IsClass && (typeInfo.GetCustomAttribute<ObsoleteAttribute>() == null)
+                        && typeInfo.IsClass && (typeInfo.GetCustomAttribute<ObsoleteAttribute>() is null)
                         && (typeInfo.IsSubclassOf(typeof(Tokenizer)) || typeInfo.IsSubclassOf(typeof(TokenFilter)) || typeInfo.IsSubclassOf(typeof(CharFilter)));
                 })
                 .ToArray();
@@ -980,7 +980,7 @@ namespace Lucene.Net.Analysis.Core
             private TokenizerSpec NewTokenizer(Random random, TextReader reader)
             {
                 TokenizerSpec spec = new TokenizerSpec();
-                while (spec.tokenizer == null)
+                while (spec.tokenizer is null)
                 {
                     ConstructorInfo ctor = tokenizers[random.nextInt(tokenizers.size())];
                     StringBuilder descr = new StringBuilder();

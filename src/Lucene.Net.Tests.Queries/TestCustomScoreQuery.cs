@@ -115,7 +115,7 @@ namespace Lucene.Net.Tests.Queries
 
                 public override Explanation CustomExplain(int doc, Explanation subQueryExpl, Explanation valSrcExpl)
                 {
-                    float valSrcScore = valSrcExpl == null ? 0 : valSrcExpl.Value;
+                    float valSrcScore = valSrcExpl is null ? 0 : valSrcExpl.Value;
                     Explanation exp = new Explanation(valSrcScore + subQueryExpl.Value, "custom score: sum of:");
                     exp.AddDetail(subQueryExpl);
                     if (valSrcExpl != null)
@@ -339,31 +339,11 @@ namespace Lucene.Net.Tests.Queries
             assertEquals("queries should have same #hits", h1.Count, h4CustomAdd.Count);
             assertEquals("queries should have same #hits", h1.Count, h5CustomMulAdd.Count);
 
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q1, s, Rarely());
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q2, s, Rarely());
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q3, s, Rarely());
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q4, s, Rarely());
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q5, s, Rarely());
+            QueryUtils.Check(Random, q1, s, Rarely());
+            QueryUtils.Check(Random, q2, s, Rarely());
+            QueryUtils.Check(Random, q3, s, Rarely());
+            QueryUtils.Check(Random, q4, s, Rarely());
+            QueryUtils.Check(Random, q5, s, Rarely());
 
             // verify scores ratios
             foreach (int doc in h1.Keys)
@@ -395,7 +375,7 @@ namespace Lucene.Net.Tests.Queries
             }
         }
         
-        private void LogResult(string msg, IndexSearcher s, Query q, int doc, float? score1)
+        private void LogResult(string msg, IndexSearcher s, Query q, int doc, float score1)
         {
             Log(msg + " " + score1);
             Log("Explain by: " + q);

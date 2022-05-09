@@ -56,9 +56,9 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
         public override void ReflectWith(IAttributeReflector reflector)
         {
             string reading = GetReading();
-            string readingEN = reading == null ? null : ToStringUtil.GetRomanization(reading);
+            string readingEN = reading is null ? null : ToStringUtil.GetRomanization(reading);
             string pronunciation = GetPronunciation();
-            string pronunciationEN = pronunciation == null ? null : ToStringUtil.GetRomanization(pronunciation);
+            string pronunciationEN = pronunciation is null ? null : ToStringUtil.GetRomanization(pronunciation);
             reflector.Reflect<IReadingAttribute>("reading", reading);
             reflector.Reflect<IReadingAttribute>("reading (en)", readingEN);
             reflector.Reflect<IReadingAttribute>("pronunciation", pronunciation);

@@ -162,7 +162,7 @@ namespace Lucene.Net.Expressions.JS
         public override void DisplayRecognitionError(string[] tokenNames, RecognitionException re)
         {
             string message;
-            if (re.Token == null)
+            if (re.Token is null)
             {
                 message = " unknown error (missing token).";
             }
@@ -211,7 +211,7 @@ namespace Lucene.Net.Expressions.JS
 
         public static string GetReadableTokenString(IToken token)
         {
-            if (token == null)
+            if (token is null)
             {
                 return "unknown token";
             }

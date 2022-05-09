@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         public virtual void Add(BytesRef utf8)
         {
-            if (writer == null)
+            if (writer is null)
             {
                 throw IllegalStateException.Create();
             }
@@ -54,7 +54,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         public virtual IBytesRefEnumerator GetEnumerator()
         {
-            if (sorted == null)
+            if (sorted is null)
             {
                 CloseWriter();
 

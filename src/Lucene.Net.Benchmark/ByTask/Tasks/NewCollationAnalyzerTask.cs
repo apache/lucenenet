@@ -102,7 +102,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             try
             {
                 CultureInfo locale = RunData.Locale;
-                if (locale == null) throw RuntimeException.Create(
+                if (locale is null) throw RuntimeException.Create(
                     "Locale must be set with the NewLocale task!");
                 Analyzer analyzer = CreateAnalyzer(locale, impl);
                 RunData.Analyzer = analyzer;

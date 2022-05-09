@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis.Phonetic
 
             if (m_input.IncrementToken())
             {
-                encoded = (languages == null)
+                encoded = (languages is null)
                     ? engine.Encode(termAtt.ToString())
                     : engine.Encode(termAtt.ToString(), languages);
                 state = CaptureState();

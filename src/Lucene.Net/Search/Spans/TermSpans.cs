@@ -56,7 +56,7 @@ namespace Lucene.Net.Search.Spans
         {
             if (m_count == m_freq)
             {
-                if (m_postings == null)
+                if (m_postings is null)
                 {
                     return false;
                 }

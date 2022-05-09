@@ -167,7 +167,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             public SimpleCharacterRunAutomatonAnonymousClass(Automaton a, TermRangeQuery tq)
                 : base(a)
             {
-                if (tq.LowerTerm == null)
+                if (tq.LowerTerm is null)
                 {
                     lowerBound = null;
                 }
@@ -176,7 +176,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                     lowerBound = new CharsRef(tq.LowerTerm.Utf8ToString());
                 }
 
-                if (tq.UpperTerm == null)
+                if (tq.UpperTerm is null)
                 {
                     upperBound = null;
                 }
@@ -310,7 +310,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             public override BytesRef GetPayload()
             {
-                if (matchDescriptions[currentMatch] == null)
+                if (matchDescriptions[currentMatch] is null)
                 {
                     matchDescriptions[currentMatch] = new BytesRef(matchers[currentMatch].ToString());
                 }

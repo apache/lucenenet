@@ -37,7 +37,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
             if (node is IFieldableNode fieldNode &&
-                (node.Parent == null || !(node.Parent is IFieldableNode)))
+                (node.Parent is null || !(node.Parent is IFieldableNode)))
             {
                 QueryConfigHandler config = GetQueryConfigHandler();
 
@@ -48,11 +48,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                     if (fieldConfig != null)
                     {
-                        float? boost = fieldConfig.Get(ConfigurationKeys.BOOST);
-
-                        if (boost != null)
+                        if (fieldConfig.TryGetValue(ConfigurationKeys.BOOST, out float boost))
                         {
-                            return new BoostQueryNode(node, boost.Value);
+                            return new BoostQueryNode(node, boost);
                         }
                     }
                 }

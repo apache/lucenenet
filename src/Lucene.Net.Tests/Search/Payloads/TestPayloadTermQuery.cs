@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -315,11 +315,7 @@ namespace Lucene.Net.Search.Payloads
             Assert.IsTrue(hits.TotalHits == 1, "hits Size: " + hits.TotalHits + " is not: " + 1);
             int[] results = new int[1];
             results[0] = 0; //hits.ScoreDocs[0].Doc;
-            CheckHits.CheckHitCollector(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, query, PayloadHelper.NO_PAYLOAD_FIELD, searcher, results);
+            CheckHits.CheckHitCollector(Random, query, PayloadHelper.NO_PAYLOAD_FIELD, searcher, results);
         }
 
         internal class BoostingSimilarity : DefaultSimilarity

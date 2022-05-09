@@ -4,8 +4,9 @@ using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Support;
 using NUnit.Framework;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Context.Nts;
+using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -37,14 +38,15 @@ namespace Lucene.Net.Spatial.Prefix
         {
             try
             {
-                IDictionary<string, string> args = new Dictionary<string, string>();
-                args.Put("spatialContextFactory",
-                    typeof(Spatial4n.Core.Context.Nts.NtsSpatialContextFactory).AssemblyQualifiedName);
-                ctx = SpatialContextFactory.MakeSpatialContext(args /*, getClass().getClassLoader()*/);
+                IDictionary<string, string> args = new Dictionary<string, string>
+                {
+                    ["SpatialContextFactory"] = typeof(NtsSpatialContextFactory).FullName
+                };
+                ctx = SpatialContextFactory.MakeSpatialContext(args, GetType().Assembly);
             }
             catch (Exception e) when (e.IsNoClassDefFoundError())
             {
-                AssumeTrue("This test requires Spatial4n.Core.NTS: " + e, false);
+                AssumeTrue("This test requires Spatial4n: " + e, false);
             }
 
             GeohashPrefixTree grid = new GeohashPrefixTree(ctx, 11);//< 1 meter == 11 maxLevels

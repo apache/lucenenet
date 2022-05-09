@@ -1,6 +1,8 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Runtime.CompilerServices;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -32,25 +34,31 @@ namespace Lucene.Net.Search
         // we need to track scorers using a weak hash map because otherwise we
         // could loose references because of eg.
         // AssertingScorer.Score(Collector) which needs to delegate to work correctly
-#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
-        private static readonly ConditionalWeakTable<Scorer, WeakReference<AssertingScorer>> ASSERTING_INSTANCES =
-            new ConditionalWeakTable<Scorer, WeakReference<AssertingScorer>>();
-#else
-        private static readonly IDictionary<Scorer, WeakReference<AssertingScorer>> ASSERTING_INSTANCES = 
-            new WeakDictionary<Scorer, WeakReference<AssertingScorer>>().AsConcurrent();
+#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+        private static readonly object assertingInstancesLock = new object();
 #endif
+        private static readonly ConditionalWeakTable<Scorer, WeakReference<AssertingScorer>> assertingInstances =
+            new ConditionalWeakTable<Scorer, WeakReference<AssertingScorer>>();
 
         public static Scorer Wrap(Random random, Scorer other)
         {
-            if (other == null || other is AssertingScorer)
+            if (other is null || other is AssertingScorer)
             {
                 return other;
             }
             AssertingScorer assertScorer = new AssertingScorer(random, other);
-#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
-            ASSERTING_INSTANCES.AddOrUpdate(other, new WeakReference<AssertingScorer>(assertScorer));
-#else
-            ASSERTING_INSTANCES[other] = new WeakReference<AssertingScorer>(assertScorer);
+#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+            UninterruptableMonitor.Enter(assertingInstancesLock);
+            try
+            {
+#endif
+                assertingInstances.AddOrUpdate(other, new WeakReference<AssertingScorer>(assertScorer));
+#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(assertingInstancesLock);
+            }
 #endif
 
             return assertScorer;
@@ -58,23 +66,35 @@ namespace Lucene.Net.Search
 
         internal static Scorer GetAssertingScorer(Random random, Scorer other)
         {
-            if (other == null || other is AssertingScorer)
+            if (other is null || other is AssertingScorer)
             {
                 return other;
             }
-            if (!ASSERTING_INSTANCES.TryGetValue(other, out WeakReference<AssertingScorer> assertingScorerRef) || assertingScorerRef == null ||
-                !assertingScorerRef.TryGetTarget(out AssertingScorer assertingScorer) || assertingScorer == null)
+#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+            UninterruptableMonitor.Enter(assertingInstancesLock);
+            try
             {
-                // can happen in case of memory pressure or if
-                // scorer1.Score(collector) calls
-                // collector.setScorer(scorer2) with scorer1 != scorer2, such as
-                // BooleanScorer. In that case we can't enable all assertions
-                return new AssertingScorer(random, other);
+#endif
+                if (!assertingInstances.TryGetValue(other, out WeakReference<AssertingScorer> assertingScorerRef) || assertingScorerRef is null ||
+                    !assertingScorerRef.TryGetTarget(out AssertingScorer assertingScorer) || assertingScorer is null)
+                {
+                    // can happen in case of memory pressure or if
+                    // scorer1.Score(collector) calls
+                    // collector.setScorer(scorer2) with scorer1 != scorer2, such as
+                    // BooleanScorer. In that case we can't enable all assertions
+                    return new AssertingScorer(random, other);
+                }
+                else
+                {
+                    return assertingScorer;
+                }
+#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
             }
-            else
+            finally
             {
-                return assertingScorer;
+                UninterruptableMonitor.Exit(assertingInstancesLock);
             }
+#endif
         }
 
         internal readonly Random random;

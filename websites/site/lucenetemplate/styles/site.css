@@ -27,6 +27,12 @@
 #homepage code {
   font-family: "Roboto Mono", "Courier New", "Courier", monospace;
 }
+#homepage h1{
+    margin: 10px auto 30px auto;
+    line-height:1.4;
+    font-size: 33px;
+    max-width: 700px
+}
 #homepage h2,
 #homepage h3,
 #homepage h4 {
@@ -56,11 +62,6 @@ nav.navbar {
 }
 .home-section:nth-of-type(even) {
   background-color: rgb(247, 247, 247);
-}
-@media screen and (min-width: 58em) {
-  #homepage section {
-    font-size: 20px;
-  }
 }
 /* END From hugo academic css */
 
@@ -112,20 +113,27 @@ pre.clean {
   /* IE6-9 */
   color: white;
 }
+#intro.home-section .container {
+    padding-left:25px;
+    padding-right:25px;
+    margin-top: 50px;
+}
+#intro.home-section {
+    padding-top: 10px;
+}
+
 #intro p {
   margin: 0 0 10px;
   margin-bottom: 2rem;
 }
+
 /* hack for issue with padding disappearing in middle 2 sizes on home page */
 @media screen and (max-width: 1200px) {
   #intro .container {
     margin-top: 80px;
   }
-  #intro.home-section .container {
-    margin-top: 50px;
-  }
 }
-@media screen and (max-width: 750px) {
+@media screen and (max-width: 768px) {
   #intro {
     margin-top: 0px;
   }
@@ -135,6 +143,9 @@ pre.clean {
   #intro.home-section {
     padding-top: 1px;
   }
+  #intro.home-section .container {
+    margin-top: 30px;
+  }
 }
 
 /* hack for issue with title being overlapped by breadcrumb in middle 2 sizes */
@@ -142,13 +153,19 @@ pre.clean {
     div.body-content, div.contribution {
         margin-top: 50px;
     }
+    #intro.home-section {
+        padding-top: 65px;
+    }
 }
-@media screen and (max-width: 750px) {
+@media screen and (max-width: 768px) {
     div.body-content, div.contribution {
         margin-top: 0px;
     }
     div.body-content {
         padding-bottom: 30px;
+    }
+    #intro.home-section {
+        padding-top: 10px;
     }
 }
 

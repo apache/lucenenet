@@ -20,6 +20,8 @@
 -->
 <Project>
 
+  <Import Project=".build/dependencies.props" Condition="Exists('.build/dependencies.props')" />
+
   <!-- Features in .NET 5.x and .NET 6.x only -->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) ">
 
@@ -135,6 +137,32 @@
     </ItemGroup>
   </Target>
 
-  <Import Project="build\Release.targets" Condition="Exists('build\Release.targets')" />
+  <Target Name="PrintTargetFrameworks" Label="Prints the value for the $(TargetFrameworks) property or 'none' if no frameworks apply. Pass TestProjectsOnly=true to get results only if this is a test project.">
+    <PropertyGroup>
+      <DoOutputTargetFrameworks Condition=" '$(TestProjectsOnly)' != 'true' Or ('$(TestProjectsOnly)' == 'true' And '$(IsTestProject)' == 'true')">true</DoOutputTargetFrameworks>
+      <OutputTargetFrameworks Condition=" '$(DoOutputTargetFrameworks)' == 'true' ">$(TargetFramework)</OutputTargetFrameworks>
+      <!-- Fallback to TargetFrameworks field if TargetFramework is empty -->
+      <OutputTargetFrameworks Condition=" '$(DoOutputTargetFrameworks)' == 'true' And '$(OutputTargetFrameworks)' == '' ">$(TargetFrameworks)</OutputTargetFrameworks>
+      <OutputTargetFrameworks Condition=" '$(OutputTargetFrameworks)' == '' ">none</OutputTargetFrameworks>
+    </PropertyGroup>
+    <Message Text="$(OutputTargetFrameworks)" Importance="high"/>
+  </Target>
+
+  <!-- Global PackageReferences -->
+  <ItemGroup>
+    <!-- This is to allow the .NET Framework references to be machine-indepenedent so builds can happen without installing prerequisites -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="$(MicrosoftNETFrameworkReferenceAssembliesPackageReferenceVersion)" PrivateAssets="All" />
+  </ItemGroup>
+  
+  <!-- This is for testing only, we use SourceLink from any Azure DevOps git repo -->
+  <ItemGroup Condition=" '$(BUILD_REPOSITORY_PROVIDER)' == 'TfsGit' " Label="SourceLink Packages (experimental Azure Repos)">
+    <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="$(MicrosoftSourceLinkAzureReposGitPackageReferenceVersion)" PrivateAssets="All"/>
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(BUILD_REPOSITORY_PROVIDER)' == 'GitHub' " Label="SourceLink Packages (main repo)">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubPackageReferenceVersion)" PrivateAssets="All"/>
+  </ItemGroup>
+
+  <Import Project=".build/release.targets" Condition="Exists('.build/release.targets')" />
 
 </Project>

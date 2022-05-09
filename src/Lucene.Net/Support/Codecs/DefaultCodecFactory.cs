@@ -186,7 +186,7 @@ namespace Lucene.Net.Codecs
         /// <param name="assembly">The assembly to scan.</param>
         protected virtual void ScanForCodecs(Assembly assembly)
         {
-            if (assembly == null) return;
+            if (assembly is null) return;
 
             foreach (var c in assembly.GetTypes())
             {
@@ -299,7 +299,7 @@ namespace Lucene.Net.Codecs
             if (name is null)
                 throw new ArgumentNullException(nameof(name));
             EnsureInitialized();
-            if (!codecNameToTypeMap.TryGetValue(name, out Type codecType) || codecType == null)
+            if (!codecNameToTypeMap.TryGetValue(name, out Type codecType) || codecType is null)
             {
                 throw new ArgumentException($"Codec '{name}' cannot be loaded. If the codec is not " +
                     $"in a Lucene.Net assembly, you must subclass {typeof(DefaultCodecFactory).FullName}, " +

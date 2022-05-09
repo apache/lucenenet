@@ -26,109 +26,28 @@ GOTO endcommentblock
 ::
 :: Available Options:
 ::
-::   --Version:<Version>
-::   -v:<Version> - Assembly version number. If not supplied, the version will be the same 
-::                  as PackageVersion (excluding any pre-release tag).
+::   --file-version <FileVersion>
+::   -fv <FileVersion> - File version number. If not supplied, the file version will be the same
+::                  as PackageVersion (excluding any pre-release tag). This value is not allowed
+::                  if there is a version.props file (which is included in the release distribution).
 ::
-::   --PackageVersion:<PackageVersion>
-::   -pv:<PackageVersion> - Nuget package version. Default is 0.0.0, which instructs the script to use the value in Version.proj.
+::   --package-version <PackageVersion>
+::   -pv <PackageVersion> - Nuget package version. Default is the value defined in Directory.Build.props.
+::                  This value is not allowed if there is a version.props file (which is included in the
+::                  release distribution).
 ::
-::   --Configuration:<Configuration>
-::   -config:<Configuration> - MSBuild configuration for the build.
+::   --configuration <Configuration>
+::   -config <Configuration> - MSBuild configuration for the build.
 ::
-::   --Test
+::   --test
 ::   -t - Run the tests.
 ::
-::   --MaximumParallelJobs
+::   --maximum-parallel-jobs
 ::   -mp - Set the maxumum number of parallel jobs to run during testing. If not supplied, the default is 8.
 ::
 ::   All options are case insensitive.
 ::
-::   To escape any of the options, put double quotes around the entire value, like this:
-::   "-config:Release"
-::
 :: -----------------------------------------------------------------------------------
 :endcommentblock
-setlocal enabledelayedexpansion enableextensions
-
-REM Default values
-IF "%version%" == "" (
-	REM  If version is not supplied, our build script should parse it
-	REM  from the %PackageVersion% variable. We determine this by checking
-	REM  whether it is 0.0.0 (uninitialized).
- 	set version=0.0.0
-)
-IF "%PackageVersion%" == "" (
-    set PackageVersion=0.0.0
-)
-set configuration=Release
-IF NOT "%config%" == "" (
- 	set configuration=%config%
-)
-set runtests=false
-set maximumParallelJobs=8
-
-FOR %%a IN (%*) DO (
-	FOR /f "useback tokens=*" %%a in ('%%a') do (
-		set value=%%~a
-
-		set test=!value:~0,3!
-		IF /I !test! EQU -v: (
-			set version=!value:~3!
-		)
-
-		set test=!value:~0,10!
-		IF /I !test! EQU --version: (
-			set version=!value:~10!
-		)
-		
-		set test=!value:~0,4!
-		IF /I !test!==-pv: (
-			set packageversion=!value:~4!
-		)
-
-		set test=!value:~0,17!
-		IF /I !test!==--packageversion: (
-			set packageversion=!value:~17!
-		)
-
-		set test=!value:~0,8!
-		IF /I !test!==-config: (
-			set configuration=!value:~8!
-		)
-
-		set test=!value:~0,16!
-		IF /I !test!==--configuration: (
-			set configuration=!value:~16!
-		)
-		
-		set test=!value:~0,2!
-		IF /I !test!==-t (
-			set runtests=true
-		)
-
-		set test=!value:~0,6!
-		IF /I !test!==--test (
-			set runtests=true
-		)
-
-		set test=!value:~0,4!
-		IF /I !test!==-mp: (
-			set maximumParallelJobs=!value:~4!
-		)
-
-		set test=!value:~0,22!
-		IF /I !test!==--maximumparalleljobs: (
-			set maximumParallelJobs=!value:~22!
-		)
-	)
-)
-
-set tasks="Default"
-if "!runtests!"=="true" (
-	set tasks="Default,Test"
-)
-
-powershell -ExecutionPolicy Bypass -Command "& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 %tasks% -properties @{configuration='%configuration%';maximumParalellJobs=%maximumParallelJobs%} -parameters @{ packageVersion='%PackageVersion%';version='%version%' } }"
-
-endlocal
+where pwsh >nul 2>nul
+if %ERRORLEVEL% NEQ 0 (echo "Powershell could not be found. Please install version 3 or higher.") else (pwsh -ExecutionPolicy bypass -Command "& '%~dpn0.ps1'" %*)

@@ -77,7 +77,7 @@ namespace Lucene.Net.Support
 
         public static IComparer<T> ReverseOrder<T>(IComparer<T> cmp)
         {
-            if (cmp == null)
+            if (cmp is null)
                 return ReverseOrder<T>();
 
             if (cmp is ReverseComparer2<T> reverseComparer2)
@@ -98,7 +98,7 @@ namespace Lucene.Net.Support
         /// </summary>
         public static string ToString<T>(ICollection<T> collection)
         {
-            if (collection == null)
+            if (collection is null)
                 return "null";
 
             if (collection.Count == 0)
@@ -141,7 +141,7 @@ namespace Lucene.Net.Support
         /// </summary>
         public static string ToString<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
         {
-            if (dictionary == null)
+            if (dictionary is null)
                 return "null";
 
             if (dictionary.Count == 0)
@@ -217,28 +217,14 @@ namespace Lucene.Net.Support
 
         #region ReverseComparer
 
-        //private class ReverseComparer : IComparer<IComparable>
-        //{
-        //    internal static readonly ReverseComparer REVERSE_ORDER = new ReverseComparer();
-
-
-        //    public int Compare(IComparable c1, IComparable c2)
-        //    {
-        //        return c2.CompareTo(c1);
-        //    }
-        //}
-
-        // LUCENENET NOTE: When consolidating this, it turns out that only the 
-        // CaseInsensitiveComparer works correctly in .NET (not sure why).
-        // So, this hybrid was made from the original Java implementation and the
-        // original implemenation (above) that used CaseInsensitiveComparer.
         private class ReverseComparer<T> : IComparer<T>
         {
             internal static readonly ReverseComparer<T> REVERSE_ORDER = new ReverseComparer<T>();
 
             public int Compare(T x, T y)
             {
-                return CaseInsensitiveComparer.Default.Compare(y, x);
+                // LUCENENET specific: Use J2N's Comparer<T> to mimic Java comparison behavior
+                return JCG.Comparer<T>.Default.Compare(y, x);
             }
         }
 

@@ -1,8 +1,8 @@
 ﻿using Lucene.Net.Search;
 using Lucene.Net.Spatial.Queries;
 using NUnit.Framework;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Shapes;
 using System;
 
 namespace Lucene.Net.Spatial.Vector
@@ -29,7 +29,7 @@ namespace Lucene.Net.Spatial.Vector
         public override void SetUp()
         {
             base.SetUp();
-            this.ctx = SpatialContext.GEO;
+            this.ctx = SpatialContext.Geo;
             this.strategy = new PointVectorStrategy(ctx, GetType().Name);
         }
 

@@ -1,0 +1,51 @@
+﻿<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+<Project>
+  <PropertyGroup Label="NuGet Package Properties">
+    <IsPackable>true</IsPackable>
+    <PackageTags>lucene.net;core;text;search;information;retrieval;lucene;apache;analysis;index;query</PackageTags>
+    <Authors>The Apache Software Foundation</Authors>
+    <PackageProjectUrl>https://lucenenet.apache.org</PackageProjectUrl>
+    <PackageIcon>lucene-net-icon-128x128.png</PackageIcon>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageNoticeFile>NOTICE.txt</PackageNoticeFile>
+
+    <!-- This git tag convention was used for legacy packages rather than using PackageVersion, so we are following suit -->
+    <VCSLabelPrefix>Lucene.Net_</VCSLabelPrefix>
+    <VCSLabel>$(VCSLabelPrefix)$(PackageVersion.Replace('.', '_').Replace('-', '_'))</VCSLabel>
+    <ReleaseNotesUrl>https://github.com/$(GitHubOrganization)/$(GitHubProject)/releases/tag/$(VCSLabel)</ReleaseNotesUrl>
+    <PackageReleaseNotes>$(ReleaseNotesUrl)</PackageReleaseNotes>
+
+    <!-- Build a compound description that links to the release notes and package documentation home page. -->
+    <Description>
+      $(Description)
+
+Documentation: $(PackageProjectUrl)/docs/$(PackageVersion)/api/$(PackageDocumentationRelativeUrl)
+
+This package is part of the Lucene.NET project: https://www.nuget.org/packages/Lucene.Net/$(PackageVersion)
+    </Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="$(SolutionDir)LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)"/>
+    <None Include="$(SolutionDir)NOTICE.txt" Pack="true" PackagePath="$(PackageNoticeFile)"/>
+    <None Include="$(SolutionDir)branding\logo\lucene-net-icon-128x128.png" Pack="true" PackagePath="$(PackageIcon)"/>
+  </ItemGroup>
+</Project>

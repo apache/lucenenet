@@ -338,7 +338,7 @@ namespace Lucene.Net.Index
                 for (int docID = 0; docID < sub.MaxDoc; docID++)
                 {
                     Document doc = sub.Document(docID);
-                    if (liveDocs == null || liveDocs.Get(docID))
+                    if (liveDocs is null || liveDocs.Get(docID))
                     {
                         Console.WriteLine("    docID=" + docID + " id:" + doc.Get("id"));
                     }
@@ -369,16 +369,16 @@ namespace Lucene.Net.Index
 
             // create mapping from id2 space to id2 based on idField
             Fields f1 = MultiFields.GetFields(r1);
-            if (f1 == null)
+            if (f1 is null)
             {
                 // make sure r2 is empty
                 Assert.IsNull(MultiFields.GetFields(r2));
                 return;
             }
             Terms terms1 = f1.GetTerms(idField);
-            if (terms1 == null)
+            if (terms1 is null)
             {
-                Assert.IsTrue(MultiFields.GetFields(r2) == null || MultiFields.GetFields(r2).GetTerms(idField) == null);
+                Assert.IsTrue(MultiFields.GetFields(r2) is null || MultiFields.GetFields(r2).GetTerms(idField) is null);
                 return;
             }
             TermsEnum termsEnum = terms1.GetEnumerator();
@@ -387,7 +387,7 @@ namespace Lucene.Net.Index
             IBits liveDocs2 = MultiFields.GetLiveDocs(r2);
 
             Fields fields = MultiFields.GetFields(r2);
-            if (fields == null)
+            if (fields is null)
             {
                 // make sure r1 is in fact empty (eg has only all
                 // deleted docs):
@@ -427,7 +427,7 @@ namespace Lucene.Net.Index
                 if (termDocs1.NextDoc() == DocIdSetIterator.NO_MORE_DOCS)
                 {
                     // this doc is deleted and wasn't replaced
-                    Assert.IsTrue(termDocs2 == null || termDocs2.NextDoc() == DocIdSetIterator.NO_MORE_DOCS);
+                    Assert.IsTrue(termDocs2 is null || termDocs2.NextDoc() == DocIdSetIterator.NO_MORE_DOCS);
                     continue;
                 }
 
@@ -568,7 +568,7 @@ namespace Lucene.Net.Index
                 for (; ; )
                 {
                     len1 = 0;
-                    if (termsEnum1 == null)
+                    if (termsEnum1 is null)
                     {
                         if (!fields1Enum.MoveNext())
                         {
@@ -576,7 +576,7 @@ namespace Lucene.Net.Index
                         }
                         field1 = fields1Enum.Current;
                         Terms terms = fields1.GetTerms(field1);
-                        if (terms == null)
+                        if (terms is null)
                         {
                             continue;
                         }
@@ -611,7 +611,7 @@ namespace Lucene.Net.Index
                 for (; ; )
                 {
                     len2 = 0;
-                    if (termsEnum2 == null)
+                    if (termsEnum2 is null)
                     {
                         if (!fields2Enum.MoveNext())
                         {
@@ -619,7 +619,7 @@ namespace Lucene.Net.Index
                         }
                         field2 = fields2Enum.Current;
                         Terms terms = fields2.GetTerms(field2);
-                        if (terms == null)
+                        if (terms is null)
                         {
                             continue;
                         }
@@ -705,9 +705,9 @@ namespace Lucene.Net.Index
 
         public static void VerifyEquals(Fields d1, Fields d2)
         {
-            if (d1 == null)
+            if (d1 is null)
             {
-                Assert.IsTrue(d2 == null || d2.Count == 0);
+                Assert.IsTrue(d2 is null || d2.Count == 0);
                 return;
             }
             Assert.IsTrue(d2 != null);

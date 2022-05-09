@@ -421,7 +421,7 @@ namespace Lucene.Net.Index
                 {
                     Document d = reader.Document(i);
                     IList<IIndexableField> fields = d.Fields;
-                    bool isProxDoc = d.GetField("content3") == null;
+                    bool isProxDoc = d.GetField("content3") is null;
                     if (isProxDoc)
                     {
                         int numFields = is40Index ? 7 : 5;
@@ -783,11 +783,7 @@ namespace Lucene.Net.Index
         {
             // first create a little index with the current code and get the version
             Directory currentDir = NewDirectory();
-            RandomIndexWriter riw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, currentDir);
+            RandomIndexWriter riw = new RandomIndexWriter(Random, currentDir);
             riw.AddDocument(new Document());
             riw.Dispose();
             DirectoryReader ir = DirectoryReader.Open(currentDir);
@@ -810,7 +806,7 @@ namespace Lucene.Net.Index
                     string oldVersion = air.SegmentInfo.Info.Version;
                     // TODO: does preflex codec actually set "3.0" here? this is safe to do I think.
                     // Assert.IsNotNull(oldVersion);
-                    Assert.IsTrue(oldVersion == null || comparer.Compare(oldVersion, currentVersion) < 0, "current Constants.LUCENE_MAIN_VERSION is <= an old index: did you forget to bump it?!");
+                    Assert.IsTrue(oldVersion is null || comparer.Compare(oldVersion, currentVersion) < 0, "current Constants.LUCENE_MAIN_VERSION is <= an old index: did you forget to bump it?!");
                 }
                 r.Dispose();
             }

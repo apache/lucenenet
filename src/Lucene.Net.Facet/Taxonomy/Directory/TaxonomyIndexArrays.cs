@@ -161,7 +161,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             DocsAndPositionsEnum positions = MultiFields.GetTermPositionsEnum(reader, null, Consts.FIELD_PAYLOADS, Consts.PAYLOAD_PARENT_BYTES_REF, DocsAndPositionsFlags.PAYLOADS);
 
             // shouldn't really happen, if it does, something's wrong
-            if (positions == null || positions.Advance(first) == DocIdSetIterator.NO_MORE_DOCS)
+            if (positions is null || positions.Advance(first) == DocIdSetIterator.NO_MORE_DOCS)
             {
                 throw new CorruptIndexException("Missing parent data for category " + first);
             }

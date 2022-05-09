@@ -1,6 +1,6 @@
 ﻿using J2N.Text;
 using Lucene.Net.Spatial.Queries;
-using Spatial4n.Core.Context;
+using Spatial4n.Context;
 using System;
 using System.Collections.Generic;
 using System.IO;

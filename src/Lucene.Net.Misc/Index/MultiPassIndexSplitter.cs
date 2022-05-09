@@ -62,11 +62,11 @@ namespace Lucene.Net.Index
         /// <exception cref="IOException"> If there is a low-level I/O error </exception>
         public virtual void Split(LuceneVersion version, IndexReader @in, Store.Directory[] outputs, bool seq)
         {
-            if (outputs == null || outputs.Length < 2)
+            if (outputs is null || outputs.Length < 2)
             {
                 throw new IOException("Invalid number of outputs.");
             }
-            if (@in == null || @in.NumDocs < 2)
+            if (@in is null || @in.NumDocs < 2)
             {
                 throw new IOException("Not enough documents for splitting");
             }
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
                         indexes.Add(DirectoryReader.Open(dir));
                     }
                 }
-                if (outDir == null)
+                if (outDir is null)
                 {
                     throw new Exception("Required argument missing: -out outputDir");
                 }

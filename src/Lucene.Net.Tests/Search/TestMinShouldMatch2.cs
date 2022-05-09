@@ -74,11 +74,7 @@ namespace Lucene.Net.Search
             base.BeforeClass();
 
             dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
             int numDocs = AtLeast(300);
             for (int i = 0; i < numDocs; i++)
             {
@@ -167,7 +163,7 @@ namespace Lucene.Net.Search
 
         private void AssertNext(Scorer expected, Scorer actual)
         {
-            if (actual == null)
+            if (actual is null)
             {
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, expected.NextDoc());
                 return;
@@ -186,7 +182,7 @@ namespace Lucene.Net.Search
 
         private void AssertAdvance(Scorer expected, Scorer actual, int amount)
         {
-            if (actual == null)
+            if (actual is null)
             {
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, expected.NextDoc());
                 return;
@@ -349,7 +345,7 @@ namespace Lucene.Net.Search
             internal readonly SortedSetDocValues dv;
             internal readonly int maxDoc;
 
-            internal readonly ISet<long?> ords = new JCG.HashSet<long?>();
+            internal readonly ISet<long> ords = new JCG.HashSet<long>();
             internal readonly SimScorer[] sims;
             internal readonly int minNrShouldMatch;
 

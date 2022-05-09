@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         public string Encode(string name)
         {
             // Bulletproof for trivial input - NINO
-            if (name == null || EMPTY.Equals(name, StringComparison.OrdinalIgnoreCase) ||
+            if (name is null || EMPTY.Equals(name, StringComparison.OrdinalIgnoreCase) ||
                 SPACE.Equals(name, StringComparison.OrdinalIgnoreCase) || name.Length == 1)
             {
                 return EMPTY;
@@ -195,11 +195,11 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         public virtual bool IsEncodeEquals(string name1, string name2)
         {
             // Bulletproof for trivial input - NINO
-            if (name1 == null || EMPTY.Equals(name1, StringComparison.OrdinalIgnoreCase) || SPACE.Equals(name1, StringComparison.OrdinalIgnoreCase))
+            if (name1 is null || EMPTY.Equals(name1, StringComparison.OrdinalIgnoreCase) || SPACE.Equals(name1, StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }
-            else if (name2 == null || EMPTY.Equals(name2, StringComparison.OrdinalIgnoreCase) || SPACE.Equals(name2, StringComparison.OrdinalIgnoreCase))
+            else if (name2 is null || EMPTY.Equals(name2, StringComparison.OrdinalIgnoreCase) || SPACE.Equals(name2, StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }
@@ -336,7 +336,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <returns>De-accented word.</returns>
         internal static string RemoveAccents(string accentedWord) // LUCENENET: CA1822: Mark members as static
         {
-            if (accentedWord == null)
+            if (accentedWord is null)
             {
                 return null;
             }

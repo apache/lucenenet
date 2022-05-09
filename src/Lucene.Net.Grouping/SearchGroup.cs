@@ -58,11 +58,11 @@ namespace Lucene.Net.Search.Grouping
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || GetType() != o.GetType()) return false;
+            if (o is null || GetType() != o.GetType()) return false;
 
             SearchGroup<TGroupValue> that = (SearchGroup<TGroupValue>)o;
 
-            if (GroupValue == null)
+            if (GroupValue is null)
             {
                 if (that.GroupValue != null)
                 {
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 //if (Debugging.AssertsEnabled) Debugging.Assert(iter.hasNext()); // No reasonable way to do this in .NET
                 ISearchGroup<T> group = iter.Current;
-                if (group.SortValues == null)
+                if (group.SortValues is null)
                 {
                     throw new ArgumentException("group.sortValues is null; you must pass fillFields=true to the first pass collector");
                 }
@@ -179,7 +179,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 if (other is MergedGroup<T> otherMergedGroup)
                 {
-                    if (groupValue == null)
+                    if (groupValue is null)
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(otherMergedGroup.groupValue != null);
                     }
@@ -205,9 +205,9 @@ namespace Lucene.Net.Search.Grouping
 
                 if (other is MergedGroup<T> otherMergedGroup)
                 {
-                    if (groupValue == null)
+                    if (groupValue is null)
                     {
-                        return otherMergedGroup == null;
+                        return otherMergedGroup is null;
                     }
                     else
                     {
@@ -226,7 +226,7 @@ namespace Lucene.Net.Search.Grouping
 
             public override int GetHashCode()
             {
-                if (groupValue == null)
+                if (groupValue is null)
                 {
                     return 0;
                 }
@@ -313,8 +313,8 @@ namespace Lucene.Net.Search.Grouping
                 while (shard.Iter.MoveNext())
                 {
                     ISearchGroup<T> group = shard.Next();
-                    bool isNew = !groupsSeen.TryGetValue(group.GroupValue, out MergedGroup<T> mergedGroup) || mergedGroup == null;
-                    //System.out.println("    next group=" + (group.groupValue == null ? "null" : ((BytesRef) group.groupValue).utf8ToString()) + " sort=" + Arrays.toString(group.sortValues));
+                    bool isNew = !groupsSeen.TryGetValue(group.GroupValue, out MergedGroup<T> mergedGroup) || mergedGroup is null;
+                    //System.out.println("    next group=" + (group.groupValue is null ? "null" : ((BytesRef) group.groupValue).utf8ToString()) + " sort=" + Arrays.toString(group.sortValues));
 
                     if (isNew)
                     {
@@ -419,7 +419,7 @@ namespace Lucene.Net.Search.Grouping
                     MergedGroup<T> group = queue.Min;
                     queue.Remove(group);
                     group.IsProcessed = true;
-                    //System.out.println("  pop: shards=" + group.shards + " group=" + (group.groupValue == null ? "null" : (((BytesRef) group.groupValue).utf8ToString())) + " sortValues=" + Arrays.toString(group.topValues));
+                    //System.out.println("  pop: shards=" + group.shards + " group=" + (group.groupValue is null ? "null" : (((BytesRef) group.groupValue).utf8ToString())) + " sortValues=" + Arrays.toString(group.topValues));
                     if (count++ >= offset)
                     {
                         SearchGroup<T> newGroup = new SearchGroup<T>();

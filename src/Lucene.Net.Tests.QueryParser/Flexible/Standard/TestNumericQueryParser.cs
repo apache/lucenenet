@@ -1,4 +1,5 @@
 ﻿using J2N.Collections.Generic.Extensions;
+using J2N.Numerics;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -51,7 +52,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         private readonly static String FIELD_NAME = "field";
         private static CultureInfo? LOCALE;
         private static TimeZoneInfo? TIMEZONE;
-        private static IDictionary<String, /*Number*/ object>? RANDOM_NUMBER_MAP;
+        private static IDictionary<String, J2N.Numerics.Number>? RANDOM_NUMBER_MAP;
         private readonly static IEscapeQuerySyntax ESCAPER = new Standard.Parser.EscapeQuerySyntax();
         private readonly static String DATE_FIELD_NAME = "date";
         private static DateFormat DATE_STYLE;
@@ -138,7 +139,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             qp = new StandardQueryParser(ANALYZER);
 
-            IDictionary<string, /*Number*/object> randomNumberMap = new JCG.Dictionary<string, object>();
+            IDictionary<string, Number> randomNumberMap = new JCG.Dictionary<string, Number>();
 
             /*SimpleDateFormat*/
             //string dateFormat;
@@ -213,7 +214,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             //NUMBER_FORMAT.setMaximumIntegerDigits((Random().nextInt() & 20) + 1);
             //NUMBER_FORMAT.setMinimumIntegerDigits((Random().nextInt() & 20) + 1);
 
-            NUMBER_FORMAT = new NumberFormat(LOCALE);
+            NUMBER_FORMAT = new MockNumberFormat(LOCALE);
 
             double randomDouble;
             long randomLong;
@@ -233,11 +234,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 )), LOCALE))
                 ;
 
-            randomNumberMap.Put(NumericType.INT64.ToString(), randomLong);
-            randomNumberMap.Put(NumericType.INT32.ToString(), randomInt);
-            randomNumberMap.Put(NumericType.SINGLE.ToString(), randomFloat);
-            randomNumberMap.Put(NumericType.DOUBLE.ToString(), randomDouble);
-            randomNumberMap.Put(DATE_FIELD_NAME, randomDate);
+            randomNumberMap[NumericType.INT64.ToString()] = (J2N.Numerics.Int64)randomLong;
+            randomNumberMap[NumericType.INT32.ToString()] = (J2N.Numerics.Int32)randomInt;
+            randomNumberMap[NumericType.SINGLE.ToString()] = (J2N.Numerics.Single)randomFloat;
+            randomNumberMap[NumericType.DOUBLE.ToString()] = (J2N.Numerics.Double)randomDouble;
+            randomNumberMap[DATE_FIELD_NAME] = (J2N.Numerics.Int64)randomDate;
 
             RANDOM_NUMBER_MAP = randomNumberMap.AsReadOnly();
 
@@ -252,7 +253,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             IDictionary<String, Field> numericFieldMap = new JCG.Dictionary<String, Field>();
             qp.NumericConfigMap = (numericConfigMap);
 
-            foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
+            foreach (NumericType type in (NumericType[])Enum.GetValues(typeof(NumericType)))
             {
                 if (type == NumericType.NONE)
                 {
@@ -301,7 +302,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             numericFieldMap.Put(DATE_FIELD_NAME, dateField);
             doc.Add(dateField);
 
-            foreach (NumberType numberType in Enum.GetValues(typeof(NumberType)))
+            foreach (NumberType numberType in (NumberType[])Enum.GetValues(typeof(NumberType)))
             {
                 setFieldValues(numberType, numericFieldMap);
                 if (Verbose) Console.WriteLine("Indexing document: " + doc);
@@ -314,10 +315,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         }
 
-        private static /*Number*/ object? GetNumberType(NumberType? numberType, String fieldName)
+        private static Number? GetNumberType(NumberType? numberType, String fieldName)
         {
 
-            if (numberType == null)
+            if (numberType is null)
             {
                 return null;
             }
@@ -329,28 +330,27 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     return RANDOM_NUMBER_MAP![fieldName];
 
                 case NumberType.NEGATIVE:
-                    /*Number*/
-                    object number = RANDOM_NUMBER_MAP![fieldName];
+                    Number number = RANDOM_NUMBER_MAP![fieldName];
 
                     if (NumericType.INT64.ToString().Equals(fieldName, StringComparison.Ordinal)
                         || DATE_FIELD_NAME.Equals(fieldName, StringComparison.Ordinal))
                     {
-                        number = -Convert.ToInt64(number);
+                        number = J2N.Numerics.Int64.GetInstance(-number.ToInt64());
 
                     }
                     else if (NumericType.DOUBLE.ToString().Equals(fieldName, StringComparison.Ordinal))
                     {
-                        number = -Convert.ToDouble(number);
+                        number = J2N.Numerics.Double.GetInstance(-number.ToDouble());
 
                     }
                     else if (NumericType.SINGLE.ToString().Equals(fieldName, StringComparison.Ordinal))
                     {
-                        number = -Convert.ToSingle(number);
+                        number = J2N.Numerics.Single.GetInstance(-number.ToSingle());
 
                     }
                     else if (NumericType.INT32.ToString().Equals(fieldName, StringComparison.Ordinal))
                     {
-                        number = -Convert.ToInt32(number);
+                        number = J2N.Numerics.Int32.GetInstance(-number.ToInt32());
 
                     }
                     else
@@ -362,7 +362,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     return number;
 
                 default:
-                    return 0;
+                    return J2N.Numerics.Int32.GetInstance(0);
 
             }
 
@@ -372,8 +372,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             IDictionary<String, Field> numericFieldMap)
         {
 
-            /*Number*/
-            object? number = GetNumberType(numberType, NumericType.DOUBLE
+            Number? number = GetNumberType(numberType, NumericType.DOUBLE
                 .ToString());
             numericFieldMap[NumericType.DOUBLE.ToString()].SetDoubleValue(Convert.ToDouble(
                 number));
@@ -397,6 +396,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         private static DateFormat randomDateStyle(Random random)
         {
             return DATE_STYLES[random.nextInt(DATE_STYLES.Length)];
+        }
+
+        private class MockNumberFormat : NumberFormat
+        {
+            public MockNumberFormat(IFormatProvider? provider) : base(provider) { }
+
+            public override Number Parse(string source)
+            {
+                double dbl = J2N.Numerics.Double.Parse(source, FormatProvider);
+                if (dbl == (long)dbl)
+                    return J2N.Numerics.Int64.GetInstance((long)dbl);
+                return J2N.Numerics.Double.GetInstance(dbl);
+            }
         }
 
         [Test]
@@ -497,7 +509,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             String lowerInclusiveStr = (lowerInclusive ? "[" : "{");
             String upperInclusiveStr = (upperInclusive ? "]" : "}");
 
-            foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
+            foreach (NumericType type in (NumericType[])Enum.GetValues(typeof(NumericType)))
             {
                 if (type == NumericType.NONE)
                 {
@@ -512,10 +524,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                   .append('"').append(upperInclusiveStr).append(' ');
             }
 
-            /*Number*/
-            object? lowerDateNumber = GetNumberType(lowerType, DATE_FIELD_NAME);
-            /*Number*/
-            object? upperDateNumber = GetNumberType(upperType, DATE_FIELD_NAME);
+            Number? lowerDateNumber = GetNumberType(lowerType, DATE_FIELD_NAME);
+            Number? upperDateNumber = GetNumberType(upperType, DATE_FIELD_NAME);
             String lowerDateStr;
             String upperDateStr;
 
@@ -566,7 +576,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             StringBuilder sb = new StringBuilder();
 
-            foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
+            foreach (NumericType type in (NumericType[])Enum.GetValues(typeof(NumericType)))
             {
                 if (type == NumericType.NONE)
                 {
@@ -597,7 +607,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             StringBuilder sb = new StringBuilder();
 
-            foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
+            foreach (NumericType type in (NumericType[])Enum.GetValues(typeof(NumericType)))
             {
                 if (type == NumericType.NONE)
                 {
@@ -645,7 +655,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         private static String NumberToString(/*Number*/ object? number)
         {
-            return number == null ? "*" : ESCAPER.Escape(NUMBER_FORMAT!.Format(number),
+            return number is null ? "*" : ESCAPER.Escape(NUMBER_FORMAT!.Format(number),
                 LOCALE, EscapeQuerySyntaxType.STRING).toString();
         }
 

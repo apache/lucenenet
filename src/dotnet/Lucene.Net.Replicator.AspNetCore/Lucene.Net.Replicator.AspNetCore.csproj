@@ -22,11 +22,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!-- For now, we are not deploying this to NuGet.org -->
-  <!--<Import Project="$(SolutionDir)build/NuGet.props" />-->
+  <!--<Import Project="$(SolutionDir).build/nuget.props" />-->
   
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>
-    <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net461</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net461</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Replicator.AspNetCore</AssemblyTitle>
     <Description>AspNetCore integration of Lucene.Net.Replicator for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
@@ -35,7 +34,7 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build/Dependencies.props" />
+  
 
   <ItemGroup>
     <ProjectReference Include="..\..\Lucene.Net.Replicator\Lucene.Net.Replicator.csproj" />

@@ -2,6 +2,7 @@
 using Lucene.Net.Util.Fst;
 using System;
 using System.IO;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Analysis.Ja.Dict
 {
@@ -34,10 +35,10 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
         private TokenInfoDictionary()
         {
-            FST<long?> fst = null;
+            FST<Int64> fst = null;
             using (Stream @is = GetResource(FST_FILENAME_SUFFIX))
             {
-                fst = new FST<long?>(new InputStreamDataInput(@is), PositiveInt32Outputs.Singleton);
+                fst = new FST<Int64>(new InputStreamDataInput(@is), PositiveInt32Outputs.Singleton);
             }
             // TODO: some way to configure?
             this.fst = new TokenInfoFST(fst, true);

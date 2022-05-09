@@ -452,7 +452,7 @@ namespace Lucene.Net.Index
         {
             get => infoStream;
             set =>
-                infoStream = value == null
+                infoStream = value is null
                     ? null
                     : (value is SafeTextWriterWrapper ? value : new SafeTextWriterWrapper(value));
         }
@@ -541,7 +541,7 @@ namespace Lucene.Net.Index
             foreach (SegmentCommitInfo si in sis.Segments)
             {
                 string version = si.Info.Version;
-                if (version == null)
+                if (version is null)
                 {
                     // pre-3.1 segment
                     oldSegs = "pre-3.1";
@@ -670,14 +670,18 @@ namespace Lucene.Net.Index
             result.NewSegments.Clear();
             result.MaxSegmentName = -1;
 
+            // LUCENENET: We created the segments names wrong in 4.8.0-beta00001 - 4.8.0-beta00015,
+            // so we added a switch to be able to read these indexes in later versions.
+            int segmentRadix = SegmentInfos.useLegacySegmentNames ? 10 : J2N.Character.MaxRadix;
+
             for (int i = 0; i < numSegments; i++)
             {
-                SegmentCommitInfo info = sis.Info(i);
+                SegmentCommitInfo info = sis[i];
                 int segmentName = 0;
                 try
                 {
                     // LUCENENET: Optimized to not allocate a substring during the parse
-                    segmentName = Integer.Parse(info.Info.Name, 1, info.Info.Name.Length - 1, radix: 10);
+                    segmentName = Integer.Parse(info.Info.Name, 1, info.Info.Name.Length - 1, radix: segmentRadix);
                 }
                 catch
                 {
@@ -717,7 +721,7 @@ namespace Lucene.Net.Index
                     segInfoStat.NumFiles = info.GetFiles().Count;
                     segInfoStat.SizeMB = info.GetSizeInBytes() / (1024.0 * 1024.0);
 #pragma warning disable 612, 618
-                    if (info.Info.GetAttribute(Lucene3xSegmentInfoFormat.DS_OFFSET_KEY) == null)
+                    if (info.Info.GetAttribute(Lucene3xSegmentInfoFormat.DS_OFFSET_KEY) is null)
 #pragma warning restore 612, 618
                     {
                         // don't print size in bytes if its a 3.0 segment with shared docstores
@@ -778,7 +782,7 @@ namespace Lucene.Net.Index
                             throw RuntimeException.Create("delete count mismatch: info=" + info.DelCount + " vs reader=" + (info.Info.DocCount - numDocs));
                         }
                         IBits liveDocs = reader.LiveDocs;
-                        if (liveDocs == null)
+                        if (liveDocs is null)
                         {
                             throw RuntimeException.Create("segment should have deletions, but liveDocs is null");
                         }
@@ -996,7 +1000,7 @@ namespace Lucene.Net.Index
             Status.TermIndexStatus status = new Status.TermIndexStatus();
             int computedFieldCount = 0;
 
-            if (fields == null)
+            if (fields is null)
             {
                 Msg(infoStream, "OK [no fields/terms]");
                 return status;
@@ -1019,7 +1023,7 @@ namespace Lucene.Net.Index
                 // check that the field is in fieldinfos, and is indexed.
                 // TODO: add a separate test to check this for different reader impls
                 FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
-                if (fieldInfo == null)
+                if (fieldInfo is null)
                 {
                     throw RuntimeException.Create("fieldsEnum inconsistent with fieldInfos, no fieldInfos for: " + field);
                 }
@@ -1035,7 +1039,7 @@ namespace Lucene.Net.Index
                 computedFieldCount++;
 
                 Terms terms = fields.GetTerms(field);
-                if (terms == null)
+                if (terms is null)
                 {
                     continue;
                 }
@@ -1105,7 +1109,7 @@ namespace Lucene.Net.Index
 
                     // make sure terms arrive in order according to
                     // the comp
-                    if (lastTerm == null)
+                    if (lastTerm is null)
                     {
                         lastTerm = BytesRef.DeepCopyOf(term);
                     }
@@ -1440,7 +1444,7 @@ namespace Lucene.Net.Index
                 }
 
                 Terms fieldTerms = fields.GetTerms(field);
-                if (fieldTerms == null)
+                if (fieldTerms is null)
                 {
                     // Unusual: the FieldsEnum returned a field but
                     // the Terms for that field is null; this should
@@ -1454,7 +1458,7 @@ namespace Lucene.Net.Index
                     {
                         BlockTreeTermsReader.Stats stats = fieldReader.ComputeStats();
                         if (Debugging.AssertsEnabled) Debugging.Assert(stats != null);
-                        if (status.BlockTreeStats == null)
+                        if (status.BlockTreeStats is null)
                         {
                             status.BlockTreeStats = new Dictionary<string, BlockTreeTermsReader.Stats>();
                         }
@@ -1548,7 +1552,7 @@ namespace Lucene.Net.Index
                                 }
 
                                 docs = termsEnum.Docs(liveDocs, docs, DocsFlags.NONE);
-                                if (docs == null)
+                                if (docs is null)
                                 {
                                     throw RuntimeException.Create("null DocsEnum from to existing term " + seekTerms[i]);
                                 }
@@ -1570,7 +1574,7 @@ namespace Lucene.Net.Index
 
                                 totDocFreq += termsEnum.DocFreq;
                                 docs = termsEnum.Docs(null, docs, DocsFlags.NONE);
-                                if (docs == null)
+                                if (docs is null)
                                 {
                                     throw RuntimeException.Create("null DocsEnum from to existing term " + seekTerms[i]);
                                 }
@@ -1722,7 +1726,7 @@ namespace Lucene.Net.Index
                     // Intentionally pull even deleted documents to
                     // make sure they too are not corrupt:
                     Document doc = reader.Document(j);
-                    if (liveDocs == null || liveDocs.Get(j))
+                    if (liveDocs is null || liveDocs.Get(j))
                     {
                         status.DocCount++;
                         status.TotFields += doc.Fields.Count;
@@ -1978,7 +1982,7 @@ namespace Lucene.Net.Index
         private static void CheckDocValues(FieldInfo fi, AtomicReader reader, /*StreamWriter infoStream,*/ DocValuesStatus status)
         {
             IBits docsWithField = reader.GetDocsWithField(fi.Name);
-            if (docsWithField == null)
+            if (docsWithField is null)
             {
                 throw RuntimeException.Create(fi.Name + " docsWithField does not exist");
             }
@@ -2112,7 +2116,7 @@ namespace Lucene.Net.Index
                         CheckFields(tfv, onlyDocIsDeleted, 1, fieldInfos, false, true, infoStream, verbose);
 
                         // Only agg stats if the doc is live:
-                        bool doStats = liveDocs == null || liveDocs.Get(j);
+                        bool doStats = liveDocs is null || liveDocs.Get(j);
                         if (doStats)
                         {
                             status.DocCount++;
@@ -2142,7 +2146,7 @@ namespace Lucene.Net.Index
                                 bool vectorsHasPayload = terms.HasPayloads;
 
                                 Terms postingsTerms = postingsFields.GetTerms(field);
-                                if (postingsTerms == null)
+                                if (postingsTerms is null)
                                 {
                                     throw RuntimeException.Create("vector field=" + field + " does not exist in postings; doc=" + j);
                                 }
@@ -2184,11 +2188,11 @@ namespace Lucene.Net.Index
                                         throw RuntimeException.Create("vector term=" + term + " field=" + field + " does not exist in postings; doc=" + j);
                                     }
                                     postingsPostings = postingsTermsEnum.DocsAndPositions(null, postingsPostings);
-                                    if (postingsPostings == null)
+                                    if (postingsPostings is null)
                                     {
                                         // Term vectors were indexed w/ pos but postings were not
                                         postingsDocs = postingsTermsEnum.Docs(null, postingsDocs);
-                                        if (postingsDocs == null)
+                                        if (postingsDocs is null)
                                         {
                                             throw RuntimeException.Create("vector term=" + term + " field=" + field + " does not exist in postings; doc=" + j);
                                         }
@@ -2279,7 +2283,7 @@ namespace Lucene.Net.Index
                                                 {
                                                     if (Debugging.AssertsEnabled) Debugging.Assert(postingsPostings != null);
 
-                                                    if (payload == null)
+                                                    if (payload is null)
                                                     {
                                                         // we have payloads, but not at this position.
                                                         // postings has payloads too, it should not have one at this position
@@ -2292,7 +2296,7 @@ namespace Lucene.Net.Index
                                                     {
                                                         // we have payloads, and one at this position
                                                         // postings should also have one at this position, with the same bytes.
-                                                        if (postingsPostings.GetPayload() == null)
+                                                        if (postingsPostings.GetPayload() is null)
                                                         {
                                                             throw RuntimeException.Create("vector term=" + term + " field=" + field + " doc=" + j + " has payload=" + payload + " but postings does not.");
                                                         }
@@ -2468,7 +2472,7 @@ namespace Lucene.Net.Index
                 i++;
             }
 
-            if (indexPath == null)
+            if (indexPath is null)
             {
                 // LUCENENET specific - we only output from our CLI wrapper
                 throw new ArgumentException("\nERROR: index path not specified");
@@ -2501,7 +2505,7 @@ namespace Lucene.Net.Index
             Directory dir/* = null*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
             try
             {
-                if (dirImpl == null)
+                if (dirImpl is null)
                 {
                     dir = FSDirectory.Open(new DirectoryInfo(indexPath));
                 }

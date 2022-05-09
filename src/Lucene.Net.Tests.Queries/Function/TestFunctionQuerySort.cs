@@ -86,7 +86,7 @@ namespace Lucene.Net.Tests.Queries.Function
             assertEquals(NUM_VALS - (afterIdx + 1), hits.ScoreDocs.Length);
 
             // Verify that hits are actually "after"
-            int afterValue = (int)((double?)afterHit.Fields[0]);
+            int afterValue = ((J2N.Numerics.Double)afterHit.Fields[0]).ToInt32();
             foreach (ScoreDoc hit in hits.ScoreDocs)
             {
                 int val = Convert.ToInt32(reader.Document(hit.Doc).Get("value"), CultureInfo.InvariantCulture);

@@ -92,7 +92,7 @@ namespace Lucene.Net.Index
 
             // We create leftover files because merging could be
             // running when we crash:
-            dir.AssertNoUnreferencedFilesOnClose = false;
+            dir.AssertNoUnreferencedFilesOnDispose = false;
 
             Crash(writer);
 
@@ -106,11 +106,7 @@ namespace Lucene.Net.Index
             Directory dir2 = NewDirectory(dir);
             dir.Dispose();
 
-            (new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir2)).Dispose();
+            (new RandomIndexWriter(Random, dir2)).Dispose();
             dir2.Dispose();
         }
 
@@ -127,7 +123,7 @@ namespace Lucene.Net.Index
 
             // We create leftover files because merging could be
             // running / store files could be open when we crash:
-            dir.AssertNoUnreferencedFilesOnClose = false;
+            dir.AssertNoUnreferencedFilesOnDispose = false;
 
             dir.PreventDoubleWrite = false;
             Console.WriteLine("TEST: now crash");
@@ -145,11 +141,7 @@ namespace Lucene.Net.Index
             Directory dir2 = NewDirectory(dir);
             dir.Dispose();
 
-            (new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir2)).Dispose();
+            (new RandomIndexWriter(Random, dir2)).Dispose();
             dir2.Dispose();
         }
 
@@ -161,7 +153,7 @@ namespace Lucene.Net.Index
 
             // We create leftover files because merging could be
             // running when we crash:
-            dir.AssertNoUnreferencedFilesOnClose = false;
+            dir.AssertNoUnreferencedFilesOnDispose = false;
 
             writer.Dispose();
             writer = InitIndex(Random, dir, false);
@@ -187,11 +179,7 @@ namespace Lucene.Net.Index
             Directory dir2 = NewDirectory(dir);
             dir.Dispose();
 
-            (new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir2)).Dispose();
+            (new RandomIndexWriter(Random, dir2)).Dispose();
             dir2.Dispose();
         }
 

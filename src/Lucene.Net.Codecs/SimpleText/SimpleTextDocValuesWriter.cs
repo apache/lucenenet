@@ -130,7 +130,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 if (Debugging.AssertsEnabled) Debugging.Assert(s.Length == patternString.Length);
                 SimpleTextUtil.Write(data, s, scratch);
                 SimpleTextUtil.WriteNewline(data);
-                SimpleTextUtil.Write(data, n == null ? "F" : "T", scratch);
+                SimpleTextUtil.Write(data, n is null ? "F" : "T", scratch);
                 SimpleTextUtil.WriteNewline(data);
                 numDocsWritten++;
                 if (Debugging.AssertsEnabled) Debugging.Assert(numDocsWritten <= numDocs);
@@ -150,7 +150,7 @@ namespace Lucene.Net.Codecs.SimpleText
             var maxLength = 0;
             foreach (var value in values)
             {
-                var length = value == null ? 0 : value.Length;
+                var length = value is null ? 0 : value.Length;
                 maxLength = Math.Max(maxLength, length);
             }
             WriteFieldEntry(field, DocValuesType.BINARY);
@@ -177,7 +177,7 @@ namespace Lucene.Net.Codecs.SimpleText
             int numDocsWritten = 0;
             foreach (BytesRef value in values)
             {
-                int length = value == null ? 0 : value.Length;
+                int length = value is null ? 0 : value.Length;
                 SimpleTextUtil.Write(data, LENGTH);
                 SimpleTextUtil.Write(data, length.ToString(patternString, CultureInfo.InvariantCulture), scratch);
                 SimpleTextUtil.WriteNewline(data);
@@ -195,7 +195,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     data.WriteByte((byte) ' ');
                 }
                 SimpleTextUtil.WriteNewline(data);
-                SimpleTextUtil.Write(data, value == null ? "F" : "T", scratch);
+                SimpleTextUtil.Write(data, value is null ? "F" : "T", scratch);
                 SimpleTextUtil.WriteNewline(data);
                 numDocsWritten++;
             }
@@ -436,7 +436,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         protected override void Dispose(bool disposing)
         {
-            if (data == null || !disposing) return;
+            if (data is null || !disposing) return;
             var success = false;
             try
             {

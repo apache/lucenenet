@@ -4,14 +4,14 @@ The Lucene.NET command line interface (CLI) is a new cross-platform toolchain wi
 
 ## Prerequisites
 
-- [.NET Core 3.1.0 Runtime](https://www.microsoft.com/net/download/core#/runtime)
+- [.NET Core 3.1 Runtime or Higher](https://dotnet.microsoft.com/en-us/download/dotnet)
 
 ## Installation
 
 Perform a one-time install of the lucene-cli tool using the following dotnet CLI command:
 
 ```console
-dotnet tool install lucene-cli -g --version 4.8.0-beta00015
+dotnet tool install lucene-cli -g --version 4.8.0-beta00016
 ```
 
 > [!NOTE]

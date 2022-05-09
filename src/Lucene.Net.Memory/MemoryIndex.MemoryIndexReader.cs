@@ -378,7 +378,7 @@ namespace Lucene.Net.Index.Memory
 
                 public override int NextDoc()
                 {
-                    if (hasNext && (liveDocs == null || liveDocs.Get(0)))
+                    if (hasNext && (liveDocs is null || liveDocs.Get(0)))
                     {
                         hasNext = false;
                         return doc = 0;
@@ -437,7 +437,7 @@ namespace Lucene.Net.Index.Memory
 
                 public override int NextDoc()
                 {
-                    if (hasNext && (liveDocs == null || liveDocs.Get(0)))
+                    if (hasNext && (liveDocs is null || liveDocs.Get(0)))
                     {
                         hasNext = false;
                         return doc = 0;

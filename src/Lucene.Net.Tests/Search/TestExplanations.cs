@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 
@@ -106,11 +106,7 @@ namespace Lucene.Net.Search
         /// check the expDocNrs first, then check the query (and the explanations) </summary>
         public virtual void Qtest(Query q, int[] expDocNrs)
         {
-            CheckHits.CheckHitCollector(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q, FIELD, searcher, expDocNrs);
+            CheckHits.CheckHitCollector(Random, q, FIELD, searcher, expDocNrs);
         }
 
         /// <summary>

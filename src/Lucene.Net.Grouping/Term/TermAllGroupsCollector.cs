@@ -107,7 +107,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             ordSet.Clear();
             foreach (BytesRef countedGroup in groups)
             {
-                if (countedGroup == null)
+                if (countedGroup is null)
                 {
                     ordSet.Put(-1);
                 }

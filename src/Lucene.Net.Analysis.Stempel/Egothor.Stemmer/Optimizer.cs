@@ -131,8 +131,8 @@ namespace Egothor.Stemmer
                 // XXX also must handle Cnt and Skip !!
                 master.cells.TryGetValue(ch, out Cell a);
 
-                Cell s = !existing.cells.TryGetValue(ch, out Cell b) || (b == null) ? new Cell(a) : Merge(a, b);
-                if (s == null)
+                Cell s = !existing.cells.TryGetValue(ch, out Cell b) || (b is null) ? new Cell(a) : Merge(a, b);
+                if (s is null)
                 {
                     return null;
                 }

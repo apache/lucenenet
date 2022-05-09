@@ -72,17 +72,17 @@ namespace Lucene.Net.Search.VectorHighlight
 
             ISet<string> termSet = fieldQuery.GetTermSet(fieldName);
             // just return to make null snippet if un-matched fieldName specified when fieldMatch == true
-            if (termSet == null) return;
+            if (termSet is null) return;
 
             Fields vectors = reader.GetTermVectors(docId);
-            if (vectors == null)
+            if (vectors is null)
             {
                 // null snippet
                 return;
             }
 
             Terms vector = vectors.GetTerms(fieldName);
-            if (vector == null)
+            if (vector is null)
             {
                 // null snippet
                 return;
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search.VectorHighlight
                     continue;
                 }
                 dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
-                if (dpEnum == null)
+                if (dpEnum is null)
                 {
                     // null snippet
                     return;
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <summary>
         /// to know whether the stack is empty. Returns true if the stack is empty, false if not
         /// </summary>
-        public virtual bool IsEmpty => termList == null || termList.Count == 0;
+        public virtual bool IsEmpty => termList is null || termList.Count == 0;
 
         /// <summary>
         /// Single term with its position/offsets in the document and IDF weight.
@@ -269,7 +269,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 {
                     return true;
                 }
-                if (obj == null)
+                if (obj is null)
                 {
                     return false;
                 }

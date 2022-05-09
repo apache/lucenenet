@@ -64,9 +64,9 @@ namespace Lucene.Net.Sandbox.Queries
         {
             int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + ((analyzer == null) ? 0 : analyzer.GetHashCode());
+            result = prime * result + ((analyzer is null) ? 0 : analyzer.GetHashCode());
             result = prime * result
-                + ((fieldVals == null) ? 0 : fieldVals.GetHashCode());
+                + ((fieldVals is null) ? 0 : fieldVals.GetHashCode());
             result = prime * result + (ignoreTF ? 1231 : 1237);
             result = prime * result + maxNumTerms;
             return result;
@@ -76,7 +76,7 @@ namespace Lucene.Net.Sandbox.Queries
         {
             if (this == obj)
                 return true;
-            if (obj == null)
+            if (obj is null)
                 return false;
             if (GetType() != obj.GetType())
                 return false;
@@ -85,14 +85,14 @@ namespace Lucene.Net.Sandbox.Queries
                 return false;
             }
             FuzzyLikeThisQuery other = (FuzzyLikeThisQuery)obj;
-            if (analyzer == null)
+            if (analyzer is null)
             {
                 if (other.analyzer != null)
                     return false;
             }
             else if (!analyzer.Equals(other.analyzer))
                 return false;
-            if (fieldVals == null)
+            if (fieldVals is null)
             {
                 if (other.fieldVals != null)
                     return false;
@@ -137,11 +137,11 @@ namespace Lucene.Net.Sandbox.Queries
                 int prime = 31;
                 int result = 1;
                 result = prime * result
-                    + ((fieldName == null) ? 0 : fieldName.GetHashCode());
+                    + ((fieldName is null) ? 0 : fieldName.GetHashCode());
                 result = prime * result + J2N.BitConversion.SingleToInt32Bits(minSimilarity);
                 result = prime * result + prefixLength;
                 result = prime * result
-                    + ((queryString == null) ? 0 : queryString.GetHashCode());
+                    + ((queryString is null) ? 0 : queryString.GetHashCode());
                 return result;
             }
 
@@ -149,12 +149,12 @@ namespace Lucene.Net.Sandbox.Queries
             {
                 if (this == obj)
                     return true;
-                if (obj == null)
+                if (obj is null)
                     return false;
                 if (GetType() != obj.GetType())
                     return false;
                 FieldVals other = (FieldVals)obj;
-                if (fieldName == null)
+                if (fieldName is null)
                 {
                     if (other.fieldName != null)
                         return false;
@@ -166,7 +166,7 @@ namespace Lucene.Net.Sandbox.Queries
                     return false;
                 if (prefixLength != other.prefixLength)
                     return false;
-                if (queryString == null)
+                if (queryString is null)
                 {
                     if (other.queryString != null)
                         return false;
@@ -192,9 +192,9 @@ namespace Lucene.Net.Sandbox.Queries
 
         private void AddTerms(IndexReader reader, FieldVals f)
         {
-            if (f.queryString == null) return;
+            if (f.queryString is null) return;
             Terms terms = MultiFields.GetTerms(reader, f.fieldName);
-            if (terms == null)
+            if (terms is null)
             {
                 return;
             }
@@ -297,7 +297,7 @@ namespace Lucene.Net.Sandbox.Queries
             for (int i = 0; i < size; i++)
             {
                 ScoreTerm st = q.Pop();
-                if (!variantQueries.TryGetValue(st.FuzziedSourceTerm, out IList<ScoreTerm> l) || l == null)
+                if (!variantQueries.TryGetValue(st.FuzziedSourceTerm, out IList<ScoreTerm> l) || l is null)
                 {
                     l = new JCG.List<ScoreTerm>();
                     variantQueries[st.FuzziedSourceTerm] = l;

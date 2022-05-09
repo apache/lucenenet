@@ -3,6 +3,7 @@ using J2N.Numerics;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
+using Lucene.Net.Util;
 using System.Collections;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -41,7 +42,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         protected readonly ValueSource m_defaultVal;
 
         public RangeMapSingleFunction(ValueSource source, float min, float max, float target, float? def)
-            : this(source, min, max, new ConstValueSource(target), def == null ? null : new ConstValueSource(def.Value))
+            : this(source, min, max, new ConstValueSource(target), def is null ? null : new ConstValueSource(def.Value))
         {
         }
 
@@ -63,7 +64,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             FunctionValues vals = m_source.GetValues(context, readerContext);
             FunctionValues targets = m_target.GetValues(context, readerContext);
-            FunctionValues defaults = (this.m_defaultVal == null) ? null : m_defaultVal.GetValues(context, readerContext);
+            FunctionValues defaults = (this.m_defaultVal is null) ? null : m_defaultVal.GetValues(context, readerContext);
             return new SingleDocValuesAnonymousClass(this, this, vals, targets, defaults);
         }
 
@@ -90,7 +91,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
             public override float SingleVal(int doc)
             {
                 float val = vals.SingleVal(doc);
-                return (val >= outerInstance.m_min && val <= outerInstance.m_max) ? targets.SingleVal(doc) : (outerInstance.m_defaultVal == null ? val : defaults.SingleVal(doc));
+                // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+                int valBits = NumericUtils.SingleToSortableInt32(val);
+                return (valBits >= NumericUtils.SingleToSortableInt32(outerInstance.m_min)
+                    && valBits <= NumericUtils.SingleToSortableInt32(outerInstance.m_max))
+                    ? targets.SingleVal(doc) :
+                    (outerInstance.m_defaultVal is null ? val : defaults.SingleVal(doc));
             }
             public override string ToString(int doc)
             {
@@ -122,8 +128,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             if (!(o is RangeMapSingleFunction other))
                 return false;
-            return this.m_min == other.m_min 
-                && this.m_max == other.m_max 
+            // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
+            return J2N.BitConversion.SingleToInt32Bits(this.m_min) == J2N.BitConversion.SingleToInt32Bits(other.m_min) 
+                && J2N.BitConversion.SingleToInt32Bits(this.m_max) == J2N.BitConversion.SingleToInt32Bits(other.m_max) 
                 && this.m_target.Equals(other.m_target) 
                 && this.m_source.Equals(other.m_source) 
                 && (this.m_defaultVal == other.m_defaultVal || (this.m_defaultVal != null && this.m_defaultVal.Equals(other.m_defaultVal)));

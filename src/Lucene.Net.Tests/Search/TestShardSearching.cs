@@ -158,7 +158,7 @@ namespace Lucene.Net.Search
                         {
                             long subVersion = localShardSearcher.GetNodeVersions()[nodeID];
                             IndexSearcher sub = m_nodes[nodeID].Searchers.Acquire(subVersion);
-                            if (sub == null)
+                            if (sub is null)
                             {
                                 nodeID--;
                                 while (nodeID >= 0)
@@ -196,7 +196,7 @@ namespace Lucene.Net.Search
                     }
                     else
                     {
-                        if (terms == null && docCount > minDocsToMakeTerms)
+                        if (terms is null && docCount > minDocsToMakeTerms)
                         {
                             // TODO: try to "focus" on high freq terms sometimes too
                             // TODO: maybe also periodically reset the terms...?
@@ -338,7 +338,7 @@ namespace Lucene.Net.Search
         private PreviousSearchState AssertSame(IndexSearcher mockSearcher, NodeState.ShardIndexSearcher shardSearcher, Query q, Sort sort, PreviousSearchState state)
         {
             int numHits = TestUtil.NextInt32(Random, 1, 100);
-            if (state != null && state.SearchAfterLocal == null)
+            if (state != null && state.SearchAfterLocal is null)
             {
                 // In addition to what we last searched:
                 numHits += state.NumHitsPaged;
@@ -355,7 +355,7 @@ namespace Lucene.Net.Search
 
             // Single (mock local) searcher:
             TopDocs hits;
-            if (sort == null)
+            if (sort is null)
             {
                 if (state != null && state.SearchAfterLocal != null)
                 {
@@ -373,7 +373,7 @@ namespace Lucene.Net.Search
 
             // Shard searcher
             TopDocs shardHits;
-            if (sort == null)
+            if (sort is null)
             {
                 if (state != null && state.SearchAfterShard != null)
                 {
@@ -443,7 +443,7 @@ namespace Lucene.Net.Search
             {
                 // More hits to page through
                 moreHits = true;
-                if (sort == null)
+                if (sort is null)
                 {
                     bottomHit = hits.ScoreDocs[hits.ScoreDocs.Length - 1];
                     ScoreDoc sd = shardHits.ScoreDocs[shardHits.ScoreDocs.Length - 1];

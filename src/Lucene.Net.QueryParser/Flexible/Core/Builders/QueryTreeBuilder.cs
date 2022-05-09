@@ -72,7 +72,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
         public virtual void SetBuilder(string fieldName, IQueryBuilder<TQuery> builder)
         {
 
-            if (this.fieldNameBuilders == null)
+            if (this.fieldNameBuilders is null)
             {
                 this.fieldNameBuilders = new Dictionary<string, IQueryBuilder<TQuery>>();
             }
@@ -88,7 +88,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
         public virtual void SetBuilder(Type queryNodeClass,
             IQueryBuilder<TQuery> builder)
         {
-            if (this.queryNodeBuilders == null)
+            if (this.queryNodeBuilders is null)
             {
                 this.queryNodeBuilders = new Dictionary<Type, IQueryBuilder<TQuery>>();
             }
@@ -130,7 +130,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
                 this.fieldNameBuilders.TryGetValue(field, out builder);
             }
 
-            if (builder == null && this.queryNodeBuilders != null)
+            if (builder is null && this.queryNodeBuilders != null)
             {
                 Type clazz = node.GetType();
 
@@ -138,7 +138,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
                 {
                     builder = GetQueryBuilder(clazz);
 
-                    if (builder == null)
+                    if (builder is null)
                     {
                         Type[] classes = clazz.GetInterfaces();
 
@@ -152,7 +152,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
                             }
                         }
                     }
-                } while (builder == null && (clazz = clazz.BaseType) != null);
+                } while (builder is null && (clazz = clazz.BaseType) != null);
             }
 
             return builder;
@@ -160,7 +160,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 
         private static void ProcessNode(IQueryNode node, IQueryBuilder<TQuery> builder) // LUCENENET: CA1822: Mark members as static
         {
-            if (builder == null)
+            if (builder is null)
             {
                 // LUCENENET: Factored out NLS/Message/IMessage so end users can optionally utilize the built-in .NET localization.
                 throw new QueryNodeException(string.Format(

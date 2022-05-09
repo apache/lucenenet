@@ -1,5 +1,9 @@
 ﻿using Lucene.Net.Util;
 using System;
+using Double = J2N.Numerics.Double;
+using Int32 = J2N.Numerics.Int32;
+using Int64 = J2N.Numerics.Int64;
+using Single = J2N.Numerics.Single;
 
 namespace Lucene.Net.Documents
 {
@@ -96,7 +100,7 @@ namespace Lucene.Net.Documents
         public StoredField(string name, int value)
             : base(name, TYPE)
         {
-            FieldsData = new Int32(value);
+            FieldsData = Int32.GetInstance(value);
         }
 
         /// <summary>
@@ -107,7 +111,7 @@ namespace Lucene.Net.Documents
         public StoredField(string name, float value)
             : base(name, TYPE)
         {
-            FieldsData = new Single(value);
+            FieldsData = Single.GetInstance(value);
         }
 
         /// <summary>
@@ -118,7 +122,7 @@ namespace Lucene.Net.Documents
         public StoredField(string name, long value)
             : base(name, TYPE)
         {
-            FieldsData = new Int64(value);
+            FieldsData = Int64.GetInstance(value);
         }
 
         /// <summary>
@@ -129,7 +133,7 @@ namespace Lucene.Net.Documents
         public StoredField(string name, double value)
             : base(name, TYPE)
         {
-            FieldsData = new Double(value);
+            FieldsData = Double.GetInstance(value);
         }
     }
 }

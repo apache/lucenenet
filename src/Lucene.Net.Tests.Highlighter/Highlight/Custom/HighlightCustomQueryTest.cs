@@ -127,7 +127,7 @@ namespace Lucene.Net.Search.Highlight.Custom
 
             protected override WeightedSpanTermExtractor NewTermExtractor(String defaultField)
             {
-                return defaultField == null ? new MyWeightedSpanTermExtractor()
+                return defaultField is null ? new MyWeightedSpanTermExtractor()
                     : new MyWeightedSpanTermExtractor(defaultField);
             }
 
@@ -158,7 +158,7 @@ namespace Lucene.Net.Search.Highlight.Custom
             {
                 int prime = 31;
                 int result = base.GetHashCode();
-                result = prime * result + ((term == null) ? 0 : term.GetHashCode());
+                result = prime * result + ((term is null) ? 0 : term.GetHashCode());
                 return result;
             }
 
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search.Highlight.Custom
                 if (GetType() != obj.GetType())
                     return false;
                 CustomQuery other = (CustomQuery)obj;
-                if (term == null)
+                if (term is null)
                 {
                     if (other.term != null)
                         return false;

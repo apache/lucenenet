@@ -38,8 +38,8 @@ on:
     #branches:
     #- master
     paths:
-    - 'websites/apidocs/**'
-    - 'src/docs/LuceneDocsPlugins/**'
+    - 'websites/apidocs/**/*'
+    - 'src/docs/LuceneDocsPlugins/**/*'
 
 env:
   # If a tag is specified, the tag will be in the format: Docs_4_8_0_beta00013
@@ -117,6 +117,11 @@ jobs:
         run: |
           git --git-dir "$Env:GIT_MAIN_REPO" checkout -b "docs/${{ env.RELEASE_VERSION }}"
         shell: powershell
+
+      - name: Setup .NET 6 SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.101'
 
       - name: Build docs
         run: ./main-repo/websites/apidocs/docs.ps1 -Clean -LuceneNetVersion ${{ env.RELEASE_VERSION }}

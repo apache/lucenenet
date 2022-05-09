@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Used to map gen to <see cref="IndexCommit"/>. </summary>
-        protected IDictionary<long?, IndexCommit> m_indexCommits = new Dictionary<long?, IndexCommit>();
+        protected IDictionary<long, IndexCommit> m_indexCommits = new Dictionary<long, IndexCommit>();
 
         /// <summary>
         /// Wrapped <see cref="IndexDeletionPolicy"/> </summary>
@@ -141,22 +141,20 @@ namespace Lucene.Net.Index
             {
                 throw IllegalStateException.Create("this instance is not being used by IndexWriter; be sure to use the instance returned from writer.Config.IndexDeletionPolicy");
             }
-            int? refCount = m_refCounts[gen];
-            if (refCount == null)
+            if (!m_refCounts.TryGetValue(gen, out int refCount))
             {
                 throw new ArgumentException("commit gen=" + gen + " is not currently snapshotted");
             }
-            int refCountInt = (int)refCount;
-            if (Debugging.AssertsEnabled) Debugging.Assert(refCountInt > 0);
-            refCountInt--;
-            if (refCountInt == 0)
+            if (Debugging.AssertsEnabled) Debugging.Assert(refCount > 0);
+            refCount--;
+            if (refCount == 0)
             {
                 m_refCounts.Remove(gen);
                 m_indexCommits.Remove(gen);
             }
             else
             {
-                m_refCounts[gen] = refCountInt;
+                m_refCounts[gen] = refCount;
             }
         }
 
@@ -211,7 +209,7 @@ namespace Lucene.Net.Index
                 {
                     throw IllegalStateException.Create("this instance is not being used by IndexWriter; be sure to use the instance returned from writer.Config.IndexDeletionPolicy");
                 }
-                if (m_lastCommit == null)
+                if (m_lastCommit is null)
                 {
                     // No commit yet, eg this is a new IndexWriter:
                     throw IllegalStateException.Create("No index commit to snapshot");
@@ -293,7 +291,7 @@ namespace Lucene.Net.Index
                 other.primary = (IndexDeletionPolicy)this.primary.Clone();
                 other.m_lastCommit = null;
                 other.m_refCounts = new Dictionary<long, int>(m_refCounts);
-                other.m_indexCommits = new Dictionary<long?, IndexCommit>(m_indexCommits);
+                other.m_indexCommits = new Dictionary<long, IndexCommit>(m_indexCommits);
                 return other;
             }
             finally

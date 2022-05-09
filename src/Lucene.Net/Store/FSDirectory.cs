@@ -42,30 +42,23 @@ namespace Lucene.Net.Store
     /// <list type="bullet">
     ///
     ///     <item><description> <see cref="SimpleFSDirectory"/> is a straightforward
-    ///         implementation using <see cref="FileStream"/>.
-    ///         However, it has poor concurrent performance
+    ///         implementation using <see cref="FileStream"/>, which is ideal for writing
+    ///         without using much RAM. However, it has poor concurrent performance
     ///         (multiple threads will bottleneck) as it
     ///         synchronizes when multiple threads read from the
     ///         same file.</description></item>
     ///
     ///     <item><description> <see cref="NIOFSDirectory"/>
-    ///         uses <see cref="FileStream"/>'s positional read,
-    ///         which allows multiple threads to read from the same
-    ///         file without synchronizing. Applications using
-    ///         <see cref="Task{TResult}"/> should use
-    ///         <see cref="SimpleFSDirectory"/> instead. See <see cref="NIOFSDirectory"/> documentation
-    ///         for details.</description></item>
+    ///         uses <see cref="FileStream"/>'s positional seeking,
+    ///         which makes it slightly less efficient than using <see cref="SimpleFSDirectory"/>
+    ///         during reading, with similar write performance.</description></item>
     ///
     ///     <item><description> <see cref="MMapDirectory"/> uses memory-mapped IO when
     ///         reading. This is a good choice if you have plenty
     ///         of virtual memory relative to your index size, eg
     ///         if you are running on a 64 bit runtime, or you are
     ///         running on a 32 bit runtime but your index sizes are
-    ///         small enough to fit into the virtual memory space.
-    ///         <para/>
-    ///         Applications using <see cref="Task{TResult}"/> should use
-    ///         <see cref="SimpleFSDirectory"/> instead. See <see cref="MMapDirectory"/>
-    ///         doc for details.</description></item>
+    ///         small enough to fit into the virtual memory space.</description></item>
     /// </list>
     ///
     /// Unfortunately, because of system peculiarities, there is
@@ -73,14 +66,23 @@ namespace Lucene.Net.Store
     /// added the <see cref="Open(string)"/> method  (or one of its overloads), to allow Lucene to choose
     /// the best <see cref="FSDirectory"/> implementation given your
     /// environment, and the known limitations of each
-    /// implementation.  For users who have no reason to prefer a
+    /// implementation. For users who have no reason to prefer a
     /// specific implementation, it's best to simply use 
-    /// <see cref="Open(string)"/>  (or one of its overloads).  For all others, you should instantiate the
+    /// <see cref="Open(string)"/>  (or one of its overloads). For all others, you should instantiate the
     /// desired implementation directly.
     ///
     /// <para/>The locking implementation is by default 
     /// <see cref="NativeFSLockFactory"/>, but can be changed by
     /// passing in a custom <see cref="LockFactory"/> instance.
+    ///
+    /// <para/>
+    /// <font color="red"><b>NOTE:</b> Unlike in Java, it is not recommended to use
+    /// <see cref="Thread.Interrupt()"/> in .NET
+    /// in conjunction with an open <see cref="FSDirectory"/> because it is not guaranteed to exit atomically.
+    /// Any <c>lock</c> statement or <see cref="Monitor.Enter(object)"/> call can throw a
+    /// <see cref="ThreadInterruptedException"/>, which makes shutting down unpredictable.
+    /// To exit parallel tasks safely, we recommend using <see cref="Task"/>s
+    /// and "interrupt" them with <see cref="CancellationToken"/>s.</font>
     /// </summary>
     /// <seealso cref="Directory"/>
     public abstract class FSDirectory : BaseDirectory
@@ -114,7 +116,7 @@ namespace Lucene.Net.Store
         protected internal FSDirectory(DirectoryInfo path, LockFactory lockFactory)
         {
             // new ctors use always NativeFSLockFactory as default:
-            if (lockFactory == null)
+            if (lockFactory is null)
             {
                 lockFactory = new NativeFSLockFactory();
             }
@@ -209,7 +211,7 @@ namespace Lucene.Net.Store
             {
                 var dir = lf.LockDir;
                 // if the lock factory has no lockDir set, use the this directory as lockDir
-                if (dir == null)
+                if (dir is null)
                 {
                     lf.SetLockDir(m_directory);
                     lf.LockPrefix = null;
@@ -250,7 +252,7 @@ namespace Lucene.Net.Store
                 result[i] = files[i].Name;
             }
             // LUCENENET NOTE: this can never happen in .NET
-            //if (result == null)
+            //if (result is null)
             //{
             //    throw new IOException("directory '" + dir + "' exists and is a directory, but cannot be listed: list() returned null");
             //}

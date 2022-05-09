@@ -96,11 +96,7 @@ namespace Lucene.Net.Search
         public virtual void TestString()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "foo", Field.Store.YES));
             writer.AddDocument(doc);
@@ -129,11 +125,7 @@ namespace Lucene.Net.Search
         public virtual void TestStringMissing()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -165,11 +157,7 @@ namespace Lucene.Net.Search
         public virtual void TestStringReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "bar", Field.Store.YES));
             writer.AddDocument(doc);
@@ -198,11 +186,7 @@ namespace Lucene.Net.Search
         public virtual void TestStringVal()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "foo", Field.Store.YES));
             writer.AddDocument(doc);
@@ -231,11 +215,7 @@ namespace Lucene.Net.Search
         public virtual void TestStringValMissing()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -269,11 +249,7 @@ namespace Lucene.Net.Search
         public virtual void TestStringMissingSortedFirst()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -308,11 +284,7 @@ namespace Lucene.Net.Search
         public virtual void TestStringMissingSortedFirstReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -347,11 +319,7 @@ namespace Lucene.Net.Search
         public virtual void TestStringValMissingSortedLast()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -365,7 +333,7 @@ namespace Lucene.Net.Search
 
             IndexSearcher searcher = NewSearcher(ir);
             SortField sf = new SortField("value", SortFieldType.STRING);
-            sf.MissingValue = SortField.STRING_LAST;
+            sf.SetMissingValue(SortField.STRING_LAST);
             Sort sort = new Sort(sf);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -387,11 +355,7 @@ namespace Lucene.Net.Search
         public virtual void TestStringValMissingSortedLastReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -405,7 +369,7 @@ namespace Lucene.Net.Search
 
             IndexSearcher searcher = NewSearcher(ir);
             SortField sf = new SortField("value", SortFieldType.STRING, true);
-            sf.MissingValue = SortField.STRING_LAST;
+            sf.SetMissingValue(SortField.STRING_LAST);
             Sort sort = new Sort(sf);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -425,11 +389,7 @@ namespace Lucene.Net.Search
         public virtual void TestStringValReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "bar", Field.Store.YES));
             writer.AddDocument(doc);
@@ -458,11 +418,7 @@ namespace Lucene.Net.Search
         public virtual void TestFieldDoc()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "foo", Field.Store.NO));
             writer.AddDocument(doc);
@@ -491,11 +447,7 @@ namespace Lucene.Net.Search
         public virtual void TestFieldDocReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "foo", Field.Store.NO));
             writer.AddDocument(doc);
@@ -524,11 +476,7 @@ namespace Lucene.Net.Search
         public virtual void TestFieldScore()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewTextField("value", "foo bar bar bar bar", Field.Store.NO));
             writer.AddDocument(doc);
@@ -562,11 +510,7 @@ namespace Lucene.Net.Search
         public virtual void TestFieldScoreReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewTextField("value", "foo bar bar bar bar", Field.Store.NO));
             writer.AddDocument(doc);
@@ -598,11 +542,7 @@ namespace Lucene.Net.Search
         public virtual void TestByte()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "23", Field.Store.YES));
             writer.AddDocument(doc);
@@ -637,11 +577,7 @@ namespace Lucene.Net.Search
         public virtual void TestByteMissing()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -675,11 +611,7 @@ namespace Lucene.Net.Search
         public virtual void TestByteMissingLast()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -694,8 +626,8 @@ namespace Lucene.Net.Search
             IndexSearcher searcher = NewSearcher(ir);
 #pragma warning disable 612, 618
             SortField sortField = new SortField("value", SortFieldType.BYTE);
+            sortField.SetMissingValue(sbyte.MaxValue);
 #pragma warning restore 612, 618
-            sortField.MissingValue = sbyte.MaxValue;
             Sort sort = new Sort(sortField);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -715,11 +647,7 @@ namespace Lucene.Net.Search
         public virtual void TestByteReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "23", Field.Store.YES));
             writer.AddDocument(doc);
@@ -754,11 +682,7 @@ namespace Lucene.Net.Search
         public virtual void TestShort()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "300", Field.Store.YES));
             writer.AddDocument(doc);
@@ -793,11 +717,7 @@ namespace Lucene.Net.Search
         public virtual void TestShortMissing()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -831,11 +751,7 @@ namespace Lucene.Net.Search
         public virtual void TestShortMissingLast()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -850,8 +766,8 @@ namespace Lucene.Net.Search
             IndexSearcher searcher = NewSearcher(ir);
 #pragma warning disable 612, 618
             SortField sortField = new SortField("value", SortFieldType.INT16);
+            sortField.SetMissingValue(short.MaxValue);
 #pragma warning restore 612, 618
-            sortField.MissingValue = short.MaxValue;
             Sort sort = new Sort(sortField);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -871,11 +787,7 @@ namespace Lucene.Net.Search
         public virtual void TestShortReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "300", Field.Store.YES));
             writer.AddDocument(doc);
@@ -910,11 +822,7 @@ namespace Lucene.Net.Search
         public virtual void TestInt()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "300000", Field.Store.YES));
             writer.AddDocument(doc);
@@ -947,11 +855,7 @@ namespace Lucene.Net.Search
         public virtual void TestIntMissing()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -983,11 +887,7 @@ namespace Lucene.Net.Search
         public virtual void TestIntMissingLast()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -1001,7 +901,7 @@ namespace Lucene.Net.Search
 
             IndexSearcher searcher = NewSearcher(ir);
             SortField sortField = new SortField("value", SortFieldType.INT32);
-            sortField.MissingValue = int.MaxValue;
+            sortField.SetMissingValue(int.MaxValue);
             Sort sort = new Sort(sortField);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -1021,11 +921,7 @@ namespace Lucene.Net.Search
         public virtual void TestIntReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "300000", Field.Store.YES));
             writer.AddDocument(doc);
@@ -1058,11 +954,7 @@ namespace Lucene.Net.Search
         public virtual void TestLong()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "3000000000", Field.Store.YES));
             writer.AddDocument(doc);
@@ -1095,11 +987,7 @@ namespace Lucene.Net.Search
         public virtual void TestLongMissing()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -1131,11 +1019,7 @@ namespace Lucene.Net.Search
         public virtual void TestLongMissingLast()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -1149,7 +1033,7 @@ namespace Lucene.Net.Search
 
             IndexSearcher searcher = NewSearcher(ir);
             SortField sortField = new SortField("value", SortFieldType.INT64);
-            sortField.MissingValue = long.MaxValue;
+            sortField.SetMissingValue(long.MaxValue);
             Sort sort = new Sort(sortField);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -1169,11 +1053,7 @@ namespace Lucene.Net.Search
         public virtual void TestLongReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "3000000000", Field.Store.YES));
             writer.AddDocument(doc);
@@ -1206,11 +1086,7 @@ namespace Lucene.Net.Search
         public virtual void TestFloat()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "30.1", Field.Store.YES));
             writer.AddDocument(doc);
@@ -1243,11 +1119,7 @@ namespace Lucene.Net.Search
         public virtual void TestFloatSignedZero()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "+0", Field.Store.YES));
             writer.AddDocument(doc);
@@ -1277,11 +1149,7 @@ namespace Lucene.Net.Search
         public virtual void TestFloatMissing()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -1313,11 +1181,7 @@ namespace Lucene.Net.Search
         public virtual void TestFloatMissingLast()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -1331,7 +1195,7 @@ namespace Lucene.Net.Search
 
             IndexSearcher searcher = NewSearcher(ir);
             SortField sortField = new SortField("value", SortFieldType.SINGLE);
-            sortField.MissingValue = float.MaxValue;
+            sortField.SetMissingValue(float.MaxValue);
             Sort sort = new Sort(sortField);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -1351,11 +1215,7 @@ namespace Lucene.Net.Search
         public virtual void TestFloatReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "30.1", Field.Store.YES));
             writer.AddDocument(doc);
@@ -1388,11 +1248,7 @@ namespace Lucene.Net.Search
         public virtual void TestDouble()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "30.1", Field.Store.YES));
             writer.AddDocument(doc);
@@ -1429,11 +1285,7 @@ namespace Lucene.Net.Search
         public virtual void TestDoubleSignedZero()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "+0", Field.Store.YES));
             writer.AddDocument(doc);
@@ -1463,11 +1315,7 @@ namespace Lucene.Net.Search
         public virtual void TestDoubleMissing()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -1503,11 +1351,7 @@ namespace Lucene.Net.Search
         public virtual void TestDoubleMissingLast()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             writer.AddDocument(doc);
             doc = new Document();
@@ -1524,7 +1368,7 @@ namespace Lucene.Net.Search
 
             IndexSearcher searcher = NewSearcher(ir);
             SortField sortField = new SortField("value", SortFieldType.DOUBLE);
-            sortField.MissingValue = double.MaxValue;
+            sortField.SetMissingValue(double.MaxValue);
             Sort sort = new Sort(sortField);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -1545,11 +1389,7 @@ namespace Lucene.Net.Search
         public virtual void TestDoubleReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "30.1", Field.Store.YES));
             writer.AddDocument(doc);
@@ -1713,11 +1553,7 @@ namespace Lucene.Net.Search
             letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
             foreach (string letter in letters)
             {
                 Document doc = new Document();
@@ -1762,7 +1598,7 @@ namespace Lucene.Net.Search
                 return (term.Bytes[term.Offset] - 'A') * 123456;
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -1778,11 +1614,7 @@ namespace Lucene.Net.Search
             letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
             foreach (string letter in letters)
             {
                 Document doc = new Document();
@@ -1826,7 +1658,7 @@ namespace Lucene.Net.Search
                 return (byte)(term.Bytes[term.Offset] - 'A');
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -1842,11 +1674,7 @@ namespace Lucene.Net.Search
             letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
             foreach (string letter in letters)
             {
                 Document doc = new Document();
@@ -1893,7 +1721,7 @@ namespace Lucene.Net.Search
                 return (short)(term.Bytes[term.Offset] - 'A');
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -1909,11 +1737,7 @@ namespace Lucene.Net.Search
             letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
             foreach (string letter in letters)
             {
                 Document doc = new Document();
@@ -1958,7 +1782,7 @@ namespace Lucene.Net.Search
                 return (term.Bytes[term.Offset] - 'A') * 1234567890L;
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -1974,11 +1798,7 @@ namespace Lucene.Net.Search
             letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
             foreach (string letter in letters)
             {
                 Document doc = new Document();
@@ -2023,7 +1843,7 @@ namespace Lucene.Net.Search
                 return (float)Math.Sqrt(term.Bytes[term.Offset]);
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -2039,11 +1859,7 @@ namespace Lucene.Net.Search
             letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
             foreach (string letter in letters)
             {
                 Document doc = new Document();
@@ -2085,7 +1901,7 @@ namespace Lucene.Net.Search
                 return Math.Pow(term.Bytes[term.Offset], (term.Bytes[term.Offset] - 'A'));
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -2097,11 +1913,7 @@ namespace Lucene.Net.Search
         public virtual void TestSortOneDocument()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "foo", Field.Store.YES));
             writer.AddDocument(doc);
@@ -2125,11 +1937,7 @@ namespace Lucene.Net.Search
         public virtual void TestSortOneDocumentWithScores()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "foo", Field.Store.YES));
             writer.AddDocument(doc);
@@ -2156,11 +1964,7 @@ namespace Lucene.Net.Search
         public virtual void TestSortTwoFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("tievalue", "tied", Field.Store.NO));
             doc.Add(NewStringField("value", "foo", Field.Store.YES));
@@ -2190,11 +1994,7 @@ namespace Lucene.Net.Search
         public virtual void TestScore()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("value", "bar", Field.Store.NO));
             writer.AddDocument(doc);

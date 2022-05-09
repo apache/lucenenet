@@ -48,10 +48,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             NumericQueryNode lowerNumericNode = (NumericQueryNode)numericRangeNode.LowerBound;
             NumericQueryNode upperNumericNode = (NumericQueryNode)numericRangeNode.UpperBound;
 
-            /*Number*/
-            object lowerNumber = lowerNumericNode.Value;
-            /*Number*/
-            object upperNumber = upperNumericNode.Value;
+            J2N.Numerics.Number lowerNumber = lowerNumericNode.Value;
+            J2N.Numerics.Number upperNumber = upperNumericNode.Value;
 
             NumericConfig numericConfig = numericRangeNode.NumericConfig;
             NumericType numberType = numericConfig.Type;
@@ -64,21 +62,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             {
                 case NumericType.INT64:
                     return NumericRangeQuery.NewInt64Range(field, precisionStep,
-                        (long?)lowerNumber, (long?)upperNumber, minInclusive, maxInclusive);
+                        lowerNumber?.ToInt64(), upperNumber?.ToInt64(), minInclusive, maxInclusive);
 
                 case NumericType.INT32:
                     return NumericRangeQuery.NewInt32Range(field, precisionStep,
-                        (int?)lowerNumber, (int?)upperNumber, minInclusive,
+                        lowerNumber?.ToInt32(), upperNumber?.ToInt32(), minInclusive,
                         maxInclusive);
 
                 case NumericType.SINGLE:
                     return NumericRangeQuery.NewSingleRange(field, precisionStep,
-                        (float?)lowerNumber, (float?)upperNumber, minInclusive,
+                        lowerNumber?.ToSingle(), upperNumber?.ToSingle(), minInclusive,
                         maxInclusive);
 
                 case NumericType.DOUBLE:
                     return NumericRangeQuery.NewDoubleRange(field, precisionStep,
-                        (double?)lowerNumber, (double?)upperNumber, minInclusive,
+                        lowerNumber?.ToDouble(), upperNumber?.ToDouble(), minInclusive,
                         maxInclusive);
 
                 default:

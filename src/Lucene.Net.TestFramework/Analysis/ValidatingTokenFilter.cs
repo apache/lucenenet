@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis
                 lastStartOffset = offsetAtt.StartOffset;
             }
 
-            posLen = posLenAtt == null ? 1 : posLenAtt.PositionLength;
+            posLen = posLenAtt is null ? 1 : posLenAtt.PositionLength;
 
             if (offsetAtt != null && posIncAtt != null && offsetsAreCorrect)
             {

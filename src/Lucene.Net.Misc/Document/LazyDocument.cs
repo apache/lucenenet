@@ -41,7 +41,7 @@ namespace Lucene.Net.Documents
         // null until first field is loaded
         private Document doc;
 
-        private readonly IDictionary<int?, IList<LazyField>> fields = new Dictionary<int?, IList<LazyField>>(); // LUCENENET: marked readonly
+        private readonly IDictionary<int, IList<LazyField>> fields = new Dictionary<int, IList<LazyField>>(); // LUCENENET: marked readonly
         private readonly ISet<string> fieldNames = new JCG.HashSet<string>(); // LUCENENET: marked readonly
 
         public LazyDocument(IndexReader reader, int docID)
@@ -102,7 +102,7 @@ namespace Lucene.Net.Documents
             UninterruptableMonitor.Enter(this);
             try
             {
-                if (doc == null)
+                if (doc is null)
                 {
                     try
                     {

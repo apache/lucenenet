@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Util;
 using NUnit.Framework;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Shapes;
 using System;
 
 namespace Lucene.Net.Spatial.Queries
@@ -25,7 +25,7 @@ namespace Lucene.Net.Spatial.Queries
 
     public class SpatialArgsParserTest : LuceneTestCase
     {
-        private SpatialContext ctx = SpatialContext.GEO;
+        private SpatialContext ctx = SpatialContext.Geo;
 
         //The args parser is only dependent on the ctx for IO so I don't care to test
         // with other implementations.

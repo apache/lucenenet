@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.IO;
 using Directory = Lucene.Net.Store.Directory;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -105,7 +106,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Holds 1gram, 2gram, 3gram models as a single FST. </summary>
-        private FST<long?> fst;
+        private FST<Int64> fst;
 
         /// <summary>
         /// Analyzer that will be used for analyzing suggestions at
@@ -195,7 +196,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Returns byte size of the underlying FST. </summary>
         public override long GetSizeInBytes()
         {
-            if (fst == null)
+            if (fst is null)
             {
                 return 0;
             }
@@ -373,8 +374,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // Move all ngrams into an FST:
                     TermsEnum termsEnum = terms.GetEnumerator(null);
 
-                    Outputs<long?> outputs = PositiveInt32Outputs.Singleton;
-                    Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
+                    Outputs<Int64> outputs = PositiveInt32Outputs.Singleton;
+                    Builder<Int64> builder = new Builder<Int64>(FST.INPUT_TYPE.BYTE1, outputs);
 
                     Int32sRef scratchInts = new Int32sRef();
                     while (termsEnum.MoveNext())
@@ -471,7 +472,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             totTokens = input.ReadVInt64();
 
-            fst = new FST<long?>(input, PositiveInt32Outputs.Singleton);
+            fst = new FST<Int64>(input, PositiveInt32Outputs.Singleton);
 
             return true;
         }
@@ -597,7 +598,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     for (int i = grams - 1; i > 0; i--)
                     {
                         BytesRef token = lastTokens[i - 1];
-                        if (token == null)
+                        if (token is null)
                         {
                             continue;
                         }
@@ -609,7 +610,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     lastTokens[0] = new BytesRef();
                 }
 
-                var arc = new FST.Arc<long?>();
+                var arc = new FST.Arc<Int64>();
 
                 var bytesReader = fst.GetBytesReader();
 
@@ -628,7 +629,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     BytesRef token = lastTokens[gram];
                     // Don't make unigram predictions from empty string:
-                    if (token == null || (token.Length == 0 && key.Length > 0))
+                    if (token is null || (token.Length == 0 && key.Length > 0))
                     {
                         // Input didn't have enough tokens:
                         //System.out.println("  gram=" + gram + ": skip: not enough input");
@@ -649,7 +650,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // TODO: we could add fuzziness here
                     // match the prefix portion exactly
                     //Pair<Long,BytesRef> prefixOutput = null;
-                    long? prefixOutput = null;
+                    Int64 prefixOutput = null;
                     try
                     {
                         prefixOutput = LookupPrefix(fst, bytesReader, token, arc);
@@ -660,7 +661,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                     //System.out.println("  prefixOutput=" + prefixOutput);
 
-                    if (prefixOutput == null)
+                    if (prefixOutput is null)
                     {
                         // This model never saw this prefix, e.g. the
                         // trigram model never saw context "purple mushroom"
@@ -692,7 +693,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                     BytesRef finalLastToken;
 
-                    if (lastTokenFragment == null)
+                    if (lastTokenFragment is null)
                     {
                         finalLastToken = BytesRef.DeepCopyOf(token);
                     }
@@ -705,7 +706,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     CharsRef spare = new CharsRef();
 
                     // complete top-N
-                    Util.Fst.Util.TopResults<long?> completions = null;
+                    Util.Fst.Util.TopResults<Int64> completions = null;
                     try
                     {
 
@@ -720,7 +721,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                         // Must do num+seen.size() for queue depth because we may
                         // reject up to seen.size() paths in acceptResult():
-                        Util.Fst.Util.TopNSearcher<long?> searcher = new TopNSearcherAnonymousClass(this, fst, num, num + seen.Count, weightComparer, seen, finalLastToken);
+                        Util.Fst.Util.TopNSearcher<Int64> searcher = new TopNSearcherAnonymousClass(this, fst, num, num + seen.Count, weightComparer, seen, finalLastToken);
 
                         // since this search is initialized with a single start node 
                         // it is okay to start with an empty input path here
@@ -739,7 +740,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     BytesRef suffix = new BytesRef(8);
                     //System.out.println("    " + completions.length + " completions");
 
-                    foreach (Util.Fst.Util.Result<long?> completion in completions)
+                    foreach (Util.Fst.Util.Result<Int64> completion in completions)
                     {
                         token.Length = prefixLength;
                         // append suffix
@@ -810,7 +811,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private class TopNSearcherAnonymousClass : Util.Fst.Util.TopNSearcher<long?>
+        private class TopNSearcherAnonymousClass : Util.Fst.Util.TopNSearcher<Int64>
         {
             private readonly FreeTextSuggester outerInstance;
 
@@ -819,10 +820,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             public TopNSearcherAnonymousClass(
                 FreeTextSuggester outerInstance,
-                FST<long?> fst,
+                FST<Int64> fst,
                 int num,
                 int size,
-                IComparer<long?> weightComparer,
+                IComparer<Int64> weightComparer,
                 ISet<BytesRef> seen,
                 BytesRef finalLastToken)
                 : base(fst, num, size, weightComparer)
@@ -836,7 +837,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             private readonly BytesRef scratchBytes;
 
-            protected override void AddIfCompetitive(Util.Fst.Util.FSTPath<long?> path)
+            protected override void AddIfCompetitive(Util.Fst.Util.FSTPath<Int64> path)
             {
                 if (path.Arc.Label != outerInstance.separator)
                 {
@@ -849,7 +850,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
             }
 
-            protected override bool AcceptResult(Int32sRef input, long? output)
+            protected override bool AcceptResult(Int32sRef input, Int64 output)
             {
                 Util.Fst.Util.ToBytesRef(input, scratchBytes);
                 finalLastToken.Grow(finalLastToken.Length + scratchBytes.Length);
@@ -880,10 +881,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
         // NOTE: copied from WFSTCompletionLookup & tweaked
-        private long? LookupPrefix(FST<long?> fst, FST.BytesReader bytesReader, BytesRef scratch, FST.Arc<long?> arc)
+        private Int64 LookupPrefix(FST<Int64> fst, FST.BytesReader bytesReader, BytesRef scratch, FST.Arc<Int64> arc)
         {
 
-            long? output = fst.Outputs.NoOutput;
+            Int64 output = fst.Outputs.NoOutput;
 
             fst.GetFirstArc(arc);
 
@@ -892,7 +893,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             var end = pos + scratch.Length;
             while (pos < end)
             {
-                if (fst.FindTargetArc(bytes[pos++] & 0xff, arc, arc, bytesReader) == null)
+                if (fst.FindTargetArc(bytes[pos++] & 0xff, arc, arc, bytesReader) is null)
                 {
                     return null;
                 }
@@ -905,7 +906,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return output;
         }
 
-        internal static readonly IComparer<long?> weightComparer =  Comparer<long?>.Default;
+        internal static readonly IComparer<Int64> weightComparer =  Comparer<Int64>.Default;
 
         /// <summary>
         /// Returns the weight associated with an input string,

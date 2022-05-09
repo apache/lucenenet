@@ -88,11 +88,7 @@ namespace Lucene.Net.Facet
             FacetsConfig config = new FacetsConfig();
             config.SetHierarchical("Publish Date", true);
 
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
 
             Document doc = new Document();
             doc.Add(new FacetField("Author", "Bob"));
@@ -263,11 +259,7 @@ namespace Lucene.Net.Facet
         {
             Directory dir = NewDirectory();
             Directory taxoDir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
 
             // Writes facet ords to a separate directory from the
             // main index:
@@ -323,11 +315,7 @@ namespace Lucene.Net.Facet
         {
             Directory dir = NewDirectory();
             Directory taxoDir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
 
             // Writes facet ords to a separate directory from the
             // main index:
@@ -678,7 +666,7 @@ namespace Lucene.Net.Facet
                 while (count < numDrillDown)
                 {
                     int dim = Random.Next(numDims);
-                    if (drillDowns[dim] == null)
+                    if (drillDowns[dim] is null)
                     {
                         if (Random.NextBoolean())
                         {
@@ -725,7 +713,7 @@ namespace Lucene.Net.Facet
                 }
 
                 Query baseQuery;
-                if (contentToken == null)
+                if (contentToken is null)
                 {
                     baseQuery = new MatchAllDocsQuery();
                 }
@@ -796,7 +784,7 @@ namespace Lucene.Net.Facet
                 DrillSidewaysResult actual = ds.Search(ddq, filter, null, numDocs, sort, true, true);
 
                 TopDocs hits = s.Search(baseQuery, numDocs);
-                IDictionary<string, float?> scores = new Dictionary<string, float?>();
+                IDictionary<string, float> scores = new Dictionary<string, float>();
                 foreach (ScoreDoc sd in hits.ScoreDocs)
                 {
                     scores[s.Doc(sd.Doc).Get("id")] = sd.Score;
@@ -836,7 +824,7 @@ namespace Lucene.Net.Facet
                 for (int docID = 0; docID < maxDoc; docID++)
                 {
                     // Keeps only the even ids:
-                    if ((acceptDocs == null || acceptDocs.Get(docID)) && (Convert.ToInt32(context.Reader.Document(docID).Get("id")) & 1) == 0)
+                    if ((acceptDocs is null || acceptDocs.Get(docID)) && (Convert.ToInt32(context.Reader.Document(docID).Get("id")) & 1) == 0)
                     {
                         bits.Set(docID);
                     }
@@ -1074,7 +1062,7 @@ namespace Lucene.Net.Facet
                 {
                     continue;
                 }
-                if (contentToken == null || doc.contentToken.Equals(contentToken, StringComparison.Ordinal))
+                if (contentToken is null || doc.contentToken.Equals(contentToken, StringComparison.Ordinal))
                 {
                     int failDim = -1;
                     for (int dim = 0; dim < numDims; dim++)
@@ -1135,7 +1123,7 @@ namespace Lucene.Net.Facet
             }
             //nextDocBreak:// Not referenced
 
-            IDictionary<string, int?> idToDocID = new Dictionary<string, int?>();
+            IDictionary<string, int> idToDocID = new Dictionary<string, int>();
             for (int i = 0; i < s.IndexReader.MaxDoc; i++)
             {
                 idToDocID[s.Doc(i).Get("id")] = i;
@@ -1171,7 +1159,7 @@ namespace Lucene.Net.Facet
             return res;
         }
 
-        internal virtual void VerifyEquals(string[][] dimValues, IndexSearcher s, TestFacetResult expected, DrillSidewaysResult actual, IDictionary<string, float?> scores, bool isSortedSetDV)
+        internal virtual void VerifyEquals(string[][] dimValues, IndexSearcher s, TestFacetResult expected, DrillSidewaysResult actual, IDictionary<string, float> scores, bool isSortedSetDV)
         {
             if (Verbose)
             {
@@ -1187,7 +1175,7 @@ namespace Lucene.Net.Facet
                 }
                 Assert.AreEqual(expected.Hits[i].id, s.Doc(actual.Hits.ScoreDocs[i].Doc).Get("id"));
                 // Score should be IDENTICAL:
-                Assert.AreEqual(scores[expected.Hits[i].id].GetValueOrDefault(), actual.Hits.ScoreDocs[i].Score, 0.0f);
+                Assert.AreEqual(scores[expected.Hits[i].id], actual.Hits.ScoreDocs[i].Score, 0.0f);
             }
 
             for (int dim = 0; dim < expected.Counts.Length; dim++)
@@ -1201,7 +1189,7 @@ namespace Lucene.Net.Facet
                 }
 
                 int idx = 0;
-                IDictionary<string, int?> actualValues = new Dictionary<string, int?>();
+                IDictionary<string, int> actualValues = new Dictionary<string, int>();
 
                 if (fr != null)
                 {
@@ -1301,11 +1289,7 @@ namespace Lucene.Net.Facet
             // LUCENE-5045: make sure DrillSideways works with an empty index
             Directory dir = NewDirectory();
             Directory taxoDir = NewDirectory();
-            var writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            var writer = new RandomIndexWriter(Random, dir);
             var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
             IndexSearcher searcher = NewSearcher(writer.GetReader());
             var taxoReader = new DirectoryTaxonomyReader(taxoWriter);

@@ -6,6 +6,7 @@ using Lucene.Net.Support.IO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
@@ -141,6 +142,152 @@ namespace Lucene.Net.Index
         public static readonly int FORMAT_SEGMENTS_GEN_CURRENT = FORMAT_SEGMENTS_GEN_CHECKSUM;
 
         /// <summary>
+        /// Setting this to true will generate the same file names that were used in 4.8.0-beta00001 through 4.8.0-beta00015.
+        /// When writing more than 10 segments, these segment names were incompatible with prior versions of Lucene.NET and incompatible with Lucene 4.8.0.
+        /// <para/>
+        /// This is only for reading codecs from the affected 4.8.0 beta versions, it is not recommended to use this setting for general use.
+        /// <para/>
+        /// This must be set prior to opening an index at application startup. When setting it at other times the behavior is undefined.
+        /// <para/>
+        /// Note that this property can also be set using the "useLegacySegmentNames" system property to "true" (such as setting the environment variable "lucene:useLegacySegmentNames").
+        /// System properties can also be injected by supplying a <see cref="Configuration.IConfigurationFactory"/> at application startup
+        /// through <see cref="Configuration.ConfigurationSettings.SetConfigurationFactory(Configuration.IConfigurationFactory)"/>.
+        /// </summary>
+        public static bool UseLegacySegmentNames
+        {
+            get => useLegacySegmentNames;
+            set => useLegacySegmentNames = value;
+        }
+        internal static bool useLegacySegmentNames = Util.SystemProperties.GetPropertyAsBoolean("useLegacySegmentNames", defaultValue: false);
+
+        /// <summary>
+        /// Optimized version of <see cref="J2N.IntegralNumberExtensions.ToString(long, int)"/> with a radix of 36, that
+        /// simply does a switch case for the first 100 numbers, which takes only 5% of the time as calculating it.
+        /// We fall back to calling the method after 100 segments.
+        /// <para/>
+        /// This also implements the switch for <see cref="UseLegacySegmentNames"/> so it doesn't have to be dealt with externally.
+        /// </summary>
+        internal static string SegmentNumberToString(long segment, bool allowLegacyNames = true)
+        {
+            switch (segment)
+            {
+                case 0: return "0";
+                case 1: return "1";
+                case 2: return "2";
+                case 3: return "3";
+                case 4: return "4";
+                case 5: return "5";
+                case 6: return "6";
+                case 7: return "7";
+                case 8: return "8";
+                case 9: return "9";
+            }
+
+            if (!allowLegacyNames || !useLegacySegmentNames)
+            {
+                return segment switch
+                {
+                    10 => "a",
+                    11 => "b",
+                    12 => "c",
+                    13 => "d",
+                    14 => "e",
+                    15 => "f",
+                    16 => "g",
+                    17 => "h",
+                    18 => "i",
+                    19 => "j",
+                    20 => "k",
+                    21 => "l",
+                    22 => "m",
+                    23 => "n",
+                    24 => "o",
+                    25 => "p",
+                    26 => "q",
+                    27 => "r",
+                    28 => "s",
+                    29 => "t",
+                    30 => "u",
+                    31 => "v",
+                    32 => "w",
+                    33 => "x",
+                    34 => "y",
+                    35 => "z",
+                    36 => "10",
+                    37 => "11",
+                    38 => "12",
+                    39 => "13",
+                    40 => "14",
+                    41 => "15",
+                    42 => "16",
+                    43 => "17",
+                    44 => "18",
+                    45 => "19",
+                    46 => "1a",
+                    47 => "1b",
+                    48 => "1c",
+                    49 => "1d",
+                    50 => "1e",
+                    51 => "1f",
+                    52 => "1g",
+                    53 => "1h",
+                    54 => "1i",
+                    55 => "1j",
+                    56 => "1k",
+                    57 => "1l",
+                    58 => "1m",
+                    59 => "1n",
+                    60 => "1o",
+                    61 => "1p",
+                    62 => "1q",
+                    63 => "1r",
+                    64 => "1s",
+                    65 => "1t",
+                    66 => "1u",
+                    67 => "1v",
+                    68 => "1w",
+                    69 => "1x",
+                    70 => "1y",
+                    71 => "1z",
+                    72 => "20",
+                    73 => "21",
+                    74 => "22",
+                    75 => "23",
+                    76 => "24",
+                    77 => "25",
+                    78 => "26",
+                    79 => "27",
+                    80 => "28",
+                    81 => "29",
+                    82 => "2a",
+                    83 => "2b",
+                    84 => "2c",
+                    85 => "2d",
+                    86 => "2e",
+                    87 => "2f",
+                    88 => "2g",
+                    89 => "2h",
+                    90 => "2i",
+                    91 => "2j",
+                    92 => "2k",
+                    93 => "2l",
+                    94 => "2m",
+                    95 => "2n",
+                    96 => "2o",
+                    97 => "2p",
+                    98 => "2q",
+                    99 => "2r",
+                    _ => segment.ToString(Character.MaxRadix),
+                };
+            }
+
+            // This is wrong! Unfortunately, this is how the segment names were generated in
+            // beta 1 thru 15, so we end up here if the switch is enabled to read them.
+            // We should actually be using a radix of 36 rather than 10 (which was done correctly in Lucene.NET 3.0.3).
+            return segment.ToString(CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
         /// Used to name new segments. </summary>
         public int Counter { get; set; }
 
@@ -174,14 +321,19 @@ namespace Lucene.Net.Index
         {
         }
 
-        /// <summary>
-        /// Returns <see cref="SegmentCommitInfo"/> at the provided
-        /// index.
-        /// </summary>
-        public SegmentCommitInfo Info(int i) // LUCENENET TODO: API - add indexer for this class
+        [Obsolete("Use indexer instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        public SegmentCommitInfo Info(int i)
         {
             return segments[i];
         }
+
+        /// <summary>
+        /// Returns <see cref="SegmentCommitInfo"/> at the provided
+        /// index.
+        /// <para/>
+        /// This was info(int) in Lucene.
+        /// </summary>
+        public SegmentCommitInfo this[int index] => segments[index];
 
         /// <summary>
         /// Get the generation of the most recent commit to the
@@ -190,7 +342,7 @@ namespace Lucene.Net.Index
         /// <param name="files"> array of file names to check </param>
         public static long GetLastCommitGeneration(string[] files)
         {
-            if (files == null)
+            if (files is null)
             {
                 return -1;
             }
@@ -548,7 +700,7 @@ namespace Lucene.Net.Index
                     // If this segment is pre-4.x, perform a one-time
                     // "ugprade" to write the .si file for it:
                     string version = si.Version;
-                    if (version == null || StringHelper.VersionComparer.Compare(version, "4.0") < 0)
+                    if (version is null || StringHelper.VersionComparer.Compare(version, "4.0") < 0)
                     {
                         if (!SegmentWasUpgraded(directory, si))
                         {
@@ -744,7 +896,7 @@ namespace Lucene.Net.Index
             set =>
                 // LUCENENET specific - use a SafeTextWriterWrapper to ensure that if the TextWriter
                 // is disposed by the caller (using block) we don't get any exceptions if we keep using it.
-                infoStream = value == null
+                infoStream = value is null
                     ? null
                     : (value is SafeTextWriterWrapper ? value : new SafeTextWriterWrapper(value));
             get => infoStream;
@@ -1013,7 +1165,7 @@ namespace Lucene.Net.Index
                     catch (Exception err) when (err.IsIOException())
                     {
                         // Save the original root cause:
-                        if (exc == null)
+                        if (exc is null)
                         {
                             exc = err;
                         }
@@ -1148,7 +1300,7 @@ namespace Lucene.Net.Index
             var size = Count;
             for (int i = 0; i < size; i++)
             {
-                var info = Info(i);
+                var info = this[i];
                 if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Dir == dir);
                 if (info.Info.Dir == dir)
                 {
@@ -1162,7 +1314,7 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal void FinishCommit(Directory dir)
         {
-            if (pendingSegnOutput == null)
+            if (pendingSegnOutput is null)
             {
                 throw IllegalStateException.Create("prepareCommit was not called");
             }
@@ -1265,7 +1417,7 @@ namespace Lucene.Net.Index
                 {
                     buffer.Append(' ');
                 }
-                SegmentCommitInfo info = Info(i);
+                SegmentCommitInfo info = this[i];
                 buffer.Append(info.ToString(directory, 0));
             }
             return buffer.ToString();
@@ -1280,7 +1432,7 @@ namespace Lucene.Net.Index
             get => userData;
             internal set
             {
-                if (value == null)
+                if (value is null)
                 {
                     userData = Collections.EmptyMap<string, string>();
                 }

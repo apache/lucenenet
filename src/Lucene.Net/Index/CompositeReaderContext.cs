@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
                     var sequentialSubReaders = cr.GetSequentialSubReaders();
                     var children = new IndexReaderContext[sequentialSubReaders.Count];
                     CompositeReaderContext newParent;
-                    if (parent == null)
+                    if (parent is null)
                     {
                         newParent = new CompositeReaderContext(cr, children, leaves);
                     }

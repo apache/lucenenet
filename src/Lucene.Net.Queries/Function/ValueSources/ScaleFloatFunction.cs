@@ -108,7 +108,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
 
             var scaleInfo = (ScaleInfo)context[this];
-            if (scaleInfo == null)
+            if (scaleInfo is null)
             {
                 scaleInfo = CreateScaleInfo(context, readerContext);
             }
@@ -178,8 +178,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             if (!(o is ScaleSingleFunction other))
                 return false;
-            return this.m_min == other.m_min 
-                && this.m_max == other.m_max 
+            return J2N.BitConversion.SingleToInt32Bits(this.m_min) == J2N.BitConversion.SingleToInt32Bits(other.m_min)
+                && J2N.BitConversion.SingleToInt32Bits(this.m_max) == J2N.BitConversion.SingleToInt32Bits(other.m_max) 
                 && this.m_source.Equals(other.m_source);
         }
     }

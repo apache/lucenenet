@@ -75,17 +75,7 @@ namespace Lucene.Net.Search
     // LUCENENET specific - Specify to unzip the line file docs
     [UseTempLineDocsFile]
     public abstract class ShardSearchingTestBase : LuceneTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public ShardSearchingTestBase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
-
         // LUCENENET specific - de-nested SearcherExpiredException
 
         internal class FieldAndShardVersion
@@ -203,7 +193,7 @@ namespace Lucene.Net.Search
             NodeState.ShardIndexSearcher s = m_nodes[nodeID].Acquire(nodeVersions);
             try
             {
-                if (sort == null)
+                if (sort is null)
                 {
                     if (searchAfter != null)
                     {
@@ -216,7 +206,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(searchAfter == null); // not supported yet
+                    if (Debugging.AssertsEnabled) Debugging.Assert(searchAfter is null); // not supported yet
                     return s.LocalSearch(q, numHits, sort);
                 }
             }
@@ -233,7 +223,7 @@ namespace Lucene.Net.Search
             NodeState node = m_nodes[nodeID];
             IDictionary<Term, TermStatistics> stats = new Dictionary<Term, TermStatistics>();
             IndexSearcher s = node.Searchers.Acquire(version);
-            if (s == null)
+            if (s is null)
             {
                 throw new SearcherExpiredException("node=" + nodeID + " version=" + version);
             }
@@ -409,7 +399,7 @@ namespace Lucene.Net.Search
                         {
                             outerInstance.collectionStatsCache.TryGetValue(key, out nodeStats);
                         }
-                        if (nodeStats == null)
+                        if (nodeStats is null)
                         {
                             Console.WriteLine("coll stats myNodeID=" + MyNodeID + ": " + Collections.ToString(outerInstance.collectionStatsCache.Keys));
                         }
@@ -602,7 +592,7 @@ namespace Lucene.Net.Search
 
             public void InitSearcher(long[] nodeVersions)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(currentShardSearcher == null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(currentShardSearcher is null);
                 Array.Copy(nodeVersions, 0, currentNodeVersions, 0, currentNodeVersions.Length);
                 currentShardSearcher = new ShardIndexSearcher(this, GetCurrentNodeVersions(), Mgr.Acquire().IndexReader, MyNodeID);
             }
@@ -645,7 +635,7 @@ namespace Lucene.Net.Search
             public ShardIndexSearcher Acquire(long[] nodeVersions)
             {
                 IndexSearcher s = Searchers.Acquire(nodeVersions[MyNodeID]);
-                if (s == null)
+                if (s is null)
                 {
                     throw new SearcherExpiredException("nodeID=" + MyNodeID + " version=" + nodeVersions[MyNodeID]);
                 }

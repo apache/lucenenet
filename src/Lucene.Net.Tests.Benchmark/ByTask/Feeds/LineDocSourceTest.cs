@@ -161,7 +161,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 assertEquals(numAdds, td.TotalHits);
                 assertNotNull(td.ScoreDocs[0]);
 
-                if (storedField == null)
+                if (storedField is null)
                 {
                     storedField = DocMaker.BODY_FIELD; // added to all docs and satisfies field-name == value
                 }

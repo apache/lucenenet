@@ -27,6 +27,10 @@
     <AssemblyTitle>Lucene.Net.Tests._A-D</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TimeZoneConverter" Version="$(TimeZoneConverterPackageVersion)" />
+  </ItemGroup>
   
   <ItemGroup>
     <Compile Include="..\Lucene.Net.Tests\Properties\AssemblyInfo.cs" Link="Properties\AssemblyInfo.cs" />
@@ -69,7 +73,7 @@
     </ProjectReference>
   </ItemGroup>
   
-  <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
+  <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
   
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />

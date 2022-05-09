@@ -210,7 +210,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 else
                 {
                     @string = field.GetStringValue();
-                    if (@string == null)
+                    if (@string is null)
                     {
                         throw new ArgumentException("field " + field.Name + " is stored but does not have binaryValue, stringValue nor numericValue");
                     }

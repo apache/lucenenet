@@ -8,24 +8,15 @@ using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using JCG = J2N.Collections.Generic;
 using static Lucene.Net.Index.TermsEnum;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Attribute = Lucene.Net.Util.Attribute;
-using System.Diagnostics.CodeAnalysis;
-using RandomizedTesting.Generators;
-
-#if TESTFRAMEWORK_MSTEST
-using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-#elif TESTFRAMEWORK_NUNIT
+using JCG = J2N.Collections.Generic;
 using Test = NUnit.Framework.TestAttribute;
-#elif TESTFRAMEWORK_XUNIT
-using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
-#endif
 
 namespace Lucene.Net.Index
 {
@@ -54,16 +45,7 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
     public abstract class BaseTermVectorsFormatTestCase : BaseIndexFileFormatTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public BaseTermVectorsFormatTestCase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
         /// <summary>
         /// A combination of term vectors options.
         /// </summary>
@@ -253,9 +235,9 @@ namespace Lucene.Net.Index
             internal readonly int[] startOffsets, endOffsets;
             internal readonly BytesRef[] payloads;
 
-            internal readonly IDictionary<string, int?> freqs;
-            internal readonly IDictionary<int?, ISet<int?>> positionToTerms;
-            internal readonly IDictionary<int?, ISet<int?>> startOffsetToTerms;
+            internal readonly IDictionary<string, int> freqs;
+            internal readonly IDictionary<int, ISet<int>> positionToTerms;
+            internal readonly IDictionary<int, ISet<int>> startOffsetToTerms;
 
             internal readonly ICharTermAttribute termAtt;
             internal readonly IPositionIncrementAttribute piAtt;
@@ -325,26 +307,26 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                positionToTerms = new Dictionary<int?, ISet<int?>>(len);
-                startOffsetToTerms = new Dictionary<int?, ISet<int?>>(len);
+                positionToTerms = new Dictionary<int, ISet<int>>(len);
+                startOffsetToTerms = new Dictionary<int, ISet<int>>(len);
                 for (int i = 0; i < len; ++i)
                 {
-                    if (!positionToTerms.TryGetValue(positions[i], out ISet<int?> positionTerms))
+                    if (!positionToTerms.TryGetValue(positions[i], out ISet<int> positionTerms))
                     {
-                        positionToTerms[positions[i]] = positionTerms = new JCG.HashSet<int?>(1);
+                        positionToTerms[positions[i]] = positionTerms = new JCG.HashSet<int>(1);
                     }
                     positionTerms.Add(i);
-                    if (!startOffsetToTerms.TryGetValue(startOffsets[i], out ISet<int?> startOffsetTerms))
+                    if (!startOffsetToTerms.TryGetValue(startOffsets[i], out ISet<int> startOffsetTerms))
                     {
-                        startOffsetToTerms[startOffsets[i]] = startOffsetTerms = new JCG.HashSet<int?>(1);
+                        startOffsetToTerms[startOffsets[i]] = startOffsetTerms = new JCG.HashSet<int>(1);
                     }
                     startOffsetTerms.Add(i);
                 }
 
-                freqs = new Dictionary<string, int?>();
+                freqs = new Dictionary<string, int>();
                 foreach (string term in terms)
                 {
-                    if (freqs.TryGetValue(term, out int? freq))
+                    if (freqs.TryGetValue(term, out int freq))
                     {
                         freqs[term] = freq + 1;
                     }
@@ -471,7 +453,7 @@ namespace Lucene.Net.Index
         protected virtual void AssertEquals(RandomDocument doc, Fields fields)
         {
             // compare field names
-            Assert.AreEqual(doc == null, fields == null);
+            Assert.AreEqual(doc is null, fields is null);
             Assert.AreEqual(doc.fieldNames.Length, fields.Count);
             ISet<string> fields1 = new JCG.HashSet<string>();
             ISet<string> fields2 = new JCG.HashSet<string>();
@@ -493,9 +475,9 @@ namespace Lucene.Net.Index
 
         new protected internal static bool Equals(object o1, object o2)
         {
-            if (o1 == null)
+            if (o1 is null)
             {
-                return o2 == null;
+                return o2 is null;
             }
             else
             {
@@ -551,7 +533,7 @@ namespace Lucene.Net.Index
                 Assert.IsNotNull(docsEnum);
                 Assert.AreEqual(0, docsEnum.NextDoc());
                 Assert.AreEqual(0, docsEnum.DocID);
-                Assert.AreEqual(tk.freqs[termsEnum.Term.Utf8ToString()], (int?)docsEnum.Freq);
+                Assert.AreEqual(tk.freqs[termsEnum.Term.Utf8ToString()], docsEnum.Freq);
                 Assert.AreEqual(DocsEnum.NO_MORE_DOCS, docsEnum.NextDoc());
                 this.docsEnum.Value = docsEnum;
 
@@ -570,13 +552,13 @@ namespace Lucene.Net.Index
                 {
                     Assert.AreEqual(0, docsAndPositionsEnum.NextDoc());
                     int freq = docsAndPositionsEnum.Freq;
-                    Assert.AreEqual(tk.freqs[termsEnum.Term.Utf8ToString()], (int?)freq);
+                    Assert.AreEqual(tk.freqs[termsEnum.Term.Utf8ToString()], freq);
                     if (docsAndPositionsEnum != null)
                     {
                         for (int k = 0; k < freq; ++k)
                         {
                             int position = docsAndPositionsEnum.NextPosition();
-                            ISet<int?> indexes;
+                            ISet<int> indexes;
                             if (terms.HasPositions)
                             {
                                 indexes = tk.positionToTerms[position];
@@ -681,11 +663,7 @@ namespace Lucene.Net.Index
                 int docWithVectors = Random.Next(numDocs);
                 Document emptyDoc = new Document();
                 using Directory dir = NewDirectory();
-                using RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    this,
-#endif
-                    Random, dir);
+                using RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
                 RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), 20, options);
                 for (int i = 0; i < numDocs; ++i)
                 {
@@ -729,11 +707,7 @@ namespace Lucene.Net.Index
                     continue;
                 }
                 using Directory dir = NewDirectory();
-                using RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    this,
-#endif
-                    Random, dir);
+                using RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
                 RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 2), AtLeast(20000),
                     options);
                 writer.AddDocument(doc.ToDocument());
@@ -749,11 +723,7 @@ namespace Lucene.Net.Index
             foreach (Options options in ValidOptions())
             {
                 using Directory dir = NewDirectory();
-                using RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    this,
-#endif
-                    Random, dir);
+                using RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
                 RandomDocument doc = docFactory.NewDocument(AtLeast(100), 5, options);
                 writer.AddDocument(doc.ToDocument());
                 using IndexReader reader = writer.GetReader();
@@ -776,11 +746,7 @@ namespace Lucene.Net.Index
                         continue;
                     }
                     using Directory dir = NewDirectory();
-                    using var writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                        this,
-#endif
-                        Random, dir);
+                    using var writer = new RandomIndexWriter(Random, dir);
                     RandomDocument doc1 = docFactory.NewDocument(numFields, 20, options1);
                     RandomDocument doc2 = docFactory.NewDocument(numFields, 20, options2);
                     writer.AddDocument(AddId(doc1.ToDocument(), "1"));
@@ -805,11 +771,7 @@ namespace Lucene.Net.Index
                 docs[i] = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), TestUtil.NextInt32(Random, 10, 50), RandomOptions());
             }
             using Directory dir = NewDirectory();
-            using RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            using RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             for (int i = 0; i < numDocs; ++i)
             {
                 writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
@@ -828,7 +790,7 @@ namespace Lucene.Net.Index
             RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 5, 20);
             int numDocs = AtLeast(100);
             int numDeletes = Random.Next(numDocs);
-            ISet<int?> deletes = new JCG.HashSet<int?>();
+            ISet<int> deletes = new JCG.HashSet<int>();
             while (deletes.Count < numDeletes)
             {
                 deletes.Add(Random.Next(numDocs));
@@ -841,11 +803,7 @@ namespace Lucene.Net.Index
                     docs[i] = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), AtLeast(10), options);
                 }
                 using Directory dir = NewDirectory();
-                using RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    this,
-#endif
-                    Random, dir);
+                using RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
                 for (int i = 0; i < numDocs; ++i)
                 {
                     writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
@@ -888,11 +846,7 @@ namespace Lucene.Net.Index
                 }
                 AtomicReference<Exception> exception = new AtomicReference<Exception>();
                 using (Directory dir = NewDirectory())
-                using (RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    this,
-#endif
-                    Random, dir))
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir))
                 {
                     for (int i = 0; i < numDocs; ++i)
                     {

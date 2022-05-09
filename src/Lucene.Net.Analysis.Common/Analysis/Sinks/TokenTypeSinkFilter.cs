@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Sinks
 
         public override bool Accept(AttributeSource source)
         {
-            if (typeAtt == null)
+            if (typeAtt is null)
             {
                 typeAtt = source.AddAttribute<ITypeAttribute>();
             }

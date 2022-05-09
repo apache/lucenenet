@@ -196,7 +196,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         public StandardQueryParser GetParser(Analyzer a)
         {
-            if (a == null)
+            if (a is null)
                 a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             StandardQueryParser qp = new StandardQueryParser();
             qp.Analyzer = (a);
@@ -298,7 +298,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         public Query GetQueryDOA(String query, Analyzer a)
         {
-            if (a == null)
+            if (a is null)
                 a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             StandardQueryParser qp = new StandardQueryParser();
             qp.Analyzer = (a);
@@ -734,7 +734,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         /** for testing DateTools support */
-        private String GetDate(String s, DateTools.Resolution resolution)
+        private String GetDate(String s, DateResolution resolution)
 
         {
             // we use the default Locale since LuceneTestCase randomizes it
@@ -745,7 +745,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         /** for testing DateTools support */
-        private String GetDate(DateTime d, DateTools.Resolution resolution)
+        private String GetDate(DateTime d, DateResolution resolution)
         {
             return DateTools.DateToString(d, resolution);
         }
@@ -799,19 +799,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             String hourField = "hour";
             StandardQueryParser qp = new StandardQueryParser();
 
-            IDictionary<string, DateTools.Resolution?> dateRes = new Dictionary<string, DateTools.Resolution?>();
+            IDictionary<string, DateResolution> dateRes = new Dictionary<string, DateResolution>();
 
             // set a field specific date resolution    
-            dateRes.Put(monthField, DateTools.Resolution.MONTH);
+            dateRes.Put(monthField, DateResolution.MONTH);
 #pragma warning disable 612, 618
             qp.SetDateResolution(dateRes);
 #pragma warning restore 612, 618
 
             // set default date resolution to MILLISECOND
-            qp.SetDateResolution(DateTools.Resolution.MILLISECOND);
+            qp.SetDateResolution(DateResolution.MILLISECOND);
 
             // set second field specific date resolution
-            dateRes.Put(hourField, DateTools.Resolution.HOUR);
+            dateRes.Put(hourField, DateResolution.HOUR);
 #pragma warning disable 612, 618
             qp.SetDateResolution(dateRes);
 #pragma warning restore 612, 618
@@ -819,20 +819,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             // for this field no field specific date resolution has been set,
             // so verify if the default resolution is used
             AssertDateRangeQueryEquals(qp, defaultField, startDate, endDate,
-                endDateExpected/*.getTime()*/, DateTools.Resolution.MILLISECOND);
+                endDateExpected/*.getTime()*/, DateResolution.MILLISECOND);
 
             // verify if field specific date resolutions are used for these two
             // fields
             AssertDateRangeQueryEquals(qp, monthField, startDate, endDate,
-                endDateExpected/*.getTime()*/, DateTools.Resolution.MONTH);
+                endDateExpected/*.getTime()*/, DateResolution.MONTH);
 
             AssertDateRangeQueryEquals(qp, hourField, startDate, endDate,
-                endDateExpected/*.getTime()*/, DateTools.Resolution.HOUR);
+                endDateExpected/*.getTime()*/, DateResolution.HOUR);
         }
 
         public void AssertDateRangeQueryEquals(StandardQueryParser qp,
             String field, String startDate, String endDate, DateTime endDateInclusive,
-            DateTools.Resolution resolution)
+            DateResolution resolution)
         {
             AssertQueryEquals(qp, field, field + ":[" + EscapeDateString(startDate) + " TO " + EscapeDateString(endDate)
                 + "]", "[" + GetDate(startDate, resolution) + " TO "

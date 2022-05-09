@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         protected virtual void Allocate()
         {
-            if (this.clauses == null)
+            if (this.clauses is null)
             {
                 this.clauses = new JCG.List<IQueryNode>();
             }
@@ -57,7 +57,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public void Add(IQueryNode child)
         {
-            if (IsLeaf || this.clauses == null || child == null)
+            if (IsLeaf || this.clauses is null || child is null)
             {
                 // LUCENENET: Factored out NLS/Message/IMessage so end users can optionally utilize the built-in .NET localization.
                 throw new ArgumentException(
@@ -70,7 +70,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public void Add(IList<IQueryNode> children)
         {
-            if (IsLeaf || this.clauses == null)
+            if (IsLeaf || this.clauses is null)
             {
                 // LUCENENET: Factored out NLS/Message/IMessage so end users can optionally utilize the built-in .NET localization.
                 throw new ArgumentException(
@@ -91,7 +91,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public void Set(IList<IQueryNode> children)
         {
-            if (IsLeaf || this.clauses == null)
+            if (IsLeaf || this.clauses is null)
             {
                 // LUCENENET: Factored out NLS/Message/IMessage so end users can optionally utilize the built-in .NET localization.
                 throw new ArgumentException(QueryParserMessages.NODE_ACTION_NOT_SUPPORTED);
@@ -151,7 +151,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// </summary>
         public IList<IQueryNode> GetChildren()
         {
-            if (IsLeaf || this.clauses == null)
+            if (IsLeaf || this.clauses is null)
             {
                 return null;
             }
@@ -200,7 +200,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public virtual IQueryNode Parent => this.parent;
 
-        protected virtual bool IsRoot => Parent == null;
+        protected virtual bool IsRoot => Parent is null;
 
         /// <summary>
         /// If set to true the the method toQueryString will not write field names
@@ -221,7 +221,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
             if (this.m_toQueryStringIgnoreFields)
                 return true;
-            if (fld == null)
+            if (fld is null)
                 return true;
             if (QueryNode.PLAINTEXT_FIELD_NAME.Equals(StringUtils.ToString(fld), StringComparison.Ordinal))
                 return true;

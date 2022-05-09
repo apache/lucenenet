@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -50,6 +50,7 @@ namespace Lucene.Net.Util.Fst
     /// @lucene.experimental
     /// </summary>
     public class Builder<T> : Builder
+        where T : class // LUCENENET specific - added class constraint, since we compare reference equality
     {
         private readonly NodeHash<T> dedupHash;
         private readonly FST<T> fst;
@@ -187,7 +188,7 @@ namespace Lucene.Net.Util.Fst
 
         public virtual long TermCount => frontier[0].InputCount;
 
-        public virtual long MappedStateCount => dedupHash == null ? 0 : fst.nodeCount;
+        public virtual long MappedStateCount => dedupHash is null ? 0 : fst.nodeCount;
 
         private CompiledNode CompileNode(UnCompiledNode<T> nodeIn, int tailLength)
         {
@@ -450,7 +451,7 @@ namespace Lucene.Net.Util.Fst
                 T commonOutputPrefix;
                 T wordSuffix;
 
-                if (!lastOutput.Equals(NO_OUTPUT))
+                if (lastOutput != NO_OUTPUT)
                 {
                     commonOutputPrefix = fst.Outputs.Common(output, lastOutput);
                     if (Debugging.AssertsEnabled) Debugging.Assert(ValidOutput(commonOutputPrefix));
@@ -489,7 +490,7 @@ namespace Lucene.Net.Util.Fst
 
         internal bool ValidOutput(T output) // Only called from assert
         {
-            return output.Equals(NO_OUTPUT) || !output.Equals(NO_OUTPUT);
+            return output == NO_OUTPUT || !output.Equals(NO_OUTPUT);
         }
 
         /// <summary>
@@ -504,7 +505,7 @@ namespace Lucene.Net.Util.Fst
             DoFreezeTail(0);
             if (root.InputCount < minSuffixCount1 || root.InputCount < minSuffixCount2 || root.NumArcs == 0)
             {
-                if (fst.emptyOutput == null)
+                if (fst.emptyOutput is null)
                 {
                     return null;
                 }
@@ -583,7 +584,7 @@ namespace Lucene.Net.Util.Fst
         /// Expert: this is invoked by Builder whenever a suffix
         ///  is serialized.
         /// </summary>
-        public abstract class FreezeTail<S>
+        public abstract class FreezeTail<S> where S : class // LUCNENET specific - added class constraint because we compare reference equality
         {
             public abstract void Freeze(UnCompiledNode<S>[] frontier, int prefixLenPlus1, Int32sRef prevInput);
         }
@@ -595,7 +596,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Expert: holds a pending (seen but not yet serialized) arc. </summary>
-        public class Arc<S>
+        public class Arc<S> where S : class // LUCENENET specific - added class constraint because we compare reference equality
         {
             public int Label { get; set; } // really an "unsigned" byte
             public INode Target { get; set; }
@@ -613,7 +614,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Expert: holds a pending (seen but not yet serialized) Node. </summary>
-        public sealed class UnCompiledNode<S> : INode
+        public sealed class UnCompiledNode<S> : INode where S : class // LUCENENET specific - added class constraint, since we compare reference equality
         {
             internal Builder<S> Owner { get; private set; }
             public int NumArcs { get; set; }

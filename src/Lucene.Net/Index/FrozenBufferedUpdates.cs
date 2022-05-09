@@ -1,9 +1,11 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
-using System;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
 using System.Collections;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
+using QueryAndLimit = Lucene.Net.Index.BufferedUpdatesStream.QueryAndLimit;
 
 namespace Lucene.Net.Index
 {
@@ -23,13 +25,6 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
-    using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
-    using Query = Lucene.Net.Search.Query;
-    using QueryAndLimit = Lucene.Net.Index.BufferedUpdatesStream.QueryAndLimit;
-    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
     /// <summary>
     /// Holds buffered deletes and updates by term or query, once pushed. Pushed
@@ -83,20 +78,10 @@ namespace Lucene.Net.Index
             queries = new Query[deletes.queries.Count];
             queryLimits = new int[deletes.queries.Count];
             int upto = 0;
-            foreach (KeyValuePair<Query, int?> ent in deletes.queries)
+            foreach (KeyValuePair<Query, int> ent in deletes.queries)
             {
                 queries[upto] = ent.Key;
-                if (ent.Value.HasValue)
-                {
-                    queryLimits[upto] = ent.Value.Value;
-                }
-                else
-                {
-                    // LUCENENET NOTE: According to this: http://stackoverflow.com/a/13914344
-                    // we are supposed to throw an exception in this case, rather than
-                    // silently fail.
-                    throw new NullReferenceException();
-                }
+                queryLimits[upto] = ent.Value;
                 upto++;
             }
 

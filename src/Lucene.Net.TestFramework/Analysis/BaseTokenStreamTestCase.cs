@@ -98,30 +98,7 @@ namespace Lucene.Net.Analysis
     // LUCENENET specific - Specify to unzip the line file docs
     [UseTempLineDocsFile]
     public abstract class BaseTokenStreamTestCase : LuceneTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public BaseTokenStreamTestCase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
-        //#if TESTFRAMEWORK_MSTEST
-        //        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-        //        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
-        //        {
-        //            Lucene.Net.Util.LuceneTestCase.BeforeClass(context);
-        //        }
-
-        //        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-        //        new public static void AfterClass()
-        //        {
-        //            Lucene.Net.Util.LuceneTestCase.AfterClass();
-        //        }
-        //#endif
-
         // some helpers to test Analyzers and TokenStreams:
 
         // LUCENENET specific - de-nested ICheckClearAttributesAttribute
@@ -199,8 +176,8 @@ namespace Lucene.Net.Analysis
                 // *********** End From Lucene 8.2.0 **************
 
                 // Maps position to the start/end offset:
-                IDictionary<int?, int?> posToStartOffset = new Dictionary<int?, int?>();
-                IDictionary<int?, int?> posToEndOffset = new Dictionary<int?, int?>();
+                IDictionary<int, int> posToStartOffset = new Dictionary<int, int>();
+                IDictionary<int, int> posToEndOffset = new Dictionary<int, int>();
 
                 ts.Reset();
                 int pos = -1;
@@ -309,7 +286,7 @@ namespace Lucene.Net.Analysis
 
                             int posLength = posLengthAtt.PositionLength;
 
-                            if (!posToStartOffset.TryGetValue(pos, out int? oldStartOffset))
+                            if (!posToStartOffset.TryGetValue(pos, out int oldStartOffset))
                             {
                                 // First time we've seen a token leaving from this position:
                                 posToStartOffset[pos] = startOffset;
@@ -320,12 +297,12 @@ namespace Lucene.Net.Analysis
                                 // We've seen a token leaving from this position
                                 // before; verify the startOffset is the same:
                                 //System.out.println("  + vs " + pos + " -> " + startOffset);
-                                Assert.AreEqual(oldStartOffset.GetValueOrDefault(), startOffset, "pos=" + pos + " posLen=" + posLength + " token=" + termAtt);
+                                Assert.AreEqual(oldStartOffset, startOffset, "pos=" + pos + " posLen=" + posLength + " token=" + termAtt);
                             }
 
                             int endPos = pos + posLength;
 
-                            if (!posToEndOffset.TryGetValue(endPos, out int? oldEndOffset))
+                            if (!posToEndOffset.TryGetValue(endPos, out int oldEndOffset))
                             {
                                 // First time we've seen a token arriving to this position:
                                 posToEndOffset[endPos] = endOffset;
@@ -336,7 +313,7 @@ namespace Lucene.Net.Analysis
                                 // We've seen a token arriving to this position
                                 // before; verify the endOffset is the same:
                                 //System.out.println("  + ve " + endPos + " -> " + endOffset);
-                                Assert.AreEqual(oldEndOffset.GetValueOrDefault(), endOffset, "pos=" + pos + " posLen=" + posLength + " token=" + termAtt);
+                                Assert.AreEqual(oldEndOffset, endOffset, "pos=" + pos + " posLen=" + posLength + " token=" + termAtt);
                             }
                         }
                     }
@@ -606,7 +583,6 @@ namespace Lucene.Net.Analysis
             AssertAnalyzesTo(a, input, new string[] { expected });
         }
 
-#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         /// <summary>
         /// Utility method for blasting tokenstreams with data to make sure they don't do anything crazy
         /// </summary>
@@ -631,44 +607,6 @@ namespace Lucene.Net.Analysis
         {
             CheckRandomData(random, a, iterations, 20, simple, true);
         }
-#else
-        /// <summary>
-        /// Utility method for blasting tokenstreams with data to make sure they don't do anything crazy
-        /// <para/>
-        /// LUCENENET specific
-        /// Non-static to reduce the inter-class dependencies due to use of
-        /// static variables
-        /// </summary>
-        public void CheckRandomData(Random random, Analyzer a, int iterations)
-        {
-            CheckRandomData(random, a, iterations, 20, false, true);
-        }
-
-        /// <summary>
-        /// Utility method for blasting tokenstreams with data to make sure they don't do anything crazy
-        /// <para/>
-        /// LUCENENET specific:
-        /// Non-static to reduce the inter-class dependencies due to use of
-        /// static variables
-        /// </summary>
-        public void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength)
-        {
-            CheckRandomData(random, a, iterations, maxWordLength, false, true);
-        }
-
-        /// <summary>
-        /// Utility method for blasting tokenstreams with data to make sure they don't do anything crazy
-        /// <para/>
-        /// LUCENENET specific:
-        /// Non-static to reduce the inter-class dependencies due to use of
-        /// static variables
-        /// </summary>
-        /// <param name="simple"> true if only ascii strings will be used (try to avoid)</param>
-        public void CheckRandomData(Random random, Analyzer a, int iterations, bool simple)
-        {
-            CheckRandomData(random, a, iterations, 20, simple, true);
-        }
-#endif
 
         internal class AnalysisThread : ThreadJob
         {
@@ -713,14 +651,14 @@ namespace Lucene.Net.Analysis
                     CheckRandomData(new J2N.Randomizer(seed), a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw);
                     success = true;
                 }
-                catch (Exception e) when (e.IsException()) // LUCENENET TODO: This catch block can be removed because Rethrow.rethrow() simply does what its name says, but need to get rid of the FirstException functionality and fix ThreadJob so it re-throws ThreadInterruptedExcepetion first.
+                catch (Exception e) when (e.IsException())
                 {
                     //Console.WriteLine("Exception in Thread: " + e);
                     //throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     // LUCENENET: Throwing an exception on another thread
                     // is pointless, so we set it to a variable so we can read
                     // it from our main thread (for debugging).
-                    if (FirstException == null)
+                    if (FirstException is null)
                     {
                         FirstException = e;
                     }
@@ -732,21 +670,12 @@ namespace Lucene.Net.Analysis
             }
         }
 
-#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         public static void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple)
         {
             CheckRandomData(random, a, iterations, maxWordLength, simple, true);
         }
 
         public static void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple, bool offsetsAreCorrect)
-#else
-        public void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple)
-        {
-            CheckRandomData(random, a, iterations, maxWordLength, simple, true);
-        }
-
-        public void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple, bool offsetsAreCorrect)
-#endif
         {
             CheckResetException(a, "best effort");
             long seed = random.NextInt64();
@@ -760,11 +689,7 @@ namespace Lucene.Net.Analysis
             if (Rarely(random) && codecOk)
             {
                 dir = NewFSDirectory(CreateTempDir("bttc"));
-                iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    this,
-#endif
-                    new J2N.Randomizer(seed), dir, a);
+                iw = new RandomIndexWriter(new J2N.Randomizer(seed), dir, a);
             }
 
             bool success = false;

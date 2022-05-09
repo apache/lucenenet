@@ -3,7 +3,8 @@ using Lucene.Net.Index;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
 using NUnit.Framework;
-using Spatial4n.Core.Context;
+using Spatial4n.Context;
+using Spatial4n.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix
 {
@@ -29,10 +30,10 @@ namespace Lucene.Net.Spatial.Prefix
         [Test]
         public virtual void TestNGramPrefixGridLosAngeles()
         {
-            SpatialContext ctx = SpatialContext.GEO;
+            SpatialContext ctx = SpatialContext.Geo;
             TermQueryPrefixTreeStrategy prefixGridStrategy = new TermQueryPrefixTreeStrategy(new QuadPrefixTree(ctx), "geo");
-
-            Spatial4n.Core.Shapes.IShape point = ctx.MakePoint(-118.243680, 34.052230);
+            
+            IShape point = ctx.MakePoint(-118.243680, 34.052230);
 
             Document losAngeles = new Document();
             losAngeles.Add(new StringField("name", "Los Angeles", Field.Store.YES));
@@ -40,7 +41,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 losAngeles.Add(field);
             }
-            losAngeles.Add(new StoredField(prefixGridStrategy.FieldName, point.toString()));//just for diagnostics
+            losAngeles.Add(new StoredField(prefixGridStrategy.FieldName, point.ToString()));//just for diagnostics
 
             addDocumentsAndCommit(new Document[] { losAngeles });
 

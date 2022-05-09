@@ -385,7 +385,7 @@ namespace Lucene.Net.Search.Spell
             foreach (ScoreTerm s in terms)
             {
                 SuggestWord suggestion = new SuggestWord();
-                if (s.TermAsString == null)
+                if (s.TermAsString is null)
                 {
                     UnicodeUtil.UTF8toUTF16(s.Term, spare);
                     s.TermAsString = spare.ToString();
@@ -425,7 +425,7 @@ namespace Lucene.Net.Search.Spell
             var atts = new AttributeSource();
             IMaxNonCompetitiveBoostAttribute maxBoostAtt = atts.AddAttribute<IMaxNonCompetitiveBoostAttribute>();
             Terms terms = MultiFields.GetTerms(ir, term.Field);
-            if (terms == null)
+            if (terms is null)
             {
                 return Collections.EmptyList<ScoreTerm>();
             }
@@ -555,7 +555,7 @@ namespace Lucene.Net.Search.Spell
             {
                 const int prime = 31;
                 int result = 1;
-                result = prime * result + ((Term == null) ? 0 : Term.GetHashCode());
+                result = prime * result + ((Term is null) ? 0 : Term.GetHashCode());
                 return result;
             }
 
@@ -565,7 +565,7 @@ namespace Lucene.Net.Search.Spell
                 {
                     return true;
                 }
-                if (obj == null)
+                if (obj is null)
                 {
                     return false;
                 }
@@ -574,7 +574,7 @@ namespace Lucene.Net.Search.Spell
                     return false;
                 }
                 ScoreTerm other = (ScoreTerm)obj;
-                if (Term == null)
+                if (Term is null)
                 {
                     if (other.Term != null)
                     {

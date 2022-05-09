@@ -92,14 +92,14 @@ namespace Lucene.Net.Store
         public void SetMaxWriteMBPerSec(double? mbPerSec, IOContext.UsageContext context)
         {
             EnsureOpen();
-            //if (context == null) // LUCENENET NOTE: enum values can never be null in .NET
+            //if (context is null) // LUCENENET NOTE: enum values can never be null in .NET
             //{
             //    throw new ArgumentException("Context must not be null");
             //}
             //int ord = context.ordinal();
             _contextRateLimiters.TryGetValue(context, out RateLimiter limiter);
 
-            if (mbPerSec == null)
+            if (mbPerSec is null)
             {
                 if (limiter != null)
                 {
@@ -150,7 +150,7 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             var limiter = GetRateLimiter(context);
-            return limiter == null ? 0 : limiter.MbPerSec;
+            return limiter is null ? 0 : limiter.MbPerSec;
         }
     }
 }

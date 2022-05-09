@@ -404,7 +404,7 @@ namespace Lucene.Net.Search.Grouping
                     bool orderByCount = random.nextBoolean();
                     string randomStr = GetFromSet(context.facetValues, random.nextInt(context.facetValues.size()));
                     string facetPrefix;
-                    if (randomStr == null)
+                    if (randomStr is null)
                     {
                         facetPrefix = null;
                     }
@@ -589,11 +589,11 @@ namespace Lucene.Net.Search.Grouping
                 {
                     return 0;
                 }
-                else if (a == null)
+                else if (a is null)
                 {
                     return -1;
                 }
-                else if (b == null)
+                else if (b is null)
                 {
                     return 1;
                 }
@@ -706,7 +706,7 @@ namespace Lucene.Net.Search.Grouping
                     groupDc.SetBytesValue(new BytesRef());
                 }
                 content.SetStringValue(contentStr);
-                if (groupValue == null && facetVals.Count == 0)
+                if (groupValue is null && facetVals.Count == 0)
                 {
                     writer.AddDocument(docNoGroupNoFacet);
                 }
@@ -714,7 +714,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     writer.AddDocument(docNoFacet);
                 }
-                else if (groupValue == null)
+                else if (groupValue is null)
                 {
                     writer.AddDocument(docNoGroup);
                 }
@@ -760,7 +760,7 @@ namespace Lucene.Net.Search.Grouping
             // also includes facets with count 0
             foreach (string facetValue in facetValues)
             {
-                if (facetValue == null)
+                if (facetValue is null)
                 {
                     continue;
                 }
@@ -774,7 +774,7 @@ namespace Lucene.Net.Search.Grouping
             }
 
             // Only include null count when no facet prefix is specified
-            if (facetPrefix == null)
+            if (facetPrefix is null)
             {
                 if (facetGroups.TryGetValue(null, out ISet<string> groups) && groups != null)
                 {
@@ -813,7 +813,7 @@ namespace Lucene.Net.Search.Grouping
 
         private AbstractGroupFacetCollector CreateRandomCollector(string groupField, string facetField, string facetPrefix, bool multipleFacetsPerDocument)
         {
-            BytesRef facetPrefixBR = facetPrefix == null ? null : new BytesRef(facetPrefix);
+            BytesRef facetPrefixBR = facetPrefix is null ? null : new BytesRef(facetPrefix);
             // DocValues cannot be multi-valued:
             if (Debugging.AssertsEnabled) Debugging.Assert(!multipleFacetsPerDocument || !groupField.EndsWith("_dv", StringComparison.Ordinal));
             return TermGroupFacetCollector.CreateTermGroupFacetCollector(groupField, facetField, multipleFacetsPerDocument, facetPrefixBR, Random.nextInt(1024));

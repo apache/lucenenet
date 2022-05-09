@@ -616,11 +616,7 @@ namespace Lucene.Net.Search.Spans
 
         private void CheckHits(Query query, int[] results)
         {
-            Search.CheckHits.DoCheckHits(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, query, "field", searcher, results);
+            Search.CheckHits.DoCheckHits(Random, query, "field", searcher, results);
         }
     }
 }

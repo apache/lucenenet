@@ -1,4 +1,4 @@
-# this is the git pattern ignore file for the project.
+﻿# this is the git pattern ignore file for the project.
 # Git can be used with svn http://code.google.com/p/msysgit/
 bin
 Bin
@@ -40,6 +40,7 @@ test-files/analysis/data/
 [Nn]u[Gg]et[Pp]ackages/
 out.dot
 release/
+_artifacts/
 
 # NuGet v3's project.json files produces more ignoreable files
 *.nuget.props

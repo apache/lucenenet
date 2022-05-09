@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
             return mergeSpec;
         }
 
-        public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
+        public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool> segmentsToMerge)
         {
             JCG.List<SegmentCommitInfo> eligibleSegments = new JCG.List<SegmentCommitInfo>();
             foreach (SegmentCommitInfo info in segmentInfos.Segments)

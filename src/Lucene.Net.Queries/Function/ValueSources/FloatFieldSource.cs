@@ -80,7 +80,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override object ObjectVal(int doc)
             {
-                return valid.Get(doc) ? arr.Get(doc) : (float?)null;
+                return valid.Get(doc) ? J2N.Numerics.Single.GetInstance(arr.Get(doc)) : null; // LUCENENET: In Java, the conversion to instance of java.util.Float is implicit, but we need to do an explicit conversion
             }
 
             public override bool Exists(int doc)
@@ -102,12 +102,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             if (!(o is SingleFieldSource other))
                 return false;
-            return base.Equals(other) && (this.m_parser == null ? other.m_parser == null : this.m_parser.GetType() == other.m_parser.GetType());
+            return base.Equals(other) && (this.m_parser is null ? other.m_parser is null : this.m_parser.GetType() == other.m_parser.GetType());
         }
 
         public override int GetHashCode()
         {
-            int h = m_parser == null ? typeof(float?).GetHashCode() : m_parser.GetType().GetHashCode();
+            int h = m_parser is null ? typeof(float).GetHashCode() : m_parser.GetType().GetHashCode();
             h += base.GetHashCode();
             return h;
         }

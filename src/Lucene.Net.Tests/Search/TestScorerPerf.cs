@@ -168,7 +168,7 @@ namespace Lucene.Net.Search
             bq.Add(q, Occur.MUST);
             if (validate)
             {
-                if (result == null)
+                if (result is null)
                 {
                     result =  (BitSet)rnd.Clone();
                 }

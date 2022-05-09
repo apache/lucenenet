@@ -47,7 +47,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             DirectoryInfo dir = f.Directory;
             string categoriesName = "categories-" + f.Name;
-            return dir == null ? new FileInfo(categoriesName) : new FileInfo(System.IO.Path.Combine(dir.FullName, categoriesName));
+            return dir is null ? new FileInfo(categoriesName) : new FileInfo(System.IO.Path.Combine(dir.FullName, categoriesName));
         }
 
         protected override void Dispose(bool disposing)

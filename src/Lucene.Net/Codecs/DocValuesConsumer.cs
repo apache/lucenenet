@@ -132,7 +132,7 @@ namespace Lucene.Net.Codecs
                     yield break;
                 }
 
-                if (currentReader == null || docIDUpto == currentReader.MaxDoc)
+                if (currentReader is null || docIDUpto == currentReader.MaxDoc)
                 {
                     readerUpto++;
                     if (readerUpto < toMerge.Count)
@@ -146,7 +146,7 @@ namespace Lucene.Net.Codecs
                     continue;
                 }
 
-                if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
+                if (currentLiveDocs is null || currentLiveDocs.Get(docIDUpto))
                 {
                     long? nextValue;
                     if (currentDocsWithField.Get(docIDUpto))
@@ -196,7 +196,7 @@ namespace Lucene.Net.Codecs
                     yield break;
                 }
 
-                if (currentReader == null || docIDUpto == currentReader.MaxDoc)
+                if (currentReader is null || docIDUpto == currentReader.MaxDoc)
                 {
                     readerUpto++;
                     if (readerUpto < toMerge.Count)
@@ -210,7 +210,7 @@ namespace Lucene.Net.Codecs
                     continue;
                 }
 
-                if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
+                if (currentLiveDocs is null || currentLiveDocs.Get(docIDUpto))
                 {
                     if (currentDocsWithField.Get(docIDUpto))
                     {
@@ -249,7 +249,7 @@ namespace Lucene.Net.Codecs
                 AtomicReader reader = readers[sub];
                 SortedDocValues dv = dvs[sub];
                 IBits liveDocs = reader.LiveDocs;
-                if (liveDocs == null)
+                if (liveDocs is null)
                 {
                     liveTerms[sub] = dv.GetTermsEnum();
                 }
@@ -310,7 +310,7 @@ namespace Lucene.Net.Codecs
                     yield break;
                 }
 
-                if (currentReader == null || docIDUpTo == currentReader.MaxDoc)
+                if (currentReader is null || docIDUpTo == currentReader.MaxDoc)
                 {
                     readerUpTo++;
                     if (readerUpTo < readers.Length)
@@ -322,7 +322,7 @@ namespace Lucene.Net.Codecs
                     continue;
                 }
 
-                if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpTo))
+                if (currentLiveDocs is null || currentLiveDocs.Get(docIDUpTo))
                 {
                     int segOrd = dvs[readerUpTo].GetOrd(docIDUpTo);
                     docIDUpTo++;
@@ -352,7 +352,7 @@ namespace Lucene.Net.Codecs
                 var reader = readers[sub];
                 var dv = dvs[sub];
                 var liveDocs = reader.LiveDocs;
-                if (liveDocs == null)
+                if (liveDocs is null)
                 {
                     liveTerms[sub] = dv.GetTermsEnum();
                 }
@@ -416,7 +416,7 @@ namespace Lucene.Net.Codecs
                     yield break;
                 }
 
-                if (currentReader == null || docIDUpto == currentReader.MaxDoc)
+                if (currentReader is null || docIDUpto == currentReader.MaxDoc)
                 {
                     readerUpto++;
                     if (readerUpto < readers.Length)
@@ -428,7 +428,7 @@ namespace Lucene.Net.Codecs
                     continue;
                 }
 
-                if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
+                if (currentLiveDocs is null || currentLiveDocs.Get(docIDUpto))
                 {
                     SortedSetDocValues dv = dvs[readerUpto];
                     dv.SetDocument(docIDUpto);
@@ -471,7 +471,7 @@ namespace Lucene.Net.Codecs
                     continue;
                 }
 
-                if (currentReader == null || docIDUpto == currentReader.MaxDoc)
+                if (currentReader is null || docIDUpto == currentReader.MaxDoc)
                 {
                     readerUpto++;
                     if (readerUpto < readers.Length)
@@ -483,7 +483,7 @@ namespace Lucene.Net.Codecs
                     continue;
                 }
 
-                if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
+                if (currentLiveDocs is null || currentLiveDocs.Get(docIDUpto))
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(docIDUpto < currentReader.MaxDoc);
                     SortedSetDocValues dv = dvs[readerUpto];

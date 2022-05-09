@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
                 bool throwOnClose = !Rarely();
                 AtomicReader wrap = SlowCompositeReaderWrapper.Wrap(open);
                 FilterAtomicReader reader = new FilterAtomicReaderAnonymousClass(this, wrap, throwOnClose);
-                IList<IndexReader.IReaderClosedListener> listeners = new JCG.List<IndexReader.IReaderClosedListener>();
+                //IList<IndexReader.IReaderClosedListener> listeners = new JCG.List<IndexReader.IReaderClosedListener>(); // LUCENENET: This list is unused (and was unused in Java)
                 int listenerCount = Random.Next(20);
                 AtomicInt32 count = new AtomicInt32();
                 bool faultySet = false;

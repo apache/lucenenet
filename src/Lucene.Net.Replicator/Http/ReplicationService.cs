@@ -120,7 +120,7 @@ namespace Lucene.Net.Replicator.Http
         private static string ExtractRequestParam(IReplicationRequest request, string paramName)
         {
             string param = request.QueryParam(paramName);
-            if (param == null)
+            if (param is null)
             {
                 throw ServletException.Create("Missing mandatory parameter: " + paramName);
             }
@@ -171,7 +171,7 @@ namespace Lucene.Net.Replicator.Http
                     case ReplicationAction.UPDATE:
                         string currentVersion = request.QueryParam(REPLICATE_VERSION_PARAM);
                         SessionToken token = replicator.CheckForUpdate(currentVersion);
-                        if (token == null)
+                        if (token is null)
                         {
                             response.Body.Write(new byte[] { 0 }, 0, 1); // marker for null token
                         }

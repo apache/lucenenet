@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Phonetic
             }
             catch (Exception ignored) when (ignored.IsException()) { } // just use the direct text
 
-                if (phonetic == null) return true;
+                if (phonetic is null) return true;
 
             if (!inject)
             {

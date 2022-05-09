@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -56,11 +56,7 @@ namespace Lucene.Net.Search
             base.BeforeClass();
 
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory);
 
             Document doc = new Document();
             Field field = NewStringField(FIELD, "meaninglessnames", Field.Store.NO);

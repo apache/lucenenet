@@ -351,7 +351,7 @@
 //                {
 //                    // create the list of keys to remove only if there are keys to remove.
 //                    // this reduces heap pressure
-//                    if (keysToRemove == null)
+//                    if (keysToRemove is null)
 //                        keysToRemove = new List<IdentityWeakReference>();
 //                    keysToRemove.Add(item.Key);
 //                }
@@ -372,7 +372,7 @@
 //            private readonly int hash;
 
 //            internal IdentityWeakReference(object obj/*, ReferenceQueue<object> queue*/)
-//                : base(obj == null ? NULL : obj/*, queue*/)
+//                : base(obj is null ? NULL : obj/*, queue*/)
 //            {
 //                hash = RuntimeHelpers.GetHashCode(obj);
 //            }

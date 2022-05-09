@@ -46,7 +46,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         public override string ToString(string field)
         {
             return GetType().Name
-                + (field == null ? "" : "(unused: " + field + ")")
+                + (field is null ? "" : "(unused: " + field + ")")
                 + "(" + m_fieldName
                 + ", " + m_srndQuery.ToString()
                 + ", " + m_qf.ToString()
@@ -63,7 +63,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
         public override bool Equals(object obj)
         {
-            if (obj == null)
+            if (obj is null)
                 return false;
             if (!GetType().Equals(obj.GetType()))
                 return false;

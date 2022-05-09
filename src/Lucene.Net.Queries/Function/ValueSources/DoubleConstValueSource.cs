@@ -92,12 +92,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override string StrVal(int doc)
             {
-                return outerInstance.constant.ToString("R", CultureInfo.InvariantCulture);
+                return J2N.Numerics.Double.ToString(outerInstance.constant, NumberFormatInfo.InvariantInfo); // LUCENENET: Use J2N to mimic the Java string format using the "J" format
             }
 
             public override object ObjectVal(int doc)
             {
-                return outerInstance.constant;
+                return J2N.Numerics.Double.GetInstance(outerInstance.constant); // LUCENENET: In Java, the conversion to instance of java.util.Double is implicit, but we need to do an explicit conversion
             }
 
             public override string ToString(int doc)

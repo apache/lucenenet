@@ -139,7 +139,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                     return "".AsCharSequence();
                 }
                 string res = cache[start][end - 1];
-                if (res == null)
+                if (res is null)
                 {
                     res = cached.Substring(start, end - start);
                     cache[start][end - 1] = res;

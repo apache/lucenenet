@@ -67,12 +67,12 @@ namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
 
         private bool Equal(object l1, object l2)
         {
-            return l1 == null ? (l2 == null) : (l1.Equals(l2));
+            return l1 is null ? (l2 is null) : (l1.Equals(l2));
         }
 
         public override int GetHashCode()
         {
-            return this.tags == null ? 0 : tags.GetHashCode();
+            return this.tags is null ? 0 : tags.GetHashCode();
         }
 
         public override void CopyTo(IAttribute target)

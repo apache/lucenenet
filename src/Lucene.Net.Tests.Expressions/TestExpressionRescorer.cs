@@ -40,11 +40,7 @@ namespace Lucene.Net.Expressions
         {
             base.SetUp();
             dir = NewDirectory();
-            var iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            var iw = new RandomIndexWriter(Random, dir);
             var doc = new Document
             {
                 NewStringField("id", "1", Field.Store.YES),

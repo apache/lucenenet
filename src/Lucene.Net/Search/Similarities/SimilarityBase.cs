@@ -304,12 +304,12 @@ namespace Lucene.Net.Search.Similarities
             public override float Score(int doc, float freq)
             {
                 // We have to supply something in case norms are omitted
-                return outerInstance.Score(stats, freq, norms == null ? 1F : outerInstance.DecodeNormValue((byte)norms.Get(doc)));
+                return outerInstance.Score(stats, freq, norms is null ? 1F : outerInstance.DecodeNormValue((byte)norms.Get(doc)));
             }
 
             public override Explanation Explain(int doc, Explanation freq)
             {
-                return outerInstance.Explain(stats, doc, freq, norms == null ? 1F : outerInstance.DecodeNormValue((byte)norms.Get(doc)));
+                return outerInstance.Explain(stats, doc, freq, norms is null ? 1F : outerInstance.DecodeNormValue((byte)norms.Get(doc)));
             }
 
             public override float ComputeSlopFactor(int distance)

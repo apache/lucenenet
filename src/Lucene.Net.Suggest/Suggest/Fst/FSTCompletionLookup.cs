@@ -290,13 +290,13 @@ namespace Lucene.Net.Search.Suggest.Fst
         }
 
         /// <summary>
-        /// Returns the bucket (weight) as a Long for the provided key if it exists,
+        /// Returns the bucket (weight) as a <see cref="T:long?"/> for the provided key if it exists,
         /// otherwise null if it does not.
         /// </summary>
-        public virtual object Get(string key)
+        public virtual long? Get(string key)
         {
             int bucket = normalCompletion.GetBucket(key);
-            return bucket == -1 ? (long?)null : bucket;
+            return bucket == -1 ? null : bucket;
         }
 
         public override bool Store(DataOutput output)
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             try
             {
                 output.WriteVInt64(count);
-                if (this.normalCompletion == null || normalCompletion.FST == null)
+                if (this.normalCompletion is null || normalCompletion.FST is null)
                 {
                     return false;
                 }
@@ -341,7 +341,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 mem += normalCompletion.FST.GetSizeInBytes();
             }
-            if (higherWeightsCompletion != null && (normalCompletion == null || normalCompletion.FST != higherWeightsCompletion.FST))
+            if (higherWeightsCompletion != null && (normalCompletion is null || normalCompletion.FST != higherWeightsCompletion.FST))
             {
                 // the fst should be shared between the 2 completion instances, don't count it twice
                 mem += higherWeightsCompletion.FST.GetSizeInBytes();

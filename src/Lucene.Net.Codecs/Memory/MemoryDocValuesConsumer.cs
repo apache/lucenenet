@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -96,16 +97,16 @@ namespace Lucene.Net.Codecs.Memory
             long gcd = 0;
             bool missing = false;
             // TODO: more efficient?
-            ISet<long?> uniqueValues = null;
+            ISet<long> uniqueValues = null;
             if (optimizeStorage)
             {
-                uniqueValues = new JCG.HashSet<long?>();
+                uniqueValues = new JCG.HashSet<long>();
 
                 long count = 0;
                 foreach (var nv in values)
                 {
                     long v;
-                    if (nv == null)
+                    if (nv is null)
                     {
                         v = 0;
                         missing = true;
@@ -179,14 +180,14 @@ namespace Lucene.Net.Codecs.Memory
                 else
                 {
                     meta.WriteByte(MemoryDocValuesProducer.TABLE_COMPRESSED); // table-compressed
-                    long?[] decode = new long?[uniqueValues.Count];
+                    long[] decode = new long[uniqueValues.Count];
                     uniqueValues.CopyTo(decode, 0);
 
                     var encode = new Dictionary<long?, int?>();
                     data.WriteVInt32(decode.Length);
                     for (int i = 0; i < decode.Length; i++)
                     {
-                        data.WriteInt64(decode[i].Value);
+                        data.WriteInt64(decode[i]);
                         encode[decode[i]] = i;
                     }
 
@@ -281,7 +282,7 @@ namespace Lucene.Net.Codecs.Memory
             foreach (var v in values)
             {
                 int length;
-                if (v == null)
+                if (v is null)
                 {
                     length = 0;
                     missing = true;
@@ -346,7 +347,7 @@ namespace Lucene.Net.Codecs.Memory
             meta.WriteByte(MemoryDocValuesProducer.FST);
             meta.WriteInt64(data.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
-            var builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
+            var builder = new Builder<Int64>(INPUT_TYPE.BYTE1, outputs);
             var scratch = new Int32sRef();
             long ord = 0;
             foreach (BytesRef v in values)
@@ -354,7 +355,7 @@ namespace Lucene.Net.Codecs.Memory
                 builder.Add(Util.ToInt32sRef(v, scratch), ord);
                 ord++;
             }
-            FST<long?> fst = builder.Finish();
+            FST<Int64> fst = builder.Finish();
             if (fst != null)
             {
                 fst.Save(data);

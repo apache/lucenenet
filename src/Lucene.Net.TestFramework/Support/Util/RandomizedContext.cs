@@ -27,7 +27,8 @@ namespace Lucene.Net.Util
     /// </summary>
     internal class RandomizedContext
     {
-        internal const string RandomizedContextPropertyName = "RandomizedContext";
+        // LUCENENET NOTE: Using an underscore to prefix the name hides it from "traits" in Test Explorer
+        internal const string RandomizedContextPropertyName = "_RandomizedContext";
 
         private Random randomGenerator;
         private readonly Test currentTest;
@@ -93,7 +94,7 @@ namespace Lucene.Net.Util
         {
             get
             {
-                if (randomGenerator == null)
+                if (randomGenerator is null)
                     randomGenerator = new J2N.Randomizer(testSeed);
                 return randomGenerator;
             }

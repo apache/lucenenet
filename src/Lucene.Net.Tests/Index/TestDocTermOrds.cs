@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, conf);
 
             int[][] idToOrds = new int[NUM_DOCS][];
-            ISet<int?> ordsForDocSet = new JCG.HashSet<int?>();
+            ISet<int> ordsForDocSet = new JCG.HashSet<int>();
 
             for (int id = 0; id < NUM_DOCS; id++)
             {
@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, conf);
 
             int[][] idToOrds = new int[NUM_DOCS][];
-            ISet<int?> ordsForDocSet = new JCG.HashSet<int?>();
+            ISet<int> ordsForDocSet = new JCG.HashSet<int>();
 
             for (int id = 0; id < NUM_DOCS; id++)
             {
@@ -290,13 +290,13 @@ namespace Lucene.Net.Index
             AtomicReader slowR = SlowCompositeReaderWrapper.Wrap(r);
             foreach (string prefix in prefixesArray)
             {
-                BytesRef prefixRef = prefix == null ? null : new BytesRef(prefix);
+                BytesRef prefixRef = prefix is null ? null : new BytesRef(prefix);
 
                 int[][] idToOrdsPrefix = new int[NUM_DOCS][];
                 for (int id = 0; id < NUM_DOCS; id++)
                 {
                     int[] docOrds = idToOrds[id];
-                    IList<int?> newOrds = new JCG.List<int?>();
+                    IList<int> newOrds = new JCG.List<int>();
                     foreach (int ord in idToOrds[id])
                     {
                         if (StringHelper.StartsWith(termsArray[ord], prefixRef))
@@ -350,7 +350,7 @@ namespace Lucene.Net.Index
 
             if (Verbose)
             {
-                Console.WriteLine("TEST: verify prefix=" + (prefixRef == null ? "null" : prefixRef.Utf8ToString()));
+                Console.WriteLine("TEST: verify prefix=" + (prefixRef is null ? "null" : prefixRef.Utf8ToString()));
                 Console.WriteLine("TEST: all TERMS:");
                 TermsEnum allTE = MultiFields.GetTerms(r, "field").GetEnumerator();
                 int ord = 0;
@@ -364,7 +364,7 @@ namespace Lucene.Net.Index
             TermsEnum te = dto.GetOrdTermsEnum(r);
             if (dto.NumTerms == 0)
             {
-                if (prefixRef == null)
+                if (prefixRef is null)
                 {
                     Assert.IsNull(MultiFields.GetTerms(r, "field"));
                 }

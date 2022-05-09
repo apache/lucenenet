@@ -1,4 +1,5 @@
-﻿using J2N.Threading.Atomic;
+﻿using J2N;
+using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Support.Threading;
@@ -174,11 +175,11 @@ namespace Lucene.Net.Index
         /// Returns a <see cref="SegmentReader"/>. </summary>
         public virtual SegmentReader GetReader(IOContext context)
         {
-            if (reader == null)
+            if (reader is null)
             {
                 // We steal returned ref:
                 reader = new SegmentReader(Info, writer.Config.ReaderTermsIndexDivisor, context);
-                if (liveDocs == null)
+                if (liveDocs is null)
                 {
                     liveDocs = reader.LiveDocs;
                 }
@@ -198,7 +199,7 @@ namespace Lucene.Net.Index
             {
                 //System.out.println("  livedocs=" + rld.liveDocs);
 
-                if (mergeReader == null)
+                if (mergeReader is null)
                 {
                     if (reader != null)
                     {
@@ -216,7 +217,7 @@ namespace Lucene.Net.Index
                         //System.out.println(Thread.currentThread().getName() + ": getMergeReader seg=" + info.name);
                         // We steal returned ref:
                         mergeReader = new SegmentReader(Info, -1, context);
-                        if (liveDocs == null)
+                        if (liveDocs is null)
                         {
                             liveDocs = mergeReader.LiveDocs;
                         }
@@ -331,7 +332,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                if (reader == null)
+                if (reader is null)
                 {
                     GetReader(context).DecRef();
                     if (Debugging.AssertsEnabled) Debugging.Assert(reader != null);
@@ -372,7 +373,7 @@ namespace Lucene.Net.Index
                     // instance; must now make a private clone so we can
                     // change it:
                     LiveDocsFormat liveDocsFormat = Info.Info.Codec.LiveDocsFormat;
-                    if (liveDocs == null)
+                    if (liveDocs is null)
                     {
                         //System.out.println("create BV seg=" + info);
                         liveDocs = liveDocsFormat.NewLiveDocs(Info.Info.DocCount);
@@ -579,7 +580,10 @@ namespace Lucene.Net.Index
 
                         fieldInfos = builder.Finish();
                         long nextFieldInfosGen = Info.NextFieldInfosGen;
-                        string segmentSuffix = nextFieldInfosGen.ToString(CultureInfo.InvariantCulture);//Convert.ToString(nextFieldInfosGen, Character.MAX_RADIX));
+                        // LUCENENET specific: We created the segments names wrong in 4.8.0-beta00001 - 4.8.0-beta00015,
+                        // so we added a switch to be able to read these indexes in later versions. This logic as well as an
+                        // optimization on the first 100 segment values is implmeneted in SegmentInfos.SegmentNumberToString().
+                        string segmentSuffix = SegmentInfos.SegmentNumberToString(nextFieldInfosGen);
                         SegmentWriteState state = new SegmentWriteState(null, trackingDir, Info.Info, fieldInfos, writer.Config.TermIndexInterval, null, IOContext.DEFAULT, segmentSuffix);
                         DocValuesFormat docValuesFormat = codec.DocValuesFormat;
                         DocValuesConsumer fieldsConsumer = docValuesFormat.FieldsConsumer(state);
@@ -757,7 +761,7 @@ namespace Lucene.Net.Index
             {
                 if (curDoc == updateDoc) //document has an updated value
                 {
-                    long? value = (long?)iter.Value; // either null or updated
+                    long? value = iter.Value; // either null or updated
                     updateDoc = iter.NextDoc(); //prepare for next round
                     yield return value;
                 }

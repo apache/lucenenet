@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -32,36 +32,7 @@ namespace Lucene.Net.Index
     {
         // LUCENENET specific: de-nested Type enum and renamed DocValuesFieldUpdatesType
 
-        /// <summary>
-        /// An iterator over documents and their updated values. Only documents with
-        /// updates are returned by this iterator, and the documents are returned in
-        /// increasing order.
-        /// </summary>
-        public abstract class Iterator
-        {
-            /// <summary>
-            /// Returns the next document which has an update, or
-            /// <see cref="Search.DocIdSetIterator.NO_MORE_DOCS"/> if there are no more documents to
-            /// return.
-            /// </summary>
-            public abstract int NextDoc();
-
-            /// <summary>
-            /// Returns the current document this iterator is on. </summary>
-            public abstract int Doc { get; }
-
-            /// <summary>
-            /// Returns the value of the document returned from <see cref="NextDoc()"/>. A
-            /// <c>null</c> value means that it was unset for this document.
-            /// </summary>
-            public abstract object Value { get; }
-
-            /// <summary>
-            /// Reset the iterator's state. Should be called before <see cref="NextDoc()"/>
-            /// and <see cref="Value"/>.
-            /// </summary>
-            public abstract void Reset();
-        }
+        // LUCENENET specific: de-nested Iterator and renamed DocValuesFieldUpdatesIterator. Also created a generic version that exposes the Value property.
 
         public class Container
         {
@@ -141,23 +112,35 @@ namespace Lucene.Net.Index
         internal readonly string field;
         internal readonly DocValuesFieldUpdatesType type;
 
-        protected internal DocValuesFieldUpdates(string field, DocValuesFieldUpdatesType type)
+        protected DocValuesFieldUpdates(string field, DocValuesFieldUpdatesType type)
         {
             this.field = field;
             this.type = type;
         }
 
-        /// <summary>
-        /// Add an update to a document. For unsetting a value you should pass
-        /// <c>null</c>.
-        /// </summary>
-        public abstract void Add(int doc, object value);
+        // LUCENENET specific - use this instance to decide which subclass to cast to, which will expose the
+        // strongly typed value. This allows us to access the long? type without boxing/unboxing.
+        // The Add() method was removed and replaced with the following two.
 
         /// <summary>
-        /// Returns an <see cref="Iterator"/> over the updated documents and their
+        /// Add an update to a document from a <see cref="DocValuesFieldUpdatesIterator"/>.
+        /// The <see cref="DocValuesFieldUpdatesIterator"/>'s value should be <c>null</c> to unset a value.
+        /// Note that the value is exposed by casting to the apprpriate <see cref="DocValuesFieldUpdatesIterator"/> subclasss.
+        /// </summary>
+        public abstract void AddFromIterator(int doc, DocValuesFieldUpdatesIterator iterator);
+
+        /// <summary>
+        /// Add an update to a document from a <see cref="DocValuesUpdate"/>.
+        /// The <see cref="DocValuesUpdate"/>'s value should be <c>null</c> to unset a value.
+        /// Note that the value is exposed by casting to the apprpriate <see cref="DocValuesUpdate"/> subclasss.
+        /// </summary>
+        public abstract void AddFromUpdate(int doc, DocValuesUpdate update);
+
+        /// <summary>
+        /// Returns a <see cref="DocValuesFieldUpdatesIterator"/> over the updated documents and their
         /// values.
         /// </summary>
-        public abstract Iterator GetIterator();
+        public abstract DocValuesFieldUpdatesIterator GetIterator();
 
         /// <summary>
         /// Merge with another <see cref="DocValuesFieldUpdates"/>. this is called for a
@@ -173,11 +156,61 @@ namespace Lucene.Net.Index
         public abstract bool Any();
     }
 
+
     // LUCENENET specific - de-nested Type enumeration and renamed DocValuesFieldUpdatesType
     // primarily so it doesn't conflict with System.Type.
-    public enum DocValuesFieldUpdatesType
+    internal enum DocValuesFieldUpdatesType
     {
         NUMERIC,
         BINARY
+    }
+
+    /// <summary>
+    /// An iterator over documents. Only documents with
+    /// updates are returned by this iterator, and the documents are returned in
+    /// increasing order.
+    /// </summary>
+    internal abstract class DocValuesFieldUpdatesIterator
+    {
+        /// <summary>
+        /// Returns the next document which has an update, or
+        /// <see cref="Search.DocIdSetIterator.NO_MORE_DOCS"/> if there are no more documents to
+        /// return.
+        /// </summary>
+        public abstract int NextDoc();
+
+        /// <summary>
+        /// Returns the current document this iterator is on. </summary>
+        public abstract int Doc { get; }
+
+        /// <summary>
+        /// Reset the iterator's state. Should be called before <see cref="NextDoc()"/>
+        /// and value.
+        /// </summary>
+        public abstract void Reset();
+    }
+
+    /// <summary>
+    /// An iterator over documents and their updated values. This differs from
+    /// <see cref="DocValuesFieldUpdatesIterator"/> in that it exposes the strongly-typed value.
+    /// Only documents with updates are returned by this iterator, and the documents are returned in
+    /// increasing order.
+    /// </summary>
+    internal abstract class DocValuesFieldUpdatesIterator<T> : DocValuesFieldUpdatesIterator
+    {
+        /// <inheritdoc/>
+        public override abstract int NextDoc();
+
+        /// <inheritdoc/>
+        public override abstract int Doc { get; }
+
+        /// <summary>
+        /// Returns the value of the document returned from <see cref="NextDoc()"/>. A
+        /// <c>null</c> value means that it was unset for this document.
+        /// </summary>
+        public abstract T Value { get; }
+
+        /// <inheritdoc/>
+        public override abstract void Reset();
     }
 }

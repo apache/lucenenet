@@ -21,30 +21,28 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(SolutionDir)build/NuGet.props" />
+  <!-- These properties must be set prior to importing nuget.props -->
+  <PropertyGroup>
+    <Description>Framework for testing Lucene.NET-based applications using NUnit.</Description>
+    <PackageDocumentationRelativeUrl>test-framework/overview.html</PackageDocumentationRelativeUrl>
+  </PropertyGroup>
+
+  <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;</TargetFrameworks>
-    <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net451</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net451</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.TestFramework</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
-    <Description>Framework for testing third-party code that uses the Lucene.Net API using NUnit.</Description>
     <PackageTags>$(PackageTags);testframework;test;framework;nunit</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     
     
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
     <NoWarn Label="Collection initialization can be simplified">$(NoWarn);IDE0028</NoWarn>
-
-    <DefineConstants>$(DefineConstants);TESTFRAMEWORK_NUNIT</DefineConstants>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build/Dependencies.props" />
-
-  <ItemGroup>
-    <Compile Include="..\Lucene.Net.TestFramework.NUnit\Support\TestFramework\Assert.cs" Link="Support\TestFramework\Assert.cs" />
-  </ItemGroup>
+  
   
   <ItemGroup>
     <None Remove="Util\europarl.lines.txt.gz" />

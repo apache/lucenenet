@@ -310,7 +310,7 @@ namespace Lucene.Net.Util
                         }
                     }
                 }
-                if (neededBounds == null || neededShifts == null)
+                if (neededBounds is null || neededShifts is null)
                 {
                     return;
                 }
@@ -456,8 +456,8 @@ namespace Lucene.Net.Util
         private void AssertIntRangeSplit(int lower, int upper, int precisionStep, bool useBitSet, IEnumerable<int> expectedBounds, IEnumerable<int> expectedShifts)
         {
             FixedBitSet bits = useBitSet ? new FixedBitSet(upper - lower + 1) : null;
-            IEnumerator<int> neededBounds = (expectedBounds == null) ? null : expectedBounds.GetEnumerator();
-            IEnumerator<int> neededShifts = (expectedShifts == null) ? null : expectedShifts.GetEnumerator();
+            IEnumerator<int> neededBounds = (expectedBounds is null) ? null : expectedBounds.GetEnumerator();
+            IEnumerator<int> neededShifts = (expectedShifts is null) ? null : expectedShifts.GetEnumerator();
 
             NumericUtils.SplitInt32Range(new IntRangeBuilderAnonymousClass(lower, upper, useBitSet, bits, neededBounds, neededShifts), precisionStep, lower, upper);
 
@@ -503,7 +503,7 @@ namespace Lucene.Net.Util
                         }
                     }
                 }
-                if (neededBounds == null)
+                if (neededBounds is null)
                 {
                     return;
                 }

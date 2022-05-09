@@ -68,7 +68,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             if (node is IFieldableNode fieldNode)
             {
                 this.processChildren = false;
-                if (fieldNode.Field == null)
+                if (fieldNode.Field is null)
                 {
                     string[] fields = GetQueryConfigHandler().Get(ConfigurationKeys.MULTI_FIELDS);
 

@@ -28,13 +28,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     /// <see cref="object"/> representing a .NET numeric type.
     /// </summary>
     /// <seealso cref="Standard.Config.NumericConfig"/>
-    public class NumericQueryNode : QueryNode, IFieldValuePairQueryNode<object>
+    public class NumericQueryNode : QueryNode, IFieldValuePairQueryNode<J2N.Numerics.Number>
     {
         private NumberFormat numberFormat;
 
         private string field;
 
-        private /*Number*/ object value;
+        private J2N.Numerics.Number value;
 
         /// <summary>
         /// Creates a <see cref="NumericQueryNode"/> object using the given field,
@@ -44,7 +44,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         /// <param name="field">the field associated with this query node</param>
         /// <param name="value">the value hold by this node</param>
         /// <param name="numberFormat">the <see cref="Util.NumberFormat"/> used to convert the value to <see cref="string"/></param>
-        public NumericQueryNode(string field, /*Number*/ object value,
+        public NumericQueryNode(string field, J2N.Numerics.Number value,
             NumberFormat numberFormat)
             : base()
         {
@@ -97,9 +97,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         }
 
         /// <summary>
-        /// Gets or Sets the numeric value as <see cref="object"/> representing a .NET numeric type.
+        /// Gets or Sets the numeric value as a <see cref="J2N.Numerics.Number"/>.
         /// </summary>
-        public virtual object Value
+        public virtual J2N.Numerics.Number Value
         {
             get => value;
             set => this.value = value;

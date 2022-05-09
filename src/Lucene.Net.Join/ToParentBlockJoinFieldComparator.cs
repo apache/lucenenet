@@ -98,7 +98,7 @@ namespace Lucene.Net.Search.Join
 
         private static bool IsEmpty(DocIdSet set)
         {
-            return set == null;
+            return set is null;
         }
         
         private static FixedBitSet ToFixedBitSet(DocIdSetIterator iterator, int numBits)
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search.Join
         }
 
         // LUCENENET NOTE: This was value(int) in Lucene.
-        public override IComparable this[int slot] => _wrappedComparer[slot];
+        public override object this[int slot] => _wrappedComparer.GetValue(slot);
 
         /// <summary>
         /// Concrete implementation of <see cref="ToParentBlockJoinSortField"/> to sorts the parent docs with the lowest values
@@ -136,7 +136,7 @@ namespace Lucene.Net.Search.Join
             
             public override int CompareBottom(int parentDoc)
             {
-                if (parentDoc == 0 || _parentDocuments == null || _childDocuments == null)
+                if (parentDoc == 0 || _parentDocuments is null || _childDocuments is null)
                 {
                     return 0;
                 }
@@ -177,7 +177,7 @@ namespace Lucene.Net.Search.Join
             
             public override void Copy(int slot, int parentDoc)
             {
-                if (parentDoc == 0 || _parentDocuments == null || _childDocuments == null)
+                if (parentDoc == 0 || _parentDocuments is null || _childDocuments is null)
                 {
                     return;
                 }
@@ -209,7 +209,7 @@ namespace Lucene.Net.Search.Join
             
             public override int CompareTop(int parentDoc)
             {
-                if (parentDoc == 0 || _parentDocuments == null || _childDocuments == null)
+                if (parentDoc == 0 || _parentDocuments is null || _childDocuments is null)
                 {
                     return 0;
                 }
@@ -271,7 +271,7 @@ namespace Lucene.Net.Search.Join
             
             public override int CompareBottom(int parentDoc)
             {
-                if (parentDoc == 0 || _parentDocuments == null || _childDocuments == null)
+                if (parentDoc == 0 || _parentDocuments is null || _childDocuments is null)
                 {
                     return 0;
                 }
@@ -313,7 +313,7 @@ namespace Lucene.Net.Search.Join
             
             public override void Copy(int slot, int parentDoc)
             {
-                if (parentDoc == 0 || _parentDocuments == null || _childDocuments == null)
+                if (parentDoc == 0 || _parentDocuments is null || _childDocuments is null)
                 {
                     return;
                 }
@@ -344,7 +344,7 @@ namespace Lucene.Net.Search.Join
             
             public override int CompareTop(int parentDoc)
             {
-                if (parentDoc == 0 || _parentDocuments == null || _childDocuments == null)
+                if (parentDoc == 0 || _parentDocuments is null || _childDocuments is null)
                 {
                     return 0;
                 }

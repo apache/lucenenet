@@ -73,11 +73,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestBasicLong()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d);
             Document doc = new Document();
             NumericDocValuesField field = new NumericDocValuesField("field", 0L);
             doc.Add(field);
@@ -159,11 +155,7 @@ namespace Lucene.Net.Facet.Range
         {
 
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d);
             Document doc = new Document();
             NumericDocValuesField field = new NumericDocValuesField("field", 0L);
             doc.Add(field);
@@ -200,11 +192,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestOverlappedEndStart()
         {
             Directory d = NewDirectory();
-            var w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d);
+            var w = new RandomIndexWriter(Random, d);
             Document doc = new Document();
             NumericDocValuesField field = new NumericDocValuesField("field", 0L);
             doc.Add(field);
@@ -244,11 +232,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestMixedRangeAndNonRangeTaxonomy()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d);
             Directory td = NewDirectory();
             DirectoryTaxonomyWriter tw = new DirectoryTaxonomyWriter(td, OpenMode.CREATE);
 
@@ -365,11 +349,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestBasicDouble()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d);
             Document doc = new Document();
             DoubleDocValuesField field = new DoubleDocValuesField("field", 0.0);
             doc.Add(field);
@@ -402,11 +382,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestBasicFloat()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d);
             Document doc = new Document();
             SingleDocValuesField field = new SingleDocValuesField("field", 0.0f);
             doc.Add(field);
@@ -440,11 +416,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestRandomLongs()
         {
             Directory dir = NewDirectory();
-            var w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            var w = new RandomIndexWriter(Random, dir);
 
             int numDocs = AtLeast(1000);
             if (Verbose)
@@ -637,11 +609,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestRandomFloats()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
 
             int numDocs = AtLeast(1000);
             float[] values = new float[numDocs];
@@ -846,11 +814,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestRandomDoubles()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
 
             int numDocs = AtLeast(1000);
             double[] values = new double[numDocs];
@@ -1039,11 +1003,7 @@ namespace Lucene.Net.Facet.Range
         {
             AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField);
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d);
             Document doc = new Document();
             NumericDocValuesField field = new NumericDocValuesField("field", 0L);
             doc.Add(field);
@@ -1082,11 +1042,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestCustomDoublesValueSource()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
 
             Document doc = new Document();
             writer.AddDocument(doc);
@@ -1136,7 +1092,7 @@ namespace Lucene.Net.Facet.Range
 
             Assert.AreEqual("dim=field path=[] value=3 childCount=6\n  < 1 (0)\n  < 2 (1)\n  < 5 (3)\n  < 10 (3)\n  < 20 (3)\n  < 50 (3)\n",
                 facets.GetTopChildren(10, "field").ToString());
-            Assert.IsTrue(fastMatchFilter == null || filterWasUsed);
+            Assert.IsTrue(fastMatchFilter is null || filterWasUsed);
 
             DrillDownQuery ddq = new DrillDownQuery(config);
             ddq.Add("field", ranges[1].GetFilter(fastMatchFilter, vs));

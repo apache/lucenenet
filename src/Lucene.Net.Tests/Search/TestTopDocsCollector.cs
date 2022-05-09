@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
 
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
             {
-                if (results == null)
+                if (results is null)
                 {
                     return EMPTY_TOPDOCS;
                 }
@@ -109,11 +109,7 @@ namespace Lucene.Net.Search
             // populate an index with 30 documents, this should be enough for the test.
             // The documents have no content - the test uses MatchAllDocsQuery().
             dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             for (int i = 0; i < 30; i++)
             {
                 writer.AddDocument(new Document());

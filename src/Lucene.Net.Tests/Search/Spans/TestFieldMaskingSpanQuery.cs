@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -95,11 +95,7 @@ namespace Lucene.Net.Search.Spans
 
         protected internal virtual void Check(SpanQuery q, int[] docs)
         {
-            CheckHits.CheckHitCollector(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q, null, searcher, docs);
+            CheckHits.CheckHitCollector(Random, q, null, searcher, docs);
         }
 
         [Test]

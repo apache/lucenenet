@@ -59,7 +59,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             {
                 IList<IQueryNode> children = GetChildren();
 
-                if (children == null || children.Count == 0)
+                if (children is null || children.Count == 0)
                 {
                     return null;
                 }
@@ -94,7 +94,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
-            if (Child == null)
+            if (Child is null)
                 return "";
             return Child.ToQueryString(escapeSyntaxParser) + "^"
                 + GetValueString();

@@ -198,7 +198,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         goto label_1_break;
                 }
                 c = DisjQuery(field);
-                if (clauses == null)
+                if (clauses is null)
                 {
                     clauses = new JCG.List<IQueryNode>();
                     clauses.Add(first);
@@ -236,7 +236,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 }
                 Jj_consume_token(RegexpToken.OR);
                 c = ConjQuery(field);
-                if (clauses == null)
+                if (clauses is null)
                 {
                     clauses = new JCG.List<IQueryNode>();
                     clauses.Add(first);
@@ -274,7 +274,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 }
                 Jj_consume_token(RegexpToken.AND);
                 c = ModClause(field);
-                if (clauses == null)
+                if (clauses is null)
                 {
                     clauses = new JCG.List<IQueryNode>();
                     clauses.Add(first);
@@ -1101,7 +1101,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             if (jj_scanpos == jj_lastpos)
             {
                 jj_la--;
-                if (jj_scanpos.Next == null)
+                if (jj_scanpos.Next is null)
                 {
                     jj_lastpos = jj_scanpos = jj_scanpos.Next = TokenSource.GetNextToken();
                 }
@@ -1150,7 +1150,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
         private int Jj_ntk()
         {
-            if ((Jj_nt = Token.Next) == null)
+            if ((Jj_nt = Token.Next) is null)
                 return (jj_ntk = (Token.Next = TokenSource.GetNextToken()).Kind);
             else
                 return (jj_ntk = Jj_nt.Kind);
@@ -1293,7 +1293,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             JJCalls p = jj_2_rtns[index];
             while (p.gen > jj_gen)
             {
-                if (p.next == null) { p = p.next = new JJCalls(); break; }
+                if (p.next is null) { p = p.next = new JJCalls(); break; }
                 p = p.next;
             }
             p.gen = jj_gen + xla - jj_la; p.first = Token; p.arg = xla;

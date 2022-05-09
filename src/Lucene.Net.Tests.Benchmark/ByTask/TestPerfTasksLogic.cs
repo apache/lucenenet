@@ -513,7 +513,7 @@ namespace Lucene.Net.Benchmarks.ByTask
                     continue;
                 }
                 Terms terms = fields.GetTerms(fieldName);
-                if (terms == null)
+                if (terms is null)
                 {
                     continue;
                 }

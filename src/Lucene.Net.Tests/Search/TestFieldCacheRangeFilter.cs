@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
 using System.Globalization;
@@ -225,9 +225,9 @@ namespace Lucene.Net.Search
 
             int numDocs = reader.NumDocs;
             int medId = ((maxId - minId) / 2);
-            short? minIdO = Convert.ToInt16((short)minId);
-            short? maxIdO = Convert.ToInt16((short)maxId);
-            short? medIdO = Convert.ToInt16((short)medId);
+            short minIdO = Convert.ToInt16((short)minId);
+            short maxIdO = Convert.ToInt16((short)maxId);
+            short medIdO = Convert.ToInt16((short)medId);
 
             Assert.AreEqual(numDocs, 1 + maxId - minId, "num of docs");
 
@@ -317,9 +317,9 @@ namespace Lucene.Net.Search
 
             int numDocs = reader.NumDocs;
             int medId = ((maxId - minId) / 2);
-            int? minIdO = Convert.ToInt32(minId);
-            int? maxIdO = Convert.ToInt32(maxId);
-            int? medIdO = Convert.ToInt32(medId);
+            int minIdO = Convert.ToInt32(minId);
+            int maxIdO = Convert.ToInt32(maxId);
+            int medIdO = Convert.ToInt32(medId);
 
             Assert.AreEqual(numDocs, 1 + maxId - minId, "num of docs");
 
@@ -408,9 +408,9 @@ namespace Lucene.Net.Search
 
             int numDocs = reader.NumDocs;
             int medId = ((maxId - minId) / 2);
-            long? minIdO = Convert.ToInt64(minId);
-            long? maxIdO = Convert.ToInt64(maxId);
-            long? medIdO = Convert.ToInt64(medId);
+            long minIdO = Convert.ToInt64(minId);
+            long maxIdO = Convert.ToInt64(maxId);
+            long medIdO = Convert.ToInt64(medId);
 
             Assert.AreEqual(numDocs, 1 + maxId - minId, "num of docs");
 
@@ -500,8 +500,8 @@ namespace Lucene.Net.Search
             IndexSearcher search = NewSearcher(reader);
 
             int numDocs = reader.NumDocs;
-            float? minIdO = Convert.ToSingle(minId + .5f);
-            float? medIdO = Convert.ToSingle((float)minIdO + ((maxId - minId)) / 2.0f);
+            float minIdO = Convert.ToSingle(minId + .5f);
+            float medIdO = Convert.ToSingle((float)minIdO + ((maxId - minId)) / 2.0f);
 
             ScoreDoc[] result;
             Query q = new TermQuery(new Term("body", "body"));
@@ -529,8 +529,8 @@ namespace Lucene.Net.Search
             IndexSearcher search = NewSearcher(reader);
 
             int numDocs = reader.NumDocs;
-            double? minIdO = Convert.ToDouble(minId + .5);
-            double? medIdO = Convert.ToDouble((float)minIdO + ((maxId - minId)) / 2.0);
+            double minIdO = Convert.ToDouble(minId + .5);
+            double medIdO = Convert.ToDouble((float)minIdO + ((maxId - minId)) / 2.0);
 
             ScoreDoc[] result;
             Query q = new TermQuery(new Term("body", "body"));

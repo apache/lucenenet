@@ -13,6 +13,7 @@ using System.IO;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -91,7 +92,7 @@ namespace Lucene.Net.Analysis.Ja
         private readonly UserDictionary userDictionary;
         private readonly CharacterDefinition characterDefinition;
 
-        private readonly FST.Arc<long?> arc = new FST.Arc<long?>();
+        private readonly FST.Arc<Int64> arc = new FST.Arc<Int64>();
         private readonly FST.BytesReader fstReader;
         private readonly Int32sRef wordIdRef = new Int32sRef();
 
@@ -587,7 +588,7 @@ namespace Lucene.Net.Analysis.Ja
                         {
                             break;
                         }
-                        if (userFST.FindTargetArc(ch, arc, arc, posAhead == posData.pos, userFSTReader) == null)
+                        if (userFST.FindTargetArc(ch, arc, arc, posAhead == posData.pos, userFSTReader) is null)
                         {
                             break;
                         }
@@ -623,7 +624,7 @@ namespace Lucene.Net.Analysis.Ja
                         }
                         //System.out.println("    match " + (char) ch + " posAhead=" + posAhead);
 
-                        if (fst.FindTargetArc(ch, arc, arc, posAhead == posData.pos, fstReader) == null)
+                        if (fst.FindTargetArc(ch, arc, arc, posAhead == posData.pos, fstReader) is null)
                         {
                             break;
                         }
@@ -925,7 +926,7 @@ namespace Lucene.Net.Analysis.Ja
                 int backID = posData.backID[bestIDX];
                 int nextBestIDX = posData.backIndex[bestIDX];
 
-                if (outputCompounds && searchMode && altToken == null && backType != JapaneseTokenizerType.USER)
+                if (outputCompounds && searchMode && altToken is null && backType != JapaneseTokenizerType.USER)
                 {
 
                     // In searchMode, if best path had picked a too-long

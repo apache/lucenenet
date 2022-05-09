@@ -97,7 +97,7 @@ namespace Lucene.Net.Util
               }
             }
 
-            if (exitMethodHit == null)
+            if (exitMethodHit is null)
             {
               // should never happen, only if JVM hides stack trace - replace by generic:
               exitMethodHit = "JVM exit method";

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Store;
+﻿using J2N.Numerics;
+using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -82,7 +83,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 }
                 charsSpare.Grow(spare.Length);
                 UnicodeUtil.UTF8toUTF16(spare.Bytes, spare.Offset, spare.Length, charsSpare);
-                trie.Put(charsSpare.ToString(), weight);
+                trie.Put(charsSpare.ToString(), J2N.Numerics.Int64.GetInstance(weight));
             }
         }
 
@@ -129,7 +130,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             {
                 list = trie.MatchAlmost(key, count);
             }
-            if (list == null || list.Count == 0)
+            if (list is null || list.Count == 0)
             {
                 return res;
 
@@ -195,7 +196,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
         private void WriteRecursively(DataOutput @out, JaspellTernarySearchTrie.TSTNode node)
         {
-            if (node == null)
+            if (node is null)
             {
                 return;
             }
@@ -220,7 +221,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             @out.WriteByte((byte)mask);
             if (node.data != null)
             {
-                @out.WriteInt64((long)(node.data));
+                @out.WriteInt64(((Number)node.data).ToInt64());
             }
             WriteRecursively(@out, node.relatives[JaspellTernarySearchTrie.TSTNode.LOKID]);
             WriteRecursively(@out, node.relatives[JaspellTernarySearchTrie.TSTNode.EQKID]);
@@ -231,7 +232,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         {
             output.WriteVInt64(count);
             JaspellTernarySearchTrie.TSTNode root = trie.Root;
-            if (root == null) // empty tree
+            if (root is null) // empty tree
             {
                 return false;
             }

@@ -140,8 +140,7 @@ namespace Lucene.Net.Codecs.SimpleText
                         NewLine();
 
                         Write(VALUE);
-                        // LUCENENET: Need to specify the "R" for round-trip: http://stackoverflow.com/a/611564
-                        Write(field.GetStringValue("R", CultureInfo.InvariantCulture));
+                        Write(field.GetStringValue(CultureInfo.InvariantCulture)); // LUCENENET: Use the "J" format that is the default round-trippable format
                         NewLine();
                         break;
                     case NumericFieldType.DOUBLE:
@@ -149,8 +148,7 @@ namespace Lucene.Net.Codecs.SimpleText
                         NewLine();
 
                         Write(VALUE);
-                        // LUCENENET: Need to specify the "R" for round-trip: http://stackoverflow.com/a/611564
-                        Write(field.GetStringValue("R", CultureInfo.InvariantCulture));
+                        Write(field.GetStringValue(CultureInfo.InvariantCulture)); // LUCENENET: Use the "J" format that is the default round-trippable format
                         NewLine();
                         break;
                     default:
@@ -169,7 +167,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     Write(bytes);
                     NewLine();
                 }
-                else if (field.GetStringValue() == null)
+                else if (field.GetStringValue() is null)
                 {
                     throw new ArgumentException("field " + field.Name +
                                                        " is stored but does not have binaryValue, stringValue nor numericValue");

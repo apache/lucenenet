@@ -121,7 +121,7 @@ namespace Lucene.Net.Search.Grouping
                 return null;
             }
 
-            if (m_orderedGroups == null)
+            if (m_orderedGroups is null)
             {
                 BuildSortedSet();
             }
@@ -135,7 +135,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     continue;
                 }
-                //System.out.println("  group=" + (group.groupValue == null ? "null" : group.groupValue.utf8ToString()));
+                //System.out.println("  group=" + (group.groupValue is null ? "null" : group.groupValue.utf8ToString()));
                 SearchGroup<TGroupValue> searchGroup = new SearchGroup<TGroupValue>();
                 searchGroup.GroupValue = group.GroupValue;
                 if (fillFields)
@@ -143,7 +143,7 @@ namespace Lucene.Net.Search.Grouping
                     searchGroup.SortValues = new object[sortFieldCount];
                     for (int sortFieldIDX = 0; sortFieldIDX < sortFieldCount; sortFieldIDX++)
                     {
-                        searchGroup.SortValues[sortFieldIDX] = comparers[sortFieldIDX][group.ComparerSlot];
+                        searchGroup.SortValues[sortFieldIDX] = comparers[sortFieldIDX].GetValue(group.ComparerSlot);
                     }
                 }
                 result.Add(searchGroup);

@@ -112,7 +112,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override string StrVal(int doc)
             {
-                return Convert.ToString((sbyte)arr.Get(doc), CultureInfo.InvariantCulture);
+                return J2N.Numerics.SByte.ToString((sbyte)arr.Get(doc), CultureInfo.InvariantCulture);
             }
 
             public override string ToString(int doc)
@@ -122,7 +122,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override object ObjectVal(int doc)
             {
-                return (sbyte)arr.Get(doc); // TODO: valid?
+                // LUCENENET: In Java, the conversion to instance of java.util.Byte is implicit, but we need to do an explicit conversion
+                return J2N.Numerics.SByte.GetInstance((sbyte)arr.Get(doc)); // TODO: valid?
             }
 
         }
@@ -131,12 +132,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             if (o is null) return false;
             if (!(o is ByteFieldSource other)) return false;
-            return base.Equals(other) && (this.parser == null ? other.parser == null : this.parser.GetType() == other.parser.GetType());
+            return base.Equals(other) && (this.parser is null ? other.parser is null : this.parser.GetType() == other.parser.GetType());
         }
 
         public override int GetHashCode()
         {
-            int h = parser == null ? typeof(sbyte?).GetHashCode() : parser.GetType().GetHashCode();
+            int h = parser is null ? typeof(sbyte?).GetHashCode() : parser.GetType().GetHashCode();
             h += base.GetHashCode();
             return h;
         }

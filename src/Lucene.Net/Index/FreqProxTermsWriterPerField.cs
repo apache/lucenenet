@@ -157,7 +157,7 @@ namespace Lucene.Net.Index
             //System.out.println("writeProx termID=" + termID + " proxCode=" + proxCode);
             if (Debugging.AssertsEnabled) Debugging.Assert(hasProx);
             BytesRef payload;
-            if (payloadAttribute == null)
+            if (payloadAttribute is null)
             {
                 payload = null;
             }
@@ -238,7 +238,7 @@ namespace Lucene.Net.Index
 
             if (!hasFreq)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(postings.termFreqs == null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(postings.termFreqs is null);
                 if (docState.docID != postings.lastDocIDs[termID])
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(docState.docID > postings.lastDocIDs[termID]);
@@ -441,7 +441,7 @@ namespace Lucene.Net.Index
                 Debugging.Assert(!writeOffsets || writePositions);
             }
 
-            IDictionary<Term, int?> segDeletes;
+            IDictionary<Term, int> segDeletes;
             if (state.SegUpdates != null && state.SegUpdates.terms.Count > 0)
             {
                 segDeletes = state.SegUpdates.terms;
@@ -484,11 +484,11 @@ namespace Lucene.Net.Index
 
                 PostingsConsumer postingsConsumer = termsConsumer.StartTerm(text);
 
-                int? delDocLimit;
+                int delDocLimit;
                 if (segDeletes != null)
                 {
                     protoTerm.Bytes = text;
-                    if (segDeletes.TryGetValue(protoTerm, out int? docIDUpto) && docIDUpto != null)
+                    if (segDeletes.TryGetValue(protoTerm, out int docIDUpto))
                     {
                         delDocLimit = docIDUpto;
                     }
@@ -582,7 +582,7 @@ namespace Lucene.Net.Index
                         // deterministic (just for this Term's docs).
 
                         // TODO: can we do this reach-around in a cleaner way????
-                        if (state.LiveDocs == null)
+                        if (state.LiveDocs is null)
                         {
                             state.LiveDocs = docState.docWriter.codec.LiveDocsFormat.NewLiveDocs(state.SegmentInfo.DocCount);
                         }
@@ -618,7 +618,7 @@ namespace Lucene.Net.Index
                                     // this position has a payload
                                     int payloadLength = prox.ReadVInt32();
 
-                                    if (payload == null)
+                                    if (payload is null)
                                     {
                                         payload = new BytesRef();
                                         payload.Bytes = new byte[payloadLength];

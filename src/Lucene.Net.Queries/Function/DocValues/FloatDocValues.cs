@@ -78,12 +78,12 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override string StrVal(int doc)
         {
-            return SingleVal(doc).ToString("R", CultureInfo.InvariantCulture);
+            return J2N.Numerics.Single.ToString(SingleVal(doc), NumberFormatInfo.InvariantInfo); // LUCENENET: Use J2N to mimic the Java string format using the "J" format
         }
 
         public override object ObjectVal(int doc)
         {
-            return Exists(doc) ? SingleVal(doc) : (float?)null;
+            return Exists(doc) ? J2N.Numerics.Single.GetInstance(SingleVal(doc)) : null; // LUCENENET: In Java, the conversion to instance of java.util.Single is implicit, but we need to do an explicit conversion
         }
 
         public override string ToString(int doc)

@@ -27,6 +27,7 @@ _Released:_ `2021-10-29`
 
 ### Supported Frameworks
 
+- .NET 6.0
 - [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 - [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 - .NET Framework 4.5

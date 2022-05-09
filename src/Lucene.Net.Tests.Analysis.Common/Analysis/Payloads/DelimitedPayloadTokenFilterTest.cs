@@ -137,7 +137,7 @@ namespace Lucene.Net.Analysis.Payloads
             }
             else
             {
-                assertTrue("expectPay is not null and it should be", expectPay == null);
+                assertTrue("expectPay is not null and it should be", expectPay is null);
             }
         }
 
@@ -158,7 +158,7 @@ namespace Lucene.Net.Analysis.Payloads
             }
             else
             {
-                assertTrue("expectPay is not null and it should be", expectPay == null);
+                assertTrue("expectPay is not null and it should be", expectPay is null);
             }
         }
     }

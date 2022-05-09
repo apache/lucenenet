@@ -106,12 +106,12 @@ namespace Lucene.Net.Index
         public override sealed int DocFreq(Term term)
         {
             Fields fields = Fields;
-            if (fields == null)
+            if (fields is null)
             {
                 return 0;
             }
             Terms terms = fields.GetTerms(term.Field);
-            if (terms == null)
+            if (terms is null)
             {
                 return 0;
             }
@@ -136,12 +136,12 @@ namespace Lucene.Net.Index
         public override sealed long TotalTermFreq(Term term)
         {
             Fields fields = Fields;
-            if (fields == null)
+            if (fields is null)
             {
                 return 0;
             }
             Terms terms = fields.GetTerms(term.Field);
-            if (terms == null)
+            if (terms is null)
             {
                 return 0;
             }
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
         public override sealed long GetSumDocFreq(string field)
         {
             Terms terms = GetTerms(field);
-            if (terms == null)
+            if (terms is null)
             {
                 return 0;
             }
@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
         public override sealed int GetDocCount(string field)
         {
             Terms terms = GetTerms(field);
-            if (terms == null)
+            if (terms is null)
             {
                 return 0;
             }
@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
         public override sealed long GetSumTotalTermFreq(string field)
         {
             Terms terms = GetTerms(field);
-            if (terms == null)
+            if (terms is null)
             {
                 return 0;
             }
@@ -191,7 +191,7 @@ namespace Lucene.Net.Index
         public Terms GetTerms(string field) // LUCENENET specific: Renamed from Terms()
         {
             Fields fields = Fields;
-            if (fields == null)
+            if (fields is null)
             {
                 return null;
             }

@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.Spans
             {
                 return false;
             }
-            if (current == null)
+            if (current is null)
             {
                 AtomicReaderContext ctx = leaves[leafOrd];
                 current = query.GetSpans(ctx, ((AtomicReader)ctx.Reader).LiveDocs, termContexts);
@@ -117,7 +117,7 @@ namespace Lucene.Net.Search.Spans
                 current = query.GetSpans(ctx, ((AtomicReader)ctx.Reader).LiveDocs, termContexts);
                 leafOrd = subIndex;
             }
-            else if (current == null)
+            else if (current is null)
             {
                 AtomicReaderContext ctx = leaves[leafOrd];
                 current = query.GetSpans(ctx, ((AtomicReader)ctx.Reader).LiveDocs, termContexts);
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                if (current == null)
+                if (current is null)
                 {
                     return DocIdSetIterator.NO_MORE_DOCS;
                 }
@@ -167,7 +167,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                if (current == null)
+                if (current is null)
                 {
                     return DocIdSetIterator.NO_MORE_DOCS;
                 }
@@ -179,7 +179,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                if (current == null)
+                if (current is null)
                 {
                     return DocIdSetIterator.NO_MORE_DOCS;
                 }
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search.Spans
 
         public override ICollection<byte[]> GetPayload()
         {
-            if (current == null)
+            if (current is null)
             {
                 return Collections.EmptyList<byte[]>();
             }
@@ -200,7 +200,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                if (current == null)
+                if (current is null)
                 {
                     return false;
                 }

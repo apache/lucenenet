@@ -487,7 +487,7 @@ namespace Lucene.Net.Search
         private int CountTerms(MultiTermQuery q)
         {
             Terms terms = MultiFields.GetTerms(reader, q.Field);
-            if (terms == null)
+            if (terms is null)
             {
                 return 0;
             }

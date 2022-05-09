@@ -123,11 +123,11 @@ namespace Lucene.Net.Search
                 {
                     bool reversed = rev == 0;
                     SortField sf = new SortField(field, SortFieldType.STRING, reversed);
-                    sf.MissingValue = SortField.STRING_FIRST;
+                    sf.SetMissingValue(SortField.STRING_FIRST);
                     allSortFields.Add(sf);
 
                     sf = new SortField(field, SortFieldType.STRING, reversed);
-                    sf.MissingValue = SortField.STRING_LAST;
+                    sf.SetMissingValue(SortField.STRING_LAST);
                     allSortFields.Add(sf);
                 }
             }
@@ -139,35 +139,31 @@ namespace Lucene.Net.Search
                 if (sf.Type == SortFieldType.INT32)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.INT32, sf.IsReverse);
-                    sf2.MissingValue = Random.Next();
+                    sf2.SetMissingValue(Random.Next());
                     allSortFields.Add(sf2);
                 }
                 else if (sf.Type == SortFieldType.INT64)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.INT64, sf.IsReverse);
-                    sf2.MissingValue = Random.NextInt64();
+                    sf2.SetMissingValue(Random.NextInt64());
                     allSortFields.Add(sf2);
                 }
                 else if (sf.Type == SortFieldType.SINGLE)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.SINGLE, sf.IsReverse);
-                    sf2.MissingValue = (float)Random.NextDouble();
+                    sf2.SetMissingValue(Random.NextSingle());
                     allSortFields.Add(sf2);
                 }
                 else if (sf.Type == SortFieldType.DOUBLE)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.DOUBLE, sf.IsReverse);
-                    sf2.MissingValue = Random.NextDouble();
+                    sf2.SetMissingValue(Random.NextDouble());
                     allSortFields.Add(sf2);
                 }
             }
 
             dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
             int numDocs = AtLeast(200);
             for (int i = 0; i < numDocs; i++)
             {
@@ -179,7 +175,7 @@ namespace Lucene.Net.Search
                 fields.Add(new Int32Field("int", Random.Next(), Field.Store.NO));
                 fields.Add(new Int64Field("long", Random.NextInt64(), Field.Store.NO));
 
-                fields.Add(new SingleField("float", (float)Random.NextDouble(), Field.Store.NO));
+                fields.Add(new SingleField("float", Random.NextSingle(), Field.Store.NO));
                 fields.Add(new DoubleField("double", Random.NextDouble(), Field.Store.NO));
                 fields.Add(NewStringField("bytes", TestUtil.RandomRealisticUnicodeString(Random), Field.Store.NO));
                 fields.Add(NewStringField("bytesval", TestUtil.RandomRealisticUnicodeString(Random), Field.Store.NO));
@@ -188,7 +184,7 @@ namespace Lucene.Net.Search
                 if (supportsDocValues)
                 {
                     fields.Add(new NumericDocValuesField("intdocvalues", Random.Next()));
-                    fields.Add(new SingleDocValuesField("floatdocvalues", (float)Random.NextDouble()));
+                    fields.Add(new SingleDocValuesField("floatdocvalues", Random.NextSingle()));
                     fields.Add(new SortedDocValuesField("sortedbytesdocvalues", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random))));
                     fields.Add(new SortedDocValuesField("sortedbytesdocvaluesval", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random))));
                     fields.Add(new BinaryDocValuesField("straightbytesdocvalues", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random))));
@@ -305,7 +301,7 @@ namespace Lucene.Net.Search
             }
             bool doMaxScore = Random.NextBoolean();
             bool doScores = Random.NextBoolean();
-            if (sort == null)
+            if (sort is null)
             {
                 all = searcher.Search(query, filter, maxDoc);
             }
@@ -331,7 +327,7 @@ namespace Lucene.Net.Search
             while (pageStart < all.TotalHits)
             {
                 TopDocs paged;
-                if (sort == null)
+                if (sort is null)
                 {
                     if (isVerbose)
                     {

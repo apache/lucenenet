@@ -194,7 +194,7 @@ namespace Lucene.Net.Analysis.Synonym
                     //System.out.println("  output=" + output + " new ord=" + ord);
                 }
 
-                if (!workingSet.TryGetValue(input, out MapEntry e) || e == null)
+                if (!workingSet.TryGetValue(input, out MapEntry e) || e is null)
                 {
                     e = new MapEntry();
                     workingSet[CharsRef.DeepCopyOf(input)] = e; // make a copy, since we will keep around in our map
@@ -248,11 +248,11 @@ namespace Lucene.Net.Analysis.Synonym
                 BytesRef scratch = new BytesRef(64);
                 ByteArrayDataOutput scratchOutput = new ByteArrayDataOutput();
 
-                ISet<int?> dedupSet;
+                ISet<int> dedupSet;
 
                 if (dedup)
                 {
-                    dedupSet = new JCG.HashSet<int?>();
+                    dedupSet = new JCG.HashSet<int>();
                 }
                 else
                 {
@@ -292,8 +292,8 @@ namespace Lucene.Net.Analysis.Synonym
                     {
                         if (dedupSet != null)
                         {
-                            // box once
-                            int? ent = output.ords[i];
+                            // LUCENENET specific - no boxing happening here
+                            int ent = output.ords[i];
                             if (dedupSet.Contains(ent))
                             {
                                 continue;

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
@@ -77,8 +79,8 @@ namespace Lucene.Net.Index
                 sis.Read(dir);
                 Assert.AreEqual(2, sis.Count);
 
-                FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis.Info(0));
-                FieldInfos fis2 = SegmentReader.ReadFieldInfos(sis.Info(1));
+                FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis[0]);
+                FieldInfos fis2 = SegmentReader.ReadFieldInfos(sis[1]);
 
                 Assert.AreEqual("f1", fis1.FieldInfo(0).Name);
                 Assert.AreEqual("f2", fis1.FieldInfo(1).Name);
@@ -95,7 +97,7 @@ namespace Lucene.Net.Index
                 sis.Read(dir);
                 Assert.AreEqual(1, sis.Count);
 
-                FieldInfos fis3 = SegmentReader.ReadFieldInfos(sis.Info(0));
+                FieldInfos fis3 = SegmentReader.ReadFieldInfos(sis[0]);
 
                 Assert.AreEqual("f1", fis3.FieldInfo(0).Name);
                 Assert.AreEqual("f2", fis3.FieldInfo(1).Name);
@@ -140,8 +142,8 @@ namespace Lucene.Net.Index
             sis.Read(dir1);
             Assert.AreEqual(2, sis.Count);
 
-            FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis.Info(0));
-            FieldInfos fis2 = SegmentReader.ReadFieldInfos(sis.Info(1));
+            FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis[0]);
+            FieldInfos fis2 = SegmentReader.ReadFieldInfos(sis[1]);
 
             Assert.AreEqual("f1", fis1.FieldInfo(0).Name);
             Assert.AreEqual("f2", fis1.FieldInfo(1).Name);
@@ -172,7 +174,7 @@ namespace Lucene.Net.Index
                     SegmentInfos sis = new SegmentInfos();
                     sis.Read(dir);
                     Assert.AreEqual(1, sis.Count);
-                    FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis.Info(0));
+                    FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis[0]);
                     Assert.AreEqual("f1", fis1.FieldInfo(0).Name);
                     Assert.AreEqual("f2", fis1.FieldInfo(1).Name);
                 }
@@ -187,8 +189,8 @@ namespace Lucene.Net.Index
                     SegmentInfos sis = new SegmentInfos();
                     sis.Read(dir);
                     Assert.AreEqual(2, sis.Count);
-                    FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis.Info(0));
-                    FieldInfos fis2 = SegmentReader.ReadFieldInfos(sis.Info(1));
+                    FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis[0]);
+                    FieldInfos fis2 = SegmentReader.ReadFieldInfos(sis[1]);
                     Assert.AreEqual("f1", fis1.FieldInfo(0).Name);
                     Assert.AreEqual("f2", fis1.FieldInfo(1).Name);
                     Assert.AreEqual("f1", fis2.FieldInfo(0).Name);
@@ -207,9 +209,9 @@ namespace Lucene.Net.Index
                     SegmentInfos sis = new SegmentInfos();
                     sis.Read(dir);
                     Assert.AreEqual(3, sis.Count);
-                    FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis.Info(0));
-                    FieldInfos fis2 = SegmentReader.ReadFieldInfos(sis.Info(1));
-                    FieldInfos fis3 = SegmentReader.ReadFieldInfos(sis.Info(2));
+                    FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis[0]);
+                    FieldInfos fis2 = SegmentReader.ReadFieldInfos(sis[1]);
+                    FieldInfos fis3 = SegmentReader.ReadFieldInfos(sis[2]);
                     Assert.AreEqual("f1", fis1.FieldInfo(0).Name);
                     Assert.AreEqual("f2", fis1.FieldInfo(1).Name);
                     Assert.AreEqual("f1", fis2.FieldInfo(0).Name);
@@ -236,7 +238,7 @@ namespace Lucene.Net.Index
                 SegmentInfos sis_ = new SegmentInfos();
                 sis_.Read(dir);
                 Assert.AreEqual(1, sis_.Count);
-                FieldInfos fis1_ = SegmentReader.ReadFieldInfos(sis_.Info(0));
+                FieldInfos fis1_ = SegmentReader.ReadFieldInfos(sis_[0]);
                 Assert.AreEqual("f1", fis1_.FieldInfo(0).Name);
                 Assert.AreEqual("f2", fis1_.FieldInfo(1).Name);
                 Assert.AreEqual("f3", fis1_.FieldInfo(2).Name);
@@ -417,6 +419,50 @@ namespace Lucene.Net.Index
 
                 default:
                     return null;
+            }
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestSegmentNumberToStringGeneration()
+        {
+            // We cover the 100 literal values that we return plus an additional 5 to ensure continuation
+            const long MaxSegment = 105;
+
+            bool temp = SegmentInfos.UseLegacySegmentNames;
+            try
+            {
+                // Normal usage
+                SegmentInfos.UseLegacySegmentNames = false;
+                for (long seg = 0; seg < MaxSegment; seg++)
+                {
+                    string expected = J2N.IntegralNumberExtensions.ToString(seg, J2N.Character.MaxRadix);
+                    string actual = SegmentInfos.SegmentNumberToString(seg);
+                    Assert.AreEqual(expected, actual);
+                }
+
+                // This is for places where we were generating the names correctly. We don't want to flip
+                // to radix 10 when the feature is enabled here.
+                SegmentInfos.UseLegacySegmentNames = true;
+                for (long seg = 0; seg < MaxSegment; seg++)
+                {
+                    string expected = J2N.IntegralNumberExtensions.ToString(seg, J2N.Character.MaxRadix);
+                    string actual = SegmentInfos.SegmentNumberToString(seg, allowLegacyNames: false);
+                    Assert.AreEqual(expected, actual);
+                }
+
+                // This is to generate names with radix 10 (to read indexes from beta 1 thru 15 only)
+                SegmentInfos.UseLegacySegmentNames = true;
+                for (long seg = 0; seg < MaxSegment; seg++)
+                {
+                    string expected = seg.ToString(CultureInfo.InvariantCulture);
+                    string actual = SegmentInfos.SegmentNumberToString(seg);
+                    Assert.AreEqual(expected, actual);
+                }
+            }
+            finally
+            {
+                SegmentInfos.UseLegacySegmentNames = temp;
             }
         }
     }

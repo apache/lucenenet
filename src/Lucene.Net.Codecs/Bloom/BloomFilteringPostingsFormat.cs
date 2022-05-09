@@ -112,7 +112,7 @@ namespace Lucene.Net.Codecs.Bloom
 
         public override FieldsConsumer FieldsConsumer(SegmentWriteState state)
         {
-            if (_delegatePostingsFormat == null)
+            if (_delegatePostingsFormat is null)
             {
                 throw UnsupportedOperationException.Create("Error - constructed without a choice of PostingsFormat");
             }
@@ -193,14 +193,14 @@ namespace Lucene.Net.Codecs.Bloom
 
             public override Terms GetTerms(string field)
             {
-                if (!_bloomsByFieldName.TryGetValue(field, out FuzzySet filter) || filter == null)
+                if (!_bloomsByFieldName.TryGetValue(field, out FuzzySet filter) || filter is null)
                 {
                     return _delegateFieldsProducer.GetTerms(field);
                 }
                 else
                 {
                     var result = _delegateFieldsProducer.GetTerms(field);
-                    return result == null ? null : new BloomFilteredTerms(result, filter);
+                    return result is null ? null : new BloomFilteredTerms(result, filter);
                 }
             }
 

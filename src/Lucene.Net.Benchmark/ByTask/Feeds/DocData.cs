@@ -45,7 +45,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         /// <summary>
         /// Gets the date. If the ctor with <see cref="DateTime"/> was called, then the string
-        /// returned is the output of <see cref="DateTools.DateToString(DateTime, DateTools.Resolution)"/>.
+        /// returned is the output of <see cref="DateTools.DateToString(DateTime, DateResolution)"/>.
         /// Otherwise it's the string passed to the other ctor.
         /// </summary>
         public virtual string Date => date;
@@ -54,7 +54,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             if (date.HasValue)
             {
-                SetDate(DateTools.DateToString(date.Value, DateTools.Resolution.SECOND));
+                SetDate(DateTools.DateToString(date.Value, DateResolution.SECOND));
             }
             else
             {

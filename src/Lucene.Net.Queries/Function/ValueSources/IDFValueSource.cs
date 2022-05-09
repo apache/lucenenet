@@ -48,7 +48,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             var searcher = (IndexSearcher)context["searcher"];
             TFIDFSimilarity sim = AsTFIDF(searcher.Similarity, m_field);
-            if (sim == null)
+            if (sim is null)
             {
                 throw UnsupportedOperationException.Create("requires a TFIDFSimilarity (such as DefaultSimilarity)");
             }

@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis.Synonym
             IList<IList<string>> synList = new JCG.List<IList<string>>();
             foreach (string toks in strList)
             {
-                IList<string> tokList = tokFactory == null ? SplitWS(toks, true) : SplitByTokenizer(toks, tokFactory);
+                IList<string> tokList = tokFactory is null ? SplitWS(toks, true) : SplitByTokenizer(toks, tokFactory);
                 synList.Add(tokList);
             }
             return synList;

@@ -404,16 +404,12 @@ namespace Lucene.Net.Index
                     {
                         // not synchronized
                         DirectoryReader refreshed = DirectoryReader.OpenIfChanged(r);
-                        if (refreshed == null)
+                        if (refreshed is null)
                         {
                             refreshed = r;
                         }
 
-                        IndexSearcher searcher =
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                            outerInstance.
-#endif
-                            NewSearcher(refreshed);
+                        IndexSearcher searcher = NewSearcher(refreshed);
                         ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("field1", "a" + rnd.Next(refreshed.MaxDoc))), null, 1000).ScoreDocs;
                         if (hits.Length > 0)
                         {
@@ -550,14 +546,14 @@ namespace Lucene.Net.Index
                 try
                 {
                     refreshed = DirectoryReader.OpenIfChanged(reader);
-                    if (refreshed == null)
+                    if (refreshed is null)
                     {
                         refreshed = reader;
                     }
                 }
                 finally
                 {
-                    if (refreshed == null && r != null)
+                    if (refreshed is null && r != null)
                     {
                         // Hit exception -- close opened reader
                         r.Dispose();

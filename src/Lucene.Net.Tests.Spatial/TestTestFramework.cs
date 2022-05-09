@@ -1,8 +1,8 @@
 ﻿using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,7 +35,7 @@ namespace Lucene.Net.Spatial
             String name = StrategyTestCase.RESOURCE_PATH + StrategyTestCase.QTEST_Cities_Intersects_BBox;
 
             Stream @in = GetType().getResourceAsStream(name);
-            SpatialContext ctx = SpatialContext.GEO;
+            SpatialContext ctx = SpatialContext.Geo;
             IEnumerator<SpatialTestQuery> iter = SpatialTestQuery.GetTestQueries(
                 new SpatialArgsParser(), ctx, name, @in);//closes the InputStream
             IList<SpatialTestQuery> tests = new JCG.List<SpatialTestQuery>();

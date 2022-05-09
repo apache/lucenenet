@@ -118,7 +118,7 @@ namespace Lucene.Net.Index
                     // accidentally deleting the index:
                     dir.RandomIOExceptionRateOnOpen = 0.0;
                     Assert.IsTrue(DirectoryReader.IndexExists(dir));
-                    if (r2 == null)
+                    if (r2 is null)
                     {
                         r2 = DirectoryReader.Open(dir);
                     }
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                if (any && r == null && Random.NextBoolean())
+                if (any && r is null && Random.NextBoolean())
                 {
                     // Make a copy of a non-empty index so we can use
                     // it to addIndexes later:

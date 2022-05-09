@@ -1,4 +1,4 @@
-using J2N.Collections;
+﻿using J2N.Collections;
 using Lucene.Net.Diagnostics;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
@@ -29,6 +29,7 @@ namespace Lucene.Net.Util.Fst
     /// Used to dedup states (lookup already-frozen states)
     /// </summary>
     internal sealed class NodeHash<T>
+        where T : class // LUCENENET specific - added class constraint, since we compare reference equality
     {
         private PagedGrowableWriter table;
         private long count;

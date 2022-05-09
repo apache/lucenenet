@@ -196,7 +196,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             long? previous = null;
             foreach (Input tf in keys)
             {
-                long? current = (Convert.ToInt64(lookup.Get(TestUtil.BytesToCharSequence(tf.term, Random).ToString())));
+                long? current = lookup.Get(TestUtil.BytesToCharSequence(tf.term, Random).ToString());
                 if (previous != null)
                 {
                     assertEquals(previous, current);

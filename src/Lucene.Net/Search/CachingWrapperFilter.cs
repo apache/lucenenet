@@ -1,6 +1,10 @@
 ﻿using Lucene.Net.Diagnostics;
-using Lucene.Net.Support;
+using Lucene.Net.Runtime.CompilerServices;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+using Prism.Events;
+#endif
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
@@ -37,26 +41,26 @@ namespace Lucene.Net.Search
     /// </summary>
     public class CachingWrapperFilter : Filter
     {
-        private readonly Filter _filter;
+        private readonly Filter filter;
 
-#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
-        private readonly ConditionalWeakTable<object, DocIdSet> _cache = new ConditionalWeakTable<object, DocIdSet>();
-#else
-        private readonly IDictionary<object, DocIdSet> _cache = new WeakDictionary<object, DocIdSet>().AsConcurrent();
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+        // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use
+        private readonly IEventAggregator eventAggregator = new EventAggregator();
 #endif
+        private readonly ConditionalWeakTable<object, DocIdSet> cache = new ConditionalWeakTable<object, DocIdSet>();
 
         /// <summary>
         /// Wraps another filter's result and caches it. </summary>
         /// <param name="filter"> Filter to cache results of </param>
         public CachingWrapperFilter(Filter filter)
         {
-            this._filter = filter;
+            this.filter = filter;
         }
 
         /// <summary>
         /// Gets the contained filter. </summary>
         /// <returns> the contained filter. </returns>
-        public virtual Filter Filter => _filter;
+        public virtual Filter Filter => filter;
 
         /// <summary>
         /// Provide the <see cref="DocIdSet"/> to be cached, using the <see cref="DocIdSet"/> provided
@@ -70,7 +74,7 @@ namespace Lucene.Net.Search
         /// </summary>
         protected virtual DocIdSet DocIdSetToCache(DocIdSet docIdSet, AtomicReader reader)
         {
-            if (docIdSet == null)
+            if (docIdSet is null)
             {
                 // this is better than returning null, as the nonnull result can be cached
                 return EMPTY_DOCIDSET;
@@ -85,7 +89,7 @@ namespace Lucene.Net.Search
                 // null is allowed to be returned by iterator(),
                 // in this case we wrap with the sentinel set,
                 // which is cacheable.
-                if (it == null)
+                if (it is null)
                 {
                     return EMPTY_DOCIDSET;
                 }
@@ -114,19 +118,30 @@ namespace Lucene.Net.Search
             var reader = context.AtomicReader;
             object key = reader.CoreCacheKey;
 
-            if (_cache.TryGetValue(key, out DocIdSet docIdSet) && docIdSet != null)
+            if (cache.TryGetValue(key, out DocIdSet docIdSet))
             {
                 hitCount++;
             }
             else
             {
                 missCount++;
-                docIdSet = DocIdSetToCache(_filter.GetDocIdSet(context, null), reader);
+                docIdSet = DocIdSetToCache(filter.GetDocIdSet(context, null), reader);
                 if (Debugging.AssertsEnabled) Debugging.Assert(docIdSet.IsCacheable);
-#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
-                _cache.AddOrUpdate(key, docIdSet);
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+                cache.AddOrUpdate(key, docIdSet);
 #else
-                _cache[key] = docIdSet;
+                UninterruptableMonitor.Enter(cache);
+                try
+                {
+                    cache.AddOrUpdate(key, docIdSet);
+                    // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
+                    // we use a weak event to retrieve the DocIdSet instances
+                    reader.SubscribeToGetCacheKeysEvent(eventAggregator.GetEvent<Events.GetCacheKeysEvent>());
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(cache);
+                }
 #endif
             }
 
@@ -135,19 +150,19 @@ namespace Lucene.Net.Search
 
         public override string ToString()
         {
-            return this.GetType().Name + "(" + _filter + ")";
+            return this.GetType().Name + "(" + filter + ")";
         }
 
         public override bool Equals(object o)
         {
             if (o is null) return false;
             if (!(o is CachingWrapperFilter other)) return false;
-            return _filter.Equals(other._filter);
+            return filter.Equals(other.filter);
         }
 
         public override int GetHashCode()
         {
-            return (_filter.GetHashCode() ^ this.GetType().GetHashCode());
+            return (filter.GetHashCode() ^ this.GetType().GetHashCode());
         }
 
         /// <summary>
@@ -173,20 +188,28 @@ namespace Lucene.Net.Search
         {
             // Sync only to pull the current set of values:
             IList<DocIdSet> docIdSets;
-            UninterruptableMonitor.Enter(_cache);
+            UninterruptableMonitor.Enter(cache);
             try
             {
-#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                 docIdSets = new JCG.List<DocIdSet>();
-                foreach (var pair in _cache)
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+                foreach (var pair in cache)
                     docIdSets.Add(pair.Value);
 #else
-                docIdSets = new JCG.List<DocIdSet>(_cache.Values);
+                // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
+                // we use a weak event to retrieve the DocIdSet instances. We look each of these up here to avoid the need
+                // to attach events to the DocIdSet instances themselves (thus using the existing IndexReader.Dispose()
+                // method to detach the events rather than using a finalizer in DocIdSet to ensure they are cleaned up).
+                var e = new Events.GetCacheKeysEventArgs();
+                eventAggregator.GetEvent<Events.GetCacheKeysEvent>().Publish(e);
+                foreach (var key in e.CacheKeys)
+                    if (cache.TryGetValue(key, out DocIdSet value))
+                        docIdSets.Add(value);
 #endif
             }
             finally
             {
-                UninterruptableMonitor.Exit(_cache);
+                UninterruptableMonitor.Exit(cache);
             }
 
             long total = 0;

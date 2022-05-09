@@ -99,7 +99,7 @@ namespace Lucene.Net.Documents
 
         public override Status NeedsField(FieldInfo fieldInfo)
         {
-            return fieldsToAdd == null || fieldsToAdd.Contains(fieldInfo.Name) ? Status.YES : Status.NO;
+            return fieldsToAdd is null || fieldsToAdd.Contains(fieldInfo.Name) ? Status.YES : Status.NO;
         }
 
         /// <summary>

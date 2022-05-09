@@ -125,7 +125,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             get
             {
-                if (sort == null)
+                if (sort is null)
                 {
                     throw IllegalStateException.Create("No sort field was set");
                 }

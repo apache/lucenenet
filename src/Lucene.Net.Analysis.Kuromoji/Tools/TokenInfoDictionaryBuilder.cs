@@ -9,6 +9,7 @@ using System.IO;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Analysis.Ja.Util
 {
@@ -116,7 +117,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             Console.WriteLine("  encode...");
 
             PositiveInt32Outputs fstOutput = PositiveInt32Outputs.Singleton;
-            Builder<long?> fstBuilder = new Builder<long?>(Lucene.Net.Util.Fst.FST.INPUT_TYPE.BYTE2, 0, 0, true, true, int.MaxValue, fstOutput, null, true, PackedInt32s.DEFAULT, true, 15);
+            Builder<Int64> fstBuilder = new Builder<Int64>(FST.INPUT_TYPE.BYTE2, 0, 0, true, true, int.MaxValue, fstOutput, null, true, PackedInt32s.DEFAULT, true, 15);
             Int32sRef scratch = new Int32sRef();
             long ord = -1; // first ord will be 0
             string lastValue = null;
@@ -150,7 +151,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                 offset = next;
             }
 
-            FST<long?> fst = fstBuilder.Finish();
+            FST<Int64> fst = fstBuilder.Finish();
 
             Console.WriteLine("  " + fst.NodeCount + " nodes, " + fst.ArcCount + " arcs, " + fst.GetSizeInBytes() + " bytes...  ");
             dictionary.SetFST(fst);

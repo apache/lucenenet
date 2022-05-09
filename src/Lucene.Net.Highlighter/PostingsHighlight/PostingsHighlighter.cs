@@ -160,7 +160,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// </summary>
         protected virtual PassageFormatter GetFormatter(string field)
         {
-            if (defaultFormatter == null)
+            if (defaultFormatter is null)
             {
                 defaultFormatter = new DefaultPassageFormatter();
             }
@@ -175,7 +175,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// </summary>
         protected virtual PassageScorer GetScorer(string field)
         {
-            if (defaultScorer == null)
+            if (defaultScorer is null)
             {
                 defaultScorer = new PassageScorer();
             }
@@ -517,7 +517,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             IDictionary<int, object> highlights = new Dictionary<int, object>();
 
             PassageFormatter fieldFormatter = GetFormatter(field);
-            if (fieldFormatter == null)
+            if (fieldFormatter is null)
             {
                 // LUCENENET: Changed from NullPointerException to InvalidOperationException (which isn't caught anywhere outside of tests)
                 throw IllegalStateException.Create("PassageFormatter cannot be null");
@@ -570,7 +570,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                         postings = new DocsAndPositionsEnum[terms.Length];
                     }
                 }
-                if (termsEnum == null)
+                if (termsEnum is null)
                 {
                     continue; // no terms for this field, nothing to do
                 }
@@ -609,7 +609,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             TermsEnum termsEnum, DocsAndPositionsEnum[] postings, int n)
         {
             PassageScorer scorer = GetScorer(field);
-            if (scorer == null)
+            if (scorer is null)
             {
                 // LUCENENET: Changed from NullPointerException to InvalidOperationException (which isn't caught anywhere outside of tests)
                 throw IllegalStateException.Create("PassageScorer cannot be null");
@@ -625,7 +625,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 {
                     continue;
                 }
-                else if (de == null)
+                else if (de is null)
                 {
                     postings[i] = EMPTY; // initially
                     if (!termsEnum.SeekExact(terms[i]))
@@ -633,7 +633,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                         continue; // term not found
                     }
                     de = postings[i] = termsEnum.DocsAndPositions(null, null, DocsAndPositionsFlags.OFFSETS);
-                    if (de == null)
+                    if (de is null)
                     {
                         // no positions available
                         throw new ArgumentException("field '" + field + "' was indexed without offsets, cannot highlight");
@@ -740,7 +740,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 {
                     tf++;
                     BytesRef term = terms[off.id];
-                    if (term == null)
+                    if (term is null)
                     {
                         // multitermquery match, pull from payload
                         term = off.dp.GetPayload();

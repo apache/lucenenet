@@ -260,7 +260,7 @@ namespace Lucene.Net.Index
 
             SortedSetDocValues multi = MultiDocValues.GetSortedSetValues(ir, "bytes");
             SortedSetDocValues single = merged.GetSortedSetDocValues("bytes");
-            if (multi == null)
+            if (multi is null)
             {
                 Assert.IsNull(single);
             }
@@ -337,7 +337,7 @@ namespace Lucene.Net.Index
 
             SortedSetDocValues multi = MultiDocValues.GetSortedSetValues(ir, "bytes");
             SortedSetDocValues single = merged.GetSortedSetDocValues("bytes");
-            if (multi == null)
+            if (multi is null)
             {
                 Assert.IsNull(single);
             }
@@ -357,7 +357,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < numDocs; i++)
                 {
                     single.SetDocument(i);
-                    IList<long?> expectedList = new JCG.List<long?>();
+                    IList<long> expectedList = new JCG.List<long>();
                     long ord;
                     while ((ord = single.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                     {
@@ -368,7 +368,7 @@ namespace Lucene.Net.Index
                     int upto = 0;
                     while ((ord = multi.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                     {
-                        Assert.AreEqual((long)expectedList[upto], ord);
+                        Assert.AreEqual(expectedList[upto], ord);
                         upto++;
                     }
                     Assert.AreEqual(expectedList.Count, upto);
@@ -413,7 +413,7 @@ namespace Lucene.Net.Index
 
             IBits multi = MultiDocValues.GetDocsWithField(ir, "numbers");
             IBits single = merged.GetDocsWithField("numbers");
-            if (multi == null)
+            if (multi is null)
             {
                 Assert.IsNull(single);
             }

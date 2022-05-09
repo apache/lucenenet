@@ -8,9 +8,9 @@ using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Distance;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Distance;
+using Spatial4n.Shapes;
 using System;
 using System.Globalization;
 
@@ -79,7 +79,7 @@ namespace Lucene.Net.Spatial
         {
             //Typical geospatial context
             //  These can also be constructed from SpatialContextFactory
-            this.ctx = SpatialContext.GEO;
+            this.ctx = SpatialContext.Geo;
 
             int maxLevels = 11;//results in sub-meter precision for geohash
                                //TODO demo lookup by detail distance
@@ -125,7 +125,7 @@ namespace Lucene.Net.Spatial
                 //store it too; the format is up to you
                 //  (assume point in this example)
                 IPoint pt = (IPoint)shape;
-                doc.Add(new StoredField(strategy.FieldName, pt.X.ToString(CultureInfo.InvariantCulture) + " " + pt.Y.ToString(CultureInfo.InvariantCulture)));
+                doc.Add(new StoredField(strategy.FieldName, J2N.Numerics.Double.ToString(pt.X, CultureInfo.InvariantCulture) + " " + J2N.Numerics.Double.ToString(pt.Y, CultureInfo.InvariantCulture)));
             }
 
             return doc;
@@ -142,7 +142,7 @@ namespace Lucene.Net.Spatial
                 //Search with circle
                 //note: SpatialArgs can be parsed from a string
                 SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects,
-                    ctx.MakeCircle(-80.0, 33.0, DistanceUtils.Dist2Degrees(200, DistanceUtils.EARTH_MEAN_RADIUS_KM)));
+                    ctx.MakeCircle(-80.0, 33.0, DistanceUtils.Dist2Degrees(200, DistanceUtils.EarthMeanRadiusKilometers)));
                 Filter filter = strategy.MakeFilter(args);
                 TopDocs docs = indexSearcher.Search(new MatchAllDocsQuery(), filter, 10, idSort);
                 AssertDocMatchedIds(indexSearcher, docs, 2);
@@ -155,14 +155,14 @@ namespace Lucene.Net.Spatial
                 double x = double.Parse(doc1Str.Substring(0, spaceIdx - 0), CultureInfo.InvariantCulture);
                 double y = double.Parse(doc1Str.Substring(spaceIdx + 1), CultureInfo.InvariantCulture);
                 double doc1DistDEG = ctx.CalcDistance(args.Shape.Center, x, y);
-                assertEquals(121.6d, DistanceUtils.Degrees2Dist(doc1DistDEG, DistanceUtils.EARTH_MEAN_RADIUS_KM), 0.1);
+                assertEquals(121.6d, DistanceUtils.Degrees2Dist(doc1DistDEG, DistanceUtils.EarthMeanRadiusKilometers), 0.1);
                 //or more simply:
-                assertEquals(121.6d, doc1DistDEG * DistanceUtils.DEG_TO_KM, 0.1);
+                assertEquals(121.6d, doc1DistDEG * DistanceUtils.DegreesToKilometers, 0.1);
             }
             //--Match all, order by distance ascending
             {
                 IPoint pt = ctx.MakePoint(60, -50);
-                ValueSource valueSource = strategy.MakeDistanceValueSource(pt, DistanceUtils.DEG_TO_KM);//the distance (in km)
+                ValueSource valueSource = strategy.MakeDistanceValueSource(pt, DistanceUtils.DegreesToKilometers);//the distance (in km)
                 Sort distSort = new Sort(valueSource.GetSortField(false)).Rewrite(indexSearcher);//false=asc dist
                 TopDocs docs = indexSearcher.Search(new MatchAllDocsQuery(), 10, distSort);
                 AssertDocMatchedIds(indexSearcher, docs, 4, 20, 2);

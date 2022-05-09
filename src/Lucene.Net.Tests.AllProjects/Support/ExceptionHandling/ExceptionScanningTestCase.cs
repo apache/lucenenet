@@ -318,7 +318,7 @@ namespace Lucene.Net.Support.ExceptionHandling
                 typeof(J2N.IO.BufferUnderflowException),
                 typeof(J2N.IO.BufferOverflowException),
                 typeof(J2N.IO.InvalidMarkException),
-                typeof(Lucene.Net.Spatial.Queries.UnsupportedSpatialOperation), // Subclasses NotSupportedException
+                typeof(Lucene.Net.Spatial.Queries.UnsupportedSpatialOperationException), // Subclasses NotSupportedException
 
                 //typeof(NUnit.Framework.Internal.InvalidPlatformException),
 

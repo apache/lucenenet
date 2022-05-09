@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
         private Directory dir;
         private IndexReader reader;
         /* expected maxTermFrequency values for our documents */
-        private readonly IList<int?> expected = new JCG.List<int?>();
+        private readonly IList<int> expected = new JCG.List<int>();
 
         [SetUp]
         public override void SetUp()
@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
             NumericDocValues fooNorms = MultiDocValues.GetNormValues(reader, "foo");
             for (int i = 0; i < reader.MaxDoc; i++)
             {
-                Assert.AreEqual((int)expected[i], fooNorms.Get(i) & 0xff);
+                Assert.AreEqual(expected[i], fooNorms.Get(i) & 0xff);
             }
         }
 

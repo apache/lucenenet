@@ -20,21 +20,25 @@
 
 -->
 <Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- These properties must be set prior to importing nuget.props -->
+  <PropertyGroup>
+    <Description>System for benchmarking the Lucene.NET full-text search engine library from The Apache Software Foundation.</Description>
+    <PackageDocumentationRelativeUrl>benchmark/Lucene.Net.Benchmarks.html</PackageDocumentationRelativeUrl>
+  </PropertyGroup>
   
-  <Import Project="$(SolutionDir)build/NuGet.props" />
+  <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>
-    <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net451</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net451</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Benchmark</AssemblyTitle>
-    <Description>System for benchmarking the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
     <PackageTags>$(PackageTags);benchmark</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build/Dependencies.props" />
+  
 
   <ItemGroup>
     <ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
@@ -50,7 +54,7 @@
   <ItemGroup>
     <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
     <PackageReference Include="ICU4N.Collation" Version="$(ICU4NCollationPackageVersion)" />
-    <PackageReference Include="Spatial4n.Core" Version="$(Spatial4nCorePackageVersion)" />
+    <PackageReference Include="Spatial4n" Version="$(Spatial4nPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">

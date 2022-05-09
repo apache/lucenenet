@@ -193,7 +193,7 @@ namespace Lucene.Net.Util
                 {
                     //return Properties.Get(PropertyNames.Category) as string;
                     var catList = Properties[PropertyNames.Category];
-                    if (catList == null)
+                    if (catList is null)
                         return null;
 
                     switch (catList.Count)

@@ -115,7 +115,7 @@ namespace Lucene.Net.Search.Join
             {
                 Scorer parentScorer = _parentWeight.GetScorer(readerContext, null);
 
-                if (parentScorer == null)
+                if (parentScorer is null)
                 {
                     // No matches
                     return null;
@@ -128,7 +128,7 @@ namespace Lucene.Net.Search.Join
                 // acceptDocs when we score:
                 DocIdSet parents = _parentsFilter.GetDocIdSet(readerContext, null);
 
-                if (parents == null)
+                if (parents is null)
                 {
                     // No matches
                     return null;

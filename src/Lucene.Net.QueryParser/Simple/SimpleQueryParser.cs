@@ -508,7 +508,7 @@ namespace Lucene.Net.QueryParsers.Simple
                 }
 
                 // first term (or phrase or subquery) found and will begin our query tree
-                if (state.Top == null)
+                if (state.Top is null)
                 {
                     state.Top = branch;
                 }

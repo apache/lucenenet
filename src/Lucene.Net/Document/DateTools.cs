@@ -1,4 +1,5 @@
 ﻿using J2N.Text;
+using Lucene.Net.Support;
 using System;
 using System.Globalization;
 
@@ -36,97 +37,174 @@ namespace Lucene.Net.Documents
     /// a sortable binary representation (prefix encoded) of numeric values, which
     /// date/time are.
     /// 
-    /// For indexing a <see cref="DateTime"/>, just get the <see cref="DateTime.Ticks"/> and index
+    /// For indexing a <see cref="DateTime"/>, just get the <see cref="UnixTimeMillisecondsToTicks(long)"/> from <see cref="DateTime.Ticks"/> and index
     /// this as a numeric value with <see cref="Int64Field"/> and use <see cref="Search.NumericRangeQuery{T}"/>
     /// to query it.
     /// </summary>
+    // LUCENENET: This class was refactored significantly to be usable on the .NET platform, but still allows
+    // all of the same features as Java and prior versions of Lucene.NET
     public static class DateTools
     {
-        private const string YEAR_FORMAT = "yyyy";
-        private const string MONTH_FORMAT = "yyyyMM";
-        private const string DAY_FORMAT = "yyyyMMdd";
-        private const string HOUR_FORMAT = "yyyyMMddHH";
-        private const string MINUTE_FORMAT = "yyyyMMddHHmm";
-        private const string SECOND_FORMAT = "yyyyMMddHHmmss";
-        private const string MILLISECOND_FORMAT = "yyyyMMddHHmmssfff";
-
-        // LUCENENET - not used
-        //private static readonly System.Globalization.Calendar calInstance = new System.Globalization.GregorianCalendar();
+        /// <summary>
+        /// Returns the date format string for the specified <paramref name="resolution"/>
+        /// or <c>null</c> if the resolution is invalid.
+        /// </summary>
+        private static string ToDateFormat(DateResolution resolution) => resolution switch
+        {
+            DateResolution.YEAR =>        "yyyy",
+            DateResolution.MONTH =>       "yyyyMM",
+            DateResolution.DAY =>         "yyyyMMdd",
+            DateResolution.HOUR =>        "yyyyMMddHH",
+            DateResolution.MINUTE =>      "yyyyMMddHHmm",
+            DateResolution.SECOND =>      "yyyyMMddHHmmss",
+            DateResolution.MILLISECOND => "yyyyMMddHHmmssfff",
+            _ => null, // Invalid option
+        };
 
         /// <summary>
-        /// Converts a <see cref="DateTime"/> to a string suitable for indexing.
+        /// Converts a <see cref="DateTime"/> to a string suitable for indexing using the specified 
+        /// <paramref name="resolution"/>.
+        /// <para/>
+        /// The <paramref name="date"/> is converted according to its <see cref="DateTime.Kind"/> property
+        /// to the Universal Coordinated Time (UTC) prior to rounding to the the specified
+        /// <paramref name="resolution"/>. If <see cref="DateTime.Kind"/> is <see cref="DateTimeKind.Unspecified"/>,
+        /// <see cref="DateTimeKind.Local"/> is assumed.
         /// </summary>
-        /// <param name="date"> the date to be converted </param>
-        /// <param name="resolution"> the desired resolution, see
-        /// <see cref="Round(DateTime, DateTools.Resolution)"/> </param>
-        /// <returns> a string in format <c>yyyyMMddHHmmssSSS</c> or shorter,
-        /// depending on <paramref name="resolution"/>; using GMT as timezone  </returns>
-        public static string DateToString(DateTime date, Resolution resolution)
+        /// <param name="date">The date to be converted.</param>
+        /// <param name="resolution">The desired resolution, see
+        /// <see cref="Round(DateTime, DateResolution)"/>.</param>
+        /// <returns>A string in format <c>yyyyMMddHHmmssSSS</c> or shorter,
+        /// depending on <paramref name="resolution"/>; using UTC as the timezone.</returns>
+        public static string DateToString(DateTime date, DateResolution resolution)
         {
-            return TimeToString(date.Ticks / TimeSpan.TicksPerMillisecond, resolution);
+            return DateToString(date, resolution, timeZone: null);
         }
 
         /// <summary>
-        /// Converts a millisecond time to a string suitable for indexing.
+        /// Converts a <see cref="DateTime"/> to a string suitable for indexing using the specified <paramref name="timeZone"/>
+        /// and <paramref name="resolution"/>.
+        /// <para/>
+        /// The <paramref name="date"/> is converted from the specified <paramref name="timeZone"/> to Universal Coordinated Time
+        /// (UTC) prior to rounding to the the specified <paramref name="resolution"/>.
         /// </summary>
-        /// <param name="time"> the date expressed as milliseconds since January 1, 1970, 00:00:00 GMT (also known as the "epoch") </param>
-        /// <param name="resolution"> the desired resolution, see
-        /// <see cref="Round(long, DateTools.Resolution)"/> </param>
-        /// <returns> a string in format <c>yyyyMMddHHmmssSSS</c> or shorter,
-        /// depending on <paramref name="resolution"/>; using GMT as timezone </returns>
-        public static string TimeToString(long time, Resolution resolution)
+        /// <param name="date">The date to be converted.</param>
+        /// <param name="timeZone">The time zone of the specified <paramref name="date"/>.</param>
+        /// <param name="resolution">The desired resolution, see
+        /// <see cref="Round(DateTime, DateResolution)"/>.</param>
+        /// <returns>A string in format <c>yyyyMMddHHmmssSSS</c> or shorter,
+        /// depending on <paramref name="resolution"/>; using UTC as the timezone.</returns>
+        public static string DateToString(DateTime date, TimeZoneInfo timeZone, DateResolution resolution)
         {
-            DateTime date = new DateTime(Round(time, resolution));
+            if (timeZone is null)
+                throw new ArgumentNullException(nameof(timeZone));
 
-            if (resolution == Resolution.YEAR)
+            return DateToString(date, resolution, timeZone);
+        }
+
+        private static string DateToString(DateTime date, DateResolution resolution, TimeZoneInfo timeZone)
+        {
+            string format = ToDateFormat(resolution);
+            if (format is null)
+                throw new ArgumentException($"Unknown resolution {resolution}.");
+
+            DateTimeOffset timeZoneAdjusted;
+            switch (date.Kind)
             {
-                return date.ToString(YEAR_FORMAT, CultureInfo.InvariantCulture);
-            }
-            else if (resolution == Resolution.MONTH)
-            {
-                return date.ToString(MONTH_FORMAT, CultureInfo.InvariantCulture);
-            }
-            else if (resolution == Resolution.DAY)
-            {
-                return date.ToString(DAY_FORMAT, CultureInfo.InvariantCulture);
-            }
-            else if (resolution == Resolution.HOUR)
-            {
-                return date.ToString(HOUR_FORMAT, CultureInfo.InvariantCulture);
-            }
-            else if (resolution == Resolution.MINUTE)
-            {
-                return date.ToString(MINUTE_FORMAT, CultureInfo.InvariantCulture);
-            }
-            else if (resolution == Resolution.SECOND)
-            {
-                return date.ToString(SECOND_FORMAT, CultureInfo.InvariantCulture);
-            }
-            else if (resolution == Resolution.MILLISECOND)
-            {
-                return date.ToString(MILLISECOND_FORMAT, CultureInfo.InvariantCulture);
+                case DateTimeKind.Utc:
+                    if (timeZone is null || TimeZoneInfo.Utc.Equals(timeZone))
+                    {
+                        timeZoneAdjusted = new DateTimeOffset(date, TimeSpan.Zero);
+                    }
+                    else
+                    {
+                        timeZoneAdjusted = new DateTimeOffset(date, TimeSpan.Zero);
+                        timeZoneAdjusted = TimeZoneInfo.ConvertTime(timeZoneAdjusted, timeZone);
+                    }
+                    break;
+
+                case DateTimeKind.Local:
+                    timeZone = timeZone ?? TimeZoneInfo.Local;
+                    timeZoneAdjusted = new DateTimeOffset(date, timeZone.GetUtcOffset(date));
+                    break;
+
+                default: //case DateTimeKind.Unspecified:
+                    timeZone = timeZone ?? TimeZoneInfo.Local; // Assume local time zone if not specified
+                    timeZoneAdjusted = new DateTimeOffset(date, timeZone.GetUtcOffset(new DateTime(date.Ticks, DateTimeKind.Local)));
+                    break;
             }
 
-            throw new ArgumentException("unknown resolution " + resolution);
+            DateTime d = Round(timeZoneAdjusted.UtcDateTime, resolution);
+            return d.ToString(format, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// Converts a string produced by <see cref="TimeToString(long, Resolution)"/> or
-        /// <see cref="DateToString(DateTime, Resolution)"/> back to a time, represented as the
-        /// number of milliseconds since January 1, 1970, 00:00:00 GMT (also known as the "epoch").
+        /// Converts a <see cref="DateTimeOffset"/> to a string suitable for indexing using the specified 
+        /// <paramref name="resolution"/>.
+        /// <para/>
+        /// The <paramref name="date"/> is converted using its <see cref="DateTimeOffset.UtcDateTime"/> property.
         /// </summary>
-        /// <param name="dateString"> the date string to be converted </param>
-        /// <returns> the number of milliseconds since January 1, 1970, 00:00:00 GMT (also known as the "epoch")</returns>
-        /// <exception cref="FormatException"> if <paramref name="dateString"/> is not in the
-        /// expected format </exception>
-        public static long StringToTime(string dateString)
+        /// <param name="date">The date to be converted.</param>
+        /// <param name="resolution">The desired resolution, see <see cref="Round(DateTime, DateResolution)"/>.</param>
+        /// <returns>A string in format <c>yyyyMMddHHmmssSSS</c> or shorter,
+        /// depending on <paramref name="resolution"/>; using UTC as the timezone.</returns>
+        public static string DateToString(DateTimeOffset date, DateResolution resolution)
         {
-            return StringToDate(dateString).Ticks;
+            string format = ToDateFormat(resolution);
+            if (format is null)
+                throw new ArgumentException($"Unknown resolution {resolution}.");
+            DateTime d = Round(date.UtcDateTime, resolution);
+            return d.ToString(format, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// Converts a string produced by <see cref="TimeToString(long, Resolution)"/> or
-        /// <see cref="DateToString(DateTime, Resolution)"/> back to a time, represented as a
+        /// Converts from a numeric representation of a time to a string suitable for indexing.
+        /// <para/>
+        /// <b>NOTE:</b> For compatibility with Lucene.NET 3.0.3 and Lucene.NET 4.8.0-beta00001 through 4.8.0-beta00015
+        /// specify <paramref name="inputRepresentation"/> as <see cref="NumericRepresentation.TICKS_AS_MILLISECONDS"/>.
+        /// </summary>
+        /// <param name="time">The ticks that represent the date to be converted.</param>
+        /// <param name="resolution">The desired resolution, see
+        /// <see cref="Round(long, DateResolution, NumericRepresentation, NumericRepresentation)"/>.</param>
+        /// <param name="inputRepresentation">The numeric representation of <paramref name="time"/>.</param>
+        /// <returns>A string in format <c>yyyyMMddHHmmssSSS</c> or shorter,
+        /// depending on <paramref name="resolution"/>; using GMT as timezone.</returns>
+        public static string TimeToString(long time, DateResolution resolution,
+            NumericRepresentation inputRepresentation = NumericRepresentation.UNIX_TIME_MILLISECONDS)
+        {
+            string format = ToDateFormat(resolution);
+            if (format is null)
+                throw new ArgumentException($"Unknown resolution {resolution}.");
+            DateTime date = new DateTime(Round(time, resolution, inputRepresentation, NumericRepresentation.TICKS), DateTimeKind.Utc);
+            return date.ToString(format, CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Converts a string produced by <see cref="TimeToString(long, DateResolution, NumericRepresentation)"/> or
+        /// <see cref="DateToString(DateTime, DateResolution)"/> back to a time, represented as a <see cref="long"/>.
+        /// <para/>
+        /// <b>NOTE:</b> For compatibility with Lucene.NET 3.0.3 and Lucene.NET 4.8.0-beta00001 through 4.8.0-beta00015
+        /// specify <paramref name="outputRepresentation"/> as <see cref="NumericRepresentation.TICKS"/>.
+        /// </summary>
+        /// <param name="dateString"> The date string to be converted. </param>
+        /// <param name="outputRepresentation">The numeric representation of the return value.</param>
+        /// <returns>A numeric representation of <paramref name="dateString"/> represented as specified by
+        /// <paramref name="outputRepresentation"/>.</returns>
+        /// <exception cref="FormatException"><paramref name="dateString"/> is not in the expected format.</exception>
+        public static long StringToTime(string dateString, NumericRepresentation outputRepresentation = NumericRepresentation.UNIX_TIME_MILLISECONDS)
+        {
+            long ticks = StringToDate(dateString).Ticks;
+            return outputRepresentation switch
+            {
+                NumericRepresentation.UNIX_TIME_MILLISECONDS => TicksToUnixTimeMilliseconds(ticks),
+                NumericRepresentation.TICKS => ticks,
+                NumericRepresentation.TICKS_AS_MILLISECONDS => ticks / TimeSpan.TicksPerMillisecond,
+                _ => throw new ArgumentException($"'{outputRepresentation}' is not a valid {nameof(outputRepresentation)}.")
+            };
+        }
+
+        /// <summary>
+        /// Converts a string produced by <see cref="TimeToString(long, DateResolution, NumericRepresentation)"/> or
+        /// <see cref="DateToString(DateTime, DateResolution)"/> back to a time, represented as a
         /// <see cref="DateTime"/> object.
         /// </summary>
         /// <param name="dateString"> the date string to be converted </param>
@@ -135,99 +213,71 @@ namespace Lucene.Net.Documents
         /// expected format </exception>
         public static DateTime StringToDate(string dateString)
         {
-            DateTime date;
-            if (dateString.Length == 4)
-            {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
-                    1, 1, 0, 0, 0, 0);
-            }
-            else if (dateString.Length == 6)
-            {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
-                    1, 0, 0, 0, 0);
-            }
-            else if (dateString.Length == 8)
-            {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(6, 2), CultureInfo.InvariantCulture),
-                    0, 0, 0, 0);
-            }
-            else if (dateString.Length == 10)
-            {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(6, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(8, 2), CultureInfo.InvariantCulture),
-                    0, 0, 0);
-            }
-            else if (dateString.Length == 12)
-            {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(6, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(8, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(10, 2), CultureInfo.InvariantCulture),
-                    0, 0);
-            }
-            else if (dateString.Length == 14)
-            {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(6, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(8, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(10, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(12, 2), CultureInfo.InvariantCulture),
-                    0);
-            }
-            else if (dateString.Length == 17)
-            {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(6, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(8, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(10, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(12, 2), CultureInfo.InvariantCulture),
-                    Convert.ToInt16(dateString.Substring(14, 3), CultureInfo.InvariantCulture));
-            }
-            else
-            {
-                throw new ParseException("Input is not valid date string: " + dateString, 0);
-            }
-            return date;
+            string format = ToDateFormat((DateResolution)dateString.Length);
+            if (format is null || !DateTimeOffset.TryParseExact(dateString, format, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AssumeUniversal, out DateTimeOffset dateOffset))
+                throw new ParseException($"Input is not valid date string: '{dateString}'.", 0);
+
+            return dateOffset.DateTime;
         }
 
         /// <summary>
         /// Limit a date's resolution. For example, the date <c>2004-09-21 13:50:11</c>
         /// will be changed to <c>2004-09-01 00:00:00</c> when using
-        /// <see cref="Resolution.MONTH"/>.
+        /// <see cref="DateResolution.MONTH"/>.
         /// </summary>
-        /// <param name="date"> the date to be rounded </param>
-        /// <param name="resolution"> The desired resolution of the date to be returned </param>
-        /// <returns> the date with all values more precise than <paramref name="resolution"/>
-        /// set to 0 or 1 </returns>
-        public static DateTime Round(DateTime date, Resolution resolution)
+        /// <param name="date"> The <see cref="DateTime"/> to be rounded.</param>
+        /// <param name="resolution"> The desired resolution of the <see cref="DateTime"/> to be returned. </param>
+        /// <returns> The <see cref="DateTime"/> with all values more precise than <paramref name="resolution"/>
+        /// set to their minimum value (0 or 1 depending on the field).</returns>
+        public static DateTime Round(DateTime date, DateResolution resolution)
         {
-            return new DateTime(Round(date.Ticks / TimeSpan.TicksPerMillisecond, resolution));
+            return new DateTime(Round(date.Ticks, resolution,
+                inputRepresentation: NumericRepresentation.TICKS,
+                outputRepresentation: NumericRepresentation.TICKS));
         }
 
         /// <summary>
-        /// Limit a date's resolution. For example, the date <c>1095767411000</c>
+        /// Limit a date's resolution.
+        /// <para/>
+        /// For example, the time <c>1095774611000</c>
         /// (which represents 2004-09-21 13:50:11) will be changed to
-        /// <c>1093989600000</c> (2004-09-01 00:00:00) when using
-        /// <see cref="Resolution.MONTH"/>.
+        /// <c>1093996800000</c> (2004-09-01 00:00:00) when using
+        /// <see cref="DateResolution.MONTH"/> and <see cref="NumericRepresentation.UNIX_TIME_MILLISECONDS"/>
+        /// for both <paramref name="inputRepresentation"/> and <paramref name="outputRepresentation"/>.
+        /// <para/>
+        /// The ticks <c>632313714110000000</c>
+        /// (which represents 2004-09-21 13:50:11) will be changed to
+        /// <c>632295936000000000</c> (2004-09-01 00:00:00) when using
+        /// <see cref="DateResolution.MONTH"/> and <see cref="NumericRepresentation.TICKS"/>
+        /// for both <paramref name="inputRepresentation"/> and <paramref name="outputRepresentation"/>.
+        /// <para/>
+        /// <b>NOTE:</b> For compatibility with Lucene.NET 3.0.3 and Lucene.NET 4.8.0-beta00001 through 4.8.0-beta00015
+        /// specify <paramref name="inputRepresentation"/> as <see cref="NumericRepresentation.TICKS_AS_MILLISECONDS"/> and
+        /// <paramref name="outputRepresentation"/> as <see cref="NumericRepresentation.TICKS"/>.
         /// </summary>
-        /// <param name="time"> the time to be rounded </param>
-        /// <param name="resolution"> The desired resolution of the date to be returned </param>
-        /// <returns> the date with all values more precise than <paramref name="resolution"/>
-        /// set to 0 or 1, expressed as milliseconds since January 1, 1970, 00:00:00 GMT 
-        /// (also known as the "epoch")</returns>
-        public static long Round(long time, Resolution resolution)
+        /// <param name="time">The ticks that represent the date to be rounded.</param>
+        /// <param name="resolution">The desired resolution of the date to be returned.</param>
+        /// <param name="inputRepresentation">The numeric representation of <paramref name="time"/>.</param>
+        /// <param name="outputRepresentation">The numeric representation of the return value.</param>
+        /// <returns>The date with all values more precise than <paramref name="resolution"/>
+        /// set to their minimum value (0 or 1 depending on the field). The return value is expressed in ticks.</returns>
+        public static long Round(long time, DateResolution resolution,
+            NumericRepresentation inputRepresentation = NumericRepresentation.UNIX_TIME_MILLISECONDS,
+            NumericRepresentation outputRepresentation = NumericRepresentation.UNIX_TIME_MILLISECONDS)
         {
-            DateTime dt = new DateTime(time * TimeSpan.TicksPerMillisecond);
+            long ticks = inputRepresentation switch
+            {
+                NumericRepresentation.UNIX_TIME_MILLISECONDS => UnixTimeMillisecondsToTicks(time),
+                NumericRepresentation.TICKS => time,
+                NumericRepresentation.TICKS_AS_MILLISECONDS => time * TimeSpan.TicksPerMillisecond,
+                _ => throw new ArgumentException($"'{inputRepresentation}' is not a valid {nameof(inputRepresentation)}.")
+            };
+            
+            DateTimeOffset dt = new DateTimeOffset(ticks, TimeSpan.Zero);
+            // Remove extra ticks beyond milliseconds
+            dt = new DateTimeOffset(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Millisecond, TimeSpan.Zero);
 
-            if (resolution == Resolution.YEAR)
+            if (resolution == DateResolution.YEAR)
             {
                 dt = dt.AddMonths(1 - dt.Month);
                 dt = dt.AddDays(1 - dt.Day);
@@ -236,7 +286,7 @@ namespace Lucene.Net.Documents
                 dt = dt.AddSeconds(0 - dt.Second);
                 dt = dt.AddMilliseconds(0 - dt.Millisecond);
             }
-            else if (resolution == Resolution.MONTH)
+            else if (resolution == DateResolution.MONTH)
             {
                 dt = dt.AddDays(1 - dt.Day);
                 dt = dt.AddHours(0 - dt.Hour);
@@ -244,29 +294,29 @@ namespace Lucene.Net.Documents
                 dt = dt.AddSeconds(0 - dt.Second);
                 dt = dt.AddMilliseconds(0 - dt.Millisecond);
             }
-            else if (resolution == Resolution.DAY)
+            else if (resolution == DateResolution.DAY)
             {
                 dt = dt.AddHours(0 - dt.Hour);
                 dt = dt.AddMinutes(0 - dt.Minute);
                 dt = dt.AddSeconds(0 - dt.Second);
                 dt = dt.AddMilliseconds(0 - dt.Millisecond);
             }
-            else if (resolution == Resolution.HOUR)
+            else if (resolution == DateResolution.HOUR)
             {
                 dt = dt.AddMinutes(0 - dt.Minute);
                 dt = dt.AddSeconds(0 - dt.Second);
                 dt = dt.AddMilliseconds(0 - dt.Millisecond);
             }
-            else if (resolution == Resolution.MINUTE)
+            else if (resolution == DateResolution.MINUTE)
             {
                 dt = dt.AddSeconds(0 - dt.Second);
                 dt = dt.AddMilliseconds(0 - dt.Millisecond);
             }
-            else if (resolution == Resolution.SECOND)
+            else if (resolution == DateResolution.SECOND)
             {
                 dt = dt.AddMilliseconds(0 - dt.Millisecond);
             }
-            else if (resolution == Resolution.MILLISECOND)
+            else if (resolution == DateResolution.MILLISECOND)
             {
                 // don't cut off anything
             }
@@ -274,40 +324,102 @@ namespace Lucene.Net.Documents
             {
                 throw new ArgumentException("unknown resolution " + resolution);
             }
-            return dt.Ticks;
+            return outputRepresentation switch
+            {
+                NumericRepresentation.UNIX_TIME_MILLISECONDS => TicksToUnixTimeMilliseconds(dt.Ticks),
+                NumericRepresentation.TICKS => dt.Ticks,
+                NumericRepresentation.TICKS_AS_MILLISECONDS => dt.Ticks / TimeSpan.TicksPerMillisecond,
+                _ => throw new ArgumentException($"'{outputRepresentation}' is not a valid {nameof(outputRepresentation)}.")
+            };
         }
 
         /// <summary>
-        /// Specifies the time granularity. </summary>
-        public enum Resolution
+        /// Converts from .NET ticks to the number of milliseconds since January 1, 1970, 00:00:00
+        /// UTC (also known as the "epoch").
+        /// <para/>
+        /// This is the value that is stored in Java Lucene indexes and can be used for storing values
+        /// that can be read by Java Lucene.
+        /// </summary>
+        /// <param name="ticks">The .NET ticks to be converted.</param>
+        /// <returns>The converted ticks to number of milliseconds since January 1, 1970, 00:00:00
+        /// UTC (also known as the "epoch").</returns>
+        public static long TicksToUnixTimeMilliseconds(long ticks)
         {
-            /// <summary>
-            /// Limit a date's resolution to year granularity. </summary>
-            YEAR = 4,
-
-            /// <summary>
-            /// Limit a date's resolution to month granularity. </summary>
-            MONTH = 6,
-
-            /// <summary>
-            /// Limit a date's resolution to day granularity. </summary>
-            DAY = 8,
-
-            /// <summary>
-            /// Limit a date's resolution to hour granularity. </summary>
-            HOUR = 10,
-
-            /// <summary>
-            /// Limit a date's resolution to minute granularity. </summary>
-            MINUTE = 12,
-
-            /// <summary>
-            /// Limit a date's resolution to second granularity. </summary>
-            SECOND = 14,
-
-            /// <summary>
-            /// Limit a date's resolution to millisecond granularity. </summary>
-            MILLISECOND = 17
+            return DateTimeOffsetUtil.ToUnixTimeMilliseconds(ticks);
         }
+
+        /// <summary>
+        /// Converts from the number of milliseconds since January 1, 1970, 00:00:00 UTC
+        /// (also known as the "epoch") to .NET ticks.
+        /// </summary>
+        /// <param name="unixTimeMilliseconds">The number of milliseconds since January 1, 1970, 00:00:00
+        /// UTC (also known as the "epoch") to be converted.</param>
+        /// <returns>The converted .NET ticks that can be used to create a <see cref="DateTime"/> or <see cref="DateTimeOffset"/>.</returns>
+        public static long UnixTimeMillisecondsToTicks(long unixTimeMilliseconds)
+        {
+            return DateTimeOffsetUtil.GetTicksFromUnixTimeMilliseconds(unixTimeMilliseconds);
+        }
+    }
+
+    /// <summary>
+    /// Specifies the time granularity. </summary>
+    public enum DateResolution
+    {
+        /// <summary>
+        /// Limit a date's resolution to year granularity. </summary>
+        YEAR = 4,
+
+        /// <summary>
+        /// Limit a date's resolution to month granularity. </summary>
+        MONTH = 6,
+
+        /// <summary>
+        /// Limit a date's resolution to day granularity. </summary>
+        DAY = 8,
+
+        /// <summary>
+        /// Limit a date's resolution to hour granularity. </summary>
+        HOUR = 10,
+
+        /// <summary>
+        /// Limit a date's resolution to minute granularity. </summary>
+        MINUTE = 12,
+
+        /// <summary>
+        /// Limit a date's resolution to second granularity. </summary>
+        SECOND = 14,
+
+        /// <summary>
+        /// Limit a date's resolution to millisecond granularity. </summary>
+        MILLISECOND = 17
+    }
+
+    /// <summary>
+    /// Specifies how a time will be represented as a <see cref="long"/>.
+    /// </summary>
+    public enum NumericRepresentation
+    {
+        /// <summary>
+        /// The number of milliseconds since January 1, 1970, 00:00:00
+        /// UTC (also known as the "epoch"). This is the format that Lucene
+        /// uses, and it is recommended to store this value in the index for compatibility.
+        /// </summary>
+        UNIX_TIME_MILLISECONDS,
+
+        /// <summary>
+        /// The .NET ticks representing a date. Specify this to pass the raw ticks from <see cref="DateTime.Ticks"/>
+        /// or to instantiate a new <see cref="DateTime"/> from the result.
+        /// </summary>
+        TICKS,
+
+        /// <summary>
+        /// .NET ticks as total milliseconds.
+        /// Input values must be converted using the formula <c>ticks / <see cref="TimeSpan.TicksPerMillisecond"/></c>.
+        /// Output values can be converted to ticks using <c>ticks * <see cref="TimeSpan.TicksPerMillisecond"/></c>.
+        /// <para/>
+        /// This option is provided for compatibility with Lucene.NET 3.0.3 and Lucene.NET 4.8.0-beta00001 through 4.8.0-beta00015,
+        /// since it was the only option for input representation.
+        /// </summary>
+        TICKS_AS_MILLISECONDS,
     }
 }

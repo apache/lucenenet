@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Expressions.JS;
 using Lucene.Net.Index;
@@ -102,8 +102,8 @@ namespace Lucene.Net.Expressions
             Assert.AreEqual(10, values.Int32Val(0));
             Assert.AreEqual(10, values.Int16Val(0));
             Assert.AreEqual((byte)10, values.ByteVal(0));
-            Assert.AreEqual("10", values.StrVal(0));
-            Assert.AreEqual(System.Convert.ToDouble(10), values.ObjectVal(0));
+            Assert.AreEqual("10.0", values.StrVal(0));
+            Assert.AreEqual(J2N.Numerics.Double.GetInstance(10), values.ObjectVal(0));
 
             Assert.AreEqual(40, values.DoubleVal(1), 0);
             Assert.AreEqual(40, values.SingleVal(1), 0);
@@ -111,8 +111,8 @@ namespace Lucene.Net.Expressions
             Assert.AreEqual(40, values.Int32Val(1));
             Assert.AreEqual(40, values.Int16Val(1));
             Assert.AreEqual((byte)40, values.ByteVal(1));
-            Assert.AreEqual("40", values.StrVal(1));
-            Assert.AreEqual(System.Convert.ToDouble(40), values.ObjectVal(1));
+            Assert.AreEqual("40.0", values.StrVal(1));
+            Assert.AreEqual(J2N.Numerics.Double.GetInstance(40), values.ObjectVal(1));
 
             Assert.AreEqual(4, values.DoubleVal(2), 0);
             Assert.AreEqual(4, values.SingleVal(2), 0);
@@ -120,8 +120,8 @@ namespace Lucene.Net.Expressions
             Assert.AreEqual(4, values.Int32Val(2));
             Assert.AreEqual(4, values.Int16Val(2));
             Assert.AreEqual((byte)4, values.ByteVal(2));
-            Assert.AreEqual("4", values.StrVal(2));
-            Assert.AreEqual(System.Convert.ToDouble(4), values.ObjectVal(2));
+            Assert.AreEqual("4.0", values.StrVal(2));
+            Assert.AreEqual(J2N.Numerics.Double.GetInstance(4), values.ObjectVal(2));
         }
 
         [Test]

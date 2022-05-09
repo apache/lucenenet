@@ -1,4 +1,5 @@
-﻿using System;
+﻿using J2N.Globalization;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -606,7 +607,7 @@ namespace Lucene.Net.Search
             /// <param name="terms">The <see cref="Index.Terms"/> instance to create the <see cref="Index.TermsEnum"/> from.</param>
             /// <returns>A possibly filtered <see cref="Index.TermsEnum"/> instance, this method must not return <c>null</c>.</returns>
             /// <exception cref="IOException">If an <see cref="IOException"/> occurs</exception>
-            TermsEnum TermsEnum(Terms terms);
+            TermsEnum GetTermsEnum(Terms terms);
         }
 
         /// <summary>
@@ -727,7 +728,7 @@ namespace Lucene.Net.Search
                 return typeof(IFieldCache).FullName + ".DEFAULT_BYTE_PARSER";
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -762,7 +763,7 @@ namespace Lucene.Net.Search
                 return typeof(IFieldCache).FullName + ".DEFAULT_INT16_PARSER";
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -792,7 +793,7 @@ namespace Lucene.Net.Search
                 return int.Parse(term.Utf8ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture);
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -825,16 +826,11 @@ namespace Lucene.Net.Search
                 // FloatField, instead, which already decodes
                 // directly from byte[]
 
-                // LUCENENET: We parse to double first and then cast to float, which allows us to parse 
-                // double.MaxValue.ToString("R") (resulting in Infinity). This is how it worked in Java
-                // and the TestFieldCache.TestInfoStream() test depends on this behavior to pass.
-
-                // We also need to use the same logic as DEFAULT_DOUBLE_PARSER to ensure we have signed zero
-                // support, so just call it directly rather than duplicating the logic here.
-                return (float)DEFAULT_DOUBLE_PARSER.ParseDouble(term);
+                string text = term.Utf8ToString();
+                return J2N.Numerics.Single.Parse(text, NumberStyle.Float, NumberFormatInfo.InvariantInfo);
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -869,7 +865,7 @@ namespace Lucene.Net.Search
                 return long.Parse(term.Utf8ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture);
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -897,20 +893,10 @@ namespace Lucene.Net.Search
                 // DoubleField, instead, which already decodes
                 // directly from byte[]
                 string text = term.Utf8ToString();
-                double value = double.Parse(text, NumberStyles.Float, CultureInfo.InvariantCulture);
-
-                // LUCENENET specific special case - check whether a negative
-                // zero was passed in and, if so, convert the sign. Unfotunately, double.Parse()
-                // doesn't take care of this for us.
-                if (value == 0 && text.TrimStart().StartsWith("-", StringComparison.Ordinal))
-                {
-                    value = -0d; // Hard-coding the value in case double.Parse() works right someday (which would break if we did value * -1)
-                }
-
-                return value;
+                return J2N.Numerics.Double.Parse(text, NumberStyle.Float, NumberFormatInfo.InvariantInfo);
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return terms.GetEnumerator();
             }
@@ -939,7 +925,7 @@ namespace Lucene.Net.Search
                 return NumericUtils.PrefixCodedToInt32(term);
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return NumericUtils.FilterPrefixCodedInt32s(terms.GetEnumerator());
             }
@@ -973,7 +959,7 @@ namespace Lucene.Net.Search
                 return typeof(IFieldCache).FullName + ".NUMERIC_UTILS_SINGLE_PARSER";
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return NumericUtils.FilterPrefixCodedInt32s(terms.GetEnumerator());
             }
@@ -1002,7 +988,7 @@ namespace Lucene.Net.Search
                 return typeof(IFieldCache).FullName + ".NUMERIC_UTILS_INT64_PARSER";
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return NumericUtils.FilterPrefixCodedInt64s(terms.GetEnumerator());
             }
@@ -1026,7 +1012,7 @@ namespace Lucene.Net.Search
                 return typeof(IFieldCache).FullName + ".NUMERIC_UTILS_DOUBLE_PARSER";
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 return NumericUtils.FilterPrefixCodedInt64s(terms.GetEnumerator());
             }

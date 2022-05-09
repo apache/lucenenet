@@ -1,5 +1,6 @@
 ﻿using J2N;
 using J2N.Threading;
+using J2N.Threading.Atomic;
 using Lucene.Net.Support.Threading;
 using System;
 using System.Threading;
@@ -43,6 +44,7 @@ namespace Lucene.Net.Search
     public class ControlledRealTimeReopenThread<T> : ThreadJob, IDisposable
          where T : class
     {
+        // LUCENENET: java final converted readonly
         private readonly ReferenceManager<T> manager;
         private readonly long targetMaxStaleNS;
         private readonly long targetMinStaleNS;
@@ -50,10 +52,12 @@ namespace Lucene.Net.Search
         private volatile bool finish;
         private long waitingGen;
         private long searchingGen;
-        private long refreshStartGen;
+        private readonly AtomicInt64 refreshStartGen = new AtomicInt64();
+        private readonly AtomicBoolean isDisposed = new AtomicBoolean(false);
 
-        private readonly EventWaitHandle reopenCond = new AutoResetEvent(false); // LUCENENET: marked readonly
-        private readonly EventWaitHandle available = new AutoResetEvent(false); // LUCENENET: marked readonly
+        protected readonly EventWaitHandle m_notify = new ManualResetEvent(false);  // LUCENENET specific: used to mimic intrinsic monitor used by java wait and notifyAll keywords.
+        private readonly EventWaitHandle reopenCond = new AutoResetEvent(false);    // LUCENENET NOTE: unlike java, in c# we don't need to lock reopenCond when calling methods on it.
+
 
         /// <summary>
         /// Create <see cref="ControlledRealTimeReopenThread{T}"/>, to periodically
@@ -76,10 +80,11 @@ namespace Lucene.Net.Search
             {
                 throw new ArgumentException("targetMaxScaleSec (= " + targetMaxStaleSec.ToString("0.0") + ") < targetMinStaleSec (=" + targetMinStaleSec.ToString("0.0") + ")");
             }
+
             this.writer = writer;
             this.manager = manager;
-            this.targetMaxStaleNS = (long)(1000000000 * targetMaxStaleSec);
-            this.targetMinStaleNS = (long)(1000000000 * targetMinStaleSec);
+            this.targetMaxStaleNS = (long)(Time.SecondsPerNanosecond * targetMaxStaleSec);
+            this.targetMinStaleNS = (long)(Time.SecondsPerNanosecond * targetMinStaleSec);
             manager.AddListener(new HandleRefresh(this));
         }
 
@@ -107,39 +112,46 @@ namespace Lucene.Net.Search
             UninterruptableMonitor.Enter(this);
             try
             {
-                // if we're finishing, , make it out so that all waiting search threads will return
+				// if we're finishing, make it out so that all waiting search threads will return
                 searchingGen = finish ? long.MaxValue : refreshStartGen;
-                available.Set();
+                m_notify.Set();                        // LUCENENET NOTE:  Will notify all and remain signaled, so it must be reset in WaitForGeneration
             }
             finally
             {
                 UninterruptableMonitor.Exit(this);
             }
-            reopenCond.Reset();
         }
 
         /// <summary>
-        /// Releases all resources used by the <see cref="ControlledRealTimeReopenThread{T}"/>.
+        /// Kills the thread and releases all resources used by the
+        /// <see cref="ControlledRealTimeReopenThread{T}"/>. Also joins to the
+        /// thread so that when this method returns the thread is no longer alive.
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
+            Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
 
         /// <summary>
-        /// Releases resources used by the <see cref="ControlledRealTimeReopenThread{T}"/> and
-        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// Kills the thread and releases all resources used by the
+        /// <see cref="ControlledRealTimeReopenThread{T}"/>. Also joins to the
+        /// thread so that when this method returns the thread is no longer alive.
         /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
-        /// <c>false</c> to release only unmanaged resources.</param>
-
-        // LUCENENET specific - implemented proper dispose pattern
+        // LUCENENET specific - Support for Dispose(bool) since this is a non-sealed class.
         protected virtual void Dispose(bool disposing)
         {
+            // LUCENENET: Prevent double-dispose of our managed resources.
+            if (isDisposed.GetAndSet(true))
+            {
+                return;
+            }
+
             if (disposing)
             {
                 finish = true;
+
+                // So thread wakes up and notices it should finish:
                 reopenCond.Set();
 
                 try
@@ -152,9 +164,11 @@ namespace Lucene.Net.Search
                 }
                 finally
                 {
-                    // LUCENENET specific: dispose reset event
+                    RefreshDone();
+
+                    // LUCENENET specific: dispose reset events
                     reopenCond.Dispose();
-                    available.Dispose();
+                    m_notify.Dispose();
                 }
             }
         }
@@ -193,47 +207,52 @@ namespace Lucene.Net.Search
         ///         or false if <paramref name="maxMS"/> wait time was exceeded </returns>
         public virtual bool WaitForGeneration(long targetGen, int maxMS)
         {
+            // LUCENENET NOTE: Porting this method is a bit tricky because the java wait method releases the
+            //                 syncronize lock and c# has no similar primitive.  So we must handle locking a
+            //                 bit differently here to mimic that affect.
+
             long curGen = writer.Generation;
             if (targetGen > curGen)
             {
                 throw new ArgumentException("targetGen=" + targetGen + " was never returned by the ReferenceManager instance (current gen=" + curGen + ")");
             }
+
             UninterruptableMonitor.Enter(this);
             try
             {
                 if (targetGen <= searchingGen)
-                    return true;
-                else
                 {
-                    waitingGen = Math.Max(waitingGen, targetGen);
-                    reopenCond.Set();
-                    available.Reset();
+                    return true;
                 }
+
+                // Need to find waitingGen inside lock as its used to determine
+                // stale time
+                waitingGen = Math.Max(waitingGen, targetGen);
+                reopenCond.Set();                                   // LUCENENET NOTE: gives Run() an oppertunity to notice one is now waiting if one wasn't before.
+                m_notify.Reset();                                   // LUCENENET specific: required to "close the door". Java's notifyAll keyword didn't need this.
             }
             finally
             {
                 UninterruptableMonitor.Exit(this);
             }
 
-            long startMS = Time.NanoTime() / 1000000;
-
-            // LUCENENET specific - reading searchingGen not thread safe, so use Interlocked.Read()
-            while (targetGen > Interlocked.Read(ref searchingGen))
+            long startMS = Time.NanoTime() / Time.MillisecondsPerNanosecond;
+            while (targetGen > Interlocked.Read(ref searchingGen))      // LUCENENET specific - reading searchingGen not thread safe, so use Interlocked.Read()
             {
                 if (maxMS < 0)
                 {
-                    available.WaitOne();
+                    m_notify.WaitOne();
                 }
                 else
                 {
-                    long msLeft = (startMS + maxMS) - (Time.NanoTime()) / 1000000;
+                    long msLeft = (startMS + maxMS) - (Time.NanoTime()) / Time.MillisecondsPerNanosecond;
                     if (msLeft <= 0)
                     {
                         return false;
                     }
                     else
                     {
-                        available.WaitOne(TimeSpan.FromMilliseconds(msLeft));
+                        m_notify.WaitOne(TimeSpan.FromMilliseconds(msLeft));
                     }
                 }
             }
@@ -245,30 +264,47 @@ namespace Lucene.Net.Search
         {
             // TODO: maybe use private thread ticktock timer, in
             // case clock shift messes up nanoTime?
+            // LUCENENET NOTE: Time.NanoTime() is not affected by clock changes.
             long lastReopenStartNS = Time.NanoTime();
 
             //System.out.println("reopen: start");
             while (!finish)
             {
-                bool hasWaiting;
 
-                UninterruptableMonitor.Enter(this);
-                try
+                // TODO: try to guestimate how long reopen might
+                // take based on past data?
+
+                // Loop until we've waiting long enough before the
+                // next reopen:
+                while (!finish)
                 {
-                    hasWaiting = waitingGen > searchingGen;
-                }
-                finally
-                {
-                    UninterruptableMonitor.Exit(this);
-                }
 
-                long nextReopenStartNS = lastReopenStartNS + (hasWaiting ? targetMinStaleNS : targetMaxStaleNS);
-                long sleepNS = nextReopenStartNS - Time.NanoTime();
-
-                if (sleepNS > 0)
                     try
                     {
-                        reopenCond.WaitOne(TimeSpan.FromMilliseconds(sleepNS / Time.MillisecondsPerNanosecond));//Convert NS to MS
+                        // Need lock before finding out if has waiting
+                        bool hasWaiting;
+                		UninterruptableMonitor.Enter(this);
+                		try
+                		{
+                            // True if we have someone waiting for reopened searcher:
+                            hasWaiting = waitingGen > searchingGen;
+                		}
+                		finally
+                		{
+                    		UninterruptableMonitor.Exit(this);
+                		}
+
+                        long nextReopenStartNS = lastReopenStartNS + (hasWaiting ? targetMinStaleNS : targetMaxStaleNS);
+                        long sleepNS = nextReopenStartNS - Time.NanoTime();
+
+                        if (sleepNS > 0)
+                        {
+                            reopenCond.WaitOne(TimeSpan.FromMilliseconds(sleepNS / Time.MillisecondsPerNanosecond));//Convert NS to MS
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                     catch (Exception ie) when (ie.IsInterruptedException())
                     {
@@ -276,6 +312,7 @@ namespace Lucene.Net.Search
                         return;
                     }
 
+                }
                 if (finish)
                 {
                     break;
@@ -285,7 +322,7 @@ namespace Lucene.Net.Search
                 // Save the gen as of when we started the reopen; the
                 // listener (HandleRefresh above) copies this to
                 // searchingGen once the reopen completes:
-                refreshStartGen = writer.GetAndIncrementGeneration();
+                refreshStartGen.Value = writer.GetAndIncrementGeneration();
                 try
                 {
                     manager.MaybeRefreshBlocking();
@@ -295,8 +332,6 @@ namespace Lucene.Net.Search
                     throw RuntimeException.Create(ioe);
                 }
             }
-            // this will set the searchingGen so that all waiting threads will exit
-            RefreshDone();
         }
     }
 }

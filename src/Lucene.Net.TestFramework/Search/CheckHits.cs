@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
         public static void CheckNoMatchExplanations(Query q, string defaultFieldName, IndexSearcher searcher, int[] results)
         {
             string d = q.ToString(defaultFieldName);
-            JCG.SortedSet<int?> ignore = new JCG.SortedSet<int?>();
+            JCG.SortedSet<int> ignore = new JCG.SortedSet<int>();
             for (int i = 0; i < results.Length; i++)
             {
                 ignore.Add(Convert.ToInt32(results[i], CultureInfo.InvariantCulture));
@@ -76,7 +76,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         /// <summary>
         /// Tests that a query matches the an expected set of documents using a
         /// HitCollector.
@@ -91,31 +90,8 @@ namespace Lucene.Net.Search
         /// <param name="results"> A list of documentIds that must match the query. </param>
         /// <seealso cref="DoCheckHits(Random, Query, string, IndexSearcher, int[])"/>
         public static void CheckHitCollector(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results)
-#else
-        /// <summary>
-        /// Tests that a query matches the an expected set of documents using a
-        /// HitCollector.
-        /// <para>
-        /// Note that when using the HitCollector API, documents will be collected
-        /// if they "match" regardless of what their score is.
-        /// </para>
-        /// </summary>
-        /// <param name="luceneTestCase"> The current test instance. </param>
-        /// <param name="query"> The query to test. </param>
-        /// <param name="searcher"> The searcher to test the query against. </param>
-        /// <param name="defaultFieldName"> Used for displaying the query in assertion messages. </param>
-        /// <param name="results"> A list of documentIds that must match the query. </param>
-        /// <seealso cref="DoCheckHits(LuceneTestCase, Random, Query, string, IndexSearcher, int[])"/>
-        // LUCENENET specific
-        // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
-        public static void CheckHitCollector(LuceneTestCase luceneTestCase, Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results)
-#endif
         {
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                luceneTestCase,
-#endif
-                random, query, searcher);
+            QueryUtils.Check(random, query, searcher);
 
             Trace.TraceInformation("Checked");
 
@@ -130,11 +106,7 @@ namespace Lucene.Net.Search
             for (int i = -1; i < 2; i++)
             {
                 actual.Clear();
-                IndexSearcher s = QueryUtils.WrapUnderlyingReader(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    luceneTestCase,
-#endif
-                    random, searcher, i);
+                IndexSearcher s = QueryUtils.WrapUnderlyingReader(random, searcher, i);
                 s.Search(query, c);
                 Assert.AreEqual(correct, actual, aggressive: false, () => "Wrap Reader " + i + ": " + query.ToString(defaultFieldName));
             }
@@ -142,7 +114,6 @@ namespace Lucene.Net.Search
 
         // LUCENENET specific - de-nested SetCollector
 
-#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         /// <summary>
         /// Tests that a query matches the an expected set of documents using Hits.
         ///
@@ -156,24 +127,6 @@ namespace Lucene.Net.Search
         /// <param name="results"> a list of documentIds that must match the query </param>
         /// <seealso cref="CheckHitCollector(Random, Query, string, IndexSearcher, int[])"/>
         public static void DoCheckHits(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results)
-#else
-        /// <summary>
-        /// Tests that a query matches the an expected set of documents using Hits.
-        ///
-        /// <para>Note that when using the Hits API, documents will only be returned
-        /// if they have a positive normalized score.
-        /// </para>
-        /// </summary>
-        /// <param name="luceneTestCase"> The current test instance. </param>
-        /// <param name="query"> the query to test </param>
-        /// <param name="searcher"> the searcher to test the query against </param>
-        /// <param name="defaultFieldName"> used for displaing the query in assertion messages </param>
-        /// <param name="results"> a list of documentIds that must match the query </param>
-        /// <seealso cref="CheckHitCollector(LuceneTestCase, Random, Query, string, IndexSearcher, int[])"/>
-        // LUCENENET specific
-        // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
-        public static void DoCheckHits(LuceneTestCase luceneTestCase, Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results)
-#endif
         {
             ScoreDoc[] hits = searcher.Search(query, 1000).ScoreDocs;
 
@@ -191,11 +144,7 @@ namespace Lucene.Net.Search
 
             Assert.AreEqual(correct, actual, aggressive: false, () => query.ToString(defaultFieldName));
 
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                luceneTestCase,
-#endif
-                random, query, searcher, LuceneTestCase.Rarely(random));
+            QueryUtils.Check(random, query, searcher, LuceneTestCase.Rarely(random));
         }
 
         /// <summary>
@@ -244,8 +193,8 @@ namespace Lucene.Net.Search
         public static string Hits2str(ScoreDoc[] hits1, ScoreDoc[] hits2, int start, int end)
         {
             StringBuilder sb = new StringBuilder();
-            int len1 = hits1 == null ? 0 : hits1.Length;
-            int len2 = hits2 == null ? 0 : hits2.Length;
+            int len1 = hits1 is null ? 0 : hits1.Length;
+            int len2 = hits2 is null ? 0 : hits2.Length;
             if (end <= 0)
             {
                 end = Math.Max(len1, len2);

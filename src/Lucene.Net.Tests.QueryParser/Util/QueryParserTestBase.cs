@@ -146,7 +146,7 @@ namespace Lucene.Net.QueryParsers.Util
 
         public abstract void SetAutoGeneratePhraseQueries(ICommonQueryParserConfiguration cqpC, bool value);
 
-        public abstract void SetDateResolution(ICommonQueryParserConfiguration cqpC, string field, DateTools.Resolution value);
+        public abstract void SetDateResolution(ICommonQueryParserConfiguration cqpC, string field, DateResolution value);
 
         public abstract Query GetQuery(string query, ICommonQueryParserConfiguration cqpC);
 
@@ -223,7 +223,7 @@ namespace Lucene.Net.QueryParsers.Util
 
         public Query GetQueryDOA(string query, Analyzer a)
         {
-            if (a == null)
+            if (a is null)
                 a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             ICommonQueryParserConfiguration qp = GetParserConfig(a);
             SetDefaultOperatorAND(qp);
@@ -671,7 +671,7 @@ namespace Lucene.Net.QueryParsers.Util
         }
 
         /// <summary>for testing DateTools support</summary>
-        private string GetDate(string s, DateTools.Resolution resolution)
+        private string GetDate(string s, DateResolution resolution)
         {
             // we use the default Locale since LuceneTestCase randomizes it
             DateTime d = DateTime.ParseExact(s, CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern, CultureInfo.CurrentCulture);
@@ -679,7 +679,7 @@ namespace Lucene.Net.QueryParsers.Util
         }
 
         /// <summary>for testing DateTools support</summary>
-        private string GetDate(DateTime d, DateTools.Resolution resolution)
+        private string GetDate(DateTime d, DateResolution resolution)
         {
             return DateTools.DateToString(d, resolution);
         }
@@ -724,29 +724,29 @@ namespace Lucene.Net.QueryParsers.Util
             ICommonQueryParserConfiguration qp = GetParserConfig(a);
 
             // set a field specific date resolution
-            SetDateResolution(qp, monthField, DateTools.Resolution.MONTH);
+            SetDateResolution(qp, monthField, DateResolution.MONTH);
 
             // set default date resolution to MILLISECOND
-            qp.SetDateResolution(DateTools.Resolution.MILLISECOND);
+            qp.SetDateResolution(DateResolution.MILLISECOND);
 
             // set second field specific date resolution    
-            SetDateResolution(qp, hourField, DateTools.Resolution.HOUR);
+            SetDateResolution(qp, hourField, DateResolution.HOUR);
 
             // for this field no field specific date resolution has been set,
             // so verify if the default resolution is used
             AssertDateRangeQueryEquals(qp, defaultField, startDate, endDate,
-                    endDateExpected /*.getTime()*/, DateTools.Resolution.MILLISECOND);
+                    endDateExpected /*.getTime()*/, DateResolution.MILLISECOND);
 
             // verify if field specific date resolutions are used for these two fields
             AssertDateRangeQueryEquals(qp, monthField, startDate, endDate,
-                    endDateExpected /*.getTime()*/, DateTools.Resolution.MONTH);
+                    endDateExpected /*.getTime()*/, DateResolution.MONTH);
 
             AssertDateRangeQueryEquals(qp, hourField, startDate, endDate,
-                    endDateExpected /*.getTime()*/, DateTools.Resolution.HOUR);
+                    endDateExpected /*.getTime()*/, DateResolution.HOUR);
         }
 
         public void AssertDateRangeQueryEquals(ICommonQueryParserConfiguration cqpC, string field, string startDate, string endDate,
-            DateTime endDateInclusive, DateTools.Resolution resolution)
+            DateTime endDateInclusive, DateResolution resolution)
         {
             AssertQueryEquals(cqpC, field, field + ":[" + EscapeDateString(startDate) + " TO " + EscapeDateString(endDate) + "]",
                        "[" + GetDate(startDate, resolution) + " TO " + GetDate(endDateInclusive, resolution) + "]");

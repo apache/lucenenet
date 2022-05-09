@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.CharFilters
         /// Retrieve the corrected offset. </summary>
         protected override int Correct(int currentOff)
         {
-            if (offsets == null || currentOff < offsets[0])
+            if (offsets is null || currentOff < offsets[0])
             {
                 return currentOff;
             }
@@ -88,7 +88,7 @@ namespace Lucene.Net.Analysis.CharFilters
             }
         }
 
-        protected virtual int LastCumulativeDiff => offsets == null ? 0 : diffs[size - 1];
+        protected virtual int LastCumulativeDiff => offsets is null ? 0 : diffs[size - 1];
 
         /// <summary>
         /// <para>
@@ -104,7 +104,7 @@ namespace Lucene.Net.Analysis.CharFilters
         ///                       to the output offset </param>
         protected virtual void AddOffCorrectMap(int off, int cumulativeDiff)
         {
-            if (offsets == null)
+            if (offsets is null)
             {
                 offsets = new int[64];
                 diffs = new int[64];

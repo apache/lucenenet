@@ -47,7 +47,7 @@ namespace Lucene.Net.Search
             DocIdSet filteredSet = new FilteredDocIdSetAnonymousClass(this, innerSet);
 
             DocIdSetIterator iter = filteredSet.GetIterator();
-            IList<int?> list = new JCG.List<int?>();
+            IList<int> list = new JCG.List<int>();
             int doc = iter.Advance(3);
             if (doc != DocIdSetIterator.NO_MORE_DOCS)
             {
@@ -60,10 +60,10 @@ namespace Lucene.Net.Search
 
             int[] docs = new int[list.Count];
             int c = 0;
-            IEnumerator<int?> intIter = list.GetEnumerator();
+            using IEnumerator<int> intIter = list.GetEnumerator();
             while (intIter.MoveNext())
             {
-                docs[c++] = (int)intIter.Current;
+                docs[c++] = intIter.Current;
             }
             int[] answer = new int[] { 4, 6, 8 };
             bool same = Arrays.Equals(answer, docs);
@@ -146,11 +146,7 @@ namespace Lucene.Net.Search
             // Tests that if a Filter produces a null DocIdSet, which is given to
             // IndexSearcher, everything works fine. this came up in LUCENE-1754.
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("c", "val", Field.Store.NO));
             writer.AddDocument(doc);
@@ -188,11 +184,7 @@ namespace Lucene.Net.Search
         public virtual void TestNullIteratorFilteredDocIdSet()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("c", "val", Field.Store.NO));
             writer.AddDocument(doc);

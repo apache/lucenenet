@@ -1,4 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
+using J2N.Numerics;
+using J2N.Text;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
@@ -66,7 +68,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         /// </summary>
         public virtual object Int64ToObject(long val)
         {
-            return val;
+            return J2N.Numerics.Int64.GetInstance(val); // LUCENENET: In Java, the conversion to instance of java.util.Long is implicit, but we need to do an explicit conversion
         }
 
         /// <summary>
@@ -74,7 +76,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
         /// </summary>
         public virtual string Int64ToString(long val)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}", Int64ToObject(val));
+            object obj = Int64ToObject(val);
+            // LUCENENET: Optimized path for Number. We fall back to string.Format.
+            if (obj is Number number)
+                return number.ToString(NumberFormatInfo.InvariantInfo);
+            return string.Format(StringFormatter.InvariantCulture, "{0}", obj);
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
@@ -156,12 +162,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
             if (!(o is Int64FieldSource other))
                 return false;
-            return base.Equals(other) && (this.m_parser == null ? other.m_parser == null : this.m_parser.GetType() == other.m_parser.GetType());
+            return base.Equals(other) && (this.m_parser is null ? other.m_parser is null : this.m_parser.GetType() == other.m_parser.GetType());
         }
 
         public override int GetHashCode()
         {
-            int h = m_parser == null ? this.GetType().GetHashCode() : m_parser.GetType().GetHashCode();
+            int h = m_parser is null ? this.GetType().GetHashCode() : m_parser.GetType().GetHashCode();
             h += base.GetHashCode();
             return h;
         }

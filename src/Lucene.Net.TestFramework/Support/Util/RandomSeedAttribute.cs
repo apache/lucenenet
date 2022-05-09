@@ -28,25 +28,18 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Construct a <see cref="RandomSeedAttribute"/> with a specific random seed value.
         /// </summary>
-        /// <param name="randomSeed">A <see cref="long"/> value that represents the initial random seed to use to run the tests.</param>
-        public RandomSeedAttribute(long randomSeed)
+        /// <param name="randomSeed">A <see cref="string"/> value that represents the initial random seed to use to run the tests.
+        /// The seed is a hexadecimal string representation of a <see cref="long"/> value.
+        /// <para/>
+        /// <b>NOTE:</b> For future expansion, the string may include other values as well using ":" as delimiters.</param>
+        public RandomSeedAttribute(string randomSeed)
         {
             RandomSeed = randomSeed;
         }
 
         /// <summary>
-        /// Construct a <see cref="RandomSeedAttribute"/> with a specific random seed value.
-        /// </summary>
-        /// <param name="randomSeed">A <see cref="ulong"/> value that represents the initial random seed to use to run the tests.</param>
-        [CLSCompliant(false)]
-        public RandomSeedAttribute(ulong randomSeed)
-        {
-            RandomSeed = unchecked((long)randomSeed);
-        }
-
-        /// <summary>
         /// The random seed value.
         /// </summary>
-        public long RandomSeed { get; private set; }
+        public string RandomSeed { get; private set; }
     }
 }

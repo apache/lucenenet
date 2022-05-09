@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -24,8 +25,9 @@ namespace Lucene.Net.Spatial.Util
      */
 
     /// <summary>
-    /// Caches the doubleVal of another value source in a HashMap
+    /// Caches the doubleVal of another value source in a <see cref="Dictionary{TKey, TValue}"/>
     /// so that it is computed only once.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public class CachingDoubleValueSource : ValueSource
@@ -35,7 +37,8 @@ namespace Lucene.Net.Spatial.Util
         
         public CachingDoubleValueSource(ValueSource source)
         {
-            this.m_source = source;
+            // LUCENENET specific - added guard clause
+            this.m_source = source ?? throw new ArgumentNullException(nameof(source));
             m_cache = new JCG.Dictionary<int, double>();
         }
 
@@ -46,6 +49,10 @@ namespace Lucene.Net.Spatial.Util
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
+            // LUCENENET specific - added guard clause
+            if (readerContext is null)
+                throw new ArgumentNullException(nameof(readerContext));
+
             int @base = readerContext.DocBase;
             FunctionValues vals = m_source.GetValues(context, readerContext);
             return new CachingDoubleFunctionValue(@base, vals, m_cache);
@@ -61,9 +68,10 @@ namespace Lucene.Net.Spatial.Util
 
             public CachingDoubleFunctionValue(int docBase, FunctionValues vals, IDictionary<int, double> cache)
             {
+                // LUCENENET specific - added guard clauses
                 this.docBase = docBase;
-                values = vals;
-                this.cache = cache;
+                values = vals ?? throw new ArgumentNullException(nameof(vals));
+                this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
             }
 
             public override double DoubleVal(int doc)
@@ -93,12 +101,10 @@ namespace Lucene.Net.Spatial.Util
 
         #endregion
 
-        public override bool Equals(object o)
+        public override bool Equals(object? o)
         {
             if (this == o) return true;
-
-
-            if (!(o is CachingDoubleValueSource that)) return false;
+            if (o is null || !(o is CachingDoubleValueSource that)) return false;
             if (m_source != null ? !m_source.Equals(that.m_source) : that.m_source != null) return false;
 
             return true;

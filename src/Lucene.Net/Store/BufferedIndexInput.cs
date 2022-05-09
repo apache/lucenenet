@@ -81,7 +81,7 @@ namespace Lucene.Net.Store
         /// Change the buffer size used by this <see cref="IndexInput"/> </summary>
         public void SetBufferSize(int newSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(m_buffer == null || bufferSize == m_buffer.Length, "buffer={0} bufferSize={1} buffer.length={2}", m_buffer, bufferSize, (m_buffer != null ? m_buffer.Length : 0));
+            if (Debugging.AssertsEnabled) Debugging.Assert(m_buffer is null || bufferSize == m_buffer.Length, "buffer={0} bufferSize={1} buffer.length={2}", m_buffer, bufferSize, (m_buffer != null ? m_buffer.Length : 0));
             if (newSize != bufferSize)
             {
                 CheckBufferSize(newSize);
@@ -381,7 +381,7 @@ namespace Lucene.Net.Store
                 throw EOFException.Create("read past EOF: " + this);
             }
 
-            if (m_buffer == null)
+            if (m_buffer is null)
             {
                 NewBuffer(new byte[bufferSize]); // allocate buffer lazily
                 SeekInternal(bufferStart);

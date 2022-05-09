@@ -60,14 +60,14 @@ namespace Lucene.Net.Index
                     j++;
                     dirImpl = args[j];
                 }
-                else if (filename == null)
+                else if (filename is null)
                 {
                     filename = arg;
                 }
                 j++;
             }
 
-            if (filename == null)
+            if (filename is null)
             {
                 // LUCENENET specific - our wrapper console shows the correct usage
                 throw new ArgumentException("ERROR: CFS-FILE is required");
@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
                 FileInfo file = new FileInfo(filename);
                 string dirname = file.DirectoryName;
                 filename = file.Name;
-                if (dirImpl == null)
+                if (dirImpl is null)
                 {
                     dir = FSDirectory.Open(new DirectoryInfo(dirname));
                 }

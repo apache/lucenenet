@@ -47,11 +47,7 @@ namespace Lucene.Net.Index
         public virtual void TestBasic()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
             ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
@@ -260,11 +256,7 @@ namespace Lucene.Net.Index
             ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
 
             for (int i = 0; i < 20; i++)
             {

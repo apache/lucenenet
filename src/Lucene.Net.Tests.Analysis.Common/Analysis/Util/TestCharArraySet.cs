@@ -70,16 +70,16 @@ namespace Lucene.Net.Analysis.Util
         public virtual void TestObjectContains()
         {
             CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
-            int? val = Convert.ToInt32(1);
+            J2N.Numerics.Int32 val = J2N.Numerics.Int32.GetInstance(1);
             set.Add(val);
             assertTrue(set.Contains(val));
-            assertTrue(set.Contains(new int?(1))); // another integer
+            assertTrue(set.Contains(J2N.Numerics.Int32.GetInstance(1))); // another integer
             assertTrue(set.Contains("1"));
             assertTrue(set.Contains(new char[] { '1' }));
             // test unmodifiable
             set = CharArraySet.UnmodifiableSet(set);
             assertTrue(set.Contains(val));
-            assertTrue(set.Contains(new int?(1))); // another integer
+            assertTrue(set.Contains(J2N.Numerics.Int32.GetInstance(1))); // another integer
             assertTrue(set.Contains("1"));
             assertTrue(set.Contains(new char[] { '1' }));
         }

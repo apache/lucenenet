@@ -27,10 +27,11 @@
     
     <IsPublishable>false</IsPublishable>
     <IsPublishable Condition=" '$(TargetFramework)' == 'net5.0' ">true</IsPublishable>
+    <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build/Dependencies.props" />
-  <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
+  
+  <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="$(MicrosoftCodeAnalysisAnalyzersPackageVersion)" />

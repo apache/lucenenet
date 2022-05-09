@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Facet;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System.Globalization;
 
 namespace Lucene.Net.Demo.Facet
 {
@@ -28,9 +29,7 @@ namespace Lucene.Net.Demo.Facet
         public void TestSimple()
         {
             FacetResult result = new ExpressionAggregationFacetsExample().RunSearch();
-            //assertEquals("dim=A path=[] value=3.9681187 childCount=2\n  B (2.236068)\n  C (1.7320508)\n", result.toString());
-            // LUCENENET TODO: string output is not quite the same as in Java, but it is close enough not to be considered a bug
-            assertEquals("dim=A path=[] value=3.968119 childCount=2\n  B (2.236068)\n  C (1.732051)\n", result.toString());
+            assertEquals("dim=A path=[] value=3.9681187 childCount=2\n  B (2.236068)\n  C (1.7320508)\n", result.ToString(CultureInfo.InvariantCulture));
         }
     }
 }

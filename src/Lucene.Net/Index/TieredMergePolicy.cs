@@ -455,7 +455,7 @@ namespace Lucene.Net.Index
                         // If we are already running a max sized merge
                         // (maxMergeIsRunning), don't allow another max
                         // sized merge to kick off:
-                        if ((bestScore == null || score.Score < bestScore.Score) && (!hitTooLarge || !maxMergeIsRunning))
+                        if ((bestScore is null || score.Score < bestScore.Score) && (!hitTooLarge || !maxMergeIsRunning))
                         {
                             best = candidate;
                             bestScore = score;
@@ -466,7 +466,7 @@ namespace Lucene.Net.Index
 
                     if (best != null)
                     {
-                        if (spec == null)
+                        if (spec is null)
                         {
                             spec = new MergeSpecification();
                         }
@@ -566,7 +566,7 @@ namespace Lucene.Net.Index
             public override string Explanation => "skew=" + string.Format(CultureInfo.InvariantCulture, "{0:F3}", skew) + " nonDelRatio=" + string.Format(CultureInfo.InvariantCulture, "{0:F3}", nonDelRatio);
         }
 
-        public override MergeSpecification FindForcedMerges(SegmentInfos infos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
+        public override MergeSpecification FindForcedMerges(SegmentInfos infos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool> segmentsToMerge)
         {
             if (Verbose())
             {
@@ -578,10 +578,10 @@ namespace Lucene.Net.Index
             JCG.List<SegmentCommitInfo> eligible = new JCG.List<SegmentCommitInfo>();
             bool forceMergeRunning = false;
             ICollection<SegmentCommitInfo> merging = m_writer.Get().MergingSegments;
-            bool? segmentIsOriginal = false;
+            bool segmentIsOriginal = false;
             foreach (SegmentCommitInfo info in infos.Segments)
             {
-                if (segmentsToMerge.TryGetValue(info, out bool? isOriginal))
+                if (segmentsToMerge.TryGetValue(info, out bool isOriginal))
                 {
                     segmentIsOriginal = isOriginal;
                     if (!merging.Contains(info))
@@ -624,7 +624,7 @@ namespace Lucene.Net.Index
             // Do full merges, first, backwards:
             while (end >= maxMergeAtOnceExplicit + maxSegmentCount - 1)
             {
-                if (spec == null)
+                if (spec is null)
                 {
                     spec = new MergeSpecification();
                 }
@@ -637,7 +637,7 @@ namespace Lucene.Net.Index
                 end -= maxMergeAtOnceExplicit;
             }
 
-            if (spec == null && !forceMergeRunning)
+            if (spec is null && !forceMergeRunning)
             {
                 // Do final merge
                 int numToMerge = end - maxSegmentCount + 1;
@@ -691,7 +691,7 @@ namespace Lucene.Net.Index
                 // calling forceMergeDeletes, and knows this may take a
                 // long time / produce big segments (like forceMerge):
                 int end = Math.Min(start + maxMergeAtOnceExplicit, eligible.Count);
-                if (spec == null)
+                if (spec is null)
                 {
                     spec = new MergeSpecification();
                 }

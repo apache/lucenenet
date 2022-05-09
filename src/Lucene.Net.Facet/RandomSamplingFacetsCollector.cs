@@ -159,7 +159,7 @@ namespace Lucene.Net.Facet
                 return matchingDocs;
             }
 
-            if (sampledDocs == null)
+            if (sampledDocs is null)
             {
                 samplingRate = (1.0 * sampleSize) / totalHits;
                 sampledDocs = CreateSampledDocs(matchingDocs);
@@ -271,7 +271,7 @@ namespace Lucene.Net.Facet
         /// </summary>
         public virtual FacetResult AmortizeFacetCounts(FacetResult res, FacetsConfig config, IndexSearcher searcher)
         {
-            if (res == null || totalHits <= sampleSize)
+            if (res is null || totalHits <= sampleSize)
             {
                 return res;
             }

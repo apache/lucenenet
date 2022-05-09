@@ -132,7 +132,7 @@ namespace Lucene.Net.Util
 
         private static long RandomSeekPos(Random random, long size) // LUCENENET: CA1822: Mark members as static
         {
-            if (random == null || size <= 3L)
+            if (random is null || size <= 3L)
             {
                 return 0L;
             }
@@ -326,7 +326,7 @@ namespace Lucene.Net.Util
             try
             {
                 line = reader.ReadLine();
-                if (line == null)
+                if (line is null)
                 {
                     // Always rewind at end:
                     if (LuceneTestCase.Verbose)
@@ -344,7 +344,7 @@ namespace Lucene.Net.Util
             }
 
             DocState docState = threadDocs.Value;
-            if (docState == null)
+            if (docState is null)
             {
                 docState = new DocState(useDocValues);
                 threadDocs.Value = docState;

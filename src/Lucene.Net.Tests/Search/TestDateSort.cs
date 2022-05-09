@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 
 namespace Lucene.Net.Search
@@ -48,11 +48,7 @@ namespace Lucene.Net.Search
             base.SetUp();
             // Create an index writer.
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory);
 
             // oldest doc:
             // Add the first document.  text = "Document 1"  dateTime = Oct 10 03:25:22 EDT 2007
@@ -117,7 +113,7 @@ namespace Lucene.Net.Search
             document.Add(textField);
 
             // Add the date/time field.
-            string dateTimeString = DateTools.TimeToString(time, DateTools.Resolution.SECOND);
+            string dateTimeString = DateTools.TimeToString(time, DateResolution.SECOND);
             Field dateTimeField = NewStringField(DATE_TIME_FIELD, dateTimeString, Field.Store.YES);
             document.Add(dateTimeField);
 

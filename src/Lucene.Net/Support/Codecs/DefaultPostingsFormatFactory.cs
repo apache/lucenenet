@@ -182,7 +182,7 @@ namespace Lucene.Net.Codecs
         /// <param name="assembly">The assembly to scan.</param>
         protected virtual void ScanForPostingsFormats(Assembly assembly)
         {
-            if (assembly == null) return;
+            if (assembly is null) return;
 
             foreach (var c in assembly.GetTypes())
             {
@@ -295,7 +295,7 @@ namespace Lucene.Net.Codecs
             if (name is null)
                 throw new ArgumentNullException(nameof(name));
             EnsureInitialized();
-            if (!postingsFormatNameToTypeMap.TryGetValue(name, out Type codecType) || codecType == null)
+            if (!postingsFormatNameToTypeMap.TryGetValue(name, out Type codecType) || codecType is null)
             {
                 throw new ArgumentException($"PostingsFormat '{name}' cannot be loaded. If the format is not " +
                     $"in a Lucene.Net assembly, you must subclass {typeof(DefaultPostingsFormatFactory).FullName}, " +

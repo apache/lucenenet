@@ -1,7 +1,7 @@
 ﻿using J2N.Text;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Exceptions;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Exceptions;
+using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -29,7 +29,7 @@ namespace Lucene.Net.Spatial.Queries
     /// <summary>
     /// Parses a string that usually looks like "OPERATION(SHAPE)" into a <see cref="SpatialArgs"/>
     /// object. The set of operations supported are defined in <see cref="SpatialOperation"/>, such
-    /// as "Intersects" being a common one. The shape portion is defined by WKT <see cref="Spatial4n.Core.IO.WktShapeParser"/>,
+    /// as "Intersects" being a common one. The shape portion is defined by WKT <see cref="Spatial4n.IO.WktShapeParser"/>,
     /// but it can be overridden/customized via <see cref="ParseShape(string, SpatialContext)"/>.
     /// There are some optional name-value pair parameters that follow the closing parenthesis.  Example:
     /// <code>
@@ -39,7 +39,7 @@ namespace Lucene.Net.Spatial.Queries
     /// In the future it would be good to support something at least semi-standardized like a
     /// variant of <a href="http://docs.geoserver.org/latest/en/user/filter/ecql_reference.html#spatial-predicate">
     ///   [E]CQL</a>.
-    ///   
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class SpatialArgsParser
@@ -52,6 +52,10 @@ namespace Lucene.Net.Spatial.Queries
         /// </summary>
         public static string WriteSpatialArgs(SpatialArgs args)
         {
+            // LUCENENET specific - added guard clause
+            if (args is null)
+                throw new ArgumentNullException(nameof(args));
+
             var str = new StringBuilder();
             str.Append(args.Operation.Name);
             str.Append('(');
@@ -70,17 +74,24 @@ namespace Lucene.Net.Spatial.Queries
         /// <param name="v">The string to parse. Mandatory.</param>
         /// <param name="ctx">The spatial context. Mandatory.</param>
         /// <returns>Not null.</returns>
-        /// <exception cref="ArgumentException">if the parameters don't make sense or an add-on parameter is unknown</exception>
-        /// <exception cref="Spatial4n.Core.Exceptions.ParseException">If there is a problem parsing the string</exception>
-        /// <exception cref="InvalidShapeException">When the coordinates are invalid for the shape</exception>
+        /// <exception cref="ArgumentException">if the parameters don't make sense or an add-on parameter is unknown.</exception>
+        /// <exception cref="Spatial4n.Exceptions.ParseException">If there is a problem parsing the string.</exception>
+        /// <exception cref="InvalidShapeException">When the coordinates are invalid for the shape.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="v"/> or <paramref name="ctx"/> is <c>null</c>.</exception>
         public virtual SpatialArgs Parse(string v, SpatialContext ctx)
         {
+            // LUCENENET specific - added guard clauses
+            if (v is null)
+                throw new ArgumentNullException(nameof(v));
+            if (ctx is null)
+                throw new ArgumentNullException(nameof(ctx));
+
             int idx = v.IndexOf('(');
             int edx = v.LastIndexOf(')');
 
             if (idx < 0 || idx > edx)
             {
-                throw new Spatial4n.Core.Exceptions.ParseException("missing parens: " + v, -1);
+                throw new Spatial4n.Exceptions.ParseException("missing parens: " + v, -1);
             }
 
             SpatialOperation op = SpatialOperation.Get(v.Substring(0, idx - 0).Trim());
@@ -90,7 +101,7 @@ namespace Lucene.Net.Spatial.Queries
             string body = v.Substring(idx + 1, edx - (idx + 1)).Trim();
             if (body.Length < 1)
             {
-                throw new Spatial4n.Core.Exceptions.ParseException("missing body : " + v, idx + 1);
+                throw new Spatial4n.Exceptions.ParseException("missing body : " + v, idx + 1);
             }
 
             var shape = ParseShape(body, ctx);
@@ -118,28 +129,42 @@ namespace Lucene.Net.Spatial.Queries
             return new SpatialArgs(op, shape);
         }
 
+        /// <exception cref="ArgumentNullException"><paramref name="args"/> or <paramref name="nameValPairs"/> is <c>null</c>.</exception>
         protected virtual void ReadNameValuePairs(SpatialArgs args, IDictionary<string, string> nameValPairs)
         {
-            nameValPairs.TryGetValue(DIST_ERR_PCT, out string distErrPctStr);
-            nameValPairs.TryGetValue(DIST_ERR, out string distErrStr);
+            // LUCENENET specific - added guard clause
+            if (args is null)
+                throw new ArgumentNullException(nameof(args));
+            if (nameValPairs is null)
+                throw new ArgumentNullException(nameof(nameValPairs));
+
+            nameValPairs.TryGetValue(DIST_ERR_PCT, out string? distErrPctStr);
+            nameValPairs.TryGetValue(DIST_ERR, out string? distErrStr);
             args.DistErrPct = ReadDouble(distErrPctStr);
             nameValPairs.Remove(DIST_ERR_PCT);
             args.DistErr = ReadDouble(distErrStr);
             nameValPairs.Remove(DIST_ERR);
         }
 
+        /// <exception cref="ArgumentNullException"><paramref name="str"/> or <paramref name="ctx"/> is <c>null</c>.</exception>
         protected virtual IShape ParseShape(string str, SpatialContext ctx) 
         {
+            // LUCENENET specific - added guard clauses
+            if (str is null)
+                throw new ArgumentNullException(nameof(str));
+            if (ctx is null)
+                throw new ArgumentNullException(nameof(ctx));
+            
             //return ctx.readShape(str);//still in Spatial4n 0.4 but will be deleted
             return ctx.ReadShapeFromWkt(str);
         }
 
-        protected static double? ReadDouble(string v)
+        protected static double? ReadDouble(string? v)
         {
             return double.TryParse(v, NumberStyles.Float, CultureInfo.InvariantCulture, out double val) ? val : (double?)null;
         }
 
-        protected static bool ReadBool(string v, bool defaultValue)
+        protected static bool ReadBool(string? v, bool defaultValue)
         {
             return bool.TryParse(v, out bool ret) ? ret : defaultValue;
         }
@@ -148,8 +173,13 @@ namespace Lucene.Net.Spatial.Queries
         /// Parses "a=b c=d f" (whitespace separated) into name-value pairs. If there
         /// is no '=' as in 'f' above then it's short for f=f.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="body"/> is <c>null</c>.</exception>
         protected static IDictionary<string, string> ParseMap(string body)
         {
+            // LUCENENET specific - added guard clause
+            if (body is null)
+                throw new ArgumentNullException(nameof(body));
+
             var map = new Dictionary<string, string>();
             StringTokenizer st = new StringTokenizer(body, " \n\t");
 

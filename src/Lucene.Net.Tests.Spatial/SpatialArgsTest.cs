@@ -1,8 +1,8 @@
 ﻿using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Shapes;
 using System;
 
 namespace Lucene.Net.Spatial
@@ -29,7 +29,7 @@ namespace Lucene.Net.Spatial
         [Test]
         public void CalcDistanceFromErrPct()
         {
-            SpatialContext ctx = SpatialContext.GEO;
+            SpatialContext ctx = SpatialContext.Geo;
             double DEP = 0.5;//distErrPct
 
             //the result is the diagonal distance from the center to the closest corner,

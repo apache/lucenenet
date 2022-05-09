@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Ja
         public static UserDictionary ReadDict()
         {
             Stream @is = typeof(TestJapaneseTokenizer).getResourceAsStream("userdict.txt");
-            if (@is == null)
+            if (@is is null)
             {
                 throw RuntimeException.Create("Cannot find userdict.txt in test classpath!");
             }

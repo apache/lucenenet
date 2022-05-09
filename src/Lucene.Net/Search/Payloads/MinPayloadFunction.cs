@@ -55,7 +55,7 @@ namespace Lucene.Net.Search.Payloads
             {
                 return true;
             }
-            if (obj == null)
+            if (obj is null)
             {
                 return false;
             }

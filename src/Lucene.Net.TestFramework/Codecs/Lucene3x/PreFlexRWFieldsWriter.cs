@@ -195,7 +195,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                     if (outerInstance.storePayloads)
                     {
-                        int payloadLength = payload == null ? 0 : payload.Length;
+                        int payloadLength = payload is null ? 0 : payload.Length;
                         if (payloadLength != lastPayloadLength)
                         {
                             //System.out.println("        write payload len=" + payloadLength);

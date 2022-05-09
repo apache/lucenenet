@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -39,15 +39,21 @@
 .btn-primary:hover {
   background-color: #1764aa;
 }
-button,
-a {
+
+article.content {font-size: 15px}
+
+a, a:hover, a:focus {
+  color: #0098ff;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+button {
   color: #1764aa;
-  /* #0095eb */
 }
 button:hover,
-button:focus,
-a:hover,
-a:focus {
+button:focus {
   color: #143653;
   text-decoration: none;
 }
@@ -74,10 +80,35 @@ header ul.navbar-nav {
   float: right;
   font-weight: 600;
 }
+
+.navbar-nav>li>a {
+    color:#177cc8;
+}
+.navbar-nav>li>a:hover, .navbar-nav>li>a:focus {
+    color:#143653;
+}
+
 @media screen and (min-width: 768px) {
   header ul.navbar-nav {
     padding-right: 100px;
   }	
+}
+
+article img {
+    margin:15px 0 30px 0;
+}
+
+article[data-uid="contributing/setup-java-debugging"] img,
+article[data-uid="quick-start/tutorial"] img {
+    border: solid 1px #dedcd3
+}
+
+article[data-uid="quick-start/introduction"] .diagram{
+    text-align:center;
+}
+
+article[data-uid="quick-start/introduction"] .diagram img{
+    max-width:400px
 }
 
 .sidefilter {
@@ -95,6 +126,10 @@ body .toc {
 
 .sidefilter {
   background-color: rgb(247, 247, 247);
+}
+
+.sideaffix > div.contribution > ul > li > a.contribution-link {
+    opacity:80%;
 }
 
 /* FORK ME ON GITHUB */
@@ -138,7 +173,7 @@ body .toc {
     right: 0;
     width: 200px;
     overflow: hidden;
-    height: 200px;
+    height: 150px;
     z-index: 9999;
   }
   #forkongithub a {
@@ -153,4 +188,14 @@ body .toc {
     -o-transform: rotate(45deg);
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8);
   }
+}
+
+.home-section.books img {width:300px}
+
+
+@media (min-width: 900px){
+    .home-section.books .col-md-6 { width: 50%; }
+}
+@media (min-width:1200px){
+    .home-section.books .container{width:970px}
 }

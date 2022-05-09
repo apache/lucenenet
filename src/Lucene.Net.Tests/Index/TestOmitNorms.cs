@@ -312,7 +312,7 @@ namespace Lucene.Net.Index
             DirectoryReader ir2 = riw.GetReader();
             NumericDocValues norms2 = GetOnlySegmentReader(ir2).GetNormValues(field);
 
-            if (norms1 == null)
+            if (norms1 is null)
             {
                 Assert.IsNull(norms2);
             }

@@ -216,7 +216,7 @@ namespace Lucene.Net.Util
         public void Copy(BytesRef bytes, BytesRef @out)
         {
             int left = blockSize - upto;
-            if (bytes.Length > left || currentBlock == null)
+            if (bytes.Length > left || currentBlock is null)
             {
                 if (currentBlock != null)
                 {
@@ -257,7 +257,7 @@ namespace Lucene.Net.Util
                 Array.Copy(currentBlock, 0, newBlock, 0, upto);
                 currentBlock = newBlock;
             }
-            if (currentBlock == null)
+            if (currentBlock is null)
             {
                 currentBlock = EMPTY_BYTES;
             }
@@ -270,7 +270,7 @@ namespace Lucene.Net.Util
 
         public long GetPointer()
         {
-            if (currentBlock == null)
+            if (currentBlock is null)
             {
                 return 0;
             }

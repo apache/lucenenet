@@ -21,20 +21,24 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(SolutionDir)build/NuGet.props" />
+  <!-- These properties must be set prior to importing nuget.props -->
+  <PropertyGroup>
+    <Description>Dynamically computed values to sort/facet/search on based on a pluggable grammar for the Lucene.NET full-text search engine library from The Apache Software Foundation.</Description>
+    <PackageDocumentationRelativeUrl>expressions/overview.html</PackageDocumentationRelativeUrl>
+  </PropertyGroup>
+
+  <Import Project="$(SolutionDir).build/nuget.props" />
   
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>
-    <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net45</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net45</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Expressions</AssemblyTitle>
-    <Description>Dynamically computed values to sort/facet/search on based on a pluggable grammar for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
     <PackageTags>$(PackageTags);expression</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build/Dependencies.props" />
+  
 
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />

@@ -128,7 +128,7 @@ namespace Sax
             {
                 string message = base.Message;
 
-                if (message == null && exception != null)
+                if (message is null && exception != null)
                 {
                     return exception.Message;
                 }

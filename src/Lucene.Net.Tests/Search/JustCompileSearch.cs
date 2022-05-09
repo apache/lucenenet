@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using System;
 
 namespace Lucene.Net.Search
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
                 throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
                 throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
 
-            public TermsEnum TermsEnum(Terms terms)
+            public TermsEnum GetTermsEnum(Terms terms)
             {
                 throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
             }
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
             }
 
             // LUCENENET NOTE: This was value(int) in Lucene.
-            public override IComparable this[int slot] => throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
+            public override object this[int slot] => throw UnsupportedOperationException.Create(UNSUPPORTED_MSG);
 
             public override int CompareTop(int doc)
             {

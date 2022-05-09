@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -40,11 +40,7 @@ namespace Lucene.Net.Search
         public virtual void TestBasic()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(NewTextField("field", "value", Field.Store.NO));
             writer.AddDocument(doc);
@@ -97,11 +93,7 @@ namespace Lucene.Net.Search
         public virtual void TestRandom()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d);
             w.IndexWriter.Config.SetMaxBufferedDocs(17);
             int numDocs = AtLeast(100);
             ISet<string> aDocs = new JCG.HashSet<string>();
@@ -148,11 +140,7 @@ namespace Lucene.Net.Search
         public virtual void TestThousandDocuments()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             for (int i = 0; i < 1000; i++)
             {
                 Document doc = new Document();

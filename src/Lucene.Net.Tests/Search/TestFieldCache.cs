@@ -131,15 +131,15 @@ namespace Lucene.Net.Search
             for (int i = 0; i < NUM_DOCS; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewStringField("theLong", (theLong--).ToString(CultureInfo.InvariantCulture), Field.Store.NO));
-                doc.Add(NewStringField("theDouble", (theDouble--).ToString("R", CultureInfo.InvariantCulture), Field.Store.NO));
-                doc.Add(NewStringField("theByte", (theByte--).ToString(CultureInfo.InvariantCulture), Field.Store.NO));
-                doc.Add(NewStringField("theShort", (theShort--).ToString(CultureInfo.InvariantCulture), Field.Store.NO));
-                doc.Add(NewStringField("theInt", (theInt--).ToString(CultureInfo.InvariantCulture), Field.Store.NO));
-                doc.Add(NewStringField("theFloat", (theFloat--).ToString("R", CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theLong", J2N.Numerics.Int64.ToString(theLong--, CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theDouble", J2N.Numerics.Double.ToString(theDouble--, CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theByte", J2N.Numerics.SByte.ToString(theByte--, CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theShort", J2N.Numerics.Int16.ToString(theShort--, CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theInt", J2N.Numerics.Int32.ToString(theInt--, CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theFloat", J2N.Numerics.Single.ToString(theFloat--, CultureInfo.InvariantCulture), Field.Store.NO));
                 if (i % 2 == 0)
                 {
-                    doc.Add(NewStringField("sparse", (i).ToString(CultureInfo.InvariantCulture), Field.Store.NO));
+                    doc.Add(NewStringField("sparse", J2N.Numerics.Int32.ToString(i, CultureInfo.InvariantCulture), Field.Store.NO));
                 }
 
                 if (i % 2 == 0)
@@ -294,8 +294,8 @@ namespace Lucene.Net.Search
                     termsIndex.LookupOrd(ord, br);
                     term = br;
                 }
-                string s = term == null ? null : term.Utf8ToString();
-                Assert.IsTrue(unicodeStrings[i] == null || unicodeStrings[i].Equals(s, StringComparison.Ordinal), "for doc " + i + ": " + s + " does not equal: " + unicodeStrings[i]);
+                string s = term is null ? null : term.Utf8ToString();
+                Assert.IsTrue(unicodeStrings[i] is null || unicodeStrings[i].Equals(s, StringComparison.Ordinal), "for doc " + i + ": " + s + " does not equal: " + unicodeStrings[i]);
             }
 
             int nTerms = termsIndex.ValueCount;
@@ -347,8 +347,8 @@ namespace Lucene.Net.Search
                 {
                     term = br;
                 }
-                string s = term == null ? null : term.Utf8ToString();
-                Assert.IsTrue(unicodeStrings[i] == null || unicodeStrings[i].Equals(s, StringComparison.Ordinal), "for doc " + i + ": " + s + " does not equal: " + unicodeStrings[i]);
+                string s = term is null ? null : term.Utf8ToString();
+                Assert.IsTrue(unicodeStrings[i] is null || unicodeStrings[i].Equals(s, StringComparison.Ordinal), "for doc " + i + ": " + s + " does not equal: " + unicodeStrings[i]);
             }
 
             // test bad field
@@ -368,7 +368,7 @@ namespace Lucene.Net.Search
                 ISet<BytesRef> values = new JCG.LinkedHashSet<BytesRef>(multiValued[i]);
                 foreach (BytesRef v in values)
                 {
-                    if (v == null)
+                    if (v is null)
                     {
                         // why does this test use null values... instead of an empty list: confusing
                         break;
@@ -410,11 +410,11 @@ namespace Lucene.Net.Search
             if (i > 0 && Random.Next(3) == 1)
             {
                 // reuse past string -- try to find one that's not null
-                for (int iter = 0; iter < 10 && s == null; iter++)
+                for (int iter = 0; iter < 10 && s is null; iter++)
                 {
                     s = unicodeStrings[Random.Next(i)];
                 }
-                if (s == null)
+                if (s is null)
                 {
                     s = TestUtil.RandomUnicodeString(Random);
                 }
@@ -802,11 +802,7 @@ namespace Lucene.Net.Search
         public virtual void TestNonexistantFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             iw.AddDocument(doc);
             DirectoryReader ir = iw.GetReader();
@@ -865,11 +861,7 @@ namespace Lucene.Net.Search
         public virtual void TestNonIndexedFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             doc.Add(new StoredField("bogusbytes", "bogus"));
             doc.Add(new StoredField("bogusshorts", "bogus"));

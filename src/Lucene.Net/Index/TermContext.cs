@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
             TopReaderContext = context;
             docFreq = 0;
             int len;
-            if (context.Leaves == null)
+            if (context.Leaves is null)
             {
                 len = 1;
             }
@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
             {
                 Debugging.Assert(state != null, "state must not be null");
                 Debugging.Assert(ord >= 0 && ord < states.Length);
-                Debugging.Assert(states[ord] == null, "state for ord: {0} already registered", ord);
+                Debugging.Assert(states[ord] is null, "state for ord: {0} already registered", ord);
             }
             this.docFreq += docFreq;
             if (this.totalTermFreq >= 0 && totalTermFreq >= 0)

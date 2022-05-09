@@ -1,4 +1,5 @@
-﻿using J2N.Runtime.CompilerServices;
+﻿using J2N;
+using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
@@ -69,7 +70,7 @@ namespace Lucene.Net.Index
 
         private readonly FieldInfos fieldInfos; // LUCENENET specific - since it is readonly, made all internal classes use property
 
-        private readonly IList<long?> dvGens = new JCG.List<long?>();
+        private readonly IList<long> dvGens = new JCG.List<long>();
 
         /// <summary>
         /// Constructs a new <see cref="SegmentReader"/> with a new core. </summary>
@@ -187,15 +188,15 @@ namespace Lucene.Net.Index
         {
             Directory dir = core.cfsReader ?? si.Info.Dir;
             DocValuesFormat dvFormat = codec.DocValuesFormat;
-            IDictionary<long?, IList<FieldInfo>> genInfos = GetGenInfos();
+            IDictionary<long, IList<FieldInfo>> genInfos = GetGenInfos();
 
             //      System.out.println("[" + Thread.currentThread().getName() + "] SR.initDocValuesProducers: segInfo=" + si + "; gens=" + genInfos.keySet());
 
             // TODO: can we avoid iterating over fieldinfos several times and creating maps of all this stuff if dv updates do not exist?
 
-            foreach (KeyValuePair<long?, IList<FieldInfo>> e in genInfos)
+            foreach (KeyValuePair<long, IList<FieldInfo>> e in genInfos)
             {
-                long? gen = e.Key;
+                long gen = e.Key;
                 IList<FieldInfo> infos = e.Value;
                 DocValuesProducer dvp = segDocValues.GetDocValuesProducer(gen, si, IOContext.READ, dir, dvFormat, infos, TermInfosIndexDivisor);
                 foreach (FieldInfo fi in infos)
@@ -232,7 +233,10 @@ namespace Lucene.Net.Index
 
             try
             {
-                string segmentSuffix = info.FieldInfosGen == -1 ? "" : info.FieldInfosGen.ToString(CultureInfo.InvariantCulture);//Convert.ToString(info.FieldInfosGen, Character.MAX_RADIX));
+                // LUCENENET specific: We created the segments names wrong in 4.8.0-beta00001 - 4.8.0-beta00015,
+                // so we added a switch to be able to read these indexes in later versions. This logic as well as an
+                // optimization on the first 100 segment values is implmeneted in SegmentInfos.SegmentNumberToString().
+                string segmentSuffix = info.FieldInfosGen == -1 ? string.Empty : SegmentInfos.SegmentNumberToString(info.FieldInfosGen);
                 return info.Info.Codec.FieldInfosFormat.FieldInfosReader.Read(dir, info.Info.Name, segmentSuffix, IOContext.READ_ONCE);
             }
             finally
@@ -245,9 +249,9 @@ namespace Lucene.Net.Index
         }
 
         // returns a gen->List<FieldInfo> mapping. Fields without DV updates have gen=-1
-        private IDictionary<long?, IList<FieldInfo>> GetGenInfos()
+        private IDictionary<long, IList<FieldInfo>> GetGenInfos()
         {
-            IDictionary<long?, IList<FieldInfo>> genInfos = new Dictionary<long?, IList<FieldInfo>>();
+            IDictionary<long, IList<FieldInfo>> genInfos = new Dictionary<long, IList<FieldInfo>>();
             foreach (FieldInfo fi in FieldInfos)
             {
                 if (fi.DocValuesType == DocValuesType.NONE)
@@ -255,7 +259,7 @@ namespace Lucene.Net.Index
                     continue;
                 }
                 long gen = fi.DocValuesGen;
-                if (!genInfos.TryGetValue(gen, out IList<FieldInfo> infos) || infos == null)
+                if (!genInfos.TryGetValue(gen, out IList<FieldInfo> infos) || infos is null)
                 {
                     infos = new JCG.List<FieldInfo>();
                     genInfos[gen] = infos;
@@ -360,7 +364,7 @@ namespace Lucene.Net.Index
         public override Fields GetTermVectors(int docID)
         {
             TermVectorsReader termVectorsReader = TermVectorsReader;
-            if (termVectorsReader == null)
+            if (termVectorsReader is null)
             {
                 return null;
             }
@@ -424,7 +428,7 @@ namespace Lucene.Net.Index
         private FieldInfo GetDVField(string field, DocValuesType type)
         {
             FieldInfo fi = FieldInfos.FieldInfo(field);
-            if (fi == null)
+            if (fi is null)
             {
                 // Field does not exist
                 return null;
@@ -447,7 +451,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             FieldInfo fi = GetDVField(field, DocValuesType.NUMERIC);
-            if (fi == null)
+            if (fi is null)
             {
                 return null;
             }
@@ -469,7 +473,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             FieldInfo fi = FieldInfos.FieldInfo(field);
-            if (fi == null)
+            if (fi is null)
             {
                 // Field does not exist
                 return null;
@@ -482,7 +486,7 @@ namespace Lucene.Net.Index
 
             IDictionary<string, IBits> dvFields = docsWithFieldLocal.Value;
 
-            if (!dvFields.TryGetValue(field, out IBits dvs) || dvs == null)
+            if (!dvFields.TryGetValue(field, out IBits dvs) || dvs is null)
             {
                 dvProducersByField.TryGetValue(field, out DocValuesProducer dvProducer);
                 if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer != null);
@@ -497,7 +501,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             FieldInfo fi = GetDVField(field, DocValuesType.BINARY);
-            if (fi == null)
+            if (fi is null)
             {
                 return null;
             }
@@ -519,7 +523,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             FieldInfo fi = GetDVField(field, DocValuesType.SORTED);
-            if (fi == null)
+            if (fi is null)
             {
                 return null;
             }
@@ -541,7 +545,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             FieldInfo fi = GetDVField(field, DocValuesType.SORTED_SET);
-            if (fi == null)
+            if (fi is null)
             {
                 return null;
             }
@@ -563,7 +567,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             FieldInfo fi = FieldInfos.FieldInfo(field);
-            if (fi == null || !fi.HasNorms)
+            if (fi is null || !fi.HasNorms)
             {
                 // Field does not exist or does not index norms
                 return null;

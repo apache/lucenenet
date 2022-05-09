@@ -260,7 +260,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public bool IsValid()
         {
-            if (ints == null)
+            if (ints is null)
             {
                 throw IllegalStateException.Create("ints is null");
             }

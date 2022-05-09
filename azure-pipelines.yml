@@ -54,7 +54,7 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 variables:
 - name: BuildCounter
   value: $[counter(variables['VersionSuffix'],coalesce(variables['BuildCounterSeed'], 1250))]
-- name: BuildSDKVersion
+- name: DotNetSDKVersion
   value: '6.0.100'
 - name: DocumentationArtifactName
   value: 'docs'
@@ -85,7 +85,7 @@ variables:
 - name: TestSettingsFileName
   value: 'lucene.testsettings.json'
 - name: BuildDirectory # Where the build scripts and configs are
-  value: '$(System.DefaultWorkingDirectory)/build'
+  value: '$(System.DefaultWorkingDirectory)/.build'
 - name: PublishDirectory # Test binaries directory
   value: '$(Build.ArtifactStagingDirectory)/$(BinaryArtifactName)'
 - name: NuGetArtifactDirectory # NuGet binaries directory
@@ -122,34 +122,28 @@ stages:
         Write-Host "##vso[task.setvariable variable=RunPack;]$runPack"
       displayName: 'Setup Default Variable Values'
 
-    - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk $(BuildSDKVersion)'
-      inputs:
-        packageType: 'sdk'
-        version: '$(BuildSDKVersion)'
+    - template: '.build/azure-templates/install-dotnet-sdk.yml'
+      parameters:
+        sdkVersion: '$(DotNetSDKVersion)'
 
     - pwsh: |
-        Import-Module "$(BuildDirectory)/psake.psm1"
-        $generateBuildBat = $env:ISRELEASE
+        Import-Module "$(BuildDirectory)/psake/psake.psm1"
         $primaryCommand = if ($env:RUNPACK -ne 'false') { 'Pack' } else { 'Compile' }
         $parameters = @{}
         $properties = @{
-            backup_files='false';
-            publish_directory='$(PublishTempDirectory)';
-            nuget_package_directory='$(NuGetArtifactDirectory)';
-            # Lock the build.bat so it only builds this version in the release distribution
-            generateBuildBat=$generateBuildBat;
-            skipSdkInstallation='true'
+            backupFiles='false';
+            publishDirectory='$(PublishTempDirectory)';
+            nugetPackageDirectory='$(NuGetArtifactDirectory)'
         }
         [string[]]$tasks = @($primaryCommand)
         if ($env:RunTests -ne 'false') {
             [string[]]$tasks = $primaryCommand,'Publish'
         }
-        Invoke-psake $(BuildDirectory)/build.ps1 -Task $tasks -properties $properties -parameters $parameters
+        Invoke-Psake $(BuildDirectory)/runbuild.ps1 -Task $tasks -properties $properties -parameters $parameters
         exit !($psake.build_success)
       displayName: 'PSake Build, Pack, and Publish'
 
-    #- template: 'build/azure-templates/show-all-environment-variables.yml' # Uncomment for debugging
+    #- template: '.build/azure-templates/show-all-environment-variables.yml' # Uncomment for debugging
         
     - pwsh: |
         $dir = '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
@@ -191,15 +185,14 @@ stages:
       displayName: 'Persist Test Settings to lucene.testsettings.json'
       condition: and(succeeded(), ne(variables['RunTests'], 'false'))
 
-    # If this is a release pipeline, copy the build.bat and Version.props files as version artifacts, which will 
-    # overwrite the build.bat and Version.props files of the release.
+    # If this is a release pipeline, copy the version.props files as a version artifact, which will
+    # be included in the release.
     - task: CopyFiles@2
-      displayName: 'Copy build.bat and Version.props Files to: /$(VersionArtifactName)'
+      displayName: 'Copy version.props Files to: /$(VersionArtifactName)'
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)'
         Contents: |
-          build.bat
-          Version.props
+          version.props
         TargetFolder: '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
       condition: and(succeeded(), eq(variables['IsRelease'], 'true'))
             
@@ -236,35 +229,35 @@ stages:
         publishLocation: 'pipeline'
       condition: and(succeeded(), ne(variables['ArtifactFeedID'], ''))
 
-    - template: 'build/azure-templates/publish-test-binaries.yml'
+    - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
         framework: 'net6.0'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
-    - template: 'build/azure-templates/publish-test-binaries.yml'
+    - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
         framework: 'net5.0'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
-    - template: 'build/azure-templates/publish-test-binaries.yml'
+    - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
         framework: 'netcoreapp3.1'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
-    - template: 'build/azure-templates/publish-test-binaries.yml'
+    - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
         framework: 'net461'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
-    - template: 'build/azure-templates/publish-test-binaries.yml'
+    - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
         framework: 'net48'
@@ -274,9 +267,13 @@ stages:
   - job: Docs
     condition: and(succeeded(), eq(variables['GenerateDocs'], 'true'))
     pool:
-      vmImage: 'vs2017-win2016'
+      vmImage: 'windows-latest'
 
     steps:
+    - template: '.build/azure-templates/install-dotnet-sdk.yml'
+      parameters:
+        sdkVersion: '$(DotNetSDKVersion)'
+
     - pwsh: |
          $(Build.SourcesDirectory)/websites/apidocs/docs.ps1 -LuceneNetVersion $(PackageVersion) -Clean -BaseUrl https://lucenenet.apache.org/docs/
       errorActionPreference: 'continue'
@@ -300,7 +297,7 @@ stages:
   - job: Website
     condition: and(succeeded(), eq(variables['GenerateWebsite'], 'true'))
     pool:
-      vmImage: 'vs2017-win2016'
+      vmImage: 'windows-latest'
 
     steps:
     - pwsh: |
@@ -351,7 +348,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
         framework: 'net6.0'
@@ -361,6 +358,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net6_0_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
     condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
@@ -385,7 +383,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
         framework: 'net6.0'
@@ -395,6 +393,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net5_0_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
@@ -419,7 +418,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
         framework: 'net5.0'
@@ -429,6 +428,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net5_0_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
     condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
@@ -453,7 +453,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
         framework: 'net5.0'
@@ -463,6 +463,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_netcoreapp3_1_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
@@ -487,7 +488,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
         framework: 'netcoreapp3.1'
@@ -497,6 +498,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_netcoreapp3_1_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
     condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
@@ -521,7 +523,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
         framework: 'netcoreapp3.1'
@@ -531,6 +533,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net461_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
@@ -545,7 +548,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
         framework: 'net461'
@@ -555,6 +558,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net461_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
     condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
@@ -569,7 +573,7 @@ stages:
     pool:
       vmImage: $(imageName)
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
         framework: 'net461'
@@ -579,6 +583,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net48_Windows_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
@@ -586,7 +591,7 @@ stages:
     pool:
       vmImage: 'windows-2019'
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: 'Windows'
         framework: 'net48'
@@ -596,6 +601,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: 8
         maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net48_Windows_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
     condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
@@ -603,7 +609,7 @@ stages:
     pool:
       vmImage: 'windows-2019'
     steps:
-    - template: 'build/azure-templates/run-tests-on-os.yml'
+    - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: 'Windows'
         framework: 'net48'
@@ -613,6 +619,7 @@ stages:
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: 8
         maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
 
 - stage: Publish_Stage
@@ -631,7 +638,7 @@ stages:
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
       fetchDepth: '1'  # the depth of commits to ask Git to fetch
 
-    - template: 'build/azure-templates/show-all-environment-variables.yml'
+    - template: '.build/azure-templates/show-all-environment-variables.yml'
 
     - task: DownloadPipelineArtifact@0
       displayName: 'Download Build Artifacts: $(VersionArtifactName)'
@@ -651,9 +658,9 @@ stages:
         Write-Host "##vso[task.setvariable variable=PackageVersion;]$version"
         Write-Host "##vso[build.updatebuildnumber]$version"
       displayName: 'Read PackageVersion from File to Build.BuildNumber'
-    - template: 'build/azure-templates/show-all-environment-variables.yml'
+    - template: '.build/azure-templates/show-all-environment-variables.yml'
 
-    - template: 'build/azure-templates/publish-nuget-packages.yml'
+    - template: '.build/azure-templates/publish-nuget-packages.yml'
       parameters:
         artifactFeedID: '$(ArtifactFeedID)'
         nugetArtifactName: '$(NuGetArtifactName)'
@@ -673,7 +680,7 @@ stages:
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
       fetchDepth: '1'  # the depth of commits to ask Git to fetch
 
-    - template: 'build/azure-templates/show-all-environment-variables.yml'
+    - template: '.build/azure-templates/show-all-environment-variables.yml'
 
 
     - task: 'DownloadPipelineArtifact@0'
@@ -689,7 +696,7 @@ stages:
         artifactName: '$(VersionArtifactName)'
         targetPath: '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
         
-    - template: 'build/azure-templates/show-all-files.yml' # Uncomment for debugging
+    - template: '.build/azure-templates/show-all-files.yml' # Uncomment for debugging
 
       # NOTE: We are setting Build.BuildNumber here to the NuGet package version to work around the limitation that
       # the version cannot be passed to the Index Sources & Publish Symbols task.
@@ -700,13 +707,15 @@ stages:
         Write-Host "##vso[task.setvariable variable=PackageVersion;]$version"
         Write-Host "##vso[build.updatebuildnumber]$version"
       displayName: 'Build VCS Label and Rehydrate Version Variables'
+
     - pwsh: |
-        $files = 'build.bat','Version.props'
+        [string[]]$files = @('version.props')
         foreach ($file in $files) {
             Copy-Item -Path "$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)/$file" -Destination "$(Build.SourcesDirectory)/$file" -Force -ErrorAction Continue
         }
-      displayName: 'Update build.bat and Version.props to build only version $(PackageVersion)'
-    - template: 'build/azure-templates/show-all-environment-variables.yml'
+      displayName: 'Update version.props to build only version $(PackageVersion)'
+
+    - template: '.build/azure-templates/show-all-environment-variables.yml'
 
     - task: CopyFiles@2
       displayName: 'Copy Source Code Files to: $(Build.ArtifactStagingDirectory)/srctemp'
@@ -715,10 +724,12 @@ stages:
         Contents: |
          **
          !.git/**/*
+         !.github/**/*
          !branding/**/*
-         !release/**/*
+         !_artifacts/**/*
          !src/**/bin/**/*
          !src/**/obj/**/*
+         !websites/**/*
          branding/logo/lucene-net-icon-128x128.png
         TargetFolder: '$(Build.ArtifactStagingDirectory)/srctemp'
 
@@ -764,5 +775,3 @@ stages:
         targetPath: '$(Build.ArtifactStagingDirectory)/$(ReleaseArtifactName)'
         artifact:  '$(ReleaseArtifactName)'
         publishLocation: 'pipeline'
-
-# LUCENENET TODO: Write VCS Label (git tag) automatically

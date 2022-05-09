@@ -1,5 +1,4 @@
-﻿#if TESTFRAMEWORK_NUNIT
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -143,4 +142,3 @@ namespace Lucene.Net.Tests.TestFramework
         }
     }
 }
-#endif

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using BitSet = Lucene.Net.Util.OpenBitSet;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -84,7 +85,7 @@ namespace Lucene.Net.Codecs.Memory
                     long sumDocFreq = blockIn.ReadVInt64();
                     int docCount = blockIn.ReadVInt32();
                     int longsSize = blockIn.ReadVInt32();
-                    var index = new FST<long?>(indexIn, PositiveInt32Outputs.Singleton);
+                    var index = new FST<Int64>(indexIn, PositiveInt32Outputs.Singleton);
 
                     var current = new TermsReader(this, fieldInfo, blockIn, numTerms, sumTotalTermFreq, sumDocFreq, docCount, longsSize, index);
                     // LUCENENET NOTE: This simulates a put operation in Java,
@@ -198,7 +199,7 @@ namespace Lucene.Net.Codecs.Memory
             internal readonly long sumDocFreq;
             internal readonly int docCount;
             private readonly int longsSize;
-            internal readonly FST<long?> index;
+            internal readonly FST<Int64> index;
 
             private readonly int numSkipInfo;
             internal readonly long[] skipInfo;
@@ -206,7 +207,7 @@ namespace Lucene.Net.Codecs.Memory
             internal readonly byte[] metaLongsBlock;
             internal readonly byte[] metaBytesBlock;
 
-            internal TermsReader(FSTOrdTermsReader outerInstance, FieldInfo fieldInfo, IndexInput blockIn, long numTerms, long sumTotalTermFreq, long sumDocFreq, int docCount, int longsSize, FST<long?> index)
+            internal TermsReader(FSTOrdTermsReader outerInstance, FieldInfo fieldInfo, IndexInput blockIn, long numTerms, long sumTotalTermFreq, long sumDocFreq, int docCount, int longsSize, FST<Int64> index)
             {
                 this.outerInstance = outerInstance;
                 this.fieldInfo = fieldInfo;
@@ -450,7 +451,7 @@ namespace Lucene.Net.Codecs.Memory
             // Iterates through all terms in this field
             private sealed class SegmentTermsEnum : BaseTermsEnum
             {
-                private readonly BytesRefFSTEnum<long?> fstEnum;
+                private readonly BytesRefFSTEnum<Int64> fstEnum;
 
                 /* True when current term's metadata is decoded */
                 private bool decoded;
@@ -460,7 +461,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 internal SegmentTermsEnum(FSTOrdTermsReader.TermsReader outerInstance) : base(outerInstance)
                 {
-                    this.fstEnum = new BytesRefFSTEnum<long?>(outerInstance.index);
+                    this.fstEnum = new BytesRefFSTEnum<Int64>(outerInstance.index);
                     this.decoded = false;
                     this.seekPending = false;
                 }
@@ -475,16 +476,16 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 // Update current enum according to FSTEnum
-                private void UpdateEnum(BytesRefFSTEnum.InputOutput<long?> pair)
+                private void UpdateEnum(BytesRefFSTEnum.InputOutput<Int64> pair)
                 {
-                    if (pair == null)
+                    if (pair is null)
                     {
                         term = null;
                     }
                     else
                     {
                         term = pair.Input;
-                        ord = pair.Output.Value;
+                        ord = pair.Output;
                         DecodeStats();
                     }
                     decoded = false;
@@ -505,7 +506,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         var pair = fstEnum.Current;
                         term = pair.Input;
-                        ord = pair.Output.Value;
+                        ord = pair.Output;
                         DecodeStats();
                     }
                     else
@@ -534,7 +535,7 @@ namespace Lucene.Net.Codecs.Memory
                 public override SeekStatus SeekCeil(BytesRef target)
                 {
                     UpdateEnum(fstEnum.SeekCeil(target));
-                    if (term == null)
+                    if (term is null)
                     {
                         return SeekStatus.END;
                     }
@@ -574,9 +575,9 @@ namespace Lucene.Net.Codecs.Memory
                 private int level;
 
                 /// <summary>term dict fst</summary>
-                private readonly FST<long?> fst;
+                private readonly FST<Int64> fst;
                 private readonly FST.BytesReader fstReader;
-                private readonly Outputs<long?> fstOutputs;
+                private readonly Outputs<Int64> fstOutputs;
 
                 /// <summary>Query automaton to intersect with.</summary>
                 private readonly ByteRunAutomaton fsa;
@@ -584,14 +585,14 @@ namespace Lucene.Net.Codecs.Memory
                 private sealed class Frame
                 {
                     /// <summary>fst stats</summary>
-                    internal FST.Arc<long?> arc;
+                    internal FST.Arc<Int64> arc;
 
                     /// <summary>automaton stats</summary>
                     internal int state;
 
                     internal Frame()
                     {
-                        this.arc = new FST.Arc<long?>();
+                        this.arc = new FST.Arc<Int64>();
                         this.state = -1;
                     }
 
@@ -624,7 +625,7 @@ namespace Lucene.Net.Codecs.Memory
                     this.decoded = false;
                     this.pending = false;
 
-                    if (startTerm == null)
+                    if (startTerm is null)
                     {
                         pending = IsAccept(TopFrame());
                     }
@@ -648,7 +649,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     var arc = TopFrame().arc;
                     if (Debugging.AssertsEnabled) Debugging.Assert(arc.NextFinalOutput == fstOutputs.NoOutput);
-                    ord = arc.Output.Value;
+                    ord = arc.Output;
                     base.DecodeStats();
                 }
 
@@ -719,7 +720,7 @@ namespace Lucene.Net.Codecs.Memory
                         frame = NewFrame();
                         label = target.Bytes[upto] & 0xff;
                         frame = LoadCeilFrame(label, TopFrame(), frame);
-                        if (frame == null || frame.arc.Label != label)
+                        if (frame is null || frame.arc.Label != label)
                         {
                             break;
                         }
@@ -822,7 +823,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     var arc = frame.arc;
                     arc = Util.Fst.Util.ReadCeilArc(label, fst, top.arc, arc, fstReader);
-                    if (arc == null)
+                    if (arc is null)
                     {
                         return null;
                     }
@@ -850,7 +851,7 @@ namespace Lucene.Net.Codecs.Memory
                 [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 private static bool CanGrow(Frame frame) // can walk forward on both fst&fsa // LUCENENET: CA1822: Mark members as static
                 {
-                    return frame.state != -1 && FST<long?>.TargetHasArcs(frame.arc);
+                    return frame.state != -1 && FST<Int64>.TargetHasArcs(frame.arc);
                 }
 
                 [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -896,7 +897,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 private BytesRef Grow(int label)
                 {
-                    if (term == null)
+                    if (term is null)
                     {
                         term = new BytesRef(new byte[16], 0, 0);
                     }

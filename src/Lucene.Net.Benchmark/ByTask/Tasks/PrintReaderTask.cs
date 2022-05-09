@@ -45,7 +45,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             Directory dir = RunData.Directory;
             IndexReader r; // LUCENENET: IDE0059: Remove unnecessary value assignment
-            if (userData == null)
+            if (userData is null)
                 r = DirectoryReader.Open(dir);
             else
                 r = DirectoryReader.Open(OpenReaderTask.FindIndexCommit(dir, userData));

@@ -198,7 +198,7 @@ namespace Lucene.Net.Queries
             for (int i = 0; i < queryTerms.Length; i++)
             {
                 TermContext termContext = contextArray[i];
-                if (termContext == null)
+                if (termContext is null)
                 {
                     lowFreq.Add(NewTermQuery(queryTerms[i], null), m_lowFreqOccur);
                 }
@@ -264,7 +264,7 @@ namespace Lucene.Net.Queries
             foreach (AtomicReaderContext context in leaves)
             {
                 Fields fields = context.AtomicReader.Fields;
-                if (fields == null)
+                if (fields is null)
                 {
                     // reader has no fields
                     continue;
@@ -274,7 +274,7 @@ namespace Lucene.Net.Queries
                     Term term = queryTerms[i];
                     TermContext termContext = contextArray[i];
                     Terms terms = fields.GetTerms(term.Field);
-                    if (terms == null)
+                    if (terms is null)
                     {
                         // field does not exist
                         continue;
@@ -288,7 +288,7 @@ namespace Lucene.Net.Queries
                     }
                     if (termsEnum.SeekExact(term.Bytes))
                     {
-                        if (termContext == null)
+                        if (termContext is null)
                         {
                             contextArray[i] = new TermContext(reader.Context, termsEnum.GetTermState(), context.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                         }
@@ -398,14 +398,14 @@ namespace Lucene.Net.Queries
             int result = base.GetHashCode();
             result = prime * result + (m_disableCoord ? 1231 : 1237);
             result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_highFreqBoost);
-            result = prime * result + /*((highFreqOccur == null) ? 0 :*/ m_highFreqOccur.GetHashCode()/*)*/;
+            result = prime * result + /*((highFreqOccur is null) ? 0 :*/ m_highFreqOccur.GetHashCode()/*)*/;
             result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_lowFreqBoost);
-            result = prime * result + /*((lowFreqOccur == null) ? 0 :*/ m_lowFreqOccur.GetHashCode()/*)*/;
+            result = prime * result + /*((lowFreqOccur is null) ? 0 :*/ m_lowFreqOccur.GetHashCode()/*)*/;
             result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_maxTermFrequency);
             result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_lowFreqMinNrShouldMatch);
             result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_highFreqMinNrShouldMatch);
             // LUCENENET specific: use structural equality comparison
-            result = prime * result + ((m_terms == null) ? 0 : JCG.ListEqualityComparer<Term>.Default.GetHashCode(m_terms));
+            result = prime * result + ((m_terms is null) ? 0 : JCG.ListEqualityComparer<Term>.Default.GetHashCode(m_terms));
             return result;
         }
 
@@ -456,7 +456,7 @@ namespace Lucene.Net.Queries
             {
                 return false;
             }
-            if (m_terms == null)
+            if (m_terms is null)
             {
                 if (other.m_terms != null)
                 {
@@ -479,7 +479,7 @@ namespace Lucene.Net.Queries
         /// <returns> new <see cref="TermQuery"/> instance </returns>
         protected virtual Query NewTermQuery(Term term, TermContext context)
         {
-            return context == null ? new TermQuery(term) : new TermQuery(term, context);
+            return context is null ? new TermQuery(term) : new TermQuery(term, context);
         }
 
         /// <summary>

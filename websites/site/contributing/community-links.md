@@ -25,12 +25,11 @@ A very detailed how-to guide for working with Lucene.Net.
 
 An excellent introductory series from [Simone Chiaretta](http://codeclimber.net.nz/)
 
-- [How to get started with Lucene.Net](http://codeclimber.net.nz/archive/2009/08/27/how-to-get-started-with-lucene.net.aspx)
-- [The Main Concepts](http://codeclimber.net.nz/archive/2009/08/31/lucene.net-the-main-concepts.aspx)
-- [Your First Application](http://codeclimber.net.nz/archive/2009/09/02/lucene.net-your-first-application.aspx)
-- [Dissecting Storage Documents and Fields](http://codeclimber.net.nz/archive/2009/09/04/dissecting-lucene.net-storage-documents-and-fields.aspx)
-- [Lucene - or how I stopped worrying and learned to love unstructured data](http://codeclimber.net.nz/archive/2009/09/08/lucene-or-how-i-stopped-worrying-and-learned-to.aspx)
-- [How Subtext Lucene.Net index is structured](http://codeclimber.net.nz/archive/2009/09/10/how-subtext-lucene.net-index-is-structured.aspx)
+- [How to get started with Lucene.Net](https://codeclimber.net.nz/archive/2009/08/27/how-to-get-started-with-lucenenet/)
+- [The Main Concepts](https://codeclimber.net.nz/archive/2009/08/31/lucenenet-the-main-concepts/)
+- [Your First Application](https://codeclimber.net.nz/archive/2009/09/02/lucenenet-your-first-application/)
+- [Dissecting Storage Documents and Fields](https://codeclimber.net.nz/archive/2009/09/04/dissecting-lucenenet-storage-documents-and-fields/)
+- [Lucene - or how I stopped worrying and learned to love unstructured data](https://codeclimber.net.nz/archive/2009/09/08/lucene-or-how-i-stopped-worrying-and-learned-to/)
 
 ### Other posts
 

@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
         private long DocsWithFieldBytesUsed()
         {
             // size of the long[] + some overhead
-            return docsWithField == null ? 0 : RamUsageEstimator.SizeOf(docsWithField.Bits) + 64;
+            return docsWithField is null ? 0 : RamUsageEstimator.SizeOf(docsWithField.Bits) + 64;
         }
 
         private void UpdateBytesUsed()
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
                 if (upto < size)
                 {
                     var v = iter.Next();
-                    if (docsWithField == null || docsWithField.Get(upto))
+                    if (docsWithField is null || docsWithField.Get(upto))
                     {
                         value = v;
                     }

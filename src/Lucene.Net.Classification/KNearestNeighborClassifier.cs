@@ -26,9 +26,10 @@ namespace Lucene.Net.Classification
      */
 
     /// <summary>
-    /// A k-Nearest Neighbor classifier (see <code>http://en.wikipedia.org/wiki/K-nearest_neighbors</code>) based
+    /// A k-Nearest Neighbor classifier (see
+    /// <a href="http://en.wikipedia.org/wiki/K-nearest_neighbors">http://en.wikipedia.org/wiki/K-nearest_neighbors</a>) based
     /// on <see cref="MoreLikeThis"/>
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class KNearestNeighborClassifier : IClassifier<BytesRef>
@@ -69,7 +70,7 @@ namespace Lucene.Net.Classification
         /// <returns>a <see cref="ClassificationResult{BytesRef}"/> holding assigned class of type <see cref="BytesRef"/> and score</returns>
         public virtual ClassificationResult<BytesRef> AssignClass(string text)
         {
-            if (mlt == null)
+            if (mlt is null)
             {
                 throw new IOException("You must first call Classifier#train");
             }

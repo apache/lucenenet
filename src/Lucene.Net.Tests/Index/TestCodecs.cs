@@ -1,4 +1,5 @@
-﻿using J2N.Text;
+﻿using J2N;
+using J2N.Text;
 using J2N.Threading;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
@@ -340,7 +341,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < NUM_TERMS; i++)
             {
                 int[] docs = new int[] { i };
-                string text = Convert.ToString(i);
+                string text = i.ToString(Character.MaxRadix);
                 terms[i] = new TermData(this, text, docs, null);
             }
 

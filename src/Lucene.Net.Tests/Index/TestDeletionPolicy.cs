@@ -470,7 +470,7 @@ namespace Lucene.Net.Index
             IndexCommit lastCommit = null;
             foreach (IndexCommit commit in commits)
             {
-                if (lastCommit == null || commit.Generation > lastCommit.Generation)
+                if (lastCommit is null || commit.Generation > lastCommit.Generation)
                 {
                     lastCommit = commit;
                 }

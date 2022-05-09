@@ -130,7 +130,7 @@ namespace Lucene.Net.Analysis
             {
                 Console.WriteLine("MockGraphTF.incr inputPos=" + m_inputPos + " outputPos=" + m_outputPos);
             }
-            if (random == null)
+            if (random is null)
             {
                 throw IllegalStateException.Create("IncrementToken() called in wrong state!");
             }

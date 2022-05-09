@@ -1326,7 +1326,7 @@ namespace Lucene.Net.Search
             }
             else
             {
-                if (after.Fields == null)
+                if (after.Fields is null)
                 {
                     throw new ArgumentException("after.Fields wasn't set; you must pass fillFields=true for the previous search");
                 }
@@ -1374,7 +1374,7 @@ namespace Lucene.Net.Search
 
         protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
         {
-            if (results == null)
+            if (results is null)
             {
                 results = EMPTY_SCOREDOCS;
                 // Set maxScore to NaN, in case this is a maxScore tracking collector.

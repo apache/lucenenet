@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -233,10 +233,10 @@ namespace Lucene.Net.Search
         internal virtual FieldDoc FillFields(FieldValueHitQueue.Entry entry)
         {
             int n = m_comparers.Length;
-            IComparable[] fields = new IComparable[n];
+            object[] fields = new object[n];
             for (int i = 0; i < n; ++i)
             {
-                fields[i] = m_comparers[i][entry.Slot];
+                fields[i] = m_comparers[i].GetValue(entry.Slot);
             }
             //if (maxscore > 1.0f) doc.score /= maxscore;   // normalize scores
             return new FieldDoc(entry.Doc, entry.Score, fields);

@@ -415,11 +415,7 @@ namespace Lucene.Net.Tests.Queries.Function
             }
             TopDocs docs = searcher.Search(q, null, documents.Count,
                 new Sort(new SortField("id", SortFieldType.STRING)), true, false);
-            CheckHits.DoCheckHits(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q, "", searcher, expectedDocs);
+            CheckHits.DoCheckHits(Random, q, "", searcher, expectedDocs);
             CheckHits.CheckHitsQuery(q, expected, docs.ScoreDocs, expectedDocs);
             CheckHits.CheckExplanations(q, "", searcher);
         }

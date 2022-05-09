@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             ISet<string> ls = new JCG.HashSet<string>();
             Stream langIS = typeof(Languages).FindAndGetManifestResourceStream(languagesResourceName);
 
-            if (langIS == null)
+            if (langIS is null)
             {
                 throw new ArgumentException("Unable to resolve required resource: " + languagesResourceName);
             }

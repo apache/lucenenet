@@ -92,7 +92,7 @@ namespace Lucene.Net.Facet
         /// Make a private random. </summary>
         internal virtual Random ForkRandom()
         {
-            if (random == null)
+            if (random is null)
             {
                 return null;
             }

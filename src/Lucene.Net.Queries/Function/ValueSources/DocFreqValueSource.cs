@@ -45,7 +45,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             fval = val;
             dval = val;
             lval = val;
-            sval = Convert.ToString(val, CultureInfo.InvariantCulture);
+            sval = J2N.Numerics.Int32.ToString(val, NumberFormatInfo.InvariantInfo);
             this.parent = parent;
         }
 
@@ -102,7 +102,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             fval = (float)val;
             dval = val;
             lval = (long)val;
-            sval = val.ToString("R", CultureInfo.InvariantCulture);
+            sval = J2N.Numerics.Double.ToString(val, NumberFormatInfo.InvariantInfo); // LUCENENET: Use J2N to mimic the Java string format using the "J" format
             this.parent = parent;
         }
 

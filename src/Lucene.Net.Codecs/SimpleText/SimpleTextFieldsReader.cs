@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Codecs.SimpleText
 {
@@ -53,7 +54,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
     internal class SimpleTextFieldsReader : FieldsProducer
     {
-        private readonly JCG.SortedDictionary<string, long?> fields;
+        private readonly JCG.SortedDictionary<string, long> fields;
         private readonly IndexInput input;
         private readonly FieldInfos fieldInfos;
         private readonly int maxDoc;
@@ -78,12 +79,12 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        private static JCG.SortedDictionary<string, long?> ReadFields(IndexInput @in) // LUCENENET specific - marked static
+        private static JCG.SortedDictionary<string, long> ReadFields(IndexInput @in) // LUCENENET specific - marked static
         {
             ChecksumIndexInput input = new BufferedChecksumIndexInput(@in);
             BytesRef scratch = new BytesRef(10);
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-            var fields = new JCG.SortedDictionary<string, long?>(StringComparer.Ordinal);
+            var fields = new JCG.SortedDictionary<string, long>(StringComparer.Ordinal);
 
             while (true)
             {
@@ -110,13 +111,13 @@ namespace Lucene.Net.Codecs.SimpleText
             private long totalTermFreq;
             private long docsStart;
             //private bool ended; // LUCENENET: Never read
-            private readonly BytesRefFSTEnum<PairOutputs<long?, PairOutputs<long?, long?>.Pair>.Pair> fstEnum;
+            private readonly BytesRefFSTEnum<PairOutputs<Int64, PairOutputs<Int64, Int64>.Pair>.Pair> fstEnum;
 
-            public SimpleTextTermsEnum(SimpleTextFieldsReader outerInstance, FST<PairOutputs<long?, PairOutputs<long?, long?>.Pair>.Pair> fst, IndexOptions indexOptions)
+            public SimpleTextTermsEnum(SimpleTextFieldsReader outerInstance, FST<PairOutputs<Int64, PairOutputs<Int64, Int64>.Pair>.Pair> fst, IndexOptions indexOptions)
             {
                 this.outerInstance = outerInstance;
                 this.indexOptions = indexOptions;
-                fstEnum = new BytesRefFSTEnum<PairOutputs<long?, PairOutputs<long?, long?>.Pair>.Pair>(fst);
+                fstEnum = new BytesRefFSTEnum<PairOutputs<Int64, PairOutputs<Int64, Int64>.Pair>.Pair>(fst);
             }
 
             public override bool SeekExact(BytesRef text)
@@ -126,9 +127,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     var pair1 = result.Output;
                     var pair2 = pair1.Output2;
-                    docsStart = pair1.Output1.Value;
+                    docsStart = pair1.Output1;
                     docFreq = (int)pair2.Output1;
-                    totalTermFreq = pair2.Output2.Value;
+                    totalTermFreq = pair2.Output2;
                     return true;
                 }
                 else
@@ -141,7 +142,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 //System.out.println("seek to text=" + text.utf8ToString());
                 var result = fstEnum.SeekCeil(text);
-                if (result == null)
+                if (result is null)
                 {
                     //System.out.println("  end");
                     return SeekStatus.END;
@@ -151,9 +152,9 @@ namespace Lucene.Net.Codecs.SimpleText
                     //System.out.println("  got text=" + term.utf8ToString());
                     var pair1 = result.Output;
                     var pair2 = pair1.Output2;
-                    docsStart = pair1.Output1.Value;
+                    docsStart = pair1.Output1;
                     docFreq = (int)pair2.Output1;
-                    totalTermFreq = pair2.Output2.Value;
+                    totalTermFreq = pair2.Output2;
 
                     if (result.Input.Equals(text))
                     {
@@ -175,9 +176,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     var pair1 = fstEnum.Current.Output;
                     var pair2 = pair1.Output2;
-                    docsStart = pair1.Output1.Value;
+                    docsStart = pair1.Output1;
                     docFreq = (int)pair2.Output1;
-                    totalTermFreq = pair2.Output2.Value;
+                    totalTermFreq = pair2.Output2;
                     return fstEnum.Current.Input != null;
                 }
                 else
@@ -282,7 +283,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     SimpleTextUtil.ReadLine(input, scratch);
                     if (StringHelper.StartsWith(scratch, SimpleTextFieldsWriter.DOC))
                     {
-                        if (!first && (liveDocs == null || liveDocs.Get(docID)))
+                        if (!first && (liveDocs is null || liveDocs.Get(docID)))
                         {
                             input.Seek(lineStart);
                             if (!omitTF)
@@ -324,7 +325,7 @@ namespace Lucene.Net.Codecs.SimpleText
                             || StringHelper.StartsWith(scratch, SimpleTextFieldsWriter.FIELD)
                             || StringHelper.StartsWith(scratch, SimpleTextFieldsWriter.END),
                             "scratch={0}", new BytesRefFormatter(scratch, BytesRefFormat.UTF8));
-                        if (!first && (liveDocs == null || liveDocs.Get(docID)))
+                        if (!first && (liveDocs is null || liveDocs.Get(docID)))
                         {
                             input.Seek(lineStart);
                             if (!omitTF)
@@ -412,7 +413,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     //System.out.println("NEXT DOC: " + scratch.utf8ToString());
                     if (StringHelper.StartsWith(scratch, SimpleTextFieldsWriter.DOC))
                     {
-                        if (!first && (liveDocs == null || liveDocs.Get(docID)))
+                        if (!first && (liveDocs is null || liveDocs.Get(docID)))
                         {
                             nextDocStart = lineStart;
                             input.Seek(posStart);
@@ -451,7 +452,7 @@ namespace Lucene.Net.Codecs.SimpleText
                             StringHelper.StartsWith(scratch, SimpleTextFieldsWriter.TERM)
                             || StringHelper.StartsWith(scratch, SimpleTextFieldsWriter.FIELD)
                             || StringHelper.StartsWith(scratch, SimpleTextFieldsWriter.END));
-                        if (!first && (liveDocs == null || liveDocs.Get(docID)))
+                        if (!first && (liveDocs is null || liveDocs.Get(docID)))
                         {
                             nextDocStart = lineStart;
                             input.Seek(posStart);
@@ -550,12 +551,12 @@ namespace Lucene.Net.Codecs.SimpleText
             private long sumTotalTermFreq;
             private long sumDocFreq;
             private int docCount;
-            private FST<PairOutputs<long?, PairOutputs<long?, long?>.Pair>.Pair> fst;
+            private FST<PairOutputs<Int64, PairOutputs<Int64, Int64>.Pair>.Pair> fst;
             private int termCount;
             private readonly BytesRef scratch = new BytesRef(10);
             private readonly CharsRef scratchUTF16 = new CharsRef(10);
 
-            public SimpleTextTerms(SimpleTextFieldsReader outerInstance, String field, long termsStart, int maxDoc)
+            public SimpleTextTerms(SimpleTextFieldsReader outerInstance, string field, long termsStart, int maxDoc)
             {
                 this.outerInstance = outerInstance;
                 this.maxDoc = maxDoc;
@@ -567,11 +568,10 @@ namespace Lucene.Net.Codecs.SimpleText
             private void LoadTerms()
             {
                 PositiveInt32Outputs posIntOutputs = PositiveInt32Outputs.Singleton;
-                Builder<PairOutputs<long?, PairOutputs<long?, long?>.Pair>.Pair> b;
-                PairOutputs<long?, long?> outputsInner = new PairOutputs<long?, long?>(posIntOutputs, posIntOutputs);
-                PairOutputs<long?, PairOutputs<long?, long?>.Pair> outputs = new PairOutputs<long?, PairOutputs<long?, long?>.Pair>(posIntOutputs,
+                var outputsInner = new PairOutputs<Int64, Int64>(posIntOutputs, posIntOutputs);
+                var outputs = new PairOutputs<Int64, PairOutputs<Int64, Int64>.Pair>(posIntOutputs,
                     outputsInner);
-                b = new Builder<PairOutputs<long?, PairOutputs<long?, long?>.Pair>.Pair>(FST.INPUT_TYPE.BYTE1, outputs);
+                var b = new Builder<PairOutputs<Int64, PairOutputs<Int64, Int64>.Pair>.Pair>(FST.INPUT_TYPE.BYTE1, outputs);
                 IndexInput @in = (IndexInput)outerInstance.input.Clone();
                 @in.Seek(termsStart);
                 BytesRef lastTerm = new BytesRef(10);
@@ -689,15 +689,15 @@ namespace Lucene.Net.Codecs.SimpleText
             UninterruptableMonitor.Enter(this);
             try
             {
-                if (!termsCache.TryGetValue(field, out SimpleTextTerms terms) || terms == null)
+                if (!termsCache.TryGetValue(field, out SimpleTextTerms terms) || terms is null)
                 {
-                    if (!fields.TryGetValue(field, out long? fp) || !fp.HasValue)
+                    if (!fields.TryGetValue(field, out long fp))
                     {
                         return null;
                     }
                     else
                     {
-                        terms = new SimpleTextTerms(this, field, fp.Value, maxDoc);
+                        terms = new SimpleTextTerms(this, field, fp, maxDoc);
                         termsCache[field] = terms;
                     }
                 }

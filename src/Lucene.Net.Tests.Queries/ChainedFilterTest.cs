@@ -46,11 +46,7 @@ namespace Lucene.Net.Tests.Queries
         {
             base.SetUp();
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory);
             // we use the default Locale/TZ since LuceneTestCase randomizes it
             var cal = new GregorianCalendar().ToDateTime(2003, 1, 1, 0, 0, 0, 0); // 2003 January 01
             cal = TimeZoneInfo.ConvertTime(cal, TimeZoneInfo.Local);
@@ -98,7 +94,7 @@ namespace Lucene.Net.Tests.Queries
 
         private ChainedFilter GetChainedFilter(Filter[] chain, int[] logic)
         {
-            if (logic == null)
+            if (logic is null)
             {
                 return new ChainedFilter(chain);
             }
@@ -189,11 +185,7 @@ namespace Lucene.Net.Tests.Queries
         public virtual void TestWithCachingFilter()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             IndexReader reader = writer.GetReader();
             writer.Dispose();
 

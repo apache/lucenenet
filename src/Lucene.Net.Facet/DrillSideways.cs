@@ -150,7 +150,7 @@ namespace Lucene.Net.Facet
         public virtual DrillSidewaysResult Search(DrillDownQuery query, ICollector hitCollector)
         {
 
-            IDictionary<string, int?> drillDownDims = query.Dims;
+            IDictionary<string, int> drillDownDims = query.Dims;
 
             FacetsCollector drillDownCollector = new FacetsCollector();
 

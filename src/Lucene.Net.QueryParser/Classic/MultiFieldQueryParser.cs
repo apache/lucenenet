@@ -108,7 +108,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         protected internal override Query GetFieldQuery(string field, string queryText, int slop)
         {
-            if (field == null)
+            if (field is null)
             {
                 IList<BooleanClause> clauses = new JCG.List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
@@ -151,7 +151,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         protected internal override Query GetFieldQuery(string field, string queryText, bool quoted)
         {
-            if (field == null)
+            if (field is null)
             {
                 IList<BooleanClause> clauses = new JCG.List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
@@ -179,7 +179,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         protected internal override Query GetFuzzyQuery(string field, string termStr, float minSimilarity)
         {
-            if (field == null)
+            if (field is null)
             {
                 IList<BooleanClause> clauses = new JCG.List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
@@ -193,7 +193,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         protected internal override Query GetPrefixQuery(string field, string termStr)
         {
-            if (field == null)
+            if (field is null)
             {
                 IList<BooleanClause> clauses = new JCG.List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
@@ -207,7 +207,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         protected internal override Query GetWildcardQuery(string field, string termStr)
         {
-            if (field == null)
+            if (field is null)
             {
                 IList<BooleanClause> clauses = new JCG.List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
@@ -222,7 +222,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         protected internal override Query GetRangeQuery(string field, string part1, string part2, bool startInclusive, bool endInclusive)
         {
-            if (field == null)
+            if (field is null)
             {
                 IList<BooleanClause> clauses = new JCG.List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
@@ -236,7 +236,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         protected internal override Query GetRegexpQuery(string field, string termStr)
         {
-            if (field == null)
+            if (field is null)
             {
                 IList<BooleanClause> clauses = new JCG.List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)

@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         public virtual string GetMetaphone(string txt)
         {
             bool hard; // LUCENENET: IDE0059: Remove unnecessary value assignment
-            if (txt == null || txt.Length == 0)
+            if (txt is null || txt.Length == 0)
             {
                 return "";
             }

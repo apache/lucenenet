@@ -99,7 +99,7 @@ namespace Lucene.Net.Index.Sorter
                 childSlots, parentReverseMul, parentComparers, childReverseMul, childComparers);
         }
 
-        private class FieldComparerAnonymousClass : FieldComparer<int?>
+        private class FieldComparerAnonymousClass : FieldComparer<J2N.Numerics.Int32>
         {
             private readonly BlockJoinComparerSource outerInstance;
 
@@ -145,7 +145,7 @@ namespace Lucene.Net.Index.Sorter
                 bottomChild = childSlots[slot];
             }
 
-            public override void SetTopValue(object value)
+            public override void SetTopValue(J2N.Numerics.Int32 value)
             {
                 // we dont have enough information (the docid is needed)
                 throw UnsupportedOperationException.Create("this comparer cannot be used with deep paging");
@@ -172,7 +172,7 @@ namespace Lucene.Net.Index.Sorter
             {
 
                 DocIdSet parents = outerInstance.parentsFilter.GetDocIdSet(context, null);
-                if (parents == null)
+                if (parents is null)
                 {
                     throw IllegalStateException.Create("AtomicReader " + context.AtomicReader + " contains no parents!");
                 }
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index.Sorter
             }
 
             // LUCENENET NOTE: This was value(int) in Lucene.
-            public override IComparable this[int slot] => throw
+            public override J2N.Numerics.Int32 this[int slot] => throw
                 // really our sort "value" is more complex...
                 UnsupportedOperationException.Create("filling sort field values is not yet supported");
 

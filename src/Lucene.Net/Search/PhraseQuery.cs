@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
     {
         private string field;
         private readonly IList<Term> terms = new JCG.List<Term>(4); // LUCENENET: marked readonly
-        private readonly IList<int?> positions = new JCG.List<int?>(4); // LUCENENET: marked readonly
+        private readonly IList<int> positions = new JCG.List<int>(4); // LUCENENET: marked readonly
         private int maxPosition = 0;
         private int slop = 0;
 
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
             int position = 0;
             if (positions.Count > 0)
             {
-                position = (int)positions[positions.Count - 1] + 1;
+                position = positions[positions.Count - 1] + 1;
             }
 
             Add(term, position);
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search
             int[] result = new int[positions.Count];
             for (int i = 0; i < positions.Count; i++)
             {
-                result[i] = (int)positions[i];
+                result[i] = positions[i];
             }
             return result;
         }
@@ -199,7 +199,7 @@ namespace Lucene.Net.Search
                 this.postings = postings;
                 this.docFreq = docFreq;
                 this.position = position;
-                nTerms = terms == null ? 0 : terms.Length;
+                nTerms = terms is null ? 0 : terms.Length;
                 if (nTerms > 0)
                 {
                     if (terms.Length == 1)
@@ -268,7 +268,7 @@ namespace Lucene.Net.Search
                 {
                     return true;
                 }
-                if (obj == null)
+                if (obj is null)
                 {
                     return false;
                 }
@@ -285,9 +285,9 @@ namespace Lucene.Net.Search
                 {
                     return false;
                 }
-                if (terms == null)
+                if (terms is null)
                 {
-                    return other.terms == null;
+                    return other.terms is null;
                 }
                 return Arrays.Equals(terms, other.terms);
             }
@@ -344,7 +344,7 @@ namespace Lucene.Net.Search
                 PostingsAndFreq[] postingsFreqs = new PostingsAndFreq[outerInstance.terms.Count];
 
                 Terms fieldTerms = reader.GetTerms(outerInstance.field);
-                if (fieldTerms == null)
+                if (fieldTerms is null)
                 {
                     return null;
                 }
@@ -356,7 +356,7 @@ namespace Lucene.Net.Search
                 {
                     Term t = outerInstance.terms[i];
                     TermState state = states[i].Get(context.Ord);
-                    if (state == null) // term doesnt exist in this segment
+                    if (state is null) // term doesnt exist in this segment
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(TermNotInReader(reader, t), "no termstate found but term exists in reader");
                         return null;
@@ -366,13 +366,13 @@ namespace Lucene.Net.Search
 
                     // PhraseQuery on a field that did not index
                     // positions.
-                    if (postingsEnum == null)
+                    if (postingsEnum is null)
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(te.SeekExact(t.Bytes), "termstate found but no term exists in reader");
                         // term does exist, but has no positions
                         throw IllegalStateException.Create("field \"" + t.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + t.Text + ")");
                     }
-                    postingsFreqs[i] = new PostingsAndFreq(postingsEnum, te.DocFreq, (int)outerInstance.positions[i], t);
+                    postingsFreqs[i] = new PostingsAndFreq(postingsEnum, te.DocFreq, outerInstance.positions[i], t);
                 }
 
                 // sort by increasing docFreq order
@@ -455,9 +455,9 @@ namespace Lucene.Net.Search
             string[] pieces = new string[maxPosition + 1];
             for (int i = 0; i < terms.Count; i++)
             {
-                int pos = (int)positions[i];
+                int pos = positions[i];
                 string s = pieces[pos];
-                if (s == null)
+                if (s is null)
                 {
                     s = terms[i].Text;
                 }
@@ -474,7 +474,7 @@ namespace Lucene.Net.Search
                     buffer.Append(' ');
                 }
                 string s = pieces[i];
-                if (s == null)
+                if (s is null)
                 {
                     buffer.Append('?');
                 }

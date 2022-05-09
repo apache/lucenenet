@@ -122,26 +122,34 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                 Filter filter;
                 if (type.Equals("int", StringComparison.OrdinalIgnoreCase))
                 {
-                    filter = NumericRangeFilter.NewInt32Range(field, precisionStep, Convert
-                        .ToInt32(lowerTerm, CultureInfo.InvariantCulture), Convert.ToInt32(upperTerm, CultureInfo.InvariantCulture), lowerInclusive,
+                    filter = NumericRangeFilter.NewInt32Range(field, precisionStep,
+                        J2N.Numerics.Int32.Parse(lowerTerm, NumberFormatInfo.InvariantInfo),
+                        J2N.Numerics.Int32.Parse(upperTerm, NumberFormatInfo.InvariantInfo),
+                        lowerInclusive,
                         upperInclusive);
                 }
                 else if (type.Equals("long", StringComparison.OrdinalIgnoreCase))
                 {
-                    filter = NumericRangeFilter.NewInt64Range(field, precisionStep, Convert
-                        .ToInt64(lowerTerm, CultureInfo.InvariantCulture), Convert.ToInt64(upperTerm, CultureInfo.InvariantCulture), lowerInclusive,
+                    filter = NumericRangeFilter.NewInt64Range(field, precisionStep,
+                        J2N.Numerics.Int64.Parse(lowerTerm, NumberFormatInfo.InvariantInfo),
+                        J2N.Numerics.Int64.Parse(upperTerm, NumberFormatInfo.InvariantInfo),
+                        lowerInclusive,
                         upperInclusive);
                 }
                 else if (type.Equals("double", StringComparison.OrdinalIgnoreCase))
                 {
-                    filter = NumericRangeFilter.NewDoubleRange(field, precisionStep, Convert
-                        .ToDouble(lowerTerm, CultureInfo.InvariantCulture), Convert.ToDouble(upperTerm, CultureInfo.InvariantCulture), lowerInclusive,
+                    filter = NumericRangeFilter.NewDoubleRange(field, precisionStep,
+                        J2N.Numerics.Double.Parse(lowerTerm, NumberFormatInfo.InvariantInfo),
+                        J2N.Numerics.Double.Parse(upperTerm, NumberFormatInfo.InvariantInfo),
+                        lowerInclusive,
                         upperInclusive);
                 }
                 else if (type.Equals("float", StringComparison.OrdinalIgnoreCase))
                 {
-                    filter = NumericRangeFilter.NewSingleRange(field, precisionStep, Convert
-                        .ToSingle(lowerTerm, CultureInfo.InvariantCulture), Convert.ToSingle(upperTerm, CultureInfo.InvariantCulture), lowerInclusive,
+                    filter = NumericRangeFilter.NewSingleRange(field, precisionStep,
+                        J2N.Numerics.Single.Parse(lowerTerm, NumberFormatInfo.InvariantInfo),
+                        J2N.Numerics.Single.Parse(upperTerm, NumberFormatInfo.InvariantInfo),
+                        lowerInclusive,
                         upperInclusive);
                 }
                 else

@@ -38,7 +38,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
     {
         public StandardQueryParser GetParser(Analyzer a)
         {
-            if (a == null) a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
+            if (a is null) a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             StandardQueryParser qp = new StandardQueryParser(a);
             qp.DefaultOperator = (Operator.OR);
 
@@ -109,7 +109,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
 
         public override void SetDateResolution(ICommonQueryParserConfiguration cqpC,
-            string field, DateTools.Resolution value)
+            string field, DateResolution value)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(cqpC is StandardQueryParser);
             StandardQueryParser qp = (StandardQueryParser)cqpC;

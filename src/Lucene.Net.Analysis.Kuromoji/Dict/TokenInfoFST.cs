@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Util.Fst;
 using System.Diagnostics;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Analysis.Ja.Dict
 {
@@ -30,22 +31,22 @@ namespace Lucene.Net.Analysis.Ja.Dict
     /// </summary>
     public sealed class TokenInfoFST
     {
-        private readonly FST<long?> fst;
+        private readonly FST<Int64> fst;
 
         // depending upon fasterButMoreRam, we cache root arcs for either 
         // kana (0x3040-0x30FF) or kana + han (0x3040-0x9FFF)
         // false: 191 arcs
         // true:  28,607 arcs (costs ~1.5MB)
         private readonly int cacheCeiling;
-        private readonly FST.Arc<long?>[] rootCache;
+        private readonly FST.Arc<Int64>[] rootCache;
 
-        private readonly long? NO_OUTPUT;
+        private readonly Int64 NO_OUTPUT;
 
         // LUCENENET specific - made field private
         // and added public property for reading it.
-        public long? NoOutput => NO_OUTPUT;
+        public Int64 NoOutput => NO_OUTPUT;
 
-        public TokenInfoFST(FST<long?> fst, bool fasterButMoreRam)
+        public TokenInfoFST(FST<Int64> fst, bool fasterButMoreRam)
         {
             this.fst = fst;
             this.cacheCeiling = fasterButMoreRam ? 0x9FFF : 0x30FF;
@@ -53,31 +54,31 @@ namespace Lucene.Net.Analysis.Ja.Dict
             rootCache = CacheRootArcs();
         }
 
-        private FST.Arc<long?>[] CacheRootArcs()
+        private FST.Arc<Int64>[] CacheRootArcs()
         {
-            FST.Arc<long?>[] rootCache = new FST.Arc<long?>[1 + (cacheCeiling - 0x3040)];
-            FST.Arc<long?> firstArc = new FST.Arc<long?>();
+            FST.Arc<Int64>[] rootCache = new FST.Arc<Int64>[1 + (cacheCeiling - 0x3040)];
+            FST.Arc<Int64> firstArc = new FST.Arc<Int64>();
             fst.GetFirstArc(firstArc);
-            FST.Arc<long?> arc = new FST.Arc<long?>();
+            FST.Arc<Int64> arc = new FST.Arc<Int64>();
             FST.BytesReader fstReader = fst.GetBytesReader();
             // TODO: jump to 3040, readNextRealArc to ceiling? (just be careful we don't add bugs)
             for (int i = 0; i < rootCache.Length; i++)
             {
                 if (fst.FindTargetArc(0x3040 + i, firstArc, arc, fstReader) != null)
                 {
-                    rootCache[i] = new FST.Arc<long?>().CopyFrom(arc);
+                    rootCache[i] = new FST.Arc<Int64>().CopyFrom(arc);
                 }
             }
             return rootCache;
         }
 
-        public FST.Arc<long?> FindTargetArc(int ch, FST.Arc<long?> follow, FST.Arc<long?> arc, bool useCache, FST.BytesReader fstReader)
+        public FST.Arc<Int64> FindTargetArc(int ch, FST.Arc<Int64> follow, FST.Arc<Int64> arc, bool useCache, FST.BytesReader fstReader)
         {
             if (useCache && ch >= 0x3040 && ch <= cacheCeiling)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(ch != FST.END_LABEL);
-                FST.Arc<long?> result = rootCache[ch - 0x3040];
-                if (result == null)
+                FST.Arc<Int64> result = rootCache[ch - 0x3040];
+                if (result is null)
                 {
                     return null;
                 }
@@ -93,7 +94,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             }
         }
 
-        public FST.Arc<long?> GetFirstArc(FST.Arc<long?> arc)
+        public FST.Arc<Int64> GetFirstArc(FST.Arc<Int64> arc)
         {
             return fst.GetFirstArc(arc);
         }
@@ -108,6 +109,6 @@ namespace Lucene.Net.Analysis.Ja.Dict
         /// <para/>
         /// @lucene.internal 
         /// </summary>
-        internal FST<long?> InternalFST => fst;
+        internal FST<Int64> InternalFST => fst;
     }
 }

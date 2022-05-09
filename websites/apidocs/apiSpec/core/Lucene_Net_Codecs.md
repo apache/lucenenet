@@ -180,20 +180,20 @@ The <xref:Lucene.Net.TestFramework> library contains specialized classes to mini
 > [!NOTE]
 > .NET Standard is not an executable target. Tests will not run unless you target a framework such as `netcoreapp3.1` or `net48`.
 
-Here is an example project file for .NET Core 3.1 for testing a project named `MyCodecs.csproj`.
+Here is an example project file for .NET 5 for testing a project named `MyCodecs.csproj`.
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-    <PackageReference Include="nunit" Version="3.9.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.16.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
-    <PackageReference Include="Lucene.Net.TestFramework" Version="4.8.0-beta00008" />
+    <PackageReference Include="nunit" Version="3.13.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+    <PackageReference Include="Lucene.Net.TestFramework" Version="4.8.0-beta00016" />
     <PackageReference Include="System.Net.Primitives" Version="4.3.0"/>
     </ItemGroup>
 
@@ -259,8 +259,11 @@ The goal of the <xref:Lucene.Net.Index.BasePostingsFormatTestCase> is that if al
 
 Codecs, postings formats and doc values formats can be injected into the test framework to integration test them against other Lucene.NET components. This is an advanced scenario that assumes integration tests for Lucene.NET components exist in your test project.
 
-In your test project, add a new file to the root of the project named `Startup.cs`. Remove any namespaces from the  
-file, but leave the `Startup` class and inherit <xref:Lucene.Net.Util.LuceneTestFrameworkInitializer>.
+In your test project, add a new file to the root of the project named `Startup.cs` that inherits <xref:Lucene.Net.Util.LuceneTestFrameworkInitializer>. The file may exist in any namespace. Override the `Initialize()` method to set your custom `CodecFactory`.
+
+> [!NOTE]
+> There may only be one `LuceneTestFrameworkInitializer` subclass per assembly.
+
 
 ```cs
 public class Startup : LuceneTestFrameworkInitializer
@@ -268,7 +271,7 @@ public class Startup : LuceneTestFrameworkInitializer
     /// <summary>
     /// Runs before all tests in the current assembly
     /// </summary>
-    protected override void TestFrameworkSetUp()
+    protected override void Initialize()
     {
         CodecFactory = new TestCodecFactory {
             CustomCodecTypes = new Codec[] { typeof(MyCodec) }
@@ -276,6 +279,9 @@ public class Startup : LuceneTestFrameworkInitializer
     }
 }
 ```
+
+> [!IMPORTANT]
+> In Lucene.NET 4.8.0-beta00015 and prior, the `CodecFactory` should be set in the `TestFrameworkSetUp()` method, however all later versions must use the `Initialize()` method to set the factory properties, or an `InvalidOperationException` will be thrown.
 
 ## Setting the Default Codec for use in Tests
 

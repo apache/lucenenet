@@ -6,8 +6,8 @@ using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -128,7 +128,7 @@ namespace Lucene.Net.Spatial
             }
         }
 
-        protected virtual Spatial4n.Core.Shapes.IPoint randomPoint()
+        protected virtual IPoint randomPoint()
         {
             IRectangle WB = ctx.WorldBounds;
             return ctx.MakePoint(

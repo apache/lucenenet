@@ -90,7 +90,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             try
             {
                 line = reader.ReadLine();
-                if (line == null)
+                if (line is null)
                 {
                     if (!m_forever)
                     {
@@ -100,7 +100,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     OpenFile();
                     return GetNextDocData(docData);
                 }
-                if (docDataLineReader == null)
+                if (docDataLineReader is null)
                 { // first line ever, one time initialization,
                     docDataLineReader = CreateDocDataLineReader(line);
                     if (skipHeaderLine)
@@ -171,12 +171,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             base.SetConfig(config);
             string fileName = config.Get("docs.file", null);
-            if (fileName == null)
+            if (fileName is null)
             {
                 throw new ArgumentException("docs.file must be set");
             }
             file = new FileInfo(fileName);
-            if (m_encoding == null)
+            if (m_encoding is null)
             {
                 m_encoding = Encoding.UTF8;
             }
@@ -322,7 +322,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     break;
                 case FieldName.PROP:
                     var p = docData.Props;
-                    if (p == null)
+                    if (p is null)
                     {
                         p = new Dictionary<string, string>();
                         docData.Props = p;

@@ -49,7 +49,7 @@ namespace Lucene.Net.Facet.Range
             // track the start vs end case separately because if a
             // given point is both, then it must be its own
             // elementary interval:
-            IDictionary<long?, int?> endsMap = new Dictionary<long?, int?>
+            IDictionary<long, int> endsMap = new Dictionary<long, int>
             {
                 [long.MinValue] = 1,
                 [long.MaxValue] = 2
@@ -57,13 +57,13 @@ namespace Lucene.Net.Facet.Range
 
             foreach (Int64Range range in ranges)
             {
-                if (!endsMap.TryGetValue(range.minIncl, out int? cur))
+                if (!endsMap.TryGetValue(range.minIncl, out int cur))
                 {
                     endsMap[range.minIncl] = 1;
                 }
                 else
                 {
-                    endsMap[range.minIncl] = (int)cur | 1;
+                    endsMap[range.minIncl] = cur | 1;
                 }
 
                 if (!endsMap.TryGetValue(range.maxIncl, out cur))
@@ -72,17 +72,17 @@ namespace Lucene.Net.Facet.Range
                 }
                 else
                 {
-                    endsMap[range.maxIncl] = (int)cur | 2;
+                    endsMap[range.maxIncl] = cur | 2;
                 }
             }
 
-            var endsList = new JCG.List<long?>(endsMap.Keys);
+            var endsList = new JCG.List<long>(endsMap.Keys);
             endsList.Sort();
 
             // Build elementaryIntervals (a 1D Venn diagram):
             IList<InclusiveRange> elementaryIntervals = new JCG.List<InclusiveRange>();
             int upto0 = 1;
-            long v = endsList[0] ?? 0;
+            long v = endsList[0];
             long prev;
             if (endsMap[v] == 3)
             {
@@ -96,8 +96,8 @@ namespace Lucene.Net.Facet.Range
 
             while (upto0 < endsList.Count)
             {
-                v = endsList[upto0] ?? 0;
-                int flags = endsMap[v] ?? 0;
+                v = endsList[upto0];
+                int flags = endsMap[v];
                 //System.out.println("  v=" + v + " flags=" + flags);
                 if (flags == 3)
                 {
@@ -308,7 +308,7 @@ namespace Lucene.Net.Facet.Range
 
             // Which range indices to output when a query goes
             // through this node:
-            internal IList<int?> outputs;
+            internal IList<int> outputs;
 
             public Int64RangeNode(long start, long end, Int64RangeNode left, Int64RangeNode right, int leafIndex)
             {
@@ -343,9 +343,9 @@ namespace Lucene.Net.Facet.Range
                 {
                     // Our range is fully included in the incoming
                     // range; add to our output list:
-                    if (outputs == null)
+                    if (outputs is null)
                     {
-                        outputs = new JCG.List<int?>();
+                        outputs = new JCG.List<int>();
                     }
                     outputs.Add(index);
                 }
@@ -361,9 +361,9 @@ namespace Lucene.Net.Facet.Range
             internal void ToString(StringBuilder sb, int depth)
             {
                 Indent(sb, depth);
-                if (left == null)
+                if (left is null)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(right == null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(right is null);
                     sb.Append("leaf: " + start + " to " + end);
                 }
                 else

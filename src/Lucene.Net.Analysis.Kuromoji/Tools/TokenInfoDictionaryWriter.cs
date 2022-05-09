@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Analysis.Ja.Dict;
 using Lucene.Net.Util.Fst;
 using System.IO;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Analysis.Ja.Util
 {
@@ -23,14 +24,14 @@ namespace Lucene.Net.Analysis.Ja.Util
 
     public class TokenInfoDictionaryWriter : BinaryDictionaryWriter
     {
-        private FST<long?> fst;
+        private FST<Int64> fst;
 
         public TokenInfoDictionaryWriter(int size)
             : base(typeof(TokenInfoDictionary), size)
         {
         }
 
-        public virtual void SetFST(FST<long?> fst)
+        public virtual void SetFST(FST<Int64> fst)
         {
             this.fst = fst;
         }

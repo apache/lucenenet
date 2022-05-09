@@ -38,14 +38,14 @@ namespace Lucene.Net
         [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
         public override void TestPrivateFieldNames(Type typeFromTargetAssembly)
         {
-            base.TestPrivateFieldNames(typeFromTargetAssembly, @"^Lucene\.Net\.Support\.(?:ConcurrentHashSet|PlatformHelper)|^Lucene\.ExceptionExtensions");
+            base.TestPrivateFieldNames(typeFromTargetAssembly, @"^Lucene\.Net\.Support\.(?:ConcurrentHashSet|PlatformHelper|DateTimeOffsetUtil)|^Lucene\.ExceptionExtensions");
         }
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly, @"^Lucene\.Net\.Util\.(?:LightWeight|Disposable)ThreadLocal`1\+(?:LocalState|CurrentThreadState)|^System\.Runtime\.CompilerServices");
+            base.TestPublicFields(typeFromTargetAssembly, @"^Lucene\.Net\.Util\.(?:LightWeight|Disposable)ThreadLocal`1\+(?:LocalState|CurrentThreadState)|^System\.Runtime\.CompilerServices|^Lucene\.Net\.Search\.FieldDoc\.Fields");
         }
 
         [Test, LuceneNetSpecific]

@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.OpenNlp
             dictionaryFile = Get(args, DICTIONARY);
             lemmatizerModelFile = Get(args, LEMMATIZER_MODEL);
 
-            if (dictionaryFile == null && lemmatizerModelFile == null)
+            if (dictionaryFile is null && lemmatizerModelFile is null)
             {
                 throw new ArgumentException("Configuration Error: missing parameter: at least one of '"
                     + DICTIONARY + "' and '" + LEMMATIZER_MODEL + "' must be provided.");

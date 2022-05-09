@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -53,11 +53,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             dir = NewDirectory();
-            iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            iw = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             Field idField = new StringField("id", "", Field.Store.NO);
             doc.Add(idField);
@@ -177,11 +173,7 @@ namespace Lucene.Net.Search
         public virtual void TestCachingWorks()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             writer.Dispose();
 
             IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
@@ -209,11 +201,7 @@ namespace Lucene.Net.Search
         public virtual void TestNullDocIdSet()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             writer.Dispose();
 
             IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
@@ -252,11 +240,7 @@ namespace Lucene.Net.Search
         public virtual void TestNullDocIdSetIterator()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             writer.Dispose();
 
             IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
@@ -312,13 +296,13 @@ namespace Lucene.Net.Search
             CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
             DocIdSet originalSet = filter.GetDocIdSet(context, (context.AtomicReader).LiveDocs);
             DocIdSet cachedSet = cacher.GetDocIdSet(context, (context.AtomicReader).LiveDocs);
-            if (originalSet == null)
+            if (originalSet is null)
             {
                 Assert.IsNull(cachedSet);
             }
-            if (cachedSet == null)
+            if (cachedSet is null)
             {
-                Assert.IsTrue(originalSet == null || originalSet.GetIterator() == null);
+                Assert.IsTrue(originalSet is null || originalSet.GetIterator() is null);
             }
             else
             {
@@ -331,7 +315,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    Assert.IsTrue(cachedSet is FixedBitSet || cachedSet == null, "Cached DocIdSet must be an FixedBitSet if the original one was not cacheable");
+                    Assert.IsTrue(cachedSet is FixedBitSet || cachedSet is null, "Cached DocIdSet must be an FixedBitSet if the original one was not cacheable");
                 }
             }
         }
@@ -340,11 +324,7 @@ namespace Lucene.Net.Search
         public virtual void TestIsCacheAble()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             writer.AddDocument(new Document());
             writer.Dispose();
 
@@ -391,11 +371,7 @@ namespace Lucene.Net.Search
             // (must) get an NRT reader:
             DirectoryReader reader = DirectoryReader.Open(writer.IndexWriter, true);
             // same reason we don't wrap?
-            IndexSearcher searcher = NewSearcher(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                reader, false);
+            IndexSearcher searcher = NewSearcher(reader, false);
 
             // add a doc, refresh the reader, and check that it's there
             Document doc = new Document();
@@ -403,11 +379,7 @@ namespace Lucene.Net.Search
             writer.AddDocument(doc);
 
             reader = RefreshReader(reader);
-            searcher = NewSearcher(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                reader, false);
+            searcher = NewSearcher(reader, false);
 
             TopDocs docs = searcher.Search(new MatchAllDocsQuery(), 1);
             Assert.AreEqual(1, docs.TotalHits, "Should find a hit...");
@@ -484,11 +456,7 @@ namespace Lucene.Net.Search
             oldReader = reader;
 
             reader = RefreshReader(reader);
-            searcher = NewSearcher(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                reader, false);
+            searcher = NewSearcher(reader, false);
 
             docs = searcher.Search(new MatchAllDocsQuery(), filter, 1);
             Assert.AreEqual(2, docs.TotalHits, "[query + filter] Should find 2 hits...");
@@ -504,11 +472,7 @@ namespace Lucene.Net.Search
             writer.DeleteDocuments(new Term("id", "1"));
 
             reader = RefreshReader(reader);
-            searcher = NewSearcher(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                reader, false);
+            searcher = NewSearcher(reader, false);
 
             docs = searcher.Search(new MatchAllDocsQuery(), filter, 1);
             Assert.AreEqual(0, docs.TotalHits, "[query + filter] Should *not* find a hit...");

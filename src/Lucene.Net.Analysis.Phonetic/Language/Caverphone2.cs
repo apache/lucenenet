@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         public override string Encode(string source)
         {
             string txt = source;
-            if (txt == null || txt.Length == 0)
+            if (txt is null || txt.Length == 0)
             {
                 return TEN_1;
             }

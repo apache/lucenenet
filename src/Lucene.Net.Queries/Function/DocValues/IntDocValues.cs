@@ -79,12 +79,12 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override string StrVal(int doc)
         {
-            return Int32Val(doc).ToString(CultureInfo.InvariantCulture);
+            return J2N.Numerics.Int32.ToString(Int32Val(doc), CultureInfo.InvariantCulture);
         }
 
         public override object ObjectVal(int doc)
         {
-            return Exists(doc) ? Int32Val(doc) : (int?)null;
+            return Exists(doc) ? J2N.Numerics.Int32.GetInstance(Int32Val(doc)) : null; // LUCENENET: In Java, the conversion to instance of java.util.Integer is implicit, but we need to do an explicit conversion
         }
 
         public override string ToString(int doc)
@@ -98,7 +98,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
             // instead of using separate comparison functions, adjust the endpoints.
 
-            if (lowerVal == null)
+            if (lowerVal is null)
             {
                 lower = int.MinValue;
             }
@@ -111,7 +111,7 @@ namespace Lucene.Net.Queries.Function.DocValues
                 }
             }
 
-            if (upperVal == null)
+            if (upperVal is null)
             {
                 upper = int.MaxValue;
             }

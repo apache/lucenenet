@@ -56,11 +56,11 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
         public override void ReflectWith(IAttributeReflector reflector)
         {
             string type = GetInflectionType();
-            string typeEN = type == null ? null : ToStringUtil.GetInflectionTypeTranslation(type);
+            string typeEN = type is null ? null : ToStringUtil.GetInflectionTypeTranslation(type);
             reflector.Reflect<IInflectionAttribute>("inflectionType", type);
             reflector.Reflect<IInflectionAttribute>("inflectionType (en)", typeEN);
             string form = GetInflectionForm();
-            string formEN = form == null ? null : ToStringUtil.GetInflectedFormTranslation(form);
+            string formEN = form is null ? null : ToStringUtil.GetInflectedFormTranslation(form);
             reflector.Reflect<IInflectionAttribute>("inflectionForm", form);
             reflector.Reflect<IInflectionAttribute>("inflectionForm (en)", formEN);
         }

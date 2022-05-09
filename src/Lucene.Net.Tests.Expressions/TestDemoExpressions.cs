@@ -43,11 +43,7 @@ namespace Lucene.Net.Expressions
         {
             base.SetUp();
             dir = NewDirectory();
-            var iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            var iw = new RandomIndexWriter(Random, dir);
             var doc = new Document
             {
                 NewStringField("id", "1", Field.Store.YES),
@@ -96,9 +92,11 @@ namespace Lucene.Net.Expressions
             // compile an expression:
             var expr = JavascriptCompiler.Compile("sqrt(_score) + ln(popularity)");
             // we use SimpleBindings: which just maps variables to SortField instances
-            SimpleBindings bindings = new SimpleBindings();
-            bindings.Add(new SortField("_score", SortFieldType.SCORE));
-            bindings.Add(new SortField("popularity", SortFieldType.INT32));
+            SimpleBindings bindings = new SimpleBindings
+            {
+                new SortField("_score", SortFieldType.SCORE),
+                new SortField("popularity", SortFieldType.INT32),
+            };
             // create a sort field and sort by it (reverse order)
             Sort sort = new Sort(expr.GetSortField(bindings, true));
             Query query = new TermQuery(new Term("body", "contents"));
@@ -119,7 +117,7 @@ namespace Lucene.Net.Expressions
             {
                 FieldDoc d = (FieldDoc)td.ScoreDocs[i];
                 float expected = (float)Math.Sqrt(d.Score);
-                float actual = (float)((double)d.Fields[0]);
+                float actual = ((J2N.Numerics.Double)d.Fields[0]).ToSingle();
                 Assert.AreEqual(expected, actual, CheckHits.ExplainToleranceDelta(expected, actual));
             }
         }
@@ -138,7 +136,7 @@ namespace Lucene.Net.Expressions
             {
                 FieldDoc d = (FieldDoc)td.ScoreDocs[i];
                 float expected = 2 * d.Score;
-                float actual = (float)((double)d.Fields[0]);
+                float actual = ((J2N.Numerics.Double)d.Fields[0]).ToSingle();
                 Assert.AreEqual(expected, actual, CheckHits.ExplainToleranceDelta
                     (expected, actual));
             }
@@ -150,9 +148,11 @@ namespace Lucene.Net.Expressions
         {
             var expr1 = JavascriptCompiler.Compile("_score");
             var expr2 = JavascriptCompiler.Compile("2*expr1");
-            var bindings = new SimpleBindings();
-            bindings.Add(new SortField("_score", SortFieldType.SCORE));
-            bindings.Add("expr1", expr1);
+            var bindings = new SimpleBindings
+            {
+                new SortField("_score", SortFieldType.SCORE),
+                { "expr1", expr1 },
+            };
             Sort sort = new Sort(expr2.GetSortField(bindings, true));
             Query query = new TermQuery(new Term("body", "contents"));
             TopFieldDocs td = searcher.Search(query, null, 3, sort, true, true);
@@ -160,7 +160,7 @@ namespace Lucene.Net.Expressions
             {
                 FieldDoc d = (FieldDoc)td.ScoreDocs[i];
                 float expected = 2 * d.Score;
-                float actual = (float)((double)d.Fields[0]);
+                float actual = ((J2N.Numerics.Double)d.Fields[0]).ToSingle();
                 Assert.AreEqual(expected, actual, CheckHits.ExplainToleranceDelta
                     (expected, actual));
             }
@@ -199,7 +199,7 @@ namespace Lucene.Net.Expressions
             {
                 FieldDoc d = (FieldDoc)td.ScoreDocs[i_1];
                 float expected = n * d.Score;
-                float actual = (float)((double)d.Fields[0]);
+                float actual = ((J2N.Numerics.Double)d.Fields[0]).ToSingle();
                 Assert.AreEqual(expected, actual, CheckHits.ExplainToleranceDelta(expected, actual));
             }
         }
@@ -214,11 +214,11 @@ namespace Lucene.Net.Expressions
             Sort sort = new Sort(distance.GetSortField(bindings, false));
             TopFieldDocs td = searcher.Search(new MatchAllDocsQuery(), null, 3, sort);
             FieldDoc d = (FieldDoc)td.ScoreDocs[0];
-            Assert.AreEqual(0.4619D, (double)d.Fields[0], 1E-4);
+            Assert.AreEqual(0.4619D, (J2N.Numerics.Double)d.Fields[0], 1E-4);
             d = (FieldDoc)td.ScoreDocs[1];
-            Assert.AreEqual(1.0546D, (double)d.Fields[0], 1E-4);
+            Assert.AreEqual(1.0546D, (J2N.Numerics.Double)d.Fields[0], 1E-4);
             d = (FieldDoc)td.ScoreDocs[2];
-            Assert.AreEqual(5.2842D, (double)d.Fields[0], 1E-4);
+            Assert.AreEqual(5.2842D, (J2N.Numerics.Double)d.Fields[0], 1E-4);
         }
     }
 }

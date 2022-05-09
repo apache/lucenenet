@@ -64,7 +64,7 @@ namespace Lucene.Net.Codecs.MockRandom
         public MockRandomPostingsFormat(Random random)
             : base()
         {
-            if (random == null)
+            if (random is null)
                 this.seedRandom = new RandomAnonymousClassHelper();
             else
                 this.seedRandom = new J2N.Randomizer(random.NextInt64());

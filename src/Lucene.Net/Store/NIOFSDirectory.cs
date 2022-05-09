@@ -30,23 +30,21 @@ namespace Lucene.Net.Store
     /// <para/>
     /// This class only uses <see cref="FileStream"/> when reading; writing is achieved with
     /// <see cref="FSDirectory.FSIndexOutput"/>.
-    /// <para>
-    /// <b>NOTE</b>: <see cref="NIOFSDirectory"/> is not recommended on Windows because of a bug in
-    /// how FileChannel.read is implemented in Sun's JRE. Inside of the
-    /// implementation the position is apparently synchronized. See <a
-    /// href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6265734">here</a>
-    /// for details.
-    /// </para>
-    /// <para>
-    /// <font color="red"><b>NOTE:</b> Accessing this class either directly or
-    /// indirectly from a thread while it's interrupted can close the
-    /// underlying file descriptor immediately if at the same time the thread is
-    /// blocked on IO. The file descriptor will remain closed and subsequent access
-    /// to <see cref="NIOFSDirectory"/> will throw a <see cref="ObjectDisposedException"/>. If
-    /// your application uses
-    /// <see cref="System.Threading.Tasks.Task"/> you should use <see cref="SimpleFSDirectory"/> in
-    /// favor of <see cref="NIOFSDirectory"/>.</font>
-    /// </para>
+    /// <para/>
+    /// <b>NOTE</b>: Since the .NET <see cref="NIOFSDirectory"/> uses additional seeking during reads,
+    /// it will generally be slightly less efficient than <see cref="SimpleFSDirectory"/>.
+    /// This class has poor concurrent read performance (multiple threads will
+    /// bottleneck) as it synchronizes when multiple threads
+    /// read from the same file. It's usually better to use
+    /// <see cref="MMapDirectory"/> for reading.
+    /// <para/>
+    /// <font color="red"><b>NOTE:</b> Unlike in Java, it is not recommended to use
+    /// <see cref="System.Threading.Thread.Interrupt()"/> in .NET
+    /// in conjunction with an open <see cref="FSDirectory"/> because it is not guaranteed to exit atomically.
+    /// Any <c>lock</c> statement or <see cref="System.Threading.Monitor.Enter(object)"/> call can throw a
+    /// <see cref="System.Threading.ThreadInterruptedException"/>, which makes shutting down unpredictable.
+    /// To exit parallel tasks safely, we recommend using <see cref="System.Threading.Tasks.Task"/>s
+    /// and "interrupt" them with <see cref="System.Threading.CancellationToken"/>s.</font>
     /// </summary>
     public class NIOFSDirectory : FSDirectory
     {

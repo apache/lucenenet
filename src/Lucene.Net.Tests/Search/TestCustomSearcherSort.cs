@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -56,11 +56,7 @@ namespace Lucene.Net.Search
             base.SetUp();
             INDEX_SIZE = AtLeast(2000);
             index = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                LuceneTestCase.Random, index);
+            RandomIndexWriter writer = new RandomIndexWriter(LuceneTestCase.Random, index);
             RandomGen random = new RandomGen(this, Random);
             for (int i = 0; i < INDEX_SIZE; ++i) // don't decrease; if to low the
             {
@@ -126,7 +122,7 @@ namespace Lucene.Net.Search
             // make a query without sorting first
             ScoreDoc[] hitsByRank = searcher.Search(query, null, int.MaxValue).ScoreDocs;
             CheckHits(hitsByRank, "Sort by rank: "); // check for duplicates
-            IDictionary<int?, int?> resultMap = new JCG.SortedDictionary<int?, int?>();
+            IDictionary<int, int> resultMap = new JCG.SortedDictionary<int, int>();
             // store hits in TreeMap - TreeMap does not allow duplicates; existing
             // entries are silently overwritten
             for (int hitid = 0; hitid < hitsByRank.Length; ++hitid)
@@ -142,7 +138,7 @@ namespace Lucene.Net.Search
             // besides the sorting both sets of hits must be identical
             for (int hitid = 0; hitid < resultSort.Length; ++hitid)
             {
-                int? idHitDate = Convert.ToInt32(resultSort[hitid].Doc); // document ID
+                int idHitDate = Convert.ToInt32(resultSort[hitid].Doc); // document ID
                 // from sorted
                 // search
                 if (!resultMap.ContainsKey(idHitDate))
@@ -175,13 +171,11 @@ namespace Lucene.Net.Search
         {
             if (hits != null)
             {
-                IDictionary<int?, int?> idMap = new JCG.SortedDictionary<int?, int?>();
+                IDictionary<int, int> idMap = new JCG.SortedDictionary<int, int>();
                 for (int docnum = 0; docnum < hits.Length; ++docnum)
                 {
-                    int? luceneId = null;
-
-                    luceneId = Convert.ToInt32(hits[docnum].Doc);
-                    if (idMap.TryGetValue(luceneId, out int? value))
+                    int luceneId = Convert.ToInt32(hits[docnum].Doc);
+                    if (idMap.TryGetValue(luceneId, out int value))
                     {
                         StringBuilder message = new StringBuilder(prefix);
                         message.Append("Duplicate key for hit index = ");
@@ -257,7 +251,7 @@ namespace Lucene.Net.Search
 
             // Just to generate some different Lucene Date strings
             internal virtual string LuceneDate
-                => DateTools.TimeToString((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + random.Next() - int.MinValue, DateTools.Resolution.DAY);
+                => DateTools.TimeToString((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + random.Next() - int.MinValue, DateResolution.DAY);
         }
     }
 }

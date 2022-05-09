@@ -31,8 +31,8 @@
   <ItemGroup>
     <Compile Include="..\Lucene.Net.Tests\Properties\AssemblyInfo.cs" Link="Properties\AssemblyInfo.cs" />
     <Compile Include="..\Lucene.Net.Tests\Index\TestBinaryDocValuesUpdates.cs" LinkBase="Index" />
-    <Compile Include="..\Lucene.Net.Tests\Index\TestIndexWriterReader.cs" LinkBase="Index" />
-    <Compile Include="..\Lucene.Net.Tests\Index\TestIndexWriter.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestI*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestJ*.cs" LinkBase="Index" />
     <Compile Include="..\Lucene.Net.Tests\Index\TestK*.cs" LinkBase="Index" />
     <Compile Include="..\Lucene.Net.Tests\Index\TestL*.cs" LinkBase="Index" />
     <Compile Include="..\Lucene.Net.Tests\Index\TestM*.cs" LinkBase="Index" />
@@ -84,7 +84,7 @@
     </ProjectReference>
   </ItemGroup>
 
-  <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
+  <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
   
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />

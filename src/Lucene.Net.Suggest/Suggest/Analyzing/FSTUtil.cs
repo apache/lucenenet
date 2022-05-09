@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     {
         /// <summary>
         /// Holds a pair (automaton, fst) of states and accumulated output in the intersected machine. </summary>
-        public sealed class Path<T>
+        public sealed class Path<T> where T : class // LUCENENET specific - added class constraint because we are comparing reference equality
         {
             /// <summary>
             /// Node in the automaton where path ends: </summary>
@@ -67,7 +67,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Enumerates all minimal prefix paths in the automaton that also intersect the <see cref="FST"/>,
         /// accumulating the <see cref="FST"/> end node and output for each path.
         /// </summary>
-        public static IList<Path<T>> IntersectPrefixPaths<T>(Automaton a, FST<T> fst)
+        public static IList<Path<T>> IntersectPrefixPaths<T>(Automaton a, FST<T> fst) where T : class // LUCENENET specific - added class constraint because we are comparing reference equality
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(a.IsDeterministic);
             IList<Path<T>> queue = new JCG.List<Path<T>>();
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                               .CopyFrom(nextArc), fst.Outputs.Add(path.Output, nextArc.Output), newInput));
                             int label = nextArc.Label; // used in assert
                             nextArc = nextArc.IsLast ? null : fst.ReadNextRealArc(nextArc, fstReader);
-                            if (Debugging.AssertsEnabled) Debugging.Assert(nextArc == null || label < nextArc.Label, "last: {0} next: {1}", label, nextArc?.Label);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(nextArc is null || label < nextArc.Label, "last: {0} next: {1}", label, nextArc?.Label);
                         }
                     }
                 }

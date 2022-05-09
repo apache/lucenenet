@@ -1,27 +1,20 @@
-﻿using J2N.Threading;
+﻿using J2N.Collections.Generic.Extensions;
+using J2N.Threading;
 using Lucene.Net.Codecs;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
+using Console = Lucene.Net.Util.SystemConsole;
 using Directory = Lucene.Net.Store.Directory;
-using J2N.Collections.Generic.Extensions;
-using RandomizedTesting.Generators;
-
-#if TESTFRAMEWORK_MSTEST
-using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-#elif TESTFRAMEWORK_NUNIT
+using JCG = J2N.Collections.Generic;
 using Test = NUnit.Framework.TestAttribute;
-#elif TESTFRAMEWORK_XUNIT
-using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
-#endif
 
 namespace Lucene.Net.Index
 {
@@ -69,19 +62,7 @@ namespace Lucene.Net.Index
 
     //[TestFixture]
     public abstract class BasePostingsFormatTestCase : BaseIndexFileFormatTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public BasePostingsFormatTestCase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-            beforeAfter.SetBeforeAfterClassActions(BeforeClass, AfterClass);
-#endif
-        }
-#else
-    {
-#endif
         private enum Option
         {
             // Sometimes use .Advance():
@@ -173,7 +154,7 @@ namespace Lucene.Net.Index
                 while (true)
                 {
                     _nextDoc();
-                    if (liveDocs == null || docID == NO_MORE_DOCS || liveDocs.Get(docID))
+                    if (liveDocs is null || docID == NO_MORE_DOCS || liveDocs.Get(docID))
                     {
                         return docID;
                     }
@@ -365,38 +346,10 @@ namespace Lucene.Net.Index
             return new SeedPostings(seed, minDocFreq, maxDocFreq, withLiveDocs ? globalLiveDocs : null, options);
         }
 
-//#if TESTFRAMEWORK_MSTEST
-//        private static readonly IList<string> initalizationLock = new JCG.List<string>();
-
-//        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
-//        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-//        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
-//        {
-//            UninterruptableMonitor.Enter(initializationLock);
-//            try
-//            {
-//                if (!initalizationLock.Contains(context.FullyQualifiedTestClassName))
-//                    initalizationLock.Add(context.FullyQualifiedTestClassName);
-//                else
-//                    return; // Only allow this class to initialize once (MSTest bug)
-//            }
-//            finally
-//            {
-//                UninterruptableMonitor.Exit(initializationLock);
-//            }
-//#else
-#if TESTFRAMEWORK_NUNIT
         [NUnit.Framework.OneTimeSetUp]
-#endif
-//        new public static void BeforeClass()
-//        {
-//#endif
-//#else
-        //[OneTimeSetUp]
         public override void BeforeClass() // Renamed from CreatePostings to ensure the base class setup is called before this one
         {
             base.BeforeClass();
-//#endif
 
             totalPostings = 0;
             totalPayloadBytes = 0;
@@ -517,17 +470,7 @@ namespace Lucene.Net.Index
             }
         }
 
-
-//#if TESTFRAMEWORK_MSTEST
-//        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
-//        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanup(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-//# el
-#if TESTFRAMEWORK_NUNIT
         [NUnit.Framework.OneTimeTearDown]
-#endif
-//        new public static void AfterClass()
-//#else
-        //[OneTimeTearDown]
         public override void AfterClass()
         {
             allTerms = null;
@@ -655,7 +598,7 @@ namespace Lucene.Net.Index
                                     {
                                         if (doPayloads)
                                         {
-                                            Console.WriteLine("      pos=" + pos + " payload=" + (payload == null ? "null" : payload.Length + " bytes"));
+                                            Console.WriteLine("      pos=" + pos + " payload=" + (payload is null ? "null" : payload.Length + " bytes"));
                                         }
                                         else
                                         {
@@ -860,7 +803,7 @@ namespace Lucene.Net.Index
 
             if (Verbose)
             {
-                if (prevDocsEnum == null)
+                if (prevDocsEnum is null)
                 {
                     Console.WriteLine("  got enum=" + docsEnum);
                 }
@@ -1050,9 +993,9 @@ namespace Lucene.Net.Index
                             {
                                 if (Verbose)
                                 {
-                                    Console.WriteLine("      now check expectedPayload length=" + (expectedPayload == null ? 0 : expectedPayload.Length));
+                                    Console.WriteLine("      now check expectedPayload length=" + (expectedPayload is null ? 0 : expectedPayload.Length));
                                 }
-                                if (expectedPayload == null || expectedPayload.Length == 0)
+                                if (expectedPayload is null || expectedPayload.Length == 0)
                                 {
                                     Assert.IsNull(docsAndPositionsEnum.GetPayload(), "should not have payload");
                                 }
@@ -1076,7 +1019,7 @@ namespace Lucene.Net.Index
                             {
                                 if (Verbose)
                                 {
-                                    Console.WriteLine("      skip check payload length=" + (expectedPayload == null ? 0 : expectedPayload.Length));
+                                    Console.WriteLine("      skip check payload length=" + (expectedPayload is null ? 0 : expectedPayload.Length));
                                 }
                             }
                         }

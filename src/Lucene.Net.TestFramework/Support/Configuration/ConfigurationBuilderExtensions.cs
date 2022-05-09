@@ -37,7 +37,7 @@ namespace Lucene.Net.Configuration
         [CLSCompliant(false)]
         public static IConfigurationBuilder AddNUnitTestRunSettings(this IConfigurationBuilder builder)
         {
-            if (builder == null)
+            if (builder is null)
                 throw new ArgumentNullException(nameof(builder));
 
             return builder.Add(new TestParameterConfigurationSource() { TestParameters = NUnit.Framework.TestContext.Parameters });
@@ -54,7 +54,7 @@ namespace Lucene.Net.Configuration
         [CLSCompliant(false)]
         public static IConfigurationBuilder AddJsonFilesFromRootDirectoryTo(this IConfigurationBuilder builder, string currentPath, string fileName)
         {
-            if (builder == null)
+            if (builder is null)
                 throw new ArgumentNullException(nameof(builder));
 
             Stack<string> locations = ScanConfigurationFiles(currentPath, fileName);
@@ -77,7 +77,7 @@ namespace Lucene.Net.Configuration
         [CLSCompliant(false)]
         public static IConfigurationBuilder AddXmlFilesFromRootDirectoryTo(this IConfigurationBuilder builder, string currentPath, string fileName)
         {
-            if (builder == null)
+            if (builder is null)
                 throw new ArgumentNullException(nameof(builder));
 
             Stack<string> locations = ScanConfigurationFiles(currentPath, fileName);

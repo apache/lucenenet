@@ -120,9 +120,9 @@ namespace Lucene.Net.Util
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Equals(string s1, string s2)
         {
-            if (s1 == null)
+            if (s1 is null)
             {
-                return s2 == null;
+                return s2 is null;
             }
             else
             {

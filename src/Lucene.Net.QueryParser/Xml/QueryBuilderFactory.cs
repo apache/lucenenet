@@ -30,7 +30,7 @@ namespace Lucene.Net.QueryParsers.Xml
 
         public virtual Query GetQuery(XmlElement n)
         {
-            if (!builders.TryGetValue(n.Name, out IQueryBuilder builder) || builder == null)
+            if (!builders.TryGetValue(n.Name, out IQueryBuilder builder) || builder is null)
             {
                 throw new ParserException("No QueryObjectBuilder defined for node " + n.Name);
             }

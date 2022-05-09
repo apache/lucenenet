@@ -85,7 +85,7 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         private static Net.Store.Directory indexDir, taxoDir;
-        private static IDictionary<string, int?> allExpectedCounts, termExpectedCounts;
+        private static IDictionary<string, int> allExpectedCounts, termExpectedCounts;
 
         [OneTimeTearDown]
         public override void AfterClass() // LUCENENET specific - renamed from AfterClassCountingFacetsAggregatorTest() to ensure calling order
@@ -170,7 +170,7 @@ namespace Lucene.Net.Facet.Taxonomy
             indexWriter.Commit(); // flush a segment
         }
 
-        private static void IndexDocsWithFacetsNoTerms(IndexWriter indexWriter, ITaxonomyWriter taxoWriter, IDictionary<string, int?> expectedCounts)
+        private static void IndexDocsWithFacetsNoTerms(IndexWriter indexWriter, ITaxonomyWriter taxoWriter, IDictionary<string, int> expectedCounts)
         {
             Random random = Random;
             int numDocs = AtLeast(random, 2);
@@ -184,7 +184,7 @@ namespace Lucene.Net.Facet.Taxonomy
             indexWriter.Commit(); // flush a segment
         }
 
-        private static void IndexDocsWithFacetsAndTerms(IndexWriter indexWriter, ITaxonomyWriter taxoWriter, IDictionary<string, int?> expectedCounts)
+        private static void IndexDocsWithFacetsAndTerms(IndexWriter indexWriter, ITaxonomyWriter taxoWriter, IDictionary<string, int> expectedCounts)
         {
             Random random = Random;
             int numDocs = AtLeast(random, 2);
@@ -199,7 +199,7 @@ namespace Lucene.Net.Facet.Taxonomy
             indexWriter.Commit(); // flush a segment
         }
 
-        private static void IndexDocsWithFacetsAndSomeTerms(IndexWriter indexWriter, ITaxonomyWriter taxoWriter, IDictionary<string, int?> expectedCounts)
+        private static void IndexDocsWithFacetsAndSomeTerms(IndexWriter indexWriter, ITaxonomyWriter taxoWriter, IDictionary<string, int> expectedCounts)
         {
             Random random = Random;
             int numDocs = AtLeast(random, 2);
@@ -219,9 +219,9 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         // initialize expectedCounts w/ 0 for all categories
-        private static IDictionary<string, int?> newCounts()
+        private static IDictionary<string, int> newCounts()
         {
-            IDictionary<string, int?> counts = new Dictionary<string, int?>();
+            IDictionary<string, int> counts = new Dictionary<string, int>();
             counts[CP_A] = 0;
             counts[CP_B] = 0;
             counts[CP_C] = 0;
@@ -298,13 +298,13 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(-1, (int)result.Value);
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(termExpectedCounts[CP_A + "/" + labelValue.Label].GetValueOrDefault(), labelValue.Value);
+                Assert.AreEqual(termExpectedCounts[CP_A + "/" + labelValue.Label], labelValue.Value);
             }
             result = facets.GetTopChildren(NUM_CHILDREN_CP_B, CP_B);
-            Assert.AreEqual(termExpectedCounts[CP_B].GetValueOrDefault(), result.Value);
+            Assert.AreEqual(termExpectedCounts[CP_B], result.Value);
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(termExpectedCounts[CP_B + "/" + labelValue.Label].GetValueOrDefault(), labelValue.Value);
+                Assert.AreEqual(termExpectedCounts[CP_B + "/" + labelValue.Label], labelValue.Value);
             }
 
             IOUtils.Dispose(indexReader, taxoReader);
@@ -327,17 +327,17 @@ namespace Lucene.Net.Facet.Taxonomy
             int prevValue = int.MaxValue;
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(allExpectedCounts[CP_A + "/" + labelValue.Label].GetValueOrDefault(), labelValue.Value);
+                Assert.AreEqual(allExpectedCounts[CP_A + "/" + labelValue.Label], labelValue.Value);
                 Assert.IsTrue((int)labelValue.Value <= prevValue, "wrong sort order of sub results: labelValue.value=" + labelValue.Value + " prevValue=" + prevValue);
                 prevValue = (int)labelValue.Value;
             }
 
             result = facets.GetTopChildren(NUM_CHILDREN_CP_B, CP_B);
-            Assert.AreEqual(allExpectedCounts[CP_B].GetValueOrDefault(), result.Value);
+            Assert.AreEqual(allExpectedCounts[CP_B], result.Value);
             prevValue = int.MaxValue;
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(allExpectedCounts[CP_B + "/" + labelValue.Label].GetValueOrDefault(), labelValue.Value);
+                Assert.AreEqual(allExpectedCounts[CP_B + "/" + labelValue.Label], labelValue.Value);
                 Assert.IsTrue((int)labelValue.Value <= prevValue, "wrong sort order of sub results: labelValue.value=" + labelValue.Value + " prevValue=" + prevValue);
                 prevValue = (int)labelValue.Value;
             }
@@ -361,13 +361,13 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(-1, (int)result.Value);
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(allExpectedCounts[CP_A + "/" + labelValue.Label].GetValueOrDefault(), labelValue.Value);
+                Assert.AreEqual(allExpectedCounts[CP_A + "/" + labelValue.Label], labelValue.Value);
             }
             result = facets.GetTopChildren(int.MaxValue, CP_B);
-            Assert.AreEqual(allExpectedCounts[CP_B].GetValueOrDefault(), result.Value);
+            Assert.AreEqual(allExpectedCounts[CP_B], result.Value);
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(allExpectedCounts[CP_B + "/" + labelValue.Label].GetValueOrDefault(), labelValue.Value);
+                Assert.AreEqual(allExpectedCounts[CP_B + "/" + labelValue.Label], labelValue.Value);
             }
 
             IOUtils.Dispose(indexReader, taxoReader);
@@ -386,16 +386,16 @@ namespace Lucene.Net.Facet.Taxonomy
             Facets facets = GetTaxonomyFacetCounts(taxoReader, GetConfig(), sfc);
 
             FacetResult result = facets.GetTopChildren(NUM_CHILDREN_CP_C, CP_C);
-            Assert.AreEqual(allExpectedCounts[CP_C].GetValueOrDefault(), result.Value);
+            Assert.AreEqual(allExpectedCounts[CP_C], result.Value);
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(allExpectedCounts[CP_C + "/" + labelValue.Label].GetValueOrDefault(), labelValue.Value);
+                Assert.AreEqual(allExpectedCounts[CP_C + "/" + labelValue.Label], labelValue.Value);
             }
             result = facets.GetTopChildren(NUM_CHILDREN_CP_D, CP_D);
-            Assert.AreEqual(allExpectedCounts[CP_C].GetValueOrDefault(), result.Value);
+            Assert.AreEqual(allExpectedCounts[CP_C], result.Value);
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
-                Assert.AreEqual(allExpectedCounts[CP_D + "/" + labelValue.Label].GetValueOrDefault(), labelValue.Value);
+                Assert.AreEqual(allExpectedCounts[CP_D + "/" + labelValue.Label], labelValue.Value);
             }
 
             IOUtils.Dispose(indexReader, taxoReader);

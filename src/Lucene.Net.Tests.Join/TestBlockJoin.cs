@@ -134,11 +134,7 @@ namespace Lucene.Net.Search.Join
         public void TestSimple()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
 
             IList<Document> docs = new JCG.List<Document>();
 
@@ -228,11 +224,7 @@ namespace Lucene.Net.Search.Join
         public void TestBugCausedByRewritingTwice()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
 
             IList<Document> docs = new JCG.List<Document>();
 
@@ -289,11 +281,7 @@ namespace Lucene.Net.Search.Join
         public virtual void TestSimpleFilter()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
 
             IList<Document> docs = new JCG.List<Document>();
             docs.Add(MakeJob("java", 2007));
@@ -392,21 +380,13 @@ namespace Lucene.Net.Search.Join
         public void TestBoostBug()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
             IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
 
             ToParentBlockJoinQuery q = new ToParentBlockJoinQuery(new MatchAllDocsQuery(), new QueryWrapperFilter(new MatchAllDocsQuery()), ScoreMode.Avg);
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, q, s);
+            QueryUtils.Check(Random, q, s);
             s.Search(q, 10);
             BooleanQuery bq = new BooleanQuery();
             bq.Boost = 2f; // we boost the BQ
@@ -548,16 +528,8 @@ namespace Lucene.Net.Search.Join
             IList<int> toDelete = new JCG.List<int>();
 
             // TODO: parallel star join, nested join cases too!
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
-            RandomIndexWriter joinW = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, joinDir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
+            RandomIndexWriter joinW = new RandomIndexWriter(Random, joinDir);
             for (int parentDocID = 0; parentDocID < numParentDocs; parentDocID++)
             {
                 Document parentDoc = new Document();
@@ -869,7 +841,7 @@ namespace Lucene.Net.Search.Join
 
                 if (Verbose)
                 {
-                    Console.WriteLine("\nTEST: block join index gets " + (joinResults == null ? 0 : joinResults.Groups.Length) + " groups; hitsPerGroup=" + hitsPerGroup);
+                    Console.WriteLine("\nTEST: block join index gets " + (joinResults is null ? 0 : joinResults.Groups.Length) + " groups; hitsPerGroup=" + hitsPerGroup);
                     if (joinResults != null)
                     {
                         IGroupDocs<int>[] groups = joinResults.Groups;
@@ -1164,11 +1136,7 @@ namespace Lucene.Net.Search.Join
         public void TestMultiChildTypes()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
 
             IList<Document> docs = new JCG.List<Document>();
 
@@ -1255,11 +1223,7 @@ namespace Lucene.Net.Search.Join
         public void TestAdvanceSingleParentSingleChild()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
             Document childDoc = new Document();
             childDoc.Add(NewStringField("child", "1", Field.Store.NO));
             Document parentDoc = new Document();
@@ -1317,11 +1281,7 @@ namespace Lucene.Net.Search.Join
         public void TestGetTopGroups()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
 
             IList<Document> docs = new JCG.List<Document>();
             docs.Add(MakeJob("ruby", 2005));
@@ -1415,11 +1375,7 @@ namespace Lucene.Net.Search.Join
         public void TestSometimesParentOnlyMatches()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d);
             Document parent = new Document();
             parent.Add(new StoredField("parentID", "0"));
             parent.Add(NewTextField("parentText", "text", Field.Store.NO));
@@ -1484,11 +1440,7 @@ namespace Lucene.Net.Search.Join
         public void TestChildQueryNeverMatches()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d);
             Document parent = new Document();
             parent.Add(new StoredField("parentID", "0"));
             parent.Add(NewTextField("parentText", "text", Field.Store.NO));
@@ -1554,11 +1506,7 @@ namespace Lucene.Net.Search.Join
         public void TestChildQueryMatchesParent()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d);
             Document parent = new Document();
             parent.Add(new StoredField("parentID", "0"));
             parent.Add(NewTextField("parentText", "text", Field.Store.NO));
@@ -1617,11 +1565,7 @@ namespace Lucene.Net.Search.Join
         public void TestAdvanceSingleDeletedParentNoChild()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
 
             // First doc with 1 children
             Document parentDoc = new Document();

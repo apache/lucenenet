@@ -4,6 +4,7 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Runtime.CompilerServices;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -52,16 +53,7 @@ namespace Lucene.Net.Index
     // LUCENENET specific - Specify to unzip the line file docs
     [UseTempLineDocsFile]
     public abstract class ThreadedIndexingAndSearchingTestCase : LuceneTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public ThreadedIndexingAndSearchingTestCase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
         protected readonly AtomicBoolean m_failed = new AtomicBoolean();
         protected readonly AtomicInt32 m_addCount = new AtomicInt32();
         protected readonly AtomicInt32 m_delCount = new AtomicInt32();
@@ -201,7 +193,7 @@ namespace Lucene.Net.Index
                         }
 
                         Document doc = docs.NextDoc();
-                        if (doc == null)
+                        if (doc is null)
                         {
                             break;
                         }
@@ -254,7 +246,7 @@ namespace Lucene.Net.Index
                                 while (docsList.Count < maxDocCount)
                                 {
                                     doc = docs.NextDoc();
-                                    if (doc == null)
+                                    if (doc is null)
                                     {
                                         break;
                                     }
@@ -470,21 +462,33 @@ namespace Lucene.Net.Index
                                 assertNotNull(source);
                                 if (source.Equals("merge", StringComparison.Ordinal))
                                 {
-                                    assertTrue("sub reader " + sub + " wasn't warmed: warmed=" + outerInstance.warmed + " diagnostics=" + diagnostics + " si=" + segReader.SegmentInfo,
-                                        // LUCENENET: ConditionalWeakTable doesn't have ContainsKey, so we normalize to TryGetValue
-                                        !outerInstance.m_assertMergedSegmentsWarmed || outerInstance.warmed.TryGetValue(segReader.core, out BooleanRef _));
+#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+                                    UninterruptableMonitor.Enter(outerInstance.warmedLock);
+                                    try
+                                    {
+#endif
+                                        assertTrue("sub reader " + sub + " wasn't warmed: warmed=" + outerInstance.warmed + " diagnostics=" + diagnostics + " si=" + segReader.SegmentInfo,
+                                            // LUCENENET: ConditionalWeakTable doesn't have ContainsKey, so we normalize to TryGetValue
+                                            !outerInstance.m_assertMergedSegmentsWarmed || outerInstance.warmed.TryGetValue(segReader.core, out BooleanRef _));
+#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+                                    }
+                                    finally
+                                    {
+                                        UninterruptableMonitor.Exit(outerInstance.warmedLock);
+                                    }
+#endif
                                 }
                             }
                             if (s.IndexReader.NumDocs > 0)
                             {
                                 outerInstance.SmokeTestSearcher(s);
                                 Fields fields = MultiFields.GetFields(s.IndexReader);
-                                if (fields == null)
+                                if (fields is null)
                                 {
                                     continue;
                                 }
                                 Terms terms = fields.GetTerms("body");
-                                if (terms == null)
+                                if (terms is null)
                                 {
                                     continue;
                                 }
@@ -550,11 +554,10 @@ namespace Lucene.Net.Index
 
         protected bool m_assertMergedSegmentsWarmed = true;
 
-#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
-        private readonly ConditionalWeakTable<SegmentCoreReaders, BooleanRef> warmed = new ConditionalWeakTable<SegmentCoreReaders, BooleanRef>();
-#else
-        private readonly IDictionary<SegmentCoreReaders, BooleanRef> warmed = new WeakDictionary<SegmentCoreReaders, BooleanRef>().AsConcurrent();
+#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+        private readonly object warmedLock = new object();
 #endif
+        private readonly ConditionalWeakTable<SegmentCoreReaders, BooleanRef> warmed = new ConditionalWeakTable<SegmentCoreReaders, BooleanRef>();
 
         public virtual void RunTest(string testName)
         {
@@ -566,7 +569,7 @@ namespace Lucene.Net.Index
             long t0 = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             Random random = new J2N.Randomizer(Random.NextInt64());
-            LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
+            using LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
             DirectoryInfo tempDir = CreateTempDir(testName);
             m_dir = GetDirectory(NewMockFSDirectory(tempDir)); // some subclasses rely on this being MDW
             if (m_dir is BaseDirectoryWrapper baseDirectoryWrapper)
@@ -808,10 +811,18 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("TEST: now warm merged reader=" + reader);
                 }
-#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
-                outerInstance.warmed.AddOrUpdate(((SegmentReader)reader).core, true);
-#else
-                outerInstance.warmed[((SegmentReader)reader).core] = true;
+#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+                UninterruptableMonitor.Enter(outerInstance.warmedLock);
+                try
+                {
+#endif
+                    outerInstance.warmed.AddOrUpdate(((SegmentReader)reader).core, true);
+#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(outerInstance.warmedLock);
+                }
 #endif
                 int maxDoc = reader.MaxDoc;
                 IBits liveDocs = reader.LiveDocs;
@@ -819,17 +830,13 @@ namespace Lucene.Net.Index
                 int inc = Math.Max(1, maxDoc / 50);
                 for (int docID = 0; docID < maxDoc; docID += inc)
                 {
-                    if (liveDocs == null || liveDocs.Get(docID))
+                    if (liveDocs is null || liveDocs.Get(docID))
                     {
                         Document doc = reader.Document(docID);
                         sum += doc.Fields.Count;
                     }
                 }
-                IndexSearcher searcher = 
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    outerInstance.
-#endif
-                    NewSearcher(reader);
+                IndexSearcher searcher = NewSearcher(reader);
 
                 sum += searcher.Search(new TermQuery(new Term("body", "united")), 10).TotalHits;
 

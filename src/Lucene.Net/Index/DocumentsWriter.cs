@@ -28,13 +28,11 @@ namespace Lucene.Net.Index
      */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using FlushedSegment = Lucene.Net.Index.DocumentsWriterPerThread.FlushedSegment;
     using IEvent = Lucene.Net.Index.IndexWriter.IEvent;
     using InfoStream = Lucene.Net.Util.InfoStream;
-    using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
     using Query = Lucene.Net.Search.Query;
     using SegmentFlushTicket = Lucene.Net.Index.DocumentsWriterFlushQueue.SegmentFlushTicket;
     using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
@@ -515,7 +513,7 @@ namespace Lucene.Net.Index
 
         private void EnsureInitialized(ThreadState state)
         {
-            if (state.IsActive && state.dwpt == null)
+            if (state.IsActive && state.dwpt is null)
             {
                 FieldInfos.Builder infos = new FieldInfos.Builder(writer.globalFieldNumberMap);
                 state.dwpt = new DocumentsWriterPerThread(writer.NewSegmentName(), directory, config, infoStream, deleteQueue, infos);
@@ -624,7 +622,7 @@ namespace Lucene.Net.Index
                 SegmentFlushTicket ticket = null;
                 try
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(currentFullFlushDelQueue == null
+                    if (Debugging.AssertsEnabled) Debugging.Assert(currentFullFlushDelQueue is null
                         || flushingDWPT.deleteQueue == currentFullFlushDelQueue,
                         "expected: {0} but was: {1} {2}", currentFullFlushDelQueue, flushingDWPT.deleteQueue, flushControl.IsFullFlush);
                     /*

@@ -41,7 +41,7 @@ namespace Lucene.Net.Expressions
              readerContext)
         {
             Scorer v = (Scorer)context["scorer"];
-            if (v == null)
+            if (v is null)
             {
                 throw IllegalStateException.Create("Expressions referencing the score can only be used for sorting");
             }

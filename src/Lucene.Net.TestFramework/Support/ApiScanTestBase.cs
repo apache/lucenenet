@@ -33,17 +33,8 @@ namespace Lucene.Net.Util
     /// by end users.
     /// </summary>
     public abstract class ApiScanTestBase : LuceneTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
-    {
-        internal ApiScanTestBase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
     {
         internal ApiScanTestBase() { } // LUCENENET: Not for use by end users
-#endif
 
         /// <summary>
         /// Private fields must be upper case separated with underscores, 
@@ -627,7 +618,7 @@ namespace Lucene.Net.Util
 
                 foreach (var property in properties)
                 {
-                    if (property.GetSetMethod(true) != null && property.GetGetMethod(true) == null && property.DeclaringType.Equals(c.UnderlyingSystemType))
+                    if (property.GetSetMethod(true) != null && property.GetGetMethod(true) is null && property.DeclaringType.Equals(c.UnderlyingSystemType))
                     {
                         result.Add(string.Concat(c.FullName, ".", property.Name));
                     }

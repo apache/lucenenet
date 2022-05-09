@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                if (acceptDocs == null)
+                if (acceptDocs is null)
                 {
                     acceptDocs = new Bits.MatchAllBits(5);
                 }
@@ -155,11 +155,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
             Assert.AreEqual(1, hits[0].Doc);
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, filteredquery, searcher);
+            QueryUtils.Check(Random, filteredquery, searcher);
 
             hits = searcher.Search(filteredquery, null, 1000, new Sort(new SortField("sorter", SortFieldType.STRING))).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
@@ -168,39 +164,23 @@ namespace Lucene.Net.Search
             filteredquery = new FilteredQuery(new TermQuery(new Term("field", "one")), filter, RandomFilterStrategy(Random, useRandomAccess));
             hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, filteredquery, searcher);
+            QueryUtils.Check(Random, filteredquery, searcher);
 
             filteredquery = new FilteredQuery(new MatchAllDocsQuery(), filter, RandomFilterStrategy(Random, useRandomAccess));
             hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, filteredquery, searcher);
+            QueryUtils.Check(Random, filteredquery, searcher);
 
             filteredquery = new FilteredQuery(new TermQuery(new Term("field", "x")), filter, RandomFilterStrategy(Random, useRandomAccess));
             hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
             Assert.AreEqual(3, hits[0].Doc);
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, filteredquery, searcher);
+            QueryUtils.Check(Random, filteredquery, searcher);
 
             filteredquery = new FilteredQuery(new TermQuery(new Term("field", "y")), filter, RandomFilterStrategy(Random, useRandomAccess));
             hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, filteredquery, searcher);
+            QueryUtils.Check(Random, filteredquery, searcher);
 
             // test boost
             Filter f = NewStaticFilterA();
@@ -279,11 +259,7 @@ namespace Lucene.Net.Search
             Query filteredquery = new FilteredQuery(rq, filter, RandomFilterStrategy(Random, useRandomAccess));
             ScoreDoc[] hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, filteredquery, searcher);
+            QueryUtils.Check(Random, filteredquery, searcher);
         }
 
         [Test]
@@ -304,11 +280,7 @@ namespace Lucene.Net.Search
             bq.Add(query, Occur.MUST);
             ScoreDoc[] hits = searcher.Search(bq, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, query, searcher);
+            QueryUtils.Check(Random, query, searcher);
         }
 
         [Test]
@@ -329,11 +301,7 @@ namespace Lucene.Net.Search
             bq.Add(query, Occur.SHOULD);
             ScoreDoc[] hits = searcher.Search(bq, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, query, searcher);
+            QueryUtils.Check(Random, query, searcher);
         }
 
         // Make sure BooleanQuery, which does out-of-order
@@ -355,11 +323,7 @@ namespace Lucene.Net.Search
             bq.Add(new TermQuery(new Term("field", "two")), Occur.SHOULD);
             ScoreDoc[] hits = searcher.Search(query, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, query, searcher);
+            QueryUtils.Check(Random, query, searcher);
         }
 
         [Test]
@@ -376,21 +340,13 @@ namespace Lucene.Net.Search
             Query query = new FilteredQuery(new FilteredQuery(new MatchAllDocsQuery(), new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("field", "three")))), RandomFilterStrategy(Random, useRandomAccess)), new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("field", "four")))), RandomFilterStrategy(Random, useRandomAccess));
             ScoreDoc[] hits = searcher.Search(query, 10).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, query, searcher);
+            QueryUtils.Check(Random, query, searcher);
 
             // one more:
             query = new FilteredQuery(query, new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("field", "five")))), RandomFilterStrategy(Random, useRandomAccess));
             hits = searcher.Search(query, 10).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, query, searcher);
+            QueryUtils.Check(Random, query, searcher);
         }
 
         [Test]
@@ -563,7 +519,7 @@ namespace Lucene.Net.Search
                 bool nullBitset = Random.Next(10) == 5;
                 AtomicReader reader = context.AtomicReader;
                 DocsEnum termDocsEnum = reader.GetTermDocsEnum(new Term("field", "0"));
-                if (termDocsEnum == null)
+                if (termDocsEnum is null)
                 {
                     return null; // no docs -- return null
                 }
@@ -699,7 +655,7 @@ namespace Lucene.Net.Search
                 public override DocIdSetIterator GetIterator()
                 {
                     DocsEnum termDocsEnum = ((AtomicReader)context.Reader).GetTermDocsEnum(new Term("field", "0"));
-                    if (termDocsEnum == null)
+                    if (termDocsEnum is null)
                     {
                         return null;
                     }

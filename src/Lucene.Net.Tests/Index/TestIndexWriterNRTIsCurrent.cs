@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
                             }
                             catch (Exception e) when (e.IsIOException())
                             {
-                                if (failed == null)
+                                if (failed is null)
                                 {
                                     failed = e;
                                 }

@@ -54,12 +54,12 @@ namespace Lucene.Net.Analysis.OpenNlp
 
         private static byte[][] ToPayloads(params string[] strings)
         {
-            return strings.Select(s => s == null ? null : Encoding.UTF8.GetBytes(s)).ToArray();
+            return strings.Select(s => s is null ? null : Encoding.UTF8.GetBytes(s)).ToArray();
         }
 
         //    private static byte[][] ToPayloads(params String[] strings)
         //    {
-        //        return Arrays.stream(strings).map(s->s == null ? null : s.getBytes(StandardCharsets.UTF_8)).toArray(byte[][]::new);
+        //        return Arrays.stream(strings).map(s->s is null ? null : s.getBytes(StandardCharsets.UTF_8)).toArray(byte[][]::new);
         //    }
 
         [Test]

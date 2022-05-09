@@ -4,6 +4,7 @@ using Lucene.Net.Util.Fst;
 using NUnit.Framework;
 using System;
 using Console = Lucene.Net.Util.SystemConsole;
+using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Analysis.Ja.Dict
 {
@@ -37,12 +38,13 @@ namespace Lucene.Net.Analysis.Ja.Dict
             int lastSourceId = -1;
             TokenInfoDictionary tid = TokenInfoDictionary.Instance;
             ConnectionCosts matrix = ConnectionCosts.Instance;
-            FST<long?> fst = tid.FST.InternalFST;
-            Int32sRefFSTEnum<long?> fstEnum = new Int32sRefFSTEnum<long?>(fst);
-            Int32sRefFSTEnum.InputOutput<long?> mapping;
+            FST<Int64> fst = tid.FST.InternalFST;
+            Int32sRefFSTEnum<Int64> fstEnum = new Int32sRefFSTEnum<Int64>(fst);
+            Int32sRefFSTEnum.InputOutput<Int64> mapping;
             Int32sRef scratch = new Int32sRef();
-            while ((mapping = fstEnum.Next()) != null)
+            while (fstEnum.MoveNext())
             {
+                mapping = fstEnum.Current;
                 numTerms++;
                 Int32sRef input = mapping.Input;
                 char[] chars = new char[input.Length];
@@ -66,10 +68,10 @@ namespace Lucene.Net.Analysis.Ja.Dict
                     lastWordId = wordId;
 
                     String baseForm = tid.GetBaseForm(wordId, chars, 0, chars.Length);
-                    assertTrue(baseForm == null || UnicodeUtil.ValidUTF16String(baseForm));
+                    assertTrue(baseForm is null || UnicodeUtil.ValidUTF16String(baseForm));
 
                     String inflectionForm = tid.GetInflectionForm(wordId);
-                    assertTrue(inflectionForm == null || UnicodeUtil.ValidUTF16String(inflectionForm));
+                    assertTrue(inflectionForm is null || UnicodeUtil.ValidUTF16String(inflectionForm));
                     if (inflectionForm != null)
                     {
                         // check that its actually an ipadic inflection form
@@ -77,7 +79,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
                     }
 
                     String inflectionType = tid.GetInflectionType(wordId);
-                    assertTrue(inflectionType == null || UnicodeUtil.ValidUTF16String(inflectionType));
+                    assertTrue(inflectionType is null || UnicodeUtil.ValidUTF16String(inflectionType));
                     if (inflectionType != null)
                     {
                         // check that its actually an ipadic inflection type

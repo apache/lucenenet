@@ -80,7 +80,7 @@ namespace Lucene.Net.Search.Join
 
         // Maps each BlockJoinQuery instance to its "slot" in
         // joinScorers and in OneGroup's cached doc/scores/count:
-        private readonly IDictionary<Query, int?> joinQueryID = new Dictionary<Query, int?>();
+        private readonly IDictionary<Query, int> joinQueryID = new Dictionary<Query, int>();
         private readonly int numParentHits;
         private readonly FieldValueHitQueue<OneGroup> queue;
         private readonly FieldComparer[] comparers;
@@ -318,9 +318,9 @@ namespace Lucene.Net.Search.Join
         private void Enroll(ToParentBlockJoinQuery query, ToParentBlockJoinQuery.BlockJoinScorer scorer)
         {
             scorer.TrackPendingChildHits();
-            if (joinQueryID.TryGetValue(query, out int? slot))
+            if (joinQueryID.TryGetValue(query, out int slot))
             {
-                joinScorers[(int)slot] = scorer;
+                joinScorers[slot] = scorer;
             }
             else
             {
@@ -397,15 +397,16 @@ namespace Lucene.Net.Search.Join
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public virtual ITopGroups<int> GetTopGroups(ToParentBlockJoinQuery query, Sort withinGroupSort, int offset, int maxDocsPerGroup, int withinGroupOffset, bool fillSortFields)
         {
-            if (!joinQueryID.TryGetValue(query, out int? slot))
+            if (!joinQueryID.TryGetValue(query, out int slot))
             {
                 if (totalHitCount == 0)
                 {
                     return null;
                 }
+                slot = -1; // LUCENENET: In Java null is converted to -1 for AccumulateGroups()
             }
 
-            if (sortedGroups == null)
+            if (sortedGroups is null)
             {
                 if (offset >= queue.Count)
                 {
@@ -418,7 +419,7 @@ namespace Lucene.Net.Search.Join
                 return null;
             }
 
-            return AccumulateGroups(slot == null ? -1 : (int)slot, offset, maxDocsPerGroup, withinGroupOffset, withinGroupSort, fillSortFields);
+            return AccumulateGroups(slot, offset, maxDocsPerGroup, withinGroupOffset, withinGroupSort, fillSortFields);
         }
 
         /// <summary>
@@ -459,7 +460,7 @@ namespace Lucene.Net.Search.Join
 
                 // At this point we hold all docs w/ in each group, unsorted; we now sort them:
                 ICollector collector;
-                if (withinGroupSort == null)
+                if (withinGroupSort is null)
                 {
                     //System.out.println("sort by score");
                     // Sort by score
@@ -497,7 +498,7 @@ namespace Lucene.Net.Search.Join
                     groupSortValues = new object[comparers.Length];
                     for (int sortFieldIdx = 0; sortFieldIdx < comparers.Length; sortFieldIdx++)
                     {
-                        groupSortValues[sortFieldIdx] = comparers[sortFieldIdx][og.Slot];
+                        groupSortValues[sortFieldIdx] = comparers[sortFieldIdx].GetValue(og.Slot);
                     }
                 }
                 else
@@ -506,7 +507,7 @@ namespace Lucene.Net.Search.Join
                 }
 
                 TopDocs topDocs;
-                if (withinGroupSort == null)
+                if (withinGroupSort is null)
                 {
                     var tempCollector = (TopScoreDocCollector) collector;
                     topDocs = tempCollector.GetTopDocs(withinGroupOffset, numDocsInGroup);

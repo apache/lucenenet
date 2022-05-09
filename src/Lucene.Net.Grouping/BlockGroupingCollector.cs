@@ -404,7 +404,7 @@ namespace Lucene.Net.Search.Grouping
                 // At this point we hold all docs w/ in each group,
                 // unsorted; we now sort them:
                 ITopDocsCollector collector;
-                if (withinGroupSort == null)
+                if (withinGroupSort is null)
                 {
                     // Sort by score
                     if (!needsScores)
@@ -437,10 +437,10 @@ namespace Lucene.Net.Search.Grouping
 
                 if (fillSortFields)
                 {
-                    groupSortValues = new IComparable[comparers.Length];
+                    groupSortValues = new object[comparers.Length];
                     for (int sortFieldIDX = 0; sortFieldIDX < comparers.Length; sortFieldIDX++)
                     {
-                        groupSortValues[sortFieldIDX] = comparers[sortFieldIDX][og.comparerSlot];
+                        groupSortValues[sortFieldIDX] = comparers[sortFieldIDX].GetValue(og.comparerSlot);
                     }
                 }
                 else

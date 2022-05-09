@@ -247,7 +247,7 @@ namespace Lucene.Net.Index
         internal readonly IndexFileDeleter deleter;
 
         // used by forceMerge to note those needing merging
-        private readonly IDictionary<SegmentCommitInfo, bool?> segmentsToMerge = new Dictionary<SegmentCommitInfo, bool?>();
+        private readonly IDictionary<SegmentCommitInfo, bool> segmentsToMerge = new Dictionary<SegmentCommitInfo, bool>();
 
         private int mergeMaxNumSegments;
 
@@ -488,7 +488,7 @@ namespace Lucene.Net.Index
                 {
                     int idx = outerInstance.segmentInfos.IndexOf(info);
                     Debugging.Assert(idx != -1, "info={0} isn't live", info);
-                    Debugging.Assert(outerInstance.segmentInfos.Info(idx) == info, "info={0} doesn't match live info in segmentInfos", info);
+                    Debugging.Assert(outerInstance.segmentInfos[idx] == info, "info={0} doesn't match live info in segmentInfos", info);
                     return true;
                 }
                 finally
@@ -634,7 +634,7 @@ namespace Lucene.Net.Index
                                 //IOUtils.ReThrow(t);
                                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
-                            else if (priorE == null)
+                            else if (priorE is null)
                             {
                                 priorE = t;
                             }
@@ -661,7 +661,7 @@ namespace Lucene.Net.Index
                                 //IOUtils.ReThrow(t);
                                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
-                            else if (priorE == null)
+                            else if (priorE is null)
                             {
                                 priorE = t;
                             }
@@ -725,7 +725,7 @@ namespace Lucene.Net.Index
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Dir == outerInstance.directory, "info.dir={0} vs {1}", info.Info.Dir, outerInstance.directory);
 
-                    if (!readerMap.TryGetValue(info, out ReadersAndUpdates rld) || rld == null)
+                    if (!readerMap.TryGetValue(info, out ReadersAndUpdates rld) || rld is null)
                     {
                         if (!create)
                         {
@@ -2098,7 +2098,7 @@ namespace Lucene.Net.Index
             {
                 if (i >= 0 && i < segmentInfos.Count)
                 {
-                    return segmentInfos.Info(i).Info.DocCount;
+                    return segmentInfos[i].Info.DocCount;
                 }
                 else
                 {
@@ -2131,7 +2131,7 @@ namespace Lucene.Net.Index
                 // problems at least with ConcurrentMergeScheduler.
                 changeCount++;
                 segmentInfos.Changed();
-                return "_" + (segmentInfos.Counter++).ToString(J2N.Character.MaxRadix);
+                return "_" + SegmentInfos.SegmentNumberToString(segmentInfos.Counter++, allowLegacyNames: false); // LUCENENET specific - we had this right thru all of the betas, so don't change if the legacy feature is enabled
             }
             finally
             {
@@ -3632,7 +3632,7 @@ namespace Lucene.Net.Index
             // copy the attributes map, we might modify it below.
             // also we need to ensure its read-write, since we will invoke the SIwriter (which might want to set something).
 #pragma warning disable 612, 618
-            if (info.Info.Attributes == null)
+            if (info.Info.Attributes is null)
             {
                 attributes = new Dictionary<string, string>();
             }
@@ -4055,7 +4055,7 @@ namespace Lucene.Net.Index
                     infoStream.Message("IW", "commit: enter lock");
                 }
 
-                if (pendingCommit == null)
+                if (pendingCommit is null)
                 {
                     if (infoStream.IsEnabled("IW"))
                     {
@@ -4117,7 +4117,7 @@ namespace Lucene.Net.Index
                 {
                     if (infoStream.IsEnabled("IW"))
                     {
-                        infoStream.Message("IW", "commit: pendingCommit == null; skip");
+                        infoStream.Message("IW", "commit: pendingCommit is null; skip");
                     }
                 }
 
@@ -4355,9 +4355,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        private static void SkipDeletedDoc(DocValuesFieldUpdates.Iterator[] updatesIters, int deletedDoc) // LUCENENET: CA1822: Mark members as static
+        private static void SkipDeletedDoc(DocValuesFieldUpdatesIterator[] updatesIters, int deletedDoc) // LUCENENET: CA1822: Mark members as static
         {
-            foreach (DocValuesFieldUpdates.Iterator iter in updatesIters)
+            foreach (DocValuesFieldUpdatesIterator iter in updatesIters)
             {
                 if (iter.Doc == deletedDoc)
                 {
@@ -4382,7 +4382,7 @@ namespace Lucene.Net.Index
 
             internal void Init(ReaderPool readerPool, MergePolicy.OneMerge merge, MergeState mergeState, bool initWritableLiveDocs)
             {
-                if (mergedDeletesAndUpdates == null)
+                if (mergedDeletesAndUpdates is null)
                 {
                     mergedDeletesAndUpdates = readerPool.Get(merge.info, true);
                     docMap = merge.GetDocMap(mergeState);
@@ -4396,15 +4396,15 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void MaybeApplyMergedDVUpdates(MergePolicy.OneMerge merge, MergeState mergeState, int docUpto, MergedDeletesAndUpdates holder, string[] mergingFields, DocValuesFieldUpdates[] dvFieldUpdates, DocValuesFieldUpdates.Iterator[] updatesIters, int curDoc)
+        private void MaybeApplyMergedDVUpdates(MergePolicy.OneMerge merge, MergeState mergeState, int docUpto, MergedDeletesAndUpdates holder, string[] mergingFields, DocValuesFieldUpdates[] dvFieldUpdates, DocValuesFieldUpdatesIterator[] updatesIters, int curDoc)
         {
             int newDoc = -1;
             for (int idx = 0; idx < mergingFields.Length; idx++)
             {
-                DocValuesFieldUpdates.Iterator updatesIter = updatesIters[idx];
+                DocValuesFieldUpdatesIterator updatesIter = updatesIters[idx];
                 if (updatesIter.Doc == curDoc) // document has an update
                 {
-                    if (holder.mergedDeletesAndUpdates == null)
+                    if (holder.mergedDeletesAndUpdates is null)
                     {
                         holder.Init(readerPool, merge, mergeState, false);
                     }
@@ -4413,7 +4413,8 @@ namespace Lucene.Net.Index
                         newDoc = holder.docMap.Map(docUpto);
                     }
                     DocValuesFieldUpdates dvUpdates = dvFieldUpdates[idx];
-                    dvUpdates.Add(newDoc, updatesIter.Value);
+                    // LUCENENET specific - dvUpdates handles getting the value so we don't need to deal with boxing/unboxing here.
+                    dvUpdates.AddFromIterator(newDoc, updatesIter);
                     updatesIter.NextDoc(); // advance to next document
                 }
                 else
@@ -4469,7 +4470,7 @@ namespace Lucene.Net.Index
                     IDictionary<string, DocValuesFieldUpdates> mergingFieldUpdates = rld.MergingFieldUpdates;
                     string[] mergingFields;
                     DocValuesFieldUpdates[] dvFieldUpdates;
-                    DocValuesFieldUpdates.Iterator[] updatesIters;
+                    DocValuesFieldUpdatesIterator[] updatesIters;
                     if (mergingFieldUpdates.Count == 0)
                     {
                         mergingFields = null;
@@ -4480,7 +4481,7 @@ namespace Lucene.Net.Index
                     {
                         mergingFields = new string[mergingFieldUpdates.Count];
                         dvFieldUpdates = new DocValuesFieldUpdates[mergingFieldUpdates.Count];
-                        updatesIters = new DocValuesFieldUpdates.Iterator[mergingFieldUpdates.Count];
+                        updatesIters = new DocValuesFieldUpdatesIterator[mergingFieldUpdates.Count];
                         int idx = 0;
                         foreach (KeyValuePair<string, DocValuesFieldUpdates> e in mergingFieldUpdates)
                         {
@@ -4488,7 +4489,7 @@ namespace Lucene.Net.Index
                             DocValuesFieldUpdates updates = e.Value;
                             mergingFields[idx] = field;
                             dvFieldUpdates[idx] = mergedDVUpdates.GetUpdates(field, updates.type);
-                            if (dvFieldUpdates[idx] == null)
+                            if (dvFieldUpdates[idx] is null)
                             {
                                 dvFieldUpdates[idx] = mergedDVUpdates.NewUpdates(field, updates.type, mergeState.SegmentInfo.DocCount);
                             }
@@ -4537,7 +4538,7 @@ namespace Lucene.Net.Index
                                 {
                                     if (!currentLiveDocs.Get(j))
                                     {
-                                        if (holder.mergedDeletesAndUpdates == null || !holder.initializedWritableLiveDocs)
+                                        if (holder.mergedDeletesAndUpdates is null || !holder.initializedWritableLiveDocs)
                                         {
                                             holder.Init(readerPool, merge, mergeState, true);
                                         }
@@ -4588,7 +4589,7 @@ namespace Lucene.Net.Index
                         {
                             if (!currentLiveDocs.Get(j))
                             {
-                                if (holder.mergedDeletesAndUpdates == null || !holder.initializedWritableLiveDocs)
+                                if (holder.mergedDeletesAndUpdates is null || !holder.initializedWritableLiveDocs)
                                 {
                                     holder.Init(readerPool, merge, mergeState, true);
                                 }
@@ -4651,7 +4652,7 @@ namespace Lucene.Net.Index
 
                 if (infoStream.IsEnabled("IW"))
                 {
-                    if (holder.mergedDeletesAndUpdates == null)
+                    if (holder.mergedDeletesAndUpdates is null)
                     {
                         infoStream.Message("IW", "no new deletes or field updates since merge started");
                     }
@@ -5305,7 +5306,7 @@ namespace Lucene.Net.Index
                         }
                         catch (Exception t) when (t.IsThrowable())
                         {
-                            if (th == null)
+                            if (th is null)
                             {
                                 th = t;
                             }
@@ -5718,7 +5719,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                return segmentInfos.Count > 0 ? segmentInfos.Info(segmentInfos.Count - 1) : null;
+                return segmentInfos.Count > 0 ? segmentInfos[segmentInfos.Count - 1] : null;
             }
             finally
             {
@@ -5894,7 +5895,7 @@ namespace Lucene.Net.Index
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(TestPoint("startStartCommit"));
-                Debugging.Assert(pendingCommit == null);
+                Debugging.Assert(pendingCommit is null);
             }
 
             if (hitOOM)
@@ -5948,7 +5949,7 @@ namespace Lucene.Net.Index
                     UninterruptableMonitor.Enter(this);
                     try
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(pendingCommit == null);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(pendingCommit is null);
 
                         if (Debugging.AssertsEnabled) Debugging.Assert(segmentInfos.Generation == toSync.Generation);
 
@@ -6374,7 +6375,7 @@ namespace Lucene.Net.Index
         /// Each event should only rely on the serializeability within it's process method. All actions that must happen before or after a certain action must be
         /// encoded inside the <see cref="Process(IndexWriter, bool, bool)"/> method.
         /// </summary>
-        public interface IEvent
+        internal interface IEvent
         {
             /// <summary>
             /// Processes the event. this method is called by the <see cref="IndexWriter"/>

@@ -23,14 +23,12 @@ using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
-
-#if TESTFRAMEWORK_MSTEST
-using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-#elif TESTFRAMEWORK_NUNIT
+using Number = J2N.Numerics.Number;
+using Double = J2N.Numerics.Double;
+using Int32 = J2N.Numerics.Int32;
+using Int64 = J2N.Numerics.Int64;
+using Single = J2N.Numerics.Single;
 using Test = NUnit.Framework.TestAttribute;
-#elif TESTFRAMEWORK_XUNIT
-using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
-#endif
 
 namespace Lucene.Net.Index
 {
@@ -59,16 +57,7 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
     public abstract class BaseStoredFieldsFormatTestCase : BaseIndexFileFormatTestCase
-#if TESTFRAMEWORK_XUNIT
-        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        public BaseStoredFieldsFormatTestCase(BeforeAfterClass beforeAfter)
-            : base(beforeAfter)
-        {
-        }
-#else
-    {
-#endif
         protected override void AddRandomFields(Document d)
         {
             int numValues = Random.Next(3);
@@ -88,7 +77,7 @@ namespace Lucene.Net.Index
             int docCount = AtLeast(200);
             int fieldCount = TestUtil.NextInt32(rand, 1, 5);
 
-            IList<int?> fieldIDs = new JCG.List<int?>();
+            IList<int> fieldIDs = new JCG.List<int>();
 
             FieldType customType = new FieldType(TextField.TYPE_STORED);
             customType.IsTokenized = false;
@@ -268,12 +257,8 @@ namespace Lucene.Net.Index
             try
             {
                 var numDocs = AtLeast(500);
-                var answers = new object[numDocs];
-                using (var w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                        this,
-#endif
-                        Random, dir))
+                var answers = new Number[numDocs];
+                using (var w = new RandomIndexWriter(Random, dir))
                 {
                     NumericType[] typeAnswers = new NumericType[numDocs];
                     for (int id = 0; id < numDocs; id++)
@@ -281,7 +266,7 @@ namespace Lucene.Net.Index
                         Document doc = new Document();
                         Field nf;
                         Field sf;
-                        object answer;
+                        Number answer;
                         NumericType typeAnswer;
                         if (Random.NextBoolean())
                         {
@@ -289,7 +274,7 @@ namespace Lucene.Net.Index
                             if (Random.NextBoolean())
                             {
                                 float f = Random.NextSingle();
-                                answer = Convert.ToSingle(f, CultureInfo.InvariantCulture);
+                                answer = Single.GetInstance(f);
                                 nf = new SingleField("nf", f, Field.Store.NO);
                                 sf = new StoredField("nf", f);
                                 typeAnswer = NumericType.SINGLE;
@@ -297,7 +282,7 @@ namespace Lucene.Net.Index
                             else
                             {
                                 double d = Random.NextDouble();
-                                answer = Convert.ToDouble(d, CultureInfo.InvariantCulture);
+                                answer = Double.GetInstance(d);
                                 nf = new DoubleField("nf", d, Field.Store.NO);
                                 sf = new StoredField("nf", d);
                                 typeAnswer = NumericType.DOUBLE;
@@ -309,7 +294,7 @@ namespace Lucene.Net.Index
                             if (Random.NextBoolean())
                             {
                                 int i = Random.Next();
-                                answer = Convert.ToInt32(i, CultureInfo.InvariantCulture);
+                                answer = Int32.GetInstance(i);
                                 nf = new Int32Field("nf", i, Field.Store.NO);
                                 sf = new StoredField("nf", i);
                                 typeAnswer = NumericType.INT32;
@@ -317,7 +302,7 @@ namespace Lucene.Net.Index
                             else
                             {
                                 long l = Random.NextInt64();
-                                answer = Convert.ToInt64(l, CultureInfo.InvariantCulture);
+                                answer = Int64.GetInstance(l);
                                 nf = new Int64Field("nf", l, Field.Store.NO);
                                 sf = new StoredField("nf", l);
                                 typeAnswer = NumericType.INT64;
@@ -339,7 +324,7 @@ namespace Lucene.Net.Index
 
                 foreach (AtomicReaderContext ctx in r.Leaves)
                 {
-                    AtomicReader sub = ctx.AtomicReader; // LUCENENET TODO: Dispose() ?
+                    AtomicReader sub = ctx.AtomicReader;
                     FieldCache.Int32s ids = FieldCache.DEFAULT.GetInt32s(sub, "id", false);
                     for (int docID = 0; docID < sub.NumDocs; docID++)
                     {
@@ -365,11 +350,7 @@ namespace Lucene.Net.Index
             IndexReader r = null;
             try
             {
-                using (RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                        this,
-#endif
-                        Random, dir))
+                using (RandomIndexWriter w = new RandomIndexWriter(Random, dir))
                 {
                     Document doc = new Document();
                     FieldType onlyStored = new FieldType();
@@ -558,7 +539,7 @@ namespace Lucene.Net.Index
                             throw IllegalStateException.Create("Expected 1 hit, got " + topDocs.TotalHits);
                         }
                         Document sdoc = rd.Document(topDocs.ScoreDocs[0].Doc);
-                        if (sdoc == null || sdoc.Get("fld") == null)
+                        if (sdoc is null || sdoc.Get("fld") is null)
                         {
                             throw IllegalStateException.Create("Could not find document " + q);
                         }
@@ -668,7 +649,7 @@ namespace Lucene.Net.Index
                     for (int i = 0; i < ir.MaxDoc; ++i)
                     {
                         Document doc = ir.Document(i);
-                        if (doc == null)
+                        if (doc is null)
                         {
                             continue;
                         }
@@ -803,11 +784,7 @@ namespace Lucene.Net.Index
                 }
                 w.Commit();
                 w.Dispose();
-                w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                        this,
-#endif
-                        Random, dir);
+                w = new RandomIndexWriter(Random, dir);
                 w.ForceMerge(TestUtil.NextInt32(Random, 1, 3));
                 w.Commit();
             }

@@ -71,7 +71,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             IndexReader reader;
 
             bool closeSearcher;
-            if (searcher == null)
+            if (searcher is null)
             {
                 // open our own reader
                 Directory dir = RunData.Directory;
@@ -96,7 +96,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     if (null == liveDocs || liveDocs.Get(m))
                     {
                         doc = reader.Document(m);
-                        res += (doc == null ? 0 : 1);
+                        res += (doc is null ? 0 : 1);
                     }
                 }
             }

@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Queries;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Queries;
@@ -32,12 +32,12 @@ namespace Lucene.Net.Spatial
     /// A document is considered disjoint if it has spatial data that does not
     /// intersect with the query shape.  Another way of looking at this is that it's
     /// a way to invert a query shape.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class DisjointSpatialFilter : Filter
     {
-        private readonly string field;//maybe null
+        private readonly string? field;//maybe null
         private readonly Filter intersectsFilter;
 
         /// <param name="strategy">Needed to compute intersects</param>
@@ -45,10 +45,16 @@ namespace Lucene.Net.Spatial
         /// <param name="field">
         /// This field is used to determine which docs have spatial data via
         /// <see cref="IFieldCache.GetDocsWithField(AtomicReader, string)"/>.
-        /// Passing null will assume all docs have spatial data.
+        /// Passing <c>null</c> will assume all docs have spatial data.
         /// </param>
-        public DisjointSpatialFilter(SpatialStrategy strategy, SpatialArgs args, string field)
+        public DisjointSpatialFilter(SpatialStrategy strategy, SpatialArgs args, string? field)
         {
+            // LUCENENET specific - added guard clauses
+            if (strategy is null)
+                throw new ArgumentNullException(nameof(strategy));
+            if (args is null)
+                throw new ArgumentNullException(nameof(args));
+
             this.field = field;
 
             // TODO consider making SpatialArgs cloneable
@@ -59,13 +65,13 @@ namespace Lucene.Net.Spatial
         }
 
         //restore so it looks like it was
-        public override bool Equals(object o)
+        public override bool Equals(object? o)
         {
             if (this == o)
             {
                 return true;
             }
-            if (o == null || GetType() != o.GetType())
+            if (o is null || GetType() != o.GetType())
             {
                 return false;
             }
@@ -83,16 +89,20 @@ namespace Lucene.Net.Spatial
 
         public override int GetHashCode()
         {
-            int result = field != null ? field.GetHashCode() : 0;
+            int result = field is null ? 0 : field.GetHashCode();
             result = 31 * result + intersectsFilter.GetHashCode();
             return result;
         }
 
         /// <exception cref="IOException"></exception>
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
+        public override DocIdSet? GetDocIdSet(AtomicReaderContext context, IBits? acceptDocs)
         {
-            IBits docsWithField;
-            if (field == null)
+            // LUCENENET specific - added guard clause
+            if (context is null)
+                throw new ArgumentNullException(nameof(context));
+
+            IBits? docsWithField;
+            if (field is null)
             {
                 docsWithField = null;
             }
@@ -102,7 +112,7 @@ namespace Lucene.Net.Spatial
                 // which is nice but loading it in this way might be slower than say using an
                 // intersects filter against the world bounds. So do we add a method to the
                 // strategy, perhaps?  But the strategy can't cache it.
-                docsWithField = FieldCache.DEFAULT.GetDocsWithField((context.AtomicReader), field);
+                docsWithField = FieldCache.DEFAULT.GetDocsWithField(context.AtomicReader, field);
 
                 int maxDoc = context.AtomicReader.MaxDoc;
                 if (docsWithField.Length != maxDoc)

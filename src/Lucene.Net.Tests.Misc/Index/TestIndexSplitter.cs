@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
             // so the unreferenced files are expected.
             if (fsDir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)fsDir).AssertNoUnreferencedFilesOnClose = (false);
+                ((MockDirectoryWrapper)fsDir).AssertNoUnreferencedFilesOnDispose = (false);
             }
 
             MergePolicy mergePolicy = new LogByteSizeMergePolicy();
@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
             iw.Dispose();
             // we should have 2 segments now
             IndexSplitter @is = new IndexSplitter(dir);
-            string splitSegName = @is.Infos.Info(1).Info.Name;
+            string splitSegName = @is.Infos[1].Info.Name;
             @is.Split(destDir, new string[] { splitSegName });
             Store.Directory fsDirDest = NewFSDirectory(destDir);
             DirectoryReader r = DirectoryReader.Open(fsDirDest);

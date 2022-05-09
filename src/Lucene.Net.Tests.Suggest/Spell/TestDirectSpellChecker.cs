@@ -32,11 +32,7 @@ namespace Lucene.Net.Search.Spell
         {
             DirectSpellChecker spellchecker = new DirectSpellChecker();
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir,
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
                 new MockAnalyzer(Random, MockTokenizer.KEYWORD, true));
 
             string[] termsToAdd = { "metanoia", "metanoian", "metanoiai", "metanoias", "metanoið‘" };
@@ -70,11 +66,7 @@ namespace Lucene.Net.Search.Spell
             DirectSpellChecker spellChecker = new DirectSpellChecker();
             spellChecker.MinQueryLength = (0);
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir,
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
                 new MockAnalyzer(Random, MockTokenizer.SIMPLE, true));
 
             for (int i = 0; i < 20; i++)
@@ -144,11 +136,7 @@ namespace Lucene.Net.Search.Spell
         public void TestOptions()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir,
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
                 new MockAnalyzer(Random, MockTokenizer.SIMPLE, true));
 
             Document doc = new Document();
@@ -217,11 +205,7 @@ namespace Lucene.Net.Search.Spell
         {
             DirectSpellChecker spellChecker = new DirectSpellChecker();
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir,
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
                 new MockAnalyzer(Random, MockTokenizer.SIMPLE, true));
 
             for (int i = 0; i < 20; i++)
@@ -248,11 +232,7 @@ namespace Lucene.Net.Search.Spell
         {
             DirectSpellChecker spellChecker = new DirectSpellChecker();
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir,
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
                 new MockAnalyzer(Random, MockTokenizer.SIMPLE, true));
 
             for (int i = 0; i < 20; i++)
@@ -280,11 +260,7 @@ namespace Lucene.Net.Search.Spell
         {
             DirectSpellChecker spellChecker = new DirectSpellChecker();
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir,
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
                 new MockAnalyzer(Random, MockTokenizer.SIMPLE, true));
 
             for (int i = 0; i < 20; i++)

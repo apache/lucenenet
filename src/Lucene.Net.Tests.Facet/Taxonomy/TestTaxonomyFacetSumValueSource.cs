@@ -78,11 +78,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // main index:
             DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             FacetsConfig config = new FacetsConfig();
 
             // Reused across documents, to add the necessary facet
@@ -132,7 +128,7 @@ namespace Lucene.Net.Facet.Taxonomy
             TaxonomyFacetSumValueSource facets = new TaxonomyFacetSumValueSource(taxoReader, new FacetsConfig(), c, new Int32FieldSource("num"));
 
             // Retrieve & verify results:
-            Assert.AreEqual("dim=Author path=[] value=145.0 childCount=4\n  Lisa (50.0)\n  Frank (45.0)\n  Susan (40.0)\n  Bob (10.0)\n", facets.GetTopChildren(10, "Author").ToString());
+            Assert.AreEqual("dim=Author path=[] value=145.0 childCount=4\n  Lisa (50.0)\n  Frank (45.0)\n  Susan (40.0)\n  Bob (10.0)\n", facets.GetTopChildren(10, "Author").ToString(CultureInfo.InvariantCulture));
 
             taxoReader.Dispose();
             searcher.IndexReader.Dispose();
@@ -151,11 +147,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // main index:
             var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             FacetsConfig config = new FacetsConfig();
 
             Document doc = new Document();
@@ -203,9 +195,9 @@ namespace Lucene.Net.Facet.Taxonomy
             IList<FacetResult> results = facets.GetAllDims(10);
 
             Assert.AreEqual(3, results.Count);
-            Assert.AreEqual("dim=a path=[] value=60.0 childCount=3\n  foo3 (30.0)\n  foo2 (20.0)\n  foo1 (10.0)\n", results[0].ToString());
-            Assert.AreEqual("dim=b path=[] value=50.0 childCount=2\n  bar2 (30.0)\n  bar1 (20.0)\n", results[1].ToString());
-            Assert.AreEqual("dim=c path=[] value=30.0 childCount=1\n  baz1 (30.0)\n", results[2].ToString());
+            Assert.AreEqual("dim=a path=[] value=60.0 childCount=3\n  foo3 (30.0)\n  foo2 (20.0)\n  foo1 (10.0)\n", results[0].ToString(CultureInfo.InvariantCulture));
+            Assert.AreEqual("dim=b path=[] value=50.0 childCount=2\n  bar2 (30.0)\n  bar1 (20.0)\n", results[1].ToString(CultureInfo.InvariantCulture));
+            Assert.AreEqual("dim=c path=[] value=30.0 childCount=1\n  baz1 (30.0)\n", results[2].ToString(CultureInfo.InvariantCulture));
 
             IOUtils.Dispose(searcher.IndexReader, taxoReader, dir, taxoDir);
         }
@@ -223,11 +215,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetsConfig config = new FacetsConfig();
             config.SetIndexFieldName("a", "$facets2");
 
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
 
             Document doc = new Document();
             doc.Add(new Int32Field("num", 10, Field.Store.NO));
@@ -336,7 +324,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetsCollector sfc = new FacetsCollector();
             NewSearcher(r).Search(new MatchAllDocsQuery(), sfc);
             Facets facets = new TaxonomyFacetSumValueSource(taxoReader, config, sfc, new Int64FieldSource("price"));
-            Assert.AreEqual("dim=a path=[] value=10.0 childCount=2\n  1 (6.0)\n  0 (4.0)\n", facets.GetTopChildren(10, "a").ToString());
+            Assert.AreEqual("dim=a path=[] value=10.0 childCount=2\n  1 (6.0)\n  0 (4.0)\n", facets.GetTopChildren(10, "a").ToString(CultureInfo.InvariantCulture));
 
             IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
@@ -370,7 +358,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetsCollector.Search(NewSearcher(r), q, 10, fc);
             Facets facets = new TaxonomyFacetSumValueSource(taxoReader, config, fc, valueSource);
 
-            Assert.AreEqual("dim=a path=[] value=10.0 childCount=2\n  1 (6.0)\n  0 (4.0)\n", facets.GetTopChildren(10, "a").ToString());
+            Assert.AreEqual("dim=a path=[] value=10.0 childCount=2\n  1 (6.0)\n  0 (4.0)\n", facets.GetTopChildren(10, "a").ToString(CultureInfo.InvariantCulture));
 
             IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
@@ -462,7 +450,7 @@ namespace Lucene.Net.Facet.Taxonomy
             NewSearcher(r).Search(new MatchAllDocsQuery(), sfc);
             Facets facets = new TaxonomyFacetSumValueSource(taxoReader, config, sfc, valueSource);
 
-            Assert.AreEqual("dim=a path=[] value=10.0 childCount=2\n  1 (6.0)\n  0 (4.0)\n", facets.GetTopChildren(10, "a").ToString());
+            Assert.AreEqual("dim=a path=[] value=10.0 childCount=2\n  1 (6.0)\n  0 (4.0)\n", facets.GetTopChildren(10, "a").ToString(CultureInfo.InvariantCulture));
 
             IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
@@ -508,11 +496,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Store.Directory indexDir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
 
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, indexDir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, indexDir);
             var tw = new DirectoryTaxonomyWriter(taxoDir);
             FacetsConfig config = new FacetsConfig();
             int numDocs = AtLeast(1000);
@@ -555,10 +539,10 @@ namespace Lucene.Net.Facet.Taxonomy
                 Facets facets = new TaxonomyFacetSumValueSource(tr, config, fc, values);
 
                 // Slow, yet hopefully bug-free, faceting:
-                var expectedValues = new JCG.List<Dictionary<string, float?>>(numDims);
+                var expectedValues = new JCG.List<Dictionary<string, float>>(numDims);
                 for (int i = 0; i < numDims; i++)
                 {
-                    expectedValues.Add(new Dictionary<string, float?>());
+                    expectedValues.Add(new Dictionary<string, float>());
                 }
 
                 foreach (TestDoc doc in testDocs)
@@ -569,7 +553,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         {
                             if (doc.dims[j] != null)
                             {
-                                if (!expectedValues[j].TryGetValue(doc.dims[j], out float? v) || v == null)
+                                if (!expectedValues[j].TryGetValue(doc.dims[j], out float v))
                                 {
                                     expectedValues[j][doc.dims[j]] = doc.value;
                                 }
@@ -587,10 +571,10 @@ namespace Lucene.Net.Facet.Taxonomy
                 {
                     JCG.List<LabelAndValue> labelValues = new JCG.List<LabelAndValue>();
                     float totValue = 0;
-                    foreach (KeyValuePair<string, float?> ent in expectedValues[i])
+                    foreach (KeyValuePair<string, float> ent in expectedValues[i])
                     {
-                        labelValues.Add(new LabelAndValue(ent.Key, ent.Value.Value));
-                        totValue += ent.Value.Value;
+                        labelValues.Add(new LabelAndValue(ent.Key, ent.Value));
+                        totValue += ent.Value;
                     }
                     SortLabelValues(labelValues);
                     if (totValue > 0)

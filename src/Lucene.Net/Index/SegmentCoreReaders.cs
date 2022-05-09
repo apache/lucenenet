@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
             fieldsReaderLocal = new DisposableThreadLocal<StoredFieldsReader>(()
                 => (StoredFieldsReader)fieldsReaderOrig.Clone());
             termVectorsLocal = new DisposableThreadLocal<TermVectorsReader>(()
-                => (termVectorsReaderOrig == null) ? null : (TermVectorsReader)termVectorsReaderOrig.Clone());
+                => (termVectorsReaderOrig is null) ? null : (TermVectorsReader)termVectorsReaderOrig.Clone());
 
             if (termsIndexDivisor == 0)
             {
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception t) when (t.IsThrowable())
                     {
-                        if (th == null)
+                        if (th is null)
                         {
                             th = t;
                         }

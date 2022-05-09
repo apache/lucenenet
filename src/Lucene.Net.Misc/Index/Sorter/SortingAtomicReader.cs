@@ -60,7 +60,7 @@ namespace Lucene.Net.Index.Sorter
             public override Terms GetTerms(string field)
             {
                 Terms terms = this.m_input.GetTerms(field);
-                if (terms == null)
+                if (terms is null)
                 {
                     return null;
                 }
@@ -113,7 +113,7 @@ namespace Lucene.Net.Index.Sorter
 
             internal virtual IBits NewToOld(IBits liveDocs)
             {
-                if (liveDocs == null)
+                if (liveDocs is null)
                 {
                     return null;
                 }
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index.Sorter
                 }
 
                 DocsAndPositionsEnum inDocsAndPositions = m_input.DocsAndPositions(NewToOld(liveDocs), inReuse, flags);
-                if (inDocsAndPositions == null)
+                if (inDocsAndPositions is null)
                 {
                     return null;
                 }
@@ -333,7 +333,7 @@ namespace Lucene.Net.Index.Sorter
                 {
                     this.docs = docs;
                     this.freqs = freqs;
-                    if (freqs != null && tmpFreqs == null)
+                    if (freqs != null && tmpFreqs is null)
                     {
                         tmpFreqs = new int[tmpDocs.Length];
                     }
@@ -427,7 +427,7 @@ namespace Lucene.Net.Index.Sorter
                 int doc;
                 if (withFreqs)
                 {
-                    if (freqs == null || freqs.Length < docs.Length)
+                    if (freqs is null || freqs.Length < docs.Length)
                     {
                         freqs = new int[docs.Length];
                     }
@@ -465,7 +465,7 @@ namespace Lucene.Net.Index.Sorter
             // for testing
             internal virtual bool Reused(DocsEnum other)
             {
-                if (other == null || !(other is SortingDocsEnum))
+                if (other is null || !(other is SortingDocsEnum))
                 {
                     return false;
                 }
@@ -637,7 +637,7 @@ namespace Lucene.Net.Index.Sorter
             // for testing
             internal virtual bool Reused(DocsAndPositionsEnum other)
             {
-                if (other == null || !(other is SortingDocsAndPositionsEnum))
+                if (other is null || !(other is SortingDocsAndPositionsEnum))
                 {
                     return false;
                 }
@@ -656,7 +656,7 @@ namespace Lucene.Net.Index.Sorter
                     BytesRef payload = @in.GetPayload();
                     // The low-order bit of token is set only if there is a payload, the
                     // previous bits are the delta-encoded position. 
-                    int token = (pos - previousPosition) << 1 | (payload == null ? 0 : 1);
+                    int token = (pos - previousPosition) << 1 | (payload is null ? 0 : 1);
                     @out.WriteVInt32(token);
                     previousPosition = pos;
                     if (storeOffsets) // don't encode offsets if they are not stored
@@ -756,7 +756,7 @@ namespace Lucene.Net.Index.Sorter
         /// </summary>
         internal static AtomicReader Wrap(AtomicReader reader, Sorter.DocMap docMap)
         {
-            if (docMap == null)
+            if (docMap is null)
             {
                 // the reader is already sorter
                 return reader;
@@ -786,7 +786,7 @@ namespace Lucene.Net.Index.Sorter
             get
             {
                 Fields fields = m_input.Fields;
-                if (fields == null)
+                if (fields is null)
                 {
                     return null;
                 }
@@ -800,7 +800,7 @@ namespace Lucene.Net.Index.Sorter
         public override BinaryDocValues GetBinaryDocValues(string field)
         {
             BinaryDocValues oldDocValues = m_input.GetBinaryDocValues(field);
-            if (oldDocValues == null)
+            if (oldDocValues is null)
             {
                 return null;
             }
@@ -815,7 +815,7 @@ namespace Lucene.Net.Index.Sorter
             get
             {
                 IBits inLiveDocs = m_input.LiveDocs;
-                if (inLiveDocs == null)
+                if (inLiveDocs is null)
                 {
                     return null;
                 }
@@ -829,7 +829,7 @@ namespace Lucene.Net.Index.Sorter
         public override NumericDocValues GetNormValues(string field)
         {
             NumericDocValues norm = m_input.GetNormValues(field);
-            if (norm == null)
+            if (norm is null)
             {
                 return null;
             }
@@ -842,7 +842,7 @@ namespace Lucene.Net.Index.Sorter
         public override NumericDocValues GetNumericDocValues(string field)
         {
             NumericDocValues oldDocValues = m_input.GetNumericDocValues(field);
-            if (oldDocValues == null)
+            if (oldDocValues is null)
             {
                 return null;
             }
@@ -852,7 +852,7 @@ namespace Lucene.Net.Index.Sorter
         public override SortedDocValues GetSortedDocValues(string field)
         {
             SortedDocValues sortedDV = m_input.GetSortedDocValues(field);
-            if (sortedDV == null)
+            if (sortedDV is null)
             {
                 return null;
             }
@@ -865,7 +865,7 @@ namespace Lucene.Net.Index.Sorter
         public override SortedSetDocValues GetSortedSetDocValues(string field)
         {
             SortedSetDocValues sortedSetDV = m_input.GetSortedSetDocValues(field);
-            if (sortedSetDV == null)
+            if (sortedSetDV is null)
             {
                 return null;
             }
@@ -878,7 +878,7 @@ namespace Lucene.Net.Index.Sorter
         public override IBits GetDocsWithField(string field)
         {
             IBits bits = m_input.GetDocsWithField(field);
-            if (bits == null || bits is Bits.MatchAllBits || bits is Bits.MatchNoBits)
+            if (bits is null || bits is Bits.MatchAllBits || bits is Bits.MatchNoBits)
             {
                 return bits;
             }

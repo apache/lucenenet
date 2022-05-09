@@ -28,6 +28,7 @@ namespace Lucene.Net.Util.Fst
     /// @lucene.experimental
     /// </summary>
     public abstract class FSTEnum<T> // LUCENENET NOTE: changed from internal to public because has public subclasses
+        where T : class // LUCENENET specific - added class constraint, since we compare reference equality
     {
         protected readonly FST<T> m_fst;
 
@@ -537,7 +538,7 @@ namespace Lucene.Net.Util.Fst
             {
                 //System.out.println("  cycle target=" + (targetLabel == -1 ? "-1" : (char) targetLabel));
                 FST.Arc<T> nextArc = m_fst.FindTargetArc(targetLabel, arc, GetArc(m_upto), fstReader);
-                if (nextArc == null)
+                if (nextArc is null)
                 {
                     // short circuit
                     //upto--;
@@ -632,7 +633,7 @@ namespace Lucene.Net.Util.Fst
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private FST.Arc<T> GetArc(int idx)
         {
-            if (m_arcs[idx] == null)
+            if (m_arcs[idx] is null)
             {
                 m_arcs[idx] = new FST.Arc<T>();
             }

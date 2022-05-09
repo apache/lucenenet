@@ -40,11 +40,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
         {
             base.SetUp();
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory);
 
             // Add series of docs with specific information for MoreLikeThis
             AddDoc(writer, "lucene");
@@ -73,7 +69,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
         [Test]
         public void TestBoostFactor()
         {
-            IDictionary<string, float?> originalValues = OriginalValues;
+            IDictionary<string, float> originalValues = GetOriginalValues();
 
             MoreLikeThis mlt = new MoreLikeThis(reader);
             mlt.Analyzer = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
@@ -96,7 +92,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
             foreach (BooleanClause clause in clauses)
             {
                 TermQuery tq = (TermQuery)clause.Query;
-                float? termBoost = originalValues[tq.Term.Text];
+                float termBoost = originalValues[tq.Term.Text];
                 assertNotNull("Expected term " + tq.Term.Text, termBoost);
 
                 float totalBoost = (float) (termBoost * boostFactor);
@@ -105,28 +101,25 @@ namespace Lucene.Net.Tests.Queries.Mlt
             }
         }
         
-        private IDictionary<string, float?> OriginalValues
+        private IDictionary<string, float> GetOriginalValues()
         {
-            get
-            {
-                IDictionary<string, float?> originalValues = new Dictionary<string, float?>();
-                MoreLikeThis mlt = new MoreLikeThis(reader);
-                mlt.Analyzer = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
-                mlt.MinDocFreq = 1;
-                mlt.MinTermFreq = 1;
-                mlt.MinWordLen = 1;
-                mlt.FieldNames = new[] { "text" };
-                mlt.ApplyBoost = true;
-                BooleanQuery query = (BooleanQuery)mlt.Like(new StringReader("lucene release"), "text");
-                IList<BooleanClause> clauses = query.Clauses;
+            IDictionary<string, float> originalValues = new Dictionary<string, float>();
+            MoreLikeThis mlt = new MoreLikeThis(reader);
+            mlt.Analyzer = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
+            mlt.MinDocFreq = 1;
+            mlt.MinTermFreq = 1;
+            mlt.MinWordLen = 1;
+            mlt.FieldNames = new[] { "text" };
+            mlt.ApplyBoost = true;
+            BooleanQuery query = (BooleanQuery)mlt.Like(new StringReader("lucene release"), "text");
+            IList<BooleanClause> clauses = query.Clauses;
 
-                foreach (BooleanClause clause in clauses)
-                {
-                    TermQuery tq = (TermQuery)clause.Query;
-                    originalValues[tq.Term.Text] = tq.Boost;
-                }
-                return originalValues;
+            foreach (BooleanClause clause in clauses)
+            {
+                TermQuery tq = (TermQuery)clause.Query;
+                originalValues[tq.Term.Text] = tq.Boost;
             }
+            return originalValues;
         }
 
         // LUCENE-3326
@@ -149,11 +142,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
         public void TestMoreLikeThisQuery()
         {
             Query query = new MoreLikeThisQuery("this is a test", new[] { "text" }, new MockAnalyzer(Random), "text");
-            QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, query, searcher);
+            QueryUtils.Check(Random, query, searcher);
         }
 
         // TODO: add tests for the MoreLikeThisQuery

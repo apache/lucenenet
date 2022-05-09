@@ -267,7 +267,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             inputFiles = new Enumerator(dataDir);
 
-            if (inputFiles == null)
+            if (inputFiles is null)
             {
                 throw RuntimeException.Create("No txt files in dataDir: " + dataDir.FullName);
             }

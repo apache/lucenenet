@@ -67,9 +67,9 @@ namespace Lucene.Net.Replicator
                 }
             }
 
-            public bool? Call()
+            public void Call()
             {
-                if (indexReader == null)
+                if (indexReader is null)
                 {
                     indexReader = DirectoryReader.Open(indexDir);
                     lastIndexGeneration = indexReader.IndexCommit.Generation;
@@ -109,7 +109,6 @@ namespace Lucene.Net.Replicator
                     TopDocs docs = searcher.Search(drillDown, 10);
                     assertEquals(1, docs.TotalHits);
                 }
-                return null;
             }
 
             public void Dispose()
@@ -330,7 +329,6 @@ namespace Lucene.Net.Replicator
             {
                 if (Random.NextDouble() < 0.2 && failures > 0)
                     throw RuntimeException.Create("random exception from callback");
-                return null;
             });
             client = new ReplicationClientAnonymousClass(this, replicator, handler, @in, failures);
             client.StartUpdateThread(10, "indexAndTaxo");

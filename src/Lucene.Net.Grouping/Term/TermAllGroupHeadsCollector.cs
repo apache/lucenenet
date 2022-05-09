@@ -169,7 +169,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             if (!groups.TryGetValue(groupValue, out GroupHead groupHead))
             {
                 groupHead = new GroupHead(this, groupValue, sortWithinGroup, doc);
-                groups[groupValue == null ? null : BytesRef.DeepCopyOf(groupValue)] = groupHead;
+                groups[groupValue is null ? null : BytesRef.DeepCopyOf(groupValue)] = groupHead;
                 m_temporalResult.Stop = true;
             }
             else
@@ -339,7 +339,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             foreach (GroupHead collectedGroup in collectedGroups)
             {
                 int ord;
-                if (collectedGroup.GroupValue == null)
+                if (collectedGroup.GroupValue is null)
                 {
                     ord = -1;
                 }
@@ -347,7 +347,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                 {
                     ord = groupIndex.LookupTerm(collectedGroup.GroupValue);
                 }
-                if (collectedGroup.GroupValue == null || ord >= 0)
+                if (collectedGroup.GroupValue is null || ord >= 0)
                 {
                     ordSet.Put(ord);
                     segmentGroupHeads[ord + 1] = collectedGroup;
@@ -359,7 +359,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                             continue;
                         }
                         int sortOrd;
-                        if (collectedGroup.sortValues[i] == null)
+                        if (collectedGroup.sortValues[i] is null)
                         {
                             sortOrd = -1;
                         }
@@ -559,7 +559,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             foreach (GroupHead collectedGroup in collectedGroups)
             {
                 int groupOrd;
-                if (collectedGroup.GroupValue == null)
+                if (collectedGroup.GroupValue is null)
                 {
                     groupOrd = -1;
                 }
@@ -567,7 +567,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                 {
                     groupOrd = groupIndex.LookupTerm(collectedGroup.GroupValue);
                 }
-                if (collectedGroup.GroupValue == null || groupOrd >= 0)
+                if (collectedGroup.GroupValue is null || groupOrd >= 0)
                 {
                     ordSet.Put(groupOrd);
                     segmentGroupHeads[groupOrd + 1] = collectedGroup;
@@ -735,7 +735,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             foreach (GroupHead collectedGroup in collectedGroups)
             {
                 int ord;
-                if (collectedGroup.GroupValue == null)
+                if (collectedGroup.GroupValue is null)
                 {
                     ord = -1;
                 }
@@ -743,7 +743,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                 {
                     ord = groupIndex.LookupTerm(collectedGroup.GroupValue);
                 }
-                if (collectedGroup.GroupValue == null || ord >= 0)
+                if (collectedGroup.GroupValue is null || ord >= 0)
                 {
                     ordSet.Put(ord);
                     segmentGroupHeads[ord + 1] = collectedGroup;

@@ -47,7 +47,7 @@ namespace Lucene.Net.Store
                 {
                     // below maxint we reuse buffers
                     singleBuffers.TryGetValue(Convert.ToInt32(size), out byte[] buf);
-                    if (buf == null)
+                    if (buf is null)
                     {
                         buf = new byte[size];
                         //System.out.println("allocate: "+size);

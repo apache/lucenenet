@@ -1,8 +1,9 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Shapes;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Spatial.Util
@@ -25,16 +26,15 @@ namespace Lucene.Net.Spatial.Util
      */
 
     /// <summary>
-    /// Provides access to a
-    /// <see cref="ShapeFieldCache{T}">ShapeFieldCache&lt;T&gt;</see>
-    /// for a given
-    /// <see cref="Lucene.Net.Index.AtomicReader">Lucene.Net.Index.AtomicReader</see>.
-    /// 
-    /// If a Cache does not exist for the TextReader, then it is built by iterating over
+    /// Provides access to a <see cref="ShapeFieldCache{T}" />
+    /// for a given <see cref="AtomicReader" />.
+    /// <para/>
+    /// If a Cache does not exist for the Reader, then it is built by iterating over
     /// the all terms for a given field, reconstructing the Shape from them, and adding
     /// them to the Cache.
-    /// </summary>
+    /// <para/>
     /// @lucene.internal
+    /// </summary>
     public abstract class ShapeFieldCacheProvider<T>
         where T : IShape
     {
@@ -45,17 +45,18 @@ namespace Lucene.Net.Spatial.Util
         private readonly ConditionalWeakTable<IndexReader, Lazy<ShapeFieldCache<T>>> sidx =
             new ConditionalWeakTable<IndexReader, Lazy<ShapeFieldCache<T>>>();
 
-        protected internal readonly int m_defaultSize;
-        protected internal readonly string m_shapeField;
+        protected readonly int m_defaultSize;
+        protected readonly string m_shapeField;
 
         protected ShapeFieldCacheProvider(string shapeField, int defaultSize) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             // it may be a List<T> or T
-            this.m_shapeField = shapeField;
+            this.m_shapeField = shapeField ?? throw new ArgumentNullException(nameof(shapeField)); // LUCENENET specific - added guard clause
             this.m_defaultSize = defaultSize;
         }
 
-        protected internal abstract T ReadShape(BytesRef term);
+        [return: MaybeNull]
+        protected abstract T ReadShape(BytesRef term);
 
         public virtual ShapeFieldCache<T> GetCache(AtomicReader reader)
         {
@@ -67,15 +68,15 @@ namespace Lucene.Net.Spatial.Util
                 log.Fine("Building Cache [" + reader.MaxDoc() + "]");*/
                 ShapeFieldCache<T> idx = new ShapeFieldCache<T>(key.MaxDoc, m_defaultSize);
                 int count = 0;
-                DocsEnum docs = null;
+                DocsEnum? docs = null;
                 Terms terms = ((AtomicReader)key).GetTerms(m_shapeField);
-                TermsEnum te = null;
+                TermsEnum? te = null;
                 if (terms != null)
                 {
                     te = terms.GetEnumerator(te);
                     while (te.MoveNext())
                     {
-                        T shape = ReadShape(te.Term);
+                        T? shape = ReadShape(te.Term);
                         if (shape != null)
                         {
                             docs = te.Docs(null, docs, DocsFlags.NONE);

@@ -132,7 +132,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             /// <param name="forceAppend">Indicates if the default processing shall be overridden.</param>
             public void ProcessNextReplacement(string replacement, bool forceAppend)
             {
-                bool append = lastReplacement == null || !lastReplacement.EndsWith(replacement, StringComparison.Ordinal) || forceAppend;
+                bool append = lastReplacement is null || !lastReplacement.EndsWith(replacement, StringComparison.Ordinal) || forceAppend;
 
                 if (append && builder.Length < MAX_LENGTH)
                 {
@@ -151,7 +151,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
             public override string ToString()
             {
-                if (cachedString == null)
+                if (cachedString is null)
                 {
                     cachedString = builder.ToString();
                 }
@@ -258,7 +258,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         static DaitchMokotoffSoundex()
         {
             Stream rulesIS = typeof(DaitchMokotoffSoundex).FindAndGetManifestResourceStream(RESOURCE_FILE);
-            if (rulesIS == null)
+            if (rulesIS is null)
             {
                 throw new ArgumentException("Unable to load resource: " + RESOURCE_FILE);
             }
@@ -361,7 +361,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
                                 Rule r = new Rule(pattern, replacement1, replacement2, replacement3);
                                 char patternKey = r.Pattern[0];
-                                if (!ruleMapping.TryGetValue(patternKey, out IList<Rule> rules) || rules == null)
+                                if (!ruleMapping.TryGetValue(patternKey, out IList<Rule> rules) || rules is null)
                                 {
                                     rules = new JCG.List<Rule>();
                                     ruleMapping[patternKey] = rules;
@@ -457,7 +457,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual string Encode(string source)
         {
-            if (source == null)
+            if (source is null)
             {
                 return null;
             }
@@ -506,7 +506,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <exception cref="ArgumentException">If a character is not mapped.</exception>
         private string[] GetSoundex(string source, bool branching)
         {
-            if (source == null)
+            if (source is null)
             {
                 return null;
             }
@@ -531,7 +531,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 }
 
                 string inputContext = input.Substring(index);
-                if (!RULES.TryGetValue(ch, out IList<Rule> rules) || rules == null)
+                if (!RULES.TryGetValue(ch, out IList<Rule> rules) || rules is null)
                 {
                     continue;
                 }

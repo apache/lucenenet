@@ -38,11 +38,7 @@ namespace Lucene.Net.Tests.Queries
         {
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random);
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir, analyzer);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, analyzer);
             var docs = new string[]
             {
                 @"this is the end of the world right",
@@ -185,11 +181,7 @@ namespace Lucene.Net.Tests.Queries
         {
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random);
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir, analyzer);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, analyzer);
             string[] docs = new string[]
             {
                 @"this is the end of the world right",
@@ -362,11 +354,7 @@ namespace Lucene.Net.Tests.Queries
         {
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random);
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir, analyzer);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, analyzer);
             var docs = new string[]
             {
                 @"this is the end of the world right",
@@ -428,11 +416,7 @@ namespace Lucene.Net.Tests.Queries
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random);
             analyzer.MaxTokenLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir, analyzer);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, analyzer);
             CreateRandomIndex(AtLeast(50), w, Random.NextInt64());
             DirectoryReader reader = w.GetReader();
             AtomicReader wrapper = SlowCompositeReaderWrapper.Wrap(reader);
@@ -517,11 +501,7 @@ namespace Lucene.Net.Tests.Queries
                  */
                 w.ForceMerge(1);
                 DirectoryReader reader2 = w.GetReader();
-                QueryUtils.Check(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    this,
-#endif
-                    Random, cq, NewSearcher(reader2));
+                QueryUtils.Check(Random, cq, NewSearcher(reader2));
                 reader2.Dispose();
             }
             finally

@@ -254,7 +254,7 @@ namespace Lucene.Net.Replicator.Http
 
         private string QueryString(string request, params string[] parameters)
         {
-            return parameters == null
+            return parameters is null
                 ? string.Format("{0}/{1}", Url, request)
                 : string.Format("{0}/{1}?{2}", Url, request, string
                 .Join("&", parameters.Select(WebUtility.UrlEncode).InPairs((key, val) => string.Format("{0}={1}", key, val))));

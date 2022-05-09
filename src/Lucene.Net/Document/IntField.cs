@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Index;
 using System;
+using Int32 = J2N.Numerics.Int32;
 
 namespace Lucene.Net.Documents
 {
@@ -154,7 +155,7 @@ namespace Lucene.Net.Documents
         public Int32Field(string name, int value, Store stored)
             : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
-            FieldsData = new Int32(value);
+            FieldsData = Int32.GetInstance(value);
         }
 
         /// <summary>
@@ -175,7 +176,7 @@ namespace Lucene.Net.Documents
             {
                 throw new ArgumentException("type.NumericType must be NumericType.INT32 but got " + type.NumericType);
             }
-            FieldsData = new Int32(value);
+            FieldsData = Int32.GetInstance(value);
         }
     }
 }

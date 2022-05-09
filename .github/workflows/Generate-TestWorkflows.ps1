@@ -221,8 +221,8 @@ on:
   pull_request:
     paths:
     - '$projectRelativeDirectory/**/*'
-    - 'build/Dependencies.props'
-    - 'build/TestReferences.Common.*'
+    - '.build/dependencies.props'
+    - '.build/TestReferences.Common.*'
     - 'TestTargetFrameworks.*'
     - '*.sln'$directoryBuildPaths
     # Dependencies$dependencyPaths
@@ -322,22 +322,25 @@ try {
 
 foreach ($testProject in $TestProjects) {
     $projectName = [System.IO.Path]::GetFileNameWithoutExtension($testProject)
-    [string[]]$frameworks = $TestFrameworks
+    
+     # Call the target to get the configured test frameworks for this project. We only read the first line because MSBuild adds extra output.
+    $frameworksString = $(dotnet build "$testProject" --verbosity minimal --nologo --no-restore /t:PrintTargetFrameworks /p:TestProjectsOnly=true /p:TestFrameworks=true)[0].Trim()
 
-    # Special case - CodeAnalysis only supports .NET 5.0 for testing
-    if ($projectName.Contains("Tests.CodeAnalysis")) {
-        $frameworks = @('net5.0')
+    if ($frameworksString -eq 'none') {
+        Write-Host "WARNING: Skipping project '$projectName' because it is not marked with `<IsTestProject`>true`<`/IsTestProject`> and/or it contains no test frameworks for the current environment." -ForegroundColor Yellow
+        continue
     }
 
-    # Special case - our CLI tool only supports .NET Core 3.1
-    if ($projectName.Contains("Tests.Cli")) {
-        $frameworks = @('netcoreapp3.1')
+    [string[]]$frameworks = $frameworksString -split '\s*;\s*'
+    $frameworks = $frameworks | ? { $TestFrameworks -contains $_ } # IntersectWith
+
+    if ($frameworks.Count -eq 0) {
+        Write-Host "WARNING: ${projectName} contains no matching target frameworks: $frameworksString" -ForegroundColor Yellow
+        continue
     }
 
-    # Special case - OpenNLP.NET only supports .NET Framework
-    if ($projectName.Contains("Tests.Analysis.OpenNLP")) {
-        $frameworks = @('net48')
-    }
+    Write-Host ""
+    Write-Host "Frameworks To Test for ${projectName}: $($frameworks -join ';')" -ForegroundColor Cyan
 
     #Write-Host "Project: $projectName"
     Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion

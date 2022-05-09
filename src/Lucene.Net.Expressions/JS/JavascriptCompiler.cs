@@ -49,11 +49,10 @@ namespace Lucene.Net.Expressions.JS
     /// You can compile with an alternate set of functions via <see cref="Compile(string, IDictionary{string, MethodInfo})"/>.
     /// For example:
     /// <code>
-    /// IDictionary&lt;string, MethodInfo&gt; functions = new Dictionary&lt;string, MethodInfo&gt;();
-    /// // add all the default functions
-    /// functions.PutAll(JavascriptCompiler.DEFAULT_FUNCTIONS);
+    /// // instantiate and add all the default functions
+    /// IDictionary&lt;string, MethodInfo&gt; functions = new Dictionary&lt;string, MethodInfo&gt;(JavascriptCompiler.DEFAULT_FUNCTIONS);
     /// // add sqrt()
-    /// functions.Put("sqrt", (typeof(Math)).GetMethod("Sqrt", new Type[] { typeof(double) }));
+    /// functions["sqrt"] = (typeof(Math)).GetMethod("Sqrt", new Type[] { typeof(double) });
     /// // call compile with customized function map
     /// Expression foo = JavascriptCompiler.Compile("sqrt(score)+ln(popularity)", functions);
     /// </code>
@@ -233,7 +232,7 @@ namespace Lucene.Net.Expressions.JS
                         ITree identifier = current.GetChild(0);
                         string call = identifier.Text;
                         int arguments = current.ChildCount - 1;
-                        if (!functions.TryGetValue(call, out MethodInfo method) || method == null)
+                        if (!functions.TryGetValue(call, out MethodInfo method) || method is null)
                         {
                             throw new ArgumentException("Unrecognized method call (" + call + ").");
                         }

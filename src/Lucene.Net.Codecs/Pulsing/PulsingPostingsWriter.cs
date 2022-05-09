@@ -234,7 +234,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 pos.docID = _currentDoc.docID;
                 if (payload != null && payload.Length > 0)
                 {
-                    if (pos.payload == null)
+                    if (pos.payload is null)
                     {
                         pos.payload = BytesRef.DeepCopyOf(payload);
                     }
@@ -323,7 +323,7 @@ namespace Lucene.Net.Codecs.Pulsing
                             var posDelta = pos.pos - lastPos;
                             lastPos = pos.pos;
 
-                            var payloadLength = pos.payload == null ? 0 : pos.payload.Length;
+                            var payloadLength = pos.payload is null ? 0 : pos.payload.Length;
                             if (_storePayloads)
                             {
                                 if (payloadLength != lastPayloadLength)
@@ -415,7 +415,7 @@ namespace Lucene.Net.Codecs.Pulsing
             var _state = (PulsingTermState)state;
             if (Debugging.AssertsEnabled) Debugging.Assert(empty.Length == 0);
             _absolute = _absolute || abs;
-            if (_state.bytes == null)
+            if (_state.bytes is null)
             {
                 _wrappedPostingsWriter.EncodeTerm(_longs, _buffer, fieldInfo, _state.wrappedState, _absolute);
                 for (var i = 0; i < _longsSize; i++)
@@ -489,7 +489,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
                 foreach (var pos in _pending)
                 {
-                    if (doc == null)
+                    if (doc is null)
                     {
                         doc = pos;
                         _wrappedPostingsWriter.StartDoc(doc.docID, doc.termFreq);

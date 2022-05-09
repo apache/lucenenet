@@ -1,12 +1,16 @@
-# Apache Lucene.NET
+# Welcome to Apache Lucene.NET 
 
 [![Nuget](https://img.shields.io/nuget/dt/Lucene.Net)](https://www.nuget.org/packages/Lucene.Net)
 [![Azure DevOps builds (master)](https://img.shields.io/azure-devops/build/lucene-net/6ba240c9-9598-47e7-a793-0ed8a4ba2f8b/3/master)](https://dev.azure.com/lucene-net/Lucene.NET/_build?definitionId=3&_a=summary)
 [![GitHub](https://img.shields.io/github/license/apache/lucenenet)](https://github.com/apache/lucenenet/blob/master/LICENSE.txt)
 
-## Full-text search for .NET
+## Powerful Full-text search for .NET
 
-Apache Lucene.NET is a .NET full-text search engine framework, a C# port of the popular Apache Lucene project.  Apache Lucene.NET is not a complete application, but rather a code library and API that can easily be used to add search capabilities to applications.
+Apache Lucene.NET is an open-source full-text search library written in C#. It is a port of the popular Java Apache Lucene project.
+
+Apache Lucene.NET is a .NET library providing powerful indexing and search features, as well as spellchecking, hit highlighting and advanced analysis/tokenization capabilities.
+
+Lucene.NET version 4.8 (still in Beta) runs everywhere .NET runs, including Windows, Unix, MacOS, Android and iOS.
 
 The Apache Lucene.NET web site is at:
   http://lucenenet.apache.org
@@ -27,7 +31,7 @@ The Apache Lucene.NET web site is at:
 
 ## Status
 
-Latest Stable Version: Lucene.NET 3.0.3
+Latest Release Version: Lucene.NET 3.0.3
 
 Working toward Lucene.NET 4.8.0 (currently in BETA)
 
@@ -104,7 +108,7 @@ PM> Install-Package Lucene.Net -Pre
 
 ## Documentation
 
-We now have some preliminary documentation for Lucene.NET 4.8.0 [on the Lucene.NET Website](https://lucenenet.apache.org/).
+We have preliminary documentation for Lucene.NET 4.8.0 [on the Lucene.NET Website](https://lucenenet.apache.org/).
 
 The API is similar to Java [Lucene 4.8.0](https://lucene.apache.org/core/4_8_0/), which you may also find helpful to review.
 
@@ -121,7 +125,7 @@ There are several demos implemented as simple console applications that can be c
 
 There is also a dotnet command line tool available on NuGet. It contains all of the demos as well as tools maintaining your Lucene.NET index, featuring operations such as splitting, merging, listing segment info, fixing, deleting segments, upgrading, etc. Always be sure to back up your index before running any commands against it!
 
-- [Prerequisite: .NET Core 3.1.0 Runtime](https://www.microsoft.com/net/download/core#/runtime)
+- [Prerequisite: .NET Core 3.1 Runtime or Higher](https://dotnet.microsoft.com/en-us/download/dotnet)
 
 ```
 dotnet tool install lucene-cli -g --version 4.8.0-beta00015
@@ -171,25 +175,34 @@ Before you start working on a pull request, please read our [Contributing](https
 
 ### Command Line
 
-Building on the Command Line is currently only supported on Windows.
-
 ##### Prerequisites
 
-1. [Powershell](https://msdn.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell) 3.0 or higher (see [this question](http://stackoverflow.com/questions/1825585/determine-installed-powershell-version) to check your Powershell version)
+1. [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell) 3.0 or higher (see [this question](http://stackoverflow.com/questions/1825585/determine-installed-powershell-version) to check your PowerShell version)
 2. [.NET 6.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
-3. [.NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/download/visual-studio-sdks)
 
 ##### Execution
 
 > **NOTE:** If the project is open in Visual Studio, its background restore may interfere with these commands. It is recommended to close all instances of Visual Studio that have `Lucene.Net.sln` open before executing.
 
-To build the source, clone or download and unzip the repository. From the repository root, execute the `build.bat` file from a command prompt and include the desired options from the build options table below:
+To build the source, clone or download and unzip the repository. For specific releases, download and unzip the `.src.zip` file from the [download page of the specific version](https://lucenenet.apache.org/download/download.html). From the repository or distribution root, execute the **build** command from a command prompt and include the desired options from the build options table below:
+
+###### Windows
 
 ```
 > build [options]
 ```
 
+###### Linux or macOS
+
+```
+./build [options]
+```
+
+> **NOTE:** The `build` file will need to be given permission to run using the command `chmod u+x build` before the first execution.
+
 ##### Build Options
+
+The following options are case-insensitive. Each option has both a short form indicated by a single `-` and a long form indicated by `--`. The options that require a value must be followed by a space and then the value, similar to running the [dotnet CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/).
 
 <table>
     <tr>
@@ -200,45 +213,53 @@ To build the source, clone or download and unzip the repository. From the reposi
     </tr>
     <tr>
         <td>&#8209;config</td>
-        <td>&#8209;&#8209;Configuration</td>
+        <td>&#8209;&#8209;configuration</td>
         <td>The build configuration ("Release" or "Debug").</td>
-        <td>build&nbsp;&#8209;&#8209;Configuration:Debug</td>
+        <td>build&nbsp;&#8209;&#8209;configuration Debug</td>
     </tr>
     <tr>
         <td>&#8209;mp</td>
-        <td>&#8209;&#8209;MaximumParallelJobs</td>
+        <td>&#8209;&#8209;maximum-parallel-jobs</td>
         <td>The maximum number of parallel jobs to run during testing. If not supplied, the default is 8.</td>
-        <td>build&nbsp;&#8209;t&nbsp;&#8209;mp:10</td>
+        <td>build&nbsp;&#8209;t&nbsp;&#8209;mp 10</td>
     </tr>
     <tr>
         <td>&#8209;pv</td>
-        <td>&#8209;&#8209;PackageVersion</td>
+        <td>&#8209;&#8209;package-version</td>
         <td>The NuGet package version. If not supplied, will use the version from the Version.proj file.</td>
-        <td>build&nbsp;&#8209;pv:4.8.0&#8209;beta00001</td>
+        <td>build&nbsp;&#8209;pv 4.8.0&#8209;beta00001</td>
     </tr>
     <tr>
         <td>&#8209;t</td>
-        <td>&#8209;&#8209;Test</td>
-        <td>Runs the tests after building. Note that testing typically takes around 40 minutes with 8 parallel jobs.</td>
+        <td>&#8209;&#8209;test</td>
+        <td>Runs the tests after building. This option does not require a value. Note that testing typically takes around 40 minutes with 8 parallel jobs.</td>
         <td>build&nbsp;&#8209;t</td>
     </tr>
     <tr>
-        <td>&#8209;v</td>
-        <td>&#8209;&#8209;Version</td>
-        <td>The assembly file version. If not supplied, will use the PackageVersion (excluding any pre-release tag).</td>
-        <td>build&nbsp;&#8209;pv:4.8.0&#8209;beta00001&nbsp;&#8209;v:4.8.0</td>
+        <td>&#8209;fv</td>
+        <td>&#8209;&#8209;file-version</td>
+        <td>The assembly file version. If not supplied, will use the --package-version (excluding any pre-release tag). The assembly version is generated as the major version of this value without the minor, build, or revision compoenents.</td>
+        <td>build&nbsp;&#8209;pv 4.8.0&#8209;beta00001&nbsp;&#8209;fv 4.8.0</td>
     </tr>
 </table>
 
-For example the following command creates a Release build with NuGet package version 4.8.0‑ci00015 and assembly file version 4.8.0:
+For example the following command creates a Release build with NuGet package version 4.8.0‑ci00015 and file version 4.8.0. Assembly version will be equal to the passed in major version (in this case 4.0.0).
+
+###### Windows
 
 ```
-> build ‑‑Configuration:Release ‑pv:4.8.0‑ci00015 ‑v:4.8.0
+> build ‑‑configuration Release ‑pv 4.8.0‑ci00015 ‑fv 4.8.0
 ```
 
-In the above example we are using "ci" in the package version to indicate this is not a publically released beta version but rather the ouput of a continuous integration build from master which occured after beta00014 but before beta00015 was released.  
+###### Linux or macOS
 
-NuGet packages are output by the build to the `/release/NuGetPackages/` directory. Test results (if applicable) are output to the `/release/TestResults/` directory.
+```
+./build ‑‑configuration Release ‑pv 4.8.0‑ci00015 ‑fv 4.8.0
+```
+
+In the above example we are using "ci" in the package version to indicate this is not a publicly released beta version but rather the output of a continuous integration build from master which occurred after beta00014 but before beta00015 was released.
+
+NuGet packages are output by the build to the `/_artifacts/NuGetPackages/` directory. Test results (if applicable) are output to the `/_artifacts/TestResults/` directory.
 
 You can setup Visual Studio to read the NuGet packages like any NuGet feed by following these steps:
 
@@ -246,7 +267,7 @@ You can setup Visual Studio to read the NuGet packages like any NuGet feed by fo
 2. Click the gear icon next to the Package sources dropdown.
 3. Click the `+` icon (for add)
 4. Give the source a name such as `Lucene.Net Local Packages`
-5. Click the `...` button next to the Source field, and choose the `/src/release/NuGetPackages` folder on your local system.
+5. Click the `...` button next to the Source field, and choose the `/src/_artifacts/NuGetPackages` folder on your local system.
 6. Click Ok
 
 Then all you need to do is choose the `Lucene.Net Local Packages` feed from the dropdown (in the NuGet Package Manager) and you can search for, install, and update the NuGet packages just as you can with any Internet-based feed.
@@ -257,14 +278,13 @@ Then all you need to do is choose the `Lucene.Net Local Packages` feed from the 
 
 1. Visual Studio 2019 or higher
 2. [.NET 6.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
-3. [.NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/download/visual-studio-sdks)
 
-> **NOTE:** Preview versions of .NET SDK may require the "Use previews of the .NET SDK (requires restart)" option to be enabled in Visual Studio under Tools > Options > Environment > Preview Features.
+> **NOTE:** Preview versions of .NET SDK require the "Use previews of the .NET SDK (requires restart)" option to be enabled in Visual Studio under Tools > Options > Environment > Preview Features. .NET 6.0 is not supported on Visual Studio 2019, so the only option available for building on VS 2019 is to use a pre-release .NET 6.0 SDK.
 
 #### Execution
 
 1. Open `Lucene.Net.sln` in Visual Studio.
-2. Choose the target framework to test by opening `build/TestTargetFramework.props` and uncommenting the corresponding `<TargetFramework>` (and commenting all others).
+2. Choose the target framework to test by opening `.build/TestTargetFramework.props` and uncommenting the corresponding `<TargetFramework>` (and commenting all others).
 3. Build a project or the entire solution, and wait for Visual Studio to discover the tests - this may take several minutes.
 4. Run or debug the tests in Test Explorer, optionally using the desired filters.
 

@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
     /// <summary>
     /// This listener listens for every field configuration request and assign a
     /// <see cref="ConfigurationKeys.DATE_RESOLUTION"/> to the equivalent <see cref="FieldConfig"/> based
-    /// on a defined map: fieldName -> <see cref="DateTools.Resolution"/> stored in
+    /// on a defined map: fieldName -> <see cref="DateResolution"/> stored in
     /// <see cref="ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP"/>.
     /// </summary>
     /// <seealso cref="ConfigurationKeys.DATE_RESOLUTION"/>
@@ -42,22 +42,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         public virtual void BuildFieldConfig(FieldConfig fieldConfig)
         {
-            DateTools.Resolution? dateRes = null;
-            IDictionary<string, DateTools.Resolution?> dateResMap = this.config.Get(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP);
-
-            if (dateResMap != null)
+            // LUCENENET: Simplified logic using TryGetValue
+            if ((this.config.TryGetValue(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, out IDictionary<string, DateResolution> dateResMap)
+                && dateResMap.TryGetValue(fieldConfig.Field, out DateResolution dateRes))
+                || this.config.TryGetValue(ConfigurationKeys.DATE_RESOLUTION, out dateRes))
             {
-                dateResMap.TryGetValue(fieldConfig.Field, out dateRes);
-            }
-
-            if (dateRes == null)
-            {
-                dateRes = this.config.Get(ConfigurationKeys.DATE_RESOLUTION);
-            }
-
-            if (dateRes != null)
-            {
-                fieldConfig.Set(ConfigurationKeys.DATE_RESOLUTION, dateRes.Value);
+                fieldConfig.Set(ConfigurationKeys.DATE_RESOLUTION, dateRes);
             }
         }
     }

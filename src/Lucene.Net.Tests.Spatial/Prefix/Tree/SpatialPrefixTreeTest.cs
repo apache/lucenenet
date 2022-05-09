@@ -2,8 +2,8 @@
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Queries;
 using NUnit.Framework;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Shapes;
 using System;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -35,7 +35,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         public override void SetUp()
         {
             base.SetUp();
-            ctx = SpatialContext.GEO;
+            ctx = SpatialContext.Geo;
         }
 
         [Test]

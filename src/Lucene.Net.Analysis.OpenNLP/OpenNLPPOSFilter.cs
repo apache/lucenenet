@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis.OpenNlp
             if (tokenNum == sentenceTokenAttrs.Count)
             { // beginning of stream, or previous sentence exhausted
                 string[] sentenceTokens = NextSentence();
-                if (sentenceTokens == null)
+                if (sentenceTokens is null)
                 {
                     Clear();
                     return false;

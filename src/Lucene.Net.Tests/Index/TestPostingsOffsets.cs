@@ -242,7 +242,7 @@ namespace Lucene.Net.Index
         public virtual void TestRandom()
         {
             // token -> docID -> tokens
-            IDictionary<string, IDictionary<int?, IList<Token>>> actualTokens = new Dictionary<string, IDictionary<int?, IList<Token>>>();
+            IDictionary<string, IDictionary<int, IList<Token>>> actualTokens = new Dictionary<string, IDictionary<int, IList<Token>>>();
 
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, iwc);
@@ -301,9 +301,9 @@ namespace Lucene.Net.Index
                     int tokenOffset = Random.Next(5);
 
                     Token token = MakeToken(text, posIncr, offset + offIncr, offset + offIncr + tokenOffset);
-                    if (!actualTokens.TryGetValue(text, out IDictionary<int?, IList<Token>> postingsByDoc))
+                    if (!actualTokens.TryGetValue(text, out IDictionary<int, IList<Token>> postingsByDoc))
                     {
-                        actualTokens[text] = postingsByDoc = new Dictionary<int?, IList<Token>>();
+                        actualTokens[text] = postingsByDoc = new Dictionary<int, IList<Token>>();
                     }
                     if (!postingsByDoc.TryGetValue(docCount, out IList<Token> postings))
                     {
@@ -441,11 +441,7 @@ namespace Lucene.Net.Index
         public virtual void TestAddFieldTwice()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
             Document doc = new Document();
             FieldType customType3 = new FieldType(TextField.TYPE_STORED);
             customType3.StoreTermVectors = true;

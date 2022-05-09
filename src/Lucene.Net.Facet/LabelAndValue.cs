@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.Globalization;
+#nullable enable
 
 namespace Lucene.Net.Facet
 {
@@ -25,7 +26,7 @@ namespace Lucene.Net.Facet
     /// Single label and its value, usually contained in a
     /// <see cref="FacetResult"/>. 
     /// </summary>
-    public sealed class LabelAndValue
+    public sealed class LabelAndValue : IFormattable
     {
         /// <summary>
         /// Facet's label. </summary>
@@ -62,15 +63,33 @@ namespace Lucene.Net.Facet
             this.TypeOfValue = typeof(int);
         }
 
+        /// <summary>
+        /// Converts the value of this instance to its equivalent string representation.
+        /// </summary>
+        /// <returns>The string representation of the label and value of this instance.</returns>
         public override string ToString()
         {
+            return ToString(null);
+        }
+
+        /// <summary>
+        /// Converts the value of this instance to its equivalent string representation
+        /// using the specified culture-specific format information.
+        /// </summary>
+        /// <returns>The string representation of the label and value of this instance
+        /// as specified by <paramref name="provider"/>.</returns>
+        // LUCENENET specific - allow passing in a format provider to format the numbers.
+        public string ToString(IFormatProvider? provider)
+        {
             string valueString = (TypeOfValue == typeof(int))
-                ? Value.ToString("0", CultureInfo.InvariantCulture)
-                : Value.ToString("0.0#####", CultureInfo.InvariantCulture);
+                ? J2N.Numerics.Int32.ToString(Convert.ToInt32(Value), provider)
+                : J2N.Numerics.Single.ToString(Value, provider);
             return Label + " (" + valueString + ")";
         }
 
-        public override bool Equals(object other)
+        string IFormattable.ToString(string? format, IFormatProvider? provider) => ToString(provider);
+
+        public override bool Equals(object? other)
         {
             if ((other is LabelAndValue) == false)
             {

@@ -43,9 +43,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         public override IQueryNode Process(IQueryNode queryTree)
         {
-            bool? lowercaseExpandedTerms = GetQueryConfigHandler().Get(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS);
-
-            if (lowercaseExpandedTerms != null && lowercaseExpandedTerms.Value)
+            if (GetQueryConfigHandler().TryGetValue(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS, out bool lowercaseExpandedTerms)
+                && lowercaseExpandedTerms)
             {
                 return base.Process(queryTree);
             }
@@ -56,7 +55,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
             CultureInfo locale = GetQueryConfigHandler().Get(ConfigurationKeys.LOCALE);
-            if (locale == null)
+            if (locale is null)
             {
                 locale = CultureInfo.CurrentCulture; //Locale.getDefault();
             }

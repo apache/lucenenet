@@ -163,9 +163,9 @@ namespace Lucene.Net.Analysis
                     pos += posInc;
 
                     posData = positions.Get(pos);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(posData.leaving == null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(posData.leaving is null);
 
-                    if (posData.arriving == null)
+                    if (posData.arriving is null)
                     {
                         // No token ever arrived to this position
                         if (pos == 0)
@@ -208,7 +208,7 @@ namespace Lucene.Net.Analysis
                 BytesRef termUTF8 = ChangeToken(term);
                 int[] termUnicode = null;
                 Position endPosData = positions.Get(endPos);
-                if (endPosData.arriving == null)
+                if (endPosData.arriving is null)
                 {
                     endPosData.arriving = new State();
                 }
@@ -296,14 +296,14 @@ namespace Lucene.Net.Analysis
             Position posData = positions.Get(pos);
             Position prevPosData = positions.Get(pos - 1);
 
-            while (posData.arriving == null || prevPosData.leaving == null)
+            while (posData.arriving is null || prevPosData.leaving is null)
             {
-                if (posData.arriving == null)
+                if (posData.arriving is null)
                 {
                     posData.arriving = new State();
                     posData.arriving.AddTransition(new Transition(POS_SEP, posData.leaving));
                 }
-                if (prevPosData.leaving == null)
+                if (prevPosData.leaving is null)
                 {
                     if (pos == 1)
                     {

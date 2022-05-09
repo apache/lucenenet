@@ -57,11 +57,7 @@ namespace Lucene.Net.Index
             Directory d = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(LuceneTestCase.Random);
             analyzer.MaxTokenLength = TestUtil.NextInt32(LuceneTestCase.Random, 1, IndexWriter.MAX_TERM_LENGTH);
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                LuceneTestCase.Random, d, analyzer);
+            RandomIndexWriter w = new RandomIndexWriter(LuceneTestCase.Random, d, analyzer);
             int numDocs = AtLeast(10);
             for (int docCount = 0; docCount < numDocs; docCount++)
             {
@@ -204,7 +200,7 @@ namespace Lucene.Net.Index
             docs.Dispose();
         }
 
-        private void AddDoc(RandomIndexWriter w, ICollection<string> terms, IDictionary<BytesRef, int?> termToID, int id)
+        private void AddDoc(RandomIndexWriter w, ICollection<string> terms, IDictionary<BytesRef, int> termToID, int id)
         {
             Document doc = new Document();
             doc.Add(new Int32Field("id", id, Field.Store.NO));
@@ -237,18 +233,14 @@ namespace Lucene.Net.Index
         public virtual void TestIntersectRandom()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir);
 
             int numTerms = AtLeast(300);
             //final int numTerms = 50;
 
             ISet<string> terms = new JCG.HashSet<string>();
             ICollection<string> pendingTerms = new JCG.List<string>();
-            IDictionary<BytesRef, int?> termToID = new Dictionary<BytesRef, int?>();
+            IDictionary<BytesRef, int> termToID = new Dictionary<BytesRef, int>();
             int id = 0;
             while (terms.Count != numTerms)
             {
@@ -373,7 +365,7 @@ namespace Lucene.Net.Index
 
                     if (Verbose)
                     {
-                        Console.WriteLine("\nTEST: iter2=" + iter2 + " startTerm=" + (startTerm == null ? "<null>" : startTerm.Utf8ToString()));
+                        Console.WriteLine("\nTEST: iter2=" + iter2 + " startTerm=" + (startTerm is null ? "<null>" : startTerm.Utf8ToString()));
 
                         if (startTerm != null)
                         {
@@ -392,7 +384,7 @@ namespace Lucene.Net.Index
                     TermsEnum te = MultiFields.GetTerms(r, "f").Intersect(c, startTerm);
 
                     int loc;
-                    if (startTerm == null)
+                    if (startTerm is null)
                     {
                         loc = 0;
                     }
@@ -422,7 +414,7 @@ namespace Lucene.Net.Index
                         BytesRef actual = te.Term;
                         if (Verbose)
                         {
-                            Console.WriteLine("TEST:   next() expected=" + expected.Utf8ToString() + " actual=" + (actual == null ? "null" : actual.Utf8ToString()));
+                            Console.WriteLine("TEST:   next() expected=" + expected.Utf8ToString() + " actual=" + (actual is null ? "null" : actual.Utf8ToString()));
                         }
                         Assert.AreEqual(expected, actual);
                         Assert.AreEqual(1, te.DocFreq);
@@ -589,11 +581,7 @@ namespace Lucene.Net.Index
         public virtual void TestZeroTerms()
         {
             var d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, d);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d);
             Document doc = new Document();
             doc.Add(NewTextField("field", "one two three", Field.Store.NO));
             doc = new Document();

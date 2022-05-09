@@ -42,9 +42,9 @@ namespace Lucene.Net.Support
         [DebuggerStepThrough]
         public static bool RemoveAll<T>(this ICollection<T> source, ICollection<T> collection)
         {
-            if (source == null)
+            if (source is null)
                 throw new ArgumentNullException(nameof(source));
-            if (collection == null)
+            if (collection is null)
                 throw new ArgumentNullException(nameof(collection));
 
             if (source.Count == 0) return false;
@@ -85,9 +85,9 @@ namespace Lucene.Net.Support
         [DebuggerStepThrough]
         public static bool RetainAll<T>(this ICollection<T> source, ICollection<T> collection)
         {
-            if (source == null)
+            if (source is null)
                 throw new ArgumentNullException(nameof(source));
-            if (collection == null)
+            if (collection is null)
                 throw new ArgumentNullException(nameof(collection));
 
             if (source.Count == 0) return false;

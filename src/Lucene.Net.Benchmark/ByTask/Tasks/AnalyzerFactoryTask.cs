@@ -544,12 +544,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             {
                 // First, try className == FQN
                 Type result = Type.GetType(className);
-                if (result == null)
+                if (result is null)
                 {
                     // Second, retry lookup after prepending the Lucene analysis package prefix
                     result = Type.GetType(LUCENE_ANALYSIS_PACKAGE_PREFIX + className);
 
-                    if (result == null)
+                    if (result is null)
                     {
                         throw ClassNotFoundException.Create("Can't find class '" + className
                                                  + "' or '" + LUCENE_ANALYSIS_PACKAGE_PREFIX + className + "'");

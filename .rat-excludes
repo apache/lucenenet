@@ -1,4 +1,4 @@
-# Note: these patterns are applied to single files or directories, not full paths
+﻿# Note: these patterns are applied to single files or directories, not full paths
 # coverage/* will ignore any coverage dir, but airflow/www/static/coverage/* will match nothing
 
 .rat-excludes
@@ -9,6 +9,8 @@
 lib/*
 obj/*
 bin/*
+_artifacts/*
+_site/*
 
 # Exclude SVN release folders
 svn-dev/*
@@ -21,6 +23,7 @@ svn-release/*
 LuceneResourcesWikiPage\.html
 
 # Covered under a different license
+psake/*
 KStemData\d+\.cs
 Snowball/*
 Egothor.Stemmer/*
@@ -34,3 +37,4 @@ NullableAttributes\.cs
 ConfigurationReloadToken\.cs
 ConfigurationRoot\.cs
 ConfigurationSection\.cs
+DateTimeOffsetUtil\.cs

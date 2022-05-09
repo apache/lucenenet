@@ -68,13 +68,13 @@ namespace Lucene.Net.QueryParsers.Classic
     /// <tt>date:[6/1/2005 TO 6/4/2005]</tt> produces a range query that searches
     /// for "date" fields between 2005-06-01 and 2005-06-04. Note that the format
     /// of the accepted input depends on the <see cref="System.Globalization.CultureInfo" />.
-    /// A <see cref="Documents.DateTools.Resolution" /> has to be set,
+    /// A <see cref="Documents.DateResolution" /> has to be set,
     /// if you want to use <see cref="Documents.DateTools"/> for date conversion.<p/>
     /// </para>
     /// <para>
     /// The date resolution that shall be used for RangeQueries can be set
-    /// using <see cref="QueryParserBase.SetDateResolution(Documents.DateTools.Resolution)" />
-    /// or <see cref="QueryParserBase.SetDateResolution(string, Documents.DateTools.Resolution)" />. The former
+    /// using <see cref="QueryParserBase.SetDateResolution(Documents.DateResolution)" />
+    /// or <see cref="QueryParserBase.SetDateResolution(string, Documents.DateResolution)" />. The former
     /// sets the default date resolution for all fields, whereas the latter can
     /// be used to set field specific date resolutions. Field specific date
     /// resolutions take, if set, precedence over the default date resolution.
@@ -744,7 +744,7 @@ namespace Lucene.Net.QueryParsers.Classic
             if (jj_scanpos == jj_lastpos)
             {
                 jj_la--;
-                if (jj_scanpos.Next == null)
+                if (jj_scanpos.Next is null)
                 {
                     jj_lastpos = jj_scanpos = jj_scanpos.Next = TokenSource.GetNextToken();
                 }
@@ -797,7 +797,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         private int Jj_ntk()
         {
-            if ((Jj_nt = Token.Next) == null)
+            if ((Jj_nt = Token.Next) is null)
                 return (jj_ntk = (Token.Next = TokenSource.GetNextToken()).Kind);
             else
                 return (jj_ntk = Jj_nt.Kind);
@@ -939,7 +939,7 @@ namespace Lucene.Net.QueryParsers.Classic
             JJCalls p = jj_2_rtns[index];
             while (p.gen > jj_gen)
             {
-                if (p.next == null)
+                if (p.next is null)
                 {
                     p = p.next = new JJCalls();
                     break;

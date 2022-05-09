@@ -344,7 +344,7 @@ namespace Lucene.Net.Analysis.CharFilters
                     StringBuilder output = new StringBuilder();
 
                     // Maps output offset to input offset:
-                    IList<int?> inputOffsets = new JCG.List<int?>();
+                    IList<int> inputOffsets = new JCG.List<int>();
 
                     int cumDiff = 0;
                     int charIdx = 0;
@@ -446,7 +446,7 @@ namespace Lucene.Net.Analysis.CharFilters
 
                     MappingCharFilter mapFilter = new MappingCharFilter(charMap, new StringReader(content));
                     StringBuilder actualBuilder = new StringBuilder();
-                    IList<int?> actualInputOffsets = new JCG.List<int?>();
+                    IList<int> actualInputOffsets = new JCG.List<int>();
 
                     // Now consume the actual mapFilter, somewhat randomly:
                     while (true)

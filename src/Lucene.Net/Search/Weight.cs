@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
         public virtual BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
         {
             Scorer scorer = GetScorer(context, acceptDocs);
-            if (scorer == null)
+            if (scorer is null)
             {
                 // No docs match
                 return null;

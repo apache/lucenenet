@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using JCG = J2N.Collections.Generic;
+using Int64 = J2N.Numerics.Int64;
 using static Lucene.Net.Util.Fst.FST;
 using static Lucene.Net.Util.Packed.PackedInt32s;
 
@@ -236,7 +237,7 @@ namespace Lucene.Net.Codecs.Lucene42
             long startFP = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             foreach (BytesRef v in values)
             {
-                int length = v == null ? 0 : v.Length;
+                int length = v is null ? 0 : v.Length;
                 if (length > Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH)
                 {
                     throw new ArgumentException("DocValuesField \"" + field.Name + "\" is too large, must be <= " + Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH);
@@ -280,7 +281,7 @@ namespace Lucene.Net.Codecs.Lucene42
             meta.WriteByte((byte)Lucene42DocValuesProducer.FST);
             meta.WriteInt64(data.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
-            Builder<long?> builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
+            Builder<Int64> builder = new Builder<Int64>(INPUT_TYPE.BYTE1, outputs);
             Int32sRef scratch = new Int32sRef();
             long ord = 0;
             foreach (BytesRef v in values)

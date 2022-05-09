@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
 
         public override bool IncrementToken()
         {
-            if (tokenIter == null || !tokenIter.MoveNext())
+            if (tokenIter is null || !tokenIter.MoveNext())
             {
                 // there are no remaining tokens from the current sentence... are there more sentences?
                 if (m_input.IncrementToken())

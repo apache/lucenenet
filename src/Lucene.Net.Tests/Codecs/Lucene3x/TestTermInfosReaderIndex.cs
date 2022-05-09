@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
+using J2N;
+using RandomizedTesting.Generators;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -226,7 +228,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             writer.Dispose();
         }
 
-        private static string Text => Convert.ToString(Random.Next(), CultureInfo.InvariantCulture);
+        private static string Text => Random.NextInt64().ToString(Character.MaxRadix);
     }
 #pragma warning restore 612, 618
 }

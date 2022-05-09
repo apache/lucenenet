@@ -6,7 +6,7 @@ using Lucene.Net.Queries.Function;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Util;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Shapes;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -31,7 +31,7 @@ namespace Lucene.Net.Spatial.Prefix
      */
 
     /// <summary>
-    /// An abstract SpatialStrategy based on <see cref="Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree"/>. The two
+    /// An abstract SpatialStrategy based on <see cref="SpatialPrefixTree"/>. The two
     /// subclasses are <see cref="RecursivePrefixTreeStrategy">RecursivePrefixTreeStrategy</see> and
     /// <see cref="TermQueryPrefixTreeStrategy">TermQueryPrefixTreeStrategy</see>.  This strategy is most effective as a fast
     /// approximate spatial search filter.
@@ -62,13 +62,13 @@ namespace Lucene.Net.Spatial.Prefix
     /// </list>
     /// 
     /// <h4>Implementation:</h4>
-    /// The <see cref="Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree"/>
+    /// The <see cref="SpatialPrefixTree"/>
     /// does most of the work, for example returning
     /// a list of terms representing grids of various sizes for a supplied shape.
     /// An important
     /// configuration item is <see cref="DistErrPct"/> which balances
     /// shape precision against scalability.  See those docs.
-    /// 
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public abstract class PrefixTreeStrategy : SpatialStrategy
@@ -84,7 +84,8 @@ namespace Lucene.Net.Spatial.Prefix
         protected double m_distErrPct = SpatialArgs.DEFAULT_DISTERRPCT;// [ 0 TO 0.5 ]
 
         protected PrefixTreeStrategy(SpatialPrefixTree grid, string fieldName, bool simplifyIndexedCells) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
-            : base(grid.SpatialContext, fieldName)
+            // LUCENENET specific - added guard clause
+            : base(grid is null ? throw new ArgumentNullException(nameof(grid)) : grid.SpatialContext, fieldName)
         {
             this.m_grid = grid;
             this.m_simplifyIndexedCells = simplifyIndexedCells;
@@ -109,13 +110,13 @@ namespace Lucene.Net.Spatial.Prefix
         /// <remarks>
         /// The default measure of shape precision affecting shapes at index and query
         /// times. Points don't use this as they are always indexed at the configured
-        /// maximum precision (<see cref="Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree.MaxLevels"/>);
+        /// maximum precision (<see cref="SpatialPrefixTree.MaxLevels"/>);
         /// this applies to all other shapes. Specific shapes at index and query time
         /// can use something different than this default value.  If you don't set a
         /// default then the default is <see cref="SpatialArgs.DEFAULT_DISTERRPCT"/> --
         /// 2.5%.
         /// </remarks>
-        /// <seealso cref="Lucene.Net.Spatial.Queries.SpatialArgs.DistErrPct"/>
+        /// <seealso cref="SpatialArgs.DistErrPct"/>
         public virtual double DistErrPct
         {
             get => m_distErrPct;
@@ -124,11 +125,15 @@ namespace Lucene.Net.Spatial.Prefix
 
         public override Field[] CreateIndexableFields(IShape shape)
         {
+            // LUCENENET: Added guard clause
+            if (shape is null)
+                throw new ArgumentNullException(nameof(shape));
+
             double distErr = SpatialArgs.CalcDistanceFromErrPct(shape, m_distErrPct, m_ctx);
             return CreateIndexableFields(shape, distErr);
         }
 
-        public virtual Field[] CreateIndexableFields(IShape shape, double distErr)
+        public virtual Field[] CreateIndexableFields(IShape? shape, double distErr)
         {
             int detailLevel = m_grid.GetLevelForDistance(distErr);
             IList<Cell> cells = m_grid.GetCells(shape, detailLevel, true, m_simplifyIndexedCells);//intermediates cells
@@ -157,15 +162,16 @@ namespace Lucene.Net.Spatial.Prefix
         {
             private readonly ICharTermAttribute termAtt;
 
-            private IEnumerator<Cell> iter = null;
+            private readonly IEnumerator<Cell> iter; // LUCENENET specific - marked readonly and got rid of null setting
 
             public CellTokenStream(IEnumerator<Cell> tokens)
             {
-                this.iter = tokens;
+                // LUCENENET specific - added guard clause
+                this.iter = tokens ?? throw new ArgumentNullException(nameof(tokens));
                 termAtt = AddAttribute<ICharTermAttribute>();
             }
 
-            internal string nextTokenStringNeedingLeaf = null;
+            internal string? nextTokenStringNeedingLeaf = null;
 
             public override bool IncrementToken()
             {
@@ -205,8 +211,7 @@ namespace Lucene.Net.Spatial.Prefix
                 {
                     if (disposing)
                     {
-                        iter?.Dispose(); // LUCENENET specific - dispose iter and set to null
-                        iter = null;
+                        iter.Dispose(); // LUCENENET specific - dispose iter
                     }
                 }
                 finally
@@ -218,11 +223,15 @@ namespace Lucene.Net.Spatial.Prefix
 
         public override ValueSource MakeDistanceValueSource(IPoint queryPoint, double multiplier)
         {
+            // LUCENENET specific - added guard clause
+            if (queryPoint is null)
+                throw new ArgumentNullException(nameof(queryPoint));
+
             // LUCENENET specific - use Lazy<T> to make the create operation atomic. See #417.
             var p = provider.GetOrAdd(FieldName,
                 f => new Lazy<PointPrefixTreeFieldCacheProvider>(
                     () => new PointPrefixTreeFieldCacheProvider(m_grid, FieldName, m_defaultFieldValuesArrayLen)));
-            return new ShapeFieldCacheDistanceValueSource(m_ctx, p.Value, queryPoint, multiplier);
+            return new ShapeFieldCacheDistanceValueSource(m_ctx, p.Value!, queryPoint, multiplier);
         }
 
         public virtual SpatialPrefixTree Grid => m_grid;

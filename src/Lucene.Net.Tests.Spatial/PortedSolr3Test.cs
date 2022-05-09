@@ -5,9 +5,9 @@ using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Vector;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Distance;
-using Spatial4n.Core.Shapes;
+using Spatial4n.Context;
+using Spatial4n.Distance;
+using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -42,7 +42,7 @@ namespace Lucene.Net.Spatial
         {
             IList<Object[]> ctorArgs = new JCG.List<object[]>();
 
-            SpatialContext ctx = SpatialContext.GEO;
+            SpatialContext ctx = SpatialContext.Geo;
             SpatialPrefixTree grid;
             SpatialStrategy strategy;
 
@@ -167,7 +167,7 @@ namespace Lucene.Net.Spatial
         private void _CheckHits(bool bbox, IPoint pt, double distKM, int assertNumFound, params int[] assertIds)
         {
             SpatialOperation op = SpatialOperation.Intersects;
-            double distDEG = DistanceUtils.Dist2Degrees(distKM, DistanceUtils.EARTH_MEAN_RADIUS_KM);
+            double distDEG = DistanceUtils.Dist2Degrees(distKM, DistanceUtils.EarthMeanRadiusKilometers);
             IShape shape = ctx.MakeCircle(pt, distDEG);
             if (bbox)
                 shape = shape.BoundingBox;
@@ -187,14 +187,14 @@ namespace Lucene.Net.Spatial
             assertEquals("" + shape, assertNumFound, results.numFound);
             if (assertIds != null)
             {
-                ISet<int?> resultIds = new JCG.HashSet<int?>();
+                ISet<int> resultIds = new JCG.HashSet<int>();
                 foreach (SearchResult result in results.results)
                 {
-                    resultIds.add(int.Parse(result.document.Get("id"), CultureInfo.InvariantCulture));
+                    resultIds.Add(int.Parse(result.document.Get("id"), CultureInfo.InvariantCulture));
                 }
                 foreach (int assertId in assertIds)
                 {
-                    assertTrue("has " + assertId, resultIds.contains(assertId));
+                    assertTrue("has " + assertId, resultIds.Contains(assertId));
                 }
             }
         }

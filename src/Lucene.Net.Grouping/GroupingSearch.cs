@@ -379,7 +379,7 @@ namespace Lucene.Net.Search.Grouping
             }
 
             IEnumerable<ISearchGroup<TGroupValue>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
-            if (topSearchGroups == null)
+            if (topSearchGroups is null)
             {
                 // LUCENENET specific - optimized empty array creation
                 return new TopGroups<TGroupValue>(Arrays.Empty<SortField>(), Arrays.Empty<SortField>(), 0, 0, Arrays.Empty<GroupDocs<TGroupValue>>(), float.NaN);
@@ -422,7 +422,7 @@ namespace Lucene.Net.Search.Grouping
             FunctionAllGroupsCollector<TMutableValue> allGroupsCollector;
             AbstractAllGroupHeadsCollector allGroupHeadsCollector;
 
-            if (groupFunction == null)
+            if (groupFunction is null)
             {
                 throw IllegalStateException.Create("groupFunction must be set via the constructor by specifying a ValueSource.");
             }
@@ -503,7 +503,7 @@ namespace Lucene.Net.Search.Grouping
             }
 
             IEnumerable<ISearchGroup<TMutableValue>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
-            if (topSearchGroups == null)
+            if (topSearchGroups is null)
             {
                 // LUCENENET specific - optimized empty array creation
                 return new TopGroups<TMutableValue>(Arrays.Empty<SortField>(), Arrays.Empty<SortField>(), 0, 0, Arrays.Empty<GroupDocs<TMutableValue>>(), float.NaN);

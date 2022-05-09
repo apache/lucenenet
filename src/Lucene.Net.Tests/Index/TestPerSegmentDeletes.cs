@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
             // it's been applied in the merge and now it's gone
             IndexReader r2 = writer.GetReader();
             int[] id2docs = ToDocsArray(new Term("id", "2"), null, r2);
-            Assert.IsTrue(id2docs == null);
+            Assert.IsTrue(id2docs is null);
             r2.Dispose();
 
             /*
@@ -138,8 +138,8 @@ namespace Lucene.Net.Index
             /// fsmp.length = 2;
             /// System.out.println("maybeMerge "+writer.SegmentInfos);
             ///
-            /// SegmentInfo info0 = writer.SegmentInfos.Info(0);
-            /// SegmentInfo info1 = writer.SegmentInfos.Info(1);
+            /// SegmentInfo info0 = writer.SegmentInfos[0];
+            /// SegmentInfo info1 = writer.SegmentInfos[1];
             ///
             /// writer.MaybeMerge();
             /// System.out.println("maybeMerge after "+writer.SegmentInfos);
@@ -162,7 +162,7 @@ namespace Lucene.Net.Index
             /// int[] docs = toDocsArray(id3, null, r);
             /// System.out.println("id3 docs:"+Arrays.toString(docs));
             /// // there shouldn't be any docs for id:3
-            /// Assert.IsTrue(docs == null);
+            /// Assert.IsTrue(docs is null);
             /// r.Dispose();
             ///
             /// part2(writer, fsmp);
@@ -214,7 +214,7 @@ namespace Lucene.Net.Index
             // deletes for info1, the newly created segment from the
             // merge should have no deletes because they were applied in
             // the merge
-            //SegmentInfo info1 = writer.SegmentInfos.Info(1);
+            //SegmentInfo info1 = writer.SegmentInfos[1];
             //Assert.IsFalse(exists(info1, writer.docWriter.segmentDeletes));
 
             //System.out.println("infos4:"+writer.SegmentInfos);
@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
 
         public static void PrintDelDocs(IBits bits)
         {
-            if (bits == null)
+            if (bits is null)
             {
                 return;
             }
@@ -302,7 +302,7 @@ namespace Lucene.Net.Index
                 return null;
             }
 
-            public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
+            public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool> segmentsToMerge)
             {
                 return null;
             }

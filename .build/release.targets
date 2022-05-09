@@ -1,0 +1,216 @@
+﻿<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+<Project>
+  
+  <PropertyGroup Label="Release Audit Tool Settings">
+    <RatDirectory>$(SolutionDir)lib/apache-rat</RatDirectory>
+    <RatFile>$(RatDirectory)/apache-rat-0.13.jar</RatFile>
+    <RatExcludeFile>$(SolutionDir).rat-excludes</RatExcludeFile>
+
+    <RatCommand>java</RatCommand>
+    <RatCommand>$(RatCommand) -jar &quot;$(RatFile)&quot;</RatCommand>
+    <RatCommand>$(RatCommand) --addLicense</RatCommand>
+    <RatCommand>$(RatCommand) --force</RatCommand>
+    <RatCommand>$(RatCommand) --exclude-file &quot;$(RatExcludeFile)&quot;</RatCommand>
+    <RatCommand>$(RatCommand) --dir &quot;$(SolutionDir.TrimEnd('\'))&quot;</RatCommand>
+  </PropertyGroup>
+
+  <Target Name="AuditRelease" Label="Audits the release using Apache Release Audit Tool" Condition="'$(AssemblyName)' == 'Lucene.Net' ">
+    <Message Importance="high" Text="Release Audit Executing..."/>
+    <Exec Command="$(RatCommand)" />
+    <Message Importance="high" Text="Release Audit Complete"/>
+  </Target>
+  
+  <PropertyGroup Label="Apache Subversion Settings">
+    <SvnDevUrl>https://dist.apache.org/repos/dist/dev/lucenenet/</SvnDevUrl>
+    <SvnDevDirectory>$(SolutionDir)svn-dev</SvnDevDirectory>
+    
+    <SvnReleaseUrl>https://dist.apache.org/repos/dist/release/lucenenet/</SvnReleaseUrl>
+    <SvnReleaseDirectory>$(SolutionDir)svn-release</SvnReleaseDirectory>
+  </PropertyGroup>
+
+  <Target Name="CheckoutRelease" Label="Checks out/refreshes the Apache svn release and dev branches to local directories" Condition="'$(AssemblyName)' == 'Lucene.Net' ">
+    <ItemGroup>
+      <_RequiredProperties Include="SvnDevUrl">
+        <Value>$(SvnDevUrl)</Value>
+      </_RequiredProperties>
+
+      <_RequiredProperties Include="SvnDevDirectory">
+        <Value>$(SvnDevDirectory)</Value>
+      </_RequiredProperties>
+
+      <_RequiredProperties Include="SvnReleaseUrl">
+        <Value>$(SvnReleaseUrl)</Value>
+      </_RequiredProperties>
+
+      <_RequiredProperties Include="SvnReleaseDirectory">
+        <Value>$(SvnReleaseDirectory)</Value>
+      </_RequiredProperties>
+    </ItemGroup>
+
+    <Error Condition =" '%(_RequiredProperties.Value)'=='' "
+          Text=" Missing required property [%(_RequiredProperties.Identity)]" />
+
+    <Exec Command="svn co $(SvnDevUrl) $(SvnDevDirectory)" />
+    <Exec Command="svn co $(SvnReleaseUrl) $(SvnReleaseDirectory)" />
+  </Target>
+
+  <PropertyGroup Label="Release Candidate Settings">
+    <ReleaseFileName>Apache-Lucene.Net-$(PackageVersion)</ReleaseFileName>
+  </PropertyGroup>
+
+  <Target Name="SignReleaseCandidate" Label="Uses GnuPG to Sign a Release before [VOTE]" Condition="'$(AssemblyName)' == 'Lucene.Net' ">
+    <ItemGroup>
+      <_RequiredProperties Include="ReleaseFileName">
+        <Value>$(ReleaseFileName)</Value>
+      </_RequiredProperties>
+
+      <_RequiredProperties Include="PackageVersion">
+        <Value>$(PackageVersion)</Value>
+      </_RequiredProperties>
+    </ItemGroup>
+
+    <Error Condition =" '%(_RequiredProperties.Value)'=='' "
+          Text=" Missing required property [%(_RequiredProperties.Identity)]" />
+
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --armor --output $(ReleaseFileName).bin.zip.asc --detach-sig $(ReleaseFileName).bin.zip" />
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --print-md MD5 $(ReleaseFileName).bin.zip &gt; $(ReleaseFileName).bin.zip.md5" />
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --print-md SHA512 $(ReleaseFileName).bin.zip &gt; $(ReleaseFileName).bin.zip.sha512" />
+
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --armor --output $(ReleaseFileName).src.zip.asc --detach-sig $(ReleaseFileName).src.zip" />
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --print-md MD5 $(ReleaseFileName).src.zip &gt; $(ReleaseFileName).src.zip.md5" />
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --print-md SHA512 $(ReleaseFileName).src.zip &gt; $(ReleaseFileName).src.zip.sha512" />
+    
+    <!-- Verify signatures -->
+    <Message Importance="high" Text=""/>
+    <Message Importance="high" Text="Verifying Signature of $(ReleaseFileName).bin.zip.asc..."/>
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --verify $(ReleaseFileName).bin.zip.asc $(ReleaseFileName).bin.zip" />
+    <Message Importance="high" Text=""/>
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --verify --status-fd 1 $(ReleaseFileName).bin.zip.asc $(ReleaseFileName).bin.zip" />
+
+    <Message Importance="high" Text=""/>
+    <Message Importance="high" Text="Verifying Signature of $(ReleaseFileName).src.zip.asc..."/>
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --verify $(ReleaseFileName).src.zip.asc $(ReleaseFileName).src.zip" />
+    <Message Importance="high" Text=""/>
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --verify --status-fd 1 $(ReleaseFileName).src.zip.asc $(ReleaseFileName).src.zip" />
+    
+  </Target>
+  
+  <PropertyGroup>
+    <SvnDevKeysFile>$(SvnDevDirectory)\KEYS</SvnDevKeysFile>
+    <SvnReleaseKeysFile>$(SvnReleaseDirectory)\KEYS</SvnReleaseKeysFile>
+    <SvnDevDiscardLocalChanges>true</SvnDevDiscardLocalChanges>
+    <SvnReleaseDiscardLocalChanges>true</SvnReleaseDiscardLocalChanges>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SvnDevReleaseFiles Include="$(SvnDevDirectory)\$(PackageVersion)\**\*.*" />
+  </ItemGroup>
+
+  <Target Name="CommitReleaseCandidate" Label="Commits a release candidate to Subversion for review before [VOTE]" Condition="'$(AssemblyName)' == 'Lucene.Net' ">
+    <ItemGroup>
+      <_RequiredProperties Include="ReleaseFileName">
+        <Value>$(ReleaseFileName)</Value>
+      </_RequiredProperties>
+
+      <_RequiredProperties Include="PackageVersion">
+        <Value>$(PackageVersion)</Value>
+      </_RequiredProperties>
+    </ItemGroup>
+
+    <Error Condition =" '%(_RequiredProperties.Value)'=='' "
+          Text=" Missing required property [%(_RequiredProperties.Identity)]" />
+    
+    <Error Condition ="!Exists('$(SvnReleaseKeysFile)')"
+          Text=" Keys file '$(SvnReleaseKeysFile)' doesn't exist in lucenenet/release" />
+    
+    <!-- Copy KEYS file from release to dev -->
+    <Message Importance="high" Text="Source: $(SvnReleaseKeysFile), Destination: $(SvnDevDirectory)"/>
+    <Copy SourceFiles="$(SvnReleaseKeysFile)" DestinationFolder="$(SvnDevDirectory)" OverwriteReadOnlyFiles="true" />
+
+    <Exec WorkingDirectory="$(SvnDevDirectory)" Command="svn add $(PackageVersion)\" />
+    <Exec WorkingDirectory="$(SvnDevDirectory)" Command="svn commit -m&quot;Added $(ReleaseFileName) to dev/lucenenet&quot;" />
+  </Target>
+
+  <Target Name="CommitRelease" Label="Commits a release to Subversion after successful [VOTE]" DependsOnTargets="CheckoutRelease" Condition="'$(AssemblyName)' == 'Lucene.Net' ">
+    <ItemGroup>
+      <_RequiredProperties Include="ReleaseFileName">
+        <Value>$(ReleaseFileName)</Value>
+      </_RequiredProperties>
+    
+      <_RequiredProperties Include="PackageVersion">
+        <Value>$(PackageVersion)</Value>
+      </_RequiredProperties>
+    </ItemGroup>
+
+    <Error Condition =" '%(_RequiredProperties.Value)'=='' "
+          Text=" Missing required property [%(_RequiredProperties.Identity)]" />
+    
+    <Error Condition ="!Exists('$(SvnDevDirectory)\$(PackageVersion)')"
+          Text=" Directory '$(SvnDevDirectory)\$(PackageVersion)' doesn't exist in lucenenet/dev" />
+    <Error Condition ="!Exists('$(SvnDevKeysFile)')"
+          Text=" Keys file '$(SvnDevKeysFile)' doesn't exist in lucenenet/dev" />
+
+    <Message Importance="high" Text="Releasing $(PackageVersion)..."/>
+    
+    <!-- Discard local changes -->
+    <Exec WorkingDirectory="$(SvnDevDirectory)" Command="svn revert --recursive ./" Condition=" '$(SvnDevDiscardLocalChanges)' == 'true' " />
+    <Exec WorkingDirectory="$(SvnReleaseDirectory)" Command="svn revert --recursive ./" Condition=" '$(SvnReleaseDiscardLocalChanges)' == 'true' " />
+    
+    <!-- Copy KEYS file from dev to release -->
+    <Message Importance="high" Text="Source: $(SvnDevKeysFile), Destination: $(SvnReleaseDirectory)"/>
+    <Copy SourceFiles="$(SvnDevKeysFile)" DestinationFolder="$(SvnReleaseDirectory)" OverwriteReadOnlyFiles="true" />
+    
+    <!-- Copy release assets -->
+    <Message Importance="high" Text="Source: @(SvnDevReleaseFiles), Destination: $(SvnReleaseDirectory)\$(PackageVersion)"/>
+    <Copy SourceFiles="@(SvnDevReleaseFiles)" DestinationFolder="$(SvnReleaseDirectory)\$(PackageVersion)" OverwriteReadOnlyFiles="true" />
+    
+    <!-- Delete from svn dev -->
+    <Exec WorkingDirectory="$(SvnDevDirectory)" Command="svn delete $(PackageVersion)\ --force" />
+    <Exec WorkingDirectory="$(SvnDevDirectory)" Command="svn commit -m &quot;Removed $(ReleaseFileName) from dev/lucenenet&quot;" />
+    
+    <!-- Add to svn release -->
+    <Exec WorkingDirectory="$(SvnReleaseDirectory)" Command="svn add $(PackageVersion)\" />
+    <Exec WorkingDirectory="$(SvnReleaseDirectory)" Command="svn commit -m &quot;Added $(ReleaseFileName) to release/lucenenet&quot;" />
+
+    <Message Importance="high" Text="Release of $(PackageVersion) Complete"/>
+  </Target>
+  
+  <Target Name="AppendSignature" Label="Uses GnuPG to append a user's signature to the KEYS file in release/lucenenet" DependsOnTargets="CheckoutRelease" Condition="'$(AssemblyName)' == 'Lucene.Net' ">
+    <ItemGroup>
+      <_RequiredProperties Include="ApacheID">
+        <Value>$(ApacheID)</Value>
+      </_RequiredProperties>
+    </ItemGroup>
+
+    <Error Condition =" '%(_RequiredProperties.Value)'=='' "
+          Text=" Missing required property [%(_RequiredProperties.Identity)]" />
+  
+    <Error Condition ="!Exists('$(SvnReleaseKeysFile)')"
+          Text=" Keys file '$(SvnReleaseKeysFile)' doesn't exist in lucenenet/release" />
+    
+    <!-- Add signature to release/lucenenet/KEYS file -->
+    <Exec WorkingDirectory="$(SvnReleaseDirectory)" Command="(gpg --list-sigs $(ApacheID) &amp;&amp; gpg --armor --export $(ApacheID)) >> KEYS" />
+    <Exec WorkingDirectory="$(SvnReleaseDirectory)" Command="svn commit -m &quot;Added Key for $(ApacheID)&quot;" />
+  
+  </Target>
+  
+</Project>

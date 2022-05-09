@@ -87,7 +87,7 @@
 //        public static string GetLocalizedMessage(string key, CultureInfo locale)
 //        {
 //            string message = GetResourceBundleObject(key, locale);
-//            if (message == null)
+//            if (message is null)
 //            {
 //                return "Message with key:" + key + " and locale: " + locale
 //                    + " not found.";
@@ -200,7 +200,7 @@
 //                    try
 //                    {
 //                        string obj = resourceBundle.GetString(key);
-//                        //if (obj == null)
+//                        //if (obj is null)
 //                        //  System.err.println("WARN: Message with key:" + key + " and locale: "
 //                        //      + Locale.getDefault() + " not found.");
 //                    }

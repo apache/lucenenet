@@ -76,9 +76,9 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
                     if (Debugging.AssertsEnabled) Debugging.Assert(st.RemainingTokens == 0,"wrong format: {0}  next: {1}", line, (st.MoveNext() ? st.Current : ""));
                     if (relevant)
                     { // only keep relevant docs
-                        if (curr == null || !curr.queryID.Equals(queryID, StringComparison.Ordinal))
+                        if (curr is null || !curr.queryID.Equals(queryID, StringComparison.Ordinal))
                         {
-                            if (!judgements.TryGetValue(queryID, out curr) || curr == null)
+                            if (!judgements.TryGetValue(queryID, out curr) || curr is null)
                             {
                                 curr = new QRelJudgement(queryID);
                                 judgements[queryID] = curr;

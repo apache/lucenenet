@@ -48,17 +48,13 @@ namespace Lucene.Net.Search
 
             // create an index
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, indexStore);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore);
 
             long now = J2N.Time.CurrentTimeMilliseconds();
 
             Document doc = new Document();
             // add time that is in the past
-            doc.Add(NewStringField("datefield", DateTools.TimeToString(now - 1000, DateTools.Resolution.MILLISECOND), Field.Store.YES));
+            doc.Add(NewStringField("datefield", DateTools.TimeToString(now - 1000, DateResolution.MILLISECOND), Field.Store.YES));
             doc.Add(NewTextField("body", "Today is a very sunny day in New York City", Field.Store.YES));
             writer.AddDocument(doc);
 
@@ -68,10 +64,10 @@ namespace Lucene.Net.Search
 
             // filter that should preserve matches
             // DateFilter df1 = DateFilter.Before("datefield", now);
-            TermRangeFilter df1 = TermRangeFilter.NewStringRange("datefield", DateTools.TimeToString(now - 2000, DateTools.Resolution.MILLISECOND), DateTools.TimeToString(now, DateTools.Resolution.MILLISECOND), false, true);
+            TermRangeFilter df1 = TermRangeFilter.NewStringRange("datefield", DateTools.TimeToString(now - 2000, DateResolution.MILLISECOND), DateTools.TimeToString(now, DateResolution.MILLISECOND), false, true);
             // filter that should discard matches
             // DateFilter df2 = DateFilter.Before("datefield", now - 999999);
-            TermRangeFilter df2 = TermRangeFilter.NewStringRange("datefield", DateTools.TimeToString(0, DateTools.Resolution.MILLISECOND), DateTools.TimeToString(now - 2000, DateTools.Resolution.MILLISECOND), true, false);
+            TermRangeFilter df2 = TermRangeFilter.NewStringRange("datefield", DateTools.TimeToString(0, DateResolution.MILLISECOND), DateTools.TimeToString(now - 2000, DateResolution.MILLISECOND), true, false);
 
             // search something that doesn't exist with DateFilter
             Query query1 = new TermQuery(new Term("body", "NoMatchForthis"));
@@ -116,17 +112,13 @@ namespace Lucene.Net.Search
         {
             // create an index
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(
-#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                this,
-#endif
-                Random, indexStore);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore);
 
             long now = J2N.Time.CurrentTimeMilliseconds();
 
             Document doc = new Document();
             // add time that is in the future
-            doc.Add(NewStringField("datefield", DateTools.TimeToString(now + 888888, DateTools.Resolution.MILLISECOND), Field.Store.YES));
+            doc.Add(NewStringField("datefield", DateTools.TimeToString(now + 888888, DateResolution.MILLISECOND), Field.Store.YES));
             doc.Add(NewTextField("body", "Today is a very sunny day in New York City", Field.Store.YES));
             writer.AddDocument(doc);
 
@@ -136,10 +128,10 @@ namespace Lucene.Net.Search
 
             // filter that should preserve matches
             // DateFilter df1 = DateFilter.After("datefield", now);
-            TermRangeFilter df1 = TermRangeFilter.NewStringRange("datefield", DateTools.TimeToString(now, DateTools.Resolution.MILLISECOND), DateTools.TimeToString(now + 999999, DateTools.Resolution.MILLISECOND), true, false);
+            TermRangeFilter df1 = TermRangeFilter.NewStringRange("datefield", DateTools.TimeToString(now, DateResolution.MILLISECOND), DateTools.TimeToString(now + 999999, DateResolution.MILLISECOND), true, false);
             // filter that should discard matches
             // DateFilter df2 = DateFilter.After("datefield", now + 999999);
-            TermRangeFilter df2 = TermRangeFilter.NewStringRange("datefield", DateTools.TimeToString(now + 999999, DateTools.Resolution.MILLISECOND), DateTools.TimeToString(now + 999999999, DateTools.Resolution.MILLISECOND), false, true);
+            TermRangeFilter df2 = TermRangeFilter.NewStringRange("datefield", DateTools.TimeToString(now + 999999, DateResolution.MILLISECOND), DateTools.TimeToString(now + 999999999, DateResolution.MILLISECOND), false, true);
 
             // search something that doesn't exist with DateFilter
             Query query1 = new TermQuery(new Term("body", "NoMatchForthis"));

@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void InitTermVectorsWriter()
         {
-            if (writer == null)
+            if (writer is null)
             {
                 IOContext context = new IOContext(new FlushInfo(docWriter.NumDocsInRAM, docWriter.BytesUsed));
                 writer = docWriter.codec.TermVectorsFormat.VectorsWriter(docWriter.directory, docWriter.SegmentInfo, context);

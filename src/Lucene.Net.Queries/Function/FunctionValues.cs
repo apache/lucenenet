@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.Globalization;
+using J2N.Globalization;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
@@ -96,7 +97,7 @@ namespace Lucene.Net.Queries.Function
         public virtual bool BytesVal(int doc, BytesRef target)
         {
             string s = StrVal(doc);
-            if (s == null)
+            if (s is null)
             {
                 target.Length = 0;
                 return false;
@@ -110,7 +111,7 @@ namespace Lucene.Net.Queries.Function
         public virtual object ObjectVal(int doc)
         {
             // most FunctionValues are functions, so by default return a Float()
-            return SingleVal(doc);
+            return J2N.Numerics.Single.GetInstance(SingleVal(doc)); // LUCENENET: In Java, the conversion to instance of java.util.Float is implicit, but we need to do an explicit conversion
         }
 
         /// <summary>
@@ -254,21 +255,21 @@ namespace Lucene.Net.Queries.Function
             float lower;
             float upper;
 
-            if (lowerVal == null)
+            if (lowerVal is null)
             {
                 lower = float.NegativeInfinity;
             }
             else
             {
-                lower = Convert.ToSingle(lowerVal, CultureInfo.InvariantCulture);
+                lower = J2N.Numerics.Single.Parse(lowerVal, NumberStyle.Float, NumberFormatInfo.InvariantInfo);
             }
-            if (upperVal == null)
+            if (upperVal is null)
             {
                 upper = float.PositiveInfinity;
             }
             else
             {
-                upper = Convert.ToSingle(upperVal, CultureInfo.InvariantCulture);
+                upper = J2N.Numerics.Single.Parse(upperVal, NumberStyle.Float, NumberFormatInfo.InvariantInfo);
             }
 
             float l = lower;
