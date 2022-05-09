@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Fa
         private const char REH = '\u0631';
         private const char NOON = '\u0646';
         private const char YEH = '\u064A';
-        private const char ZWNJ = '\u200c';
+        private const char ZWNJ = '\u200c'; // ZERO WIDTH NON-JOINER character
 
         // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         public static IList<char[]> Suffixes { get; } = InitializeSuffix();

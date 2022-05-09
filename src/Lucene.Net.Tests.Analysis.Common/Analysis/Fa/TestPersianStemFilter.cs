@@ -32,59 +32,60 @@ namespace Lucene.Net.Analysis.Fa
 
     public class TestPersianStemFilter : BaseTokenStreamTestCase
     {
+        internal PersianAnalyzer a = new PersianAnalyzer(TEST_VERSION_CURRENT);
 
         [Test]
         public virtual void TestAnSuffix()
         {
-            Check("دوستان", "دوست");
+            CheckOneTerm(a, "دوستان", "دوست");
         }
 
         [Test]
         public virtual void TestHaSuffix()
         {
-            Check("کتابها", "کتاب");
+            CheckOneTerm(a, "كتابها", "كتاب");
         }
 
         [Test]
         public virtual void TestAtSuffix()
         {
-            Check("جامدات", "جامد");
+            CheckOneTerm(a, "جامدات", "جامد");
         }
 
         [Test]
         public virtual void TestYeeSuffix()
         {
-            Check("عليرضايي", "عليرضا");
+            CheckOneTerm(a, "عليرضايي", "عليرضا");
         }
 
         [Test]
         public virtual void TestYeSuffix()
         {
-            Check("شادماني", "شادمان");
+            CheckOneTerm(a, "شادماني", "شادمان");
         }
 
         [Test]
         public virtual void TestTarSuffix()
         {
-            Check("باحالتر", "باحال");
+            CheckOneTerm(a, "باحالتر", "باحال");
         }
 
         [Test]
         public virtual void TestTarinSuffix()
         {
-            Check("خوبترين", "خوب");
+            CheckOneTerm(a, "خوبترين", "خوب");
         }
 
         [Test]
         public virtual void TestShouldntStem()
         {
-            Check("کباب", "کباب");
+            CheckOneTerm(a, "كباب", "كباب");
         }
 
         [Test]
         public virtual void TestNonArabic()
         {
-            Check("English", "English");
+            CheckOneTerm(a, "English", "english");
         }
 
 
@@ -99,15 +100,6 @@ namespace Lucene.Net.Analysis.Fa
 
             PersianStemFilter filter = new PersianStemFilter(new SetKeywordMarkerFilter(tokenStream, set));
             AssertTokenStreamContents(filter, new string[] { "ساهدهات" });
-        }
-
-        private void Check(string input, string expected)
-        {
-#pragma warning disable 612, 618
-            StandardTokenizer tokenStream = new StandardTokenizer(TEST_VERSION_CURRENT, new StringReader(input));
-#pragma warning restore 612, 618
-            PersianStemFilter filter = new PersianStemFilter(tokenStream);
-            AssertTokenStreamContents(filter, new string[] { expected });
         }
 
         [Test]
