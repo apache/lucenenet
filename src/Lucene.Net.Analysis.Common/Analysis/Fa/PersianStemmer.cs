@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 9.2
 using Lucene.Net.Analysis.Util;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Fa
         private const char ZWNJ = '\u200c'; // ZERO WIDTH NON-JOINER character
 
         // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
-        public static IList<char[]> Suffixes { get; } = InitializeSuffix();
+        private static IList<char[]> Suffixes { get; } = InitializeSuffix();
 
         private static IList<char[]> InitializeSuffix()
         {
@@ -78,13 +78,13 @@ namespace Lucene.Net.Analysis.Fa
         /// <param name="s"> input buffer </param>
         /// <param name="len"> length of input buffer </param>
         /// <returns> new length of input buffer after stemming </returns>
-        public virtual int StemSuffix(char[] s, int len)
+        private int StemSuffix(char[] s, int len)
         {
-            for (int i = 0; i < Suffixes.Count; i++)
+            foreach (var suffix in Suffixes)
             {
-                if (EndsWithCheckLength(s, len, Suffixes[i]))
+                if (EndsWithCheckLength(s, len, suffix))
                 {
-                    len = StemmerUtil.DeleteN(s, len - Suffixes[i].Length, len, Suffixes[i].Length);
+                    len = StemmerUtil.DeleteN(s, len - suffix.Length, len, suffix.Length);
                 }
             }
             return len;
