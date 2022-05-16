@@ -26,6 +26,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
     /// <para/>
     /// @lucene.experimental
     /// </summary>
+    [System.Diagnostics.DebuggerDisplay("{new string(CharArray)}"]
     public class SegToken
     {
         /// <summary>
