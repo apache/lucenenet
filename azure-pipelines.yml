@@ -369,16 +369,6 @@ stages:
           imageName: 'windows-2019'
           maximumParallelJobs: 8
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-        Linux:
-          osName: 'Linux'
-          imageName: 'ubuntu-latest'
-          maximumParallelJobs: 7
-          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-        macOS:
-          osName: 'macOS'
-          imageName: 'macOS-latest'
-          maximumParallelJobs: 7
-          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
     displayName: 'Test net6.0,x86 on'
     pool:
       vmImage: $(imageName)
@@ -439,16 +429,6 @@ stages:
           imageName: 'windows-2019'
           maximumParallelJobs: 8
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-        Linux:
-          osName: 'Linux'
-          imageName: 'ubuntu-latest'
-          maximumParallelJobs: 7
-          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-        macOS:
-          osName: 'macOS'
-          imageName: 'macOS-latest'
-          maximumParallelJobs: 7
-          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
     displayName: 'Test net5.0,x86 on'
     pool:
       vmImage: $(imageName)
@@ -508,16 +488,6 @@ stages:
           osName: 'Windows'
           imageName: 'windows-2019'
           maximumParallelJobs: 8
-          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-        Linux:
-          osName: 'Linux'
-          imageName: 'ubuntu-latest'
-          maximumParallelJobs: 7
-          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-        macOS:
-          osName: 'macOS'
-          imageName: 'macOS-10.15' # macOS-latest should not be used here because we may get OS Darwin 19.6.0, which isn't supported fully (we get PlatformNotSupportedException).
-          maximumParallelJobs: 7
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
     displayName: 'Test netcoreapp3.1,x86 on'
     pool:
