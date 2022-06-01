@@ -19,6 +19,7 @@
 
 parameters:
   sdkVersion: '' # The .NET SDK version to install
+  performMultiLevelLookup: 'false' # Whether to check for x86 when running commands
 
 steps:
 - pwsh: |
@@ -40,3 +41,4 @@ steps:
   inputs:
     packageType: 'sdk'
     version: '${{ parameters.sdkVersion }}'
+    performMultiLevelLookup: '${{ parameters.performMultiLevelLookup }}'
