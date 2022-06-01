@@ -502,7 +502,8 @@ param(
 $fileText = "{
   ""sources"": [ ""src"" ],
   ""sdk"": {
-    ""version"": ""$sdkVersion""
+    ""version"": ""$sdkVersion"",
+    ""rollForward"": ""latestMajor""
   }
 }"
     $dir = [System.IO.Path]::GetDirectoryName($file)
