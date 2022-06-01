@@ -75,20 +75,33 @@ steps:
 
 #- pwsh: Get-ChildItem -Path $(System.DefaultWorkingDirectory) # Uncomment for debugging
 
+- pwsh: |
+    $testPlatform = '${{ parameters.vsTestPlatform }}'
+    if ($IsWindows -eq $null) {
+        $IsWindows = $env:OS.StartsWith('Win')
+    }
+    $performMulitLevelLookup = if ($IsWindows -and $testPlatform.Equals('x86')) { 'true' } else { 'false' }
+    Write-Host "##vso[task.setvariable variable=PerformMultiLevelLookup;]$performMulitLevelLookup"
+
 - template: 'install-dotnet-sdk.yml'
   parameters:
     sdkVersion: '${{ parameters.dotNetSdkVersion }}'
+    performMultiLevelLookup: '${{ variables.PerformMultiLevelLookup }}'
 
 - task: UseDotNet@2
   displayName: 'Use .NET Core sdk 3.1.412'
   inputs:
-    version: 3.1.412
+    packageType: 'sdk'
+    version: '3.1.412'
+    performMultiLevelLookup: '${{ variables.PerformMultiLevelLookup }}'
   condition: and(succeeded(), contains('${{ parameters.framework }}', 'netcoreapp3.'))
 
 - task: UseDotNet@2
   displayName: 'Use .NET sdk 5.0.400'
   inputs:
-    version: 5.0.400
+    packageType: 'sdk'
+    version: '5.0.400'
+    performMultiLevelLookup: '${{ variables.PerformMultiLevelLookup }}'
   condition: and(succeeded(), contains('${{ parameters.framework }}', 'net5.'))
 
 #- template: 'show-all-files.yml' # Uncomment for debugging
