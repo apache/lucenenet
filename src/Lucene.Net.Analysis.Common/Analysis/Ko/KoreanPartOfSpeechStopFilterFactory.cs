@@ -28,10 +28,15 @@ namespace Lucene.Net.Analysis.Ko
      */
     public class KoreanPartOfSpeechStopFilterFactory: TokenFilterFactory
     {
+
+        ///<summary>SPI name</summary>
         public static readonly string NAME = "koreanPartOfSpeechStop";
 
         private HashSet<POS.Tag> stopTags;
 
+        /// <summary>
+        /// Creates a new KoreanPartOfSpeechStopFilterFactory
+        /// </summary>
         public KoreanPartOfSpeechStopFilterFactory(Dictionary<string, string> args)
             : base(args)
         {

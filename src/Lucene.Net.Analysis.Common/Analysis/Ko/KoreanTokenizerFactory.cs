@@ -9,6 +9,7 @@ namespace Lucene.Net.Analysis.Ko
 {
     public class KoreanTokenizerFactory : TokenizerFactory, IResourceLoaderAware
     {
+        ///<summary>SPI name</summary>
         public static readonly string NAME = "korean";
 
         private static readonly string USER_DICT_PATH = "userDictionary";
@@ -25,6 +26,9 @@ namespace Lucene.Net.Analysis.Ko
         private readonly bool outputUnknownUnigrams;
         private readonly bool discardPunctuation;
 
+        /// <summary>
+        /// Creates a new KoreanTokenizerFactory
+        /// </summary>
         public KoreanTokenizerFactory(Dictionary<string, string> args)
             : base(args)
         {
