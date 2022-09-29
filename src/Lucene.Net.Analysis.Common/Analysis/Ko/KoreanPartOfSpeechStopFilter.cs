@@ -5,11 +5,18 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ko
 {
+    /// <summary>
+    /// Removes tokens that match a set of part-of-speech tags.
+    /// lucene.experimental
+    /// </summary>
     public sealed class KoreanPartOfSpeechStopFilter : FilteringTokenFilter
     {
         private readonly ISet<POS.Tag> stopTags;
         private readonly IPartOfSpeechAttribute posAtt;
 
+        /// <summary>
+        /// Default list of tags to filter.
+        /// </summary>
         public static readonly HashSet<POS.Tag> DEFAULT_STOP_TAGS = new (){
             POS.Tags["E"],
             POS.Tags["IC"],

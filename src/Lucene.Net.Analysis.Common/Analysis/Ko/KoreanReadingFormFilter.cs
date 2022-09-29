@@ -3,6 +3,10 @@ using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis.Ko
 {
+    /// <summary>
+    /// Replaces term text with the ReadingAttribute which is the Hangul transcription of Hanja characters.
+    /// lucene.experimental
+    /// </summary>
     public sealed class KoreanReadingFormFilter : TokenFilter
     {
         private readonly ICharTermAttribute termAttr;

@@ -7,6 +7,52 @@ using ArithmeticException = java.lang.ArithmeticException;
 
 namespace Lucene.Net.Analysis.Ko
 {
+    /**
+    * A {@link TokenFilter} that normalizes Korean numbers to regular Arabic
+    * decimal numbers in half-width characters.
+    * <p>
+    * Korean numbers are often written using a combination of Hangul and Arabic numbers with
+    * various kinds punctuation. For example, ３．２천 means 3200. This filter does this kind
+    * of normalization and allows a search for 3200 to match ３．２천 in text, but can also be
+    * used to make range facets based on the normalized numbers and so on.
+    * <p>
+    * Notice that this analyzer uses a token composition scheme and relies on punctuation
+    * tokens being found in the token stream. Please make sure your {@link KoreanTokenizer}
+    * has {@code discardPunctuation} set to false. In case punctuation characters, such as ．
+    * (U+FF0E FULLWIDTH FULL STOP), is removed from the token stream, this filter would find
+    * input tokens tokens ３ and ２천 and give outputs 3 and 2000 instead of 3200, which is
+    * likely not the intended result. If you want to remove punctuation characters from your
+    * index that are not part of normalized numbers, add a
+    * {@link org.apache.lucene.analysis.StopFilter} with the punctuation you wish to
+    * remove after {@link KoreanNumberFilter} in your analyzer chain.
+    * <p>
+    * Below are some examples of normalizations this filter supports. The input is untokenized
+    * text and the result is the single term attribute emitted for the input.
+    * <ul>
+    * <li>영영칠 becomes 7</li>
+    * <li>일영영영 becomes 1000</li>
+    * <li>삼천2백2십삼 becomes 3223</li>
+    * <li>조육백만오천일 becomes 1000006005001</li>
+    * <li>３.２천 becomes 3200</li>
+    * <li>１.２만３４５.６７ becomes 12345.67</li>
+    * <li>4,647.100 becomes 4647.1</li>
+    * <li>15,7 becomes 157 (be aware of this weakness)</li>
+    * </ul>
+    * <p>
+    * Tokens preceded by a token with {@link PositionIncrementAttribute} of zero are left
+    * left untouched and emitted as-is.
+    * <p>
+    * This filter does not use any part-of-speech information for its normalization and
+    * the motivation for this is to also support n-grammed token streams in the future.
+    * <p>
+    * This filter may in some cases normalize tokens that are not numbers in their context.
+    * For example, is 전중경일 is a name and means Tanaka Kyōichi, but 경일 (Kyōichi) out of
+    * context can strictly speaking also represent the number 10000000000000001. This filter
+    * respects the {@link KeywordAttribute}, which can be used to prevent specific
+    * normalizations from happening.
+    *
+    * @lucene.experimental
+    */
     public class KoreanNumberFilter : TokenFilter
     {
         private readonly ICharTermAttribute termAttr;
@@ -172,12 +218,9 @@ namespace Lucene.Net.Analysis.Ko
             exhausted = false;
         }
 
-        /**
-   * Normalizes a Korean number
-   *
-   * @param number number or normalize
-   * @return normalized number, or number to normalize on error (no op)
-   */
+        /// <summary>Normalizes a Korean number</summary>
+        /// <param name="number">number or normalize</param>
+        /// <returns>normalized number, or number to normalize on error (no op)</returns>
         public string NormalizeNumber(string number)
         {
             try
@@ -201,12 +244,9 @@ namespace Lucene.Net.Analysis.Ko
             }
         }
 
-        /**
-       * Parses a Korean number
-       *
-       * @param buffer buffer to parse
-       * @return parsed number, or null on error or end of input
-       */
+        /// <summary>Parses a Korean number</summary>
+        /// <param name="buffer">buffer to parse</param>
+        /// <returns>parsed number, or null on error or end of input</returns>
         private BigDecimal ParseNumber(NumberBuffer buffer)
         {
             BigDecimal sum = BigDecimal.ZERO;
@@ -226,12 +266,9 @@ namespace Lucene.Net.Analysis.Ko
             return sum;
         }
 
-        /**
-       * Parses a pair of large numbers, i.e. large Hangul factor is 10,000（만）or larger
-       *
-       * @param buffer buffer to parse
-       * @return parsed pair, or null on error or end of input
-       */
+        /// <summary>Parses a pair of large numbers, i.e. large Hangul factor is 10,000（만）or larger</summary>
+        /// <param name="buffer">buffer to parse</param>
+        /// <returns>parsed pair, or null on error or end of input</returns>
         private BigDecimal ParseLargePair(NumberBuffer buffer)
         {
             BigDecimal first = ParseMediumNumber(buffer);
@@ -259,13 +296,12 @@ namespace Lucene.Net.Analysis.Ko
             return first.multiply(second);
         }
 
-        /**
-       * Parses a "medium sized" number, typically less than 10,000（만）, but might be larger
-       * due to a larger factor from {link parseBasicNumber}.
-       *
-       * @param buffer buffer to parse
-       * @return parsed number, or null on error or end of input
-       */
+        /// <summary>
+        /// Parses a "medium sized" number, typically less than 10,000（만）, but might be larger
+        /// due to a larger factor from {link parseBasicNumber}.
+        /// </summary>
+        /// <param name="buffer">buffer to parse</param>
+        /// <returns>parsed number, or null on error or end of input</returns>
         private BigDecimal ParseMediumNumber(NumberBuffer buffer)
         {
             BigDecimal sum = BigDecimal.ZERO;
@@ -285,12 +321,11 @@ namespace Lucene.Net.Analysis.Ko
             return sum;
         }
 
-        /**
-       * Parses a pair of "medium sized" numbers, i.e. large Hangul factor is at most 1,000（천）
-       *
-       * @param buffer buffer to parse
-       * @return parsed pair, or null on error or end of input
-       */
+        /// <summary>
+        /// Parses a pair of "medium sized" numbers, i.e. large Hangul factor is at most 1,000（천
+        /// </summary>
+        /// <param name="buffer">buffer to parse</param>
+        /// <returns>parsed pair, or null on error or end of input</returns>
         private BigDecimal ParseMediumPair(NumberBuffer buffer)
         {
             BigDecimal first = ParseBasicNumber(buffer);
@@ -319,12 +354,11 @@ namespace Lucene.Net.Analysis.Ko
             return first.multiply(second);
         }
 
-        /**
-       * Parse a basic number, which is a sequence of Arabic numbers or a sequence or 0-9 Hangul numerals (영 to 구).
-       *
-       * @param buffer buffer to parse
-       * @return parsed number, or null on error or end of input
-       */
+        /// <summary>
+        /// Parse a basic number, which is a sequence of Arabic numbers or a sequence or 0-9 Hangul numerals (영 to 구).
+        /// </summary>
+        /// <param name="buffer">buffer to parse</param>
+        /// <returns>parsed number, or null on error or end of input</returns>
         private BigDecimal ParseBasicNumber(NumberBuffer buffer)
         {
             StringBuilder builder = new StringBuilder();
@@ -371,12 +405,9 @@ namespace Lucene.Net.Analysis.Ko
             return new BigDecimal(builder.toString());
         }
 
-        /**
-       * Parse large Hangul numerals (ten thousands or larger)
-       *
-       * @param buffer buffer to parse
-       * @return parsed number, or null on error or end of input
-       */
+        /// <summary>Parse large Hangul numerals (ten thousands or larger)</summary>
+        /// <param name="buffer">buffer to parse</param>
+        /// <returns>parsed number, or null on error or end of input</returns>
         public BigDecimal ParseLargeHangulNumeral(NumberBuffer buffer)
         {
             int i = buffer.position;
@@ -398,12 +429,9 @@ namespace Lucene.Net.Analysis.Ko
             return null;
         }
 
-        /**
-       * Parse medium Hangul numerals (tens, hundreds or thousands)
-       *
-       * @param buffer buffer to parse
-       * @return parsed number or null on error
-       */
+        /// <summary>Parse medium Hangul numerals (tens, hundreds or thousands)</summary>
+        /// <param name="buffer">buffer to parse</param>
+        /// <returns>parsed number or null on error</returns>
         public BigDecimal ParseMediumHangulNumeral(NumberBuffer buffer)
         {
             int i = buffer.position;
@@ -425,12 +453,9 @@ namespace Lucene.Net.Analysis.Ko
             return null;
         }
 
-        /**
-       * Numeral predicate
-       *
-       * @param input string to test
-       * @return true if and only if input is a numeral
-       */
+        /// <summary>Numeral predicate</summary>
+        /// <param name="input">string to test</param>
+        /// <returns>true if and only if input is a numeral</returns>
         public bool IsNumeral(string input)
         {
             for (int i = 0; i < input.Length; i++)
@@ -444,23 +469,17 @@ namespace Lucene.Net.Analysis.Ko
             return true;
         }
 
-        /**
-       * Numeral predicate
-       *
-       * @param c character to test
-       * @return true if and only if c is a numeral
-       */
+        /// <summary>Numeral predicate</summary>
+        /// <param name="c">character to test</param>
+        /// <returns>true if and only if c is a numeral</returns>
         public bool IsNumeral(char c)
         {
             return IsArabicNumeral(c) || IsHangulNumeral(c) || exponents.ContainsKey(c);
         }
 
-        /**
-       * Numeral punctuation predicate
-       *
-       * @param input string to test
-       * @return true if and only if c is a numeral punctuation string
-       */
+        /// <summary>Numeral punctuation predicate</summary>
+        /// <param name="input">string to test</param>
+        /// <returns>true if and only if c is a numeral punctuation string</returns>
         public bool IsNumeralPunctuation(string input)
         {
             for (int i = 0; i < input.Length; i++)
@@ -474,59 +493,45 @@ namespace Lucene.Net.Analysis.Ko
             return true;
         }
 
-        /**
-       * Numeral punctuation predicate
-       *
-       * @param c character to test
-       * @return true if and only if c is a numeral punctuation character
-       */
+        /// <summary>Numeral punctuation predicate</summary>
+        /// <param name="c">character to test</param>
+        /// <returns>true if and only if c is a numeral punctuation character</returns>
         public bool IsNumeralPunctuation(char c)
         {
             return IsDecimalPoint(c) || IsThousandSeparator(c);
         }
 
-        /**
-       * Arabic numeral predicate. Both half-width and full-width characters are supported
-       *
-       * @param c character to test
-       * @return true if and only if c is an Arabic numeral
-       */
+        /// <summary>Arabic numeral predicate. Both half-width and full-width characters are supported</summary>
+        /// <param name="c">character to test</param>
+        /// <returns>true if and only if c is an Arabic numeral</returns>
         public bool IsArabicNumeral(char c)
         {
             return IsHalfWidthArabicNumeral(c) || IsFullWidthArabicNumeral(c);
         }
 
-        /**
-       * Arabic half-width numeral predicate
-       *
-       * @param c character to test
-       * @return true if and only if c is a half-width Arabic numeral
-       */
+        /// <summary>Arabic half-width numeral predicate</summary>
+        /// <param name="c">character to test</param>
+        /// <returns>true if and only if c is a half-width Arabic numeral</returns>
         private bool IsHalfWidthArabicNumeral(char c)
         {
             // 0 U+0030 - 9 U+0039
             return '0' <= c && c <= '9';
         }
 
-        /**
-       * Arabic full-width numeral predicate
-       *
-       * @param c character to test
-       * @return true if and only if c is a full-width Arabic numeral
-       */
+        /// <summary>Arabic full-width numeral predicate</summary>
+        /// <param name="c">character to test</param>
+        /// <returns>true if and only if c is a full-width Arabic numeral</returns>
         private bool IsFullWidthArabicNumeral(char c)
         {
             // ０ U+FF10 - ９ U+FF19
             return '０' <= c && c <= '９';
         }
 
-        /**
-       * Returns the numeric value for the specified character Arabic numeral.
-       * Behavior is undefined if a non-Arabic numeral is provided
-       *
-       * @param c arabic numeral character
-       * @return numeral value
-       */
+        /// <summary>Returns the numeric value for the specified character Arabic numeral.
+        /// Behavior is undefined if a non-Arabic numeral is provided.
+        /// </summary>
+        /// <param name="c">arabic numeral character</param>
+        /// <returns>numeral value</returns>
         private int ArabicNumeralValue(char c)
         {
             int offset;
@@ -542,58 +547,46 @@ namespace Lucene.Net.Analysis.Ko
             return c - offset;
         }
 
-        /**
-       * Hangul numeral predicate that tests if the provided character is one of 영, 일, 이, 삼, 사, 오, 육, 칠, 팔, or 구.
-       * Larger number Hangul gives a false value.
-       *
-       * @param c character to test
-       * @return true if and only is character is one of 영, 일, 이, 삼, 사, 오, 육, 칠, 팔, or 구 (0 to 9)
-       */
+        /// <summary>Hangul numeral predicate that tests if the provided character is one of 영, 일, 이, 삼, 사, 오, 육, 칠, 팔, or 구.
+        /// Larger number Hangul gives a false value.
+        /// </summary>
+        /// <param name="c">character to test</param>
+        /// <returns>true if and only is character is one of 영, 일, 이, 삼, 사, 오, 육, 칠, 팔, or 구 (0 to 9)</returns>
         private bool IsHangulNumeral(char c)
         {
             return numerals.ContainsKey(c);
         }
 
-        /**
-       * Returns the value for the provided Hangul numeral. Only numeric values for the characters where
-       * {link isHangulNumeral} return true are supported - behavior is undefined for other characters.
-       *
-       * @param c Hangul numeral character
-       * @return numeral value
-       * @see #isHangulNumeral(char)
-       */
+        /// <summary>Returns the value for the provided Hangul numeral. Only numeric values for the characters where
+        /// {link isHangulNumeral} return true are supported - behavior is undefined for other characters.
+        /// </summary>
+        /// <param name="c">Hangul numeral character</param>
+        /// <returns>numeral value</returns>
+        /// <see cref="#isHangulNumeral(char)"/>
         private int HangulNumeralValue(char c)
         {
             return numerals[c];
         }
 
-        /**
-       * Decimal point predicate
-       *
-       * @param c character to test
-       * @return true if and only if c is a decimal point
-       */
+        /// <summary>Decimal point predicate </summary>
+        /// <param name="c">character to test</param>
+        /// <returns>true if and only if c is a decimal point</returns>
         private bool IsDecimalPoint(char c)
         {
             return c == '.' // U+002E FULL STOP
                    || c == '．'; // U+FF0E FULLWIDTH FULL STOP
         }
 
-        /**
-       * Thousand separator predicate
-       *
-       * @param c character to test
-       * @return true if and only if c is a thousand separator predicate
-       */
+        /// <summary>Thousand separator predicate </summary>
+        /// <param name="c">character to test</param>
+        /// <returns>true if and only if c is a thousand separator predicate</returns>
         private bool IsThousandSeparator(char c)
         {
             return c == ',' // U+002C COMMA
                    || c == '，'; // U+FF0C FULLWIDTH COMMA
         }
 
-        /**
-       * Buffer that holds a Korean number string and a position index used as a parsed-to marker
-       */
+        /// <summary>Buffer that holds a Korean number string and a position index used as a parsed-to marker</summary>
         public class NumberBuffer
         {
 

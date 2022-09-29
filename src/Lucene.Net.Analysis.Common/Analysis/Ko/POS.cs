@@ -4,8 +4,33 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ko
 {
+    /*
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
+
+    /// <summary>
+    /// Part of speech classification for Korean based on Sejong corpus classification.
+    /// The list of tags and their meanings is available here:
+    /// https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY
+    /// </summary>
     public class POS
     {
+        /// <summary>
+        /// The type of the token as enum.
+        /// </summary>
         public enum Type
         {
             //A simple morpheme.
@@ -21,17 +46,9 @@ namespace Lucene.Net.Analysis.Ko
             PREANALYSIS,
         }
 
-        public class Tag
-        {
-            public int Code { get; set; }
-            public string Description { get; set; }
-
-            public string Name { get; set; }
-
-        }
-
-        private static readonly ByteBuffer buffer;
-
+        /// <summary>
+        /// The type of the token as a list.
+        /// </summary>
         public static List<Type> TypesList = new() {
             Type.MORPHEME,
             Type.COMPOUND,
@@ -39,42 +56,93 @@ namespace Lucene.Net.Analysis.Ko
             Type.PREANALYSIS
         };
 
+        public class Tag
+        {
+            // Sets and returns the code associated with the tag (as defined in pos-id.def).
+            public int Code { get; set; }
+            // Sets and returns the description associated with the tag.
+            public string Description { get; set; }
+            // Sets and returns the name associated with the tag.
+            public string Name { get; set; }
+        }
+
+        private static readonly ByteBuffer buffer;
+
+        /// <summary>
+        /// Part of speech tag for Korean based on Sejong corpus classification.
+        /// </summary>
         public static List<Tag> TagsList = new() {
-            new() { Code = 100, Description = "Verbal endings" },
-            new() { Code = 110, Description = "Interjection" },
-            new() { Code = 120, Description = "Ending Particle" },
-            new() { Code = 130, Description = "General Adverb" },
-            new() { Code = 131, Description = "Conjunctive adverb" },
-            new() { Code = 140, Description = "Modifier" },
-            new() { Code = 150, Description = "General Noun" },
-            new() { Code = 151, Description = "Proper Noun" },
-            new() { Code = 152, Description = "Dependent noun" },
-            new() { Code = 153, Description = "Dependent noun" },
-            new() { Code = 154, Description = "Pronoun" },
-            new() { Code = 155, Description = "Numeral" },
-            new() { Code = 160, Description = "Terminal punctuation" },
-            new() { Code = 161, Description = "Chinese Characeter" },
-            new() { Code = 162, Description = "Foreign language" },
-            new() { Code = 163, Description = "Number" },
-            new() { Code = 164, Description = "Space" },
-            new() { Code = 165, Description = "Closing brackets" },
-            new() { Code = 166, Description = "Opening brackets" },
-            new() { Code = 167, Description = "Separator" },
-            new() { Code = 168, Description = "Other symbol" },
-            new() { Code = 169, Description = "Ellipsis" },
-            new() { Code = 170, Description = "Adjective" },
-            new() { Code = 171, Description = "Negative designator" },
-            new() { Code = 172, Description = "Positive designator" },
-            new() { Code = 173, Description = "Verb" },
-            new() { Code = 174, Description = "Auxiliary Verb or Adjective" },
-            new() { Code = 181, Description = "Prefix" },
-            new() { Code = 182, Description = "Root" },
-            new() { Code = 183, Description = "Adjective Suffix" },
-            new() { Code = 184, Description = "Noun Suffix" },
+            // Verbal endings
+ 			new() { Code = 100, Description = "Verbal endings" },
+            // Interjection
+ 			new() { Code = 110, Description = "Interjection" },
+            // Ending Particle
+ 			new() { Code = 120, Description = "Ending Particle" },
+            // General Adverb
+ 			new() { Code = 130, Description = "General Adverb" },
+            // Conjunctive adverb
+ 			new() { Code = 131, Description = "Conjunctive adverb" },
+            // Modifier
+ 			new() { Code = 140, Description = "Modifier" },
+            // General Noun
+ 			new() { Code = 150, Description = "General Noun" },
+            // Proper Noun
+ 			new() { Code = 151, Description = "Proper Noun" },
+            // Dependent noun
+ 			new() { Code = 152, Description = "Dependent noun" },
+            // Dependent noun
+ 			new() { Code = 153, Description = "Dependent noun" },
+            // Pronoun
+ 			new() { Code = 154, Description = "Pronoun" },
+            // Numeral
+ 			new() { Code = 155, Description = "Numeral" },
+            // Terminal punctuation
+ 			new() { Code = 160, Description = "Terminal punctuation" },
+            // Chinese Characeter
+ 			new() { Code = 161, Description = "Chinese Characeter" },
+            // Foreign language
+ 			new() { Code = 162, Description = "Foreign language" },
+            // Number
+ 			new() { Code = 163, Description = "Number" },
+            // Space
+ 			new() { Code = 164, Description = "Space" },
+            // Closing brackets
+ 			new() { Code = 165, Description = "Closing brackets" },
+            // Opening brackets
+ 			new() { Code = 166, Description = "Opening brackets" },
+            // Separator
+ 			new() { Code = 167, Description = "Separator" },
+            // Other symbol
+ 			new() { Code = 168, Description = "Other symbol" },
+            // Ellipsis
+ 			new() { Code = 169, Description = "Ellipsis" },
+            // Adjective
+ 			new() { Code = 170, Description = "Adjective" },
+            // Negative designator
+ 			new() { Code = 171, Description = "Negative designator" },
+            // Positive designator
+ 			new() { Code = 172, Description = "Positive designator" },
+            // Verb
+ 			new() { Code = 173, Description = "Verb" },
+            // Auxiliary Verb or Adjective
+ 			new() { Code = 174, Description = "Auxiliary Verb or Adjective" },
+            // Prefix
+ 			new() { Code = 181, Description = "Prefix" },
+            // Root
+ 			new() { Code = 182, Description = "Root" },
+            // Adjective Suffix
+ 			new() { Code = 183, Description = "Adjective Suffix" },
+            // Noun Suffix
+ 			new() { Code = 184, Description = "Noun Suffix" },
+            // Verb
             new() { Code = -185, Description = "Verb" },
+            // Unknown
             new() { Code = -999, Description = "Unknown" },
+            // Unknown
             new() { Code = -1, Description = "Unknown" },
+            // Unknown
             new() { Code = -1, Description = "Unknown" },
+            // Unknown
             new() { Code = -1, Description = "Unknown" }
         };
 
@@ -117,6 +185,9 @@ namespace Lucene.Net.Analysis.Ko
             { "VSV", new Tag { Name = "VSV", Code = -1, Description = "Unknown" } }
         };
 
+        /// <summary>
+        /// Returns the POS.Tag of the provided name.
+        /// </summary>
         public static Tag ResolveTag(String name) {
             String tagUpper = name.ToUpper();
             if (tagUpper.StartsWith("J")) {
@@ -128,6 +199,9 @@ namespace Lucene.Net.Analysis.Ko
             }
         }
 
+        /// <summary>
+        /// Returns the POS.Tag of the provided tag.
+        /// </summary>
         public static Tag ResolveTag(byte tag)
         {
             short tagVal = buffer.GetInt16(tag);
@@ -138,6 +212,9 @@ namespace Lucene.Net.Analysis.Ko
             return Tags["UNKNOWN"];
         }
 
+        /// <summary>
+        /// Returns the POS.Tag of the provided name.
+        /// </summary>
         public static Type ResolveType(string name) {
             if ("*".Equals(name)) {
                 return Type.MORPHEME;
@@ -150,6 +227,9 @@ namespace Lucene.Net.Analysis.Ko
             return Type.PREANALYSIS;
         }
 
+        /// <summary>
+        /// Returns the POS.Type of the provided type.
+        /// </summary>
         public static Type ResolveType(byte type)
         {
             short typeIdx = buffer.GetInt16(type);
