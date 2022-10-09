@@ -12,7 +12,7 @@ Apache Lucene.NET is a .NET library providing powerful indexing and search featu
 
 Lucene.NET version 4.8 (still in Beta) runs everywhere .NET runs, including Windows, Unix, MacOS, Android and iOS.
 
-The Apache Lucene.NET web site is at:
+The Apache Lucene.NET website is at:
   http://lucenenet.apache.org
 
 ## Supported Frameworks
@@ -57,7 +57,7 @@ PM> Install-Package Lucene.Net
 ##### All Packages
 
 - [Lucene.Net](https://www.nuget.org/packages/Lucene.Net/3.0.3) - Core library
-- [Lucene.Net.Contrib](https://www.nuget.org/packages/Lucene.Net.Contrib/3.0.3) - Various user contributed functionality and extras
+- [Lucene.Net.Contrib](https://www.nuget.org/packages/Lucene.Net.Contrib/3.0.3) - Various user-contributed functionality and extras
 - [Lucene.Net.Contrib.Spatial](https://www.nuget.org/packages/Lucene.Net.Contrib.Spatial/3.0.3) - Geospatial Search
 - [Lucene.Net.Contrib.Spatial.NTS](https://www.nuget.org/packages/Lucene.Net.Contrib.Spatial.NTS/3.0.3) - Geospatial search with support for NetTopologySuite.
 
@@ -90,7 +90,7 @@ PM> Install-Package Lucene.Net -Pre
 - [Lucene.Net.Benchmark](https://www.nuget.org/packages/Lucene.Net.Benchmark/) - System for benchmarking Lucene
 - [Lucene.Net.Classification](https://www.nuget.org/packages/Lucene.Net.Classification/) - Classification module for Lucene
 - [Lucene.Net.Codecs](https://www.nuget.org/packages/Lucene.Net.Codecs/) - Lucene codecs and postings formats
-- [Lucene.Net.Expressions](https://www.nuget.org/packages/Lucene.Net.Expressions/) - Dynamically computed values to sort/facet/search on based on a pluggable grammar
+- [Lucene.Net.Expressions](https://www.nuget.org/packages/Lucene.Net.Expressions/) - Dynamically computed values to sort/facet/search based on a pluggable grammar
 - [Lucene.Net.Facet](https://www.nuget.org/packages/Lucene.Net.Facet/) - Faceted indexing and search capabilities
 - [Lucene.Net.Grouping](https://www.nuget.org/packages/Lucene.Net.Grouping/) - Collectors for grouping search results
 - [Lucene.Net.Highlighter](https://www.nuget.org/packages/Lucene.Net.Highlighter/) - Highlights search keywords in results
@@ -101,7 +101,7 @@ PM> Install-Package Lucene.Net -Pre
 - [Lucene.Net.Queries](https://www.nuget.org/packages/Lucene.Net.Queries/) - Filters and Queries that add to core Lucene
 - [Lucene.Net.QueryParser](https://www.nuget.org/packages/Lucene.Net.QueryParser/) - Text to Query parsers and parsing framework
 - [Lucene.Net.Replicator](https://www.nuget.org/packages/Lucene.Net.Replicator/)  Files replication utility
-- [Lucene.Net.Sandbox](https://www.nuget.org/packages/Lucene.Net.Sandbox/) - Various third party contributions and new ideas
+- [Lucene.Net.Sandbox](https://www.nuget.org/packages/Lucene.Net.Sandbox/) - Various third-party contributions and new ideas
 - [Lucene.Net.Spatial](https://www.nuget.org/packages/Lucene.Net.Spatial/) - Geospatial search
 - [Lucene.Net.Suggest](https://www.nuget.org/packages/Lucene.Net.Suggest/) - Auto-suggest and Spell-checking support
 - [Lucene.Net.TestFramework](https://www.nuget.org/packages/Lucene.Net.TestFramework/) - Framework for testing Lucene-based applications
@@ -163,7 +163,7 @@ To report a bug, please use the [GitHub issue tracker](https://github.com/apache
 
 ### Start a Discussion
 
-To start a development discussion regarding technical features of Lucene.NET, please email the `dev` mailing list by sending an email to [dev-subscribe@lucenenet.apache.org](mailto:dev-subscribe@lucenenet.apache.org) and then follow the instructions to verify your email address. Note that you only need to subscribe once.
+To start a development discussion regarding the technical features of Lucene.NET, please email the `dev` mailing list by sending an email to [dev-subscribe@lucenenet.apache.org](mailto:dev-subscribe@lucenenet.apache.org) and then follow the instructions to verify your email address. Note that you only need to subscribe once.
 
 After you have subscribed to the mailing list, email your message to [dev@lucenenet.apache.org](mailto:dev@lucenenet.apache.org).
 
@@ -202,7 +202,7 @@ To build the source, clone or download and unzip the repository. For specific re
 
 ##### Build Options
 
-The following options are case-insensitive. Each option has both a short form indicated by a single `-` and a long form indicated by `--`. The options that require a value must be followed by a space and then the value, similar to running the [dotnet CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/).
+The following options are case-insensitive. Each option has both a short form indicated by a single `-` and a long-form indicated by `--`. The options that require a value must be followed by a space and then the value, similar to running the [dotnet CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/).
 
 <table>
     <tr>
@@ -238,12 +238,12 @@ The following options are case-insensitive. Each option has both a short form in
     <tr>
         <td>&#8209;fv</td>
         <td>&#8209;&#8209;file-version</td>
-        <td>The assembly file version. If not supplied, will use the --package-version (excluding any pre-release tag). The assembly version is generated as the major version of this value without the minor, build, or revision compoenents.</td>
+        <td>The assembly file version. If not supplied, will use the --package-version (excluding any pre-release tag). The assembly version is generated as the major version of this value without the minor, build, or revision components.</td>
         <td>build&nbsp;&#8209;pv 4.8.0&#8209;beta00001&nbsp;&#8209;fv 4.8.0</td>
     </tr>
 </table>
 
-For example the following command creates a Release build with NuGet package version 4.8.0‑ci00015 and file version 4.8.0. Assembly version will be equal to the passed in major version (in this case 4.0.0).
+For example, the following command creates a Release build with NuGet package version 4.8.0‑ci00015 and file version 4.8.0. The assembly version will be equal to the value passed in the major version (in this case 4.0.0).
 
 ###### Windows
 
@@ -257,7 +257,7 @@ For example the following command creates a Release build with NuGet package ver
 ./build ‑‑configuration Release ‑pv 4.8.0‑ci00015 ‑fv 4.8.0
 ```
 
-In the above example we are using "ci" in the package version to indicate this is not a publicly released beta version but rather the output of a continuous integration build from master which occurred after beta00014 but before beta00015 was released.
+In the above example, we are using "ci" in the package version to indicate this is not a publicly released beta version but rather the output of a continuous integration build from master which occurred after beta00014 but before beta00015 was released.
 
 NuGet packages are output by the build to the `/_artifacts/NuGetPackages/` directory. Test results (if applicable) are output to the `/_artifacts/TestResults/` directory.
 
