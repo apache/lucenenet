@@ -30,7 +30,7 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
   
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net45</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
 
     <RootNamespace>Lucene.Net.QueryParsers</RootNamespace>
     
@@ -50,7 +50,7 @@
     <ProjectReference Include="..\Lucene.Net.Sandbox\Lucene.Net.Sandbox.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <Reference Include="System.Xml" />
   </ItemGroup>
 

@@ -65,7 +65,7 @@ param(
 
     [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot)),
 
-    [string[]]$TestFrameworks = @('net6.0', 'net5.0','net461','net48'), # targets under test: net6.0, netstandard2.1, netstanard2.0, net45
+    [string[]]$TestFrameworks = @('net6.0', 'net5.0','net461','net48'), # targets under test: net6.0, netstandard2.1, netstanard2.0, net48
 
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
 
