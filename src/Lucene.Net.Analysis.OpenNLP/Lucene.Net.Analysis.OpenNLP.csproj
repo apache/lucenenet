@@ -30,7 +30,7 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFramework>net451</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
 
     <AssemblyTitle>Lucene.Net.Analysis.OpenNLP</AssemblyTitle>
     <PackageTags>$(PackageTags);analysis;natural;language;processing;opennlp</PackageTags>
