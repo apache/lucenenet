@@ -521,7 +521,7 @@ namespace Lucene.Net.Analysis.Fr
                 {
                     if (source.EndsWith(search[i], StringComparison.Ordinal))
                     {
-                        sb.Remove(sb.Length - search[i].Length, sb.Length - sb.Length - search[i].Length).Insert(sb.Length - search[i].Length, replace);
+                        sb.Remove(sb.Length - search[i].Length, sb.Length).Insert(sb.Length, replace);
                         modified = true;
                         found = true;
                         SetStrings();
