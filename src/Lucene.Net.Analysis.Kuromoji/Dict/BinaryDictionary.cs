@@ -199,7 +199,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             {
                 throw new FileNotFoundException(string.Format("Expected file '{0}' not found. " +
                     "If the '{1}' directory exists, this file is required. " +
-                    "Either remove the '{3}' directory or generate the required dictionary files using the lucene-cli tool.",
+                    "Either remove the '{2}' directory or generate the required dictionary files using the lucene-cli tool.",
                     fileName, DATA_DIR, DATA_SUBDIR));
             }
 
