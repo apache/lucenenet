@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.Globalization;
 using System.Text;
@@ -483,21 +483,21 @@ namespace Lucene.Net.Analysis.Fr
                 {
                     if (source.EndsWith(prefix + search[i], StringComparison.Ordinal))
                     {
-                        sb.Remove(sb.Length - (prefix.Length + search[i].Length), sb.Length - sb.Length - (prefix.Length + search[i].Length));
+                        sb.Remove(sb.Length - (prefix.Length + search[i].Length), sb.Length - (sb.Length - (prefix.Length + search[i].Length)));
                         modified = true;
                         SetStrings();
                         break;
                     }
                     else if (from != null && from.EndsWith(prefix + search[i], StringComparison.Ordinal))
                     {
-                        sb.Remove(sb.Length - (prefix.Length + search[i].Length), sb.Length - sb.Length - (prefix.Length + search[i].Length)).Insert(sb.Length - (prefix.Length + search[i].Length), replace);
+                        sb.Remove(sb.Length - (prefix.Length + search[i].Length), sb.Length - (sb.Length - (prefix.Length + search[i].Length))).Insert(sb.Length - (prefix.Length + search[i].Length), replace);
                         modified = true;
                         SetStrings();
                         break;
                     }
                     else if (without && source.EndsWith(search[i], StringComparison.Ordinal))
                     {
-                        sb.Remove(sb.Length - search[i].Length, sb.Length - sb.Length - search[i].Length);
+                        sb.Remove(sb.Length - search[i].Length, sb.Length - (sb.Length - search[i].Length));
                         modified = true;
                         SetStrings();
                         break;
@@ -521,7 +521,7 @@ namespace Lucene.Net.Analysis.Fr
                 {
                     if (source.EndsWith(search[i], StringComparison.Ordinal))
                     {
-                        sb.Remove(sb.Length - search[i].Length, sb.Length - sb.Length - search[i].Length).Insert(sb.Length - search[i].Length, replace);
+                        sb.Remove(sb.Length - search[i].Length, sb.Length - (sb.Length - search[i].Length)).Insert(sb.Length - search[i].Length, replace);
                         modified = true;
                         found = true;
                         SetStrings();
