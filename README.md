@@ -243,7 +243,7 @@ The following options are case-insensitive. Each option has both a short form in
     </tr>
 </table>
 
-The assembly version will be derived from the major version component of the passed in value, excluding the minor, build and revision components (in this case 4.0.0).
+For example, the following command creates a Release build with NuGet package version 4.8.0‑ci00015 and file version 4.8.0. The assembly version will be derived from the major version component of the passed in value, excluding the minor, build and revision components (in this case 4.0.0).
 
 ###### Windows
 
