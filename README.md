@@ -238,7 +238,7 @@ The following options are case-insensitive. Each option has both a short form in
     <tr>
         <td>&#8209;fv</td>
         <td>&#8209;&#8209;file-version</td>
-        <td>The assembly version will be derived from the major version component of the passed in value, excluding the minor, build and revision components.</td>
+        <td>The assembly file version. If not supplied, defaults to the --package-version value (excluding any pre-release label). The assembly version will be derived from the major version component of the passed in value, excluding the minor, build and revision components.</td>
         <td>build&nbsp;&#8209;pv 4.8.0&#8209;beta00001&nbsp;&#8209;fv 4.8.0</td>
     </tr>
 </table>
