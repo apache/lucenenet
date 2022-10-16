@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Text;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -176,9 +176,9 @@ namespace Lucene.Net.Analysis.Util
             if (startIndex < 0)
                 throw new ArgumentOutOfRangeException(nameof(startIndex));
             if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length));
-            if (startIndex + length > m_buf.Length)
-                throw new ArgumentOutOfRangeException("", $"{nameof(startIndex)} + {nameof(length)} > {nameof(Length)}");
+                throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(length)} may not be negative.");
+            if (startIndex > m_buf.Length - length) // LUCENENET: Checks for int overflow
+                throw new ArgumentOutOfRangeException(nameof(length), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(length)} <= {nameof(Length)}.");
 
             char[] result = new char[length];
             for (int i = 0, j = startIndex; i < length; i++, j++)

@@ -307,8 +307,8 @@ namespace Lucene.Net.Util
                 throw new ArgumentOutOfRangeException(nameof(startIndex));
             if (length < 0)
                 throw new ArgumentOutOfRangeException(nameof(length));
-            if (startIndex + length > Length)
-                throw new ArgumentOutOfRangeException("", $"{nameof(startIndex)} + {nameof(length)} > {nameof(Length)}");
+            if (startIndex > Length - length) // LUCENENET: Checks for int overflow
+                throw new ArgumentOutOfRangeException(nameof(length), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(length)} <= {nameof(Length)}.");
 
             return new CharsRef(chars, Offset + startIndex, length);
         }

@@ -265,7 +265,7 @@ namespace Egothor.Stemmer
                             // LUCENENET: Should never happen, but since we don't
                             // have a catch block here who knows what might happen if
                             // we don't do this.
-                            throw new ArgumentOutOfRangeException();
+                            throw IndexOutOfBoundsException.Create(nameof(cmd));
                         }
                     }
                     if (!TrySkip(key, LengthPP(p[i]), out key))
@@ -273,7 +273,7 @@ namespace Egothor.Stemmer
                         // LUCENENET: Should never happen, but since we don't
                         // have a catch block here who knows what might happen if
                         // we don't do this.
-                        throw new ArgumentOutOfRangeException();
+                        throw IndexOutOfBoundsException.Create(nameof(cmd));
                     }
                 }
                 // System.err.println("--->"+key);

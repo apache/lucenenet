@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
             {
                 if (priority > (int)ThreadPriority.Highest || priority < (int)ThreadPriority.Lowest)
                 {
-                    throw new ArgumentOutOfRangeException("priority must be in range " + (int)ThreadPriority.Highest + " .. " + (int)ThreadPriority.Lowest + " inclusive"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                    throw new ArgumentOutOfRangeException(nameof(priority), "priority must be in range " + (int)ThreadPriority.Lowest + " .. " + (int)ThreadPriority.Highest + " inclusive"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 }
                 mergeThreadPriority = priority;
                 UpdateMergeThreads();
