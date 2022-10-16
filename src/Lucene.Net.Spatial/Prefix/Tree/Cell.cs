@@ -118,11 +118,11 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             // LUCENENET specific - check that the offset and length are in bounds
             int len = bytes.Length;
             if (offset < 0)
-                throw new ArgumentOutOfRangeException(nameof(offset));
+                throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)} must not be negative.");
             if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length));
-            if (offset + length > len)
-                throw new ArgumentException($"{nameof(offset)} and {nameof(length)} must refer to a location within the array.");
+                throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(length)} must not be negative.");
+            if (offset > len - length) // Checks for int overflow
+                throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(offset)} and {nameof(length)} must refer to a location within the array.");
 
             b_off = offset;
             b_len = length;
@@ -139,7 +139,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 throw new ArgumentOutOfRangeException(nameof(offset));
             if (length < 0)
                 throw new ArgumentOutOfRangeException(nameof(length));
-            if (offset + length > len)
+            if (offset > len - length) // Checks for int overflow
                 throw new ArgumentOutOfRangeException(nameof(length), "Offset and length must refer to a location within the array.");
 
             if (Debugging.AssertsEnabled) Debugging.Assert(Level != 0);

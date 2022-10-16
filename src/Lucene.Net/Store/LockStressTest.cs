@@ -39,7 +39,7 @@ namespace Lucene.Net.Store
         {
             if (args.Length != 7)
             {
-                // LUCENENET specific - our wrapper console shows the correct usage
+                // LUCENENET specific - our lucene-cli wrapper console shows the correct usage
                 throw new ArgumentException();
                 //Console.WriteLine("Usage: java Lucene.Net.Store.LockStressTest myID verifierHost verifierPort lockFactoryClassName lockDirName sleepTimeMS count\n" + 
                 //    "\n" + 
@@ -64,7 +64,7 @@ namespace Lucene.Net.Store
 
             if (myID < 0 || myID > 255)
             {
-                throw new ArgumentOutOfRangeException("ID", "ID must be a unique int 0..255"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                throw new ArgumentOutOfRangeException(nameof(args), "ID must be a unique int 0..255"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
                 //Console.WriteLine("myID must be a unique int 0..255");
                 //Environment.Exit(1);
             }

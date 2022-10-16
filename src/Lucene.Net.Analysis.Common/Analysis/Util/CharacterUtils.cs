@@ -162,7 +162,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (bufferSize < 2)
             {
-                // LUCENENET: Changed from InvalidArgumentException to ArgumentOutOfRangeException
+                // LUCENENET: Changed from IllegalArgumentException to ArgumentOutOfRangeException
                 throw new ArgumentOutOfRangeException(nameof(bufferSize), "buffersize must be >= 2");
             }
             return new CharacterBuffer(new char[bufferSize], 0, 0);
@@ -244,7 +244,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (srcLen < 0)
             {
-                // LUCENENET: Changed from InvalidArgumentException to ArgumentOutOfRangeException
+                // LUCENENET: Changed from IllegalArgumentException to ArgumentOutOfRangeException
                 throw new ArgumentOutOfRangeException(nameof(srcLen), "srcLen must be >= 0");
             }
             int codePointCount = 0;
@@ -265,7 +265,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (srcLen < 0)
             {
-                // LUCENENET: Changed from InvalidArgumentException to ArgumentOutOfRangeException
+                // LUCENENET: Changed from IllegalArgumentException to ArgumentOutOfRangeException
                 throw new ArgumentOutOfRangeException(nameof(srcLen), "srcLen must be >= 0");
             }
             int written = 0;
@@ -361,7 +361,7 @@ namespace Lucene.Net.Analysis.Util
                 if (Debugging.AssertsEnabled) Debugging.Assert(buffer.Buffer.Length >= 2);
                 if (numChars < 2 || numChars > buffer.Buffer.Length)
                 {
-                    // LUCENENET: Changed from InvalidArgumentException to ArgumentOutOfRangeException
+                    // LUCENENET: Changed from IllegalArgumentException to ArgumentOutOfRangeException
                     throw new ArgumentOutOfRangeException(nameof(numChars), "numChars must be >= 2 and <= the buffer size");
                 }
                 char[] charBuffer = buffer.Buffer;
@@ -469,11 +469,11 @@ namespace Lucene.Net.Analysis.Util
                     throw new ArgumentNullException(nameof(chars)); // LUCENENET specific - added null guard clause
                 if (offset >= limit)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(offset), "offset must be less than limit");
+                    throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)} must be less than limit.");
                 }
                 // LUCENENET specific - added array bound check
                 if (offset < 0  || offset >= chars.Length)
-                    throw new ArgumentOutOfRangeException(nameof(offset));
+                    throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)} must not be negative and be less than chars.Length.");
 
                 return chars[offset];
             }
@@ -483,7 +483,7 @@ namespace Lucene.Net.Analysis.Util
                 if (Debugging.AssertsEnabled) Debugging.Assert(buffer.Buffer.Length >= 1);
                 if (numChars < 1 || numChars > buffer.Buffer.Length)
                 {
-                    // LUCENENET: Changed from InvalidArgumentException to ArgumentOutOfRangeException
+                    // LUCENENET: Changed from IllegalArgumentException to ArgumentOutOfRangeException
                     throw new ArgumentOutOfRangeException(nameof(numChars), "numChars must be >= 1 and <= the buffer size");
                 }
                 buffer.offset = 0;
@@ -527,12 +527,13 @@ namespace Lucene.Net.Analysis.Util
 
             public override int OffsetByCodePoints(char[] buf, int start, int count, int index, int offset)
             {
-                int result = index + offset;
+                // LUCENENET: Checks for int overflow
+                uint result = (uint)index + (uint)offset;
                 if (result < 0 || result > count)
                 {
                     throw new ArgumentOutOfRangeException(nameof(index) + " + " + nameof(offset), "index + offset must be >= 0 and <= count");
                 }
-                return result;
+                return (int)result;
             }
         }
 
