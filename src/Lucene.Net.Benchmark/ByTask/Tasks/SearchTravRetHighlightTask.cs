@@ -157,7 +157,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 else if (splits[i].StartsWith("mergeContiguous[", StringComparison.Ordinal) == true)
                 {
                     int len = "mergeContiguous[".Length;
+#if FEATURE_NUMBER_PARSE_READONLYSPAN
+                    m_mergeContiguous = bool.Parse(splits[i].AsSpan(len, (splits[i].Length - 1) - len));
+#else
                     m_mergeContiguous = bool.Parse(splits[i].Substring(len, (splits[i].Length - 1) - len));
+#endif
                 }
                 else if (splits[i].StartsWith("fields[", StringComparison.Ordinal) == true)
                 {

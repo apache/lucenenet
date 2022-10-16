@@ -1240,7 +1240,11 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 }
                 else
                 {
+#if FEATURE_STRINGBUILDER_APPEND_READONLYSPAN
+                    this.primary.Append(value.AsSpan(0, addChars - 0));
+#else
                     this.primary.Append(value.Substring(0, addChars - 0));
+#endif
                 }
             }
 
@@ -1253,7 +1257,11 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 }
                 else
                 {
+#if FEATURE_STRINGBUILDER_APPEND_READONLYSPAN
+                    this.alternate.Append(value.AsSpan(0, addChars - 0));
+#else
                     this.alternate.Append(value.Substring(0, addChars - 0));
+#endif
                 }
             }
 

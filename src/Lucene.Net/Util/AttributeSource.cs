@@ -152,16 +152,29 @@ namespace Lucene.Net.Util
                     int lastPlus = attributeInterfaceType.FullName.LastIndexOf('+');
                     if (lastPlus == -1)
                     {
+#if FEATURE_STRING_CONCAT_READONLYSPAN
+                        return string.Concat(
+                            attributeInterfaceType.Namespace,
+                            ".",
+                            attributeInterfaceType.Name.AsSpan(1));
+#else
                         return string.Concat(
                             attributeInterfaceType.Namespace,
                             ".",
                             attributeInterfaceType.Name.Substring(1));
+#endif
                     }
                     else
                     {
+#if FEATURE_STRING_CONCAT_READONLYSPAN
+                        return string.Concat(
+                            attributeInterfaceType.FullName.AsSpan(0, lastPlus + 1),
+                            attributeInterfaceType.Name.AsSpan(1));
+#else
                         return string.Concat(
                             attributeInterfaceType.FullName.Substring(0, lastPlus + 1),
                             attributeInterfaceType.Name.Substring(1));
+#endif
                     }
                 }
             }
