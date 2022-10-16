@@ -205,7 +205,7 @@ namespace Lucene.Net.Analysis.Nl
                 sb.Remove(index, index + 3 - index);
                 if (sb[index - 2] == 'i' && sb[index - 1] == 'g')
                 {
-                    if (sb[index - 3] != 'e' & index - 2 >= _R2)
+                    if (sb[index - 3] != 'e' && index - 2 >= _R2) // LUCENENET: '&' was changed to '&&' following - https://github.com/apache/lucenenet/issues/673
                     {
                         index -= 2;
                         sb.Remove(index, index + 2 - index);
