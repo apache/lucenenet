@@ -440,7 +440,7 @@ namespace Lucene.Net.Replicator.Http
                 return res;
             }
 
-#if FEATURE_SPAN
+#if FEATURE_STREAM_READ_SPAN
             public override int Read(Span<byte> buffer)
             {
                 int res = input.Read(buffer);

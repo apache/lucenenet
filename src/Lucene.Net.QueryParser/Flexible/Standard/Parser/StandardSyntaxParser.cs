@@ -633,7 +633,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     if (fuzzy)
                     {
                         // LUCENENET specific: parse without throwing exceptions
-                        float fms = float.TryParse(fuzzySlop.Image.Substring(1), NumberStyles.Float, CultureInfo.InvariantCulture, out float temp) ? temp : defaultMinSimilarity;
+#if FEATURE_NUMBER_PARSE_READONLYSPAN
+                        float fms = float.TryParse(fuzzySlop.Image.AsSpan(1), NumberStyles.Float, CultureInfo.InvariantCulture, out float temp) ? temp : defaultMinSimilarity;
+#else
+                        float fms = float.TryParse(fuzzySlop.Image.Substring(1), NumberStyles.Float, CultureInfo.InvariantCulture, out float temp) ? temp: defaultMinSimilarity;
+#endif
                         if (fms < 0.0f)
                         {
                             { if (true) throw new ParseException(QueryParserMessages.INVALID_SYNTAX_FUZZY_LIMITS); }
@@ -766,8 +770,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
                     if (fuzzySlop != null)
                     {
-                        // LUCENENET: don't let parsing throw exceptions
+                        // LUCENENET specific: parse without throwing exceptions
+#if FEATURE_NUMBER_PARSE_READONLYSPAN
+                        if (float.TryParse(fuzzySlop.Image.AsSpan(1), NumberStyles.Float, CultureInfo.InvariantCulture, out float temp))
+#else
                         if (float.TryParse(fuzzySlop.Image.Substring(1), NumberStyles.Float, CultureInfo.InvariantCulture, out float temp))
+#endif
                         {
                             try
                             {

@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Pattern
             {
                 buffered.Append(temp, 0, cnt);
             }
-            transformedInput = new StringReader(ProcessPattern(buffered).ToString());
+            transformedInput = new StringReader(ProcessPattern(buffered)); // LUCENENET specific: ProcessPattern already returns string, no need to call ToString() on it
         }
 
         public override int Read()
@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Pattern
         /// </summary>
         private string ProcessPattern(StringBuilder input)
         {
-            // LUCENENET TODO: Replacing characters in a StringBuilder is not natively
+            // LUCENENET TODO: Replacing characters in a StringBuilder via regex is not natively
             // supported in .NET, so this is the approach we are left with.
             // At some point it might make sense to try to port the
             // MONO implementation over that DOES support Regex on a StringBuilder.
@@ -131,7 +131,11 @@ namespace Lucene.Net.Analysis.Pattern
                     int lengthBeforeReplacement = cumulativeOutput.Length + skippedSize;
 
                     // Add the part that didn't match the regex
+#if FEATURE_STRINGBUILDER_APPEND_READONLYSPAN
+                    cumulativeOutput.Append(inputStr.AsSpan(lastMatchEnd, m.Index - lastMatchEnd));
+#else
                     cumulativeOutput.Append(inputStr.Substring(lastMatchEnd, m.Index - lastMatchEnd));
+#endif
 
                     int groupSize = m.Length;
                     lastMatchEnd = m.Index + m.Length;
@@ -171,12 +175,16 @@ namespace Lucene.Net.Analysis.Pattern
                 } while ((m = m.NextMatch()).Success);
 
                 // Append the remaining output, no further changes to indices.
-                cumulativeOutput.Append(input.ToString(lastMatchEnd, input.Length - lastMatchEnd));
+#if FEATURE_STRINGBUILDER_APPEND_READONLYSPAN
+                cumulativeOutput.Append(inputStr.AsSpan(lastMatchEnd, input.Length - lastMatchEnd));
+#else
+                cumulativeOutput.Append(inputStr.Substring(lastMatchEnd, input.Length - lastMatchEnd));
+#endif
                 return cumulativeOutput.ToString();
             }
 
             // No match - just return the original string.
-            return input.ToString();
+            return inputStr; // LUCENENET: Since we have already dumped the string from input, just return it directly.
         }
     }
 }

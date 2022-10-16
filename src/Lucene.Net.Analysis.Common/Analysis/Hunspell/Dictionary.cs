@@ -967,7 +967,11 @@ namespace Lucene.Net.Analysis.Hunspell
                                     sb.Length = 0;
                                     sb.Append(cleansed);
                                 }
+#if FEATURE_STRINGBUILDER_APPEND_READONLYSPAN
+                                sb.Append(line.AsSpan(flagSep));
+#else
                                 sb.Append(line.Substring(flagSep));
+#endif
                                 writer.Write(sb.ToString().GetBytes(Encoding.UTF8));
                             }
                         }

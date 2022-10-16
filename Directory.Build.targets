@@ -34,6 +34,7 @@
 
     <DefineConstants>$(DefineConstants);FEATURE_ARGITERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_DICTIONARY_REMOVE_CONTINUEENUMERATION</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_STRING_CONCAT_READONLYSPAN</DefineConstants>
 
   </PropertyGroup>
   
@@ -53,8 +54,10 @@
 
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_SPAN</DefineConstants>
-    
+    <DefineConstants>$(DefineConstants);FEATURE_NUMBER_PARSE_READONLYSPAN</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_STREAM_READ_SPAN</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_STRINGBUILDER_APPEND_READONLYSPAN</DefineConstants>
+
   </PropertyGroup>
 
   <!-- Features in .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x, and .NET 6.x -->
