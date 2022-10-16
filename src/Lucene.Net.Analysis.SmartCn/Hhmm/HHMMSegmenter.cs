@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// </summary>
         /// <param name="sentence">input sentence, without start and end markers</param>
         /// <returns><see cref="SegGraph"/> corresponding to the input sentence.</returns>
-        private SegGraph CreateSegGraph(string sentence)
+        private static SegGraph CreateSegGraph(string sentence) // LUCENENET: CA1822: Mark members as static
         {
             int i = 0, j;
             int length = sentence.Length;

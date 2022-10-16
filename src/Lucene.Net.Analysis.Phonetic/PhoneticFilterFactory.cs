@@ -138,7 +138,7 @@ namespace Lucene.Net.Analysis.Phonetic
             GetEncoder();//trigger initialization for potential problems to be thrown now
         }
 
-        private Type ResolveEncoder(string name, IResourceLoader loader)
+        private static Type ResolveEncoder(string name, IResourceLoader loader) // LUCENENET: CA1822: Mark members as static
         {
             string lookupName = name;
             if (name.IndexOf('.') == -1)

@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             return types;
         }
 
-        private byte ParseType(string s)
+        private static byte ParseType(string s) // LUCENENET: CA1822: Mark members as static
         {
             if (s.Equals("LOWER", StringComparison.Ordinal))
             {

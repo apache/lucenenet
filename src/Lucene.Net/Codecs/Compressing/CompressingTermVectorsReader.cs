@@ -590,7 +590,7 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         // field -> term index -> position index
-        private int[][] PositionIndex(int skip, int numFields, PackedInt32s.Reader numTerms, int[] termFreqs)
+        private static int[][] PositionIndex(int skip, int numFields, PackedInt32s.Reader numTerms, int[] termFreqs) // LUCENENET: CA1822: Mark members as static
         {
             int[][] positionIndex = new int[numFields][];
             int termIndex = 0;

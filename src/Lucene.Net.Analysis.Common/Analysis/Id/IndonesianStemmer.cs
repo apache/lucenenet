@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis.Id
             return length;
         }
 
-        private bool IsVowel(char ch)
+        private static bool IsVowel(char ch) // LUCENENET: CA1822: Mark members as static
         {
             switch (ch)
             {

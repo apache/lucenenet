@@ -172,7 +172,7 @@ namespace Lucene.Net.Analysis.Ja
             return sb.ToString();
         }
 
-        private string FormatHeader()
+        private static string FormatHeader() // LUCENENET: CA1822: Mark members as static
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("digraph viterbi {\n");
@@ -187,7 +187,7 @@ namespace Lucene.Net.Analysis.Ja
             return sb.ToString();
         }
 
-        private string FormatTrailer()
+        private static string FormatTrailer() // LUCENENET: CA1822: Mark members as static
         {
             return "}";
         }

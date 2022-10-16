@@ -482,7 +482,7 @@ namespace Lucene.Net.Codecs.Lucene45
             writer.Finish();
         }
 
-        private IEnumerable<long?> GetSortedSetEnumerable(IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
+        private static IEnumerable<long?> GetSortedSetEnumerable(IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords) // LUCENENET: CA1822: Mark members as static
         {
             IEnumerator<long?> docToOrdCountIter = docToOrdCount.GetEnumerator();
             IEnumerator<long?> ordsIter = ords.GetEnumerator();

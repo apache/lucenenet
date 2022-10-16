@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Spell
         {
         }
 
-        private int[] Matches(string s1, string s2)
+        private static int[] Matches(string s1, string s2) // LUCENENET: CA1822: Mark members as static
         {
             string max, min;
             if (s1.Length > s2.Length)

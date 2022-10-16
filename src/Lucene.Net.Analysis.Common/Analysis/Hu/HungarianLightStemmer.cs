@@ -233,7 +233,7 @@ namespace Lucene.Net.Analysis.Hu
             return len;
         }
 
-        private int RemovePlural(char[] s, int len)
+        private static int RemovePlural(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 3 && s[len - 1] == 'k')
             {
@@ -254,7 +254,7 @@ namespace Lucene.Net.Analysis.Hu
             return len;
         }
 
-        private int Normalize(char[] s, int len)
+        private static int Normalize(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 3)
             {
@@ -270,7 +270,7 @@ namespace Lucene.Net.Analysis.Hu
             return len;
         }
 
-        private bool IsVowel(char ch)
+        private static bool IsVowel(char ch) // LUCENENET: CA1822: Mark members as static
         {
             switch (ch)
             {

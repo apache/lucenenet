@@ -340,7 +340,7 @@ namespace Lucene.Net.Analysis.In
         /// <summary>
         /// LUCENENET: Returns the unicode block for the specified character
         /// </summary>
-        private Regex GetBlockForChar(char c)
+        private static Regex GetBlockForChar(char c) // LUCENENET: CA1822: Mark members as static
         {
             string charAsString = c.ToString();
             foreach (var block in scripts.Keys)

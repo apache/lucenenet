@@ -191,7 +191,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             return m_buffer.Position;
         }
 
-        private bool IsKatakana(string s)
+        private static bool IsKatakana(string s) // LUCENENET: CA1822: Mark members as static
         {
             for (int i = 0; i < s.Length; i++)
             {
@@ -212,7 +212,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             }
         }
 
-        private string ToKatakana(string s)
+        private static string ToKatakana(string s) // LUCENENET: CA1822: Mark members as static
         {
             char[] text = new char[s.Length];
             for (int i = 0; i < s.Length; i++)

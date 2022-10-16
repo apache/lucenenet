@@ -152,12 +152,12 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private void WriteHeader(IndexOutput output)
+        private static void WriteHeader(IndexOutput output) // LUCENENET: CA1822: Mark members as static
         {
             CodecUtil.WriteHeader(output, TERMS_CODEC_NAME, TERMS_VERSION_CURRENT);
         }
 
-        private void WriteTrailer(IndexOutput output, long dirStart)
+        private static void WriteTrailer(IndexOutput output, long dirStart) // LUCENENET: CA1822: Mark members as static
         {
             output.WriteInt64(dirStart);
         }

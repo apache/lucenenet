@@ -236,7 +236,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        private void WriteEntryTable(ICollection<FileEntry> entries, IndexOutput entryOut)
+        private static void WriteEntryTable(ICollection<FileEntry> entries, IndexOutput entryOut) // LUCENENET: CA1822: Mark members as static
         {
             CodecUtil.WriteHeader(entryOut, ENTRY_CODEC, VERSION_CURRENT);
             entryOut.WriteVInt32(entries.Count);

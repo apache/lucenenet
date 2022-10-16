@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Cz
             return len;
         }
 
-        private int RemoveCase(char[] s, int len)
+        private static int RemoveCase(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 7 && StemmerUtil.EndsWith(s, len, "atech"))
             {
@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.Cz
             return len;
         }
 
-        private int RemovePossessives(char[] s, int len)
+        private static int RemovePossessives(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 5 && (StemmerUtil.EndsWith(s, len, "ov") || StemmerUtil.EndsWith(s, len, "in") || StemmerUtil.EndsWith(s, len, "ův")))
             {
@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.Cz
             return len;
         }
 
-        private int Normalize(char[] s, int len)
+        private static int Normalize(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (StemmerUtil.EndsWith(s, len, "čt")) // čt -> ck
             {

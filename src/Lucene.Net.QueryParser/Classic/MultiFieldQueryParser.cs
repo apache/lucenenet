@@ -137,7 +137,7 @@ namespace Lucene.Net.QueryParsers.Classic
             return q2;
         }
 
-        private void ApplySlop(Query q, int slop)
+        private static void ApplySlop(Query q, int slop) // LUCENENET: CA1822: Mark members as static
         {
             if (q is PhraseQuery phraseQuery)
             {

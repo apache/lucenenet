@@ -90,19 +90,19 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         [Test]
         public void TestRemoveSingleDoubleConsonants_BUBLE_RemovedSuccessfully()
         {
-            Assert.AreEqual("BUBLE", this.StringEncoder.RemoveDoubleConsonants("BUBBLE"));
+            Assert.AreEqual("BUBLE", MatchRatingApproachEncoder.RemoveDoubleConsonants("BUBBLE"));
         }
 
         [Test]
         public void TestRemoveDoubleConsonants_MISSISSIPPI_RemovedSuccessfully()
         {
-            Assert.AreEqual("MISISIPI", this.StringEncoder.RemoveDoubleConsonants("MISSISSIPPI"));
+            Assert.AreEqual("MISISIPI", MatchRatingApproachEncoder.RemoveDoubleConsonants("MISSISSIPPI"));
         }
 
         [Test]
         public void TestRemoveDoubleDoubleVowel_BEETLE_NotRemoved()
         {
-            Assert.AreEqual("BEETLE", this.StringEncoder.RemoveDoubleConsonants("BEETLE"));
+            Assert.AreEqual("BEETLE", MatchRatingApproachEncoder.RemoveDoubleConsonants("BEETLE"));
         }
 
         [Test]
@@ -120,115 +120,115 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         [Test]
         public void TestRemoveVowel_ALESSANDRA_Returns_ALSSNDR()
         {
-            Assert.AreEqual("ALSSNDR", this.StringEncoder.RemoveVowels("ALESSANDRA"));
+            Assert.AreEqual("ALSSNDR", MatchRatingApproachEncoder.RemoveVowels("ALESSANDRA"));
         }
 
         [Test]
         public void TestRemoveVowel__AIDAN_Returns_ADN()
         {
-            Assert.AreEqual("ADN", this.StringEncoder.RemoveVowels("AIDAN"));
+            Assert.AreEqual("ADN", MatchRatingApproachEncoder.RemoveVowels("AIDAN"));
         }
 
         [Test]
         public void TestRemoveVowel__DECLAN_Returns_DCLN()
         {
-            Assert.AreEqual("DCLN", this.StringEncoder.RemoveVowels("DECLAN"));
+            Assert.AreEqual("DCLN", MatchRatingApproachEncoder.RemoveVowels("DECLAN"));
         }
 
         [Test]
         public void TestGetFirstLast3__ALEXANDER_Returns_Aleder()
         {
-            Assert.AreEqual("Aleder", this.StringEncoder.GetFirst3Last3("Alexzander"));
+            Assert.AreEqual("Aleder", MatchRatingApproachEncoder.GetFirst3Last3("Alexzander"));
         }
 
         [Test]
         public void TestGetFirstLast3_PETE_Returns_PETE()
         {
-            Assert.AreEqual("PETE", this.StringEncoder.GetFirst3Last3("PETE"));
+            Assert.AreEqual("PETE", MatchRatingApproachEncoder.GetFirst3Last3("PETE"));
         }
 
         [Test]
         public void TestleftTorightThenRightToLeft_ALEXANDER_ALEXANDRA_Returns4()
         {
-            Assert.AreEqual(4, this.StringEncoder.LeftToRightThenRightToLeftProcessing("ALEXANDER", "ALEXANDRA"));
+            Assert.AreEqual(4, MatchRatingApproachEncoder.LeftToRightThenRightToLeftProcessing("ALEXANDER", "ALEXANDRA"));
         }
 
         [Test]
         public void TestleftTorightThenRightToLeft_EINSTEIN_MICHAELA_Returns0()
         {
-            Assert.AreEqual(0, this.StringEncoder.LeftToRightThenRightToLeftProcessing("EINSTEIN", "MICHAELA"));
+            Assert.AreEqual(0, MatchRatingApproachEncoder.LeftToRightThenRightToLeftProcessing("EINSTEIN", "MICHAELA"));
         }
 
         [Test]
         public void TestGetMinRating_7_Return4_Successfully()
         {
-            Assert.AreEqual(4, this.StringEncoder.GetMinRating(7));
+            Assert.AreEqual(4, MatchRatingApproachEncoder.GetMinRating(7));
         }
 
         [Test]
         public void TestGetMinRating_1_Returns5_Successfully()
         {
-            Assert.AreEqual(5, this.StringEncoder.GetMinRating(1));
+            Assert.AreEqual(5, MatchRatingApproachEncoder.GetMinRating(1));
         }
 
         [Test]
         public void TestGetMinRating_2_Returns5_Successfully()
         {
-            Assert.AreEqual(5, this.StringEncoder.GetMinRating(2));
+            Assert.AreEqual(5, MatchRatingApproachEncoder.GetMinRating(2));
         }
 
         [Test]
         public void TestGetMinRating_5_Returns4_Successfully()
         {
-            Assert.AreEqual(4, this.StringEncoder.GetMinRating(5));
+            Assert.AreEqual(4, MatchRatingApproachEncoder.GetMinRating(5));
         }
 
         [Test]
         public void TestGetMinRating_5_Returns4_Successfully2()
         {
-            Assert.AreEqual(4, this.StringEncoder.GetMinRating(5));
+            Assert.AreEqual(4, MatchRatingApproachEncoder.GetMinRating(5));
         }
 
         [Test]
         public void TestGetMinRating_6_Returns4_Successfully()
         {
-            Assert.AreEqual(4, this.StringEncoder.GetMinRating(6));
+            Assert.AreEqual(4, MatchRatingApproachEncoder.GetMinRating(6));
         }
 
         [Test]
         public void TestGetMinRating_7_Returns4_Successfully()
         {
-            Assert.AreEqual(4, this.StringEncoder.GetMinRating(7));
+            Assert.AreEqual(4, MatchRatingApproachEncoder.GetMinRating(7));
         }
 
         [Test]
         public void TestGetMinRating_8_Returns3_Successfully()
         {
-            Assert.AreEqual(3, this.StringEncoder.GetMinRating(8));
+            Assert.AreEqual(3, MatchRatingApproachEncoder.GetMinRating(8));
         }
 
         [Test]
         public void TestGetMinRating_10_Returns3_Successfully()
         {
-            Assert.AreEqual(3, this.StringEncoder.GetMinRating(10));
+            Assert.AreEqual(3, MatchRatingApproachEncoder.GetMinRating(10));
         }
 
         [Test]
         public void TestGetMinRating_11_Returns_3_Successfully()
         {
-            Assert.AreEqual(3, this.StringEncoder.GetMinRating(11));
+            Assert.AreEqual(3, MatchRatingApproachEncoder.GetMinRating(11));
         }
 
         [Test]
         public void TestGetMinRating_13_Returns_1_Successfully()
         {
-            Assert.AreEqual(1, this.StringEncoder.GetMinRating(13));
+            Assert.AreEqual(1, MatchRatingApproachEncoder.GetMinRating(13));
         }
 
         [Test]
         public void TestCleanName_SuccessfullyClean()
         {
-            Assert.AreEqual("THISISATEST", this.StringEncoder.CleanName("This-ís   a t.,es &t"));
+            Assert.AreEqual("THISISATEST", MatchRatingApproachEncoder.CleanName("This-ís   a t.,es &t"));
         }
 
         [Test]

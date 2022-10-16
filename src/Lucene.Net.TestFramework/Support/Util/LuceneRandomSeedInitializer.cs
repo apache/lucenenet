@@ -44,7 +44,7 @@ namespace Lucene.Net.Util
         /// <param name="seed">The random seed for a new <see cref="Random"/> instance.
         /// Note this is a subclass of <see cref="Random"/>, since the default doesn't produce consistent results across platforms.</param>
         /// <returns><c>true</c> if the seed was found in context; <c>false</c> if the seed was generated.</returns>
-        private bool TryGetRandomSeedsFromContext(Test test, out long seed, out long? testSeed)
+        private static bool TryGetRandomSeedsFromContext(Test test, out long seed, out long? testSeed) // LUCENENET: CA1822: Mark members as static
         {
             //bool generate;
             seed = default;

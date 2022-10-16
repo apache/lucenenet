@@ -100,7 +100,7 @@ namespace Lucene.Net.Analysis.De
             return Step2(s, len);
         }
 
-        private bool StEnding(char ch)
+        private static bool StEnding(char ch) // LUCENENET: CA1822: Mark members as static
         {
             switch (ch)
             {

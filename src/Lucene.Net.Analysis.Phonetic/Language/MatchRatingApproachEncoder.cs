@@ -84,7 +84,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="name">The name to be cleaned.</param>
         /// <returns>The cleaned name.</returns>
-        internal string CleanName(string name)
+        internal static string CleanName(string name) // LUCENENET: CA1822: Mark members as static
         {
             string upperName = LOCALE_ENGLISH.TextInfo.ToUpper(name);
 
@@ -135,7 +135,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="name">The string to get the substrings from.</param>
         /// <returns>Annexed first &amp; last 3 letters of input word.</returns>
-        internal string GetFirst3Last3(string name)
+        internal static string GetFirst3Last3(string name) // LUCENENET: CA1822: Mark members as static
         {
             int nameLength = name.Length;
 
@@ -157,7 +157,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="sumLength">The length of 2 strings sent down.</param>
         /// <returns>The min rating value.</returns>
-        internal int GetMinRating(int sumLength)
+        internal static int GetMinRating(int sumLength) // LUCENENET: CA1822: Mark members as static
         {
             int minRating; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
@@ -271,7 +271,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <param name="name1"></param>
         /// <param name="name2"></param>
         /// <returns></returns>
-        internal int LeftToRightThenRightToLeftProcessing(string name1, string name2)
+        internal static int LeftToRightThenRightToLeftProcessing(string name1, string name2) // LUCENENET: CA1822: Mark members as static
         {
             char[] name1Char = name1.ToCharArray();
             char[] name2Char = name2.ToCharArray();
@@ -366,7 +366,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="name">String to have double consonants removed.</param>
         /// <returns>Single consonant word.</returns>
-        internal string RemoveDoubleConsonants(string name)
+        internal static string RemoveDoubleConsonants(string name) // LUCENENET: CA1822: Mark members as static
         {
             string replacedName = name.ToUpperInvariant();
             foreach (string dc in DOUBLE_CONSONANT)
@@ -385,7 +385,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="name">The name to have vowels removed.</param>
         /// <returns>De-voweled word.</returns>
-        internal string RemoveVowels(string name)
+        internal static string RemoveVowels(string name) // LUCENENET: CA1822: Mark members as static
         {
             // Extract first letter
             string firstLetter = name.Substring(0, 1 - 0);

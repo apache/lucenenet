@@ -9343,7 +9343,7 @@ namespace Lucene.Net.Analysis.Standard
         /// in error fallback rules.
         /// </summary>
         /// <param name="errorCode">the code of the errormessage to display</param>
-        private void ZzScanError(int errorCode)
+        private static void ZzScanError(int errorCode) // LUCENENET: CA1822: Mark members as static
         {
             string message;
             // LUCENENET specific: Defensive check so we don't have to catch IndexOutOfRangeException

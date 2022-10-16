@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void CreateIndex(IndexWriterConfig config, Directory target, IndexReader reader, Filter preserveFilter, bool negateFilter)
+        private static void CreateIndex(IndexWriterConfig config, Directory target, IndexReader reader, Filter preserveFilter, bool negateFilter) // LUCENENET: CA1822: Mark members as static
         {
             bool success = false;
             IndexWriter w = new IndexWriter(target, config);

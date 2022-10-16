@@ -398,12 +398,12 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             return code.ToString();
         }
 
-        private bool IsVowel(StringBuilder sb, int index)
+        private static bool IsVowel(StringBuilder sb, int index) // LUCENENET: CA1822: Mark members as static
         {
             return VOWELS.IndexOf(sb[index]) >= 0;
         }
 
-        private bool IsPreviousChar(StringBuilder sb, int index, char c)
+        private static bool IsPreviousChar(StringBuilder sb, int index, char c) // LUCENENET: CA1822: Mark members as static
         {
             bool matches = false;
             if (index > 0 &&
@@ -414,7 +414,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             return matches;
         }
 
-        private bool IsNextChar(StringBuilder sb, int index, char c)
+        private static bool IsNextChar(StringBuilder sb, int index, char c) // LUCENENET: CA1822: Mark members as static
         {
             bool matches = false;
             if (index >= 0 &&
@@ -425,7 +425,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             return matches;
         }
 
-        private bool RegionMatch(StringBuilder sb, int index, string test)
+        private static bool RegionMatch(StringBuilder sb, int index, string test) // LUCENENET: CA1822: Mark members as static
         {
             bool matches = false;
             if (index >= 0 &&
@@ -437,7 +437,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             return matches;
         }
 
-        private bool IsLastChar(int wdsz, int n)
+        private static bool IsLastChar(int wdsz, int n) // LUCENENET: CA1822: Mark members as static
         {
             return n + 1 == wdsz;
         }

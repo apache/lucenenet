@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             this.specialCaseHW = !HasMarker(this.soundexMapping);
         }
 
-        private bool HasMarker(char[] mapping)
+        private static bool HasMarker(char[] mapping) // LUCENENET: CA1822: Mark members as static
         {
             foreach (char ch in mapping)
             {

@@ -143,7 +143,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                 }
             }
 
-            private BreakIterator ParseRules(string filename, IResourceLoader loader)
+            private static BreakIterator ParseRules(string filename, IResourceLoader loader) // LUCENENET: CA1822: Mark members as static
             {
                 StringBuilder rules = new StringBuilder();
                 Stream rulesStream = loader.OpenResource(filename);

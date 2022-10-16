@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.El
             }
         }
 
-        private int LowerCase(int codepoint)
+        private static int LowerCase(int codepoint) // LUCENENET: CA1822: Mark members as static
         {
             switch (codepoint)
             {

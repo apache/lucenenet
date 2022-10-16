@@ -229,7 +229,7 @@ namespace Lucene.Net.Search.Suggest
                 }
             }
 
-            private ISet<string> GetRelevantFields(params string[] fields)
+            private static ISet<string> GetRelevantFields(params string[] fields) // LUCENENET: CA1822: Mark members as static
             {
                 var relevantFields = new JCG.HashSet<string>();
                 foreach (string relevantField in fields)

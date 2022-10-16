@@ -477,7 +477,7 @@ namespace Lucene.Net.Search
         }
 
         // Breakout calculation of the termArrays equals
-        private bool TermArraysEquals(IList<Term[]> termArrays1, IList<Term[]> termArrays2)
+        private static bool TermArraysEquals(IList<Term[]> termArrays1, IList<Term[]> termArrays2) // LUCENENET: CA1822: Mark members as static
         {
             if (termArrays1.Count != termArrays2.Count)
             {

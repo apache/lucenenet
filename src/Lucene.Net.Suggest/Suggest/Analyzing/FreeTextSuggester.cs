@@ -866,7 +866,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// weight -> cost </summary>
-        private long EncodeWeight(long ngramCount)
+        private static long EncodeWeight(long ngramCount) // LUCENENET: CA1822: Mark members as static
         {
             return long.MaxValue - ngramCount;
         }
@@ -881,7 +881,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
         // NOTE: copied from WFSTCompletionLookup & tweaked
-        private Int64 LookupPrefix(FST<Int64> fst, FST.BytesReader bytesReader, BytesRef scratch, FST.Arc<Int64> arc)
+        private static Int64 LookupPrefix(FST<Int64> fst, FST.BytesReader bytesReader, BytesRef scratch, FST.Arc<Int64> arc) // LUCENENET: CA1822: Mark members as static
         {
 
             Int64 output = fst.Outputs.NoOutput;

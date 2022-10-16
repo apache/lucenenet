@@ -116,7 +116,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private int ReadHeader(IndexInput @in)
+        private static int ReadHeader(IndexInput @in) // LUCENENET: CA1822: Mark members as static
         {
             return CodecUtil.CheckHeader(@in, FSTTermsWriter.TERMS_CODEC_NAME, FSTTermsWriter.TERMS_VERSION_START, FSTTermsWriter.TERMS_VERSION_CURRENT);
         }
@@ -135,7 +135,7 @@ namespace Lucene.Net.Codecs.Memory
         }
 
 
-        private void CheckFieldSummary(SegmentInfo info, IndexInput @in, TermsReader field, TermsReader previous)
+        private static void CheckFieldSummary(SegmentInfo info, IndexInput @in, TermsReader field, TermsReader previous) // LUCENENET: CA1822: Mark members as static
         {
             // #docs with field must be <= #docs
             if (field.docCount < 0 || field.docCount > info.DocCount)

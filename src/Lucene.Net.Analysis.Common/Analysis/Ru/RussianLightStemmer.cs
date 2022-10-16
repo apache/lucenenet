@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Ru
             return Normalize(s, len);
         }
 
-        private int Normalize(char[] s, int len)
+        private static int Normalize(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 3)
             {
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Ru
             return len;
         }
 
-        private int RemoveCase(char[] s, int len)
+        private static int RemoveCase(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 6 && (StemmerUtil.EndsWith(s, len, "иями") || StemmerUtil.EndsWith(s, len, "оями")))
             {

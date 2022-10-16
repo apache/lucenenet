@@ -569,7 +569,7 @@ namespace Lucene.Net.Analysis.En
             return d;
         }
 
-        private bool IsAlpha(char ch)
+        private static bool IsAlpha(char ch) // LUCENENET: CA1822: Mark members as static
         {
             return ch >= 'a' && ch <= 'z'; // terms must be lowercased already
         }

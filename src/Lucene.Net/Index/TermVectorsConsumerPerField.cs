@@ -141,7 +141,7 @@ namespace Lucene.Net.Index
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public void Abort()
+        public static void Abort() // LUCENENET: CA1822: Mark members as static
         {
         }
 

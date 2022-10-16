@@ -193,13 +193,13 @@ namespace Lucene.Net.Benchmarks.Quality
         }
 
         private const string padd = "                                    ";
-        private string Format(string s, int minLen)
+        private static string Format(string s, int minLen) // LUCENENET: CA1822: Mark members as static
         {
             s = (s ?? "");
             int n = Math.Max(minLen, s.Length);
             return (s + padd).Substring(0, n-0);
         }
-        private string FracFormat(string frac)
+        private static string FracFormat(string frac) // LUCENENET: CA1822: Mark members as static
         {
             int k = frac.IndexOf('.');
             string s1 = padd + frac.Substring(0, k-0);

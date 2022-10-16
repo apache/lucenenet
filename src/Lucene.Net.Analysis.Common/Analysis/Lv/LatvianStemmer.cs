@@ -101,7 +101,7 @@ namespace Lucene.Net.Analysis.Lv
         ///     <item><description> z -> ž</description></item>
         /// </list>
         /// </summary>
-        private int Unpalatalize(char[] s, int len)
+        private static int Unpalatalize(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             // we check the character removed: if its -u then 
             // its 2,5, or 6 gen pl., and these two can only apply then.
@@ -189,7 +189,7 @@ namespace Lucene.Net.Analysis.Lv
         /// Count the vowels in the string, we always require at least
         /// one in the remaining stem to accept it.
         /// </summary>
-        private int NumVowels(char[] s, int len)
+        private static int NumVowels(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             int n = 0;
             for (int i = 0; i < len; i++)

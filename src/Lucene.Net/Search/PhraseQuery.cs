@@ -400,7 +400,7 @@ namespace Lucene.Net.Search
             }
 
             // only called from assert
-            private bool TermNotInReader(AtomicReader reader, Term term)
+            private static bool TermNotInReader(AtomicReader reader, Term term) // LUCENENET: CA1822: Mark members as static
             {
                 return reader.DocFreq(term) == 0;
             }
