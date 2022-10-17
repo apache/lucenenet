@@ -276,7 +276,7 @@ namespace Lucene.Net.Util
         /// // tight loop with many invocations.
         /// </code>
         /// </summary>
-        protected static Random Random => LuceneTestCase.Random; // LUCENENET: CA1822: Mark members as static
+        protected Random Random => LuceneTestCase.Random;
 
         /// <summary>
         /// Overridden in a derived class, provides a way to set <see cref="CodecFactory"/>,

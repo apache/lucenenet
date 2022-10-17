@@ -299,7 +299,7 @@ namespace Lucene.Net.Index
                 indexWriter.PublishFlushedSegment(newSegment.segmentInfo, segmentUpdates, globalPacket);
             }
 
-            protected virtual void FinishFlush(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates bufferedUpdates)
+            protected void FinishFlush(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates bufferedUpdates)
             {
                 // Finish the flushed segment and publish it to IndexWriter
                 if (newSegment is null)

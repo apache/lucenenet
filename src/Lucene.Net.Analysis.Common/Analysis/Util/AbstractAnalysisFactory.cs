@@ -177,7 +177,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// NOTE: This was requireInt() in Lucene
         /// </summary>
-        protected virtual int RequireInt32(IDictionary<string, string> args, string name)
+        protected int RequireInt32(IDictionary<string, string> args, string name)
         {
             return int.Parse(Require(args, name), CultureInfo.InvariantCulture);
         }
@@ -185,7 +185,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// NOTE: This was getInt() in Lucene
         /// </summary>
-        protected virtual int GetInt32(IDictionary<string, string> args, string name, int defaultVal)
+        protected int GetInt32(IDictionary<string, string> args, string name, int defaultVal)
         {
             if (args.TryGetValue(name, out string s))
             {
@@ -195,12 +195,12 @@ namespace Lucene.Net.Analysis.Util
             return defaultVal;
         }
 
-        protected virtual bool RequireBoolean(IDictionary<string, string> args, string name)
+        protected bool RequireBoolean(IDictionary<string, string> args, string name)
         {
             return bool.Parse(Require(args, name));
         }
 
-        protected virtual bool GetBoolean(IDictionary<string, string> args, string name, bool defaultVal)
+        protected bool GetBoolean(IDictionary<string, string> args, string name, bool defaultVal)
         {
             if (args.TryGetValue(name, out string s))
             {
@@ -213,7 +213,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// NOTE: This was requireFloat() in Lucene
         /// </summary>
-        protected virtual float RequireSingle(IDictionary<string, string> args, string name)
+        protected float RequireSingle(IDictionary<string, string> args, string name)
         {
             return float.Parse(Require(args, name), CultureInfo.InvariantCulture);
         }
@@ -221,7 +221,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// NOTE: This was getFloat() in Lucene
         /// </summary>
-        protected virtual float GetSingle(IDictionary<string, string> args, string name, float defaultVal)
+        protected float GetSingle(IDictionary<string, string> args, string name, float defaultVal)
         {
             if (args.TryGetValue(name, out string s))
             {
@@ -285,7 +285,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Compiles a pattern for the value of the specified argument key <paramref name="name"/> 
         /// </summary>
-        protected virtual Regex GetPattern(IDictionary<string, string> args, string name)
+        protected Regex GetPattern(IDictionary<string, string> args, string name)
         {
             try
             {
@@ -329,7 +329,7 @@ namespace Lucene.Net.Analysis.Util
         /// Returns as <see cref="CharArraySet"/> from wordFiles, which
         /// can be a comma-separated list of filenames
         /// </summary>
-        protected virtual CharArraySet GetWordSet(IResourceLoader loader, string wordFiles, bool ignoreCase)
+        protected CharArraySet GetWordSet(IResourceLoader loader, string wordFiles, bool ignoreCase)
         {
             AssureMatchVersion();
             IList<string> files = SplitFileNames(wordFiles);
@@ -351,7 +351,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Returns the resource's lines (with content treated as UTF-8)
         /// </summary>
-        protected virtual IList<string> GetLines(IResourceLoader loader, string resource)
+        protected IList<string> GetLines(IResourceLoader loader, string resource)
         {
             return WordlistLoader.GetLines(loader.OpenResource(resource), Encoding.UTF8);
         }
@@ -360,7 +360,7 @@ namespace Lucene.Net.Analysis.Util
         /// Same as <see cref="GetWordSet(IResourceLoader, string, bool)"/>,
         /// except the input is in snowball format. 
         /// </summary>
-        protected virtual CharArraySet GetSnowballWordSet(IResourceLoader loader, string wordFiles, bool ignoreCase)
+        protected CharArraySet GetSnowballWordSet(IResourceLoader loader, string wordFiles, bool ignoreCase)
         {
             AssureMatchVersion();
             IList<string> files = SplitFileNames(wordFiles);
@@ -388,7 +388,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="fileNames"> the string containing file names </param>
         /// <returns> a list of file names with the escaping backslashed removed </returns>
-        protected virtual IList<string> SplitFileNames(string fileNames)
+        protected IList<string> SplitFileNames(string fileNames)
         {
             if (fileNames is null)
             {

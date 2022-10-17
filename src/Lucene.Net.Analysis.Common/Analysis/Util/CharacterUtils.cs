@@ -261,7 +261,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Converts a sequence of unicode code points to a sequence of .NET characters. </summary>
         ///  <returns> the number of chars written to the destination buffer  </returns>
-        public virtual int ToChars(int[] src, int srcOff, int srcLen, char[] dest, int destOff)
+        public int ToChars(int[] src, int srcOff, int srcLen, char[] dest, int destOff)
         {
             if (srcLen < 0)
             {

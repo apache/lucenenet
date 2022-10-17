@@ -387,7 +387,7 @@ namespace Lucene.Net.Index
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void Abort()
+        public void Abort()
         {
         }
 
