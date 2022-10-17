@@ -24,77 +24,77 @@ namespace TagSoup
         /// <summary>
         /// Reports an attribute name without a value.
         /// </summary>
-        void Adup(char[] buff, int offset, int length);
+        void Adup(char[] buffer, int startIndex, int length);
 
         /// <summary>
         /// Reports an attribute name; a value will follow.
         /// </summary>
-        void Aname(char[] buff, int offset, int length);
+        void Aname(char[] buffer, int startIndex, int length);
 
         /// <summary>
         /// Reports an attribute value.
         /// </summary>
-        void Aval(char[] buff, int offset, int length);
+        void Aval(char[] buffer, int startIndex, int length);
 
         /// <summary>
         /// Reports the content of a CDATA section (not a CDATA element)
         /// </summary>
-        void CDSect(char[] buff, int offset, int length);
+        void CDSect(char[] buffer, int startIndex, int length);
 
         /// <summary>
         /// Reports a &lt;!....&gt; declaration - typically a DOCTYPE
         /// </summary>
-        void Decl(char[] buff, int offset, int length);
+        void Decl(char[] buffer, int startIndex, int length);
 
         /// <summary>
         /// Reports an entity reference or character reference.
         /// </summary>
-        void Entity(char[] buff, int offset, int length);
+        void Entity(char[] buffer, int startIndex, int length);
 
         /// <summary>
         /// Reports EOF.
         /// </summary>
-        void EOF(char[] buff, int offset, int length);
+        void EOF(char[] buffer, int startIndex, int length);
 
         /// <summary>
         /// Reports an end-tag.
         /// </summary>
-        void ETag(char[] buff, int offset, int length);
+        void ETag(char[] buffer, int startIndex, int length);
 
         /// <summary>
         /// Reports the general identifier (element type name) of a start-tag.
         /// </summary>
-        void GI(char[] buff, int offset, int length);
+        void GI(char[] buffer, int startIndex, int length);
 
         /// <summary>
         /// Reports character content.
         /// </summary>
-        void PCDATA(char[] buff, int offset, int length);
+        void PCDATA(char[] buffer, int startIndex, int length);
 
         /// <summary>
         /// Reports the data part of a processing instruction.
         /// </summary>
-        void PI(char[] buff, int offset, int length);
+        void PI(char[] buffer, int startIndex, int length);
 
         /// <summary>
         /// Reports the target part of a processing instruction.
         /// </summary>
-        void PITarget(char[] buff, int offset, int length);
+        void PITarget(char[] buffer, int startIndex, int length);
 
         /// <summary>
         /// Reports the close of a start-tag.
         /// </summary>
-        void STagC(char[] buff, int offset, int length);
+        void STagC(char[] buffer, int startIndex, int length);
 
         /// <summary>
         /// Reports the close of an empty-tag.
         /// </summary>
-        void STagE(char[] buff, int offset, int length);
+        void STagE(char[] buffer, int startIndex, int length);
 
         /// <summary>
         /// Reports a comment.
         /// </summary>
-        void Cmnt(char[] buff, int offset, int length);
+        void Cmnt(char[] buffer, int startIndex, int length);
 
         /// <summary>
         /// Returns the value of the last entity or character reference reported.

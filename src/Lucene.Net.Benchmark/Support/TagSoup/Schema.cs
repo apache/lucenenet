@@ -14,8 +14,9 @@
 // 
 // Model of document
 
+using Lucene;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace TagSoup
 {
@@ -34,8 +35,8 @@ namespace TagSoup
         public const int F_CDATA = 2;
         public const int F_NOFORCE = 4;
 
-        private readonly Hashtable theEntities = new Hashtable(); // string -> Character
-        private readonly Hashtable theElementTypes = new Hashtable(); // string -> ElementType
+        private readonly IDictionary<string, int> theEntities = new Dictionary<string, int>(); // string -> Character
+        private readonly IDictionary<string, ElementType> theElementTypes = new Dictionary<string, ElementType>(); // string -> ElementType
 
         private string theURI = "";
         private string thePrefix = "";
@@ -75,7 +76,7 @@ namespace TagSoup
             ElementType e = GetElementType(elemName);
             if (e is null)
             {
-                throw new Exception("Attribute " + attrName + " specified for unknown element type " + elemName);
+                throw Error.Create("Attribute " + attrName + " specified for unknown element type " + elemName);
             }
             e.SetAttribute(attrName, type, value);
         }
@@ -91,12 +92,12 @@ namespace TagSoup
             ElementType parent = GetElementType(parentName);
             if (child is null)
             {
-                throw new Exception("No child " + name + " for parent " + parentName);
+                throw Error.Create("No child " + name + " for parent " + parentName);
             }
             if (parent is null)
             {
 #pragma warning disable IDE0016 // Use 'throw' expression
-                throw new Exception("No parent " + parentName + " for child " + name);
+                throw Error.Create("No parent " + parentName + " for child " + name);
 #pragma warning restore IDE0016 // Use 'throw' expression
             }
             child.Parent = parent;
@@ -119,7 +120,11 @@ namespace TagSoup
         /// <returns>The corresponding <see cref="TagSoup.ElementType"/></returns>
         public virtual ElementType GetElementType(string name)
         {
-            return (ElementType)(theElementTypes[name.ToLowerInvariant()]);
+            // LUCENENET: Added guard clause
+            if (name is null)
+                throw new ArgumentNullException(nameof(name));
+
+            return theElementTypes.TryGetValue(name.ToLowerInvariant(), out ElementType value) ? value : null;
         }
 
         /// <summary>
@@ -129,11 +134,15 @@ namespace TagSoup
         /// <returns>The corresponding character, or 0 if none</returns>
         public virtual int GetEntity(string name)
         {
+            // LUCENENET: Added guard clause
+            if (name is null)
+                throw new ArgumentNullException(nameof(name));
+
             //		System.err.println("%% Looking up entity " + name);
-            if (theEntities.ContainsKey(name))
+            if (theEntities.TryGetValue(name, out int value))
             {
-                return (int)theEntities[name];
-            }
+                return value;
+            }    
             return 0;
         }
 

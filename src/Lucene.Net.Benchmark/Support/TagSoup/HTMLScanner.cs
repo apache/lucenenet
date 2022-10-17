@@ -1,4 +1,4 @@
-// This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
+﻿// This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
 //
 // TagSoup is licensed under the Apache License,
 // Version 2.0.  You may obtain a copy of this license at
@@ -13,11 +13,10 @@
 // 
 // 
 
+using Lucene;
 using Sax;
 using System;
-using System.Globalization;
 using System.IO;
-using System.Text;
 
 namespace TagSoup
 {
@@ -297,7 +296,7 @@ namespace TagSoup
         ///   next state = statetable[value + 3]. That is, the value points
         ///   to the start of the answer 4-tuple in the statetable.
         /// </summary>
-        private static short[][] statetableIndex;
+        private static readonly short[][] statetableIndex = LoadStateTableIndex(ref statetableIndexMaxChar); // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
 
         /// <summary>
         ///   The highest character value seen in the statetable.
@@ -305,8 +304,10 @@ namespace TagSoup
         ///   is used.
         /// </summary>
         private static int statetableIndexMaxChar;
-        public HTMLScanner()
+
+        private static short[][] LoadStateTableIndex(ref int statetableIndexMaxChar)
         {
+            short[][] result;
             int maxState = -1;
             int maxChar = -1;
             for (int i = 0; i < statetable.Length; i += 4)
@@ -322,11 +323,11 @@ namespace TagSoup
             }
             statetableIndexMaxChar = maxChar + 1;
 
-            statetableIndex = new short[maxState + 1][];
+            result = new short[maxState + 1][];
 
             for (int i = 0; i <= maxState; i++)
             {
-                statetableIndex[i] = new short[maxChar + 3];
+                result[i] = new short[maxChar + 3];
             }
             for (int theState = 0; theState <= maxState; ++theState)
             {
@@ -353,9 +354,10 @@ namespace TagSoup
                             break;
                         }
                     }
-                    statetableIndex[theState][ch + 2] = (short)hit;
+                    result[theState][ch + 2] = (short)hit;
                 }
             }
+            return result;
         }
 
         // Locator implementation
@@ -372,14 +374,14 @@ namespace TagSoup
         // Scanner implementation
 
         /// <summary>
-        /// Reset document locator, supplying systemid and publicid.
+        /// Reset document locator, supplying systemId and publicId.
         /// </summary>
-        /// <param name="systemid">System id</param>
-        /// <param name="publicid">Public id</param>
-        public virtual void ResetDocumentLocator(string publicid, string systemid)
+        /// <param name="systemId">System id</param>
+        /// <param name="publicId">Public id</param>
+        public virtual void ResetDocumentLocator(string publicId, string systemId)
         {
-            thePublicid = publicid;
-            theSystemid = systemid;
+            thePublicid = publicId;
+            theSystemid = systemId;
             theLastLine = theLastColumn = theCurrentLine = theCurrentColumn = 0;
         }
 
@@ -440,9 +442,9 @@ namespace TagSoup
                 switch (action)
                 {
                     case 0:
-                        throw new Exception(
-                            "HTMLScanner can't cope with " + (int)ch + " in state " +
-                            (int)theState);
+                        throw Error.Create(
+                            "HTMLScanner can't cope with " + ch + " in state " +
+                            theState);
                     case A_ADUP:
                         h.Adup(theOutputBuffer, 0, theSize);
                         theSize = 0;
@@ -668,7 +670,7 @@ namespace TagSoup
                         theSize = 0;
                         break;
                     default:
-                        throw new Exception("Can't process state " + action);
+                        throw Error.Create("Can't process state " + action);
                 }
                 if (!unread)
                 {
