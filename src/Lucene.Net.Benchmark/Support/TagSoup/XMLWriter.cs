@@ -22,6 +22,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace TagSoup
 {
@@ -298,7 +299,7 @@ namespace TagSoup
         {
         }
 
-        public virtual void StartDTD(string name, string publicid, string systemid)
+        public virtual void StartDTD(string name, string publicId, string systemId)
         {
             if (name is null)
             {
@@ -311,25 +312,25 @@ namespace TagSoup
             hasOutputDTD = true;
             Write("<!DOCTYPE ");
             Write(name);
-            if (systemid is null)
+            if (systemId is null)
             {
-                systemid = "";
+                systemId = "";
             }
             if (overrideSystem != null)
             {
-                systemid = overrideSystem;
+                systemId = overrideSystem;
             }
-            char sysquote = (systemid.IndexOf('"') != -1) ? '\'' : '"';
+            char sysquote = (systemId.IndexOf('"') != -1) ? '\'' : '"';
             if (overridePublic != null)
             {
-                publicid = overridePublic;
+                publicId = overridePublic;
             }
-            if (!(publicid is null || "".Equals(publicid, StringComparison.Ordinal)))
+            if (!(publicId is null || "".Equals(publicId, StringComparison.Ordinal)))
             {
-                char pubquote = (publicid.IndexOf('"') != -1) ? '\'' : '"';
+                char pubquote = (publicId.IndexOf('"') != -1) ? '\'' : '"';
                 Write(" PUBLIC ");
                 Write(pubquote);
-                Write(publicid);
+                Write(publicId);
                 Write(pubquote);
                 Write(' ');
             }
@@ -338,7 +339,7 @@ namespace TagSoup
                 Write(" SYSTEM ");
             }
             Write(sysquote);
-            Write(systemid);
+            Write(systemId);
             Write(sysquote);
             Write(">\n");
         }
@@ -359,9 +360,9 @@ namespace TagSoup
         {
             SetOutput(writer);
             nsSupport = new NamespaceSupport();
-            prefixTable = new Hashtable();
-            forcedDeclTable = new Hashtable();
-            doneDeclTable = new Hashtable();
+            prefixTable = new Dictionary<string, string>();
+            forcedDeclTable = new Dictionary<string, bool>();
+            doneDeclTable = new Dictionary<string, string>();
             outputProperties = new Dictionary<string, string>();
         }
 
@@ -425,7 +426,7 @@ namespace TagSoup
         {
             if (writer is null)
             {
-                output = new StreamWriter(Console.OpenStandardOutput());
+                output = Console.Out;
             }
             else
             {
@@ -453,6 +454,10 @@ namespace TagSoup
         /// <seealso cref="ForceNSDecl(string,string)" />
         public virtual void SetPrefix(string uri, string prefix)
         {
+            // LUCENENET: Added guard clause
+            if (uri is null)
+                throw new ArgumentNullException(nameof(uri));
+
             prefixTable[uri] = prefix;
         }
 
@@ -464,7 +469,11 @@ namespace TagSoup
         /// <seealso cref="SetPrefix" />
         public virtual string GetPrefix(string uri)
         {
-            return (string)(prefixTable.ContainsKey(uri) ? prefixTable[uri] : string.Empty);
+            // LUCENENET: Added guard clause
+            if (uri is null)
+                throw new ArgumentNullException(nameof(uri));
+
+            return prefixTable.TryGetValue(uri, out string value) ? value : string.Empty;
         }
 
         /// <summary>
@@ -488,6 +497,10 @@ namespace TagSoup
         /// <seealso cref="SetPrefix" />
         public virtual void ForceNSDecl(string uri)
         {
+            // LUCENENET: Added guard clause
+            if (uri is null)
+                throw new ArgumentNullException(nameof(uri));
+
             forcedDeclTable[uri] = true;
         }
 
@@ -509,6 +522,10 @@ namespace TagSoup
         /// <seealso cref="ForceNSDecl(string)" />
         public virtual void ForceNSDecl(string uri, string prefix)
         {
+            // LUCENENET: Added guard clause
+            if (uri is null)
+                throw new ArgumentNullException(nameof(uri));
+
             SetPrefix(uri, prefix);
             ForceNSDecl(uri);
         }
@@ -583,7 +600,7 @@ namespace TagSoup
             }
             catch (Exception e) when (e.IsIOException())
             {
-                throw new SAXException(e.Message, e);
+                throw new SAXException(e.ToString(), e);
             }
         }
 
@@ -616,6 +633,10 @@ namespace TagSoup
         /// <seealso cref="IContentHandler.StartElement" />
         public override void StartElement(string uri, string localName, string qName, IAttributes atts)
         {
+            // LUCENENET: Added guard clause
+            if (atts is null)
+                throw new ArgumentNullException(nameof(atts));
+
             elementLevel++;
             nsSupport.PushContext();
             if (forceDTD && !hasOutputDTD)
@@ -1173,16 +1194,14 @@ namespace TagSoup
             {
                 return prefix;
             }
-            bool containsPrefix = doneDeclTable.ContainsKey(uri);
-            prefix = (string)(containsPrefix ? doneDeclTable[uri] : null);
+            bool containsPrefix = doneDeclTable.TryGetValue(uri, out prefix);
             if (containsPrefix && ((!isElement || defaultNS != null) && "".Equals(prefix, StringComparison.Ordinal) || nsSupport.GetUri(prefix) != null))
             {
                 prefix = null;
             }
             if (prefix is null)
             {
-                containsPrefix = prefixTable.ContainsKey(uri);
-                prefix = (string)(containsPrefix ? prefixTable[uri] : null);
+                containsPrefix = prefixTable.TryGetValue(uri, out prefix);
                 if (containsPrefix
                     && ((!isElement || defaultNS != null) && "".Equals(prefix, StringComparison.Ordinal) || nsSupport.GetUri(prefix) != null))
                 {
@@ -1549,9 +1568,9 @@ namespace TagSoup
             "selected"
         };
 
-        private Hashtable prefixTable;
-        private Hashtable forcedDeclTable;
-        private Hashtable doneDeclTable;
+        private IDictionary<string, string> prefixTable;
+        private IDictionary<string, bool> forcedDeclTable;
+        private IDictionary<string, string> doneDeclTable;
         private int elementLevel = 0;
         private TextWriter output;
         private NamespaceSupport nsSupport;
