@@ -516,7 +516,7 @@ namespace Lucene.Net.Cli.CommandLine
             Out.WriteLine();
         }
 
-        private void HandleUnexpectedArg(CommandLineApplication command, string[] args, int index, string argTypeName)
+        private static void HandleUnexpectedArg(CommandLineApplication command, string[] args, int index, string argTypeName) // LUCENENET: CA1822: Mark members as static
         {
             if (command._throwOnUnexpectedArg)
             {

@@ -275,7 +275,7 @@ namespace Lucene.Net.Analysis.Fr
             return Norm(s, len);
         }
 
-        private int Norm(char[] s, int len)
+        private static int Norm(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 4)
             {

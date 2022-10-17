@@ -191,7 +191,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             }
         }
 
-        private XmlReaderSettings GetXmlReaderSettings()
+        private static XmlReaderSettings GetXmlReaderSettings() // LUCENENET: CA1822: Mark members as static
         {
             return
 
@@ -202,7 +202,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 };
         }
 
-        private IDictionary<string, string> GetAttributes(XmlReader node)
+        private static IDictionary<string, string> GetAttributes(XmlReader node) // LUCENENET: CA1822: Mark members as static
         {
             var result = new Dictionary<string, string>();
             if (node.HasAttributes)

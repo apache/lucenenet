@@ -449,7 +449,7 @@ namespace Lucene.Net.Analysis.Hunspell
             stripOffsets[currentIndex] = currentOffset;
         }
 
-        private FST<Int32sRef> AffixFST(JCG.SortedDictionary<string, IList<int>> affixes)
+        private static FST<Int32sRef> AffixFST(JCG.SortedDictionary<string, IList<int>> affixes) // LUCENENET: CA1822: Mark members as static
         {
             Int32SequenceOutputs outputs = Int32SequenceOutputs.Singleton;
             Builder<Int32sRef> builder = new Builder<Int32sRef>(FST.INPUT_TYPE.BYTE4, outputs);
@@ -660,7 +660,7 @@ namespace Lucene.Net.Analysis.Hunspell
             }
         }
 
-        private FST<CharsRef> ParseConversions(TextReader reader, int num, int lineNumber)
+        private static FST<CharsRef> ParseConversions(TextReader reader, int num, int lineNumber) // LUCENENET: CA1822: Mark members as static
         {
             IDictionary<string, string> mappings = new JCG.SortedDictionary<string, string>(StringComparer.Ordinal);
 
@@ -754,7 +754,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <param name="encoding"> Encoding to retrieve the <see cref="Encoding"/> instance for </param>
         /// <returns> <see cref="Encoding"/> for the given encoding <see cref="string"/> </returns>
         // LUCENENET NOTE: This was getJavaEncoding in Lucene
-        private Encoding GetSystemEncoding(string encoding)
+        private static Encoding GetSystemEncoding(string encoding) // LUCENENET: CA1822: Mark members as static
         {
             if (string.IsNullOrEmpty(encoding))
             {

@@ -180,7 +180,7 @@ namespace Lucene.Net.Queries
             return MinNrShouldMatch(m_highFreqMinNrShouldMatch, numOptional);
         }
 
-        private int MinNrShouldMatch(float minNrShouldMatch, int numOptional)
+        private static int MinNrShouldMatch(float minNrShouldMatch, int numOptional) // LUCENENET: CA1822: Mark members as static
         {
             if (minNrShouldMatch >= 1.0f || minNrShouldMatch == 0.0f)
             {

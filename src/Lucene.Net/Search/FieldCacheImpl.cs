@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
             return result.ToArray();
         }
 
-        private void AddCacheEntries<TKey, TValue>(IList<FieldCache.CacheEntry> result, Type cacheType, Cache<TKey, TValue> cache) where TKey : CacheKey
+        private void AddCacheEntries<TKey, TValue>(IList<FieldCache.CacheEntry> result, Type cacheType, Cache<TKey, TValue> cache) where TKey : CacheKey // LUCENENET: CA1822: Mark members as static
         {
             UninterruptableMonitor.Enter(cache.readerCache);
             try

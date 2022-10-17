@@ -133,7 +133,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private bool Valid(Int64 o)
+        private static bool Valid(Int64 o) // LUCENENET: CA1822: Mark members as static
         {
             Debugging.Assert(o != null, "PositiveIntOutput precondition fail");
             Debugging.Assert(o == NO_OUTPUT || o > 0,"o={0}", o);

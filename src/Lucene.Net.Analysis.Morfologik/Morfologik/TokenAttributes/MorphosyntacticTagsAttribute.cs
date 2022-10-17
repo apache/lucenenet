@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
             return false;
         }
 
-        private bool Equal(object l1, object l2)
+        private static bool Equal(object l1, object l2) // LUCENENET: CA1822: Mark members as static
         {
             return l1 is null ? (l2 is null) : (l1.Equals(l2));
         }

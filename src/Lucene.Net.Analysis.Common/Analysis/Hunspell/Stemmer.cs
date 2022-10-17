@@ -724,7 +724,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <param name="flags"> Array of flags to cross check against.  Can be <c>null</c> </param>
         /// <param name="matchEmpty"> If true, will match a zero length flags array. </param>
         /// <returns> <c>true</c> if the flag is found in the array or the array is <c>null</c>, <c>false</c> otherwise </returns>
-        private bool HasCrossCheckedFlag(char flag, char[] flags, bool matchEmpty)
+        private static bool HasCrossCheckedFlag(char flag, char[] flags, bool matchEmpty) // LUCENENET: CA1822: Mark members as static
         {
             return (flags.Length == 0 && matchEmpty) || Array.BinarySearch(flags, flag) >= 0;
         }

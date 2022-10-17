@@ -115,7 +115,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        private string ReadString(int offset, BytesRef scratch)
+        private static string ReadString(int offset, BytesRef scratch) // LUCENENET: CA1822: Mark members as static
         {
             return Encoding.UTF8.GetString(scratch.Bytes, scratch.Offset + offset, scratch.Length - offset);
         }

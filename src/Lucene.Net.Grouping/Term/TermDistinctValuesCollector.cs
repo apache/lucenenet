@@ -94,7 +94,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        private bool DoesNotContainOrd(int ord, int[] ords)
+        private static bool DoesNotContainOrd(int ord, int[] ords) // LUCENENET: CA1822: Mark members as static
         {
             if (ords.Length == 0)
             {

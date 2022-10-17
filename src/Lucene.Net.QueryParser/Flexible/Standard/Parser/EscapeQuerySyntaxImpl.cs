@@ -74,7 +74,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             return buffer;
         }
 
-        private ICharSequence EscapeQuoted(ICharSequence str, CultureInfo locale)
+        private static ICharSequence EscapeQuoted(ICharSequence str, CultureInfo locale) // LUCENENET: CA1822: Mark members as static
         {
             if (str is null || str.Length == 0)
                 return str;

@@ -85,7 +85,7 @@ namespace Lucene.Net.Util
                 }
 
                 // LUCENENET: optimize known creation of built-in types
-                private Attribute CreateInstance(Type attributeType)
+                private static Attribute CreateInstance(Type attributeType) // LUCENENET: CA1822: Mark members as static
                 {
                     if (ReferenceEquals(typeof(CharTermAttribute), attributeType))
                         return new CharTermAttribute();

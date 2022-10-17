@@ -114,7 +114,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
             }
 
-            internal string Time(string original)
+            internal static string Time(string original) // LUCENENET: CA1822: Mark members as static
             {
                 StringBuilder buffer = new StringBuilder(24); // LUCENENET: We always have 24 chars, so allocate it up front
 

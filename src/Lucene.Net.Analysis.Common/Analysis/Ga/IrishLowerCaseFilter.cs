@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Ga
             }
         }
 
-        private bool IsUpperVowel(int v)
+        private static bool IsUpperVowel(int v) // LUCENENET: CA1822: Mark members as static
         {
             switch (v)
             {

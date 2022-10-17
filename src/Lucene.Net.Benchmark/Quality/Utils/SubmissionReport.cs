@@ -88,7 +88,7 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
         }
 
         private const string padd = "                                    ";
-        private string Format(string s, int minLen)
+        private static string Format(string s, int minLen) // LUCENENET: CA1822: Mark members as static
         {
             s = (s ?? "");
             int n = Math.Max(minLen, s.Length);

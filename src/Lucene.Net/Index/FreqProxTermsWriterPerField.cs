@@ -386,10 +386,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public void Abort()
-        {
-        }
+        // LUCENENET: Removed Abort() method because it is not in use.
 
         internal BytesRef payload;
 

@@ -93,7 +93,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
             return node;
         }
 
-        private IQueryNode ApplyModifier(IQueryNode node, Modifier mod)
+        private static IQueryNode ApplyModifier(IQueryNode node, Modifier mod) // LUCENENET: CA1822: Mark members as static
         {
             // check if modifier is not already defined and is default
             if (!(node is ModifierQueryNode modNode))

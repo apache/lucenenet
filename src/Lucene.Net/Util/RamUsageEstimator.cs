@@ -947,7 +947,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Round the capacity to the next allowed value.
             /// </summary>
-            private int RoundCapacity(int requestedCapacity) // LUCENENET NOTE: made private, since protected is not valid in a sealed class
+            private static int RoundCapacity(int requestedCapacity) // LUCENENET NOTE: made private, since protected is not valid in a sealed class // LUCENENET: CA1822: Mark members as static
             {
                 // Maximum positive integer that is a power of two.
                 if (requestedCapacity > ((int)(0x80000000 >> 1))) // LUCENENET: No need to cast to uint because it already is

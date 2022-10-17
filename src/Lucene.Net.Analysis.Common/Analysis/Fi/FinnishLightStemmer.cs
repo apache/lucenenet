@@ -122,7 +122,7 @@ namespace Lucene.Net.Analysis.Fi
             return len;
         }
 
-        private int Step2(char[] s, int len)
+        private static int Step2(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 5)
             {
@@ -241,7 +241,7 @@ namespace Lucene.Net.Analysis.Fi
             return len;
         }
 
-        private int Norm1(char[] s, int len)
+        private static int Norm1(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 5 && StemmerUtil.EndsWith(s, len, "hde"))
             {
@@ -275,7 +275,7 @@ namespace Lucene.Net.Analysis.Fi
             return len;
         }
 
-        private int Norm2(char[] s, int len)
+        private static int Norm2(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 8)
             {
@@ -312,7 +312,7 @@ namespace Lucene.Net.Analysis.Fi
             return len;
         }
 
-        private bool IsVowel(char ch)
+        private static bool IsVowel(char ch) // LUCENENET: CA1822: Mark members as static
         {
             switch (ch)
             {

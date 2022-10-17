@@ -260,7 +260,7 @@ namespace Lucene.Net.Codecs.SimpleText
             return ArrayUtil.ParseInt32(_scratchUtf16.Chars, 0, _scratchUtf16.Length);
         }
 
-        private bool EqualsAt(BytesRef a, BytesRef b, int bOffset)
+        private static bool EqualsAt(BytesRef a, BytesRef b, int bOffset) // LUCENENET: CA1822: Mark members as static
         {
             return a.Length == b.Length - bOffset &&
                    ArrayUtil.Equals(a.Bytes, a.Offset, b.Bytes, b.Offset + bOffset, b.Length - bOffset);

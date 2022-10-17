@@ -3166,7 +3166,7 @@ namespace Lucene.Net.Util
         // LUCENENET specific - moved this here so we can reference it more readily (similar to how Spatial does it).
         // However, this is also available as an extension method of the System.Random class in RandomizedTesting.Generators.
         // This method was originally in carrotsearch.randomizedtesting.RandomizedTest.
-        public double RandomGaussian()
+        public static double RandomGaussian() // LUCENENET: CA1822: Mark members as static
         {
             return Random.NextGaussian();
         }

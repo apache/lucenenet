@@ -93,7 +93,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             return false;
         }
 
-        private bool IsPrefixWildcard(string text)
+        private static bool IsPrefixWildcard(string text) // LUCENENET: CA1822: Mark members as static
         {
             if (text is null || text.Length <= 0 || !IsWildcard(text)) return false;
 

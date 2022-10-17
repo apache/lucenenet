@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis.Br
         /// Checks a term if it can be processed correctly.
         /// </summary>
         /// <returns>  true if, and only if, the given term consists in letters. </returns>
-        private bool IsStemmable(string term)
+        private static bool IsStemmable(string term) // LUCENENET: CA1822: Mark members as static
         {
             for (int c = 0; c < term.Length; c++)
             {
@@ -109,7 +109,7 @@ namespace Lucene.Net.Analysis.Br
         /// Checks a term if it can be processed indexed.
         /// </summary>
         /// <returns> true if it can be indexed </returns>
-        private bool IsIndexable(string term)
+        private static bool IsIndexable(string term) // LUCENENET: CA1822: Mark members as static
         {
             return (term.Length < 30) && (term.Length > 2);
         }
@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.Br
         /// See if string is 'a','e','i','o','u'
         /// </summary>
         /// <returns> true if is vowel </returns>
-        private bool IsVowel(char value)
+        private static bool IsVowel(char value) // LUCENENET: CA1822: Mark members as static
         {
             return (value == 'a') || (value == 'e') || (value == 'i') || (value == 'o') || (value == 'u');
         }
@@ -259,7 +259,7 @@ namespace Lucene.Net.Analysis.Br
         /// 4) ç -> c
         /// </summary>
         /// <returns> null or a string transformed </returns>
-        private string ChangeTerm(string value)
+        private static string ChangeTerm(string value) // LUCENENET: CA1822: Mark members as static
         {
             int j;
             string r = "";
@@ -319,7 +319,7 @@ namespace Lucene.Net.Analysis.Br
         /// Check if a string ends with a suffix
         /// </summary>
         /// <returns> true if the string ends with the specified suffix </returns>
-        private bool Suffix(string value, string suffix)
+        private static bool Suffix(string value, string suffix) // LUCENENET: CA1822: Mark members as static
         {
 
             // be-safe !!!

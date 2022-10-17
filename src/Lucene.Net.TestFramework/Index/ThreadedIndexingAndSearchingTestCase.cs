@@ -520,7 +520,7 @@ namespace Lucene.Net.Index
                                         //if (VERBOSE) {
                                         //System.out.println(Thread.currentThread().getName() + " now search body:" + term.Utf8ToString());
                                         //}
-                                        totHits.AddAndGet(outerInstance.RunQuery(s, new TermQuery(new Term("body", termsEnum.Term))));
+                                        totHits.AddAndGet(RunQuery(s, new TermQuery(new Term("body", termsEnum.Term))));
                                     }
                                 }
                                 //if (VERBOSE) {
@@ -906,7 +906,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private int RunQuery(IndexSearcher s, Query q)
+        private static int RunQuery(IndexSearcher s, Query q) // LUCENENET: CA1822: Mark members as static
         {
             s.Search(q, 10);
             int hitCount = s.Search(q, null, 10, new Sort(new SortField("title", SortFieldType.STRING))).TotalHits;

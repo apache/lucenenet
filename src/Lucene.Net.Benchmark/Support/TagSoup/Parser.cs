@@ -1147,7 +1147,7 @@ namespace TagSoup
         /// </summary>
         /// <param name="src"></param>
         /// <returns></returns>
-        private string CleanPublicId(string src)
+        private static string CleanPublicId(string src) // LUCENENET: CA1822: Mark members as static
         {
             if (src is null)
             {

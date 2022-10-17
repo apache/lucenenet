@@ -231,7 +231,7 @@ namespace Lucene.Net.Index.Memory
                     info.SortTerms();
                 }
 
-                internal int BinarySearch(BytesRef b, BytesRef bytesRef, int low, int high, BytesRefHash hash, int[] ords, IComparer<BytesRef> comparer)
+                internal static int BinarySearch(BytesRef b, BytesRef bytesRef, int low, int high, BytesRefHash hash, int[] ords, IComparer<BytesRef> comparer) // LUCENENET: CA1822: Mark members as static
                 {
                     int mid; // LUCENENET: IDE0059: Remove unnecessary value assignment
                     while (low <= high)

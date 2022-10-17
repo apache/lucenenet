@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.De
         /// Checks if a term could be stemmed.
         /// </summary>
         /// <returns>  true if, and only if, the given term consists in letters. </returns>
-        private bool IsStemmable(string term)
+        private static bool IsStemmable(string term) // LUCENENET: CA1822: Mark members as static
         {
             for (int c = 0; c < term.Length; c++)
             {
@@ -159,7 +159,7 @@ namespace Lucene.Net.Analysis.De
         /// <summary>
         /// Removes a particle denotion ("ge") from a term.
         /// </summary>
-        private void RemoveParticleDenotion(StringBuilder buffer)
+        private static void RemoveParticleDenotion(StringBuilder buffer) // LUCENENET: CA1822: Mark members as static
         {
             if (buffer.Length > 4)
             {
@@ -265,7 +265,7 @@ namespace Lucene.Net.Analysis.De
         /// character combinations. Umlauts will remain as their corresponding vowel,
         /// as "ß" remains as "ss".
         /// </summary>
-        private void Resubstitute(StringBuilder buffer)
+        private static void Resubstitute(StringBuilder buffer) // LUCENENET: CA1822: Mark members as static
         {
             for (int c = 0; c < buffer.Length; c++)
             {
