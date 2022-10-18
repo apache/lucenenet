@@ -410,14 +410,14 @@ namespace Lucene.Net.Util.Fst
             {
                 return new ForwardBytesReader(blocks[0]);
             }
-            return new ForwardBytesReaderAnonymousInner(this);
+            return new ForwardBytesReaderAnonymousClass(this);
         }
 
-        private class ForwardBytesReaderAnonymousInner : FST.BytesReader
+        private class ForwardBytesReaderAnonymousClass : FST.BytesReader
         {
             private readonly BytesStore outerInstance;
 
-            public ForwardBytesReaderAnonymousInner(BytesStore outerInstance)
+            public ForwardBytesReaderAnonymousClass(BytesStore outerInstance)
             {
                 this.outerInstance = outerInstance;
                 nextRead = outerInstance.blockSize;
@@ -498,14 +498,14 @@ namespace Lucene.Net.Util.Fst
             {
                 return new ReverseBytesReader(blocks[0]);
             }
-            return new ReverseBytesReaderAnonymousInner(this);
+            return new ReverseBytesReaderAnonymousClass(this);
         }
 
-        private class ReverseBytesReaderAnonymousInner : FST.BytesReader
+        private class ReverseBytesReaderAnonymousClass : FST.BytesReader
         {
             private readonly BytesStore outerInstance;
 
-            public ReverseBytesReaderAnonymousInner(BytesStore outerInstance)
+            public ReverseBytesReaderAnonymousClass(BytesStore outerInstance)
             {
                 this.outerInstance = outerInstance;
                 current = outerInstance.blocks.Count == 0 ? null : outerInstance.blocks[0];
