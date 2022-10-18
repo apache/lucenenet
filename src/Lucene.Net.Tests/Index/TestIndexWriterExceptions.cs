@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
 
             public virtual IEnumerator<Document> GetEnumerator()
             {
-                return new IteratorAnonymousClass(this);
+                return new EnumeratorAnonymousClass(this);
             }
 
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -122,11 +122,11 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-            private sealed class IteratorAnonymousClass : IEnumerator<Document>
+            private sealed class EnumeratorAnonymousClass : IEnumerator<Document>
             {
                 private readonly DocCopyIterator outerInstance;
 
-                public IteratorAnonymousClass(DocCopyIterator outerInstance)
+                public EnumeratorAnonymousClass(DocCopyIterator outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }

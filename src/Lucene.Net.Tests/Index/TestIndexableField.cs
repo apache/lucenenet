@@ -393,7 +393,7 @@ namespace Lucene.Net.Index
 
             public IEnumerator<IIndexableField> GetEnumerator()
             {
-                return new IteratorAnonymousClass(this, outerInstance);
+                return new EnumeratorAnonymousClass(this, outerInstance);
             }
 
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -401,12 +401,12 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-            private sealed class IteratorAnonymousClass : IEnumerator<IIndexableField>
+            private sealed class EnumeratorAnonymousClass : IEnumerator<IIndexableField>
             {
                 private readonly EnumerableAnonymousClass outerInstance;
                 private readonly TestIndexableField outerTextIndexableField;
 
-                public IteratorAnonymousClass(EnumerableAnonymousClass outerInstance, TestIndexableField outerTextIndexableField)
+                public EnumeratorAnonymousClass(EnumerableAnonymousClass outerInstance, TestIndexableField outerTextIndexableField)
                 {
                     this.outerInstance = outerInstance;
                     this.outerTextIndexableField = outerTextIndexableField;

@@ -107,14 +107,14 @@ namespace Lucene.Net.Index.Memory
 
                 public override IEnumerator<string> GetEnumerator()
                 {
-                    return new IteratorAnonymousClass(this);
+                    return new EnumeratorAnonymousClass(this);
                 }
 
-                private sealed class IteratorAnonymousClass : IEnumerator<string>
+                private sealed class EnumeratorAnonymousClass : IEnumerator<string>
                 {
                     private readonly MemoryFields outerInstance;
 
-                    public IteratorAnonymousClass(MemoryFields outerInstance)
+                    public EnumeratorAnonymousClass(MemoryFields outerInstance)
                     {
                         this.outerInstance = outerInstance;
                         upto = -1;
