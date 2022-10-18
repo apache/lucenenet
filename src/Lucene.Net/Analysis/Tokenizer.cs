@@ -137,6 +137,7 @@ namespace Lucene.Net.Analysis
 
             protected override void Dispose(bool disposing)
             {
+                // LUCENENET: Intentionally blank
             }
         }
     }

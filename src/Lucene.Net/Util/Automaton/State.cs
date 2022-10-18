@@ -1,6 +1,7 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -91,7 +92,7 @@ namespace Lucene.Net.Util.Automaton
                 return new TransitionsEnumerator(this);
             }
 
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            IEnumerator IEnumerable.GetEnumerator()
             {
                 return GetEnumerator();
             }
@@ -123,7 +124,7 @@ namespace Lucene.Net.Util.Automaton
 
                 public Transition Current => current;
 
-                object System.Collections.IEnumerator.Current => Current;
+                object IEnumerator.Current => Current;
 
                 public void Reset()
                 {
@@ -132,6 +133,7 @@ namespace Lucene.Net.Util.Automaton
 
                 public void Dispose()
                 {
+                    // LUCENENET: Intentionally blank
                 }
             }
         }

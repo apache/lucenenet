@@ -53,6 +53,7 @@ namespace Lucene.Net.Index
 
         protected override void Dispose(bool disposing)
         {
+            // LUCENENET: Intentionally blank
         }
 
         public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos)
@@ -77,6 +78,7 @@ namespace Lucene.Net.Index
 
         public override void SetIndexWriter(IndexWriter writer)
         {
+            // LUCENENET: Intentionally blank
         }
 
         protected override long Size(SegmentCommitInfo info)

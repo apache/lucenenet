@@ -1260,11 +1260,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// <summary>Enable tracing.</summary>
         public void Enable_tracing()
         {
+            // LUCENENET: Intentionally blank
         }
 
         /// <summary>Disable tracing.</summary>
         public void Disable_tracing()
         {
+            // LUCENENET: Intentionally blank
         }
 
         private void Jj_rescan_token()

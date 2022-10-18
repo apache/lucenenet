@@ -563,17 +563,17 @@ namespace Lucene.Net.Index
 
         private IEnumerator<ThreadState> GetPerThreadsIterator(int upto)
         {
-            return new IteratorAnonymousClass(this, upto);
+            return new EnumeratorAnonymousClass(this, upto);
         }
 
-        private class IteratorAnonymousClass : IEnumerator<ThreadState>
+        private class EnumeratorAnonymousClass : IEnumerator<ThreadState>
         {
             private readonly DocumentsWriterFlushControl outerInstance;
             private ThreadState current;
             private readonly int upto;
             private int i;
 
-            public IteratorAnonymousClass(DocumentsWriterFlushControl outerInstance, int upto)
+            public EnumeratorAnonymousClass(DocumentsWriterFlushControl outerInstance, int upto)
             {
                 this.outerInstance = outerInstance;
                 this.upto = upto;
@@ -584,6 +584,7 @@ namespace Lucene.Net.Index
 
             public void Dispose()
             {
+                // LUCENENET: Intentionally blank
             }
 
             object System.Collections.IEnumerator.Current => Current;

@@ -298,6 +298,7 @@ namespace Lucene.Net.Util
 
             public void Dispose()
             {
+                // LUCENENET: Intentionally blank
             }
 
             public bool MoveNext()
