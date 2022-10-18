@@ -266,8 +266,8 @@ namespace Lucene.Net.Index
                             if (coalescedUpdates != null)
                             {
                                 //System.out.println("    del coalesced");
-                                delCount += (int)ApplyTermDeletes(coalescedUpdates.TermsIterable(), rld, reader);
-                                delCount += (int)ApplyQueryDeletes(coalescedUpdates.QueriesIterable(), rld, reader);
+                                delCount += (int)ApplyTermDeletes(coalescedUpdates.GetTermsEnumerable(), rld, reader);
+                                delCount += (int)ApplyQueryDeletes(coalescedUpdates.GetQueriesEnumerable(), rld, reader);
                                 ApplyDocValuesUpdates(coalescedUpdates.numericDVUpdates, rld, reader, dvUpdates);
                                 ApplyDocValuesUpdates(coalescedUpdates.binaryDVUpdates, rld, reader, dvUpdates);
                             }
@@ -334,8 +334,8 @@ namespace Lucene.Net.Index
                             bool segAllDeletes;
                             try
                             {
-                                delCount += (int)ApplyTermDeletes(coalescedUpdates.TermsIterable(), rld, reader);
-                                delCount += (int)ApplyQueryDeletes(coalescedUpdates.QueriesIterable(), rld, reader);
+                                delCount += (int)ApplyTermDeletes(coalescedUpdates.GetTermsEnumerable(), rld, reader);
+                                delCount += (int)ApplyQueryDeletes(coalescedUpdates.GetQueriesEnumerable(), rld, reader);
                                 DocValuesFieldUpdates.Container dvUpdates = new DocValuesFieldUpdates.Container();
                                 ApplyDocValuesUpdates(coalescedUpdates.numericDVUpdates, rld, reader, dvUpdates);
                                 ApplyDocValuesUpdates(coalescedUpdates.binaryDVUpdates, rld, reader, dvUpdates);

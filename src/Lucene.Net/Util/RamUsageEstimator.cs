@@ -3,6 +3,7 @@ using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -984,19 +985,19 @@ namespace Lucene.Net.Util
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public IEnumerator<KType> GetEnumerator()
             {
-                return new IteratorAnonymousClass(this);
+                return new EnumeratorAnonymousClass(this);
             }
 
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            IEnumerator IEnumerable.GetEnumerator()
             {
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousClass : IEnumerator<KType>
+            private class EnumeratorAnonymousClass : IEnumerator<KType>
             {
                 private readonly IdentityHashSet<KType> outerInstance;
 
-                public IteratorAnonymousClass(IdentityHashSet<KType> outerInstance)
+                public EnumeratorAnonymousClass(IdentityHashSet<KType> outerInstance)
                 {
                     this.outerInstance = outerInstance;
                     pos = -1;
@@ -1022,7 +1023,7 @@ namespace Lucene.Net.Util
 
                 public KType Current => current;
 
-                object System.Collections.IEnumerator.Current => Current;
+                object IEnumerator.Current => Current;
 
                 private object FetchNext()
                 {

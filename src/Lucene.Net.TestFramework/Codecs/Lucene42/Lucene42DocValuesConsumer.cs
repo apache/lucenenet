@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using Lucene.Net.Util.Packed;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using JCG = J2N.Collections.Generic;
@@ -346,18 +347,18 @@ namespace Lucene.Net.Codecs.Lucene42
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
             // write the ordinals as a binary field
-            AddBinaryField(field, new IterableAnonymousClass(docToOrdCount, ords));
+            AddBinaryField(field, new EnumerableAnonymousClass(docToOrdCount, ords));
 
             // write the values as FST
             WriteFST(field, values);
         }
 
-        private class IterableAnonymousClass : IEnumerable<BytesRef>
+        private class EnumerableAnonymousClass : IEnumerable<BytesRef>
         {
             private readonly IEnumerable<long?> docToOrdCount;
             private readonly IEnumerable<long?> ords;
 
-            public IterableAnonymousClass(IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
+            public EnumerableAnonymousClass(IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
             {
                 this.docToOrdCount = docToOrdCount;
                 this.ords = ords;
@@ -365,17 +366,17 @@ namespace Lucene.Net.Codecs.Lucene42
 
             public IEnumerator<BytesRef> GetEnumerator()
             {
-                return new SortedSetIterator(docToOrdCount.GetEnumerator(), ords.GetEnumerator());
+                return new SortedSetEnumerator(docToOrdCount.GetEnumerator(), ords.GetEnumerator());
             }
 
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            IEnumerator IEnumerable.GetEnumerator()
             {
                 return GetEnumerator();
             }
         }
 
         // per-document vint-encoded byte[]
-        internal class SortedSetIterator : IEnumerator<BytesRef>
+        internal class SortedSetEnumerator : IEnumerator<BytesRef>
         {
             internal byte[] buffer = new byte[10];
             internal ByteArrayDataOutput @out = new ByteArrayDataOutput();
@@ -384,7 +385,7 @@ namespace Lucene.Net.Codecs.Lucene42
             internal readonly IEnumerator<long?> counts;
             internal readonly IEnumerator<long?> ords;
 
-            internal SortedSetIterator(IEnumerator<long?> counts, IEnumerator<long?> ords)
+            internal SortedSetEnumerator(IEnumerator<long?> counts, IEnumerator<long?> ords)
             {
                 this.counts = counts;
                 this.ords = ords;
@@ -422,7 +423,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
             public BytesRef Current => @ref;
 
-            object System.Collections.IEnumerator.Current => Current;
+            object IEnumerator.Current => Current;
 
             // encodes count values to buffer
             internal virtual void EncodeValues(int count)

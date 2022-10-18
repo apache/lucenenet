@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -32,21 +32,21 @@ namespace Lucene.Net.Codecs
         /// Insert an empty byte[] to the front of this enumerable.</summary>
         public static IEnumerable<BytesRef> InsertEmptyValue(IEnumerable<BytesRef> iterable)
         {
-            return new IterableAnonymousClass(iterable);
+            return new EnumerableAnonymousClass(iterable);
         }
 
-        private class IterableAnonymousClass : IEnumerable<BytesRef>
+        private class EnumerableAnonymousClass : IEnumerable<BytesRef>
         {
             private readonly IEnumerable<BytesRef> iterable;
 
-            public IterableAnonymousClass(IEnumerable<BytesRef> iterable)
+            public EnumerableAnonymousClass(IEnumerable<BytesRef> iterable)
             {
                 this.iterable = iterable;
             }
 
             public IEnumerator<BytesRef> GetEnumerator()
             {
-                return new IteratorAnonymousClass(this);
+                return new EnumeratorAnonymousClass(this);
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -54,9 +54,9 @@ namespace Lucene.Net.Codecs
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousClass : IEnumerator<BytesRef>
+            private class EnumeratorAnonymousClass : IEnumerator<BytesRef>
             {
-                public IteratorAnonymousClass(IterableAnonymousClass outerInstance)
+                public EnumeratorAnonymousClass(EnumerableAnonymousClass outerInstance)
                 {
                     seenEmpty = false;
                     @in = outerInstance.iterable.GetEnumerator();
@@ -100,29 +100,29 @@ namespace Lucene.Net.Codecs
         /// Remaps ord -1 to ord 0 on this enumerable. </summary>
         public static IEnumerable<long?> MapMissingToOrd0(IEnumerable<long?> iterable)
         {
-            return new IterableAnonymousClass2(iterable);
+            return new EnumerableAnonymousClass2(iterable);
         }
 
-        private class IterableAnonymousClass2 : IEnumerable<long?>
+        private class EnumerableAnonymousClass2 : IEnumerable<long?>
         {
             private readonly IEnumerable<long?> iterable;
 
-            public IterableAnonymousClass2(IEnumerable<long?> iterable)
+            public EnumerableAnonymousClass2(IEnumerable<long?> iterable)
             {
                 this.iterable = iterable;
             }
 
             public IEnumerator<long?> GetEnumerator()
             {
-                return new IteratorAnonymousClass2(this);
+                return new EnumeratorAnonymousClass2(this);
             }
 
             IEnumerator IEnumerable.GetEnumerator()
                 => GetEnumerator();
 
-            private class IteratorAnonymousClass2 : IEnumerator<long?>
+            private class EnumeratorAnonymousClass2 : IEnumerator<long?>
             {
-                public IteratorAnonymousClass2(IterableAnonymousClass2 outerInstance)
+                public EnumeratorAnonymousClass2(EnumerableAnonymousClass2 outerInstance)
                 {
                     @in = outerInstance.iterable.GetEnumerator();
                 }
@@ -160,29 +160,29 @@ namespace Lucene.Net.Codecs
         /// Remaps every ord+1 on this enumerable. </summary>
         public static IEnumerable<long?> MapAllOrds(IEnumerable<long?> iterable)
         {
-            return new IterableAnonymousClass3(iterable);
+            return new EnumerableAnonymousClass3(iterable);
         }
 
-        private class IterableAnonymousClass3 : IEnumerable<long?>
+        private class EnumerableAnonymousClass3 : IEnumerable<long?>
         {
             private readonly IEnumerable<long?> iterable;
 
-            public IterableAnonymousClass3(IEnumerable<long?> iterable)
+            public EnumerableAnonymousClass3(IEnumerable<long?> iterable)
             {
                 this.iterable = iterable;
             }
 
             public IEnumerator<long?> GetEnumerator()
             {
-                return new IteratorAnonymousClass3(this);
+                return new EnumeratorAnonymousClass3(this);
             }
 
             IEnumerator IEnumerable.GetEnumerator()
                 => GetEnumerator();
 
-            private class IteratorAnonymousClass3 : IEnumerator<long?>
+            private class EnumeratorAnonymousClass3 : IEnumerator<long?>
             {
-                public IteratorAnonymousClass3(IterableAnonymousClass3 outerInstance)
+                public EnumeratorAnonymousClass3(EnumerableAnonymousClass3 outerInstance)
                 {
                     @in = outerInstance.iterable.GetEnumerator();
                 }
