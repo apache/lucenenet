@@ -1,0 +1,45 @@
+﻿# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+# 
+#   http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+# References:
+# https://stackoverflow.com/a/58704739
+# https://docs.github.com/en/actions/security-guides/automatic-token-authentication
+
+name: 'Lucene.Net Dependency Conflict Warning'
+
+on:
+  pull_request:
+    paths:
+    - '.build/dependencies.props'
+    - 'src/**/*.csproj'
+
+jobs:
+
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add warning comment to PR
+        env:
+          URL: ${{ github.event.pull_request.comments_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl \
+            -X POST \
+            $URL \
+            -H "Content-Type: application/json" \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            --data '{ "body": ":warning: **IMPORTANT:** This PR may contain changes to dependency versions. The GitHub Actions test runner is not set up to detect dependency version conflicts between projects. To ensure the changes do not cause dependency conflicts, [run the tests for these changes in Azure DevOps](https://github.com/apache/lucenenet#azure-devops) before accepting this pull request. :warning:" }'
