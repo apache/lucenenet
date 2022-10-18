@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
                 // (but we need to clone them), and only when
                 // getReader, commit, etc. are called, we do an
                 // addDocuments?  Would be better testing.
-                IndexWriter.AddDocuments(new IterableAnonymousClass<IIndexableField>(doc), a);
+                IndexWriter.AddDocuments(new EnumerableAnonymousClass<IIndexableField>(doc), a);
             }
             else
             {
@@ -148,18 +148,18 @@ namespace Lucene.Net.Index
             MaybeCommit();
         }
 
-        private class IterableAnonymousClass<IndexableField> : IEnumerable<IEnumerable<IndexableField>>
+        private class EnumerableAnonymousClass<IndexableField> : IEnumerable<IEnumerable<IndexableField>>
         {
             private readonly IEnumerable<IndexableField> doc;
 
-            public IterableAnonymousClass(IEnumerable<IndexableField> doc)
+            public EnumerableAnonymousClass(IEnumerable<IndexableField> doc)
             {
                 this.doc = doc;
             }
 
             public IEnumerator<IEnumerable<IndexableField>> GetEnumerator()
             {
-                return new IteratorAnonymousClass(this);
+                return new EnumeratorAnonymousClass(this);
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -167,11 +167,11 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousClass : IEnumerator<IEnumerable<IndexableField>>
+            private class EnumeratorAnonymousClass : IEnumerator<IEnumerable<IndexableField>>
             {
-                private readonly IterableAnonymousClass<IndexableField> outerInstance;
+                private readonly EnumerableAnonymousClass<IndexableField> outerInstance;
 
-                public IteratorAnonymousClass(IterableAnonymousClass<IndexableField> outerInstance)
+                public EnumeratorAnonymousClass(EnumerableAnonymousClass<IndexableField> outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }
@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
         {
             if (r.Next(5) == 3)
             {
-                IndexWriter.UpdateDocuments(t, new IterableAnonymousClass2(doc));
+                IndexWriter.UpdateDocuments(t, new EnumerableAnonymousClass2(doc));
             }
             else
             {
@@ -250,28 +250,28 @@ namespace Lucene.Net.Index
             MaybeCommit();
         }
 
-        private class IterableAnonymousClass2 : IEnumerable<IEnumerable<IIndexableField>>
+        private class EnumerableAnonymousClass2 : IEnumerable<IEnumerable<IIndexableField>>
         {
             private readonly IEnumerable<IIndexableField> doc;
 
-            public IterableAnonymousClass2(IEnumerable<IIndexableField> doc)
+            public EnumerableAnonymousClass2(IEnumerable<IIndexableField> doc)
             {
                 this.doc = doc;
             }
 
             public IEnumerator<IEnumerable<IIndexableField>> GetEnumerator()
             {
-                return new IteratorAnonymousClass2(this);
+                return new EnumeratorAnonymousClass2(this);
             }
 
             IEnumerator IEnumerable.GetEnumerator() 
                 => GetEnumerator();
 
-            private class IteratorAnonymousClass2 : IEnumerator<IEnumerable<IIndexableField>>
+            private class EnumeratorAnonymousClass2 : IEnumerator<IEnumerable<IIndexableField>>
             {
-                private readonly IterableAnonymousClass2 outerInstance;
+                private readonly EnumerableAnonymousClass2 outerInstance;
 
-                public IteratorAnonymousClass2(IterableAnonymousClass2 outerInstance)
+                public EnumeratorAnonymousClass2(EnumerableAnonymousClass2 outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }

@@ -273,7 +273,7 @@ namespace Lucene.Net.Util
             State initState = GetCurrentState();
             if (initState != null)
             {
-                return new IteratorAnonymousClass(initState);
+                return new EnumeratorAnonymousClass(initState);
             }
             else
             {
@@ -281,9 +281,9 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class IteratorAnonymousClass : IEnumerator<Attribute>
+        private class EnumeratorAnonymousClass : IEnumerator<Attribute>
         {
-            public IteratorAnonymousClass(AttributeSource.State initState)
+            public EnumeratorAnonymousClass(AttributeSource.State initState)
             {
                 state = initState;
             }
