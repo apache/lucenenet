@@ -35,7 +35,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             return new Lucene3xTermVectorsReaderAnonymousClass(directory, segmentInfo, fieldInfos, context);
         }
 
-        private class Lucene3xTermVectorsReaderAnonymousClass : Lucene3xTermVectorsReader
+        private sealed class Lucene3xTermVectorsReaderAnonymousClass : Lucene3xTermVectorsReader
         {
             public Lucene3xTermVectorsReaderAnonymousClass(Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, IOContext context)
                 : base(directory, segmentInfo, fieldInfos, context)

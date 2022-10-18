@@ -97,7 +97,7 @@ namespace Lucene.Net.Store
             Console.WriteLine("Server terminated.");
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly object localLock;
             private readonly int[] lockedID;

@@ -410,7 +410,7 @@ namespace Lucene.Net.Codecs.Memory
             WriteFST(field, values);
         }
 
-        private class EnumerableAnonymousClass : IEnumerable<BytesRef>
+        private sealed class EnumerableAnonymousClass : IEnumerable<BytesRef>
         {
             private readonly IEnumerable<long?> _docToOrdCount;
             private readonly IEnumerable<long?> _ords;

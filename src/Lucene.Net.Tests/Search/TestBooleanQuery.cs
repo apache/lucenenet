@@ -392,7 +392,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class IndexSearcherAnonymousClass : IndexSearcher
+        private sealed class IndexSearcherAnonymousClass : IndexSearcher
         {
             private readonly TestBooleanQuery outerInstance;
 

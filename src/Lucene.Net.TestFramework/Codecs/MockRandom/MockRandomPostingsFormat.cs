@@ -43,7 +43,7 @@ namespace Lucene.Net.Codecs.MockRandom
         private readonly Random seedRandom;
         private const string SEED_EXT = "sd";
 
-        private class RandomAnonymousClassHelper : J2N.Randomizer
+        private sealed class RandomAnonymousClassHelper : J2N.Randomizer
         {
             public RandomAnonymousClassHelper()
                 : base(0)
@@ -117,7 +117,7 @@ namespace Lucene.Net.Codecs.MockRandom
             }
         }
 
-        private class IndexTermSelectorAnonymousClass : VariableGapTermsIndexWriter.IndexTermSelector
+        private sealed class IndexTermSelectorAnonymousClass : VariableGapTermsIndexWriter.IndexTermSelector
         {
             private readonly Random rand;
             private readonly int gap;

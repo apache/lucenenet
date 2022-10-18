@@ -272,7 +272,7 @@ namespace Lucene.Net.Index
             return new TermStateAnonymousClass();
         }
 
-        private class TermStateAnonymousClass : TermState
+        private sealed class TermStateAnonymousClass : TermState
         {
             public override void CopyFrom(TermState other)
             {
@@ -290,7 +290,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static readonly TermsEnum EMPTY = new TermsEnumAnonymousClass();
 
-        private class TermsEnumAnonymousClass : TermsEnum
+        private sealed class TermsEnumAnonymousClass : TermsEnum
         {
             public override SeekStatus SeekCeil(BytesRef term)
             {

@@ -163,7 +163,7 @@ namespace Lucene.Net.Search.Spans
         /// <seealso cref="MultiTermRewriteMethod"/>
         public static readonly SpanRewriteMethod SCORING_SPAN_QUERY_REWRITE = new SpanRewriteMethodAnonymousClass();
 
-        private class SpanRewriteMethodAnonymousClass : SpanRewriteMethod
+        private sealed class SpanRewriteMethodAnonymousClass : SpanRewriteMethod
         {
             public SpanRewriteMethodAnonymousClass()
             {
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search.Spans
 
             private readonly ScoringRewrite<SpanOrQuery> @delegate = new ScoringRewriteAnonymousClass();
 
-            private class ScoringRewriteAnonymousClass : ScoringRewrite<SpanOrQuery>
+            private sealed class ScoringRewriteAnonymousClass : ScoringRewrite<SpanOrQuery>
             {
                 public ScoringRewriteAnonymousClass()
                 {
@@ -227,7 +227,7 @@ namespace Lucene.Net.Search.Spans
                 @delegate = new TopTermsRewriteAnonymousClass(size);
             }
 
-            private class TopTermsRewriteAnonymousClass : TopTermsRewrite<SpanOrQuery>
+            private sealed class TopTermsRewriteAnonymousClass : TopTermsRewrite<SpanOrQuery>
             {
                 public TopTermsRewriteAnonymousClass(int size)
                     : base(size)

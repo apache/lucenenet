@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
         ///  <seealso cref="MultiTermQuery.MultiTermRewriteMethod"/>
         public static readonly ScoringRewrite<BooleanQuery> SCORING_BOOLEAN_QUERY_REWRITE = new ScoringRewriteAnonymousClass();
 
-        private class ScoringRewriteAnonymousClass : ScoringRewrite<BooleanQuery>
+        private sealed class ScoringRewriteAnonymousClass : ScoringRewrite<BooleanQuery>
         {
             public ScoringRewriteAnonymousClass()
             {
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="MultiTermQuery.MultiTermRewriteMethod"/>
         public static readonly RewriteMethod CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE = new RewriteMethodAnonymousClass();
 
-        private class RewriteMethodAnonymousClass : RewriteMethod
+        private sealed class RewriteMethodAnonymousClass : RewriteMethod
         {
             public RewriteMethodAnonymousClass()
             {

@@ -398,7 +398,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             }
         }
 
-        private class RuleAnonymousClass : Rule
+        private sealed class RuleAnonymousClass : Rule
         {
             private readonly int myLine;
             private readonly string loc;

@@ -97,7 +97,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             return new BenchmarkHighlighterAnonymousClass(this, m_highlighter);
         }
 
-        private class BenchmarkHighlighterAnonymousClass : BenchmarkHighlighter
+        private sealed class BenchmarkHighlighterAnonymousClass : BenchmarkHighlighter
         {
             private readonly SearchTravRetHighlightTask outerInstance;
             private readonly Highlighter highlighter;

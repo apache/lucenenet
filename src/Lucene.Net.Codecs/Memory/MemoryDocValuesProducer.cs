@@ -284,7 +284,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private class NumericDocValuesAnonymousClass : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass : NumericDocValues
         {
             private readonly long[] decode;
             private readonly PackedInt32s.Reader ordsReader;
@@ -301,7 +301,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private class NumericDocValuesAnonymousClass2 : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass2 : NumericDocValues
         {
             private readonly sbyte[] bytes;
 
@@ -316,7 +316,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private class NumericDocValuesAnonymousClass3 : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass3 : NumericDocValues
         {
             private readonly long min;
             private readonly long mult;
@@ -377,7 +377,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private class BinaryDocValuesAnonymousClass : BinaryDocValues
+        private sealed class BinaryDocValuesAnonymousClass : BinaryDocValues
         {
             private readonly PagedBytes.Reader bytesReader;
             private readonly int fixedLength;
@@ -394,7 +394,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private class BinaryDocValuesAnonymousClass2 : BinaryDocValues
+        private sealed class BinaryDocValuesAnonymousClass2 : BinaryDocValues
         {
             private readonly PagedBytes.Reader bytesReader;
             private readonly MonotonicBlockPackedReader addresses;
@@ -450,7 +450,7 @@ namespace Lucene.Net.Codecs.Memory
                 scratchInts, fstEnum);
         }
 
-        private class SortedDocValuesAnonymousClass : SortedDocValues
+        private sealed class SortedDocValuesAnonymousClass : SortedDocValues
         {
             private readonly MemoryDocValuesProducer.FSTEntry entry;
             private readonly NumericDocValues docToOrd;
@@ -568,7 +568,7 @@ namespace Lucene.Net.Codecs.Memory
                 scratchArc, scratchInts, fstEnum, @ref, input);
         }
 
-        private class SortedSetDocValuesAnonymousClass : SortedSetDocValues
+        private sealed class SortedSetDocValuesAnonymousClass : SortedSetDocValues
         {
             private readonly MemoryDocValuesProducer.FSTEntry entry;
             private readonly BinaryDocValues docToOrds;

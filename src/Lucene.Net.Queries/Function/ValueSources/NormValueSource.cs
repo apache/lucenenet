@@ -72,7 +72,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return new SingleDocValuesAnonymousClass(this, similarity, norms);
         }
 
-        private class SingleDocValuesAnonymousClass : SingleDocValues
+        private sealed class SingleDocValuesAnonymousClass : SingleDocValues
         {
             private readonly TFIDFSimilarity similarity;
             private readonly NumericDocValues norms;

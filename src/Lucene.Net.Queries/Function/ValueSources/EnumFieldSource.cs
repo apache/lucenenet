@@ -108,7 +108,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return new Int32DocValuesAnonymousClass(this, this, arr, valid);
         }
 
-        private class Int32DocValuesAnonymousClass : Int32DocValues
+        private sealed class Int32DocValuesAnonymousClass : Int32DocValues
         {
             private readonly EnumFieldSource outerInstance;
 

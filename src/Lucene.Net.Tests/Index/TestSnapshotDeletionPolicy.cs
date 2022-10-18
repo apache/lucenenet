@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
             TestIndexWriter.AssertNoUnreferencedFiles(dir, "some files were not deleted but should have been");
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly long stopTime;
             private readonly IndexWriter writer;
@@ -385,7 +385,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousClass2 : ThreadJob
+        private sealed class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly TestSnapshotDeletionPolicy outerInstance;
 

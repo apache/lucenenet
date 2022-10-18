@@ -131,7 +131,7 @@ namespace Lucene.Net.Search.Highlight
             assertEquals("<B>This</B> piece of text refers to Kennedy at the beginning then has a longer piece of text that is <B>very</B>", fragment);
         }
 
-        private class TestHighlightUnknowQueryAnonymousClass : Query
+        private sealed class TestHighlightUnknowQueryAnonymousClass : Query
         {
             public override Query Rewrite(IndexReader reader)
             {
@@ -1543,7 +1543,7 @@ namespace Lucene.Net.Search.Highlight
             assertEquals("XHTML Encoding should have worked:", rawDocContent, decodedSnippet);
         }
 
-        private class TestEncodingScorerAnonymousClass : IScorer
+        private sealed class TestEncodingScorerAnonymousClass : IScorer
         {
             private readonly HighlighterTest outerInstance;
 

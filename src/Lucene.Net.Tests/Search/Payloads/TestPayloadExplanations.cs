@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Payloads
             searcher.Similarity = new DefaultSimilarityAnonymousClass(this);
         }
 
-        private class DefaultSimilarityAnonymousClass : DefaultSimilarity
+        private sealed class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
             private readonly TestPayloadExplanations outerInstance;
 

@@ -256,7 +256,7 @@ namespace Lucene.Net.Search
                 return new CollectorAnonymousClass(this, collector);
             }
 
-            private class CollectorAnonymousClass : ICollector
+            private sealed class CollectorAnonymousClass : ICollector
             {
                 private readonly ConstantBulkScorer outerInstance;
 
@@ -268,23 +268,23 @@ namespace Lucene.Net.Search
                     this.collector = collector;
                 }
                 
-                public virtual void SetScorer(Scorer scorer)
+                public void SetScorer(Scorer scorer)
                 {
                     // we must wrap again here, but using the value passed in as parameter:
                     collector.SetScorer(new ConstantScorer(outerInstance.outerInstance, scorer, outerInstance.weight, outerInstance.theScore));
                 }
 
-                public virtual void Collect(int doc)
+                public void Collect(int doc)
                 {
                     collector.Collect(doc);
                 }
 
-                public virtual void SetNextReader(AtomicReaderContext context)
+                public void SetNextReader(AtomicReaderContext context)
                 {
                     collector.SetNextReader(context);
                 }
 
-                public virtual bool AcceptsDocsOutOfOrder => collector.AcceptsDocsOutOfOrder;
+                public bool AcceptsDocsOutOfOrder => collector.AcceptsDocsOutOfOrder;
             }
         }
 

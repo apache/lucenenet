@@ -413,7 +413,7 @@ namespace Lucene.Net.Util.Fst
             return new ForwardBytesReaderAnonymousClass(this);
         }
 
-        private class ForwardBytesReaderAnonymousClass : FST.BytesReader
+        private sealed class ForwardBytesReaderAnonymousClass : FST.BytesReader
         {
             private readonly BytesStore outerInstance;
 
@@ -501,7 +501,7 @@ namespace Lucene.Net.Util.Fst
             return new ReverseBytesReaderAnonymousClass(this);
         }
 
-        private class ReverseBytesReaderAnonymousClass : FST.BytesReader
+        private sealed class ReverseBytesReaderAnonymousClass : FST.BytesReader
         {
             private readonly BytesStore outerInstance;
 

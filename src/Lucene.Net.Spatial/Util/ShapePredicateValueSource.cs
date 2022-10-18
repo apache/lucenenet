@@ -74,7 +74,7 @@ namespace Lucene.Net.Spatial.Util
             return new BoolDocValuesAnonymousClass(this, shapeValues);
         }
 
-        private class BoolDocValuesAnonymousClass : BoolDocValues
+        private sealed class BoolDocValuesAnonymousClass : BoolDocValues
         {
             private readonly ShapePredicateValueSource outerInstance;
             private readonly FunctionValues shapeValues;

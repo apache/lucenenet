@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis.Util
             return new CharArrayIteratorAnonymousClass2();
         }
 
-        private class CharArrayIteratorAnonymousClass2 : CharArrayIterator
+        private sealed class CharArrayIteratorAnonymousClass2 : CharArrayIterator
         {
             // no bugs
             protected override char JreBugWorkaround(char ch)
@@ -151,7 +151,7 @@ namespace Lucene.Net.Analysis.Util
             return new CharArrayIteratorAnonymousClass4();
         }
 
-        private class CharArrayIteratorAnonymousClass4 : CharArrayIterator
+        private sealed class CharArrayIteratorAnonymousClass4 : CharArrayIterator
         {
             // no bugs
             protected override char JreBugWorkaround(char ch)

@@ -46,7 +46,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             return document;
         }
 
-        private class BenchmarkHighlighterAnonymousClass : BenchmarkHighlighter
+        private sealed class BenchmarkHighlighterAnonymousClass : BenchmarkHighlighter
         {
             private readonly CountingHighlighterTestTask outerInstance;
             private readonly Highlighter highlighter;

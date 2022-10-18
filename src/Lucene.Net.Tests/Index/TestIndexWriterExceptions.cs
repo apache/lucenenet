@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousClass : IEnumerator<Document>
+            private sealed class IteratorAnonymousClass : IEnumerator<Document>
             {
                 private readonly DocCopyIterator outerInstance;
 
@@ -647,7 +647,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TokenFilterAnonymousClass : TokenFilter
+        private sealed class TokenFilterAnonymousClass : TokenFilter
         {
             public TokenFilterAnonymousClass(MockTokenizer tokenizer)
                 : base(tokenizer)
@@ -938,7 +938,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly int NUM_ITER;
             private readonly IndexWriter writer;
@@ -1223,7 +1223,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TOOMInfoStreamAnonymousClass : InfoStream
+        private sealed class TOOMInfoStreamAnonymousClass : InfoStream
         {
             private readonly AtomicBoolean thrown;
 
@@ -1904,7 +1904,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class IndexableFieldAnonymousClass : IIndexableField
+        private sealed class IndexableFieldAnonymousClass : IIndexableField
         {
             public string Name => "foo";
 
@@ -1923,19 +1923,19 @@ namespace Lucene.Net.Index
             }
 
             // LUCENENET specific - created overload so we can format an underlying numeric type using specified provider
-            public virtual string GetStringValue(IFormatProvider provider)
+            public string GetStringValue(IFormatProvider provider)
             {
                 return GetStringValue();
             }
 
             // LUCENENET specific - created overload so we can format an underlying numeric type using specified format
-            public virtual string GetStringValue(string format)
+            public string GetStringValue(string format)
             {
                 return GetStringValue();
             }
 
             // LUCENENET specific - created overload so we can format an underlying numeric type using specified format and provider
-            public virtual string GetStringValue(string format, IFormatProvider provider)
+            public string GetStringValue(string format, IFormatProvider provider)
             {
                 return GetStringValue();
             }
@@ -1952,40 +1952,40 @@ namespace Lucene.Net.Index
 
             // LUCENENET specific - Since we have no numeric reference types in .NET, this method was added to check
             // the numeric type of the inner field without boxing/unboxing.
-            public virtual NumericFieldType NumericType => NumericFieldType.NONE;
+            public NumericFieldType NumericType => NumericFieldType.NONE;
 
             // LUCENENET specific - created overload for Byte, since we have no Number class in .NET
-            public virtual byte? GetByteValue()
+            public byte? GetByteValue()
             {
                 return null;
             }
 
             // LUCENENET specific - created overload for Short, since we have no Number class in .NET
-            public virtual short? GetInt16Value()
+            public short? GetInt16Value()
             {
                 return null;
             }
 
             // LUCENENET specific - created overload for Int32, since we have no Number class in .NET
-            public virtual int? GetInt32Value()
+            public int? GetInt32Value()
             {
                 return null;
             }
 
             // LUCENENET specific - created overload for Int64, since we have no Number class in .NET
-            public virtual long? GetInt64Value()
+            public long? GetInt64Value()
             {
                 return null;
             }
 
             // LUCENENET specific - created overload for Single, since we have no Number class in .NET
-            public virtual float? GetSingleValue()
+            public float? GetSingleValue()
             {
                 return null;
             }
 
             // LUCENENET specific - created overload for Double, since we have no Number class in .NET
-            public virtual double? GetDoubleValue()
+            public double? GetDoubleValue()
             {
                 return null;
             }
@@ -2057,7 +2057,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailureAnonymousClass : Failure
+        private sealed class FailureAnonymousClass : Failure
         {
 
             public override Failure Reset()
@@ -2319,7 +2319,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailureAnonymousClass2 : Failure
+        private sealed class FailureAnonymousClass2 : Failure
         {
             private readonly AtomicBoolean shouldFail;
 
@@ -2359,7 +2359,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ConcurrentMergeSchedulerAnonymousClass : ConcurrentMergeScheduler
+        private sealed class ConcurrentMergeSchedulerAnonymousClass : ConcurrentMergeScheduler
         {
             protected override void HandleMergeException(Exception exc)
             {
@@ -2429,7 +2429,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TEDRInfoStreamAnonymousClass : InfoStream
+        private sealed class TEDRInfoStreamAnonymousClass : InfoStream
         {
             private readonly string messageToFailOn;
 
@@ -2511,7 +2511,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class FailureAnonymousClass3 : Failure
+        private sealed class FailureAnonymousClass3 : Failure
         {
             public override void Eval(MockDirectoryWrapper dir)
             {

@@ -353,7 +353,7 @@ namespace Lucene.Net.Codecs.Lucene42
             WriteFST(field, values);
         }
 
-        private class EnumerableAnonymousClass : IEnumerable<BytesRef>
+        private sealed class EnumerableAnonymousClass : IEnumerable<BytesRef>
         {
             private readonly IEnumerable<long?> docToOrdCount;
             private readonly IEnumerable<long?> ords;

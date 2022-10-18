@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis
             dir.Dispose();
         }
 
-        private class TokenStreamAnonymousClass : TokenStream
+        private sealed class TokenStreamAnonymousClass : TokenStream
         {
             private TestCachingTokenFilter outerInstance;
 

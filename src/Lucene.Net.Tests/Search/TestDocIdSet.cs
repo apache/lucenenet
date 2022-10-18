@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class DocIdSetAnonymousClass : DocIdSet
+        private sealed class DocIdSetAnonymousClass : DocIdSet
         {
             private readonly TestDocIdSet outerInstance;
 
@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
                 return new DocIdSetIteratorAnonymousClass(this);
             }
 
-            private class DocIdSetIteratorAnonymousClass : DocIdSetIterator
+            private sealed class DocIdSetIteratorAnonymousClass : DocIdSetIterator
             {
                 private readonly DocIdSetAnonymousClass outerInstance;
 
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class FilteredDocIdSetAnonymousClass : FilteredDocIdSet
+        private sealed class FilteredDocIdSetAnonymousClass : FilteredDocIdSet
         {
             private readonly TestDocIdSet outerInstance;
 
@@ -165,7 +165,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class FilterAnonymousClass : Filter
+        private sealed class FilterAnonymousClass : Filter
         {
             private readonly TestDocIdSet outerInstance;
 
@@ -203,7 +203,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class FilterAnonymousClass2 : Filter
+        private sealed class FilterAnonymousClass2 : Filter
         {
             private readonly TestDocIdSet outerInstance;
 
@@ -218,7 +218,7 @@ namespace Lucene.Net.Search
                 return new FilteredDocIdSetAnonymousClass2(this, innerNullIteratorSet);
             }
 
-            private class DocIdSetAnonymousClass2 : DocIdSet
+            private sealed class DocIdSetAnonymousClass2 : DocIdSet
             {
                 private readonly FilterAnonymousClass2 outerInstance;
 
@@ -233,7 +233,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            private class FilteredDocIdSetAnonymousClass2 : FilteredDocIdSet
+            private sealed class FilteredDocIdSetAnonymousClass2 : FilteredDocIdSet
             {
                 private readonly FilterAnonymousClass2 outerInstance;
 

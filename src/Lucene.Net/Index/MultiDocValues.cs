@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
             return new NumericDocValuesAnonymousClass(values, starts);
         }
 
-        private class NumericDocValuesAnonymousClass : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass : NumericDocValues
         {
             private readonly NumericDocValues[] values;
             private readonly int[] starts;
@@ -166,7 +166,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class NumericDocValuesAnonymousClass2 : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass2 : NumericDocValues
         {
             private readonly NumericDocValues[] values;
             private readonly int[] starts;
@@ -295,7 +295,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class BinaryDocValuesAnonymousClass : BinaryDocValues
+        private sealed class BinaryDocValuesAnonymousClass : BinaryDocValues
         {
             private readonly BinaryDocValues[] values;
             private readonly int[] starts;

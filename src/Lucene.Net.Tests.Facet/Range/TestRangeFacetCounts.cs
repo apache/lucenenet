@@ -301,7 +301,7 @@ namespace Lucene.Net.Facet.Range
             IOUtils.Dispose(tw, tr, td, w, r, d);
         }
 
-        private class DrillSidewaysAnonymousClass : DrillSideways
+        private sealed class DrillSidewaysAnonymousClass : DrillSideways
         {
             private readonly TestRangeFacetCounts outerInstance;
 
@@ -1112,7 +1112,7 @@ namespace Lucene.Net.Facet.Range
             IOUtils.Dispose(r, writer, dir);
         }
 
-        private class ValueSourceAnonymousClass : ValueSource
+        private sealed class ValueSourceAnonymousClass : ValueSource
         {
             private readonly TestRangeFacetCounts outerInstance;
 
@@ -1129,7 +1129,7 @@ namespace Lucene.Net.Facet.Range
                 return new DoubleDocValuesAnonymousClass(this);
             }
 
-            private class DoubleDocValuesAnonymousClass : DoubleDocValues
+            private sealed class DoubleDocValuesAnonymousClass : DoubleDocValues
             {
                 private readonly ValueSourceAnonymousClass outerInstance;
 
@@ -1162,7 +1162,7 @@ namespace Lucene.Net.Facet.Range
 
         }
 
-        private class CachingWrapperFilterAnonymousClass : CachingWrapperFilter
+        private sealed class CachingWrapperFilterAnonymousClass : CachingWrapperFilter
         {
             private readonly TestRangeFacetCounts outerInstance;
 
@@ -1184,7 +1184,7 @@ namespace Lucene.Net.Facet.Range
             }
         }
 
-        private class DrillSidewaysAnonymousClass2 : DrillSideways
+        private sealed class DrillSidewaysAnonymousClass2 : DrillSideways
         {
             private readonly TestRangeFacetCounts outerInstance;
 

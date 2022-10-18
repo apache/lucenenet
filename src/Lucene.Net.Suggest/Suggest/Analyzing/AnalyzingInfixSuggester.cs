@@ -290,7 +290,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private Analyzer GetGramAnalyzer()
             => new AnalyzerWrapperAnonymousClass(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
 
-        private class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
+        private sealed class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
         {
             private readonly AnalyzingInfixSuggester outerInstance;
 

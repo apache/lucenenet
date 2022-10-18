@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
         private readonly PostingsFormat postingsFormat;
 
-        private class PerFieldPostingsFormatAnonymousClass : PerFieldPostingsFormat
+        private sealed class PerFieldPostingsFormatAnonymousClass : PerFieldPostingsFormat
         {
             private readonly Lucene42Codec outerInstance;
 
@@ -71,7 +71,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
         private readonly DocValuesFormat docValuesFormat;
 
-        private class PerFieldDocValuesFormatAnonymousClass : PerFieldDocValuesFormat
+        private sealed class PerFieldDocValuesFormatAnonymousClass : PerFieldDocValuesFormat
         {
             private readonly Lucene42Codec outerInstance;
 
@@ -150,7 +150,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
         private readonly NormsFormat normsFormat = new Lucene42NormsFormatAnonymousClass();
 
-        private class Lucene42NormsFormatAnonymousClass : Lucene42NormsFormat
+        private sealed class Lucene42NormsFormatAnonymousClass : Lucene42NormsFormat
         {
             public override DocValuesConsumer NormsConsumer(SegmentWriteState state)
             {

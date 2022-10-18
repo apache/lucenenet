@@ -116,7 +116,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             }
         }
 
-        private class DefaultICUTokenizerConfigAnonymousClass : DefaultICUTokenizerConfig
+        private sealed class DefaultICUTokenizerConfigAnonymousClass : DefaultICUTokenizerConfig
         {
             private readonly BreakIterator[] breakers;
             public DefaultICUTokenizerConfigAnonymousClass(bool cjkAsWords, bool myanmarAsWords, IDictionary<int, string> tailored, IResourceLoader loader)

@@ -521,7 +521,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(pool.Count, numThreads);
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestPayloads outerInstance;
 

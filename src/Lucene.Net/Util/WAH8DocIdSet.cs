@@ -244,7 +244,7 @@ namespace Lucene.Net.Util
             return builder.Build();
         }
 
-        private class PriorityQueueAnonymousClass : PriorityQueue<WAH8DocIdSet.Iterator>
+        private sealed class PriorityQueueAnonymousClass : PriorityQueue<WAH8DocIdSet.Iterator>
         {
             public PriorityQueueAnonymousClass(int numSets)
                 : base(numSets)

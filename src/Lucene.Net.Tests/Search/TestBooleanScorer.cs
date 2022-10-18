@@ -106,7 +106,7 @@ namespace Lucene.Net.Search
             directory.Dispose();
         }
 
-        private class BulkScorerAnonymousClass : BulkScorer
+        private sealed class BulkScorerAnonymousClass : BulkScorer
         {
             private int doc = -1;
 
@@ -123,7 +123,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class CollectorAnonymousClass : ICollector
+        private sealed class CollectorAnonymousClass : ICollector
         {
             private readonly TestBooleanScorer outerInstance;
 
@@ -137,21 +137,21 @@ namespace Lucene.Net.Search
 
             internal int docBase;
 
-            public virtual void SetScorer(Scorer scorer)
+            public void SetScorer(Scorer scorer)
             {
             }
 
-            public virtual void Collect(int doc)
+            public void Collect(int doc)
             {
                 hits.Add(docBase + doc);
             }
 
-            public virtual void SetNextReader(AtomicReaderContext context)
+            public void SetNextReader(AtomicReaderContext context)
             {
                 docBase = context.DocBase;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder => true;
+            public bool AcceptsDocsOutOfOrder => true;
         }
 
         [Test]
@@ -186,7 +186,7 @@ namespace Lucene.Net.Search
             d.Dispose();
         }
 
-        private class CollectorAnonymousClass2 : ICollector
+        private sealed class CollectorAnonymousClass2 : ICollector
         {
             private readonly TestBooleanScorer outerInstance;
 
@@ -200,23 +200,23 @@ namespace Lucene.Net.Search
                 this.count = count;
             }
 
-            public virtual void SetScorer(Scorer scorer)
+            public void SetScorer(Scorer scorer)
             {
                 // Make sure we got BooleanScorer:
                 Type clazz = scorer.GetType();
                 Assert.AreEqual(typeof(FakeScorer).Name, clazz.Name, "Scorer is implemented by wrong class");
             }
 
-            public virtual void Collect(int doc)
+            public void Collect(int doc)
             {
                 count[0]++;
             }
 
-            public virtual void SetNextReader(AtomicReaderContext context)
+            public void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public virtual bool AcceptsDocsOutOfOrder => true;
+            public bool AcceptsDocsOutOfOrder => true;
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace Lucene.Net.Search
                 return new WeightAnonymousClass(this);
             }
 
-            private class WeightAnonymousClass : Weight
+            private sealed class WeightAnonymousClass : Weight
             {
                 private readonly CrazyMustUseBulkScorerQuery outerInstance;
 
@@ -268,7 +268,7 @@ namespace Lucene.Net.Search
                     return new BulkScorerAnonymousClass(this);
                 }
 
-                private class BulkScorerAnonymousClass : BulkScorer
+                private sealed class BulkScorerAnonymousClass : BulkScorer
                 {
                     private readonly WeightAnonymousClass outerInstance;
 

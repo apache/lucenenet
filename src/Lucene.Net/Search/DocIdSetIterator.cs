@@ -35,7 +35,7 @@ namespace Lucene.Net.Search
             return new DocIdSetIteratorAnonymousClass();
         }
 
-        private class DocIdSetIteratorAnonymousClass : DocIdSetIterator
+        private sealed class DocIdSetIteratorAnonymousClass : DocIdSetIterator
         {
             public DocIdSetIteratorAnonymousClass()
             {

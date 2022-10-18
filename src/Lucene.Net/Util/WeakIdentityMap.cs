@@ -259,7 +259,7 @@
 //            }
 //        }
 
-//        private class EnumeratorAnonymousClass : IEnumerator<TKey>
+//        private sealed class EnumeratorAnonymousClass : IEnumerator<TKey>
 //        {
 //            private readonly WeakIdentityMap<TKey, TValue> outerInstance;
 //            private readonly IEnumerator<KeyValuePair<IdentityWeakReference, TValue>> enumerator;

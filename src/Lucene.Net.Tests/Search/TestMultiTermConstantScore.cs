@@ -1,4 +1,4 @@
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -285,7 +285,7 @@ namespace Lucene.Net.Search
             Assert.IsTrue(hits[0].Score > hits[1].Score);
         }
 
-        private class CollectorAnonymousClass : ICollector
+        private sealed class CollectorAnonymousClass : ICollector
         {
             private readonly TestMultiTermConstantScore outerInstance;
 
@@ -298,22 +298,22 @@ namespace Lucene.Net.Search
             private int @base;
             private Scorer scorer;
 
-            public virtual void SetScorer(Scorer scorer)
+            public void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public virtual void Collect(int doc)
+            public void Collect(int doc)
             {
                 Assert.AreEqual(1.0f, scorer.GetScore(), SCORE_COMP_THRESH, "score for doc " + (doc + @base) + " was not correct");
             }
 
-            public virtual void SetNextReader(AtomicReaderContext context)
+            public void SetNextReader(AtomicReaderContext context)
             {
                 @base = context.DocBase;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder => true;
+            public bool AcceptsDocsOutOfOrder => true;
         }
 
         [Test]

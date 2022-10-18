@@ -161,7 +161,7 @@ namespace Lucene.Net.Analysis
 
         protected readonly RollingBuffer<T> m_positions;
 
-        private class RollingBufferAnonymousClass : RollingBuffer<T>
+        private sealed class RollingBufferAnonymousClass : RollingBuffer<T>
         {
             private readonly LookaheadTokenFilter<T> outerInstance;
 

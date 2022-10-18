@@ -502,7 +502,7 @@ namespace Lucene.Net.Util
             return new Lucene46CodecAnonymousClass(format);
         }
 
-        private class Lucene46CodecAnonymousClass : Lucene46Codec
+        private sealed class Lucene46CodecAnonymousClass : Lucene46Codec
         {
             private readonly PostingsFormat format;
 
@@ -534,7 +534,7 @@ namespace Lucene.Net.Util
             return new Lucene46CodecAnonymousClass2(format);
         }
 
-        private class Lucene46CodecAnonymousClass2 : Lucene46Codec
+        private sealed class Lucene46CodecAnonymousClass2 : Lucene46Codec
         {
             private readonly DocValuesFormat format;
 
@@ -651,7 +651,7 @@ namespace Lucene.Net.Util
             Assert.AreEqual(reflectedValues, map, aggressive: false, "Reflection does not produce same map");
         }
 
-        private class AttributeReflectorAnonymousClass : IAttributeReflector
+        private sealed class AttributeReflectorAnonymousClass : IAttributeReflector
         {
             private readonly IDictionary<string, object> map;
 
@@ -899,7 +899,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class RandomAccessFilterStrategyAnonymousClass : FilteredQuery.RandomAccessFilterStrategy
+        private sealed class RandomAccessFilterStrategyAnonymousClass : FilteredQuery.RandomAccessFilterStrategy
         {
             protected override bool UseRandomAccess(IBits bits, int firstFilterDoc)
             {

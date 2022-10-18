@@ -56,7 +56,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return new DoubleDocValuesAnonymousClass(this, arr, valid);
         }
 
-        private class DoubleDocValuesAnonymousClass : DoubleDocValues
+        private sealed class DoubleDocValuesAnonymousClass : DoubleDocValues
         {
             private readonly FieldCache.Doubles arr;
             private readonly IBits valid;

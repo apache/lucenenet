@@ -281,7 +281,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class EnumeratorAnonymousClass : IEnumerator<Attribute>
+        private sealed class EnumeratorAnonymousClass : IEnumerator<Attribute>
         {
             public EnumeratorAnonymousClass(AttributeSource.State initState)
             {
@@ -604,7 +604,7 @@ namespace Lucene.Net.Util
             return buffer.ToString();
         }
 
-        private class AttributeReflectorAnonymousClass : IAttributeReflector
+        private sealed class AttributeReflectorAnonymousClass : IAttributeReflector
         {
             private readonly bool prependAttClass;
             private readonly StringBuilder buffer;

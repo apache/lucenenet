@@ -45,13 +45,13 @@ namespace Lucene.Net.Codecs.RAMOnly
         private static readonly IComparer<BytesRef> reverseUnicodeComparer = new ComparerAnonymousClass();
 
 #pragma warning disable 659 // LUCENENET: Overrides Equals but not GetHashCode
-        private class ComparerAnonymousClass : IComparer<BytesRef>
+        private sealed class ComparerAnonymousClass : IComparer<BytesRef>
 #pragma warning restore 659
         {
             public ComparerAnonymousClass()
             { }
 
-            public virtual int Compare(BytesRef t1, BytesRef t2)
+            public int Compare(BytesRef t1, BytesRef t2)
             {
                 var b1 = t1.Bytes;
                 var b2 = t2.Bytes;

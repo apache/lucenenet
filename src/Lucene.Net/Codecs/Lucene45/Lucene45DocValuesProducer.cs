@@ -403,7 +403,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
-        private class Int64ValuesAnonymousClass : Int64Values
+        private sealed class Int64ValuesAnonymousClass : Int64Values
         {
             private readonly long min;
             private readonly long mult;
@@ -423,7 +423,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
-        private class Int64ValuesAnonymousClass2 : Int64Values
+        private sealed class Int64ValuesAnonymousClass2 : Int64Values
         {
             private readonly long[] table;
             private readonly PackedInt32s.Reader ords;
@@ -468,7 +468,7 @@ namespace Lucene.Net.Codecs.Lucene45
             return new Int64BinaryDocValuesAnonymousClass(bytes, data);
         }
 
-        private class Int64BinaryDocValuesAnonymousClass : Int64BinaryDocValues
+        private sealed class Int64BinaryDocValuesAnonymousClass : Int64BinaryDocValues
         {
             private readonly Lucene45DocValuesProducer.BinaryEntry bytes;
             private readonly IndexInput data;
@@ -537,7 +537,7 @@ namespace Lucene.Net.Codecs.Lucene45
             return new Int64BinaryDocValuesAnonymousClass2(bytes, data, addresses);
         }
 
-        private class Int64BinaryDocValuesAnonymousClass2 : Int64BinaryDocValues
+        private sealed class Int64BinaryDocValuesAnonymousClass2 : Int64BinaryDocValues
         {
             private readonly Lucene45DocValuesProducer.BinaryEntry bytes;
             private readonly IndexInput data;
@@ -632,7 +632,7 @@ namespace Lucene.Net.Codecs.Lucene45
             return new SortedDocValuesAnonymousClass(valueCount, binary, ordinals);
         }
 
-        private class SortedDocValuesAnonymousClass : SortedDocValues
+        private sealed class SortedDocValuesAnonymousClass : SortedDocValues
         {
             private readonly int valueCount;
             private readonly BinaryDocValues binary;
@@ -737,7 +737,7 @@ namespace Lucene.Net.Codecs.Lucene45
             return new RandomAccessOrdsAnonymousClass(valueCount, binary, ordinals, ordIndex);
         }
 
-        private class RandomAccessOrdsAnonymousClass : RandomAccessOrds
+        private sealed class RandomAccessOrdsAnonymousClass : RandomAccessOrds
         {
             private readonly long valueCount;
             private readonly Lucene45DocValuesProducer.Int64BinaryDocValues binary;
@@ -835,7 +835,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
-        private class BitsAnonymousClass : IBits
+        private sealed class BitsAnonymousClass : IBits
         {
             private readonly Lucene45DocValuesProducer outerInstance;
 
@@ -849,7 +849,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 this.@in = @in;
             }
 
-            public virtual bool Get(int index)
+            public bool Get(int index)
             {
                 try
                 {
@@ -862,7 +862,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
-            public virtual int Length => outerInstance.maxDoc;
+            public int Length => outerInstance.maxDoc;
         }
 
         public override IBits GetDocsWithField(FieldInfo field)
@@ -1087,7 +1087,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 return new TermsEnumAnonymousClass(this, input);
             }
 
-            private class TermsEnumAnonymousClass : TermsEnum
+            private sealed class TermsEnumAnonymousClass : TermsEnum
             {
                 private readonly CompressedBinaryDocValues outerInstance;
 

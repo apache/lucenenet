@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
             Join(stallThreads);
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly DocumentsWriterStallControl ctrl;
             private readonly int stallProbability;
@@ -402,7 +402,7 @@ namespace Lucene.Net.Index
             return array;
         }
 
-        private class ThreadAnonymousClass2 : ThreadJob
+        private sealed class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly DocumentsWriterStallControl ctrl;
 

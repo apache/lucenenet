@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
             reader.Dispose();
         }
 
-        private class CollectorAnonymousClass : ICollector
+        private sealed class CollectorAnonymousClass : ICollector
         {
             private readonly TestEarlyTermination outerInstance;
 
@@ -89,11 +89,11 @@ namespace Lucene.Net.Search
             internal readonly bool outOfOrder;
             internal bool collectionTerminated;
 
-            public virtual void SetScorer(Scorer scorer)
+            public void SetScorer(Scorer scorer)
             {
             }
 
-            public virtual void Collect(int doc)
+            public void Collect(int doc)
             {
                 Assert.IsFalse(collectionTerminated);
                 if (Rarely())
@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public virtual void SetNextReader(AtomicReaderContext context)
+            public void SetNextReader(AtomicReaderContext context)
             {
                 if (Random.NextBoolean())
                 {
@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public virtual bool AcceptsDocsOutOfOrder => outOfOrder;
+            public bool AcceptsDocsOutOfOrder => outOfOrder;
         }
     }
 }

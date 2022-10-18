@@ -122,7 +122,7 @@ namespace Lucene.Net.Facet.Taxonomy
             return new OrdinalsSegmentReaderAnonymousClass(cachedOrds);
         }
 
-        private class OrdinalsSegmentReaderAnonymousClass : OrdinalsSegmentReader
+        private sealed class OrdinalsSegmentReaderAnonymousClass : OrdinalsSegmentReader
         {
             private readonly CachedOrds cachedOrds;
 

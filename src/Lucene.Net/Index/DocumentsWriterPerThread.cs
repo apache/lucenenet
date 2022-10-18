@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
 
         public static IndexingChain DefaultIndexingChain => defaultIndexingChain;
 
-        private class IndexingChainAnonymousClass : IndexingChain
+        private sealed class IndexingChainAnonymousClass : IndexingChain
         {
             public IndexingChainAnonymousClass()
             {

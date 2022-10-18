@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
                 });
             }
 
-            private class TermsAnonymousClass : Terms
+            private sealed class TermsAnonymousClass : Terms
             {
                 private readonly SortedSetDocValues docTermOrds;
 

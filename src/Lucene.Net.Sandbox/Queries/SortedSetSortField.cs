@@ -141,7 +141,7 @@ namespace Lucene.Net.Sandbox.Queries
             base.m_missingValue = value;
         }
 
-        private class TermOrdValComparerAnonymousClass : FieldComparer.TermOrdValComparer
+        private sealed class TermOrdValComparerAnonymousClass : FieldComparer.TermOrdValComparer
         {
             private readonly SortedSetSortField outerInstance;
 

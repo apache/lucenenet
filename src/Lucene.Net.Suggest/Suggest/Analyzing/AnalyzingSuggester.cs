@@ -884,7 +884,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private class TopNSearcherAnonymousClass : Util.Fst.Util.TopNSearcher<PairOutputs<Int64, BytesRef>.Pair>
+        private sealed class TopNSearcherAnonymousClass : Util.Fst.Util.TopNSearcher<PairOutputs<Int64, BytesRef>.Pair>
         {
             private readonly AnalyzingSuggester outerInstance;
 

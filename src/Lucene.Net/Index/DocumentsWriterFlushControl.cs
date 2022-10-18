@@ -566,7 +566,7 @@ namespace Lucene.Net.Index
             return new EnumeratorAnonymousClass(this, upto);
         }
 
-        private class EnumeratorAnonymousClass : IEnumerator<ThreadState>
+        private sealed class EnumeratorAnonymousClass : IEnumerator<ThreadState>
         {
             private readonly DocumentsWriterFlushControl outerInstance;
             private ThreadState current;

@@ -203,7 +203,7 @@ namespace Lucene.Net.Search
             CheckBooleanQueryBoosts((BooleanQuery)q3);
         }
 
-        private class MultiTermQueryAnonymousClass : MultiTermQuery
+        private sealed class MultiTermQueryAnonymousClass : MultiTermQuery
         {
             private readonly TestMultiTermQueryRewrites outerInstance;
 
@@ -218,7 +218,7 @@ namespace Lucene.Net.Search
                 return new TermRangeTermsEnumAnonymousClass(this, terms.GetEnumerator(), new BytesRef("2"), new BytesRef("7"));
             }
 
-            private class TermRangeTermsEnumAnonymousClass : TermRangeTermsEnum
+            private sealed class TermRangeTermsEnumAnonymousClass : TermRangeTermsEnum
             {
                 private readonly MultiTermQueryAnonymousClass outerInstance;
 

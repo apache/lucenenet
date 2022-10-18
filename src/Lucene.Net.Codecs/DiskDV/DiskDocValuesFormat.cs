@@ -41,7 +41,7 @@ namespace Lucene.Net.Codecs.DiskDV
             return new Lucene45DocValuesConsumerAnonymousClass(state);
         }
 
-        private class Lucene45DocValuesConsumerAnonymousClass : Lucene45DocValuesConsumer
+        private sealed class Lucene45DocValuesConsumerAnonymousClass : Lucene45DocValuesConsumer
         {
             public Lucene45DocValuesConsumerAnonymousClass(SegmentWriteState state)
                 : base(state, DATA_CODEC, DATA_EXTENSION, META_CODEC, META_EXTENSION)

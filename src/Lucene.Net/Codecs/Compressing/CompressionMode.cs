@@ -44,7 +44,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// </summary>
         public static readonly CompressionMode FAST = new CompressionModeAnonymousClass();
 
-        private class CompressionModeAnonymousClass : CompressionMode
+        private sealed class CompressionModeAnonymousClass : CompressionMode
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override Compressor NewCompressor()
@@ -73,7 +73,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// </summary>
         public static readonly CompressionMode HIGH_COMPRESSION = new CompressionModeAnonymousClass2();
 
-        private class CompressionModeAnonymousClass2 : CompressionMode
+        private sealed class CompressionModeAnonymousClass2 : CompressionMode
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override Compressor NewCompressor()
@@ -102,7 +102,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// </summary>
         public static readonly CompressionMode FAST_DECOMPRESSION = new CompressionModeAnonymousClass3();
 
-        private class CompressionModeAnonymousClass3 : CompressionMode
+        private sealed class CompressionModeAnonymousClass3 : CompressionMode
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override Compressor NewCompressor()
@@ -141,7 +141,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         private static readonly Decompressor LZ4_DECOMPRESSOR = new DecompressorAnonymousClass();
 
-        private class DecompressorAnonymousClass : Decompressor
+        private sealed class DecompressorAnonymousClass : Decompressor
         {
             public override void Decompress(DataInput @in, int originalLength, int offset, int length, BytesRef bytes)
             {

@@ -73,13 +73,13 @@ namespace Lucene.Net.Analysis.Core
 
         private static readonly IPredicate<object[]> ALWAYS = new PredicateAnonymousClass();
 
-        private class PredicateAnonymousClass : IPredicate<object[]>
+        private sealed class PredicateAnonymousClass : IPredicate<object[]>
         {
             public PredicateAnonymousClass()
             {
             }
 
-            public virtual bool Apply(object[] args)
+            public bool Apply(object[] args)
             {
                 return true;
             }
@@ -169,26 +169,26 @@ namespace Lucene.Net.Analysis.Core
             allowedCharFilterArgs.Add(typeof(TextReader));
         }
 
-        private class PredicateAnonymousClass2 : IPredicate<object[]>
+        private sealed class PredicateAnonymousClass2 : IPredicate<object[]>
         {
             public PredicateAnonymousClass2()
             {
             }
 
-            public virtual bool Apply(object[] args)
+            public bool Apply(object[] args)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(args.Length == 3);
                 return !((bool)args[2]); // args are broken if consumeAllTokens is false
             }
         }
 
-        private class PredicateAnonymousClass3 : IPredicate<object[]>
+        private sealed class PredicateAnonymousClass3 : IPredicate<object[]>
         {
             public PredicateAnonymousClass3()
             {
             }
 
-            public virtual bool Apply(object[] args)
+            public bool Apply(object[] args)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(args.Length == 3);
                 return !((bool)args[2]); // args are broken if consumeAllTokens is false

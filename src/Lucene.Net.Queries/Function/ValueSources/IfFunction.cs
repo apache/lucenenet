@@ -49,7 +49,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return new FunctionValuesAnonymousClass(ifVals, trueVals, falseVals);
         }
 
-        private class FunctionValuesAnonymousClass : FunctionValues
+        private sealed class FunctionValuesAnonymousClass : FunctionValues
         {
             private readonly FunctionValues ifVals;
             private readonly FunctionValues trueVals;

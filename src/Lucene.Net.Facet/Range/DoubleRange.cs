@@ -126,7 +126,7 @@ namespace Lucene.Net.Facet.Range
             return new FilterAnonymousClass(this, fastMatchFilter, valueSource);
         }
 
-        private class FilterAnonymousClass : Filter
+        private sealed class FilterAnonymousClass : Filter
         {
             private readonly DoubleRange outerInstance;
 
@@ -180,7 +180,7 @@ namespace Lucene.Net.Facet.Range
                 return new DocIdSetAnonymousClass(this, acceptDocs, values, maxDoc, fastMatchBits);
             }
 
-            private class DocIdSetAnonymousClass : DocIdSet
+            private sealed class DocIdSetAnonymousClass : DocIdSet
             {
                 private readonly FilterAnonymousClass outerInstance;
 
@@ -200,7 +200,7 @@ namespace Lucene.Net.Facet.Range
 
                 public override IBits Bits => new BitsAnonymousClass(this);
 
-                private class BitsAnonymousClass : IBits
+                private sealed class BitsAnonymousClass : IBits
                 {
                     private readonly DocIdSetAnonymousClass outerInstance;
 
@@ -209,7 +209,7 @@ namespace Lucene.Net.Facet.Range
                         this.outerInstance = outerInstance;
                     }
 
-                    public virtual bool Get(int docID)
+                    public bool Get(int docID)
                     {
                         if (outerInstance.acceptDocs != null && outerInstance.acceptDocs.Get(docID) == false)
                         {
@@ -222,7 +222,7 @@ namespace Lucene.Net.Facet.Range
                         return outerInstance.outerInstance.outerInstance.Accept(outerInstance.values.DoubleVal(docID));
                     }
 
-                    public virtual int Length => outerInstance.maxDoc;
+                    public int Length => outerInstance.maxDoc;
                 }
 
                 public override DocIdSetIterator GetIterator()

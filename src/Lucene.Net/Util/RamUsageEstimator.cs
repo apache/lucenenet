@@ -993,7 +993,7 @@ namespace Lucene.Net.Util
                 return GetEnumerator();
             }
 
-            private class EnumeratorAnonymousClass : IEnumerator<KType>
+            private sealed class EnumeratorAnonymousClass : IEnumerator<KType>
             {
                 private readonly IdentityHashSet<KType> outerInstance;
 

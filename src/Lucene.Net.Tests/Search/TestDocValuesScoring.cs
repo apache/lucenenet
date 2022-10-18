@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class PerFieldSimilarityWrapperAnonymousClass : PerFieldSimilarityWrapper
+        private sealed class PerFieldSimilarityWrapperAnonymousClass : PerFieldSimilarityWrapper
         {
             private readonly TestDocValuesScoring outerInstance;
 
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search
                 return new SimScorerAnonymousClass(this, sub, values);
             }
 
-            private class SimScorerAnonymousClass : SimScorer
+            private sealed class SimScorerAnonymousClass : SimScorer
             {
                 private readonly BoostingSimilarity outerInstance;
 

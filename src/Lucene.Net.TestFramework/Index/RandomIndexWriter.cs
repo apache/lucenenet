@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
             return MockIndexWriter(dir, conf, new TestPointAnonymousClass(random));
         }
 
-        private class TestPointAnonymousClass : ITestPoint
+        private sealed class TestPointAnonymousClass : ITestPoint
         {
             private readonly Random random;
 
@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
                 this.random = random;
             }
 
-            public virtual void Apply(string message)
+            public void Apply(string message)
             {
                 if (random.Next(4) == 2)
                 {
@@ -148,7 +148,7 @@ namespace Lucene.Net.Index
             MaybeCommit();
         }
 
-        private class EnumerableAnonymousClass<IndexableField> : IEnumerable<IEnumerable<IndexableField>>
+        private sealed class EnumerableAnonymousClass<IndexableField> : IEnumerable<IEnumerable<IndexableField>>
         {
             private readonly IEnumerable<IndexableField> doc;
 
@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-            private class EnumeratorAnonymousClass : IEnumerator<IEnumerable<IndexableField>>
+            private sealed class EnumeratorAnonymousClass : IEnumerator<IEnumerable<IndexableField>>
             {
                 private readonly EnumerableAnonymousClass<IndexableField> outerInstance;
 
@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
             MaybeCommit();
         }
 
-        private class EnumerableAnonymousClass2 : IEnumerable<IEnumerable<IIndexableField>>
+        private sealed class EnumerableAnonymousClass2 : IEnumerable<IEnumerable<IIndexableField>>
         {
             private readonly IEnumerable<IIndexableField> doc;
 
@@ -268,7 +268,7 @@ namespace Lucene.Net.Index
             IEnumerator IEnumerable.GetEnumerator() 
                 => GetEnumerator();
 
-            private class EnumeratorAnonymousClass2 : IEnumerator<IEnumerable<IIndexableField>>
+            private sealed class EnumeratorAnonymousClass2 : IEnumerator<IEnumerable<IIndexableField>>
             {
                 private readonly EnumerableAnonymousClass2 outerInstance;
 
@@ -296,7 +296,7 @@ namespace Lucene.Net.Index
 
                 object IEnumerator.Current => Current;
 
-                public virtual void Reset()
+                public void Reset()
                     => throw new NotImplementedException();
 
                 public void Dispose()

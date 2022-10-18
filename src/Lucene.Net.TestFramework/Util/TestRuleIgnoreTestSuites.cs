@@ -54,7 +54,7 @@ namespace Lucene.Net.Util
         return new StatementAnonymousClass(this, s, d);
       }
 
-      private class StatementAnonymousClass : Statement
+      private sealed class StatementAnonymousClass : Statement
       {
           private readonly TestRuleIgnoreTestSuites OuterInstance;
 

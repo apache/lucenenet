@@ -266,7 +266,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             dir.Dispose();
         }
 
-        private class DirectoryTaxonomyWriterAnonymousClass : DirectoryTaxonomyWriter
+        private sealed class DirectoryTaxonomyWriterAnonymousClass : DirectoryTaxonomyWriter
         {
             private readonly TestDirectoryTaxonomyReader outerInstance;
 
@@ -326,7 +326,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             dir.Dispose();
         }
 
-        private class DirectoryTaxonomyWriterAnonymousClass2 : DirectoryTaxonomyWriter
+        private sealed class DirectoryTaxonomyWriterAnonymousClass2 : DirectoryTaxonomyWriter
         {
             internal static IndexWriter iw = null;
 
@@ -385,7 +385,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             dir.Dispose();
         }
 
-        private class DirectoryTaxonomyWriterAnonymousClass3 : DirectoryTaxonomyWriter
+        private sealed class DirectoryTaxonomyWriterAnonymousClass3 : DirectoryTaxonomyWriter
         {
             internal static IndexWriter iw;
 

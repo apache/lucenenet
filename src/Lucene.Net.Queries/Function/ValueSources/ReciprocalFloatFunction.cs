@@ -67,7 +67,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return new SingleDocValuesAnonymousClass(this, this, vals);
         }
 
-        private class SingleDocValuesAnonymousClass : SingleDocValues
+        private sealed class SingleDocValuesAnonymousClass : SingleDocValues
         {
             private readonly ReciprocalSingleFunction outerInstance;
             private readonly FunctionValues vals;

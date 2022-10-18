@@ -363,7 +363,7 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
 
-        private class ValueSourceAnonymousClass : ValueSource
+        private sealed class ValueSourceAnonymousClass : ValueSource
         {
             private readonly TestTaxonomyFacetSumValueSource outerInstance;
 
@@ -379,7 +379,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 return new DoubleDocValuesAnonymousClass(this, scorer);
             }
 
-            private class DoubleDocValuesAnonymousClass : DoubleDocValues
+            private sealed class DoubleDocValuesAnonymousClass : DoubleDocValues
             {
                 private readonly ValueSourceAnonymousClass outerInstance;
 
