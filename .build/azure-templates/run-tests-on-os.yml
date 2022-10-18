@@ -251,7 +251,8 @@ steps:
 - pwsh: |
     $failed = $false
     if ($env:HOSTCRASHED -eq 'true') {
-        Write-Host "##vso[task.logissue type=error;]Test host process(es) crashed:  $($env:CRASHEDRUNS)."
+        $runsExpanded = "$($env:CRASHEDRUNS)" -replace ',',"`r`n"
+        Write-Host "##vso[task.logissue type=error;]Test host process(es) crashed, hung, or failed to load assemblies. Review the testresults artifacts for details. (click here to view the projects that failed)`r`n$runsExpanded"
         $failed = $true
     }
     $maximumAllowedFailures = '${{ parameters.maximumAllowedFailures }}'
