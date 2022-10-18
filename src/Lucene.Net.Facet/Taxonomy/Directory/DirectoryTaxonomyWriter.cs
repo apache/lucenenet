@@ -1085,8 +1085,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
             }
 
-            public void AddDone() // nothing to do
+            public void AddDone()
             {
+                // nothing to do
             }
 
             public int[] GetMap()

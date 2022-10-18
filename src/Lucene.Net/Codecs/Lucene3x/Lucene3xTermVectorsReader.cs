@@ -316,6 +316,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 public void Dispose()
                 {
+                    // LUCENENET: Intentionally blank
                 }
             }
 

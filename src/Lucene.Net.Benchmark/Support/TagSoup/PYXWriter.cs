@@ -71,6 +71,7 @@ namespace TagSoup
 
         public virtual void Entity(char[] buffer, int startIndex, int length)
         {
+            // LUCENENET: Intentionally blank
         }
 
         public virtual int GetEntity()
@@ -95,6 +96,7 @@ namespace TagSoup
 
         public virtual void Decl(char[] buffer, int startIndex, int length)
         {
+            // LUCENENET: Intentionally blank
         }
 
         public virtual void GI(char[] buffer, int startIndex, int length)
@@ -220,6 +222,7 @@ namespace TagSoup
 
         public virtual void EndPrefixMapping(string prefix)
         {
+            // LUCENENET: Intentionally blank
         }
 
         public virtual void IgnorableWhitespace(char[] buffer, int startIndex, int length)
@@ -240,14 +243,17 @@ namespace TagSoup
 
         public virtual void SetDocumentLocator(ILocator locator)
         {
+            // LUCENENET: Intentionally blank
         }
 
         public virtual void SkippedEntity(string name)
         {
+            // LUCENENET: Intentionally blank
         }
 
         public virtual void StartDocument()
         {
+            // LUCENENET: Intentionally blank
         }
 
         public virtual void StartElement(string uri, string localname, string qname, IAttributes atts)
@@ -283,6 +289,7 @@ namespace TagSoup
 
         public virtual void StartPrefixMapping(string prefix, string uri)
         {
+            // LUCENENET: Intentionally blank
         }
 
         public virtual void Comment(char[] ch, int start, int length)
@@ -292,26 +299,32 @@ namespace TagSoup
 
         public virtual void EndCDATA()
         {
+            // LUCENENET: Intentionally blank
         }
 
         public virtual void EndDTD()
         {
+            // LUCENENET: Intentionally blank
         }
 
         public virtual void EndEntity(string name)
         {
+            // LUCENENET: Intentionally blank
         }
 
         public virtual void StartCDATA()
         {
+            // LUCENENET: Intentionally blank
         }
 
         public virtual void StartDTD(string name, string publicId, string systemId)
         {
+            // LUCENENET: Intentionally blank
         }
 
         public virtual void StartEntity(string name)
         {
+            // LUCENENET: Intentionally blank
         }
 
         // Constructor

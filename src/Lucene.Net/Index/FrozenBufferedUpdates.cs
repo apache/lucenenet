@@ -223,6 +223,7 @@ namespace Lucene.Net.Index
 
                 public void Dispose()
                 {
+                    // LUCENENET: Intentionally blank
                 }
             }
         }

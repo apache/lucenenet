@@ -266,6 +266,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             public void Dispose()
             {
+                // LUCENENET: Intentionally blank
             }
 
             public bool MoveNext()

@@ -169,25 +169,27 @@ namespace Lucene.Net.Index
 
         private class ParallelAtomicReaderAnonymousClass : ParallelAtomicReader
         {
-            public ParallelAtomicReaderAnonymousClass(Lucene.Net.Index.AtomicReader[] atomicSubs, Lucene.Net.Index.AtomicReader[] storedSubs)
+            public ParallelAtomicReaderAnonymousClass(AtomicReader[] atomicSubs, AtomicReader[] storedSubs)
                 : base(true, atomicSubs, storedSubs)
             {
             }
 
             protected internal override void DoClose()
             {
+                // LUCENENET: Intentionally blank
             }
         }
 
         private class ParallelCompositeReaderAnonymousClass : ParallelCompositeReader
         {
-            public ParallelCompositeReaderAnonymousClass(Lucene.Net.Index.CompositeReader[] compositeSubs, Lucene.Net.Index.CompositeReader[] storedSubs)
+            public ParallelCompositeReaderAnonymousClass(CompositeReader[] compositeSubs, CompositeReader[] storedSubs)
                 : base(true, compositeSubs, storedSubs)
             {
             }
 
             protected internal override void DoClose()
             {
+                // LUCENENET: Intentionally blank
             }
         }
 

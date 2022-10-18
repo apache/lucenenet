@@ -133,6 +133,7 @@ namespace TagSoup
 
         public virtual void StartCDATA()
         {
+            // LUCENENET: Intentionally blank
         }
 
         //public static void main(string[] argv)  {

@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.Text;
 
@@ -139,6 +139,7 @@ namespace Lucene.Net.Search
 
         public override void ExtractTerms(ISet<Term> terms)
         {
+            // LUCENENET: Intentionally blank
         }
 
         public override string ToString(string field)
