@@ -107,7 +107,7 @@ namespace Lucene.Net.Facet
             return new WeightAnonymousClass(this, baseWeight, drillDowns);
         }
 
-        private class WeightAnonymousClass : Weight
+        private sealed class WeightAnonymousClass : Weight
         {
             private readonly DrillSidewaysQuery outerInstance;
 

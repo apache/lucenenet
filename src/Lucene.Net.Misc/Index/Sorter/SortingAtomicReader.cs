@@ -120,7 +120,7 @@ namespace Lucene.Net.Index.Sorter
                 return new BitsAnonymousClass(this, liveDocs);
             }
 
-            private class BitsAnonymousClass : IBits
+            private sealed class BitsAnonymousClass : IBits
             {
                 private readonly SortingTermsEnum outerInstance;
 

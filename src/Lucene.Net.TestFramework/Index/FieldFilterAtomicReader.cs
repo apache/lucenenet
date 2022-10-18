@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
             base.Document(docID, new StoredFieldVisitorAnonymousClass(this, visitor));
         }
 
-        private class StoredFieldVisitorAnonymousClass : StoredFieldVisitor
+        private sealed class StoredFieldVisitorAnonymousClass : StoredFieldVisitor
         {
             private readonly FieldFilterAtomicReader outerInstance;
 

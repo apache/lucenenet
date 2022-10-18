@@ -90,7 +90,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
-        private class FieldAnonymousClass : Field
+        private sealed class FieldAnonymousClass : Field
         {
             private readonly TestCompressingStoredFieldsFormat outerInstance;
 

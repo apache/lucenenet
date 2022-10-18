@@ -51,7 +51,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
         }
 
-        private class FunctionValuesAnonymousClass : FunctionValues
+        private sealed class FunctionValuesAnonymousClass : FunctionValues
         {
             private readonly BytesRefFieldSource outerInstance;
 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
         }
 
-        private class DocTermsIndexDocValuesAnonymousClass : DocTermsIndexDocValues
+        private sealed class DocTermsIndexDocValuesAnonymousClass : DocTermsIndexDocValues
         {
             private readonly BytesRefFieldSource outerInstance;
 

@@ -865,7 +865,7 @@ namespace Lucene.Net.Facet.Taxonomy
             tr.Dispose();
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestTaxonomyCombined outerInstance;
 

@@ -337,7 +337,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             return snippets;
         }
 
-        private class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
+        private sealed class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
         {
             private readonly string[] fields;
             private readonly int[] maxPassages;
@@ -843,7 +843,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// we rewrite against an empty indexreader: as we don't want things like
         /// rangeQueries that don't summarize the document
         /// </summary>
-        private class DocsAndPositionsEnumAnonymousClass : DocsAndPositionsEnum
+        private sealed class DocsAndPositionsEnumAnonymousClass : DocsAndPositionsEnum
         {
             public override int NextPosition()
             {

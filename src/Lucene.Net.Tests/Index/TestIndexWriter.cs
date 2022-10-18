@@ -1038,7 +1038,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TokenStreamAnonymousClass : TokenStream
+        private sealed class TokenStreamAnonymousClass : TokenStream
         {
             private readonly TestIndexWriter outerInstance;
 
@@ -2319,7 +2319,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class AnalyzerAnonymousClass : Analyzer
+        private sealed class AnalyzerAnonymousClass : Analyzer
         {
             private readonly TestIndexWriter outerInstance;
 
@@ -2664,7 +2664,7 @@ namespace Lucene.Net.Index
             }
 
             /*
-          private class EnumeratorAnonymousClass : IEnumerator<IEnumerable<IndexableField>>
+          private sealed class EnumeratorAnonymousClass : IEnumerator<IEnumerable<IndexableField>>
           {
               private readonly RandomFailingFieldEnumerable outerInstance;
 
@@ -2838,7 +2838,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TestPointAnonymousClass : ITestPoint
+        private sealed class TestPointAnonymousClass : ITestPoint
         {
             private readonly TestIndexWriter outerInstance;
 

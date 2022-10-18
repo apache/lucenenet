@@ -1267,7 +1267,7 @@ namespace Lucene.Net.Index
             DoTestNumericsVsStoredFields(new Int64ProducerAnonymousClass(minValue, maxValue));
         }
 
-        private class Int64ProducerAnonymousClass : Int64Producer
+        private sealed class Int64ProducerAnonymousClass : Int64Producer
         {
             private readonly long minValue;
             private readonly long maxValue;
@@ -1349,7 +1349,7 @@ namespace Lucene.Net.Index
             DoTestMissingVsFieldCache(new Int64ProducerAnonymousClass2(minValue, maxValue));
         }
 
-        private class Int64ProducerAnonymousClass2 : Int64Producer
+        private sealed class Int64ProducerAnonymousClass2 : Int64Producer
         {
             private readonly long minValue;
             private readonly long maxValue;
@@ -2696,7 +2696,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class Int64ProducerAnonymousClass3 : Int64Producer
+        private sealed class Int64ProducerAnonymousClass3 : Int64Producer
         {
             private readonly long min;
             private readonly long mul;
@@ -2732,7 +2732,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class Int64ProducerAnonymousClass4 : Int64Producer
+        private sealed class Int64ProducerAnonymousClass4 : Int64Producer
         {
             internal override long Next()
             {
@@ -3256,7 +3256,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly DirectoryReader ir;
             private readonly CountdownEvent startingGun;
@@ -3392,7 +3392,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousClass2 : ThreadJob
+        private sealed class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly DirectoryReader ir;
             private readonly CountdownEvent startingGun;

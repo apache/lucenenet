@@ -377,7 +377,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestIndexWriterDelete outerInstance;
 
@@ -939,7 +939,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailureAnonymousClass : Failure
+        private sealed class FailureAnonymousClass : Failure
         {
             private readonly TestIndexWriterDelete outerInstance;
 
@@ -1054,7 +1054,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailureAnonymousClass2 : Failure
+        private sealed class FailureAnonymousClass2 : Failure
         {
             private readonly TestIndexWriterDelete outerInstance;
 
@@ -1339,7 +1339,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class IndexWriterAnonymousClass : IndexWriter
+        private sealed class IndexWriterAnonymousClass : IndexWriter
         {
             private readonly TestIndexWriterDelete outerInstance;
 

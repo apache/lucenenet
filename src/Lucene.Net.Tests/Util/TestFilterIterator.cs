@@ -136,7 +136,7 @@ namespace Lucene.Net.Util
         }
 
         [Obsolete("This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private class FilterIteratorAnonymousClass : FilterIterator<string>
+        private sealed class FilterIteratorAnonymousClass : FilterIterator<string>
         {
             public FilterIteratorAnonymousClass(IEnumerator<string> iterator)
                 : base(iterator)
@@ -160,7 +160,7 @@ namespace Lucene.Net.Util
         }
 
         [Obsolete("This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private class FilterIteratorAnonymousClass2 : FilterIterator<string>
+        private sealed class FilterIteratorAnonymousClass2 : FilterIterator<string>
         {
             public FilterIteratorAnonymousClass2(IEnumerator<string> iterator)
                 : base(iterator)
@@ -185,7 +185,7 @@ namespace Lucene.Net.Util
         }
 
         [Obsolete("This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private class FilterIteratorAnonymousClass3 : FilterIterator<string>
+        private sealed class FilterIteratorAnonymousClass3 : FilterIterator<string>
         {
             public FilterIteratorAnonymousClass3(IEnumerator<string> iterator)
                 : base(iterator)
@@ -209,7 +209,7 @@ namespace Lucene.Net.Util
         }
 
         [Obsolete("This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private class FilterIteratorAnonymousClass4 : FilterIterator<string>
+        private sealed class FilterIteratorAnonymousClass4 : FilterIterator<string>
         {
             public FilterIteratorAnonymousClass4(IEnumerator<string> iterator)
                 : base(iterator)
@@ -234,7 +234,7 @@ namespace Lucene.Net.Util
         }
 
         [Obsolete("This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private class FilterIteratorAnonymousClass5 : FilterIterator<string>
+        private sealed class FilterIteratorAnonymousClass5 : FilterIterator<string>
         {
             public FilterIteratorAnonymousClass5(IEnumerator<string> iterator)
                 : base(iterator)
@@ -262,7 +262,7 @@ namespace Lucene.Net.Util
         }
 
         [Obsolete("This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private class FilterIteratorAnonymousClass6 : FilterIterator<string>
+        private sealed class FilterIteratorAnonymousClass6 : FilterIterator<string>
         {
             public FilterIteratorAnonymousClass6(IEnumerator<string> iterator)
                 : base(iterator)
@@ -290,7 +290,7 @@ namespace Lucene.Net.Util
         }
 
         [Obsolete("This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private class FilterIteratorAnonymousClass7 : FilterIterator<string>
+        private sealed class FilterIteratorAnonymousClass7 : FilterIterator<string>
         {
             public FilterIteratorAnonymousClass7(IEnumerator<string> iterator)
                 : base(iterator)

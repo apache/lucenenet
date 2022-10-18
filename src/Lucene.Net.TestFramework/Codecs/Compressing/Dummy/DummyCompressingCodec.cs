@@ -30,7 +30,7 @@ namespace Lucene.Net.Codecs.Compressing.Dummy
     {
         public static readonly CompressionMode DUMMY = new CompressionModeAnonymousClass();
 
-        private class CompressionModeAnonymousClass : CompressionMode
+        private sealed class CompressionModeAnonymousClass : CompressionMode
         {
             public CompressionModeAnonymousClass()
             { }
@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.Compressing.Dummy
 
         private static readonly Decompressor DUMMY_DECOMPRESSOR = new DecompressorAnonymousClass();
 
-        private class DecompressorAnonymousClass : Decompressor
+        private sealed class DecompressorAnonymousClass : Decompressor
         {
             public override void Decompress(DataInput @in, int originalLength, int offset, int length, BytesRef bytes)
             {
@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs.Compressing.Dummy
 
         private static readonly Compressor DUMMY_COMPRESSOR = new CompressorAnonymousClass();
 
-        private class CompressorAnonymousClass : Compressor
+        private sealed class CompressorAnonymousClass : Compressor
         {
             public override void Compress(byte[] bytes, int off, int len, DataOutput @out)
             {

@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
             return new DocTermOrdsRangeFilterAnonymousClass(field, lowerVal, upperVal, includeLower, includeUpper);
         }
 
-        private class DocTermOrdsRangeFilterAnonymousClass : DocTermOrdsRangeFilter
+        private sealed class DocTermOrdsRangeFilterAnonymousClass : DocTermOrdsRangeFilter
         {
             public DocTermOrdsRangeFilterAnonymousClass(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
                 : base(field, lowerVal, upperVal, includeLower, includeUpper)

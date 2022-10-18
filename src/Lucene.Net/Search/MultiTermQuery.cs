@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="MultiTermRewriteMethod"/>
         public static readonly RewriteMethod CONSTANT_SCORE_FILTER_REWRITE = new RewriteMethodAnonymousClass();
 
-        private class RewriteMethodAnonymousClass : RewriteMethod
+        private sealed class RewriteMethodAnonymousClass : RewriteMethod
         {
             public RewriteMethodAnonymousClass()
             {
@@ -244,7 +244,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static readonly RewriteMethod CONSTANT_SCORE_AUTO_REWRITE_DEFAULT = new ConstantScoreAutoRewriteAnonymousClass();
 
-        private class ConstantScoreAutoRewriteAnonymousClass : ConstantScoreAutoRewrite
+        private sealed class ConstantScoreAutoRewriteAnonymousClass : ConstantScoreAutoRewrite
         {
             public ConstantScoreAutoRewriteAnonymousClass()
             {

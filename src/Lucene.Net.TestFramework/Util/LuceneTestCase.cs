@@ -3171,7 +3171,7 @@ namespace Lucene.Net.Util
             return Random.NextGaussian();
         }
 
-        private class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
+        private sealed class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
         {
             private readonly LimitedConcurrencyLevelTaskScheduler ex;
 

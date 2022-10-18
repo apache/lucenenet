@@ -291,7 +291,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly Analyzer analyzer;
             private readonly IDictionary<string, BytesRef> map;

@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
             dir1.Dispose();
         }
 
-        private class ReaderClosedListenerAnonymousClass : IReaderClosedListener
+        private sealed class ReaderClosedListenerAnonymousClass : IReaderClosedListener
         {
             private readonly TestParallelCompositeReader outerInstance;
 
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
             dir1.Dispose();
         }
 
-        private class ReaderClosedListenerAnonymousClass2 : IReaderClosedListener
+        private sealed class ReaderClosedListenerAnonymousClass2 : IReaderClosedListener
         {
             private readonly TestParallelCompositeReader outerInstance;
 

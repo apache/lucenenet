@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
             return new EnumerableAnonymousClass(this);
         }
 
-        private class EnumerableAnonymousClass : IEnumerable<Term>
+        private sealed class EnumerableAnonymousClass : IEnumerable<Term>
         {
             private readonly CoalescedUpdates outerInstance;
 
@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
             }
 
-            public virtual IEnumerator<Term> GetEnumerator()
+            public IEnumerator<Term> GetEnumerator()
             {
                 IEnumerator<Term>[] subs = new IEnumerator<Term>[outerInstance.iterables.Count];
                 for (int i = 0; i < outerInstance.iterables.Count; i++)
@@ -105,7 +105,7 @@ namespace Lucene.Net.Index
             return new EnumerableAnonymousClass2(this);
         }
 
-        private class EnumerableAnonymousClass2 : IEnumerable<QueryAndLimit>
+        private sealed class EnumerableAnonymousClass2 : IEnumerable<QueryAndLimit>
         {
             private readonly CoalescedUpdates outerInstance;
 
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
             }
 
-            public virtual IEnumerator<QueryAndLimit> GetEnumerator()
+            public IEnumerator<QueryAndLimit> GetEnumerator()
             {
                 return new EnumeratorAnonymousClass(this);
             }
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-            private class EnumeratorAnonymousClass : IEnumerator<QueryAndLimit>
+            private sealed class EnumeratorAnonymousClass : IEnumerator<QueryAndLimit>
             {
                 private readonly EnumerableAnonymousClass2 outerInstance;
                 private readonly IEnumerator<KeyValuePair<Query, int>> iter;

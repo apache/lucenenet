@@ -127,7 +127,7 @@ namespace Lucene.Net.Search.Spans
             Assert.AreEqual(2, terms.Count);
         }
 
-        private class SpanTermQueryAnonymousClass : SpanTermQuery
+        private sealed class SpanTermQueryAnonymousClass : SpanTermQuery
         {
             private readonly TestFieldMaskingSpanQuery outerInstance;
 

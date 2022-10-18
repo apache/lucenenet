@@ -178,7 +178,7 @@ namespace Lucene.Net.Util
             return compact;
         }
 
-        private class IntroSorterAnonymousClass : IntroSorter
+        private sealed class IntroSorterAnonymousClass : IntroSorter
         {
             private readonly BytesRefHash outerInstance;
 

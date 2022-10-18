@@ -82,7 +82,7 @@ namespace Lucene.Net.Util.Packed
             return new DocIdSetIteratorAnonymousClass(this);
         }
 
-        private class DocIdSetIteratorAnonymousClass : DocIdSetIterator
+        private sealed class DocIdSetIteratorAnonymousClass : DocIdSetIterator
         {
             public DocIdSetIteratorAnonymousClass(EliasFanoDocIdSet outerInstance)
             {

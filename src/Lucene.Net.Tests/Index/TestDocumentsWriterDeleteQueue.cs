@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
             Assert.IsFalse(queue.AnyChanges(), "all changes applied");
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestDocumentsWriterDeleteQueue outerInstance;
 

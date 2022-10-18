@@ -35,7 +35,7 @@ namespace Lucene.Net.Codecs
             return new EnumerableAnonymousClass(iterable);
         }
 
-        private class EnumerableAnonymousClass : IEnumerable<BytesRef>
+        private sealed class EnumerableAnonymousClass : IEnumerable<BytesRef>
         {
             private readonly IEnumerable<BytesRef> iterable;
 
@@ -54,7 +54,7 @@ namespace Lucene.Net.Codecs
                 return GetEnumerator();
             }
 
-            private class EnumeratorAnonymousClass : IEnumerator<BytesRef>
+            private sealed class EnumeratorAnonymousClass : IEnumerator<BytesRef>
             {
                 public EnumeratorAnonymousClass(EnumerableAnonymousClass outerInstance)
                 {
@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs
             return new EnumerableAnonymousClass2(iterable);
         }
 
-        private class EnumerableAnonymousClass2 : IEnumerable<long?>
+        private sealed class EnumerableAnonymousClass2 : IEnumerable<long?>
         {
             private readonly IEnumerable<long?> iterable;
 
@@ -120,7 +120,7 @@ namespace Lucene.Net.Codecs
             IEnumerator IEnumerable.GetEnumerator()
                 => GetEnumerator();
 
-            private class EnumeratorAnonymousClass2 : IEnumerator<long?>
+            private sealed class EnumeratorAnonymousClass2 : IEnumerator<long?>
             {
                 public EnumeratorAnonymousClass2(EnumerableAnonymousClass2 outerInstance)
                 {
@@ -163,7 +163,7 @@ namespace Lucene.Net.Codecs
             return new EnumerableAnonymousClass3(iterable);
         }
 
-        private class EnumerableAnonymousClass3 : IEnumerable<long?>
+        private sealed class EnumerableAnonymousClass3 : IEnumerable<long?>
         {
             private readonly IEnumerable<long?> iterable;
 
@@ -180,7 +180,7 @@ namespace Lucene.Net.Codecs
             IEnumerator IEnumerable.GetEnumerator()
                 => GetEnumerator();
 
-            private class EnumeratorAnonymousClass3 : IEnumerator<long?>
+            private sealed class EnumeratorAnonymousClass3 : IEnumerator<long?>
             {
                 public EnumeratorAnonymousClass3(EnumerableAnonymousClass3 outerInstance)
                 {

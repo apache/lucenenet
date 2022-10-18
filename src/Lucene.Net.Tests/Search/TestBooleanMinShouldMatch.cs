@@ -368,7 +368,7 @@ namespace Lucene.Net.Search
             // System.out.println("Total hits:"+tot);
         }
 
-        private class CallbackAnonymousClass : TestBoolean2.ICallback
+        private sealed class CallbackAnonymousClass : TestBoolean2.ICallback
         {
             private readonly TestBooleanMinShouldMatch outerInstance;
 
@@ -382,7 +382,7 @@ namespace Lucene.Net.Search
                 this.vals = vals;
             }
 
-            public virtual void PostCreate(BooleanQuery q)
+            public void PostCreate(BooleanQuery q)
             {
                 BooleanClause[] c = q.GetClauses();
                 int opt = 0;
@@ -459,7 +459,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class DefaultSimilarityAnonymousClass : DefaultSimilarity
+        private sealed class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
             private readonly TestBooleanMinShouldMatch outerInstance;
 
@@ -496,7 +496,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class DefaultSimilarityAnonymousClass2 : DefaultSimilarity
+        private sealed class DefaultSimilarityAnonymousClass2 : DefaultSimilarity
         {
             private readonly TestBooleanMinShouldMatch outerInstance;
 

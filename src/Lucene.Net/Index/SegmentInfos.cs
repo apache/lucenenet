@@ -625,7 +625,7 @@ namespace Lucene.Net.Index
             new FindSegmentsFileAnonymousClass(this, directory).Run();
         }
 
-        private class FindSegmentsFileAnonymousClass : FindSegmentsFile
+        private sealed class FindSegmentsFileAnonymousClass : FindSegmentsFile
         {
             private readonly SegmentInfos outerInstance;
 

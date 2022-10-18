@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Search
 {
@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
 
         public override sealed IBits Bits => (m_acceptDocs is null) ? (IBits)new BitsAnonymousClass(this) : new BitsAnonymousClass2(this);
 
-        private class BitsAnonymousClass : IBits
+        private sealed class BitsAnonymousClass : IBits
         {
             private readonly FieldCacheDocIdSet outerInstance;
 
@@ -78,15 +78,15 @@ namespace Lucene.Net.Search
                 this.outerInstance = outerInstance;
             }
 
-            public virtual bool Get(int docid)
+            public bool Get(int docid)
             {
                 return outerInstance.MatchDoc(docid);
             }
 
-            public virtual int Length => outerInstance.m_maxDoc;
+            public int Length => outerInstance.m_maxDoc;
         }
 
-        private class BitsAnonymousClass2 : IBits
+        private sealed class BitsAnonymousClass2 : IBits
         {
             private readonly FieldCacheDocIdSet outerInstance;
 
@@ -95,12 +95,12 @@ namespace Lucene.Net.Search
                 this.outerInstance = outerInstance;
             }
 
-            public virtual bool Get(int docid)
+            public bool Get(int docid)
             {
                 return outerInstance.MatchDoc(docid) && outerInstance.m_acceptDocs.Get(docid);
             }
 
-            public virtual int Length => outerInstance.m_maxDoc;
+            public int Length => outerInstance.m_maxDoc;
         }
 
         public override sealed DocIdSetIterator GetIterator()
@@ -123,7 +123,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class DocIdSetIteratorAnonymousClass : DocIdSetIterator
+        private sealed class DocIdSetIteratorAnonymousClass : DocIdSetIterator
         {
             private readonly FieldCacheDocIdSet outerInstance;
 
@@ -168,7 +168,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class FilteredDocIdSetIteratorAnonymousClass : FilteredDocIdSetIterator
+        private sealed class FilteredDocIdSetIteratorAnonymousClass : FilteredDocIdSetIterator
         {
             private readonly FieldCacheDocIdSet outerInstance;
 
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class DocIdSetIteratorAnonymousClass2 : DocIdSetIterator
+        private sealed class DocIdSetIteratorAnonymousClass2 : DocIdSetIterator
         {
             private readonly FieldCacheDocIdSet outerInstance;
 

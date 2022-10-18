@@ -343,7 +343,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             Assert.AreEqual("4567890123456" + longTestString, t.ToString());
         }
 
-        private class CharSequenceAnonymousClass : ICharSequence
+        private sealed class CharSequenceAnonymousClass : ICharSequence
         {
             private readonly TestCharTermAttributeImpl outerInstance;
 

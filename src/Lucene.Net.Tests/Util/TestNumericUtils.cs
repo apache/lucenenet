@@ -276,7 +276,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class LongRangeBuilderAnonymousClass : NumericUtils.Int64RangeBuilder
+        private sealed class LongRangeBuilderAnonymousClass : NumericUtils.Int64RangeBuilder
         {
             private readonly long lower;
             private readonly long upper;
@@ -469,7 +469,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class IntRangeBuilderAnonymousClass : NumericUtils.Int32RangeBuilder
+        private sealed class IntRangeBuilderAnonymousClass : NumericUtils.Int32RangeBuilder
         {
             private readonly int lower;
             private readonly int upper;

@@ -151,7 +151,7 @@ namespace Lucene.Net.Search
             return new FieldComparerAnonymousClass(this, fieldname, numHits);
         }
 
-        private class FieldComparerAnonymousClass : FieldComparer<J2N.Numerics.Int32>
+        private sealed class FieldComparerAnonymousClass : FieldComparer<J2N.Numerics.Int32>
         {
             private readonly ElevationComparerSource outerInstance;
 

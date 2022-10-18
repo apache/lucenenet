@@ -441,7 +441,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class PriorityQueueAnonymousClass : PriorityQueue<FileAndTop>
+        private sealed class PriorityQueueAnonymousClass : PriorityQueue<FileAndTop>
         {
             private readonly OfflineSorter outerInstance;
 

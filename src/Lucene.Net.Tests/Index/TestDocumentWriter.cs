@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
             reader.Dispose();
         }
 
-        private class AnalyzerAnonymousClass : Analyzer
+        private sealed class AnalyzerAnonymousClass : Analyzer
         {
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
@@ -182,7 +182,7 @@ namespace Lucene.Net.Index
             reader.Dispose();
         }
 
-        private class AnalyzerAnonymousClass2 : Analyzer
+        private sealed class AnalyzerAnonymousClass2 : Analyzer
         {
             private readonly TestDocumentWriter outerInstance;
 
@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
                 return new TokenStreamComponents(tokenizer, new TokenFilterAnonymousClass(this, tokenizer));
             }
 
-            private class TokenFilterAnonymousClass : TokenFilter
+            private sealed class TokenFilterAnonymousClass : TokenFilter
             {
                 private readonly AnalyzerAnonymousClass2 outerInstance;
 
@@ -292,7 +292,7 @@ namespace Lucene.Net.Index
             reader.Dispose();
         }
 
-        private class TokenStreamAnonymousClass : TokenStream
+        private sealed class TokenStreamAnonymousClass : TokenStream
         {
             private readonly TestDocumentWriter outerInstance;
 

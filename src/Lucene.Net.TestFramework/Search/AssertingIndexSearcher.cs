@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
             return new AssertingWeightAnonymousClass(random, w);
         }
 
-        private class AssertingWeightAnonymousClass : AssertingWeight
+        private sealed class AssertingWeightAnonymousClass : AssertingWeight
         {
             public AssertingWeightAnonymousClass(Random random, Weight w)
                 : base(random, w)

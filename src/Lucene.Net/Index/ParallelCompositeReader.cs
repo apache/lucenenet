@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ParallelAtomicReaderAnonymousClass : ParallelAtomicReader
+        private sealed class ParallelAtomicReaderAnonymousClass : ParallelAtomicReader
         {
             public ParallelAtomicReaderAnonymousClass(AtomicReader[] atomicSubs, AtomicReader[] storedSubs)
                 : base(true, atomicSubs, storedSubs)
@@ -180,7 +180,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ParallelCompositeReaderAnonymousClass : ParallelCompositeReader
+        private sealed class ParallelCompositeReaderAnonymousClass : ParallelCompositeReader
         {
             public ParallelCompositeReaderAnonymousClass(CompositeReader[] compositeSubs, CompositeReader[] storedSubs)
                 : base(true, compositeSubs, storedSubs)

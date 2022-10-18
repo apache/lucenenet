@@ -1581,7 +1581,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class IntParserAnonymousClass : FieldCache.IInt32Parser
+        private sealed class IntParserAnonymousClass : FieldCache.IInt32Parser
         {
             private readonly TestSort outerInstance;
 
@@ -1643,7 +1643,7 @@ namespace Lucene.Net.Search
         }
 
 #pragma warning disable 612, 618
-        private class ByteParserAnonymousClass : FieldCache.IByteParser
+        private sealed class ByteParserAnonymousClass : FieldCache.IByteParser
 #pragma warning restore 612, 618
         {
             private readonly TestSort outerInstance;
@@ -1703,7 +1703,7 @@ namespace Lucene.Net.Search
         }
 
 #pragma warning disable 612, 618
-        private class ShortParserAnonymousClass : FieldCache.IInt16Parser
+        private sealed class ShortParserAnonymousClass : FieldCache.IInt16Parser
 #pragma warning restore 612, 618
         {
             private readonly TestSort outerInstance;
@@ -1765,7 +1765,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class LongParserAnonymousClass : FieldCache.IInt64Parser
+        private sealed class LongParserAnonymousClass : FieldCache.IInt64Parser
         {
             private readonly TestSort outerInstance;
 
@@ -1826,7 +1826,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class FloatParserAnonymousClass : FieldCache.ISingleParser
+        private sealed class FloatParserAnonymousClass : FieldCache.ISingleParser
         {
             private readonly TestSort outerInstance;
 
@@ -1887,7 +1887,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class DoubleParserAnonymousClass : FieldCache.IDoubleParser
+        private sealed class DoubleParserAnonymousClass : FieldCache.IDoubleParser
         {
             private readonly TestSort outerInstance;
 

@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, searcher.Search(query, 5).TotalHits);
         }
 
-        private class AutomatonProviderAnonymousClass : IAutomatonProvider
+        private sealed class AutomatonProviderAnonymousClass : IAutomatonProvider
         {
             private readonly TestRegexpQuery outerInstance;
 

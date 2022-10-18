@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
                 return new DocMapAnonymousClass();
             }
 
-            private class DocMapAnonymousClass : DocMap
+            private sealed class DocMapAnonymousClass : DocMap
             {
                 public override int Map(int docID)
                 {

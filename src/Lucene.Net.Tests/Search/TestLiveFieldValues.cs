@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class SearcherFactoryAnonymousClass : SearcherFactory
+        private sealed class SearcherFactoryAnonymousClass : SearcherFactory
         {
             public override IndexSearcher NewSearcher(IndexReader r)
             {
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class LiveFieldValuesAnonymousClass : LiveFieldValues<IndexSearcher, int?>
+        private sealed class LiveFieldValuesAnonymousClass : LiveFieldValues<IndexSearcher, int?>
         {
             public LiveFieldValuesAnonymousClass(SearcherManager mgr, int missing)
                 : base(mgr, missing)
@@ -132,7 +132,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly IndexWriter w;
             private readonly SearcherManager mgr;

@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
             return new EnumerableAnonymousClass(this);
         }
 
-        private class EnumerableAnonymousClass : IEnumerable<Term>
+        private sealed class EnumerableAnonymousClass : IEnumerable<Term>
         {
             private readonly FrozenBufferedUpdates outerInstance;
 
@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
             }
 
-            public virtual IEnumerator<Term> GetEnumerator()
+            public IEnumerator<Term> GetEnumerator()
             {
                 return outerInstance.terms.GetEnumerator();
             }
@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
             return new EnumerableAnonymousClass2(this);
         }
 
-        private class EnumerableAnonymousClass2 : IEnumerable<QueryAndLimit>
+        private sealed class EnumerableAnonymousClass2 : IEnumerable<QueryAndLimit>
         {
             private readonly FrozenBufferedUpdates outerInstance;
 
@@ -177,7 +177,7 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
             }
 
-            public virtual IEnumerator<QueryAndLimit> GetEnumerator()
+            public IEnumerator<QueryAndLimit> GetEnumerator()
             {
                 return new EnumeratorAnonymousClass(this);
             }
@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-            private class EnumeratorAnonymousClass : IEnumerator<QueryAndLimit>
+            private sealed class EnumeratorAnonymousClass : IEnumerator<QueryAndLimit>
             {
                 private readonly EnumerableAnonymousClass2 outerInstance;
                 private readonly int upto;
@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
                     i = 0;
                 }
 
-                public virtual bool MoveNext()
+                public bool MoveNext()
                 {
                     if (i < upto)
                     {
@@ -212,11 +212,11 @@ namespace Lucene.Net.Index
                     return false;
                 }
 
-                public virtual QueryAndLimit Current => current;
+                public QueryAndLimit Current => current;
 
                 object IEnumerator.Current => Current;
 
-                public virtual void Reset()
+                public void Reset()
                 {
                     throw UnsupportedOperationException.Create();
                 }

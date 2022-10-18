@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.Lucene45
     {
         private readonly FieldInfosFormat fieldInfosFormat = new Lucene42FieldInfosFormatAnonymousClass();
 
-        private class Lucene42FieldInfosFormatAnonymousClass : Lucene42FieldInfosFormat
+        private sealed class Lucene42FieldInfosFormatAnonymousClass : Lucene42FieldInfosFormat
         {
             public override FieldInfosWriter FieldInfosWriter
             {

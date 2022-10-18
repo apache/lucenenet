@@ -578,7 +578,7 @@ namespace Lucene.Net.Index.Memory
             }
         }
 
-        private class CollectorAnonymousClass : ICollector
+        private sealed class CollectorAnonymousClass : ICollector
         {
             private readonly float[] scores;
 
@@ -589,19 +589,19 @@ namespace Lucene.Net.Index.Memory
 
             private Scorer scorer;
 
-            public virtual void Collect(int doc)
+            public void Collect(int doc)
             {
                 scores[0] = scorer.GetScore();
             }
 
-            public virtual void SetScorer(Scorer scorer)
+            public void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder => true;
+            public bool AcceptsDocsOutOfOrder => true;
 
-            public virtual void SetNextReader(AtomicReaderContext context)
+            public void SetNextReader(AtomicReaderContext context)
             {
             }
         }

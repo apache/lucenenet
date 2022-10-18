@@ -54,7 +54,7 @@ namespace Lucene.Net.Search.Highlight
             CheckOneTerm(new AnalyzerAnonymousClass(), "llenges", "llenges");
         }
 
-        private class AnalyzerAnonymousClass : Analyzer
+        private sealed class AnalyzerAnonymousClass : Analyzer
         {
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {

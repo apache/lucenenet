@@ -91,7 +91,7 @@ namespace Lucene.Net.Search
             return q;
         }
 
-        private class TermCollectorAnonymousClass : TermCollector
+        private sealed class TermCollectorAnonymousClass : TermCollector
         {
             private readonly int maxSize;
             private readonly JCG.PriorityQueue<ScoreTerm> stQueue;

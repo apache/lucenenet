@@ -279,7 +279,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        private class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
+        private sealed class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
         {
             private readonly Analyzer @delegate;
             public AnalyzerWrapperAnonymousClass(Analyzer @delegate)

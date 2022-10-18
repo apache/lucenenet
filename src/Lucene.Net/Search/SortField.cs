@@ -152,7 +152,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static readonly object STRING_FIRST = new ObjectAnonymousClass();
 
-        private class ObjectAnonymousClass : object
+        private sealed class ObjectAnonymousClass : object
         {
             public ObjectAnonymousClass()
             {
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static readonly object STRING_LAST = new ObjectAnonymousClass2();
 
-        private class ObjectAnonymousClass2 : object
+        private sealed class ObjectAnonymousClass2 : object
         {
             public ObjectAnonymousClass2()
             {

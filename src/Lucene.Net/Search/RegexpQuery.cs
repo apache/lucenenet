@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
         /// </summary>
         private static readonly IAutomatonProvider defaultProvider = new AutomatonProviderAnonymousClass();
 
-        private class AutomatonProviderAnonymousClass : IAutomatonProvider
+        private sealed class AutomatonProviderAnonymousClass : IAutomatonProvider
         {
             public Automaton GetAutomaton(string name)
             {

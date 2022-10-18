@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private readonly PostingsFormat postingsFormat;
 
-        private class PerFieldPostingsFormatAnonymousClass : PerFieldPostingsFormat
+        private sealed class PerFieldPostingsFormatAnonymousClass : PerFieldPostingsFormat
         {
             private readonly Lucene40Codec outerInstance;
 

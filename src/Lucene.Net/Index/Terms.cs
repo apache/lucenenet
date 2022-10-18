@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class AutomatonTermsEnumAnonymousClass : AutomatonTermsEnum
+        private sealed class AutomatonTermsEnumAnonymousClass : AutomatonTermsEnum
         {
             private readonly BytesRef startTerm;
 

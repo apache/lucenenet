@@ -380,7 +380,7 @@ namespace Lucene.Net.Search
             indexStore.Dispose();
         }
 
-        private class DefaultSimilarityAnonymousClass : DefaultSimilarity
+        private sealed class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
             private readonly TestMultiPhraseQuery outerInstance;
 

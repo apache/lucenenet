@@ -110,7 +110,7 @@ namespace Lucene.Net.Index.Memory
                     return new IteratorAnonymousClass(this);
                 }
 
-                private class IteratorAnonymousClass : IEnumerator<string>
+                private sealed class IteratorAnonymousClass : IEnumerator<string>
                 {
                     private readonly MemoryFields outerInstance;
 
@@ -166,7 +166,7 @@ namespace Lucene.Net.Index.Memory
                     }
                 }
 
-                private class TermsAnonymousClass : Terms
+                private sealed class TermsAnonymousClass : Terms
                 {
                     private readonly MemoryFields outerInstance;
 

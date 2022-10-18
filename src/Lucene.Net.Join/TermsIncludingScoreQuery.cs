@@ -119,7 +119,7 @@ namespace Lucene.Net.Search.Join
             return new WeightAnonymousClass(this, originalWeight);
         }
 
-        private class WeightAnonymousClass : Weight
+        private sealed class WeightAnonymousClass : Weight
         {
             private readonly TermsIncludingScoreQuery outerInstance;
 

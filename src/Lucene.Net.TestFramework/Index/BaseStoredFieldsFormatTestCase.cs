@@ -501,7 +501,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly int numDocs;
             private readonly DirectoryReader rd;

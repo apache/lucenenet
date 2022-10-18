@@ -170,7 +170,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 return new DoubleDocValuesAnonymousClass(this, scorer);
             }
 
-            private class DoubleDocValuesAnonymousClass : DoubleDocValues
+            private sealed class DoubleDocValuesAnonymousClass : DoubleDocValues
             {
                 private readonly Scorer scorer;
 

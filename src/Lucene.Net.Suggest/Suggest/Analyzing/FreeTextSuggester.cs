@@ -263,7 +263,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
+        private sealed class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
         {
             private readonly FreeTextSuggester outerInstance;
             private readonly Analyzer other;
@@ -811,7 +811,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private class TopNSearcherAnonymousClass : Util.Fst.Util.TopNSearcher<Int64>
+        private sealed class TopNSearcherAnonymousClass : Util.Fst.Util.TopNSearcher<Int64>
         {
             private readonly FreeTextSuggester outerInstance;
 

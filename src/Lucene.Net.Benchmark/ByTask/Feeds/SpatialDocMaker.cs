@@ -85,7 +85,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         // LUCENENET specific: since this[string] is not virtual in .NET, this full implementation
         // of IDictionary<string, string> is required to override methods to get a value by key
-        private class DictionaryAnonymousClass : IDictionary<string, string>
+        private sealed class DictionaryAnonymousClass : IDictionary<string, string>
         {
             private readonly Config config;
             public DictionaryAnonymousClass(Config config)
@@ -155,7 +155,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             return strategy;
         }
 
-        private class RecursivePrefixTreeStrategyAnonymousClass : RecursivePrefixTreeStrategy
+        private sealed class RecursivePrefixTreeStrategyAnonymousClass : RecursivePrefixTreeStrategy
         {
             public RecursivePrefixTreeStrategyAnonymousClass(SpatialPrefixTree grid, string fieldName, Config config)
                 : base(grid, fieldName)
@@ -192,7 +192,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             return new ShapeConverterAnonymousClass(spatialStrategy, radiusDegrees, plusMinus, bbox);
         }
 
-        private class ShapeConverterAnonymousClass : IShapeConverter
+        private sealed class ShapeConverterAnonymousClass : IShapeConverter
         {
             private readonly SpatialStrategy spatialStrategy;
             private readonly double radiusDegrees;

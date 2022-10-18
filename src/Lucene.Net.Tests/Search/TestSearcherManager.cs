@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
             lifetimeMGR = new SearcherLifetimeManager();
         }
 
-        private class SearcherFactoryAnonymousClass : SearcherFactory
+        private sealed class SearcherFactoryAnonymousClass : SearcherFactory
         {
             private readonly TestSearcherManager outerInstance;
 
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
             reopenThread.Join();
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestSearcherManager outerInstance;
 
@@ -331,7 +331,7 @@ namespace Lucene.Net.Search
             //}
         }
 
-        private class SearcherFactoryAnonymousClass2 : SearcherFactory
+        private sealed class SearcherFactoryAnonymousClass2 : SearcherFactory
         {
             private readonly TestSearcherManager outerInstance;
 
@@ -367,7 +367,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class RunnableAnonymousClass //: IThreadRunnable
+        private sealed class RunnableAnonymousClass //: IThreadRunnable
         {
             private readonly TestSearcherManager outerInstance;
 
@@ -515,7 +515,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class RefreshListenerAnonymousClass : ReferenceManager.IRefreshListener
+        private sealed class RefreshListenerAnonymousClass : ReferenceManager.IRefreshListener
         {
             private readonly TestSearcherManager outerInstance;
 
@@ -573,7 +573,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class SearcherFactoryAnonymousClass3 : SearcherFactory
+        private sealed class SearcherFactoryAnonymousClass3 : SearcherFactory
         {
             private readonly TestSearcherManager outerInstance;
 
@@ -613,7 +613,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class ThreadAnonymousClass2 : ThreadJob
+        private sealed class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly TestSearcherManager outerInstance;
 

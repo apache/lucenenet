@@ -420,7 +420,7 @@ namespace Lucene.Net.Search
                 termComp = Comparer;
             }
 
-            private class Int64RangeBuilderAnonymousClass : NumericUtils.Int64RangeBuilder
+            private sealed class Int64RangeBuilderAnonymousClass : NumericUtils.Int64RangeBuilder
             {
                 private readonly NumericRangeTermsEnum outerInstance;
 
@@ -436,7 +436,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            private class Int32RangeBuilderAnonymousClass : NumericUtils.Int32RangeBuilder
+            private sealed class Int32RangeBuilderAnonymousClass : NumericUtils.Int32RangeBuilder
             {
                 private readonly NumericRangeTermsEnum outerInstance;
 

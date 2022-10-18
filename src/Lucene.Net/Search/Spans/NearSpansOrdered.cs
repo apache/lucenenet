@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.Spans
         // perform better since it has a lower overhead than TimSorter for small arrays
         private readonly InPlaceMergeSorter sorter;
 
-        private class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
+        private sealed class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
         {
             private readonly NearSpansOrdered outerInstance;
 

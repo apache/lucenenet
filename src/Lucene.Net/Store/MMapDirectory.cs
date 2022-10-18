@@ -193,7 +193,7 @@ namespace Lucene.Net.Store
             return new IndexInputSlicerAnonymousClass(this, full);
         }
 
-        private class IndexInputSlicerAnonymousClass : IndexInputSlicer
+        private sealed class IndexInputSlicerAnonymousClass : IndexInputSlicer
         {
             private readonly MMapDirectory outerInstance;
 

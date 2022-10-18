@@ -81,7 +81,7 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Dispose(writer, taxoWriter, reader, indexDir, taxoDir);
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestCachedOrdinalsReader outerInstance;
 

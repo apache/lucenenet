@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
                 fieldType = new IndexableFieldTypeAnonymousClass(this);
             }
 
-            private class IndexableFieldTypeAnonymousClass : IIndexableFieldType
+            private sealed class IndexableFieldTypeAnonymousClass : IIndexableFieldType
             {
                 private MyField outerInstance;
 
@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class EnumerableAnonymousClass : IEnumerable<IIndexableField>
+        private sealed class EnumerableAnonymousClass : IEnumerable<IIndexableField>
         {
             private readonly TestIndexableField outerInstance;
 
@@ -391,7 +391,7 @@ namespace Lucene.Net.Index
                 this.finalBaseCount = finalBaseCount;
             }
 
-            public virtual IEnumerator<IIndexableField> GetEnumerator()
+            public IEnumerator<IIndexableField> GetEnumerator()
             {
                 return new IteratorAnonymousClass(this, outerInstance);
             }
@@ -401,7 +401,7 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousClass : IEnumerator<IIndexableField>
+            private sealed class IteratorAnonymousClass : IEnumerator<IIndexableField>
             {
                 private readonly EnumerableAnonymousClass outerInstance;
                 private readonly TestIndexableField outerTextIndexableField;

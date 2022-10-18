@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class IndexCommitAnonymousClass : IndexCommit
+        private sealed class IndexCommitAnonymousClass : IndexCommit
         {
             private readonly TestIndexCommit outerInstance;
 
@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
             public override int SegmentCount => 2;
         }
 
-        private class IndexCommitAnonymousClass2 : IndexCommit
+        private sealed class IndexCommitAnonymousClass2 : IndexCommit
         {
             private readonly TestIndexCommit outerInstance;
 

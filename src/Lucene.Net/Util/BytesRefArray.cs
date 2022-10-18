@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -118,7 +118,7 @@ namespace Lucene.Net.Util
             return orderedEntries;
         }
 
-        private class IntroSorterAnonymousClass : IntroSorter
+        private sealed class IntroSorterAnonymousClass : IntroSorter
         {
             private readonly BytesRefArray outerInstance;
 
@@ -202,7 +202,7 @@ namespace Lucene.Net.Util
         }
 
         [Obsolete("This class will be removed in 4.8.0 release candidate"), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private class BytesRefIteratorAnonymousClass : IBytesRefIterator
+        private sealed class BytesRefIteratorAnonymousClass : IBytesRefIterator
         {
             private readonly BytesRefArray outerInstance;
 
@@ -223,7 +223,7 @@ namespace Lucene.Net.Util
 
             internal int pos;
 
-            public virtual BytesRef Next()
+            public BytesRef Next()
             {
                 if (pos < size)
                 {
@@ -232,7 +232,7 @@ namespace Lucene.Net.Util
                 return null;
             }
 
-            public virtual IComparer<BytesRef> Comparer => comp;
+            public IComparer<BytesRef> Comparer => comp;
         }
 
         /// <summary>

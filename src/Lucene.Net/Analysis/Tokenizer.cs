@@ -126,7 +126,7 @@ namespace Lucene.Net.Analysis
 
         private static readonly TextReader ILLEGAL_STATE_READER = new ReaderAnonymousClass();
 
-        private class ReaderAnonymousClass : TextReader
+        private sealed class ReaderAnonymousClass : TextReader
         {
             public override int Read(char[] cbuf, int off, int len)
             {

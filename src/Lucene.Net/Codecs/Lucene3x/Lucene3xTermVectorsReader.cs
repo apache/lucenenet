@@ -280,7 +280,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return new EnumeratorAnonymousClass(this);
             }
 
-            private class EnumeratorAnonymousClass : IEnumerator<string>
+            private sealed class EnumeratorAnonymousClass : IEnumerator<string>
             {
                 private readonly TVFields outerInstance;
                 private string current;

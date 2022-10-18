@@ -279,7 +279,7 @@ namespace Lucene.Net.Replicator
             handlerDir.RandomIOExceptionRateOnOpen = 0.0;
         }
 
-        private class SourceDirectoryFactoryAnonymousClass : ISourceDirectoryFactory
+        private sealed class SourceDirectoryFactoryAnonymousClass : ISourceDirectoryFactory
         {
             private long clientMaxSize = 100, handlerMaxSize = 100;
             private double clientExRate = 1.0, handlerExRate = 1.0;
@@ -334,7 +334,7 @@ namespace Lucene.Net.Replicator
             }
         }
 
-        private class ReplicationClientAnonymousClass : ReplicationClient
+        private sealed class ReplicationClientAnonymousClass : ReplicationClient
         {
             private readonly IndexReplicationClientTest test;
             private readonly AtomicInt32 failures;

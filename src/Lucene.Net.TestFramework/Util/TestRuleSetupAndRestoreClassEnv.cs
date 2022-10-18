@@ -323,7 +323,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class Lucene46CodecAnonymousClass : Lucene46Codec
+        private sealed class Lucene46CodecAnonymousClass : Lucene46Codec
         {
             private readonly PostingsFormat format;
             private readonly DocValuesFormat dvFormat;

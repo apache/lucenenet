@@ -108,7 +108,7 @@ namespace Lucene.Net.Facet
             Assert.IsTrue(config.GetDimConfig("foobar").IsHierarchical);
         }
 
-        private class FacetsConfigAnonymousClass : FacetsConfig
+        private sealed class FacetsConfigAnonymousClass : FacetsConfig
         {
             private readonly TestFacetsConfig outerInstance;
 

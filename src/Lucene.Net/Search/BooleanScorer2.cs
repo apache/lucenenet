@@ -177,7 +177,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class MinShouldMatchSumScorerAnonymousClass : MinShouldMatchSumScorer
+        private sealed class MinShouldMatchSumScorerAnonymousClass : MinShouldMatchSumScorer
         {
             private readonly BooleanScorer2 outerInstance;
 
@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class DisjunctionSumScorerAnonymousClass : DisjunctionSumScorer
+        private sealed class DisjunctionSumScorerAnonymousClass : DisjunctionSumScorer
         {
             private readonly BooleanScorer2 outerInstance;
 
@@ -218,7 +218,7 @@ namespace Lucene.Net.Search
             return new ConjunctionScorerAnonymousClass(this, m_weight, requiredScorers.ToArray(), requiredNrMatchers);
         }
 
-        private class ConjunctionScorerAnonymousClass : ConjunctionScorer
+        private sealed class ConjunctionScorerAnonymousClass : ConjunctionScorer
         {
             private readonly BooleanScorer2 outerInstance;
 

@@ -57,7 +57,7 @@ namespace Lucene.Net.Util
         base.CheckExit(status);
       }
 
-      private class PrivilegedActionAnonymousClass : PrivilegedAction<Void>
+      private sealed class PrivilegedActionAnonymousClass : PrivilegedAction<Void>
       {
           private readonly TestSecurityManager OuterInstance;
 
