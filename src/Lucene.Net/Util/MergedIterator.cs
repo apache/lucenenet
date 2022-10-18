@@ -1,7 +1,9 @@
 using J2N.Text;
 using Lucene.Net.Diagnostics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -105,7 +107,7 @@ namespace Lucene.Net.Util
 
         public T Current => current;
 
-        object System.Collections.IEnumerator.Current => Current;
+        object IEnumerator.Current => Current;
 
         public void Reset()
         {
@@ -166,16 +168,8 @@ namespace Lucene.Net.Util
 
             protected internal override bool LessThan(SubEnumerator<C> a, SubEnumerator<C> b)
             {
-                int cmp;
-                // LUCNENENET specific: For strings, we need to ensure we compare them ordinal
-                if (typeof(C).Equals(typeof(string)))
-                {
-                    cmp = (a.Current as string).CompareToOrdinal(b.Current as string);
-                }
-                else
-                {
-                    cmp = a.Current.CompareTo(b.Current);
-                }
+                // LUCNENENET specific: For strings, we need to ensure we compare ordinal to match Lucene
+                int cmp = JCG.Comparer<C>.Default.Compare(a.Current, b.Current);
                 if (cmp != 0)
                 {
                     return cmp < 0;
@@ -267,7 +261,7 @@ namespace Lucene.Net.Util
 
         public T Current => current;
 
-        object System.Collections.IEnumerator.Current => Current;
+        object IEnumerator.Current => Current;
 
         public void Reset()
         {
