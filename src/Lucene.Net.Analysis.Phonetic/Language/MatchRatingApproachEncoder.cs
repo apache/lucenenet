@@ -1,5 +1,6 @@
 ﻿// commons-codec version compatibility level: 1.9
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 
@@ -84,6 +85,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="name">The name to be cleaned.</param>
         /// <returns>The cleaned name.</returns>
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
         internal string CleanName(string name)
         {
             string upperName = LOCALE_ENGLISH.TextInfo.ToUpper(name);
@@ -135,6 +137,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="name">The string to get the substrings from.</param>
         /// <returns>Annexed first &amp; last 3 letters of input word.</returns>
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
         internal string GetFirst3Last3(string name)
         {
             int nameLength = name.Length;
@@ -157,6 +160,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="sumLength">The length of 2 strings sent down.</param>
         /// <returns>The min rating value.</returns>
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
         internal int GetMinRating(int sumLength)
         {
             int minRating; // LUCENENET: IDE0059: Remove unnecessary value assignment
@@ -271,6 +275,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <param name="name1"></param>
         /// <param name="name2"></param>
         /// <returns></returns>
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
         internal int LeftToRightThenRightToLeftProcessing(string name1, string name2)
         {
             char[] name1Char = name1.ToCharArray();
@@ -366,6 +371,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="name">String to have double consonants removed.</param>
         /// <returns>Single consonant word.</returns>
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
         internal string RemoveDoubleConsonants(string name)
         {
             string replacedName = name.ToUpperInvariant();
@@ -385,6 +391,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="name">The name to have vowels removed.</param>
         /// <returns>De-voweled word.</returns>
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
         internal string RemoveVowels(string name)
         {
             // Extract first letter
