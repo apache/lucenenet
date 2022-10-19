@@ -961,13 +961,13 @@ namespace Lucene.Net.Analysis.Ja.Util
                         builder.Append("wa");
                         break;
                     case 'ヰ':
-                        builder.Append("i");
+                        builder.Append('i');
                         break;
                     case 'ヱ':
-                        builder.Append("e");
+                        builder.Append('e');
                         break;
                     case 'ヲ':
-                        builder.Append("o");
+                        builder.Append('o');
                         break;
                     case 'ン':
                         switch (ch2)
@@ -1000,7 +1000,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                                 builder.Append("n'");
                                 goto break_main;
                             default:
-                                builder.Append("n");
+                                builder.Append('n');
                                 goto break_main;
                         }
                     case 'ガ':

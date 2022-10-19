@@ -134,7 +134,7 @@ namespace Lucene.Net.Search.Highlight
                 sb.Append(GetBackgroundColorString(score));
                 sb.Append("\" ");
             }
-            sb.Append(">");
+            sb.Append('>');
             sb.Append(originalText);
             sb.Append("</font>");
             return sb.ToString();
@@ -146,7 +146,7 @@ namespace Lucene.Net.Search.Highlight
             int gVal = GetColorVal(m_fgGMin, m_fgGMax, score);
             int bVal = GetColorVal(m_fgBMin, m_fgBMax, score);
             var sb = new StringBuilder();
-            sb.Append("#");
+            sb.Append('#');
             sb.Append(Int32ToHex(rVal));
             sb.Append(Int32ToHex(gVal));
             sb.Append(Int32ToHex(bVal));
@@ -159,7 +159,7 @@ namespace Lucene.Net.Search.Highlight
             int gVal = GetColorVal(m_bgGMin, m_bgGMax, score);
             int bVal = GetColorVal(m_bgBMin, m_bgBMax, score);
             var sb = new StringBuilder();
-            sb.Append("#");
+            sb.Append('#');
             sb.Append(Int32ToHex(rVal));
             sb.Append(Int32ToHex(gVal));
             sb.Append(Int32ToHex(bVal));

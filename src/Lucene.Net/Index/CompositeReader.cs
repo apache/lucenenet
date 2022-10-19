@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
                 buffer.Append(subReaders[0]);
                 for (int i = 1, c = subReaders.Count; i < c; ++i)
                 {
-                    buffer.Append(" ").Append(subReaders[i]);
+                    buffer.Append(' ').Append(subReaders[i]);
                 }
             }
             buffer.Append(')');

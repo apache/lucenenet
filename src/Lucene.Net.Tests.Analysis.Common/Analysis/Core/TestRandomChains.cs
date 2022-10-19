@@ -905,14 +905,14 @@ namespace Lucene.Net.Analysis.Core
                 // intentional: initReader gets its own separate random
                 random = new Randomizer(seed);
                 TokenizerSpec tokenizerSpec = NewTokenizer(random, charFilterSpec.reader);
-                sb.Append("\n");
+                sb.Append('\n');
                 sb.Append("tokenizer=");
                 sb.Append(tokenizerSpec.toString);
                 TokenFilterSpec tokenFilterSpec = NewFilterChain(random, tokenizerSpec.tokenizer, tokenizerSpec.offsetsAreCorrect);
-                sb.Append("\n");
+                sb.Append('\n');
                 sb.Append("filters=");
                 sb.Append(tokenFilterSpec.toString);
-                sb.Append("\n");
+                sb.Append('\n');
                 sb.Append("offsetsAreCorrect=" + tokenFilterSpec.offsetsAreCorrect);
                 return sb.ToString();
             }

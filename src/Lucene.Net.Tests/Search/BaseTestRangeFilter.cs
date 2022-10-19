@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
             string s = Convert.ToString(n);
             for (int i = s.Length; i <= intLength; i++)
             {
-                b.Append("0");
+                b.Append('0');
             }
             b.Append(s);
 

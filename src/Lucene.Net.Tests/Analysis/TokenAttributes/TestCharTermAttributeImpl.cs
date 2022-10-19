@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.SetEmpty().Append(buf);
                 Assert.AreEqual(buf.Length, t.Length);
                 Assert.AreEqual(buf.ToString(), t.ToString());
-                buf.Append("a");
+                buf.Append('a');
             }
             Assert.AreEqual(20000, t.Length);
         }

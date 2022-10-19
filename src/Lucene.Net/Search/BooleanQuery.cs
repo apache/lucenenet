@@ -611,7 +611,7 @@ namespace Lucene.Net.Search
             bool needParens = Boost != 1.0 || MinimumNumberShouldMatch > 0;
             if (needParens)
             {
-                buffer.Append("(");
+                buffer.Append('(');
             }
 
             for (int i = 0; i < clauses.Count; i++)
@@ -619,11 +619,11 @@ namespace Lucene.Net.Search
                 BooleanClause c = clauses[i];
                 if (c.IsProhibited)
                 {
-                    buffer.Append("-");
+                    buffer.Append('-');
                 }
                 else if (c.IsRequired)
                 {
-                    buffer.Append("+");
+                    buffer.Append('+');
                 }
 
                 Query subQuery = c.Query;
@@ -631,9 +631,9 @@ namespace Lucene.Net.Search
                 {
                     if (subQuery is BooleanQuery) // wrap sub-bools in parens
                     {
-                        buffer.Append("(");
+                        buffer.Append('(');
                         buffer.Append(subQuery.ToString(field));
-                        buffer.Append(")");
+                        buffer.Append(')');
                     }
                     else
                     {
@@ -647,13 +647,13 @@ namespace Lucene.Net.Search
 
                 if (i != clauses.Count - 1)
                 {
-                    buffer.Append(" ");
+                    buffer.Append(' ');
                 }
             }
 
             if (needParens)
             {
-                buffer.Append(")");
+                buffer.Append(')');
             }
 
             if (MinimumNumberShouldMatch > 0)

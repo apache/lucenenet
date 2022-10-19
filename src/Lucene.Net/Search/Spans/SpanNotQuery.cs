@@ -104,7 +104,7 @@ namespace Lucene.Net.Search.Spans
             buffer.Append(Convert.ToString(pre));
             buffer.Append(", ");
             buffer.Append(Convert.ToString(post));
-            buffer.Append(")");
+            buffer.Append(')');
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
         }

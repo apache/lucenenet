@@ -68,7 +68,7 @@ namespace Lucene.Net.Util
 
                 ToWords(unit, builder);
                 builder.Append(" quadrillion");
-                if (value > 0) builder.Append(" ");
+                if (value > 0) builder.Append(' ');
             }
 
             if (value >= TRILLION)
@@ -78,7 +78,7 @@ namespace Lucene.Net.Util
 
                 ToWords(unit, builder);
                 builder.Append(" trillion");
-                if (value > 0) builder.Append(" ");
+                if (value > 0) builder.Append(' ');
             }
 
             if (value >= BILLION)
@@ -88,7 +88,7 @@ namespace Lucene.Net.Util
 
                 ToWords(unit, builder);
                 builder.Append(" billion");
-                if (value > 0) builder.Append(" ");
+                if (value > 0) builder.Append(' ');
             }
 
             if (value >= MILLION)
@@ -98,7 +98,7 @@ namespace Lucene.Net.Util
 
                 ToWords(unit, builder);
                 builder.Append(" million");
-                if (value > 0) builder.Append(" ");
+                if (value > 0) builder.Append(' ');
             }
 
             if (value >= THOUSAND)
@@ -108,7 +108,7 @@ namespace Lucene.Net.Util
 
                 ToWords(unit, builder);
                 builder.Append(" thousand");
-                if (value > 0) builder.Append(" ");
+                if (value > 0) builder.Append(' ');
             }
 
             if (value >= HUNDRED)
@@ -118,63 +118,63 @@ namespace Lucene.Net.Util
 
                 ToWords(unit, builder);
                 builder.Append(" hundred");
-                if (value > 0) builder.Append(" ");
+                if (value > 0) builder.Append(' ');
             }
 
             if (value >= 90)
             {
                 value -= 90;
                 builder.Append("ninety");
-                if (value > 0) builder.Append("-");
+                if (value > 0) builder.Append('-');
             }
 
             if (value >= 80)
             {
                 value -= 80;
                 builder.Append("eighty");
-                if (value > 0) builder.Append("-");
+                if (value > 0) builder.Append('-');
             }
 
             if (value >= 70)
             {
                 value -= 70;
                 builder.Append("seventy");
-                if (value > 0) builder.Append("-");
+                if (value > 0) builder.Append('-');
             }
 
             if (value >= 60)
             {
                 value -= 60;
                 builder.Append("sixty");
-                if (value > 0) builder.Append("-");
+                if (value > 0) builder.Append('-');
             }
 
             if (value >= 50)
             {
                 value -= 50;
                 builder.Append("fifty");
-                if (value > 0) builder.Append("-");
+                if (value > 0) builder.Append('-');
             }
 
             if (value >= 40)
             {
                 value -= 40;
                 builder.Append("forty");
-                if (value > 0) builder.Append("-");
+                if (value > 0) builder.Append('-');
             }
 
             if (value >= 30)
             {
                 value -= 30;
                 builder.Append("thirty");
-                if (value > 0) builder.Append("-");
+                if (value > 0) builder.Append('-');
             }
 
             if (value >= 20)
             {
                 value -= 20;
                 builder.Append("twenty");
-                if (value > 0) builder.Append("-");
+                if (value > 0) builder.Append('-');
             }
 
             if (value == 19) builder.Append("nineteen");

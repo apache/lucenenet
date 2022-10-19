@@ -233,7 +233,7 @@ namespace Lucene.Net.Util
             return;
         }
 
-        b.Append(" -D").Append(key).Append("=");
+        b.Append(" -D").Append(key).Append('=');
         string v = value.ToString();
         // Add simplistic quoting. this varies a lot from system to system and between
         // shells... ANT should have some code for doing it properly.

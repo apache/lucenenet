@@ -141,13 +141,13 @@ namespace Lucene.Net.Queries
         /// </summary>
         public override string ToString(string field)
         {
-            StringBuilder sb = (new StringBuilder(Name)).Append("(");
+            StringBuilder sb = (new StringBuilder(Name)).Append('(');
             sb.Append(subQuery.ToString(field));
             foreach (Query scoringQuery in scoringQueries)
             {
                 sb.Append(", ").Append(scoringQuery.ToString(field));
             }
-            sb.Append(")");
+            sb.Append(')');
             sb.Append(strict ? " STRICT" : "");
             return sb.ToString() + ToStringUtils.Boost(Boost);
         }

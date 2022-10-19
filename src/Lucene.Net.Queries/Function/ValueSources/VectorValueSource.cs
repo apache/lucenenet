@@ -264,7 +264,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 }
                 sb.Append(source);
             }
-            sb.Append(")");
+            sb.Append(')');
             return sb.ToString();
         }
 

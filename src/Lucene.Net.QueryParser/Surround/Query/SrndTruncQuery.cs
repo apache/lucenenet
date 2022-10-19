@@ -62,7 +62,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             if (c == unlimited)
                 re.Append(".*");
             else if (c == mask)
-                re.Append(".");
+                re.Append('.');
             else
                 re.Append(c);
         }

@@ -624,7 +624,7 @@ namespace Lucene.Net.Index
         {
             StringBuilder sb = new StringBuilder();
             Document doc = new Document();
-            sb.Append("a");
+            sb.Append('a');
             sb.Append(n);
             FieldType customType2 = new FieldType(TextField.TYPE_STORED);
             customType2.IsTokenized = false;

@@ -200,8 +200,8 @@ namespace Lucene.Net.Diagnostics
                     parameters.Add(test.Parameter);
                     if (i > 0)
                     {
-                        messageFormat.Append(" ");
-                        expectedMessage.Append(" ");
+                        messageFormat.Append(' ');
+                        expectedMessage.Append(' ');
                     }
                     messageFormat.Append(test.MessageFormatPrefix);
                     messageFormat.Append(i.ToString(CultureInfo.InvariantCulture));

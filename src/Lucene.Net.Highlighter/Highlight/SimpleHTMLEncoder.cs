@@ -84,7 +84,7 @@ namespace Lucene.Net.Search.Highlight
                         }
                         else
                         {
-                            result.Append("&#").Append((int)ch).Append(";");
+                            result.Append("&#").Append((int)ch).Append(';');
                         }
                         break;
                 }

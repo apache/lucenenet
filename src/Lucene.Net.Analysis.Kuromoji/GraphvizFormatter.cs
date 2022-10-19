@@ -164,7 +164,7 @@ namespace Lucene.Net.Analysis.Ja
                         sb.Append('+');
                     }
                     sb.Append(bgCost);
-                    sb.Append("\"");
+                    sb.Append('\"');
                     sb.Append(attrs);
                     sb.Append("]\n");
                 }

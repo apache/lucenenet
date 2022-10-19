@@ -127,9 +127,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         public override string ToString()
         {
             StringBuilder res = new StringBuilder(task.GetName());
-            res.Append(" ");
+            res.Append(' ');
             res.Append(count);
-            res.Append(" ");
+            res.Append(' ');
             res.Append(elapsed);
             return res.ToString();
         }

@@ -221,7 +221,7 @@ namespace Lucene.Net.Index
                         RestoreState(state);
                         payloadAtt.Payload = null;
                         posIncrAtt.PositionIncrement = 0;
-                        termAtt.SetEmpty().Append("b");
+                        termAtt.SetEmpty().Append('b');
                         state = null;
                         return true;
                     }

@@ -152,11 +152,11 @@ namespace Lucene.Net.Util
                 i = i % 10;
                 if (i == 0)
                 {
-                    result.Append(" ");
+                    result.Append(' ');
                 }
                 else
                 {
-                    result.Append("-");
+                    result.Append('-');
                 }
             }
             switch ((int)i)

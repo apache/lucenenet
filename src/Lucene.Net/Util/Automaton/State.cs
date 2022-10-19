@@ -345,7 +345,7 @@ namespace Lucene.Net.Util.Automaton
             b.Append(":\n");
             foreach (Transition t in GetTransitions())
             {
-                b.Append("  ").Append(t.ToString()).Append("\n");
+                b.Append("  ").Append(t.ToString()).Append('\n');
             }
             return b.ToString();
         }

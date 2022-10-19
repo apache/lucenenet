@@ -62,7 +62,7 @@ namespace Lucene.Net.Util
                 {
                     b.Append("   ")
                      .Append(f.FullName)
-                     .Append("\n");
+                     .Append('\n');
                 }
                 throw new IOException(b.ToString());
             }

@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis.Synonym
             var sb = new StringBuilder("<");
             if (synonyms != null)
             {
-                sb.Append("[");
+                sb.Append('[');
                 for (int i = 0; i < synonyms.Length; i++)
                 {
                     if (i != 0)
@@ -135,7 +135,7 @@ namespace Lucene.Net.Analysis.Synonym
                 sb.Append("],");
             }
             sb.Append(submap);
-            sb.Append(">");
+            sb.Append('>');
             return sb.ToString();
         }
 

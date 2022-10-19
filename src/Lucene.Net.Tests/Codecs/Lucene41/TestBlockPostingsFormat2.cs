@@ -160,7 +160,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     for (int j = 0; j < 16; j++)
                     {
                         val.Append(proto);
-                        val.Append(" ");
+                        val.Append(' ');
                     }
                     ((Field)f).SetStringValue(val.ToString());
                 }
