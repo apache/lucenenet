@@ -181,7 +181,7 @@ namespace Lucene.Net.Search
                         message.Append("Duplicate key for hit index = ");
                         message.Append(docnum);
                         message.Append(", previous index = ");
-                        message.Append(value.ToString());
+                        message.Append(value); // LUCENENET: CA1830: Prefer strongly-typed Append and Insert method overloads on StringBuilder
                         message.Append(", Lucene ID = ");
                         message.Append(luceneId);
                         Log(message.ToString());

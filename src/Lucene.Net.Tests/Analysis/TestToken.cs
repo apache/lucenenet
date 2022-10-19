@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis
                 t.CopyBuffer(content, 0, content.Length);
                 Assert.AreEqual(buf.Length, t.Length);
                 Assert.AreEqual(buf.ToString(), t.ToString());
-                buf.Append(buf.ToString());
+                buf.Append(buf); // LUCENENET: CA1830: Prefer strongly-typed Append and Insert method overloads on StringBuilder
             }
             Assert.AreEqual(1048576, t.Length);
 
