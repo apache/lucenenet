@@ -266,10 +266,11 @@ namespace TagSoup
         private char[] theOutputBuffer = new char[200]; // Output buffer
         private int theSize;                    // Current buffer size
         private readonly int[] theWinMap = {    // Windows chars map // LUCENENET: marked readonly
-        0x20AC, 0xFFFD, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021,
-        0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0xFFFD, 0x017D, 0xFFFD,
-        0xFFFD, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
-        0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0xFFFD, 0x017E, 0x0178};
+            0x20AC, 0xFFFD, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021,
+            0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0xFFFD, 0x017D, 0xFFFD,
+            0xFFFD, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
+            0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0xFFFD, 0x017E, 0x0178
+        };
 
         /// <summary>
         ///   Index into the state table for [state][input character - 2].
@@ -296,18 +297,18 @@ namespace TagSoup
         ///   next state = statetable[value + 3]. That is, the value points
         ///   to the start of the answer 4-tuple in the statetable.
         /// </summary>
-        private static readonly short[][] statetableIndex = LoadStateTableIndex(ref statetableIndexMaxChar); // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        private static readonly short[][] statetableIndex;
 
         /// <summary>
         ///   The highest character value seen in the statetable.
         ///   See the doc comment for statetableIndex to see how this
         ///   is used.
         /// </summary>
-        private static int statetableIndexMaxChar;
+        private static readonly int statetableIndexMaxChar = LoadStateTableIndexMaxChar(out statetableIndex); // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
 
-        private static short[][] LoadStateTableIndex(ref int statetableIndexMaxChar)
+        private static int LoadStateTableIndexMaxChar(out short[][] statetableIndexOut)
         {
-            short[][] result;
+            int statetableIndexMaxCharResult;
             int maxState = -1;
             int maxChar = -1;
             for (int i = 0; i < statetable.Length; i += 4)
@@ -321,13 +322,13 @@ namespace TagSoup
                     maxChar = statetable[i + 1];
                 }
             }
-            statetableIndexMaxChar = maxChar + 1;
+            statetableIndexMaxCharResult = maxChar + 1;
 
-            result = new short[maxState + 1][];
+            statetableIndexOut = new short[maxState + 1][];
 
             for (int i = 0; i <= maxState; i++)
             {
-                result[i] = new short[maxChar + 3];
+                statetableIndexOut[i] = new short[maxChar + 3];
             }
             for (int theState = 0; theState <= maxState; ++theState)
             {
@@ -354,10 +355,10 @@ namespace TagSoup
                             break;
                         }
                     }
-                    result[theState][ch + 2] = (short)hit;
+                    statetableIndexOut[theState][ch + 2] = (short)hit;
                 }
             }
-            return result;
+            return statetableIndexMaxCharResult;
         }
 
         // Locator implementation
