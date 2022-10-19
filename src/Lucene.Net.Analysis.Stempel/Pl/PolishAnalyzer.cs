@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Pl
         /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
         /// accesses the static final set the first time.;
         /// </summary>
-        private class DefaultsHolder
+        private static class DefaultsHolder
         {
             internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();
             internal static readonly Trie DEFAULT_TABLE = LoadDefaultTable();

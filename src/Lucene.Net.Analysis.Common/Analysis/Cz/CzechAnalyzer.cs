@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Cz
         /// <returns> a set of default Czech-stopwords </returns>
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_SET;
 
-        private class DefaultSetHolder
+        private static class DefaultSetHolder
         {
             internal static readonly CharArraySet DEFAULT_SET = LoadDefaultSet();
 

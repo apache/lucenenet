@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Ru
         /// File containing default Russian stopwords. </summary>
         public const string DEFAULT_STOPWORD_FILE = "russian_stop.txt";
 
-        private class DefaultSetHolder
+        private static class DefaultSetHolder
         {
             /// @deprecated (3.1) remove this for Lucene 5.0 
             [Obsolete("(3.1) remove this for Lucene 5.0")]

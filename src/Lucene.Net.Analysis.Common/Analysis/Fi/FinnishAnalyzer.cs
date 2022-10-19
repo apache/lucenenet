@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Fi
         /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
         /// accesses the static final set the first time.;
         /// </summary>
-        private class DefaultSetHolder
+        private static class DefaultSetHolder
         {
             internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();
 
