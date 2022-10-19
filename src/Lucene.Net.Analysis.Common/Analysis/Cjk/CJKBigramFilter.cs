@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Cjk
         HANGUL = 8,
         /// <summary>
         /// bigram flag for all scripts </summary>
-        ALL = 0xff
+        ALL = 0xffff,
     }
 
     /// <summary>
