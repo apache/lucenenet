@@ -1082,8 +1082,8 @@ namespace Lucene.Net.Search
             public override string ToString()
             {
                 StringBuilder b = new StringBuilder();
-                b.Append(''').Append(ReaderKey).Append("'=>");
-                b.Append(''').Append(FieldName).Append("',");
+                b.Append('\'').Append(ReaderKey).Append("'=>");
+                b.Append('\'').Append(FieldName).Append("',");
                 b.Append(CacheType).Append(',').Append(custom is null ? "null" : custom.ToString()); // LUCENENET specific: use field instead of property
                 b.Append("=>").Append(Value.GetType().FullName).Append('#');
                 b.Append(RuntimeHelpers.GetHashCode(Value));
