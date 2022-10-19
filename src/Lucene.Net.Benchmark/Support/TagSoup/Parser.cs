@@ -366,8 +366,6 @@ namespace TagSoup
             // LUCENENET: Added guard clauses
             if (name is null)
                 throw new ArgumentNullException(nameof(name));
-            if (value is null)
-                throw new ArgumentNullException(nameof(value));
 
             if (name.Equals(LEXICAL_HANDLER_PROPERTY, StringComparison.Ordinal))
             {
