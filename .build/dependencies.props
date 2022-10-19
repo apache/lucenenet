@@ -48,9 +48,7 @@
     <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>$(MicrosoftCodeAnalysisCSharpPackageVersion)</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
     <MicrosoftCodeAnalysisVisualBasicPackageVersion>2.6.1</MicrosoftCodeAnalysisVisualBasicPackageVersion>
     <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>$(MicrosoftCodeAnalysisVisualBasicPackageVersion)</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
-    <MicrosoftExtensionsConfigurationPackageVersion>2.0.0</MicrosoftExtensionsConfigurationPackageVersion>
-    <MicrosoftExtensionsConfigurationPackageVersion Condition=" $(TargetFramework.StartsWith('net45')) ">1.1.2</MicrosoftExtensionsConfigurationPackageVersion>
-    <MicrosoftExtensionsConfigurationPackageVersion Condition=" $(TargetFramework.StartsWith('netcoreapp')) ">3.0.0</MicrosoftExtensionsConfigurationPackageVersion>
+    <MicrosoftExtensionsConfigurationPackageVersion>3.1.0</MicrosoftExtensionsConfigurationPackageVersion>
     <MicrosoftExtensionsConfigurationAbstractionsPackageVersion>$(MicrosoftExtensionsConfigurationPackageVersion)</MicrosoftExtensionsConfigurationAbstractionsPackageVersion>
     <MicrosoftExtensionsConfigurationCommandLinePackageVersion>$(MicrosoftExtensionsConfigurationPackageVersion)</MicrosoftExtensionsConfigurationCommandLinePackageVersion>
     <MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion>$(MicrosoftExtensionsConfigurationPackageVersion)</MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion>
@@ -75,10 +73,10 @@
     <RandomizedTestingGeneratorsPackageVersion>2.7.8</RandomizedTestingGeneratorsPackageVersion>
     <SharpZipLibPackageVersion>1.1.0</SharpZipLibPackageVersion>
     <Spatial4nPackageVersion>0.4.1.1</Spatial4nPackageVersion>
-    <SystemNetPrimitivesPackageVersion>4.3.0</SystemNetPrimitivesPackageVersion>
     <SystemReflectionEmitPackageVersion>4.3.0</SystemReflectionEmitPackageVersion>
     <SystemReflectionEmitILGenerationPackageVersion>4.3.0</SystemReflectionEmitILGenerationPackageVersion>
     <SystemReflectionTypeExtensionsPackageVersion>4.3.0</SystemReflectionTypeExtensionsPackageVersion>
+    <SystemRuntimeCompilerServicesUnsafePackageVersion>5.0.0</SystemRuntimeCompilerServicesUnsafePackageVersion>
     <SystemRuntimeInteropServicesRuntimeInformationPackageVersion>4.3.0</SystemRuntimeInteropServicesRuntimeInformationPackageVersion>
     <SystemSecurityCryptographyXmlPackageVersion>4.7.0</SystemSecurityCryptographyXmlPackageVersion>
     <SystemTextEncodingCodePagesPackageVersion>4.3.0</SystemTextEncodingCodePagesPackageVersion>
