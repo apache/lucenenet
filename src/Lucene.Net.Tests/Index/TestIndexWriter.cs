@@ -2654,8 +2654,7 @@ namespace Lucene.Net.Index
 
             public virtual IEnumerator<IEnumerable<IIndexableField>> GetEnumerator()
             {
-                return docList.GetEnumerator();
-                //return new EnumeratorAnonymousClass(this, docIter);
+                return new EnumeratorAnonymousClass(this, docList.GetEnumerator());
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -2663,38 +2662,40 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-            /*
-          private sealed class EnumeratorAnonymousClass : IEnumerator<IEnumerable<IndexableField>>
-          {
-              private readonly RandomFailingFieldEnumerable outerInstance;
+            private sealed class EnumeratorAnonymousClass : IEnumerator<IEnumerable<IIndexableField>>
+            {
+                private readonly RandomFailingFieldEnumerable outerInstance;
+                private readonly IEnumerator<IEnumerable<IIndexableField>> docIter;
 
-              private IEnumerator<IEnumerable<IndexableField>> DocIter;
-
-              public EnumeratorAnonymousClass(RandomFailingFieldEnumerable outerInstance, IEnumerator<IEnumerable<IndexableField>> docIter)
-              {
-                  this.outerInstance = outerInstance;
-                  this.DocIter = docIter;
-              }
-
-              public virtual bool HasNext()
-              {
-                return DocIter.hasNext();
-              }
-
-              public virtual IEnumerable<IndexableField> Next()
-              {
-                if (outerInstance.Random.Next(5) == 0)
+                public EnumeratorAnonymousClass(RandomFailingFieldEnumerable outerInstance, IEnumerator<IEnumerable<IIndexableField>> docIter)
                 {
-                  throw RuntimeException.Create("boom");
+                    this.outerInstance = outerInstance;
+                    this.docIter = docIter;
                 }
-                return DocIter.Next();
-              }
 
-              public virtual void Remove()
-              {
-                  throw UnsupportedOperationException.Create();
-              }
-          }*/
+                public IEnumerable<IIndexableField> Current => docIter.Current;
+
+                object IEnumerator.Current => Current;
+
+                public void Dispose()
+                {
+                    // nothing to do
+                }
+
+                public bool MoveNext()
+                {
+                    if (Random.Next(5) == 0)
+                    {
+                        throw RuntimeException.Create("boom");
+                    }
+                    return docIter.MoveNext();
+                }
+
+                public void Reset()
+                {
+                    throw UnsupportedOperationException.Create();
+                }
+            }
         }
 
         // LUCENE-2727/LUCENE-2812/LUCENE-4738:
