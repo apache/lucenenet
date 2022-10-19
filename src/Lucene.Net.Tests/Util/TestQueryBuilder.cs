@@ -306,7 +306,7 @@ namespace Lucene.Net.Util
                 if (addSynonym) // inject our synonym
                 {
                     ClearAttributes();
-                    termAtt.SetEmpty().Append("國");
+                    termAtt.SetEmpty().Append('國');
                     posIncAtt.PositionIncrement = 0;
                     addSynonym = false;
                     return true;

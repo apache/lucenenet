@@ -141,7 +141,7 @@ namespace Lucene.Net.Index
                 for (int j = 0; j < num; j++)
                 {
                     int nextInt = Random.Next(max);
-                    builder.Append(nextInt).Append(" ");
+                    builder.Append(nextInt).Append(' ');
                     if (nextInt == term)
                     {
                         positions.Add(Convert.ToInt32(j));

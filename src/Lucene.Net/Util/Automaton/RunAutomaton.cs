@@ -85,11 +85,11 @@ namespace Lucene.Net.Util.Automaton
                         {
                             max = _maxInterval;
                         }
-                        b.Append(" ");
+                        b.Append(' ');
                         Transition.AppendCharString(min, b);
                         if (min != max)
                         {
-                            b.Append("-");
+                            b.Append('-');
                             Transition.AppendCharString(max, b);
                         }
                         b.Append(" -> ").Append(k).Append("\n");

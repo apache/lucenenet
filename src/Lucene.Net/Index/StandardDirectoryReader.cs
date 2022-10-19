@@ -300,7 +300,7 @@ namespace Lucene.Net.Index
             string segmentsFile = segmentInfos.GetSegmentsFileName();
             if (segmentsFile != null)
             {
-                buffer.Append(segmentsFile).Append(":").Append(segmentInfos.Version);
+                buffer.Append(segmentsFile).Append(':').Append(segmentInfos.Version);
             }
             if (writer != null)
             {

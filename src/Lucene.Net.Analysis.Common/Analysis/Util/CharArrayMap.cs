@@ -1370,7 +1370,7 @@ namespace Lucene.Net.Analysis.Util
                         sb.Append(", ");
                     }
                     sb.Append(entry.Key);
-                    sb.Append("=");
+                    sb.Append('=');
                     sb.Append(entry.Value);
                 }
             }
@@ -1681,7 +1681,7 @@ namespace Lucene.Net.Analysis.Util
                         sb.Append(", ");
                     }
                     sb.Append(entry.Key);
-                    sb.Append("=");
+                    sb.Append('=');
                     sb.Append(entry.Value);
                 }
 

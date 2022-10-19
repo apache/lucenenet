@@ -157,7 +157,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < terms.Length; i++)
             {
                 sb.Append(terms[i].Text);
-                sb.Append(" ");
+                sb.Append(' ');
             }
             string content = sb.ToString();
 
@@ -331,11 +331,11 @@ namespace Lucene.Net.Index
             for (int i = 0; i < n; i++)
             {
                 sb.Length = 0;
-                sb.Append("t");
+                sb.Append('t');
                 int zeros = maxDigits - (int)(Math.Log(i) / Math.Log(10));
                 for (int j = 0; j < zeros; j++)
                 {
-                    sb.Append("0");
+                    sb.Append('0');
                 }
                 sb.Append(i);
                 terms[i] = new Term(fieldName, sb.ToString());

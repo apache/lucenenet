@@ -222,7 +222,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             doc.Add(new Field("id", Convert.ToString(n, CultureInfo.InvariantCulture), customType1));
             doc.Add(new Field("indexname", indexName, customType1));
-            sb.Append("a");
+            sb.Append('a');
             sb.Append(n);
             doc.Add(new Field("field1", sb.ToString(), customType));
             sb.Append(" b");

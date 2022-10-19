@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Core
             for (int i = 0; i < 20; i++)
             {
                 string w = English.Int32ToEnglish(i).Trim();
-                sb.Append(w).Append(" ");
+                sb.Append(w).Append(' ');
                 if (i % 3 != 0)
                 {
                     a.Add(w);

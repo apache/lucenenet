@@ -401,13 +401,13 @@ namespace Lucene.Net.Search
             Directory dir = new RAMDirectory();
             Token[] tokens = new Token[3];
             tokens[0] = new Token();
-            tokens[0].Append("a");
+            tokens[0].Append('a');
             tokens[0].PositionIncrement = 1;
             tokens[1] = new Token();
-            tokens[1].Append("b");
+            tokens[1].Append('b');
             tokens[1].PositionIncrement = 0;
             tokens[2] = new Token();
-            tokens[2].Append("c");
+            tokens[2].Append('c');
             tokens[2].PositionIncrement = 0;
 
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir);

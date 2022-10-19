@@ -733,7 +733,7 @@ namespace Lucene.Net.Search
         // From line 516 in Lucene
         public override sealed string ToString()
         {
-            StringBuilder sb = (new StringBuilder(field)).Append(":");
+            StringBuilder sb = (new StringBuilder(field)).Append(':');
             return sb.Append(includeLower ? '[' : '{').Append((lowerVal is null) ? "*" : lowerVal.ToString()).Append(" TO ").Append((upperVal is null) ? "*" : upperVal.ToString()).Append(includeUpper ? ']' : '}').ToString();
         }
 

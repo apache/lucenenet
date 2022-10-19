@@ -480,10 +480,10 @@ namespace Lucene.Net.Documents
                 }
                 if (i != fields.Count - 1)
                 {
-                    buffer.Append(" ");
+                    buffer.Append(' ');
                 }
             }
-            buffer.Append(">");
+            buffer.Append('>');
             return buffer.ToString();
         }
 

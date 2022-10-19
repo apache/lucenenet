@@ -206,7 +206,7 @@ namespace Lucene.Net.Search.Join
             {
                 if (stringBuilder.Length > 0)
                 {
-                    stringBuilder.Append("_");
+                    stringBuilder.Append('_');
                 }
                 stringBuilder.Append(documentNumber);
             }

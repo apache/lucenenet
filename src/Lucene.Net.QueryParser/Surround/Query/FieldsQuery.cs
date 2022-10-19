@@ -85,10 +85,10 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         public override string ToString()
         {
             StringBuilder r = new StringBuilder();
-            r.Append("(");
+            r.Append('(');
             FieldNamesToString(r);
             r.Append(q.ToString());
-            r.Append(")");
+            r.Append(')');
             return r.ToString();
         }
 

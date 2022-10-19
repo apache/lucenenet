@@ -70,7 +70,7 @@ namespace Lucene.Net.Search.Spans
             buffer.Append(m_match.ToString(field));
             buffer.Append(", ").Append(m_start).Append(", ");
             buffer.Append(m_end);
-            buffer.Append(")");
+            buffer.Append(')');
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
         }

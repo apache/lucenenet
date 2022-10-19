@@ -344,26 +344,26 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                     {
                         int n1 = (roundNumber - 1) % ai.Length;
                         int n2 = roundNumber % ai.Length;
-                        sb.Append("  ").Append(name).Append(":").Append(ai[n1]).Append("-->").Append(ai[n2]);
+                        sb.Append("  ").Append(name).Append(':').Append(ai[n1]).Append("-->").Append(ai[n2]);
                     }
                     else if (a is double[] ad)
                     {
                         int n1 = (roundNumber - 1) % ad.Length;
                         int n2 = roundNumber % ad.Length;
-                        sb.Append("  ").Append(name).Append(":").Append(ad[n1]).Append("-->").Append(ad[n2]);
+                        sb.Append("  ").Append(name).Append(':').Append(ad[n1]).Append("-->").Append(ad[n2]);
                     }
                     else if (a is string[] astr)
                     {
                         int n1 = (roundNumber - 1) % astr.Length;
                         int n2 = roundNumber % astr.Length;
-                        sb.Append("  ").Append(name).Append(":").Append(astr[n1]).Append("-->").Append(astr[n2]);
+                        sb.Append("  ").Append(name).Append(':').Append(astr[n1]).Append("-->").Append(astr[n2]);
                     }
                     else
                     {
                         bool[] ab = (bool[])a;
                         int n1 = (roundNumber - 1) % ab.Length;
                         int n2 = roundNumber % ab.Length;
-                        sb.Append("  ").Append(name).Append(":").Append(ab[n1]).Append("-->").Append(ab[n2]);
+                        sb.Append("  ").Append(name).Append(':').Append(ab[n1]).Append("-->").Append(ab[n2]);
                     }
                 }
             }
@@ -474,7 +474,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             foreach (string name in colForValByRound.Keys)
             {
                 string colName = colForValByRound[name];
-                sb.Append(" ").Append(colName);
+                sb.Append(' ').Append(colName);
             }
             return sb.ToString();
         }

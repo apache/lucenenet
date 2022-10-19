@@ -349,7 +349,7 @@ namespace Lucene.Net.Codecs.SimpleText
                         var ord = ordStream.Current;
                         if (sb2.Length > 0)
                         {
-                            sb2.Append(",");
+                            sb2.Append(',');
                         }
                         sb2.Append(ord.GetValueOrDefault().ToString(CultureInfo.InvariantCulture));
                     }
@@ -406,7 +406,7 @@ namespace Lucene.Net.Codecs.SimpleText
                         ordStream.MoveNext();
                         var ord = ordStream.Current;
                         if (sb2.Length > 0)
-                            sb2.Append(",");
+                            sb2.Append(',');
 
                         sb2.Append(ord);
                     }

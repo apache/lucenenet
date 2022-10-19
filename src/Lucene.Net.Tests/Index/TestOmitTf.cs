@@ -320,7 +320,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < 30; i++)
             {
                 Document doc = new Document();
-                sb.Append(term).Append(" ");
+                sb.Append(term).Append(' ');
                 string content = sb.ToString();
                 Field noTf = NewField("noTf", content + (i % 2 == 0 ? "" : " notf"), omitType);
                 doc.Add(noTf);

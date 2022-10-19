@@ -142,7 +142,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                             {
                                 dest.Append("&#");
                                 dest.Append((int)ch);
-                                dest.Append(";");
+                                dest.Append(';');
                             }
                             else
                             {

@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 builder.Add(entry.Key, entry.Value);
                 if (Random.nextBoolean() || output.Count == 0)
                 {
-                    input.Append(entry.Key).Append(" ");
+                    input.Append(entry.Key).Append(' ');
                     output.Add(entry.Value);
                 }
             }

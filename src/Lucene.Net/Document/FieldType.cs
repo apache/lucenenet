@@ -290,7 +290,7 @@ namespace Lucene.Net.Documents
             {
                 if (result.Length > 0)
                 {
-                    result.Append(",");
+                    result.Append(',');
                 }
                 result.Append("indexed");
                 if (IsTokenized)
@@ -335,7 +335,7 @@ namespace Lucene.Net.Documents
             {
                 if (result.Length > 0)
                 {
-                    result.Append(",");
+                    result.Append(',');
                 }
                 result.Append("docValueType=");
                 result.Append(docValueType);

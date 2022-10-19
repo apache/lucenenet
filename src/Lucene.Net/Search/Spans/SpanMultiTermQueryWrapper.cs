@@ -103,7 +103,7 @@ namespace Lucene.Net.Search.Spans
             StringBuilder builder = new StringBuilder();
             builder.Append("SpanMultiTermQueryWrapper(");
             builder.Append(m_query.ToString(field));
-            builder.Append(")");
+            builder.Append(')');
             if (Boost != 1F)
             {
                 builder.Append('^');

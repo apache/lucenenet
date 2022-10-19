@@ -125,7 +125,7 @@ namespace Lucene.Net.Analysis
                 string content = buf.ToString();
                 Assert.AreEqual(content.Length, t.Length);
                 Assert.AreEqual(content, t.ToString());
-                buf.Append("a");
+                buf.Append('a');
             }
             Assert.AreEqual(20000, t.Length);
 
@@ -138,7 +138,7 @@ namespace Lucene.Net.Analysis
                 string content = buf.ToString();
                 Assert.AreEqual(content.Length, t.Length);
                 Assert.AreEqual(content, t.ToString());
-                buf.Append("a");
+                buf.Append('a');
             }
             Assert.AreEqual(20000, t.Length);
         }
