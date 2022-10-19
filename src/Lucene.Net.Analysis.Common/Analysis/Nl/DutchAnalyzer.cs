@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Nl
         /// <returns> an unmodifiable instance of the default stop-words set. </returns>
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
-        private class DefaultSetHolder
+        private static class DefaultSetHolder
         {
             internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();
             internal static readonly CharArrayMap<string> DEFAULT_STEM_DICT = LoadDefaultStemDict();

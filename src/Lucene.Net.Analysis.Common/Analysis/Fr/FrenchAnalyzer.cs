@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.Fr
         /// <returns> an unmodifiable instance of the default stop-words set. </returns>
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
-        private class DefaultSetHolder
+        private static class DefaultSetHolder
         {
             /// @deprecated (3.1) remove this in Lucene 5.0, index bw compat 
             [Obsolete("(3.1) remove this in Lucene 5.0, index bw compat")]

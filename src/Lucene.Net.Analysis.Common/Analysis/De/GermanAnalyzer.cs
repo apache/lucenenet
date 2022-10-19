@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis.De
         /// <returns> a set of default German-stopwords  </returns>
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_SET;
 
-        private class DefaultSetHolder
+        private static class DefaultSetHolder
         {
             /// @deprecated in 3.1, remove in Lucene 5.0 (index bw compat) 
             [Obsolete("in 3.1, remove in Lucene 5.0 (index bw compat)")]

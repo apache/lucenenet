@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.El
         /// <returns> a set of default Greek-stopwords  </returns>
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_SET;
 
-        private class DefaultSetHolder
+        private static class DefaultSetHolder
         {
             internal static readonly CharArraySet DEFAULT_SET = LoadDefaultSet();
 
