@@ -6,6 +6,7 @@ using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 
@@ -89,6 +90,9 @@ namespace Lucene.Net.Analysis.Fr
 
         /// <summary>
         /// Default set of articles for <see cref="ElisionFilter"/> </summary>
+        [SuppressMessage("Performance", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
+        [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
         public static readonly CharArraySet DEFAULT_ARTICLES = new CharArraySet(
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
