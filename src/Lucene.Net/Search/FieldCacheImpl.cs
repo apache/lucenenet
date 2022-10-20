@@ -165,7 +165,7 @@ namespace Lucene.Net.Search
         }
 
         [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "False positive")]
-        private void AddCacheEntries<TKey, TValue>(IList<FieldCache.CacheEntry> result, Type cacheType, Cache<TKey, TValue> cache) where TKey : CacheKey // LUCENENET: CA1822: Mark members as static
+        private void AddCacheEntries<TKey, TValue>(IList<FieldCache.CacheEntry> result, Type cacheType, Cache<TKey, TValue> cache) where TKey : CacheKey
         {
             UninterruptableMonitor.Enter(cache.readerCache);
             try
