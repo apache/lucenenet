@@ -54,14 +54,14 @@ namespace Lucene.Net.Analysis.Cn.Smart
 
         private const string STOPWORD_FILE_COMMENT = "//";
 
+        [Obsolete("Use DefaultStopSet instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        public static CharArraySet GetDefaultStopSet() => DefaultSetHolder.DEFAULT_STOP_SET;
+
         /// <summary>
         /// Returns an unmodifiable instance of the default stop-words set.
         /// </summary>
         /// <returns>An unmodifiable instance of the default stop-words set.</returns>
-        public static CharArraySet GetDefaultStopSet()
-        {
-            return DefaultSetHolder.DEFAULT_STOP_SET;
-        }
+        public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
         /// <summary>
         /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class 
