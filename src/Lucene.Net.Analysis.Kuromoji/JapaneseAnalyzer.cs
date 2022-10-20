@@ -51,15 +51,15 @@ namespace Lucene.Net.Analysis.Ja
             this.stoptags = stoptags;
         }
 
-        public static CharArraySet GetDefaultStopSet()
-        {
-            return DefaultSetHolder.DEFAULT_STOP_SET;
-        }
+        [Obsolete("Use DefaultStopSet instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        public static CharArraySet GetDefaultStopSet() => DefaultSetHolder.DEFAULT_STOP_SET;
 
-        public static ISet<string> GetDefaultStopTags()
-        {
-            return DefaultSetHolder.DEFAULT_STOP_TAGS;
-        }
+        [Obsolete("Use DefaultStopTags instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        public static ISet<string> GetDefaultStopTags() => DefaultSetHolder.DEFAULT_STOP_TAGS;
+
+        public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
+
+        public static ISet<string> DefaultStopTags => DefaultSetHolder.DEFAULT_STOP_TAGS;
 
         /// <summary>
         /// Atomically loads DEFAULT_STOP_SET, DEFAULT_STOP_TAGS in a lazy fashion once the 
