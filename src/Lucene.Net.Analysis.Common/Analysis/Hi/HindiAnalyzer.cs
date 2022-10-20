@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Hi
         public HindiAnalyzer(LuceneVersion version, CharArraySet stopwords, CharArraySet stemExclusionSet)
             : base(version, stopwords)
         {
-            this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(m_matchVersion, stemExclusionSet));
+            this.stemExclusionSet = CharArraySet.Copy(m_matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>

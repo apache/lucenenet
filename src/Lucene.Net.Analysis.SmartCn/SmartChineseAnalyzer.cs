@@ -88,11 +88,11 @@ namespace Lucene.Net.Analysis.Cn.Smart
             internal static CharArraySet LoadDefaultStopWordSet()
             {
                 // make sure it is unmodifiable as we expose it in the outer class
-                return CharArraySet.UnmodifiableSet(WordlistLoader.GetWordSet(IOUtils
+                return WordlistLoader.GetWordSet(IOUtils
                     .GetDecodingReader(typeof(SmartChineseAnalyzer), DEFAULT_STOPWORD_FILE,
                         Encoding.UTF8), STOPWORD_FILE_COMMENT,
 #pragma warning disable 612, 618
-                    LuceneVersion.LUCENE_CURRENT));
+                    LuceneVersion.LUCENE_CURRENT).AsReadOnly();
 #pragma warning restore 612, 618
             }
         }

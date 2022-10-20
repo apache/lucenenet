@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System.Collections.Generic;
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Core
 #pragma warning disable 612, 618
             var stopSet = new CharArraySet(LuceneVersion.LUCENE_CURRENT, stopWords, false);
 #pragma warning restore 612, 618
-            return CharArraySet.UnmodifiableSet(stopSet);
+            return stopSet.AsReadOnly();
         }
 
         /// <summary>

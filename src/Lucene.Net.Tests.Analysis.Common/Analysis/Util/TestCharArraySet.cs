@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(set.Contains(new string(findme, 1, 4)));
 
             // test unmodifiable
-            set = CharArraySet.UnmodifiableSet(set);
+            set = set.AsReadOnly();
             assertTrue(set.Contains(findme, 1, 4));
             assertTrue(set.Contains(new string(findme, 1, 4)));
         }
@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(set.Contains("1"));
             assertTrue(set.Contains(new char[] { '1' }));
             // test unmodifiable
-            set = CharArraySet.UnmodifiableSet(set);
+            set = set.AsReadOnly();
             assertTrue(set.Contains(val));
             assertTrue(set.Contains(J2N.Numerics.Int32.GetInstance(1))); // another integer
             assertTrue(set.Contains("1"));
@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Util
             CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
             set.UnionWith(TEST_STOP_WORDS);
             int size = set.size();
-            set = CharArraySet.UnmodifiableSet(set);
+            set = set.AsReadOnly();
             assertEquals("Set size changed due to unmodifiableSet call", size, set.size());
             string NOT_IN_SET = "SirGallahad";
             assertFalse("Test String already exists in set", set.Contains(NOT_IN_SET));
@@ -255,7 +255,7 @@ namespace Lucene.Net.Analysis.Util
             set.UnionWith(TEST_STOP_WORDS);
             set.Add(Convert.ToInt32(1));
             int size = set.size();
-            set = CharArraySet.UnmodifiableSet(set);
+            set = set.AsReadOnly();
             assertEquals("Set size changed due to unmodifiableSet call", size, set.size());
             foreach (var stopword in TEST_STOP_WORDS)
             {
@@ -265,15 +265,16 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(set.Contains("1"));
             assertTrue(set.Contains(new[] { '1' }));
 
-            try
-            {
-                CharArraySet.UnmodifiableSet(null);
-                fail("can not make null unmodifiable");
-            }
-            catch (ArgumentNullException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
-            {
-                // expected
-            }
+            // LUCENENET specific - we use an instance method, so this is not a valid call
+            //try
+            //{
+            //    CharArraySet.UnmodifiableSet(null);
+            //    fail("can not make null unmodifiable");
+            //}
+            //catch (ArgumentNullException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            //{
+            //    // expected
+            //}
         }
 
         [Test]

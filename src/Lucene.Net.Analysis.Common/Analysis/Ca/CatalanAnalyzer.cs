@@ -46,9 +46,9 @@ namespace Lucene.Net.Analysis.Ca
         /// File containing default Catalan stopwords. </summary>
         public const string DEFAULT_STOPWORD_FILE = "stopwords.txt";
 
-        private static readonly CharArraySet DEFAULT_ARTICLES = CharArraySet.UnmodifiableSet(
+        private static readonly CharArraySet DEFAULT_ARTICLES = 
 #pragma warning disable 612, 618
-            new CharArraySet(LuceneVersion.LUCENE_CURRENT, new string[] { "d", "l", "m", "n", "s", "t" }, true));
+            new CharArraySet(LuceneVersion.LUCENE_CURRENT, new string[] { "d", "l", "m", "n", "s", "t" }, true).AsReadOnly();
 #pragma warning restore 612, 618
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.Ca
         public CatalanAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
               : base(matchVersion, stopwords)
         {
-            this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
+            this.stemExclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>

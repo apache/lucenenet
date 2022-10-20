@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.De
         {
             /// @deprecated in 3.1, remove in Lucene 5.0 (index bw compat) 
             [Obsolete("in 3.1, remove in Lucene 5.0 (index bw compat)")]
-            internal static readonly CharArraySet DEFAULT_SET_30 = CharArraySet.UnmodifiableSet(new CharArraySet(LuceneVersion.LUCENE_CURRENT, GERMAN_STOP_WORDS, false));
+            internal static readonly CharArraySet DEFAULT_SET_30 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, GERMAN_STOP_WORDS, false).AsReadOnly();
             internal static readonly CharArraySet DEFAULT_SET = LoadDefaultSet();
             private static CharArraySet LoadDefaultSet() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
             {
@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.De
         public GermanAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
               : base(matchVersion, stopwords)
         {
-            exclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
+            exclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>

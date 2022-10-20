@@ -113,7 +113,7 @@ namespace Lucene.Net.Analysis.Cz
         public CzechAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionTable)
               : base(matchVersion, stopwords)
         {
-            this.stemExclusionTable = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionTable));
+            this.stemExclusionTable = CharArraySet.Copy(matchVersion, stemExclusionTable).AsReadOnly();
         }
 
         /// <summary>

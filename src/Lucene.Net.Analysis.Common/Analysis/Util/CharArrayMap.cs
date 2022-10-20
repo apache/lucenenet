@@ -184,14 +184,14 @@ namespace Lucene.Net.Analysis.Util
             }
             Put(key, value);
         }
-        
+
         /// <summary>
         /// Returns an unmodifiable <see cref="CharArrayMap{TValue}"/>. This allows to provide
         /// unmodifiable views of internal map for "read-only" use.
         /// </summary>
         /// <returns> an new unmodifiable <see cref="CharArrayMap{TValue}"/>. </returns>
         // LUCENENET specific - allow .NET-like syntax for creating immutable collections
-        public virtual CharArrayMap<TValue> AsReadOnly()
+        public CharArrayMap<TValue> AsReadOnly()
         {
             return this is CharArrayMap.UnmodifiableCharArrayMap<TValue> readOnlyDictionary ?
                 readOnlyDictionary :

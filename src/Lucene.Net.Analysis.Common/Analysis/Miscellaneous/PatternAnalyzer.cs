@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public static readonly Regex WHITESPACE_PATTERN = new Regex("\\s+", RegexOptions.Compiled);
 
         private static readonly CharArraySet EXTENDED_ENGLISH_STOP_WORDS =
-            CharArraySet.UnmodifiableSet(new CharArraySet(LuceneVersion.LUCENE_CURRENT,
+            new CharArraySet(LuceneVersion.LUCENE_CURRENT,
                 new string[] {
                     "a", "about", "above", "across", "adj", "after", "afterwards",
                     "again", "against", "albeit", "all", "almost", "alone", "along",
@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     "with", "within", "without", "would", "xsubj", "xcal", "xauthor",
                     "xother ", "xnote", "yet", "you", "your", "yours", "yourself",
                     "yourselves"
-                    }, true));
+                    }, true).AsReadOnly();
 
         /// <summary>
         /// A lower-casing word analyzer with English stop words (can be shared
