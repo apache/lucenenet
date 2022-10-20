@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Search.Similarities
 {
@@ -49,6 +51,8 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// The <em>f</em> helper function defined for <em>B<sub>E</sub></em>. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
         private double F(double n, double m)
         {
             return (m + 0.5) * SimilarityBase.Log2(n / m) + (n - m) * SimilarityBase.Log2(n);

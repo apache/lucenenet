@@ -11,6 +11,7 @@ using Prism.Events;
 #endif
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
@@ -163,7 +164,8 @@ namespace Lucene.Net.Search
             return result.ToArray();
         }
 
-        private void AddCacheEntries<TKey, TValue>(IList<FieldCache.CacheEntry> result, Type cacheType, Cache<TKey, TValue> cache) where TKey : CacheKey // LUCENENET: CA1822: Mark members as static
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "False positive")]
+        private void AddCacheEntries<TKey, TValue>(IList<FieldCache.CacheEntry> result, Type cacheType, Cache<TKey, TValue> cache) where TKey : CacheKey
         {
             UninterruptableMonitor.Enter(cache.readerCache);
             try
