@@ -227,7 +227,8 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> an new unmodifiable <see cref="CharArraySet"/>. </returns>
         /// <exception cref="ArgumentNullException">
         ///           if the given set is <c>null</c>. </exception>
-        public static CharArraySet UnmodifiableSet(CharArraySet set) // LUCENENET TODO: API - Rename AsReadOnly() to match .NET convention
+        [Obsolete("Use the AsReadOnly() instance method instead. This method will be removed in 4.8.0 release candidate."), EditorBrowsable(EditorBrowsableState.Never)]
+        public static CharArraySet UnmodifiableSet(CharArraySet set)
         {
             if (set is null)
             {
@@ -242,6 +243,25 @@ namespace Lucene.Net.Analysis.Util
                 return set;
             }
             return new CharArraySet(CharArrayMap.UnmodifiableMap<object>(set.map));
+        }
+
+        /// <summary>
+        /// Returns an unmodifiable <see cref="CharArraySet"/>. This allows to provide
+        /// unmodifiable views of internal sets for "read-only" use.
+        /// </summary>
+        /// <returns>A new unmodifiable <see cref="CharArraySet"/>.</returns>
+        // LUCENENET specific - allow .NET-like syntax for creating immutable collections
+        public virtual CharArraySet AsReadOnly()
+        {
+            if (this == EMPTY_SET)
+            {
+                return EMPTY_SET;
+            }
+            if (this.map is CharArrayMap.UnmodifiableCharArrayMap<object>)
+            {
+                return this;
+            }
+            return new CharArraySet(CharArrayMap.UnmodifiableMap<object>(this.map));
         }
 
         /// <summary>
