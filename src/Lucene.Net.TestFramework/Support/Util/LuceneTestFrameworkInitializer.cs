@@ -2,6 +2,7 @@
 using Lucene.Net.Configuration;
 using NUnit.Framework;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Lucene.Net.Util
@@ -276,6 +277,7 @@ namespace Lucene.Net.Util
         /// // tight loop with many invocations.
         /// </code>
         /// </summary>
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
         protected Random Random => LuceneTestCase.Random;
 
         /// <summary>
