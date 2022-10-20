@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using static Lucene.Net.Search.Similarities.SimilarityBase;
 
 namespace Lucene.Net.Search.Similarities
 {
@@ -49,8 +50,8 @@ namespace Lucene.Net.Search.Similarities
             double phi = (double)tfn / F;
             double nphi = 1 - phi;
             double p = 1.0 / (stats.NumberOfDocuments + 1);
-            double D = phi * SimilarityBase.Log2(phi / p) + nphi * SimilarityBase.Log2(nphi / (1 - p));
-            return (float)(D * F + 0.5 * SimilarityBase.Log2(1 + 2 * Math.PI * tfn * nphi));
+            double D = phi * Log2(phi / p) + nphi * Log2(nphi / (1 - p));
+            return (float)(D * F + 0.5 * Log2(1 + 2 * Math.PI * tfn * nphi));
         }
 
         public override string ToString()

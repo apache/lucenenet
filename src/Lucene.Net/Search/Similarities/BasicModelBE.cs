@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using static Lucene.Net.Search.Similarities.SimilarityBase;
 
 namespace Lucene.Net.Search.Similarities
 {
@@ -46,7 +47,7 @@ namespace Lucene.Net.Search.Similarities
             double F = stats.TotalTermFreq + 1 + tfn;
             // approximation only holds true when F << N, so we use N += F
             double N = F + stats.NumberOfDocuments;
-            return (float)(-SimilarityBase.Log2((N - 1) * Math.E) + this.F(N + F - 1, N + F - tfn - 2) - this.F(F, F - tfn));
+            return (float)(-Log2((N - 1) * Math.E) + this.F(N + F - 1, N + F - tfn - 2) - this.F(F, F - tfn));
         }
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace Lucene.Net.Search.Similarities
         [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
         private double F(double n, double m)
         {
-            return (m + 0.5) * SimilarityBase.Log2(n / m) + (n - m) * SimilarityBase.Log2(n);
+            return (m + 0.5) * Log2(n / m) + (n - m) * Log2(n);
         }
 
         public override string ToString()

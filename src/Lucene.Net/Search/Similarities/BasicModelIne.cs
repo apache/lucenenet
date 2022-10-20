@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using static Lucene.Net.Search.Similarities.SimilarityBase;
 
 namespace Lucene.Net.Search.Similarities
 {
@@ -38,7 +39,7 @@ namespace Lucene.Net.Search.Similarities
             long N = stats.NumberOfDocuments;
             long F = stats.TotalTermFreq;
             double ne = N * (1 - Math.Pow((N - 1) / (double)N, F));
-            return tfn * (float)(SimilarityBase.Log2((N + 1) / (ne + 0.5)));
+            return tfn * (float)(Log2((N + 1) / (ne + 0.5)));
         }
 
         public override string ToString()

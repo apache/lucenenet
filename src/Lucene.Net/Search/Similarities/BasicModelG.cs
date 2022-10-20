@@ -1,3 +1,5 @@
+﻿using static Lucene.Net.Search.Similarities.SimilarityBase;
+
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -39,7 +41,7 @@ namespace Lucene.Net.Search.Similarities
             double N = stats.NumberOfDocuments;
             double lambda = F / (N + F);
             // -log(1 / (lambda + 1)) -> log(lambda + 1)
-            return (float)(SimilarityBase.Log2(lambda + 1) + tfn * SimilarityBase.Log2((1 + lambda) / lambda));
+            return (float)(Log2(lambda + 1) + tfn * Log2((1 + lambda) / lambda));
         }
 
         public override string ToString()
