@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Ar
             {
                 try
                 {
-                    return LoadStopwordSet(false, typeof(ArabicAnalyzer), DEFAULT_STOPWORD_FILE, "#");
+                    return LoadStopwordSet(false, typeof(ArabicAnalyzer), DEFAULT_STOPWORD_FILE, "#").AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
                 }
                 catch (Exception ex) when (ex.IsIOException())
                 {

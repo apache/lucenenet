@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis.Lv
                     return WordlistLoader.GetWordSet(
                         IOUtils.GetDecodingReader(typeof(LatvianAnalyzer), DEFAULT_STOPWORD_FILE, Encoding.UTF8),
 #pragma warning disable 612, 618
-                        LuceneVersion.LUCENE_CURRENT);
+                        LuceneVersion.LUCENE_CURRENT).AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
 #pragma warning restore 612, 618
                 }
                 catch (Exception ex) when (ex.IsIOException())

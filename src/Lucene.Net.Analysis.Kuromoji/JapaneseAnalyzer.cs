@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Cjk;
+﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Analysis.Cjk;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Ja.Dict;
 using Lucene.Net.Analysis.Util;
@@ -73,7 +74,7 @@ namespace Lucene.Net.Analysis.Ja
             {
                 try
                 {
-                    return LoadStopwordSet(true, typeof(JapaneseAnalyzer), "stopwords.txt", "#");  // ignore case
+                    return LoadStopwordSet(true, typeof(JapaneseAnalyzer), "stopwords.txt", "#").AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866  // ignore case
                 }
                 catch (Exception ex) when (ex.IsIOException())
                 {
@@ -92,7 +93,7 @@ namespace Lucene.Net.Analysis.Ja
                     {
                         DEFAULT_STOP_TAGS.Add(element);
                     }
-                    return DEFAULT_STOP_TAGS;
+                    return DEFAULT_STOP_TAGS.AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
                 }
                 catch (Exception ex) when (ex.IsIOException())
                 {
