@@ -1,0 +1,37 @@
+name: SonarCloud
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+jobs:
+  Analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: SonarScanner for .NET 6 with pull request decoration support
+        uses: highbyte/sonarscan-dotnet@v2.1.3
+        with:
+          # The key of the SonarQube project
+          sonarProjectKey: apache_lucenenet
+          # The name of the SonarQube project
+          sonarProjectName: lucenenet
+          # The name of the SonarQube organization in SonarCloud. For hosted SonarQube, skip this setting.
+          sonarOrganization: apache
+          # Optional. Set to 1 or true to not run 'dotnet test' command
+          dotnetDisableTests: true # Tests are diabled because the project is too large and experience problems when running the tests. (Random GitHub actions crashes)
+
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+# GitHub actions documentation: https://github.com/highbyte/sonarscan-dotnet
