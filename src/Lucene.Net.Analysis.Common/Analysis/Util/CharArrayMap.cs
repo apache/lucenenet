@@ -186,6 +186,19 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
+        /// Returns an unmodifiable <see cref="CharArrayMap{TValue}"/>. This allows to provide
+        /// unmodifiable views of internal map for "read-only" use.
+        /// </summary>
+        /// <returns> an new unmodifiable <see cref="CharArrayMap{TValue}"/>. </returns>
+        // LUCENENET specific - allow .NET-like syntax for creating immutable collections
+        public CharArrayMap<TValue> AsReadOnly()
+        {
+            return this is CharArrayMap.UnmodifiableCharArrayMap<TValue> readOnlyDictionary ?
+                readOnlyDictionary :
+                new CharArrayMap.UnmodifiableCharArrayMap<TValue>(this);
+        }
+
+        /// <summary>
         /// Clears all entries in this map. This method is supported for reusing, but not 
         /// <see cref="IDictionary{TKey, TValue}.Remove(TKey)"/>. 
         /// </summary>
@@ -1790,7 +1803,8 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> an new unmodifiable <see cref="CharArrayMap{TValue}"/>. </returns>
         /// <exception cref="ArgumentException">
         ///           if the given map is <c>null</c>. </exception>
-        public static CharArrayMap<TValue> UnmodifiableMap<TValue>(CharArrayMap<TValue> map) // LUCENENET TODO: API - Rename AsReadOnly() to match .NET convention
+        [Obsolete("Use the CharArrayMap<TValue>.AsReadOnly() instance method instead. This method will be removed in 4.8.0 release candidate."), EditorBrowsable(EditorBrowsableState.Never)]
+        public static CharArrayMap<TValue> UnmodifiableMap<TValue>(CharArrayMap<TValue> map)
         {
             if (map is null)
             {

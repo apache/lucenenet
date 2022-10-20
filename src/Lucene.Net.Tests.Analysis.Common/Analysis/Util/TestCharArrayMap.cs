@@ -167,7 +167,7 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(map.ContainsKey("bar"));
             assertEquals(2, map.Get("bar"));
 
-            map = CharArrayMap.UnmodifiableMap(map);
+            map = map.AsReadOnly();
             assertEquals("Map size changed due to unmodifiableMap call", size, map.Count);
             var NOT_IN_MAP = "SirGallahad";
             assertFalse("Test String already exists in map", map.ContainsKey(NOT_IN_MAP));

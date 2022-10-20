@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Nl
                     return WordlistLoader.GetSnowballWordSet(
                         IOUtils.GetDecodingReader(typeof(SnowballFilter), DEFAULT_STOPWORD_FILE, Encoding.UTF8),
 #pragma warning disable 612, 618
-                        LuceneVersion.LUCENE_CURRENT);
+                        LuceneVersion.LUCENE_CURRENT).AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
 #pragma warning restore 612, 618
                 }
                 catch (Exception ex) when (ex.IsIOException())
@@ -155,14 +155,14 @@ namespace Lucene.Net.Analysis.Nl
         public DutchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionTable, CharArrayMap<string> stemOverrideDict)
         {
             this.matchVersion = matchVersion;
-            this.stoptable = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stopwords));
-            this.excltable = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionTable));
+            this.stoptable = CharArraySet.Copy(matchVersion, stopwords).AsReadOnly();
+            this.excltable = CharArraySet.Copy(matchVersion, stemExclusionTable).AsReadOnly();
 #pragma warning disable 612, 618
             if (stemOverrideDict.Count == 0 || !matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
 #pragma warning restore 612, 618
             {
                 this.stemdict = null;
-                this.origStemdict = CharArrayMap.UnmodifiableMap(CharArrayMap.Copy(matchVersion, stemOverrideDict));
+                this.origStemdict = CharArrayMap.Copy(matchVersion, stemOverrideDict).AsReadOnly();
             }
             else
             {

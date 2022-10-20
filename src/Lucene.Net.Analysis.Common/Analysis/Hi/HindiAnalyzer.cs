@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Hi
             {
                 try
                 {
-                    return LoadStopwordSet(false, typeof(HindiAnalyzer), DEFAULT_STOPWORD_FILE, STOPWORDS_COMMENT);
+                    return LoadStopwordSet(false, typeof(HindiAnalyzer), DEFAULT_STOPWORD_FILE, STOPWORDS_COMMENT).AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
                 }
                 catch (Exception ex) when (ex.IsIOException())
                 {
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Hi
         public HindiAnalyzer(LuceneVersion version, CharArraySet stopwords, CharArraySet stemExclusionSet)
             : base(version, stopwords)
         {
-            this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(m_matchVersion, stemExclusionSet));
+            this.stemExclusionSet = CharArraySet.Copy(m_matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>

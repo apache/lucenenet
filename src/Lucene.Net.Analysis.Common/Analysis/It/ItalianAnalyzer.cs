@@ -48,12 +48,12 @@ namespace Lucene.Net.Analysis.It
         /// File containing default Italian stopwords. </summary>
         public const string DEFAULT_STOPWORD_FILE = "italian_stop.txt";
 
-        private static readonly CharArraySet DEFAULT_ARTICLES = CharArraySet.UnmodifiableSet(new CharArraySet(
+        private static readonly CharArraySet DEFAULT_ARTICLES = new CharArraySet(
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
             new string[] { "c", "l", "all", "dall", "dell", "nell", "sull", "coll", "pell", "gl", "agl",
-                "dagl", "degl", "negl", "sugl", "un", "m", "t", "s", "v", "d" }, true));
+                "dagl", "degl", "negl", "sugl", "un", "m", "t", "s", "v", "d" }, true).AsReadOnly();
 
         /// <summary>
         /// Returns an unmodifiable instance of the default stop words set. </summary>
@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.It
                     return WordlistLoader.GetSnowballWordSet(
                         IOUtils.GetDecodingReader(typeof(SnowballFilter), DEFAULT_STOPWORD_FILE, Encoding.UTF8),
 #pragma warning disable 612, 618
-                        LuceneVersion.LUCENE_CURRENT);
+                        LuceneVersion.LUCENE_CURRENT).AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
 #pragma warning restore 612, 618
                 }
                 catch (Exception ex) when (ex.IsIOException())
@@ -117,7 +117,7 @@ namespace Lucene.Net.Analysis.It
         public ItalianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
             : base(matchVersion, stopwords)
         {
-            this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
+            this.stemExclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>

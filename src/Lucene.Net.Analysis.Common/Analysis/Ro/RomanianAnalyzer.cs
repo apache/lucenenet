@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Ro
             {
                 try
                 {
-                    return LoadStopwordSet(false, typeof(RomanianAnalyzer), DEFAULT_STOPWORD_FILE, STOPWORDS_COMMENT);
+                    return LoadStopwordSet(false, typeof(RomanianAnalyzer), DEFAULT_STOPWORD_FILE, STOPWORDS_COMMENT).AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
                 }
                 catch (Exception ex) when (ex.IsIOException())
                 {
@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Ro
         public RomanianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
             : base(matchVersion, stopwords)
         {
-            this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
+            this.stemExclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>

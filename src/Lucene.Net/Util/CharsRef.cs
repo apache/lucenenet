@@ -41,6 +41,9 @@ namespace Lucene.Net.Util
     {
         /// <summary>
         /// An empty character array for convenience </summary>
+        [SuppressMessage("Performance", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
+        [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
         public static readonly char[] EMPTY_CHARS = Arrays.Empty<char>();
 
         bool ICharSequence.HasValue => true;

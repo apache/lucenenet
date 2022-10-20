@@ -6,6 +6,7 @@ using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 
@@ -89,11 +90,14 @@ namespace Lucene.Net.Analysis.Fr
 
         /// <summary>
         /// Default set of articles for <see cref="ElisionFilter"/> </summary>
-        public static readonly CharArraySet DEFAULT_ARTICLES = CharArraySet.UnmodifiableSet(new CharArraySet(
+        [SuppressMessage("Performance", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
+        [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
+        public static readonly CharArraySet DEFAULT_ARTICLES = new CharArraySet(
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-            new string[] { "l", "m", "t", "qu", "n", "s", "j", "d", "c", "jusqu", "quoiqu", "lorsqu", "puisqu" }, true));
+            new string[] { "l", "m", "t", "qu", "n", "s", "j", "d", "c", "jusqu", "quoiqu", "lorsqu", "puisqu" }, true).AsReadOnly();
 
         /// <summary>
         /// Contains words that should be indexed but not stemmed.
@@ -109,7 +113,7 @@ namespace Lucene.Net.Analysis.Fr
         {
             /// @deprecated (3.1) remove this in Lucene 5.0, index bw compat 
             [Obsolete("(3.1) remove this in Lucene 5.0, index bw compat")]
-            internal static readonly CharArraySet DEFAULT_STOP_SET_30 = CharArraySet.UnmodifiableSet(new CharArraySet(LuceneVersion.LUCENE_CURRENT, FRENCH_STOP_WORDS, false));
+            internal static readonly CharArraySet DEFAULT_STOP_SET_30 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, FRENCH_STOP_WORDS, false).AsReadOnly();
             internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();
             private static CharArraySet LoadDefaultStopSet() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
             {
@@ -118,7 +122,7 @@ namespace Lucene.Net.Analysis.Fr
                     return WordlistLoader.GetSnowballWordSet(
                         IOUtils.GetDecodingReader(typeof(SnowballFilter), DEFAULT_STOPWORD_FILE, Encoding.UTF8),
 #pragma warning disable 612, 618
-                        LuceneVersion.LUCENE_CURRENT);
+                        LuceneVersion.LUCENE_CURRENT).AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
 #pragma warning restore 612, 618
                 }
                 catch (Exception ex) when (ex.IsIOException())
@@ -165,7 +169,7 @@ namespace Lucene.Net.Analysis.Fr
         public FrenchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclutionSet)
               : base(matchVersion, stopwords)
         {
-            this.excltable = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclutionSet));
+            this.excltable = CharArraySet.Copy(matchVersion, stemExclutionSet).AsReadOnly();
         }
 
         /// <summary>

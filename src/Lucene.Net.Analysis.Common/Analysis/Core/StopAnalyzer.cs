@@ -1,7 +1,8 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Lucene.Net.Analysis.Core
@@ -41,6 +42,9 @@ namespace Lucene.Net.Analysis.Core
         /// An unmodifiable set containing some common English words that are not usually useful
         /// for searching.
         /// </summary>
+        [SuppressMessage("Performance", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
+        [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
         public static readonly CharArraySet ENGLISH_STOP_WORDS_SET = LoadEnglishStopWordsSet();
 
         private static CharArraySet LoadEnglishStopWordsSet() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
@@ -52,7 +56,7 @@ namespace Lucene.Net.Analysis.Core
 #pragma warning disable 612, 618
             var stopSet = new CharArraySet(LuceneVersion.LUCENE_CURRENT, stopWords, false);
 #pragma warning restore 612, 618
-            return CharArraySet.UnmodifiableSet(stopSet);
+            return stopSet.AsReadOnly();
         }
 
         /// <summary>

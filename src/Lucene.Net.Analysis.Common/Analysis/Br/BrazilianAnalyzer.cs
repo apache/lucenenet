@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Br
                         IOUtils.GetDecodingReader(typeof(BrazilianAnalyzer), DEFAULT_STOPWORD_FILE, Encoding.UTF8),
                         "#",
 #pragma warning disable 612, 618
-                        LuceneVersion.LUCENE_CURRENT);
+                        LuceneVersion.LUCENE_CURRENT).AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
 #pragma warning restore 612, 618
                 }
                 catch (Exception ex) when (ex.IsIOException())
@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Br
         public BrazilianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
               : this(matchVersion, stopwords)
         {
-            excltable = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
+            excltable = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>
