@@ -654,12 +654,6 @@ namespace Lucene.Net.Codecs.Memory
             internal BinaryEntry values;
         }
 
-        internal class FSTEntry
-        {
-#pragma warning disable 649 // LUCENENET NOTE: Never assigned
-            internal long offset;
-            internal long numOrds;
-#pragma warning restore 649
-        }
+        // LUCENENET specific - removed FSTEntry because it is not in use.
     }
 }

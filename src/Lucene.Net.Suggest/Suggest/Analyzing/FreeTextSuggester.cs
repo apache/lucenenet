@@ -203,51 +203,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return fst.GetSizeInBytes();
         }
 
-        private class AnalyzingComparer : IComparer<BytesRef>
-        {
-            private readonly ByteArrayDataInput readerA = new ByteArrayDataInput();
-            private readonly ByteArrayDataInput readerB = new ByteArrayDataInput();
-            private readonly BytesRef scratchA = new BytesRef();
-            private readonly BytesRef scratchB = new BytesRef();
-
-            public virtual int Compare(BytesRef a, BytesRef b)
-            {
-                readerA.Reset(a.Bytes, a.Offset, a.Length);
-                readerB.Reset(b.Bytes, b.Offset, b.Length);
-
-                // By token:
-                scratchA.Length = (ushort)readerA.ReadInt16();
-                scratchA.Bytes = a.Bytes;
-                scratchA.Offset = readerA.Position;
-
-                scratchB.Bytes = b.Bytes;
-                scratchB.Length = (ushort)readerB.ReadInt16();
-                scratchB.Offset = readerB.Position;
-
-                int cmp = scratchA.CompareTo(scratchB);
-                if (cmp != 0)
-                {
-                    return cmp;
-                }
-                readerA.SkipBytes(scratchA.Length);
-                readerB.SkipBytes(scratchB.Length);
-
-                // By length (smaller surface forms sorted first):
-                cmp = a.Length - b.Length;
-                if (cmp != 0)
-                {
-                    return cmp;
-                }
-
-                // By surface form:
-                scratchA.Offset = readerA.Position;
-                scratchA.Length = a.Length - scratchA.Offset;
-                scratchB.Offset = readerB.Position;
-                scratchB.Length = b.Length - scratchB.Offset;
-
-                return scratchA.CompareTo(scratchB);
-            }
-        }
+        // LUCENENET specific - removed AnalyzingComparer because it is not in use.
 
         private Analyzer AddShingles(Analyzer other)
         {
