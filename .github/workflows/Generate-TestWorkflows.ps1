@@ -38,7 +38,7 @@
 
  .PARAMETER TestFrameworks
     A string array of Dotnet target framework monikers to run the tests on. The default is
-    @('net6.0', 'net5.0','net461','net48').
+    @('net7.0', 'net6.0', 'net5.0','net461','net48').
 
  .PARAMETER OperatingSystems
     A string array of Github Actions operating system monikers to run the tests on.
@@ -65,7 +65,7 @@ param(
 
     [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot)),
 
-    [string[]]$TestFrameworks = @('net6.0', 'net5.0','net461','net48'), # targets under test: net6.0, netstandard2.1, netstanard2.0, net48
+    [string[]]$TestFrameworks = @('net7.0', 'net6.0', 'net5.0','net461','net48'), # targets under test: net7.0, net6.0, netstandard2.1, netstanard2.0, net48
 
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
 

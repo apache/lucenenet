@@ -30,7 +30,7 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
+    <TargetFrameworks>net7.0;net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Benchmark</AssemblyTitle>
     <PackageTags>$(PackageTags);benchmark</PackageTags>
@@ -55,6 +55,10 @@
     <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
     <PackageReference Include="ICU4N.Collation" Version="$(ICU4NCollationPackageVersion)" />
     <PackageReference Include="Spatial4n" Version="$(Spatial4nPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
+    <PackageReference Include="SharpZipLib" Version="$(SharpZipLibPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
