@@ -71,6 +71,8 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         internal static readonly MapValue PLACEHOLDER = new MapValue();
 
+        bool ICharArrayMap.IgnoreCase => ignoreCase;
+
         /// <summary>
         /// LUCENENET SPECIFIC type used to act as a placeholder. Since <c>null</c>
         /// means that our value is not populated, we need an instance of something
@@ -978,6 +980,46 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
+        /// Returns a copy of the current <see cref="CharArrayMap{TValue}"/> as a new instance of <see cref="CharArrayMap{TValue}"/>.
+        /// Preserves the value of <c>matchVersion</c> and <c>ignoreCase</c> from the current instance.
+        /// </summary>
+        /// <returns> A copy of the current <see cref="CharArrayMap{TValue}"/> as a <see cref="CharArrayMap{TValue}"/>. </returns>
+        // LUCENENET specific - allow .NET-like syntax for copying CharArrayMap
+        public virtual CharArrayMap<TValue> ToCharArrayMap()
+        {
+            return new CharArrayMap<TValue>(this.matchVersion, this.Count, ignoreCase: true);
+        }
+
+        /// <summary>
+        /// Returns a copy of the current <see cref="CharArrayMap{TValue}"/> as a new instance of <see cref="CharArrayMap{TValue}"/>
+        /// using the specified <paramref name="matchVersion"/> value. Preserves the value of <c>ignoreCase</c> from the current instance.
+        /// </summary>
+        /// <param name="matchVersion">
+        ///          compatibility match version see <a href="#version">Version
+        ///          note</a> above for details. </param>
+        /// <returns> A copy of the current <see cref="CharArrayMap{TValue}"/> as a <see cref="CharArrayMap{TValue}"/>. </returns>
+        // LUCENENET specific - allow .NET-like syntax for copying CharArrayMap
+        public virtual CharArrayMap<TValue> ToCharArrayMap(LuceneVersion matchVersion)
+        {
+            return new CharArrayMap<TValue>(matchVersion, this.Count, ignoreCase: true);
+        }
+
+        /// <summary>
+        /// Returns a copy of the current <see cref="CharArrayMap{TValue}"/> as a new instance of <see cref="CharArrayMap{TValue}"/>
+        /// using the specified <paramref name="matchVersion"/> and <paramref name="ignoreCase"/> values.
+        /// </summary>
+        /// <param name="matchVersion">
+        ///          compatibility match version see <a href="#version">Version
+        ///          note</a> above for details. </param>
+        /// <param name="ignoreCase"><c>false</c> if and only if the set should be case sensitive otherwise <c>true</c>.</param>
+        /// <returns> A copy of the current <see cref="CharArrayMap{TValue}"/> as a <see cref="CharArrayMap{TValue}"/>. </returns>
+        // LUCENENET specific - allow .NET-like syntax for copying CharArrayMap
+        public virtual CharArrayMap<TValue> ToCharArrayMap(LuceneVersion matchVersion, bool ignoreCase)
+        {
+            return new CharArrayMap<TValue>(matchVersion, this.Count, ignoreCase);
+        }
+
+        /// <summary>
         /// Gets the value associated with the specified key.
         /// </summary>
         /// <param name="key">The key of the value to get.</param>
@@ -1770,6 +1812,7 @@ namespace Lucene.Net.Analysis.Util
         bool ContainsKey(string text);
         bool ContainsKey(ICharSequence text);
         int Count { get; }
+        bool IgnoreCase { get; }
         bool IsReadOnly { get; }
         LuceneVersion MatchVersion { get; }
         ICollection<string> OriginalKeySet { get; }
@@ -2990,5 +3033,51 @@ namespace Lucene.Net.Analysis.Util
         }
 
 #endregion
+    }
+
+    /// <summary>
+    /// Extensions to <see cref="IDictionary{TKey, TValue}"/> for <see cref="CharArrayMap{TValue}"/>.
+    /// </summary>
+    // LUCENENET specific - allow .NET-like syntax for copying CharArrayMap
+    public static class DictionaryExtensions
+    {
+        /// <summary>
+        /// Returns a copy of the current <see cref="IDictionary{TKey, TValue}"/> as a <see cref="CharArrayMap{TValue}"/>
+        /// using the specified <paramref name="matchVersion"/> value.
+        /// </summary>
+        /// <typeparam name="TValue">The type of dictionary value.</typeparam>
+        /// <param name="dictionary">
+        ///          A <see cref="IDictionary{TKey, TValue}"/> to copy. </param>
+        /// <param name="matchVersion">
+        ///          compatibility match version see <a href="#version">Version
+        ///          note</a> above for details. </param>
+        /// <returns> A copy of the current dictionary as a <see cref="CharArrayMap{TValue}"/>. </returns>
+        public static CharArrayMap<TValue> ToCharArrayMap<TValue>(this IDictionary<string, TValue> dictionary, LuceneVersion matchVersion)
+        {
+            if (dictionary is null)
+                throw new ArgumentNullException(nameof(dictionary));
+
+            return new CharArrayMap<TValue>(matchVersion, dictionary.Count, ignoreCase: true);
+        }
+
+        /// <summary>
+        /// Returns a copy of the current <see cref="IDictionary{TKey, TValue}"/> as a <see cref="CharArrayMap{TValue}"/>
+        /// using the specified <paramref name="matchVersion"/> and <paramref name="ignoreCase"/> values.
+        /// </summary>
+        /// <typeparam name="TValue">The type of dictionary value.</typeparam>
+        /// <param name="dictionary">
+        ///          A <see cref="IDictionary{TKey, TValue}"/> to copy. </param>
+        /// <param name="matchVersion">
+        ///          compatibility match version see <a href="#version">Version
+        ///          note</a> above for details. </param>
+        /// <param name="ignoreCase"><c>false</c> if and only if the set should be case sensitive otherwise <c>true</c>.</param>
+        /// <returns> A copy of the current dictionary as a <see cref="CharArrayMap{TValue}"/>. </returns>
+        public static CharArrayMap<TValue> ToCharArrayMap<TValue>(this IDictionary<string, TValue> dictionary, LuceneVersion matchVersion, bool ignoreCase)
+        {
+            if (dictionary is null)
+                throw new ArgumentNullException(nameof(dictionary));
+
+            return new CharArrayMap<TValue>(matchVersion, dictionary.Count, ignoreCase);
+        }
     }
 }

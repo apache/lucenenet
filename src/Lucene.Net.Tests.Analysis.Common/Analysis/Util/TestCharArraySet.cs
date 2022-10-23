@@ -924,6 +924,268 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(readOnlyTarget.IsReadOnly);
         }
 
+
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestToCharArraySet_CharArraySet_BWCompat()
+        {
+            CharArraySet setIngoreCase = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
+            CharArraySet setCaseSensitive = new CharArraySet(TEST_VERSION_CURRENT, 10, false);
+
+            IList<string> stopwords = TEST_STOP_WORDS;
+            IList<string> stopwordsUpper = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                stopwordsUpper.Add(@string.ToUpperInvariant());
+            }
+            setIngoreCase.UnionWith(TEST_STOP_WORDS);
+            setIngoreCase.Add(Convert.ToInt32(1));
+            setCaseSensitive.UnionWith(TEST_STOP_WORDS);
+            setCaseSensitive.Add(Convert.ToInt32(1));
+
+            CharArraySet copy = setIngoreCase.ToCharArraySet(TEST_VERSION_CURRENT);
+            CharArraySet copyCaseSens = setCaseSensitive.ToCharArraySet(TEST_VERSION_CURRENT);
+
+            assertEquals(setIngoreCase.Count, copy.Count);
+            assertEquals(setCaseSensitive.Count, copy.Count);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copyCaseSens.IsSupersetOf(stopwords));
+            foreach (string @string in stopwordsUpper)
+            {
+                assertFalse(copyCaseSens.Contains(@string));
+            }
+            // test adding terms to the copy
+            IList<string> newWords = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                newWords.Add(@string + "_1");
+            }
+            copy.UnionWith(newWords);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copy.IsSupersetOf(newWords));
+            // new added terms are not in the source set
+            foreach (string @string in newWords)
+            {
+                assertFalse(setIngoreCase.Contains(@string));
+                assertFalse(setCaseSensitive.Contains(@string));
+
+            }
+        }
+
+        /// <summary>
+        /// Test the ToCharArraySet function with a CharArraySet as a source
+        /// </summary>
+        [Test, LuceneNetSpecific]
+        public virtual void TestToCharArraySet_CharArraySet()
+        {
+            CharArraySet setIngoreCase = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
+            CharArraySet setCaseSensitive = new CharArraySet(TEST_VERSION_CURRENT, 10, false);
+
+            IList<string> stopwords = TEST_STOP_WORDS;
+            IList<string> stopwordsUpper = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                stopwordsUpper.Add(@string.ToUpperInvariant());
+            }
+            setIngoreCase.UnionWith(TEST_STOP_WORDS);
+            setIngoreCase.Add(Convert.ToInt32(1));
+            setCaseSensitive.UnionWith(TEST_STOP_WORDS);
+            setCaseSensitive.Add(Convert.ToInt32(1));
+
+            CharArraySet copy = CharArraySet.Copy(TEST_VERSION_CURRENT, setIngoreCase);
+            CharArraySet copyCaseSens = CharArraySet.Copy(TEST_VERSION_CURRENT, setCaseSensitive);
+
+            assertEquals(setIngoreCase.Count, copy.Count);
+            assertEquals(setCaseSensitive.Count, copy.Count);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copyCaseSens.IsSupersetOf(stopwords));
+            foreach (string @string in stopwordsUpper)
+            {
+                assertFalse(copyCaseSens.Contains(@string));
+            }
+            // test adding terms to the copy
+            IList<string> newWords = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                newWords.Add(@string + "_1");
+            }
+            copy.UnionWith(newWords);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copy.IsSupersetOf(newWords));
+            // new added terms are not in the source set
+            foreach (string @string in newWords)
+            {
+                assertFalse(setIngoreCase.Contains(@string));
+                assertFalse(setCaseSensitive.Contains(@string));
+            }
+        }
+
+        /// <summary>
+        /// Test the ToCharArraySet function with a CharArraySet as a source
+        /// </summary>
+        [Test, LuceneNetSpecific]
+        public virtual void TestToCharArray_MatchVersion_IgnoreCase_SetCharArray()
+        {
+            CharArraySet setIngoreCase = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
+            CharArraySet setCaseSensitive = new CharArraySet(TEST_VERSION_CURRENT, 10, false);
+
+            IList<string> stopwords = TEST_STOP_WORDS;
+            IList<string> stopwordsUpper = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                stopwordsUpper.Add(@string.ToUpperInvariant());
+            }
+            setIngoreCase.UnionWith(TEST_STOP_WORDS);
+            setIngoreCase.Add(Convert.ToInt32(1));
+            setCaseSensitive.UnionWith(TEST_STOP_WORDS);
+            setCaseSensitive.Add(Convert.ToInt32(1));
+
+            CharArraySet copy = setCaseSensitive.ToCharArraySet(TEST_VERSION_CURRENT, ignoreCase: true);
+            CharArraySet copyCaseSens = setCaseSensitive.ToCharArraySet(TEST_VERSION_CURRENT, ignoreCase: false);
+
+            assertEquals(setIngoreCase.Count, copy.Count);
+            assertEquals(setCaseSensitive.Count, copy.Count);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copyCaseSens.IsSupersetOf(stopwords));
+            foreach (string @string in stopwordsUpper)
+            {
+                assertFalse(copyCaseSens.Contains(@string));
+            }
+            // test adding terms to the copy
+            IList<string> newWords = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                newWords.Add(@string + "_1");
+            }
+            copy.UnionWith(newWords);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copy.IsSupersetOf(newWords));
+            // new added terms are not in the source set
+            foreach (string @string in newWords)
+            {
+                assertFalse(setIngoreCase.Contains(@string));
+                assertFalse(setCaseSensitive.Contains(@string));
+            }
+        }
+
+        /// <summary>
+        /// Test the ToCharArraySet function with a .NET <seealso cref="ISet{T}"/> as a source
+        /// </summary>
+        [Test, LuceneNetSpecific]
+        public virtual void TestToCharArray_MatchVersion_SetJDKSet()
+        {
+            ISet<string> set = new JCG.HashSet<string>();
+
+            IList<string> stopwords = TEST_STOP_WORDS;
+            IList<string> stopwordsUpper = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                stopwordsUpper.Add(@string.ToUpperInvariant());
+            }
+            set.UnionWith(TEST_STOP_WORDS);
+
+            CharArraySet copyCaseSens = set.ToCharArraySet(TEST_VERSION_CURRENT, ignoreCase: false);
+            CharArraySet copy = stopwordsUpper.ToCharArraySet(TEST_VERSION_CURRENT, ignoreCase: true);
+
+            assertEquals(set.Count, copyCaseSens.Count);
+            assertEquals(set.Count, copy.Count);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copyCaseSens.IsSupersetOf(stopwords));
+            foreach (string @string in stopwordsUpper)
+            {
+                assertFalse(copyCaseSens.Contains(@string));
+            }
+
+            IList<string> newWords = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                newWords.Add(@string + "_1");
+            }
+            copy.UnionWith(newWords);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copy.IsSupersetOf(newWords));
+            // new added terms are not in the source set
+            foreach (string @string in newWords)
+            {
+                assertFalse(set.Contains(@string));
+                assertFalse(stopwordsUpper.Contains(@string));
+            }
+        }
+
+        /// <summary>
+        /// Test the ToCharArraySet function with a .NET <seealso cref="ISet{T}"/> as a source
+        /// </summary>
+        [Test, LuceneNetSpecific]
+        public virtual void TestToCharArray_MatchVersion_IgnoreCase_SetJDKSet()
+        {
+            ISet<string> set = new JCG.HashSet<string>();
+
+            IList<string> stopwords = TEST_STOP_WORDS;
+            IList<string> stopwordsUpper = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                stopwordsUpper.Add(@string.ToUpperInvariant());
+            }
+            set.UnionWith(TEST_STOP_WORDS);
+
+            CharArraySet copyCaseSens = set.ToCharArraySet(TEST_VERSION_CURRENT, ignoreCase: false);
+            CharArraySet copy = stopwordsUpper.ToCharArraySet(TEST_VERSION_CURRENT, ignoreCase: true);
+
+            assertEquals(set.Count, copyCaseSens.Count);
+            assertEquals(set.Count, copy.Count);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copyCaseSens.IsSupersetOf(stopwords));
+            foreach (string @string in stopwordsUpper)
+            {
+                assertFalse(copyCaseSens.Contains(@string));
+            }
+
+            IList<string> newWords = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                newWords.Add(@string + "_1");
+            }
+            copy.UnionWith(newWords);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copy.IsSupersetOf(newWords));
+            // new added terms are not in the source set
+            foreach (string @string in newWords)
+            {
+                assertFalse(set.Contains(@string));
+                assertFalse(stopwordsUpper.Contains(@string));
+            }
+        }
+
+        /// <summary>
+        /// Tests a special case of <see cref="CharArraySet.ToCharArraySet()"/> where the
+        /// set to copy is the <see cref="CharArraySet.EMPTY_SET"/>
+        /// </summary>
+        [Test, LuceneNetSpecific]
+        public virtual void TestToCharArraySetEmptySet()
+        {
+            assertSame(CharArraySet.EMPTY_SET, CharArraySet.EMPTY_SET.ToCharArraySet(TEST_VERSION_CURRENT));
+        }
+
         #endregion
     }
 }
