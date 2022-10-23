@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.Util
             assertEquals(hm.Count, cs.Count);
             assertEquals(cm.Count, cs.Count);
             // LUCENENET: Need to cast here - no implicit conversion
-            IEnumerator<KeyValuePair<string, int?>> iter1 = (IEnumerator<KeyValuePair<string, int?>>)cm.EntrySet().GetEnumerator();
+            CharArrayMap<int?>.Enumerator iter1 = cm.GetEnumerator();
             n = 0;
             while (iter1.MoveNext())
             {
@@ -126,8 +126,7 @@ namespace Lucene.Net.Analysis.Util
                 object key = entry.Key;
                 int? val = entry.Value;
                 assertEquals(cm.Get(key), val);
-                // LUCENENET: Need a cast to get to this method because it is not part of the IEnumerator<T> interface
-                ((CharArrayMap<int?>.EntryIterator)iter1).SetValue(val * 100);
+                iter1.SetValue(val * 100);
                 assertEquals(val * 100, (int)cm.Get(key));
                 n++;
             }
@@ -136,7 +135,7 @@ namespace Lucene.Net.Analysis.Util
             cm.PutAll(hm);
             assertEquals(cm.size(), n);
 
-            CharArrayMap<int?>.EntryIterator iter2 = cm.EntrySet().GetEnumerator() as CharArrayMap<int?>.EntryIterator;
+            CharArrayMap<int?>.Enumerator iter2 = cm.GetEnumerator();
             n = 0;
             while (iter2.MoveNext())
             {
@@ -149,9 +148,10 @@ namespace Lucene.Net.Analysis.Util
             }
             assertEquals(hm.Count, n);
 
-            cm.EntrySet().Clear();
+            //cm.EntrySet().Clear(); // LUCENENET: Removed EntrySet() method because .NET uses the dictionary instance
+            cm.Clear();
             assertEquals(0, cm.size());
-            assertEquals(0, cm.EntrySet().size());
+            //assertEquals(0, cm.EntrySet().size()); // LUCENENET: Removed EntrySet() method because .NET uses the dictionary instance
             assertTrue(cm.Count == 0);
         }
 
@@ -278,7 +278,8 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                map.EntrySet().Clear();
+                //map.EntrySet().Clear(); // LUCENENET: Removed EntrySet() method because .NET uses the dictionary instance
+                map.Clear();
                 fail("Modified unmodifiable map");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -336,12 +337,12 @@ namespace Lucene.Net.Analysis.Util
             CharArrayMap<int?> cm = new CharArrayMap<int?>(TEST_VERSION_CURRENT, Collections.SingletonMap<string, int?>("test", 1), false);
             assertEquals("[test]", cm.Keys.ToString());
             assertEquals("[1]", cm.Values.ToString());
-            assertEquals("[test=1]", cm.EntrySet().ToString());
+            //assertEquals("[test=1]", cm.EntrySet().ToString()); // LUCENENET: Removed EntrySet() method because .NET uses the dictionary instance
             assertEquals("{test=1}", cm.ToString());
             cm.Put("test2", 2);
             assertTrue(cm.Keys.ToString().Contains(", "));
             assertTrue(cm.Values.ToString().Contains(", "));
-            assertTrue(cm.EntrySet().ToString().Contains(", "));
+            //assertTrue(cm.EntrySet().ToString().Contains(", ")); // LUCENENET: Removed EntrySet() method because .NET uses the dictionary instance
             assertTrue(cm.ToString().Contains(", "));
         }
 

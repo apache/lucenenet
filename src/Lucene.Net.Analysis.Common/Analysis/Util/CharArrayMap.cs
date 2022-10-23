@@ -3,11 +3,13 @@ using J2N;
 using J2N.Globalization;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 
@@ -241,7 +243,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="arrayIndex">A 32-bit integer that represents the index in <paramref name="array"/> at which copying begins.</param>
         public virtual void CopyTo(KeyValuePair<string, TValue>[] array, int arrayIndex)
         {
-            using var iter = (EntryIterator)EntrySet().GetEnumerator();
+            using var iter = GetEnumerator();
             for (int i = arrayIndex; iter.MoveNext(); i++)
             {
                 array[i] = new KeyValuePair<string, TValue>(iter.Current.Key, iter.CurrentValue);
@@ -255,7 +257,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="map"></param>
         public virtual void CopyTo(CharArrayMap<TValue> map)
         {
-            using var iter = (EntryIterator)EntrySet().GetEnumerator();
+            using var iter = GetEnumerator();
             while (iter.MoveNext())
             {
                 map.Put(iter.Current.Key, iter.CurrentValue);
@@ -841,7 +843,7 @@ namespace Lucene.Net.Analysis.Util
         {
             const int PRIME = 31; // arbitrary prime
             int hash = PRIME;
-            using (var iter = (EntryIterator)EntrySet().GetEnumerator())
+            using (var iter = GetEnumerator())
             {
                 while (iter.MoveNext())
                 {
@@ -1265,11 +1267,11 @@ namespace Lucene.Net.Analysis.Util
             /// </summary>
             private class KeyEnumerator : IEnumerator<string>
             {
-                private readonly EntryIterator entryIterator;
+                private readonly Enumerator entryIterator;
 
                 public KeyEnumerator(CharArrayMap<TValue> outerInstance)
                 {
-                    this.entryIterator = new EntryIterator(outerInstance, !outerInstance.IsReadOnly);
+                    this.entryIterator = new Enumerator(outerInstance, !outerInstance.IsReadOnly);
                 }
 
                 public string Current => entryIterator.Current.Key;
@@ -1380,11 +1382,11 @@ namespace Lucene.Net.Analysis.Util
             /// </summary>
             private class ValueEnumerator : IEnumerator<TValue>
             {
-                private readonly EntryIterator entryIterator;
+                private readonly Enumerator entryIterator;
 
                 public ValueEnumerator(CharArrayMap<TValue> outerInstance)
                 {
-                    this.entryIterator = new EntryIterator(outerInstance, !outerInstance.IsReadOnly);
+                    this.entryIterator = new Enumerator(outerInstance, !outerInstance.IsReadOnly);
                 }
 
                 public TValue Current => entryIterator.CurrentValue;
@@ -1420,9 +1422,14 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Returns an enumerator that iterates through the <see cref="CharArrayMap{TValue}"/>.
         /// </summary>
-        public virtual IEnumerator<KeyValuePair<string, TValue>> GetEnumerator()
+        public virtual Enumerator GetEnumerator()
         {
-            return new EntryIterator(this, false);
+            return new Enumerator(this, !IsReadOnly);
+        }
+
+        IEnumerator<KeyValuePair<string, TValue>> IEnumerable<KeyValuePair<string, TValue>>.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         /// <summary>
@@ -1473,25 +1480,8 @@ namespace Lucene.Net.Analysis.Util
             return sb.Append('}').ToString();
         }
 
-        private EntrySet_ entrySet = null;
         private CharArraySet keySet = null;
         private KeyCollection originalKeySet = null;
-
-        internal virtual EntrySet_ CreateEntrySet()
-        {
-            return new EntrySet_(this, true);
-        }
-
-        // LUCENENET NOTE: This MUST be a method, since there is an
-        // extension method that this class needs to override the behavior of.
-        public EntrySet_ EntrySet()
-        {
-            if (entrySet is null)
-            {
-                entrySet = CreateEntrySet();
-            }
-            return entrySet;
-        }
 
         /// <summary>
         /// helper for <see cref="CharArraySet"/> to not produce endless recursion
@@ -1558,7 +1548,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// public iterator class so efficient methods are exposed to users
         /// </summary>
-        public class EntryIterator : IEnumerator<KeyValuePair<string, TValue>>
+        public class Enumerator : IEnumerator<KeyValuePair<string, TValue>>
         {
             private readonly CharArrayMap<TValue> outerInstance;
 
@@ -1566,7 +1556,7 @@ namespace Lucene.Net.Analysis.Util
             internal int lastPos;
             internal readonly bool allowModify;
 
-            internal EntryIterator(CharArrayMap<TValue> outerInstance, bool allowModify)
+            internal Enumerator(CharArrayMap<TValue> outerInstance, bool allowModify)
             {
                 this.outerInstance = outerInstance;
                 this.allowModify = allowModify;
@@ -1583,24 +1573,21 @@ namespace Lucene.Net.Analysis.Util
                 }
             }
 
-            public virtual bool HasNext => pos < outerInstance.keys.Length;
+            internal bool HasNext => pos < outerInstance.keys.Length;
 
             /// <summary>
-            /// gets the next key... do not modify the returned char[]
+            /// Gets the current key... do not modify the returned char[]
             /// </summary>
-            public virtual char[] NextKey()
-            {
-                GoNext();
-                return outerInstance.keys[lastPos];
-            }
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+            [WritableArray]
+            public virtual char[] CurrentKey
+                => outerInstance.keys[lastPos];
 
             /// <summary>
-            /// gets the next key as a newly created <see cref="string"/> object
+            /// Gets the current key as a newly created <see cref="string"/> object.
             /// </summary>
-            public virtual string NextKeyString()
-            {
-                return new string(NextKey());
-            }
+            public virtual string CurrentKeyString
+                => new string(outerInstance.keys[lastPos]);
 
             /// <summary>
             /// returns the value associated with the current key
@@ -1615,8 +1602,9 @@ namespace Lucene.Net.Analysis.Util
             }
 
             /// <summary>
-            /// sets the value associated with the last key returned
+            /// Sets the value associated with the current key
             /// </summary>
+            /// <returns>Returns the value prior to the update.</returns>
             public virtual TValue SetValue(TValue value)
             {
                 if (!allowModify)
@@ -1656,15 +1644,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             public virtual KeyValuePair<string, TValue> Current
-            {
-                get
-                {
-                    var val = outerInstance.values[lastPos];
-                    return new KeyValuePair<string, TValue>(
-                        new string(outerInstance.keys[lastPos]), 
-                        val != null ? val.Value : default);
-                }
-            }
+                => new KeyValuePair<string, TValue>(CurrentKeyString, CurrentValue);
 
             object IEnumerator.Current => Current;
 
@@ -1674,113 +1654,7 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET NOTE: The Java Lucene type MapEntry was removed here because it is not possible 
         // to inherit the value type KeyValuePair{TKey, TValue} in .NET.
 
-        /// <summary>
-        /// public EntrySet_ class so efficient methods are exposed to users
-        /// 
-        /// NOTE: In .NET this was renamed to EntrySet_ because it conflicted with the
-        /// method EntrySet(). Since there is also an extension method named <see cref="T:IDictionary{K,V}.EntrySet()"/> 
-        /// that this class needs to override, changing the name of the method was not
-        /// possible because the extension method would produce incorrect results if it were
-        /// inadvertently called, leading to hard-to-diagnose bugs.
-        /// 
-        /// Another difference between this set and the Java counterpart is that it implements
-        /// <see cref="ICollection{T}"/> rather than <see cref="ISet{T}"/> so we don't have to implement
-        /// a bunch of methods that we aren't really interested in. The <see cref="Keys"/> and <see cref="Values"/>
-        /// properties both return <see cref="ICollection{T}"/>, and while there is no <see cref="EntrySet()"/> method
-        /// or property in .NET, if there were it would certainly return <see cref="ICollection{T}"/>.
-        /// </summary>
-        public sealed class EntrySet_ : ICollection<KeyValuePair<string, TValue>>
-        {
-            private readonly CharArrayMap<TValue> outerInstance;
-
-            internal readonly bool allowModify;
-
-            internal EntrySet_(CharArrayMap<TValue> outerInstance, bool allowModify)
-            {
-                this.outerInstance = outerInstance;
-                this.allowModify = allowModify;
-            }
-
-            public IEnumerator GetEnumerator()
-            {
-                return new EntryIterator(outerInstance, allowModify);
-            }
-
-            IEnumerator<KeyValuePair<string, TValue>> IEnumerable<KeyValuePair<string, TValue>>.GetEnumerator()
-            {
-                return (IEnumerator<KeyValuePair<string, TValue>>)GetEnumerator();
-            }
-
-            public bool Contains(object o)
-            {
-                if (!(o is KeyValuePair<string, TValue>))
-                {
-                    return false;
-                }
-                var e = (KeyValuePair<string, TValue>)o;
-                string key = e.Key;
-                TValue val = e.Value;
-                TValue v = outerInstance.Get(key);
-                return v is null ? val is null : v.Equals(val);
-            }
-
-            bool ICollection<KeyValuePair<string, TValue>>.Remove(KeyValuePair<string, TValue> item)
-            {
-                throw UnsupportedOperationException.Create();
-            }
-
-            public int Count => outerInstance.count;
-
-            public void Clear()
-            {
-                if (!allowModify)
-                {
-                    throw UnsupportedOperationException.Create();
-                }
-                outerInstance.Clear();
-            }
-
-            #region LUCENENET Added for better .NET support
-
-            public void CopyTo(KeyValuePair<string, TValue>[] array, int arrayIndex)
-            {
-                outerInstance.CopyTo(array, arrayIndex);
-            }
-
-            bool ICollection<KeyValuePair<string, TValue>>.Contains(KeyValuePair<string, TValue> item)
-            {
-                throw UnsupportedOperationException.Create();
-            }
-
-            public void Add(KeyValuePair<string, TValue> item)
-            {
-                outerInstance.Add(item);
-            }
-
-            public bool IsReadOnly => !allowModify;
-
-            public override string ToString()
-            {
-                var sb = new StringBuilder("[");
-
-                IEnumerator<KeyValuePair<string, TValue>> iter1 = new EntryIterator(this.outerInstance, false);
-                while (iter1.MoveNext())
-                {
-                    KeyValuePair<string, TValue> entry = iter1.Current;
-                    if (sb.Length > 1)
-                    {
-                        sb.Append(", ");
-                    }
-                    sb.Append(entry.Key);
-                    sb.Append('=');
-                    sb.Append(entry.Value);
-                }
-
-                return sb.Append(']').ToString();
-            }
-
-            #endregion
-        }
+        // LUCENENET: EntrySet class removed because in .NET we get the entries by calling GetEnumerator() on the dictionary.
 
         // LUCENENET: Moved UnmodifiableMap static methods to CharArrayMap class
 
@@ -1979,10 +1853,7 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create();
             }
 
-            internal override EntrySet_ CreateEntrySet()
-            {
-                return new EntrySet_(this, false);
-            }
+            // LUCENENET: Removed CreateEntrySet() method - we use IsReadOnly to control whether it can be written to
 
             #region Added for better .NET support LUCENENET
 

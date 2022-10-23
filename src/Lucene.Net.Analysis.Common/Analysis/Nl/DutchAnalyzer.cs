@@ -169,12 +169,12 @@ namespace Lucene.Net.Analysis.Nl
                 this.origStemdict = null;
                 // we don't need to ignore case here since we lowercase in this analyzer anyway
                 StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(false);
-                using (CharArrayMap<string>.EntryIterator iter = (CharArrayMap<string>.EntryIterator)stemOverrideDict.EntrySet().GetEnumerator())
+                using (var iter = stemOverrideDict.GetEnumerator())
                 {
                     CharsRef spare = new CharsRef();
-                    while (iter.HasNext)
+                    while (iter.MoveNext())
                     {
-                        char[] nextKey = iter.NextKey();
+                        char[] nextKey = iter.CurrentKey;
                         spare.CopyChars(nextKey, 0, nextKey.Length);
                         builder.Add(spare.Chars, iter.CurrentValue);
                     }
