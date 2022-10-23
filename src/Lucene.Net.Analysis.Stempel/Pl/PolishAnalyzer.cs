@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis.Pl
         /// <param name="matchVersion">lucene compatibility version</param>
         /// <param name="stopwords">a stopword set</param>
         public PolishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-            : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+            : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 

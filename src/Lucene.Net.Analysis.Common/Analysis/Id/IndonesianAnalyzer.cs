@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Id
         /// <param name="stopwords">
         ///          a stopword set </param>
         public IndonesianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-            : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+            : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 

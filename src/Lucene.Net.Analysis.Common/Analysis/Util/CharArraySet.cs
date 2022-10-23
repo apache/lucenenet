@@ -68,7 +68,11 @@ namespace Lucene.Net.Analysis.Util
         [SuppressMessage("Performance", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
         [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
-        public static readonly CharArraySet EMPTY_SET = new CharArraySet(CharArrayDictionary<string>.Empty);
+        public static readonly CharArraySet Empty = new CharArraySet(CharArrayDictionary<string>.Empty);
+
+        [Obsolete("Use Empty instead. This field will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        public static CharArraySet EMPTY_SET => Empty;
+
         // LUCENENET: PLACEHOLDER moved to CharArrayDictionary
 
         internal readonly ICharArrayDictionary map;
@@ -246,9 +250,9 @@ namespace Lucene.Net.Analysis.Util
             {
                 throw new ArgumentNullException(nameof(set), "Given set is null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            if (set == EMPTY_SET)
+            if (set == Empty)
             {
-                return EMPTY_SET;
+                return Empty;
             }
             if (set.map is CharArrayDictionary.UnmodifiableCharArrayDictionary<object>)
             {
@@ -265,9 +269,9 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET specific - allow .NET-like syntax for creating immutable collections
         public virtual CharArraySet AsReadOnly()
         {
-            if (this == EMPTY_SET)
+            if (this == Empty)
             {
-                return EMPTY_SET;
+                return Empty;
             }
             if (this.map is CharArrayDictionary.UnmodifiableCharArrayDictionary<object>)
             {
@@ -286,9 +290,9 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET specific - allow .NET-like syntax for copying CharArraySet
         public virtual CharArraySet ToCharArraySet()
         {
-            if (this == EMPTY_SET)
+            if (this == Empty)
             {
-                return EMPTY_SET;
+                return Empty;
             }
 
             return new CharArraySet(CharArrayDictionary.Copy<object>(this.map.MatchVersion, this.map));
@@ -304,9 +308,9 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET specific - allow .NET-like syntax for copying CharArraySet
         public virtual CharArraySet ToCharArraySet(LuceneVersion matchVersion)
         {
-            if (this == EMPTY_SET)
+            if (this == Empty)
             {
-                return EMPTY_SET;
+                return Empty;
             }
 
             return new CharArraySet(new CharArrayDictionary<object>(matchVersion, this.map as IDictionary<string, object>, this.map.IgnoreCase));
@@ -320,9 +324,9 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET specific - allow .NET-like syntax for copying CharArraySet
         public virtual CharArraySet ToCharArraySet(LuceneVersion matchVersion, bool ignoreCase)
         {
-            if (this == EMPTY_SET)
+            if (this == Empty)
             {
-                return EMPTY_SET;
+                return Empty;
             }
 
             return new CharArraySet(new CharArrayDictionary<object>(matchVersion, this.map as IDictionary<string, object>, ignoreCase));
@@ -352,9 +356,9 @@ namespace Lucene.Net.Analysis.Util
             if (set is null)
                 throw new ArgumentNullException(nameof(set));
 
-            if (set == EMPTY_SET)
+            if (set == Empty)
             {
-                return EMPTY_SET;
+                return Empty;
             }
 
             // LUCENENET NOTE: Testing for *is* is at least 10x faster

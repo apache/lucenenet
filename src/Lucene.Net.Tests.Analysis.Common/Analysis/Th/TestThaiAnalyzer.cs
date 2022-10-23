@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Th
         [Test]
         public virtual void TestOffsets()
         {
-            AssertAnalyzesTo(new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET), "การที่ได้ต้องแสดงว่างานดี", new string[] { "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" }, new int[] { 0, 3, 6, 9, 13, 17, 20, 23 }, new int[] { 3, 6, 9, 13, 17, 20, 23, 25 });
+            AssertAnalyzesTo(new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty), "การที่ได้ต้องแสดงว่างานดี", new string[] { "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" }, new int[] { 0, 3, 6, 9, 13, 17, 20, 23 }, new int[] { 3, 6, 9, 13, 17, 20, 23, 25 });
         }
 
         [Test]
@@ -158,7 +158,7 @@ namespace Lucene.Net.Analysis.Th
         [Test]
         public virtual void TestReusableTokenStream()
         {
-            ThaiAnalyzer analyzer = new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+            ThaiAnalyzer analyzer = new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty);
             AssertAnalyzesTo(analyzer, "", new string[] { });
 
             AssertAnalyzesTo(analyzer, "การที่ได้ต้องแสดงว่างานดี", new string[] { "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" });
@@ -392,7 +392,7 @@ namespace Lucene.Net.Analysis.Th
         [Test]
         public virtual void TestTwoSentences()
         {
-            AssertAnalyzesTo(new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET), "This is a test. การที่ได้ต้องแสดงว่างานดี", new string[] { "this", "is", "a", "test", "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" }, new int[] { 0, 5, 8, 10, 16, 19, 22, 25, 29, 33, 36, 39 }, new int[] { 4, 7, 9, 14, 19, 22, 25, 29, 33, 36, 39, 41 });
+            AssertAnalyzesTo(new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty), "This is a test. การที่ได้ต้องแสดงว่างานดี", new string[] { "this", "is", "a", "test", "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" }, new int[] { 0, 5, 8, 10, 16, 19, 22, 25, 29, 33, 36, 39 }, new int[] { 4, 7, 9, 14, 19, 22, 25, 29, 33, 36, 39, 41 });
         }
 
         /// <summary>
@@ -401,7 +401,7 @@ namespace Lucene.Net.Analysis.Th
         [Test][LuceneNetSpecific]
         public virtual void TestNumeralBreaking()
         {
-            ThaiAnalyzer analyzer = new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+            ThaiAnalyzer analyzer = new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty);
             AssertAnalyzesTo(analyzer, "๑๒๓456", new String[] { "๑๒๓456" });
         }
     }

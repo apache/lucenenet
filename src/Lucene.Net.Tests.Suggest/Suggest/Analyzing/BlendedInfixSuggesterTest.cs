@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             DirectoryInfo tempDir = CreateTempDir("BlendedInfixSuggesterTest");
 
-            Analyzer a = new StandardAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+            Analyzer a = new StandardAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty);
             BlendedInfixSuggester suggester = new BlendedInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a,
                                                                         AnalyzingInfixSuggester.DEFAULT_MIN_PREFIX_CHARS,
                                                                         BlendedInfixSuggester.BlenderType.POSITION_LINEAR,
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             };
 
             DirectoryInfo tempDir = CreateTempDir("BlendedInfixSuggesterTest");
-            Analyzer a = new StandardAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+            Analyzer a = new StandardAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty);
 
             // BlenderType.LINEAR is used by default (remove position*10%)
             BlendedInfixSuggester suggester = new BlendedInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a);
@@ -129,7 +129,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             };
 
             DirectoryInfo tempDir = CreateTempDir("BlendedInfixSuggesterTest");
-            Analyzer a = new StandardAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+            Analyzer a = new StandardAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty);
 
             // if factor is small, we don't get the expected element
             BlendedInfixSuggester suggester = new BlendedInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a,
@@ -182,7 +182,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             DirectoryInfo tempDir = CreateTempDir("BlendedInfixSuggesterTest");
 
-            Analyzer a = new StandardAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+            Analyzer a = new StandardAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty);
             BlendedInfixSuggester suggester = new BlendedInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a,
                                                                         AnalyzingInfixSuggester.DEFAULT_MIN_PREFIX_CHARS,
                                                                         BlendedInfixSuggester.BlenderType.POSITION_LINEAR,
@@ -211,7 +211,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             };
 
             DirectoryInfo tempDir = CreateTempDir("BlendedInfixSuggesterTest");
-            Analyzer a = new StandardAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+            Analyzer a = new StandardAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty);
 
             // if factor is small, we don't get the expected element
             BlendedInfixSuggester suggester = new BlendedInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a,

@@ -141,7 +141,7 @@ namespace Lucene.Net.Analysis.Br
         [Test]
         public virtual void TestStemExclusionTable()
         {
-            BrazilianAnalyzer a = new BrazilianAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, new CharArraySet(TEST_VERSION_CURRENT, AsSet("quintessência"), false));
+            BrazilianAnalyzer a = new BrazilianAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty, new CharArraySet(TEST_VERSION_CURRENT, AsSet("quintessência"), false));
             checkReuse(a, "quintessência", "quintessência"); // excluded words will be completely unchanged.
         }
 

@@ -151,10 +151,10 @@ namespace Lucene.Net.Analysis.Nl
             CharArraySet set = new CharArraySet(LuceneVersion.LUCENE_30, 1, true);
 #pragma warning restore 612, 618
             set.add("lichamelijk");
-            DutchAnalyzer a = new DutchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
+            DutchAnalyzer a = new DutchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty, set);
             AssertAnalyzesTo(a, "lichamelijk lichamelijke", new string[] { "lichamelijk", "licham" });
 
-            a = new DutchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
+            a = new DutchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty, set);
             AssertAnalyzesTo(a, "lichamelijk lichamelijke", new string[] { "lichamelijk", "licham" });
 
         }
@@ -166,7 +166,7 @@ namespace Lucene.Net.Analysis.Nl
         [Test]
         public virtual void TestStemOverrides()
         {
-            DutchAnalyzer a = new DutchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+            DutchAnalyzer a = new DutchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty);
             CheckOneTerm(a, "fiets", "fiets");
         }
         /// <summary>
@@ -178,14 +178,14 @@ namespace Lucene.Net.Analysis.Nl
         {
             DutchAnalyzer a = new DutchAnalyzer(LuceneVersion.LUCENE_30);
             CheckOneTerm(a, "fiets", "fiets");
-            a = new DutchAnalyzer(LuceneVersion.LUCENE_30, CharArraySet.EMPTY_SET);
+            a = new DutchAnalyzer(LuceneVersion.LUCENE_30, CharArraySet.Empty);
             CheckOneTerm(a, "fiets", "fiet"); // only the default ctor populates the dict
         }
 
         [Test]
         public virtual void TestEmptyStemDictionary()
         {
-            DutchAnalyzer a = new DutchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, CharArraySet.EMPTY_SET, CharArrayDictionary<string>.Empty);
+            DutchAnalyzer a = new DutchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty, CharArraySet.Empty, CharArrayDictionary<string>.Empty);
             CheckOneTerm(a, "fiets", "fiet");
         }
 
@@ -197,7 +197,7 @@ namespace Lucene.Net.Analysis.Nl
         [Obsolete("(3.6) Remove this test in Lucene 5.0")]
         public virtual void TestBuggyStemOverrides()
         {
-            DutchAnalyzer a = new DutchAnalyzer(LuceneVersion.LUCENE_35, CharArraySet.EMPTY_SET);
+            DutchAnalyzer a = new DutchAnalyzer(LuceneVersion.LUCENE_35, CharArraySet.Empty);
             CheckOneTerm(a, "fiets", "fiet");
         }
 

@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis.Nl
         /// <summary>
         /// Contains words that should be indexed but not stemmed.
         /// </summary>
-        private CharArraySet excltable = CharArraySet.EMPTY_SET;
+        private CharArraySet excltable = CharArraySet.Empty;
 
         private readonly StemmerOverrideFilter.StemmerOverrideMap stemdict;
 
@@ -125,13 +125,13 @@ namespace Lucene.Net.Analysis.Nl
         /// and a few default entries for the stem exclusion table.
         /// </summary>
         public DutchAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET, CharArraySet.EMPTY_SET, DefaultSetHolder.DEFAULT_STEM_DICT)
+              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET, CharArraySet.Empty, DefaultSetHolder.DEFAULT_STEM_DICT)
         {
             // historically, only this ctor populated the stem dict!!!!!
         }
 
         public DutchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.EMPTY_SET,
+              : this(matchVersion, stopwords, CharArraySet.Empty,
 #pragma warning disable 612, 618
                     matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ?
 #pragma warning restore 612, 618

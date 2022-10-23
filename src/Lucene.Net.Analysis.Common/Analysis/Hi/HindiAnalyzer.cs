@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Hi
         /// <param name="version"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         public HindiAnalyzer(LuceneVersion version, CharArraySet stopwords)
-            : this(version, stopwords, CharArraySet.EMPTY_SET)
+            : this(version, stopwords, CharArraySet.Empty)
         {
         }
 

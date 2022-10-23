@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             {
                 Tokenizer source = new ICUTokenizer(reader, new DefaultICUTokenizerConfig(false, true));
                 TokenStream result = new CJKBigramFilter(source);
-                return new TokenStreamComponents(source, new StopFilter(TEST_VERSION_CURRENT, result, CharArraySet.EMPTY_SET));
+                return new TokenStreamComponents(source, new StopFilter(TEST_VERSION_CURRENT, result, CharArraySet.Empty));
             });
 
             /**
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                 // some halfwidth katakana forms, which will affect the bigramming.
                 TokenStream result = new ICUNormalizer2Filter(source);
                 result = new CJKBigramFilter(source);
-                return new TokenStreamComponents(source, new StopFilter(TEST_VERSION_CURRENT, result, CharArraySet.EMPTY_SET));
+                return new TokenStreamComponents(source, new StopFilter(TEST_VERSION_CURRENT, result, CharArraySet.Empty));
             });
         }
 

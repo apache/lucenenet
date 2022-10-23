@@ -121,7 +121,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         public SmartChineseAnalyzer(LuceneVersion matchVersion, bool useDefaultStopWords)
         {
             stopWords = useDefaultStopWords ? DefaultSetHolder.DEFAULT_STOP_SET
-              : CharArraySet.EMPTY_SET;
+              : CharArraySet.Empty;
             this.matchVersion = matchVersion;
         }
 
@@ -137,7 +137,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         /// <param name="stopWords"><see cref="CharArraySet"/> of stopwords to use.</param>
         public SmartChineseAnalyzer(LuceneVersion matchVersion, CharArraySet stopWords)
         {
-            this.stopWords = stopWords ?? CharArraySet.EMPTY_SET;
+            this.stopWords = stopWords ?? CharArraySet.Empty;
             this.matchVersion = matchVersion;
         }
 

@@ -137,7 +137,7 @@ namespace Lucene.Net.Analysis.De
         /// <param name="stopwords">
         ///          a stopword set </param>
         public GermanAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+              : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 

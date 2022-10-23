@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Ro
         /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         public RomanianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-            : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+            : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 

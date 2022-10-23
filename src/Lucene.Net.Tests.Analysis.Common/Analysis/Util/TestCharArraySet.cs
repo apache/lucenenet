@@ -562,7 +562,7 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestCopyEmptySet()
         {
-            assertSame(CharArraySet.EMPTY_SET, CharArraySet.Copy(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET));
+            assertSame(CharArraySet.Empty, CharArraySet.Copy(TEST_VERSION_CURRENT, CharArraySet.Empty));
         }
 
         /// <summary>
@@ -571,17 +571,17 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestEmptySet()
         {
-            assertEquals(0, CharArraySet.EMPTY_SET.size());
+            assertEquals(0, CharArraySet.Empty.size());
 
-            assertTrue(CharArraySet.EMPTY_SET.Count == 0);
+            assertTrue(CharArraySet.Empty.Count == 0);
             foreach (string stopword in TEST_STOP_WORDS)
             {
-                assertFalse(CharArraySet.EMPTY_SET.Contains(stopword));
+                assertFalse(CharArraySet.Empty.Contains(stopword));
             }
-            assertFalse(CharArraySet.EMPTY_SET.Contains("foo"));
-            assertFalse(CharArraySet.EMPTY_SET.Contains((object)"foo"));
-            assertFalse(CharArraySet.EMPTY_SET.Contains("foo".ToCharArray()));
-            assertFalse(CharArraySet.EMPTY_SET.Contains("foo".ToCharArray(), 0, 3));
+            assertFalse(CharArraySet.Empty.Contains("foo"));
+            assertFalse(CharArraySet.Empty.Contains((object)"foo"));
+            assertFalse(CharArraySet.Empty.Contains("foo".ToCharArray()));
+            assertFalse(CharArraySet.Empty.Contains("foo".ToCharArray(), 0, 3));
         }
 
         /// <summary>
@@ -1178,12 +1178,12 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Tests a special case of <see cref="CharArraySet.ToCharArraySet()"/> where the
-        /// set to copy is the <see cref="CharArraySet.EMPTY_SET"/>
+        /// set to copy is the <see cref="CharArraySet.Empty"/>
         /// </summary>
         [Test, LuceneNetSpecific]
         public virtual void TestToCharArraySetEmptySet()
         {
-            assertSame(CharArraySet.EMPTY_SET, CharArraySet.EMPTY_SET.ToCharArraySet(TEST_VERSION_CURRENT));
+            assertSame(CharArraySet.Empty, CharArraySet.Empty.ToCharArraySet(TEST_VERSION_CURRENT));
         }
 
         #endregion
