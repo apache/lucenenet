@@ -217,6 +217,13 @@ namespace Lucene.Net.Support
 #endif
         }
 
-        // LUCENENET specific - removed EmptyArrayHolder because it is not in use.
+#if !FEATURE_ARRAYEMPTY
+        private static class EmptyArrayHolder<T>
+        {
+#pragma warning disable CA1825 // Avoid zero-length array allocations.
+            public static readonly T[] EMPTY = new T[0];
+#pragma warning restore CA1825 // Avoid zero-length array allocations.
+        }
+#endif
     }
 }
