@@ -409,10 +409,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        [Obsolete("Not applicable in this class.")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public virtual bool Remove(string item) // LUCENENET TODO: API - make an explicit implementation that isn't public
+        bool ICollection<string>.Remove(string item)
         {
             // LUCENENET NOTE: According to the documentation header, Remove should not be supported
             throw UnsupportedOperationException.Create();
@@ -555,30 +552,21 @@ namespace Lucene.Net.Analysis.Util
 
         // LUCENENET - no modifications should be made outside of original
         // Java implmentation's methods.
-        [Obsolete("Not applicable in this class.")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public void IntersectWith(IEnumerable<string> other) // LUCENENET TODO: API - make an explicit implementation that isn't public
+        void ISet<string>.IntersectWith(IEnumerable<string> other)
         {
             throw UnsupportedOperationException.Create();
         }
 
         // LUCENENET - no modifications should be made outside of original
         // Java implmentation's methods.
-        [Obsolete("Not applicable in this class.")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public void ExceptWith(IEnumerable<string> other) // LUCENENET TODO: API - make an explicit implementation that isn't public
+        void ISet<string>.ExceptWith(IEnumerable<string> other)
         {
             throw UnsupportedOperationException.Create();
         }
 
         // LUCENENET - no modifications should be made outside of original
         // Java implmentation's methods.
-        [Obsolete("Not applicable in this class.")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public void SymmetricExceptWith(IEnumerable<string> other) // LUCENENET TODO: API - make an explicit implementation that isn't public
+        void ISet<string>.SymmetricExceptWith(IEnumerable<string> other)
         {
             throw UnsupportedOperationException.Create();
         }
@@ -913,7 +901,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-#endregion
+        #endregion
     }
 
     /// <summary>

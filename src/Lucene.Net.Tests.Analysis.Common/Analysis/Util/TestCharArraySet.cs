@@ -195,9 +195,7 @@ namespace Lucene.Net.Analysis.Util
             // above fails to execute.
             try
             {
-#pragma warning disable 612, 618
-                set.Remove(TEST_STOP_WORDS[0]);
-#pragma warning restore 612, 618
+                ((ISet<string>)set).Remove(TEST_STOP_WORDS[0]);
                 fail("Modified unmodifiable set");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -222,7 +220,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                set.retainAll(new CharArraySet(TEST_VERSION_CURRENT, new [] { NOT_IN_SET }, true));
+                ((ISet<string>)set).ExceptWith(new CharArraySet(TEST_VERSION_CURRENT, new [] { NOT_IN_SET }, true));
                 fail("Modified unmodifiable set");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -233,7 +231,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                set.addAll(new[] { NOT_IN_SET});
+                set.UnionWith(new[] { NOT_IN_SET});
                 fail("Modified unmodifiable set");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -244,7 +242,7 @@ namespace Lucene.Net.Analysis.Util
 
             for (int i = 0; i < TEST_STOP_WORDS.Length; i++)
             {
-                assertTrue(set.contains(TEST_STOP_WORDS[i]));
+                assertTrue(set.Contains(TEST_STOP_WORDS[i]));
             }
         }
 

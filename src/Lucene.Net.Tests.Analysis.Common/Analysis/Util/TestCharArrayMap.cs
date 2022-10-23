@@ -255,9 +255,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-#pragma warning disable 612, 618
-                map.Remove(new KeyValuePair<string, int?>("foo", 1));
-#pragma warning restore 612, 618
+                ((IDictionary<string, int?>)map).Remove(new KeyValuePair<string, int?>("foo", 1));
                 fail("Modified unmodifiable map");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
