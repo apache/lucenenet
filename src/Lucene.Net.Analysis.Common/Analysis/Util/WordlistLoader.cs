@@ -199,7 +199,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <returns> stem dictionary that overrules the stemming algorithm </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
-        public static CharArrayMap<string> GetStemDict(TextReader reader, CharArrayMap<string> result)
+        public static CharArrayDictionary<string> GetStemDict(TextReader reader, CharArrayDictionary<string> result)
         {
             try
             { 

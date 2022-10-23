@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using System;
 using NUnit.Framework;
 using Lucene.Net.Analysis.Util;
@@ -185,7 +185,7 @@ namespace Lucene.Net.Analysis.Nl
         [Test]
         public virtual void TestEmptyStemDictionary()
         {
-            DutchAnalyzer a = new DutchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, CharArraySet.EMPTY_SET, CharArrayMap<string>.EmptyMap());
+            DutchAnalyzer a = new DutchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, CharArraySet.EMPTY_SET, CharArrayDictionary<string>.EmptyMap());
             CheckOneTerm(a, "fiets", "fiet");
         }
 

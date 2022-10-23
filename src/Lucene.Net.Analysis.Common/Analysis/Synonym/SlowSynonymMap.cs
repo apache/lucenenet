@@ -37,12 +37,12 @@ namespace Lucene.Net.Analysis.Synonym
     {
         /// <summary>
         /// @lucene.internal </summary>
-        public CharArrayMap<SlowSynonymMap> Submap // recursive: Map<String, SynonymMap>
+        public CharArrayDictionary<SlowSynonymMap> Submap // recursive: Map<String, SynonymMap>
         {
             get => submap;
             set => submap = value;
         }
-        private CharArrayMap<SlowSynonymMap> submap;
+        private CharArrayDictionary<SlowSynonymMap> submap;
 
         /// <summary>
         /// @lucene.internal </summary>
@@ -88,7 +88,7 @@ namespace Lucene.Net.Analysis.Synonym
                 {
                     // for now hardcode at 4.0, as its what the old code did.
                     // would be nice to fix, but shouldn't store a version in each submap!!!
-                    currMap.submap = new CharArrayMap<SlowSynonymMap>(LuceneVersion.LUCENE_CURRENT, 1, IgnoreCase);
+                    currMap.submap = new CharArrayDictionary<SlowSynonymMap>(LuceneVersion.LUCENE_CURRENT, 1, IgnoreCase);
                 }
 
                 var map = currMap.submap.Get(str);

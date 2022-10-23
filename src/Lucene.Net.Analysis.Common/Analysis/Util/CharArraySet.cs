@@ -68,10 +68,10 @@ namespace Lucene.Net.Analysis.Util
         [SuppressMessage("Performance", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
         [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
-        public static readonly CharArraySet EMPTY_SET = new CharArraySet(CharArrayMap<string>.EmptyMap());
-        // LUCENENET: PLACEHOLDER moved to CharArrayMap
+        public static readonly CharArraySet EMPTY_SET = new CharArraySet(CharArrayDictionary<string>.EmptyMap());
+        // LUCENENET: PLACEHOLDER moved to CharArrayDictionary
 
-        internal readonly ICharArrayMap map;
+        internal readonly ICharArrayDictionary map;
 
         /// <summary>
         /// Create set with enough capacity to hold <paramref name="startSize"/> terms
@@ -84,7 +84,7 @@ namespace Lucene.Net.Analysis.Util
         ///          <c>false</c> if and only if the set should be case sensitive
         ///          otherwise <c>true</c>. </param>
         public CharArraySet(LuceneVersion matchVersion, int startSize, bool ignoreCase)
-            : this(new CharArrayMap<object>(matchVersion, startSize, ignoreCase))
+            : this(new CharArrayDictionary<object>(matchVersion, startSize, ignoreCase))
         {
         }
 
@@ -113,9 +113,9 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Create set from the specified map (internal only), used also by <see cref="CharArrayMap{TValue}.Keys"/>
+        /// Create set from the specified map (internal only), used also by <see cref="CharArrayDictionary{TValue}.Keys"/>
         /// </summary>
-        internal CharArraySet(ICharArrayMap map)
+        internal CharArraySet(ICharArrayDictionary map)
         {
             this.map = map;
         }
@@ -250,11 +250,11 @@ namespace Lucene.Net.Analysis.Util
             {
                 return EMPTY_SET;
             }
-            if (set.map is CharArrayMap.UnmodifiableCharArrayMap<object>)
+            if (set.map is CharArrayDictionary.UnmodifiableCharArrayDictionary<object>)
             {
                 return set;
             }
-            return new CharArraySet(CharArrayMap.UnmodifiableMap<object>(set.map));
+            return new CharArraySet(CharArrayDictionary.UnmodifiableMap<object>(set.map));
         }
 
         /// <summary>
@@ -269,11 +269,11 @@ namespace Lucene.Net.Analysis.Util
             {
                 return EMPTY_SET;
             }
-            if (this.map is CharArrayMap.UnmodifiableCharArrayMap<object>)
+            if (this.map is CharArrayDictionary.UnmodifiableCharArrayDictionary<object>)
             {
                 return this;
             }
-            return new CharArraySet(CharArrayMap.UnmodifiableMap<object>(this.map));
+            return new CharArraySet(CharArrayDictionary.UnmodifiableMap<object>(this.map));
         }
 
         /// <summary>
@@ -281,8 +281,8 @@ namespace Lucene.Net.Analysis.Util
         /// The <see cref="LuceneVersion"/> and <c>ignoreCase</c> property will be preserved.
         /// </summary>
         /// <returns>A copy of this set as a new instance of <see cref="CharArraySet"/>.
-        ///         The <see cref="CharArrayMap{TValue}.ignoreCase"/> field as well as the
-        ///         <see cref="CharArrayMap{TValue}.MatchVersion"/> will be preserved.</returns>
+        ///         The <see cref="CharArrayDictionary{TValue}.ignoreCase"/> field as well as the
+        ///         <see cref="CharArrayDictionary{TValue}.MatchVersion"/> will be preserved.</returns>
         // LUCENENET specific - allow .NET-like syntax for copying CharArraySet
         public virtual CharArraySet ToCharArraySet()
         {
@@ -291,7 +291,7 @@ namespace Lucene.Net.Analysis.Util
                 return EMPTY_SET;
             }
 
-            return new CharArraySet(CharArrayMap.Copy<object>(this.map.MatchVersion, this.map));
+            return new CharArraySet(CharArrayDictionary.Copy<object>(this.map.MatchVersion, this.map));
         }
 
         /// <summary>
@@ -300,7 +300,7 @@ namespace Lucene.Net.Analysis.Util
         /// The <c>ignoreCase</c> property will be preserved from this <see cref="CharArraySet"/>.
         /// </summary>
         /// <returns>A copy of this set as a new instance of <see cref="CharArraySet"/>.
-        ///         The <see cref="CharArrayMap{TValue}.ignoreCase"/> field will be preserved.</returns>
+        ///         The <see cref="CharArrayDictionary{TValue}.ignoreCase"/> field will be preserved.</returns>
         // LUCENENET specific - allow .NET-like syntax for copying CharArraySet
         public virtual CharArraySet ToCharArraySet(LuceneVersion matchVersion)
         {
@@ -309,7 +309,7 @@ namespace Lucene.Net.Analysis.Util
                 return EMPTY_SET;
             }
 
-            return new CharArraySet(new CharArrayMap<object>(matchVersion, this.map as IDictionary<string, object>, this.map.IgnoreCase));
+            return new CharArraySet(new CharArrayDictionary<object>(matchVersion, this.map as IDictionary<string, object>, this.map.IgnoreCase));
         }
 
         /// <summary>
@@ -325,7 +325,7 @@ namespace Lucene.Net.Analysis.Util
                 return EMPTY_SET;
             }
 
-            return new CharArraySet(new CharArrayMap<object>(matchVersion, this.map as IDictionary<string, object>, ignoreCase));
+            return new CharArraySet(new CharArrayDictionary<object>(matchVersion, this.map as IDictionary<string, object>, ignoreCase));
         }
 
         /// <summary>
@@ -345,8 +345,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="set">
         ///          a set to copy </param>
         /// <returns> A copy of the given set as a <see cref="CharArraySet"/>. If the given set
-        ///         is a <see cref="CharArraySet"/> the <see cref="CharArrayMap{TValue}.ignoreCase"/> field as well as the
-        ///         <see cref="CharArrayMap{TValue}.MatchVersion"/> will be preserved. </returns>
+        ///         is a <see cref="CharArraySet"/> the <see cref="CharArrayDictionary{TValue}.ignoreCase"/> field as well as the
+        ///         <see cref="CharArrayDictionary{TValue}.MatchVersion"/> will be preserved. </returns>
         public static CharArraySet Copy<T>(LuceneVersion matchVersion, ICollection<T> set)
         {
             if (set is null)
@@ -363,7 +363,7 @@ namespace Lucene.Net.Analysis.Util
             if (set is CharArraySet)
             {
                 var source = set as CharArraySet;
-                return new CharArraySet(CharArrayMap.Copy<object>(source.map.MatchVersion, source.map));
+                return new CharArraySet(CharArrayDictionary.Copy<object>(source.map.MatchVersion, source.map));
             }
 
             return CopySet(matchVersion, set, ignoreCase: false);
@@ -489,7 +489,7 @@ namespace Lucene.Net.Analysis.Util
             if (!(other is CharArraySet otherSet))
                 return false;
 
-            // Invoke the implementation on CharArrayMap that
+            // Invoke the implementation on CharArrayDictionary that
             // tests the dictionaries to ensure they contain
             // the same keys and values.
             return this.map.Equals(otherSet.map);

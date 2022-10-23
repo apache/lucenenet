@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.Util
     /// 
     /// <a name="version"></a>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
-    /// compatibility when creating <see cref="CharArrayMap"/>:
+    /// compatibility when creating <see cref="CharArrayDictionary{TValue}"/>:
     /// <list type="bullet">
     ///   <item><description> As of 3.1, supplementary characters are
     ///       properly lowercased.</description></item>
@@ -51,14 +51,14 @@ namespace Lucene.Net.Analysis.Util
     /// Before 3.1 supplementary characters could not be
     /// lowercased correctly due to the lack of Unicode 4
     /// support in JDK 1.4. To use instances of
-    /// <see cref="CharArrayMap"/> with the behavior before Lucene
+    /// <see cref="CharArrayDictionary{TValue}"/> with the behavior before Lucene
     /// 3.1 pass a <see cref="LuceneVersion"/> &lt; 3.1 to the constructors.
     /// </para>
     /// </summary>
-    public class CharArrayMap<TValue> : ICharArrayMap, IDictionary<string, TValue>
+    public class CharArrayDictionary<TValue> : ICharArrayDictionary, IDictionary<string, TValue>
     {
         // private only because missing generics
-        private static readonly CharArrayMap<TValue> EMPTY_MAP = new CharArrayMap.EmptyCharArrayMap<TValue>();
+        private static readonly CharArrayDictionary<TValue> EMPTY_MAP = new CharArrayDictionary.EmptyCharArrayDictionary<TValue>();
 
         private const int INIT_SIZE = 8;
         private readonly CharacterUtils charUtils;
@@ -69,11 +69,11 @@ namespace Lucene.Net.Analysis.Util
         internal MapValue[] values; // package private because used in CharArraySet's non Set-conform CharArraySetIterator
 
         /// <summary>
-        /// LUCENENET: Moved this from CharArraySet so it doesn't need to know the generic type of CharArrayMap
+        /// LUCENENET: Moved this from CharArraySet so it doesn't need to know the generic type of CharArrayDictionary
         /// </summary>
         internal static readonly MapValue PLACEHOLDER = new MapValue();
 
-        bool ICharArrayMap.IgnoreCase => ignoreCase;
+        bool ICharArrayDictionary.IgnoreCase => ignoreCase;
 
         /// <summary>
         /// LUCENENET SPECIFIC type used to act as a placeholder. Since <c>null</c>
@@ -111,13 +111,13 @@ namespace Lucene.Net.Analysis.Util
         /// Create map with enough capacity to hold <paramref name="startSize"/> terms
         /// </summary>
         /// <param name="matchVersion">
-        ///          lucene compatibility version - see <see cref="CharArrayMap{TValue}"/> for details. </param>
+        ///          lucene compatibility version - see <see cref="CharArrayDictionary{TValue}"/> for details. </param>
         /// <param name="startSize">
         ///          the initial capacity </param>
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive;
         ///          otherwise <c>true</c>. </param>
-        public CharArrayMap(LuceneVersion matchVersion, int startSize, bool ignoreCase)
+        public CharArrayDictionary(LuceneVersion matchVersion, int startSize, bool ignoreCase)
         {
             // LUCENENET: Added guard clause
             if (startSize < 0)
@@ -146,7 +146,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive;
         ///          otherwise <c>true</c>. </param>
-        public CharArrayMap(LuceneVersion matchVersion, IDictionary<string, TValue> c, bool ignoreCase)
+        public CharArrayDictionary(LuceneVersion matchVersion, IDictionary<string, TValue> c, bool ignoreCase)
             : this(matchVersion, c?.Count ?? 0, ignoreCase)
         {
             // LUCENENET: Added guard clause
@@ -167,7 +167,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Create set from the supplied map (used internally for readonly maps...)
         /// </summary>
-        internal CharArrayMap(CharArrayMap<TValue> toCopy)
+        internal CharArrayDictionary(CharArrayDictionary<TValue> toCopy)
         {
             this.keys = toCopy.keys;
             this.values = toCopy.values;
@@ -203,16 +203,16 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns an unmodifiable <see cref="CharArrayMap{TValue}"/>. This allows to provide
+        /// Returns an unmodifiable <see cref="CharArrayDictionary{TValue}"/>. This allows to provide
         /// unmodifiable views of internal map for "read-only" use.
         /// </summary>
-        /// <returns> an new unmodifiable <see cref="CharArrayMap{TValue}"/>. </returns>
+        /// <returns> an new unmodifiable <see cref="CharArrayDictionary{TValue}"/>. </returns>
         // LUCENENET specific - allow .NET-like syntax for creating immutable collections
-        public CharArrayMap<TValue> AsReadOnly()
+        public CharArrayDictionary<TValue> AsReadOnly()
         {
-            return this is CharArrayMap.UnmodifiableCharArrayMap<TValue> readOnlyDictionary ?
+            return this is CharArrayDictionary.UnmodifiableCharArrayDictionary<TValue> readOnlyDictionary ?
                 readOnlyDictionary :
-                new CharArrayMap.UnmodifiableCharArrayMap<TValue>(this);
+                new CharArrayDictionary.UnmodifiableCharArrayDictionary<TValue>(this);
         }
 
         /// <summary>
@@ -251,11 +251,11 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Copies all items in the current <see cref="CharArrayMap{TValue}"/> to the passed in
-        /// <see cref="CharArrayMap{TValue}"/>.
+        /// Copies all items in the current <see cref="CharArrayDictionary{TValue}"/> to the passed in
+        /// <see cref="CharArrayDictionary{TValue}"/>.
         /// </summary>
         /// <param name="map"></param>
-        public virtual void CopyTo(CharArrayMap<TValue> map)
+        public virtual void CopyTo(CharArrayDictionary<TValue> map)
         {
             using var iter = GetEnumerator();
             while (iter.MoveNext())
@@ -982,43 +982,43 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns a copy of the current <see cref="CharArrayMap{TValue}"/> as a new instance of <see cref="CharArrayMap{TValue}"/>.
+        /// Returns a copy of the current <see cref="CharArrayDictionary{TValue}"/> as a new instance of <see cref="CharArrayDictionary{TValue}"/>.
         /// Preserves the value of <c>matchVersion</c> and <c>ignoreCase</c> from the current instance.
         /// </summary>
-        /// <returns> A copy of the current <see cref="CharArrayMap{TValue}"/> as a <see cref="CharArrayMap{TValue}"/>. </returns>
-        // LUCENENET specific - allow .NET-like syntax for copying CharArrayMap
-        public virtual CharArrayMap<TValue> ToCharArrayMap()
+        /// <returns> A copy of the current <see cref="CharArrayDictionary{TValue}"/> as a <see cref="CharArrayDictionary{TValue}"/>. </returns>
+        // LUCENENET specific - allow .NET-like syntax for copying CharArrayDictionary
+        public virtual CharArrayDictionary<TValue> ToCharArrayDictionary()
         {
-            return new CharArrayMap<TValue>(this.matchVersion, this.Count, ignoreCase: true);
+            return new CharArrayDictionary<TValue>(this.matchVersion, this.Count, ignoreCase: true);
         }
 
         /// <summary>
-        /// Returns a copy of the current <see cref="CharArrayMap{TValue}"/> as a new instance of <see cref="CharArrayMap{TValue}"/>
+        /// Returns a copy of the current <see cref="CharArrayDictionary{TValue}"/> as a new instance of <see cref="CharArrayDictionary{TValue}"/>
         /// using the specified <paramref name="matchVersion"/> value. Preserves the value of <c>ignoreCase</c> from the current instance.
         /// </summary>
         /// <param name="matchVersion">
         ///          compatibility match version see <a href="#version">Version
         ///          note</a> above for details. </param>
-        /// <returns> A copy of the current <see cref="CharArrayMap{TValue}"/> as a <see cref="CharArrayMap{TValue}"/>. </returns>
-        // LUCENENET specific - allow .NET-like syntax for copying CharArrayMap
-        public virtual CharArrayMap<TValue> ToCharArrayMap(LuceneVersion matchVersion)
+        /// <returns> A copy of the current <see cref="CharArrayDictionary{TValue}"/> as a <see cref="CharArrayDictionary{TValue}"/>. </returns>
+        // LUCENENET specific - allow .NET-like syntax for copying CharArrayDictionary
+        public virtual CharArrayDictionary<TValue> ToCharArrayDictionary(LuceneVersion matchVersion)
         {
-            return new CharArrayMap<TValue>(matchVersion, this.Count, ignoreCase: true);
+            return new CharArrayDictionary<TValue>(matchVersion, this.Count, ignoreCase: true);
         }
 
         /// <summary>
-        /// Returns a copy of the current <see cref="CharArrayMap{TValue}"/> as a new instance of <see cref="CharArrayMap{TValue}"/>
+        /// Returns a copy of the current <see cref="CharArrayDictionary{TValue}"/> as a new instance of <see cref="CharArrayDictionary{TValue}"/>
         /// using the specified <paramref name="matchVersion"/> and <paramref name="ignoreCase"/> values.
         /// </summary>
         /// <param name="matchVersion">
         ///          compatibility match version see <a href="#version">Version
         ///          note</a> above for details. </param>
         /// <param name="ignoreCase"><c>false</c> if and only if the set should be case sensitive otherwise <c>true</c>.</param>
-        /// <returns> A copy of the current <see cref="CharArrayMap{TValue}"/> as a <see cref="CharArrayMap{TValue}"/>. </returns>
-        // LUCENENET specific - allow .NET-like syntax for copying CharArrayMap
-        public virtual CharArrayMap<TValue> ToCharArrayMap(LuceneVersion matchVersion, bool ignoreCase)
+        /// <returns> A copy of the current <see cref="CharArrayDictionary{TValue}"/> as a <see cref="CharArrayDictionary{TValue}"/>. </returns>
+        // LUCENENET specific - allow .NET-like syntax for copying CharArrayDictionary
+        public virtual CharArrayDictionary<TValue> ToCharArrayDictionary(LuceneVersion matchVersion, bool ignoreCase)
         {
-            return new CharArrayMap<TValue>(matchVersion, this.Count, ignoreCase);
+            return new CharArrayDictionary<TValue>(matchVersion, this.Count, ignoreCase);
         }
 
         /// <summary>
@@ -1030,7 +1030,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="value">When this method returns, contains the value associated with the specified key, 
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         public virtual bool TryGetValue(char[] key, int offset, int length, out TValue value)
         {
             var val = values[GetSlot(key, offset, length)];
@@ -1050,7 +1050,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="value">When this method returns, contains the value associated with the specified key, 
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         public virtual bool TryGetValue(char[] key, out TValue value)
         {
             var val = values[GetSlot(key, 0, key.Length)];
@@ -1070,7 +1070,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="value">When this method returns, contains the value associated with the specified key, 
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         public virtual bool TryGetValue(ICharSequence key, out TValue value)
         {
             var val = values[GetSlot(key)];
@@ -1090,7 +1090,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="value">When this method returns, contains the value associated with the specified key, 
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         public virtual bool TryGetValue(string key, out TValue value)
         {
             var val = values[GetSlot(key)];
@@ -1110,7 +1110,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="value">When this method returns, contains the value associated with the specified key, 
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         public virtual bool TryGetValue(object key, out TValue value)
         {
             // LUCENENET NOTE: Testing for *is* is at least 10x faster
@@ -1177,7 +1177,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Gets a collection containing the keys in the <see cref="CharArrayMap{TValue}"/>.
+        /// Gets a collection containing the keys in the <see cref="CharArrayDictionary{TValue}"/>.
         /// </summary>
         public virtual ICollection<string> Keys => KeySet;
 
@@ -1185,7 +1185,7 @@ namespace Lucene.Net.Analysis.Util
         private volatile ICollection<TValue> valueSet;
 
         /// <summary>
-        /// Gets a collection containing the values in the <see cref="CharArrayMap{TValue}"/>.
+        /// Gets a collection containing the values in the <see cref="CharArrayDictionary{TValue}"/>.
         /// This specialized collection can be enumerated in order to read its values and 
         /// overrides <see cref="object.ToString()"/> in order to display a string 
         /// representation of the values.
@@ -1212,9 +1212,9 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         internal class KeyCollection : ICollection<string>
         {
-            private readonly CharArrayMap<TValue> outerInstance;
+            private readonly CharArrayDictionary<TValue> outerInstance;
 
-            public KeyCollection(CharArrayMap<TValue> outerInstance)
+            public KeyCollection(CharArrayDictionary<TValue> outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -1269,7 +1269,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 private readonly Enumerator entryIterator;
 
-                public KeyEnumerator(CharArrayMap<TValue> outerInstance)
+                public KeyEnumerator(CharArrayDictionary<TValue> outerInstance)
                 {
                     this.entryIterator = new Enumerator(outerInstance, !outerInstance.IsReadOnly);
                 }
@@ -1296,13 +1296,13 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// LUCENENET specific class that represents the values in the <see cref="CharArrayMap{TValue}"/>.
+        /// LUCENENET specific class that represents the values in the <see cref="CharArrayDictionary{TValue}"/>.
         /// </summary>
         internal class ValueCollection : ICollection<TValue>
         {
-            private readonly CharArrayMap<TValue> outerInstance;
+            private readonly CharArrayDictionary<TValue> outerInstance;
 
-            public ValueCollection(CharArrayMap<TValue> outerInstance)
+            public ValueCollection(CharArrayDictionary<TValue> outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -1384,7 +1384,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 private readonly Enumerator entryIterator;
 
-                public ValueEnumerator(CharArrayMap<TValue> outerInstance)
+                public ValueEnumerator(CharArrayDictionary<TValue> outerInstance)
                 {
                     this.entryIterator = new Enumerator(outerInstance, !outerInstance.IsReadOnly);
                 }
@@ -1415,12 +1415,12 @@ namespace Lucene.Net.Analysis.Util
         #endregion
 
         /// <summary>
-        /// <c>true</c> if the <see cref="CharArrayMap{TValue}"/> is read-only; otherwise <c>false</c>.
+        /// <c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> is read-only; otherwise <c>false</c>.
         /// </summary>
         public virtual bool IsReadOnly => false;
 
         /// <summary>
-        /// Returns an enumerator that iterates through the <see cref="CharArrayMap{TValue}"/>.
+        /// Returns an enumerator that iterates through the <see cref="CharArrayDictionary{TValue}"/>.
         /// </summary>
         public virtual Enumerator GetEnumerator()
         {
@@ -1433,7 +1433,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns an enumerator that iterates through the <see cref="CharArrayMap{TValue}"/>.
+        /// Returns an enumerator that iterates through the <see cref="CharArrayDictionary{TValue}"/>.
         /// </summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
@@ -1451,7 +1451,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Gets the number of key/value pairs contained in the <see cref="CharArrayMap{TValue}"/>.
+        /// Gets the number of key/value pairs contained in the <see cref="CharArrayDictionary{TValue}"/>.
         /// </summary>
         public virtual int Count => count;
 
@@ -1520,7 +1520,7 @@ namespace Lucene.Net.Analysis.Util
 
         private sealed class UnmodifiableCharArraySet : CharArraySet
         {
-            internal UnmodifiableCharArraySet(ICharArrayMap map) 
+            internal UnmodifiableCharArraySet(ICharArrayDictionary map) 
                 : base(map)
             {
             }
@@ -1550,13 +1550,13 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public class Enumerator : IEnumerator<KeyValuePair<string, TValue>>
         {
-            private readonly CharArrayMap<TValue> outerInstance;
+            private readonly CharArrayDictionary<TValue> outerInstance;
 
             internal int pos = -1;
             internal int lastPos;
             internal readonly bool allowModify;
 
-            internal Enumerator(CharArrayMap<TValue> outerInstance, bool allowModify)
+            internal Enumerator(CharArrayDictionary<TValue> outerInstance, bool allowModify)
             {
                 this.outerInstance = outerInstance;
                 this.allowModify = allowModify;
@@ -1656,28 +1656,28 @@ namespace Lucene.Net.Analysis.Util
 
         // LUCENENET: EntrySet class removed because in .NET we get the entries by calling GetEnumerator() on the dictionary.
 
-        // LUCENENET: Moved UnmodifiableMap static methods to CharArrayMap class
+        // LUCENENET: Moved UnmodifiableMap static methods to CharArrayDictionary class
 
-        // LUCENENET: Moved Copy static methods to CharArrayMap class
+        // LUCENENET: Moved Copy static methods to CharArrayDictionary class
 
         /// <summary>
         /// Returns an empty, unmodifiable map. </summary>
-        public static CharArrayMap<TValue> EmptyMap()
+        public static CharArrayDictionary<TValue> EmptyMap()
         {
             return EMPTY_MAP;
         }
 
-        // LUCENENET: Moved UnmodifiableCharArraymap to CharArrayMap class
+        // LUCENENET: Moved UnmodifiableCharArraymap to CharArrayDictionary class
 
-        // LUCENENET: Moved EmptyCharArrayMap to CharArrayMap class
+        // LUCENENET: Moved EmptyCharArrayDictionary to CharArrayDictionary class
     }
 
     /// <summary>
     /// LUCENENET specific interface used so <see cref="CharArraySet"/>
-    /// can hold a reference to <see cref="CharArrayMap{TValue}"/> without
+    /// can hold a reference to <see cref="CharArrayDictionary{TValue}"/> without
     /// knowing its generic type.
     /// </summary>
-    internal interface ICharArrayMap
+    internal interface ICharArrayDictionary
     {
         void Clear();
         bool ContainsKey(char[] text, int offset, int length);
@@ -1696,116 +1696,116 @@ namespace Lucene.Net.Analysis.Util
         bool Put(string text);
     }
 
-    public static class CharArrayMap // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
+    public static class CharArrayDictionary // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>
-        /// Returns a copy of the given map as a <see cref="CharArrayMap{TValue}"/>. If the given map
-        /// is a <see cref="CharArrayMap{TValue}"/> the ignoreCase property will be preserved.
+        /// Returns a copy of the given map as a <see cref="CharArrayDictionary{TValue}"/>. If the given map
+        /// is a <see cref="CharArrayDictionary{TValue}"/> the ignoreCase property will be preserved.
         /// <para>
-        /// <b>Note:</b> If you intend to create a copy of another <see cref="CharArrayMap{TValue}"/> where
+        /// <b>Note:</b> If you intend to create a copy of another <see cref="CharArrayDictionary{TValue}"/> where
         /// the <see cref="LuceneVersion"/> of the source map differs from its copy
-        /// <see cref="CharArrayMap{TValue}.CharArrayMap(LuceneVersion, IDictionary{string, TValue}, bool)"/> should be used instead.
+        /// <see cref="CharArrayDictionary{TValue}.CharArrayDictionary(LuceneVersion, IDictionary{string, TValue}, bool)"/> should be used instead.
         /// The <see cref="Copy{TValue}(LuceneVersion, IDictionary{string, TValue})"/> will preserve the <see cref="LuceneVersion"/> of the
-        /// source map if it is an instance of <see cref="CharArrayMap{TValue}"/>.
+        /// source map if it is an instance of <see cref="CharArrayDictionary{TValue}"/>.
         /// </para>
         /// </summary>
         /// <param name="matchVersion">
         ///          compatibility match version see <a href="#version">Version
         ///          note</a> above for details. This argument will be ignored if the
-        ///          given map is a <see cref="CharArrayMap{TValue}"/>. </param>
+        ///          given map is a <see cref="CharArrayDictionary{TValue}"/>. </param>
         /// <param name="map">
         ///          a map to copy </param>
-        /// <returns> a copy of the given map as a <see cref="CharArrayMap{TValue}"/>. If the given map
-        ///         is a <see cref="CharArrayMap{TValue}"/> the ignoreCase property as well as the
+        /// <returns> a copy of the given map as a <see cref="CharArrayDictionary{TValue}"/>. If the given map
+        ///         is a <see cref="CharArrayDictionary{TValue}"/> the ignoreCase property as well as the
         ///         <paramref name="matchVersion"/> will be of the given map will be preserved. </returns>
-        public static CharArrayMap<TValue> Copy<TValue>(LuceneVersion matchVersion, IDictionary<string, TValue> map)
+        public static CharArrayDictionary<TValue> Copy<TValue>(LuceneVersion matchVersion, IDictionary<string, TValue> map)
         {
-            if (map == CharArrayMap<TValue>.EmptyMap())
+            if (map == CharArrayDictionary<TValue>.EmptyMap())
             {
-                return CharArrayMap<TValue>.EmptyMap();
+                return CharArrayDictionary<TValue>.EmptyMap();
             }
 
-            if (map is CharArrayMap<TValue>)
+            if (map is CharArrayDictionary<TValue>)
             {
-                var m = map as CharArrayMap<TValue>;
+                var m = map as CharArrayDictionary<TValue>;
                 // use fast path instead of iterating all values
                 // this is even on very small sets ~10 times faster than iterating
                 var keys = new char[m.keys.Length][];
                 Array.Copy(m.keys, 0, keys, 0, keys.Length);
-                var values = new CharArrayMap<TValue>.MapValue[m.values.Length];
+                var values = new CharArrayDictionary<TValue>.MapValue[m.values.Length];
                 Array.Copy(m.values, 0, values, 0, values.Length);
-                m = new CharArrayMap<TValue>(m) { keys = keys, values = values };
+                m = new CharArrayDictionary<TValue>(m) { keys = keys, values = values };
                 return m;
             }
-            return new CharArrayMap<TValue>(matchVersion, map, false);
+            return new CharArrayDictionary<TValue>(matchVersion, map, false);
         }
 
         /// <summary>
-        /// Used by <see cref="CharArraySet"/> to copy <see cref="CharArrayMap{TValue}"/> without knowing 
+        /// Used by <see cref="CharArraySet"/> to copy <see cref="CharArrayDictionary{TValue}"/> without knowing 
         /// its generic type.
         /// </summary>
-        internal static CharArrayMap<TValue> Copy<TValue>(LuceneVersion matchVersion, ICharArrayMap map)
+        internal static CharArrayDictionary<TValue> Copy<TValue>(LuceneVersion matchVersion, ICharArrayDictionary map)
         {
             return Copy(matchVersion, map as IDictionary<string, TValue>);
         }
 
         /// <summary>
-        /// Returns an unmodifiable <see cref="CharArrayMap{TValue}"/>. This allows to provide
+        /// Returns an unmodifiable <see cref="CharArrayDictionary{TValue}"/>. This allows to provide
         /// unmodifiable views of internal map for "read-only" use.
         /// </summary>
         /// <param name="map">
         ///          a map for which the unmodifiable map is returned. </param>
-        /// <returns> an new unmodifiable <see cref="CharArrayMap{TValue}"/>. </returns>
+        /// <returns> an new unmodifiable <see cref="CharArrayDictionary{TValue}"/>. </returns>
         /// <exception cref="ArgumentException">
         ///           if the given map is <c>null</c>. </exception>
-        [Obsolete("Use the CharArrayMap<TValue>.AsReadOnly() instance method instead. This method will be removed in 4.8.0 release candidate."), EditorBrowsable(EditorBrowsableState.Never)]
-        public static CharArrayMap<TValue> UnmodifiableMap<TValue>(CharArrayMap<TValue> map)
+        [Obsolete("Use the CharArrayDictionary<TValue>.AsReadOnly() instance method instead. This method will be removed in 4.8.0 release candidate."), EditorBrowsable(EditorBrowsableState.Never)]
+        public static CharArrayDictionary<TValue> UnmodifiableMap<TValue>(CharArrayDictionary<TValue> map)
         {
             if (map is null)
             {
                 throw new ArgumentNullException(nameof(map), "Given map is null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            if (map == CharArrayMap<TValue>.EmptyMap() || map.Count == 0)
+            if (map == CharArrayDictionary<TValue>.EmptyMap() || map.Count == 0)
             {
-                return CharArrayMap<TValue>.EmptyMap();
+                return CharArrayDictionary<TValue>.EmptyMap();
             }
-            if (map is CharArrayMap.UnmodifiableCharArrayMap<TValue>)
+            if (map is CharArrayDictionary.UnmodifiableCharArrayDictionary<TValue>)
             {
                 return map;
             }
-            return new CharArrayMap.UnmodifiableCharArrayMap<TValue>(map);
+            return new CharArrayDictionary.UnmodifiableCharArrayDictionary<TValue>(map);
         }
 
         /// <summary>
-        /// Used by <see cref="CharArraySet"/> to create an <see cref="UnmodifiableCharArrayMap{TValue}"/> instance
+        /// Used by <see cref="CharArraySet"/> to create an <see cref="UnmodifiableCharArrayDictionary{TValue}"/> instance
         /// without knowing the type of <typeparamref name="TValue"/>.
         /// </summary>
-        internal static ICharArrayMap UnmodifiableMap<TValue>(ICharArrayMap map)
+        internal static ICharArrayDictionary UnmodifiableMap<TValue>(ICharArrayDictionary map)
         {
             if (map is null)
             {
                 throw new ArgumentNullException(nameof(map), "Given map is null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            if (map == CharArrayMap<TValue>.EmptyMap() || map.Count == 0)
+            if (map == CharArrayDictionary<TValue>.EmptyMap() || map.Count == 0)
             {
-                return CharArrayMap<TValue>.EmptyMap();
+                return CharArrayDictionary<TValue>.EmptyMap();
             }
-            if (map is CharArrayMap.UnmodifiableCharArrayMap<TValue>)
+            if (map is CharArrayDictionary.UnmodifiableCharArrayDictionary<TValue>)
             {
                 return map;
             }
-            return new CharArrayMap.UnmodifiableCharArrayMap<TValue>(map);
+            return new CharArrayDictionary.UnmodifiableCharArrayDictionary<TValue>(map);
         }
 
         // package private CharArraySet instanceof check in CharArraySet
-        internal class UnmodifiableCharArrayMap<TValue> : CharArrayMap<TValue>
+        internal class UnmodifiableCharArrayDictionary<TValue> : CharArrayDictionary<TValue>
         {
-            public UnmodifiableCharArrayMap(CharArrayMap<TValue> map)
+            public UnmodifiableCharArrayDictionary(CharArrayDictionary<TValue> map)
                 : base(map)
             { }
 
-            public UnmodifiableCharArrayMap(ICharArrayMap map)
-                : base(map as CharArrayMap<TValue>)
+            public UnmodifiableCharArrayDictionary(ICharArrayDictionary map)
+                : base(map as CharArrayDictionary<TValue>)
             { }
 
             public override void Clear()
@@ -1897,15 +1897,15 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Empty <see cref="UnmodifiableCharArrayMap{V}"/> optimized for speed.
+        /// Empty <see cref="UnmodifiableCharArrayDictionary{V}"/> optimized for speed.
         /// Contains checks will always return <c>false</c> or throw
         /// NPE if necessary.
         /// </summary>
-        internal class EmptyCharArrayMap<V> : UnmodifiableCharArrayMap<V>
+        internal class EmptyCharArrayDictionary<V> : UnmodifiableCharArrayDictionary<V>
         {
-            public EmptyCharArrayMap()
+            public EmptyCharArrayDictionary()
 #pragma warning disable 612, 618
-                : base(new CharArrayMap<V>(LuceneVersion.LUCENE_CURRENT, 0, false))
+                : base(new CharArrayDictionary<V>(LuceneVersion.LUCENE_CURRENT, 0, false))
 #pragma warning restore 612, 618
             {
             }
@@ -1985,129 +1985,129 @@ namespace Lucene.Net.Analysis.Util
     }
 
     /// <summary>
-    /// LUCENENET specific extension methods for CharArrayMap
+    /// LUCENENET specific extension methods for CharArrayDictionary
     /// </summary>
-    public static class CharArrayMapExtensions
+    public static class CharArrayDictionaryExtensions
     {
         #region ContainsKey
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="bool"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
+        /// <c>true</c> if the <paramref name="key"/> <see cref="bool"/> is in the <see cref="CharArrayDictionary{TValue}.KeySet"/>; 
         /// otherwise <c>false</c>
         /// </summary>
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, bool key)
+        public static bool ContainsKey<TValue>(this CharArrayDictionary<TValue> map, bool key)
         {
             return map.ContainsKey(key.ToString());
         }
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="byte"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
+        /// <c>true</c> if the <paramref name="key"/> <see cref="byte"/> is in the <see cref="CharArrayDictionary{TValue}.KeySet"/>; 
         /// otherwise <c>false</c>
         /// </summary>
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, byte key)
+        public static bool ContainsKey<TValue>(this CharArrayDictionary<TValue> map, byte key)
         {
             return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="char"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
+        /// <c>true</c> if the <paramref name="key"/> <see cref="char"/> is in the <see cref="CharArrayDictionary{TValue}.KeySet"/>; 
         /// otherwise <c>false</c>
         /// </summary>
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, char key)
+        public static bool ContainsKey<TValue>(this CharArrayDictionary<TValue> map, char key)
         {
             return map.ContainsKey("" + key);
         }
 
         ///// <summary>
-        ///// <c>true</c> if the <paramref name="key"/> <see cref="decimal"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
+        ///// <c>true</c> if the <paramref name="key"/> <see cref="decimal"/> is in the <see cref="CharArrayDictionary{TValue}.KeySet"/>; 
         ///// otherwise <c>false</c>
         ///// </summary>
-        //public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, decimal key)
+        //public static bool ContainsKey<TValue>(this CharArrayDictionary<TValue> map, decimal key)
         //{
         //    return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
         //}
 
         ///// <summary>
-        ///// <c>true</c> if the <paramref name="key"/> <see cref="double"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
+        ///// <c>true</c> if the <paramref name="key"/> <see cref="double"/> is in the <see cref="CharArrayDictionary{TValue}.KeySet"/>; 
         ///// otherwise <c>false</c>
         ///// </summary>
-        //public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, double key)
+        //public static bool ContainsKey<TValue>(this CharArrayDictionary<TValue> map, double key)
         //{
         //    return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
         //}
 
         ///// <summary>
-        ///// <c>true</c> if the <paramref name="key"/> <see cref="float"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
+        ///// <c>true</c> if the <paramref name="key"/> <see cref="float"/> is in the <see cref="CharArrayDictionary{TValue}.KeySet"/>; 
         ///// otherwise <c>false</c>
         ///// </summary>
-        //public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, float key)
+        //public static bool ContainsKey<TValue>(this CharArrayDictionary<TValue> map, float key)
         //{
         //    return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
         //}
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="int"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
+        /// <c>true</c> if the <paramref name="key"/> <see cref="int"/> is in the <see cref="CharArrayDictionary{TValue}.KeySet"/>; 
         /// otherwise <c>false</c>
         /// </summary>
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, int key)
+        public static bool ContainsKey<TValue>(this CharArrayDictionary<TValue> map, int key)
         {
             return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="long"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
+        /// <c>true</c> if the <paramref name="key"/> <see cref="long"/> is in the <see cref="CharArrayDictionary{TValue}.KeySet"/>; 
         /// otherwise <c>false</c>
         /// </summary>
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, long key)
+        public static bool ContainsKey<TValue>(this CharArrayDictionary<TValue> map, long key)
         {
             return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="sbyte"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
+        /// <c>true</c> if the <paramref name="key"/> <see cref="sbyte"/> is in the <see cref="CharArrayDictionary{TValue}.KeySet"/>; 
         /// otherwise <c>false</c>
         /// </summary>
         [CLSCompliant(false)]
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, sbyte key)
+        public static bool ContainsKey<TValue>(this CharArrayDictionary<TValue> map, sbyte key)
         {
             return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="short"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
+        /// <c>true</c> if the <paramref name="key"/> <see cref="short"/> is in the <see cref="CharArrayDictionary{TValue}.KeySet"/>; 
         /// otherwise <c>false</c>
         /// </summary>
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, short key)
+        public static bool ContainsKey<TValue>(this CharArrayDictionary<TValue> map, short key)
         {
             return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="uint"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
-        /// otherwise <c>false</c>
-        /// </summary>
-        [CLSCompliant(false)]
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, uint key)
-        {
-            return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="ulong"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
+        /// <c>true</c> if the <paramref name="key"/> <see cref="uint"/> is in the <see cref="CharArrayDictionary{TValue}.KeySet"/>; 
         /// otherwise <c>false</c>
         /// </summary>
         [CLSCompliant(false)]
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, ulong key)
+        public static bool ContainsKey<TValue>(this CharArrayDictionary<TValue> map, uint key)
         {
             return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="ushort"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
+        /// <c>true</c> if the <paramref name="key"/> <see cref="ulong"/> is in the <see cref="CharArrayDictionary{TValue}.KeySet"/>; 
         /// otherwise <c>false</c>
         /// </summary>
         [CLSCompliant(false)]
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, ushort key)
+        public static bool ContainsKey<TValue>(this CharArrayDictionary<TValue> map, ulong key)
+        {
+            return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
+        }
+
+        /// <summary>
+        /// <c>true</c> if the <paramref name="key"/> <see cref="ushort"/> is in the <see cref="CharArrayDictionary{TValue}.KeySet"/>; 
+        /// otherwise <c>false</c>
+        /// </summary>
+        [CLSCompliant(false)]
+        public static bool ContainsKey<TValue>(this CharArrayDictionary<TValue> map, ushort key)
         {
             return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
         }
@@ -2119,7 +2119,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// returns the value of the mapping of the chars inside this <paramref name="text"/>
         /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, bool text)
+        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, bool text)
         {
             return map.Get(text.ToString());
         }
@@ -2127,7 +2127,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// returns the value of the mapping of the chars inside this <paramref name="text"/>
         /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, byte text)
+        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, byte text)
         {
             return map.Get(text.ToString(CultureInfo.InvariantCulture));
         }
@@ -2135,7 +2135,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// returns the value of the mapping of the chars inside this <paramref name="text"/>
         /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, char text)
+        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, char text)
         {
             return map.Get("" + text);
         }
@@ -2143,7 +2143,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// returns the value of the mapping of the chars inside this <paramref name="text"/>
         /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, decimal text)
+        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, decimal text)
         {
             return map.Get(text.ToString(CultureInfo.InvariantCulture));
         }
@@ -2151,7 +2151,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// returns the value of the mapping of the chars inside this <paramref name="text"/>
         /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, double text)
+        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, double text)
         {
             return map.Get(text.ToString(CultureInfo.InvariantCulture));
         }
@@ -2159,7 +2159,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// returns the value of the mapping of the chars inside this <paramref name="text"/>
         /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, float text)
+        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, float text)
         {
             return map.Get(text.ToString(CultureInfo.InvariantCulture));
         }
@@ -2167,7 +2167,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// returns the value of the mapping of the chars inside this <paramref name="text"/>
         /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, int text)
+        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, int text)
         {
             return map.Get(text.ToString(CultureInfo.InvariantCulture));
         }
@@ -2175,24 +2175,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// returns the value of the mapping of the chars inside this <paramref name="text"/>
         /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, long text)
-        {
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
-        /// </summary>
-        [CLSCompliant(false)]
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, sbyte text)
-        {
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
-        /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, short text)
+        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, long text)
         {
             return map.Get(text.ToString(CultureInfo.InvariantCulture));
         }
@@ -2201,7 +2184,15 @@ namespace Lucene.Net.Analysis.Util
         /// returns the value of the mapping of the chars inside this <paramref name="text"/>
         /// </summary>
         [CLSCompliant(false)]
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, uint text)
+        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, sbyte text)
+        {
+            return map.Get(text.ToString(CultureInfo.InvariantCulture));
+        }
+
+        /// <summary>
+        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
+        /// </summary>
+        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, short text)
         {
             return map.Get(text.ToString(CultureInfo.InvariantCulture));
         }
@@ -2210,7 +2201,7 @@ namespace Lucene.Net.Analysis.Util
         /// returns the value of the mapping of the chars inside this <paramref name="text"/>
         /// </summary>
         [CLSCompliant(false)]
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, ulong text)
+        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, uint text)
         {
             return map.Get(text.ToString(CultureInfo.InvariantCulture));
         }
@@ -2219,7 +2210,16 @@ namespace Lucene.Net.Analysis.Util
         /// returns the value of the mapping of the chars inside this <paramref name="text"/>
         /// </summary>
         [CLSCompliant(false)]
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, ushort text)
+        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, ulong text)
+        {
+            return map.Get(text.ToString(CultureInfo.InvariantCulture));
+        }
+
+        /// <summary>
+        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
+        /// </summary>
+        [CLSCompliant(false)]
+        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, ushort text)
         {
             return map.Get(text.ToString(CultureInfo.InvariantCulture));
         }
@@ -2231,7 +2231,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add the given mapping.
         /// </summary>
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, bool text, TValue value)
+        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, bool text, TValue value)
         {
             return map.Put(text.ToString(), value);
         }
@@ -2239,7 +2239,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add the given mapping.
         /// </summary>
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, byte text, TValue value)
+        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, byte text, TValue value)
         {
             return map.Put(text.ToString(), value);
         }
@@ -2247,7 +2247,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add the given mapping.
         /// </summary>
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, char text, TValue value)
+        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, char text, TValue value)
         {
             return map.Put(text.ToString(), value);
         }
@@ -2255,7 +2255,7 @@ namespace Lucene.Net.Analysis.Util
         ///// <summary>
         ///// Add the given mapping.
         ///// </summary>
-        //public static TValue Put<TValue>(this CharArrayMap<TValue> map, decimal text, TValue value)
+        //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, decimal text, TValue value)
         //{
         //    return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
         //}
@@ -2263,7 +2263,7 @@ namespace Lucene.Net.Analysis.Util
         ///// <summary>
         ///// Add the given mapping.
         ///// </summary>
-        //public static TValue Put<TValue>(this CharArrayMap<TValue> map, double text, TValue value)
+        //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, double text, TValue value)
         //{
         //    return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
         //}
@@ -2271,7 +2271,7 @@ namespace Lucene.Net.Analysis.Util
         ///// <summary>
         ///// Add the given mapping.
         ///// </summary>
-        //public static TValue Put<TValue>(this CharArrayMap<TValue> map, float text, TValue value)
+        //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, float text, TValue value)
         //{
         //    return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
         //}
@@ -2279,7 +2279,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add the given mapping.
         /// </summary>
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, int text, TValue value)
+        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, int text, TValue value)
         {
             return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
         }
@@ -2287,24 +2287,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add the given mapping.
         /// </summary>
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, long text, TValue value)
-        {
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
-
-        /// <summary>
-        /// Add the given mapping.
-        /// </summary>
-        [CLSCompliant(false)]
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, sbyte text, TValue value)
-        {
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
-
-        /// <summary>
-        /// Add the given mapping.
-        /// </summary>
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, short text, TValue value)
+        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, long text, TValue value)
         {
             return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
         }
@@ -2313,7 +2296,15 @@ namespace Lucene.Net.Analysis.Util
         /// Add the given mapping.
         /// </summary>
         [CLSCompliant(false)]
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, uint text, TValue value)
+        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, sbyte text, TValue value)
+        {
+            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
+        }
+
+        /// <summary>
+        /// Add the given mapping.
+        /// </summary>
+        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, short text, TValue value)
         {
             return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
         }
@@ -2322,7 +2313,7 @@ namespace Lucene.Net.Analysis.Util
         /// Add the given mapping.
         /// </summary>
         [CLSCompliant(false)]
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, ulong text, TValue value)
+        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, uint text, TValue value)
         {
             return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
         }
@@ -2331,7 +2322,16 @@ namespace Lucene.Net.Analysis.Util
         /// Add the given mapping.
         /// </summary>
         [CLSCompliant(false)]
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, ushort text, TValue value)
+        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, ulong text, TValue value)
+        {
+            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
+        }
+
+        /// <summary>
+        /// Add the given mapping.
+        /// </summary>
+        [CLSCompliant(false)]
+        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, ushort text, TValue value)
         {
             return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
         }
@@ -2342,11 +2342,11 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<bool, TValue> dictionary)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IDictionary<bool, TValue> dictionary)
         {
             foreach (var kvp in dictionary)
             {
@@ -2356,11 +2356,11 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<byte, TValue> dictionary)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IDictionary<byte, TValue> dictionary)
         {
             foreach (var kvp in dictionary)
             {
@@ -2370,11 +2370,11 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<char, TValue> dictionary)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IDictionary<char, TValue> dictionary)
         {
             foreach (var kvp in dictionary)
             {
@@ -2384,11 +2384,11 @@ namespace Lucene.Net.Analysis.Util
 
         ///// <summary>
         ///// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         ///// </summary>
         ///// <param name="map">this map</param>
         ///// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        //public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<decimal, TValue> dictionary)
+        //public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IDictionary<decimal, TValue> dictionary)
         //{
         //    foreach (var kvp in dictionary)
         //    {
@@ -2398,11 +2398,11 @@ namespace Lucene.Net.Analysis.Util
 
         ///// <summary>
         ///// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         ///// </summary>
         ///// <param name="map">this map</param>
         ///// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        //public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<double, TValue> dictionary)
+        //public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IDictionary<double, TValue> dictionary)
         //{
         //    foreach (var kvp in dictionary)
         //    {
@@ -2412,11 +2412,11 @@ namespace Lucene.Net.Analysis.Util
 
         ///// <summary>
         ///// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         ///// </summary>
         ///// <param name="map">this map</param>
         ///// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        //public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<float, TValue> dictionary)
+        //public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IDictionary<float, TValue> dictionary)
         //{
         //    foreach (var kvp in dictionary)
         //    {
@@ -2426,11 +2426,11 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<int, TValue> dictionary)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IDictionary<int, TValue> dictionary)
         {
             foreach (var kvp in dictionary)
             {
@@ -2440,11 +2440,11 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<long, TValue> dictionary)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IDictionary<long, TValue> dictionary)
         {
             foreach (var kvp in dictionary)
             {
@@ -2454,12 +2454,12 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
         [CLSCompliant(false)]
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<sbyte, TValue> dictionary)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IDictionary<sbyte, TValue> dictionary)
         {
             foreach (var kvp in dictionary)
             {
@@ -2469,11 +2469,11 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<short, TValue> dictionary)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IDictionary<short, TValue> dictionary)
         {
             foreach (var kvp in dictionary)
             {
@@ -2483,27 +2483,12 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        [CLSCompliant(false)]
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<uint, TValue> dictionary)
-        {
-            foreach (var kvp in dictionary)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
         [CLSCompliant(false)]
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<ulong, TValue> dictionary)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IDictionary<uint, TValue> dictionary)
         {
             foreach (var kvp in dictionary)
             {
@@ -2513,12 +2498,27 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
         [CLSCompliant(false)]
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<ushort, TValue> dictionary)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IDictionary<ulong, TValue> dictionary)
+        {
+            foreach (var kvp in dictionary)
+            {
+                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+            }
+        }
+
+        /// <summary>
+        /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// </summary>
+        /// <param name="map">this map</param>
+        /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
+        [CLSCompliant(false)]
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IDictionary<ushort, TValue> dictionary)
         {
             foreach (var kvp in dictionary)
             {
@@ -2529,11 +2529,11 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="collection">The values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<bool, TValue>> collection)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IEnumerable<KeyValuePair<bool, TValue>> collection)
         {
             foreach (var kvp in collection)
             {
@@ -2543,11 +2543,11 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="collection">The values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<byte, TValue>> collection)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IEnumerable<KeyValuePair<byte, TValue>> collection)
         {
             foreach (var kvp in collection)
             {
@@ -2557,11 +2557,11 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="collection">The values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<char, TValue>> collection)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IEnumerable<KeyValuePair<char, TValue>> collection)
         {
             foreach (var kvp in collection)
             {
@@ -2571,11 +2571,11 @@ namespace Lucene.Net.Analysis.Util
 
         ///// <summary>
         ///// This implementation enumerates over the specified <paramref name="collection"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         ///// </summary>
         ///// <param name="map">this map</param>
         ///// <param name="collection">The values to add/update in the current map.</param>
-        //public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<decimal, TValue>> collection)
+        //public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IEnumerable<KeyValuePair<decimal, TValue>> collection)
         //{
         //    foreach (var kvp in collection)
         //    {
@@ -2585,11 +2585,11 @@ namespace Lucene.Net.Analysis.Util
 
         ///// <summary>
         ///// This implementation enumerates over the specified <paramref name="collection"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         ///// </summary>
         ///// <param name="map">this map</param>
         ///// <param name="collection">The values to add/update in the current map.</param>
-        //public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<double, TValue>> collection)
+        //public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IEnumerable<KeyValuePair<double, TValue>> collection)
         //{
         //    foreach (var kvp in collection)
         //    {
@@ -2599,11 +2599,11 @@ namespace Lucene.Net.Analysis.Util
 
         ///// <summary>
         ///// This implementation enumerates over the specified <paramref name="collection"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         ///// </summary>
         ///// <param name="map">this map</param>
         ///// <param name="collection">The values to add/update in the current map.</param>
-        //public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<float, TValue>> collection)
+        //public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IEnumerable<KeyValuePair<float, TValue>> collection)
         //{
         //    foreach (var kvp in collection)
         //    {
@@ -2613,11 +2613,11 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="collection">The values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<int, TValue>> collection)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IEnumerable<KeyValuePair<int, TValue>> collection)
         {
             foreach (var kvp in collection)
             {
@@ -2627,11 +2627,11 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="collection">The values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<long, TValue>> collection)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IEnumerable<KeyValuePair<long, TValue>> collection)
         {
             foreach (var kvp in collection)
             {
@@ -2641,12 +2641,12 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="collection">The values to add/update in the current map.</param>
         [CLSCompliant(false)]
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<sbyte, TValue>> collection)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IEnumerable<KeyValuePair<sbyte, TValue>> collection)
         {
             foreach (var kvp in collection)
             {
@@ -2656,11 +2656,11 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="collection">The values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<short, TValue>> collection)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IEnumerable<KeyValuePair<short, TValue>> collection)
         {
             foreach (var kvp in collection)
             {
@@ -2670,27 +2670,12 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="collection">The values to add/update in the current map.</param>
-        [CLSCompliant(false)]
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<uint, TValue>> collection)
-        {
-            foreach (var kvp in collection)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="collection">The values to add/update in the current map.</param>
         [CLSCompliant(false)]
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<ulong, TValue>> collection)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IEnumerable<KeyValuePair<uint, TValue>> collection)
         {
             foreach (var kvp in collection)
             {
@@ -2700,12 +2685,27 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="collection">The values to add/update in the current map.</param>
         [CLSCompliant(false)]
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<ushort, TValue>> collection)
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IEnumerable<KeyValuePair<ulong, TValue>> collection)
+        {
+            foreach (var kvp in collection)
+            {
+                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+            }
+        }
+
+        /// <summary>
+        /// This implementation enumerates over the specified <paramref name="collection"/>'s
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// </summary>
+        /// <param name="map">this map</param>
+        /// <param name="collection">The values to add/update in the current map.</param>
+        [CLSCompliant(false)]
+        public static void PutAll<TValue>(this CharArrayDictionary<TValue> map, IEnumerable<KeyValuePair<ushort, TValue>> collection)
         {
             foreach (var kvp in collection)
             {
@@ -2725,8 +2725,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="value">When this method returns, contains the value associated with the specified key, 
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, bool key, out TValue value)
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, bool key, out TValue value)
         {
             return map.TryGetValue(key.ToString(), out value);
         }
@@ -2739,8 +2739,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="value">When this method returns, contains the value associated with the specified key, 
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, byte key, out TValue value)
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, byte key, out TValue value)
         {
             return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
         }
@@ -2753,8 +2753,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="value">When this method returns, contains the value associated with the specified key, 
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, char key, out TValue value)
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, char key, out TValue value)
         {
             return map.TryGetValue("" + key, out value);
         }
@@ -2767,8 +2767,8 @@ namespace Lucene.Net.Analysis.Util
         ///// <param name="value">When this method returns, contains the value associated with the specified key, 
         ///// if the key is found; otherwise, the default value for the type of the value parameter. 
         ///// This parameter is passed uninitialized.</param>
-        ///// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        //public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, decimal key, out TValue value)
+        ///// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        //public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, decimal key, out TValue value)
         //{
         //    return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
         //}
@@ -2781,8 +2781,8 @@ namespace Lucene.Net.Analysis.Util
         ///// <param name="value">When this method returns, contains the value associated with the specified key, 
         ///// if the key is found; otherwise, the default value for the type of the value parameter. 
         ///// This parameter is passed uninitialized.</param>
-        ///// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        //public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, double key, out TValue value)
+        ///// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        //public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, double key, out TValue value)
         //{
         //    return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
         //}
@@ -2795,8 +2795,8 @@ namespace Lucene.Net.Analysis.Util
         ///// <param name="value">When this method returns, contains the value associated with the specified key, 
         ///// if the key is found; otherwise, the default value for the type of the value parameter. 
         ///// This parameter is passed uninitialized.</param>
-        ///// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        //public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, float key, out TValue value)
+        ///// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        //public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, float key, out TValue value)
         //{
         //    return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
         //}
@@ -2809,8 +2809,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="value">When this method returns, contains the value associated with the specified key, 
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, int key, out TValue value)
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, int key, out TValue value)
         {
             return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
         }
@@ -2823,8 +2823,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="value">When this method returns, contains the value associated with the specified key, 
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, long key, out TValue value)
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, long key, out TValue value)
         {
             return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
         }
@@ -2837,9 +2837,9 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="value">When this method returns, contains the value associated with the specified key, 
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         [CLSCompliant(false)]
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, sbyte key, out TValue value)
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, sbyte key, out TValue value)
         {
             return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
         }
@@ -2852,8 +2852,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="value">When this method returns, contains the value associated with the specified key, 
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, short key, out TValue value)
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, short key, out TValue value)
         {
             return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
         }
@@ -2866,9 +2866,9 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="value">When this method returns, contains the value associated with the specified key, 
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         [CLSCompliant(false)]
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, uint key, out TValue value)
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, uint key, out TValue value)
         {
             return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
         }
@@ -2881,9 +2881,9 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="value">When this method returns, contains the value associated with the specified key, 
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         [CLSCompliant(false)]
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, ulong key, out TValue value)
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, ulong key, out TValue value)
         {
             return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
         }
@@ -2896,9 +2896,9 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="value">When this method returns, contains the value associated with the specified key, 
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         [CLSCompliant(false)]
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, ushort key, out TValue value)
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, ushort key, out TValue value)
         {
             return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
         }
@@ -2907,13 +2907,13 @@ namespace Lucene.Net.Analysis.Util
     }
 
     /// <summary>
-    /// Extensions to <see cref="IDictionary{TKey, TValue}"/> for <see cref="CharArrayMap{TValue}"/>.
+    /// Extensions to <see cref="IDictionary{TKey, TValue}"/> for <see cref="CharArrayDictionary{TValue}"/>.
     /// </summary>
-    // LUCENENET specific - allow .NET-like syntax for copying CharArrayMap
+    // LUCENENET specific - allow .NET-like syntax for copying CharArrayDictionary
     public static class DictionaryExtensions
     {
         /// <summary>
-        /// Returns a copy of the current <see cref="IDictionary{TKey, TValue}"/> as a <see cref="CharArrayMap{TValue}"/>
+        /// Returns a copy of the current <see cref="IDictionary{TKey, TValue}"/> as a <see cref="CharArrayDictionary{TValue}"/>
         /// using the specified <paramref name="matchVersion"/> value.
         /// </summary>
         /// <typeparam name="TValue">The type of dictionary value.</typeparam>
@@ -2922,17 +2922,17 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="matchVersion">
         ///          compatibility match version see <a href="#version">Version
         ///          note</a> above for details. </param>
-        /// <returns> A copy of the current dictionary as a <see cref="CharArrayMap{TValue}"/>. </returns>
-        public static CharArrayMap<TValue> ToCharArrayMap<TValue>(this IDictionary<string, TValue> dictionary, LuceneVersion matchVersion)
+        /// <returns> A copy of the current dictionary as a <see cref="CharArrayDictionary{TValue}"/>. </returns>
+        public static CharArrayDictionary<TValue> ToCharArrayDictionary<TValue>(this IDictionary<string, TValue> dictionary, LuceneVersion matchVersion)
         {
             if (dictionary is null)
                 throw new ArgumentNullException(nameof(dictionary));
 
-            return new CharArrayMap<TValue>(matchVersion, dictionary.Count, ignoreCase: true);
+            return new CharArrayDictionary<TValue>(matchVersion, dictionary.Count, ignoreCase: true);
         }
 
         /// <summary>
-        /// Returns a copy of the current <see cref="IDictionary{TKey, TValue}"/> as a <see cref="CharArrayMap{TValue}"/>
+        /// Returns a copy of the current <see cref="IDictionary{TKey, TValue}"/> as a <see cref="CharArrayDictionary{TValue}"/>
         /// using the specified <paramref name="matchVersion"/> and <paramref name="ignoreCase"/> values.
         /// </summary>
         /// <typeparam name="TValue">The type of dictionary value.</typeparam>
@@ -2942,13 +2942,13 @@ namespace Lucene.Net.Analysis.Util
         ///          compatibility match version see <a href="#version">Version
         ///          note</a> above for details. </param>
         /// <param name="ignoreCase"><c>false</c> if and only if the set should be case sensitive otherwise <c>true</c>.</param>
-        /// <returns> A copy of the current dictionary as a <see cref="CharArrayMap{TValue}"/>. </returns>
-        public static CharArrayMap<TValue> ToCharArrayMap<TValue>(this IDictionary<string, TValue> dictionary, LuceneVersion matchVersion, bool ignoreCase)
+        /// <returns> A copy of the current dictionary as a <see cref="CharArrayDictionary{TValue}"/>. </returns>
+        public static CharArrayDictionary<TValue> ToCharArrayDictionary<TValue>(this IDictionary<string, TValue> dictionary, LuceneVersion matchVersion, bool ignoreCase)
         {
             if (dictionary is null)
                 throw new ArgumentNullException(nameof(dictionary));
 
-            return new CharArrayMap<TValue>(matchVersion, dictionary.Count, ignoreCase);
+            return new CharArrayDictionary<TValue>(matchVersion, dictionary.Count, ignoreCase);
         }
     }
 }

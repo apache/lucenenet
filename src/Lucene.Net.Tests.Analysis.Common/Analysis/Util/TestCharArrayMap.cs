@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Util
     {
         public virtual void DoRandom(int iter, bool ignoreCase)
         {
-            CharArrayMap<int?> map = new CharArrayMap<int?>(TEST_VERSION_CURRENT, 1, ignoreCase);
+            CharArrayDictionary<int?> map = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, 1, ignoreCase);
             IDictionary<string, int?> hmap = new JCG.Dictionary<string, int?>();
 
             char[] key;
@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestMethods()
         {
-            CharArrayMap<int?> cm = new CharArrayMap<int?>(TEST_VERSION_CURRENT, 2, false);
+            CharArrayDictionary<int?> cm = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, 2, false);
             Dictionary<string, int?> hm = new Dictionary<string, int?>();
             hm["foo"] = 1;
             hm["bar"] = 2;
@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.Util
             assertEquals(hm.Count, cs.Count);
             assertEquals(cm.Count, cs.Count);
             // LUCENENET: Need to cast here - no implicit conversion
-            CharArrayMap<int?>.Enumerator iter1 = cm.GetEnumerator();
+            CharArrayDictionary<int?>.Enumerator iter1 = cm.GetEnumerator();
             n = 0;
             while (iter1.MoveNext())
             {
@@ -135,7 +135,7 @@ namespace Lucene.Net.Analysis.Util
             cm.PutAll(hm);
             assertEquals(cm.size(), n);
 
-            CharArrayMap<int?>.Enumerator iter2 = cm.GetEnumerator();
+            CharArrayDictionary<int?>.Enumerator iter2 = cm.GetEnumerator();
             n = 0;
             while (iter2.MoveNext())
             {
@@ -158,7 +158,7 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public void TestModifyOnUnmodifiable()
         {
-            CharArrayMap<int?> map = new CharArrayMap<int?>(TEST_VERSION_CURRENT, 2, false);
+            CharArrayDictionary<int?> map = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, 2, false);
             map.Put("foo", 1);
             map.Put("bar", 2);
             int size = map.Count;
@@ -334,7 +334,7 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestToString()
         {
-            CharArrayMap<int?> cm = new CharArrayMap<int?>(TEST_VERSION_CURRENT, Collections.SingletonMap<string, int?>("test", 1), false);
+            CharArrayDictionary<int?> cm = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, Collections.SingletonMap<string, int?>("test", 1), false);
             assertEquals("[test]", cm.Keys.ToString());
             assertEquals("[1]", cm.Values.ToString());
             //assertEquals("[test=1]", cm.EntrySet().ToString()); // LUCENENET: Removed EntrySet() method because .NET uses the dictionary instance
@@ -349,8 +349,8 @@ namespace Lucene.Net.Analysis.Util
         [Test, LuceneNetSpecific]
         public virtual void TestIsReadOnly()
         {
-            CharArrayMap<int?> target = new CharArrayMap<int?>(TEST_VERSION_CURRENT, Collections.SingletonMap<string, int?>("test", 1), false);
-            CharArrayMap<int?> readOnlyTarget = target.AsReadOnly();
+            CharArrayDictionary<int?> target = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, Collections.SingletonMap<string, int?>("test", 1), false);
+            CharArrayDictionary<int?> readOnlyTarget = target.AsReadOnly();
 
             assertFalse(target.IsReadOnly);
             assertTrue(target.Keys.IsReadOnly); // KeyCollection is always read-only

@@ -339,11 +339,11 @@ namespace Lucene.Net.Analysis.En
             }
         }
 
-        private static readonly CharArrayMap<DictEntry> dict_ht = InitializeDictHash();
+        private static readonly CharArrayDictionary<DictEntry> dict_ht = InitializeDictHash();
 
         // caching off 
         // 
-        // private int maxCacheSize; private CharArrayMap{String} cache =
+        // private int maxCacheSize; private CharArrayDictionary{String} cache =
         // null; private static final String SAME = "SAME"; // use if stemmed form is
         // the same
 
@@ -357,7 +357,7 @@ namespace Lucene.Net.Analysis.En
         private int k;
 
         // private void initializeStemHash() { if (maxCacheSize > 0) cache = new
-        // CharArrayMap<String>(maxCacheSize,false); }
+        // CharArrayDictionary<String>(maxCacheSize,false); }
 
         private char FinalChar => word[k];
 
@@ -388,13 +388,13 @@ namespace Lucene.Net.Analysis.En
             }
         }
 
-        private static CharArrayMap<DictEntry> InitializeDictHash()
+        private static CharArrayDictionary<DictEntry> InitializeDictHash()
         {
             DictEntry defaultEntry;
             DictEntry entry;
 
 #pragma warning disable 612, 618
-            CharArrayMap<DictEntry> d = new CharArrayMap<DictEntry>(LuceneVersion.LUCENE_CURRENT, 1000, false);
+            CharArrayDictionary<DictEntry> d = new CharArrayDictionary<DictEntry>(LuceneVersion.LUCENE_CURRENT, 1000, false);
 #pragma warning restore 612, 618
             for (int i = 0; i < exceptionWords.Length; i++)
             {

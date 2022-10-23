@@ -30688,13 +30688,13 @@ namespace Lucene.Net.Analysis.CharFilters
                 {"amp", "AMP" },
             };
 
-        private static readonly CharArrayMap<char> entityValues = LoadEntityValues();
+        private static readonly CharArrayDictionary<char> entityValues = LoadEntityValues();
 
-        private static CharArrayMap<char> LoadEntityValues() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        private static CharArrayDictionary<char> LoadEntityValues() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            CharArrayMap<char> entityValues
+            CharArrayDictionary<char> entityValues
 #pragma warning disable 612, 618
-            = new CharArrayMap<char>(LuceneVersion.LUCENE_CURRENT, 253, false);
+            = new CharArrayDictionary<char>(LuceneVersion.LUCENE_CURRENT, 253, false);
 #pragma warning restore 612, 618
             string[] entities = {
                 "AElig", "\u00C6", "Aacute", "\u00C1", "Acirc", "\u00C2",

@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Nl
         private static class DefaultSetHolder
         {
             internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();
-            internal static readonly CharArrayMap<string> DEFAULT_STEM_DICT = LoadDefaultStemDict();
+            internal static readonly CharArrayDictionary<string> DEFAULT_STEM_DICT = LoadDefaultStemDict();
             private static CharArraySet LoadDefaultStopSet() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
             {
                 try
@@ -90,10 +90,10 @@ namespace Lucene.Net.Analysis.Nl
 
             }
 
-            private static CharArrayMap<string> LoadDefaultStemDict() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+            private static CharArrayDictionary<string> LoadDefaultStemDict() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
             {
 #pragma warning disable 612, 618
-                var DEFAULT_STEM_DICT = new CharArrayMap<string>(LuceneVersion.LUCENE_CURRENT, 4, false);
+                var DEFAULT_STEM_DICT = new CharArrayDictionary<string>(LuceneVersion.LUCENE_CURRENT, 4, false);
 #pragma warning restore 612, 618
                 DEFAULT_STEM_DICT.Put("fiets", "fiets"); //otherwise fiet
                 DEFAULT_STEM_DICT.Put("bromfiets", "bromfiets"); //otherwise bromfiet
@@ -117,7 +117,7 @@ namespace Lucene.Net.Analysis.Nl
         private readonly StemmerOverrideFilter.StemmerOverrideMap stemdict;
 
         // null if on 3.1 or later - only for bw compat
-        private readonly CharArrayMap<string> origStemdict;
+        private readonly CharArrayDictionary<string> origStemdict;
         private readonly LuceneVersion matchVersion;
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Lucene.Net.Analysis.Nl
 #pragma warning disable 612, 618
                     matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ?
 #pragma warning restore 612, 618
-                    DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayMap<string>.EmptyMap())
+                    DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayDictionary<string>.EmptyMap())
         {
             // historically, this ctor never the stem dict!!!!!
             // so we populate it only for >= 3.6
@@ -146,13 +146,13 @@ namespace Lucene.Net.Analysis.Nl
 #pragma warning disable 612, 618
                     matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ?
 #pragma warning restore 612, 618
-                    DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayMap<string>.EmptyMap())
+                    DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayDictionary<string>.EmptyMap())
         {
             // historically, this ctor never the stem dict!!!!!
             // so we populate it only for >= 3.6
         }
 
-        public DutchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionTable, CharArrayMap<string> stemOverrideDict)
+        public DutchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionTable, CharArrayDictionary<string> stemOverrideDict)
         {
             this.matchVersion = matchVersion;
             this.stoptable = CharArraySet.Copy(matchVersion, stopwords).AsReadOnly();
@@ -162,7 +162,7 @@ namespace Lucene.Net.Analysis.Nl
 #pragma warning restore 612, 618
             {
                 this.stemdict = null;
-                this.origStemdict = CharArrayMap.Copy(matchVersion, stemOverrideDict).AsReadOnly();
+                this.origStemdict = CharArrayDictionary.Copy(matchVersion, stemOverrideDict).AsReadOnly();
             }
             else
             {
