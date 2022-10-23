@@ -1327,7 +1327,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// <c>true</c> if the <see cref="CharArrayMap{TValue}"/> is read-only; otherwise <c>false</c>.
         /// </summary>
-        public virtual bool IsReadOnly { get; private set; }
+        public virtual bool IsReadOnly => false;
 
         /// <summary>
         /// Returns an enumerator that iterates through the <see cref="CharArrayMap{TValue}"/>.
@@ -1452,6 +1452,8 @@ namespace Lucene.Net.Analysis.Util
                 : base(map)
             {
             }
+
+            public override bool IsReadOnly => true;
 
             public override bool Add(object o) // LUCENENET TODO: API - make an explicit implementation that isn't public
             {
@@ -1733,6 +1735,7 @@ namespace Lucene.Net.Analysis.Util
         bool ContainsKey(string text);
         bool ContainsKey(ICharSequence text);
         int Count { get; }
+        bool IsReadOnly { get; }
         LuceneVersion MatchVersion { get; }
         ICollection<string> OriginalKeySet { get; }
         bool Put(char[] text);
@@ -1912,6 +1915,9 @@ namespace Lucene.Net.Analysis.Util
             }
 
             #region Added for better .NET support LUCENENET
+
+            public override bool IsReadOnly => true;
+
             public override void Add(string key, TValue value)
             {
                 throw UnsupportedOperationException.Create();

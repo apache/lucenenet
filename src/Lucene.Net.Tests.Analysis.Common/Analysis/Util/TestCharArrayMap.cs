@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -344,6 +345,18 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(cm.Values.ToString().Contains(", "));
             assertTrue(cm.EntrySet().ToString().Contains(", "));
             assertTrue(cm.ToString().Contains(", "));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsReadOnly()
+        {
+            CharArrayMap<int?> target = new CharArrayMap<int?>(TEST_VERSION_CURRENT, Collections.SingletonMap<string, int?>("test", 1), false);
+            CharArrayMap<int?> readOnlyTarget = target.AsReadOnly();
+
+            assertFalse(target.IsReadOnly);
+            assertTrue(target.Keys.IsReadOnly); // KeyCollection is always read-only
+            assertTrue(readOnlyTarget.IsReadOnly);
+            assertTrue(readOnlyTarget.Keys.IsReadOnly);
         }
     }
 }

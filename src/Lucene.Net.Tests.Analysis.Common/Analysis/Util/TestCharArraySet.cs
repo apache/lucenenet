@@ -915,6 +915,17 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(target.Overlaps(originalValues));
         }
 
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsReadOnly()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            CharArraySet readOnlyTarget = target.AsReadOnly();
+
+            assertFalse(target.IsReadOnly);
+            assertTrue(readOnlyTarget.IsReadOnly);
+        }
+
         #endregion
     }
 }

@@ -220,7 +220,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// <c>true</c> if the <see cref="CharArraySet"/> is read-only; otherwise <c>false</c>.
         /// </summary>
-        public virtual bool IsReadOnly { get; private set; }
+        public virtual bool IsReadOnly => map.IsReadOnly;
 
         /// <summary>
         /// Returns an unmodifiable <see cref="CharArraySet"/>. This allows to provide
