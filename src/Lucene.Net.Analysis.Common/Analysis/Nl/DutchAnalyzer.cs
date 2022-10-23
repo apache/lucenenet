@@ -135,7 +135,7 @@ namespace Lucene.Net.Analysis.Nl
 #pragma warning disable 612, 618
                     matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ?
 #pragma warning restore 612, 618
-                    DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayDictionary<string>.EmptyMap())
+                    DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayDictionary<string>.Empty)
         {
             // historically, this ctor never the stem dict!!!!!
             // so we populate it only for >= 3.6
@@ -146,7 +146,7 @@ namespace Lucene.Net.Analysis.Nl
 #pragma warning disable 612, 618
                     matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ?
 #pragma warning restore 612, 618
-                    DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayDictionary<string>.EmptyMap())
+                    DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayDictionary<string>.Empty)
         {
             // historically, this ctor never the stem dict!!!!!
             // so we populate it only for >= 3.6

@@ -57,8 +57,10 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public class CharArrayDictionary<TValue> : ICharArrayDictionary, IDictionary<string, TValue>
     {
-        // private only because missing generics
-        private static readonly CharArrayDictionary<TValue> EMPTY_MAP = new CharArrayDictionary.EmptyCharArrayDictionary<TValue>();
+        // LUCENENET: Made public, renamed Empty
+        /// <summary>
+        /// Returns an empty, unmodifiable map. </summary>
+        public static readonly CharArrayDictionary<TValue> Empty = new CharArrayDictionary.EmptyCharArrayDictionary<TValue>();
 
         private const int INIT_SIZE = 8;
         private readonly CharacterUtils charUtils;
@@ -1660,12 +1662,7 @@ namespace Lucene.Net.Analysis.Util
 
         // LUCENENET: Moved Copy static methods to CharArrayDictionary class
 
-        /// <summary>
-        /// Returns an empty, unmodifiable map. </summary>
-        public static CharArrayDictionary<TValue> EmptyMap()
-        {
-            return EMPTY_MAP;
-        }
+        // LUCENENET: Removed EmptyMap() - use Empty instead
 
         // LUCENENET: Moved UnmodifiableCharArraymap to CharArrayDictionary class
 
@@ -1720,9 +1717,9 @@ namespace Lucene.Net.Analysis.Util
         ///         <paramref name="matchVersion"/> will be of the given map will be preserved. </returns>
         public static CharArrayDictionary<TValue> Copy<TValue>(LuceneVersion matchVersion, IDictionary<string, TValue> map)
         {
-            if (map == CharArrayDictionary<TValue>.EmptyMap())
+            if (map == CharArrayDictionary<TValue>.Empty)
             {
-                return CharArrayDictionary<TValue>.EmptyMap();
+                return CharArrayDictionary<TValue>.Empty;
             }
 
             if (map is CharArrayDictionary<TValue>)
@@ -1765,9 +1762,9 @@ namespace Lucene.Net.Analysis.Util
             {
                 throw new ArgumentNullException(nameof(map), "Given map is null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            if (map == CharArrayDictionary<TValue>.EmptyMap() || map.Count == 0)
+            if (map == CharArrayDictionary<TValue>.Empty || map.Count == 0)
             {
-                return CharArrayDictionary<TValue>.EmptyMap();
+                return CharArrayDictionary<TValue>.Empty;
             }
             if (map is CharArrayDictionary.UnmodifiableCharArrayDictionary<TValue>)
             {
@@ -1786,9 +1783,9 @@ namespace Lucene.Net.Analysis.Util
             {
                 throw new ArgumentNullException(nameof(map), "Given map is null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            if (map == CharArrayDictionary<TValue>.EmptyMap() || map.Count == 0)
+            if (map == CharArrayDictionary<TValue>.Empty || map.Count == 0)
             {
-                return CharArrayDictionary<TValue>.EmptyMap();
+                return CharArrayDictionary<TValue>.Empty;
             }
             if (map is CharArrayDictionary.UnmodifiableCharArrayDictionary<TValue>)
             {

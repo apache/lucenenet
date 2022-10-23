@@ -185,7 +185,7 @@ namespace Lucene.Net.Analysis.Nl
         [Test]
         public virtual void TestEmptyStemDictionary()
         {
-            DutchAnalyzer a = new DutchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, CharArraySet.EMPTY_SET, CharArrayDictionary<string>.EmptyMap());
+            DutchAnalyzer a = new DutchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, CharArraySet.EMPTY_SET, CharArrayDictionary<string>.Empty);
             CheckOneTerm(a, "fiets", "fiet");
         }
 
