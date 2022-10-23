@@ -115,6 +115,10 @@ namespace Lucene.Net.Analysis.Util
         ///          otherwise <c>true</c>. </param>
         public CharArrayMap(LuceneVersion matchVersion, int startSize, bool ignoreCase)
         {
+            // LUCENENET: Added guard clause
+            if (startSize < 0)
+                throw new ArgumentOutOfRangeException(nameof(startSize), $"nameof(startSize) may not be negative.");
+
             this.ignoreCase = ignoreCase;
             var size = INIT_SIZE;
             while (startSize + (startSize >> 2) > size)
@@ -139,11 +143,20 @@ namespace Lucene.Net.Analysis.Util
         ///          <c>false</c> if and only if the set should be case sensitive;
         ///          otherwise <c>true</c>. </param>
         public CharArrayMap(LuceneVersion matchVersion, IDictionary<string, TValue> c, bool ignoreCase)
-            : this(matchVersion, c.Count, ignoreCase)
+            : this(matchVersion, c?.Count ?? 0, ignoreCase)
         {
+            // LUCENENET: Added guard clause
+            if (c is null)
+                throw new ArgumentNullException(nameof(c));
+
             foreach (var v in c)
             {
-                Add(v);
+                // LUCENENET: S1699: Don't call call protected members in the constructor
+                if (ContainsKey(v.Key))
+                {
+                    throw new ArgumentException("The key " + v.Key + " already exists in the dictionary");
+                }
+                PutImpl(v.Key, new MapValue(v.Value));
             }
         }
 
@@ -426,6 +439,10 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public virtual TValue Put(ICharSequence text, TValue value)
         {
+            // LUCENENET: Added guard clause
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
             MapValue oldValue = PutImpl(text, new MapValue(value)); // could be more efficient
             return (oldValue != null) ? oldValue.Value : default;
         }
@@ -436,6 +453,10 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public virtual TValue Put(object o, TValue value)
         {
+            // LUCENENET: Added guard clause
+            if (o is null)
+                throw new ArgumentNullException(nameof(o));
+
             MapValue oldValue = PutImpl(o, new MapValue(value));
             return (oldValue != null) ? oldValue.Value : default;
         }
@@ -445,6 +466,10 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public virtual TValue Put(string text, TValue value)
         {
+            // LUCENENET: Added guard clause
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
             MapValue oldValue = PutImpl(text, new MapValue(value));
             return (oldValue != null) ? oldValue.Value : default;
         }
@@ -456,6 +481,10 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public virtual TValue Put(char[] text, TValue value)
         {
+            // LUCENENET: Added guard clause
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
             MapValue oldValue = PutImpl(text, new MapValue(value));
             return (oldValue != null) ? oldValue.Value : default;
         }
@@ -465,11 +494,19 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         private MapValue PutImpl(ICharSequence text, MapValue value)
         {
+            // LUCENENET: Added guard clause
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
             return PutImpl(text.ToString(), value); // could be more efficient
         }
 
         private MapValue PutImpl(object o, MapValue value)
         {
+            // LUCENENET: Added guard clause
+            if (o is null)
+                throw new ArgumentNullException(nameof(o));
+
             // LUCENENET NOTE: Testing for *is* is at least 10x faster
             // than casting using *as* and then checking for null.
             // http://stackoverflow.com/q/1583050/181087 
@@ -498,6 +535,10 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         private MapValue PutImpl(string text, MapValue value)
         {
+            // LUCENENET: Added guard clause
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
             return PutImpl(text.ToCharArray(), value);
         }
 
@@ -509,6 +550,10 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         private MapValue PutImpl(char[] text, MapValue value)
         {
+            // LUCENENET: Added guard clause
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
             if (ignoreCase)
             {
                 charUtils.ToLower(text, 0, text.Length);

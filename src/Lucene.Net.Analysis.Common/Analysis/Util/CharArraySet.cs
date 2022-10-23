@@ -99,9 +99,17 @@ namespace Lucene.Net.Analysis.Util
         ///          <c>false</c> if and only if the set should be case sensitive
         ///          otherwise <c>true</c>. </param>
         public CharArraySet(LuceneVersion matchVersion, ICollection<string> c, bool ignoreCase)
-            : this(matchVersion, c.Count, ignoreCase)
+            : this(matchVersion, c?.Count ?? 0, ignoreCase)
         {
-            this.UnionWith(c);
+            // LUCENENET: Added guard clause
+            if (c is null)
+                throw new ArgumentNullException(nameof(c));
+
+            foreach (string text in c)
+            {
+                // LUCENENET: S1699: Don't call call protected members in the constructor
+                map.Put(text);
+            }
         }
 
         /// <summary>
