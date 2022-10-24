@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Fi
             return len;
         }
 
-        private int Step3(char[] s, int len)
+        private static int Step3(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 8)
             {

@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Br
         ///      no such non-vowel.
         /// </summary>
         /// <returns> null or a string representing R1 </returns>
-        private string GetR1(string value)
+        private static string GetR1(string value) // LUCENENET: CA1822: Mark members as static
         {
             int i;
             int j;
@@ -190,7 +190,7 @@ namespace Lucene.Net.Analysis.Br
         ///      found.
         /// </summary>
         /// <returns> null or a string representing RV </returns>
-        private string GetRV(string value)
+        private static string GetRV(string value) // LUCENENET: CA1822: Mark members as static
         {
             int i;
             int j;
@@ -366,7 +366,7 @@ namespace Lucene.Net.Analysis.Br
         /// Remove a <see cref="string"/> suffix
         /// </summary>
         /// <returns> the <see cref="string"/> without the suffix </returns>
-        private string RemoveSuffix(string value, string toRemove)
+        private static string RemoveSuffix(string value, string toRemove) // LUCENENET: CA1822: Mark members as static
         {
             // be-safe !!!
             if ((value is null) || (toRemove is null) || !Suffix(value, toRemove))

@@ -261,6 +261,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Converts a sequence of unicode code points to a sequence of .NET characters. </summary>
         ///  <returns> the number of chars written to the destination buffer  </returns>
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
         public int ToChars(int[] src, int srcOff, int srcLen, char[] dest, int destOff)
         {
             if (srcLen < 0)
