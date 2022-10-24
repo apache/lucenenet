@@ -243,7 +243,7 @@ namespace Lucene.Net.Index.Sorter
                 }
             }
 
-            internal int Compare(int docID1, int docID2, FieldComparer[] comparers, int[] reverseMul)
+            internal static int Compare(int docID1, int docID2, FieldComparer[] comparers, int[] reverseMul) // LUCENENET: CA1822: Mark members as static
             {
                 for (int i = 0; i < comparers.Length; i++)
                 {

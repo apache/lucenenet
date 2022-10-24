@@ -287,7 +287,7 @@ namespace Lucene.Net.Analysis.In
         /// <summary>
         /// Compose into standard form any compositions in the decompositions table.
         /// </summary>
-        private int Compose(int ch0, Regex block0, ScriptData sd, char[] text, int pos, int len)
+        private static int Compose(int ch0, Regex block0, ScriptData sd, char[] text, int pos, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (pos + 1 >= len) // need at least 2 chars!
             {

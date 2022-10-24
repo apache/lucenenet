@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -140,6 +141,7 @@ namespace Lucene.Net.Util
         /// <param name="fixture">The test fixture.</param>
         /// <param name="randomizedContext">The randomized context to associate with the fixture.</param>
         /// <returns>The randomized context.</returns>
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
         public RandomizedContext InitializeTestFixture(Test fixture, RandomizedContext randomizedContext)
         {
             if (fixture is null)

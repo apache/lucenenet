@@ -2,6 +2,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace Lucene.Net.Index
@@ -299,6 +300,7 @@ namespace Lucene.Net.Index
                 indexWriter.PublishFlushedSegment(newSegment.segmentInfo, segmentUpdates, globalPacket);
             }
 
+            [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
             protected void FinishFlush(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates bufferedUpdates)
             {
                 // Finish the flushed segment and publish it to IndexWriter
