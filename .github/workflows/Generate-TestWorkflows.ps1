@@ -219,6 +219,7 @@ name: '$projectName'
 on:
   workflow_dispatch:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
     - '$projectRelativeDirectory/**/*'
     - '.build/dependencies.props'
