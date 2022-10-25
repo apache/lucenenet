@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
@@ -53,18 +53,7 @@ namespace Lucene.Net.Analysis.In
             }
         }
 
-        private static readonly IDictionary<Regex, ScriptData> scripts = new Dictionary<Regex, ScriptData>() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
-        {
-            { new Regex(@"\p{IsDevanagari}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.DEVANAGARI, 0x0900) },
-            { new Regex(@"\p{IsBengali}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.BENGALI, 0x0980) },
-            { new Regex(@"\p{IsGurmukhi}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.GURMUKHI, 0x0A00) },
-            { new Regex(@"\p{IsGujarati}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.GUJARATI, 0x0A80) },
-            { new Regex(@"\p{IsOriya}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.ORIYA, 0x0B00) },
-            { new Regex(@"\p{IsTamil}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.TAMIL, 0x0B80) },
-            { new Regex(@"\p{IsTelugu}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.TELUGU, 0x0C00) },
-            { new Regex(@"\p{IsKannada}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.KANNADA, 0x0C80) },
-            { new Regex(@"\p{IsMalayalam}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.MALAYALAM, 0x0D00) },
-        };
+        // LUCENENET: scripts moved below declaration of decompositions so it can be populated inline
 
         [Flags]
         internal enum UnicodeBlock
@@ -80,22 +69,7 @@ namespace Lucene.Net.Analysis.In
             MALAYALAM = 256
         }
 
-        static IndicNormalizer()
-        {
-            foreach (ScriptData sd in scripts.Values)
-            {
-                sd.decompMask = new OpenBitSet(0x7F);
-                for (int i = 0; i < decompositions.Length; i++)
-                {
-                    int ch = decompositions[i][0];
-                    int flags = decompositions[i][4];
-                    if ((flags & (int)sd.flag) != 0)
-                    {
-                        sd.decompMask.Set(ch);
-                    }
-                }
-            }
-        }
+        // LUCENENET: static initialization done inline instead of in constructor
 
         /// <summary>
         /// Decompositions according to Unicode 5.2, 
@@ -258,6 +232,39 @@ namespace Lucene.Net.Analysis.In
             new int[] { 0x73, 0x4B,   -1, 0x13, (int)UnicodeBlock.GURMUKHI }
         };
 
+        private static readonly IDictionary<Regex, ScriptData> scripts = LoadScripts(); // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+
+        private static IDictionary<Regex, ScriptData> LoadScripts()
+        {
+            IDictionary<Regex, ScriptData> result = new Dictionary<Regex, ScriptData>(capacity: 9)
+            {
+                { new Regex(@"\p{IsDevanagari}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.DEVANAGARI, 0x0900) },
+                { new Regex(@"\p{IsBengali}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.BENGALI, 0x0980) },
+                { new Regex(@"\p{IsGurmukhi}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.GURMUKHI, 0x0A00) },
+                { new Regex(@"\p{IsGujarati}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.GUJARATI, 0x0A80) },
+                { new Regex(@"\p{IsOriya}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.ORIYA, 0x0B00) },
+                { new Regex(@"\p{IsTamil}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.TAMIL, 0x0B80) },
+                { new Regex(@"\p{IsTelugu}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.TELUGU, 0x0C00) },
+                { new Regex(@"\p{IsKannada}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.KANNADA, 0x0C80) },
+                { new Regex(@"\p{IsMalayalam}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.MALAYALAM, 0x0D00) },
+            };
+
+            foreach (ScriptData sd in result.Values)
+            {
+                sd.decompMask = new OpenBitSet(0x7F);
+                for (int i = 0; i < decompositions.Length; i++)
+                {
+                    int ch = decompositions[i][0];
+                    int flags = decompositions[i][4];
+                    if ((flags & (int)sd.flag) != 0)
+                    {
+                        sd.decompMask.Set(ch);
+                    }
+                }
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// Normalizes input text, and returns the new length.
