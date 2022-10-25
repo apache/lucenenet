@@ -1,5 +1,6 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System.IO;
 
@@ -59,6 +60,13 @@ namespace Lucene.Net.Analysis.In
                 return new TokenStreamComponents(tokenizer, new IndicNormalizationFilter(tokenizer));
             });
             CheckOneTerm(a, "", "");
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestUnknownScript()
+        {
+            check("foo", "foo");
+            check("bar", "bar");
         }
     }
 }
