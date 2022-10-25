@@ -372,6 +372,8 @@ namespace Lucene.Net.Analysis.Util
             return ContainsKey(s);
         }
 
+        #region Get
+
         /// <summary>
         /// Returns the value of the mapping of <paramref name="length"/> chars of <paramref name="text"/>
         /// starting at <paramref name="offset"/>.
@@ -458,6 +460,10 @@ namespace Lucene.Net.Analysis.Util
             return Get(s);
         }
 
+        #endregion Get
+
+        #region GetSlot
+
         private int GetSlot(char[] text, int offset, int length)
         {
             int code = GetHashCode(text, offset, length);
@@ -520,6 +526,10 @@ namespace Lucene.Net.Analysis.Util
             return pos;
         }
 
+        #endregion GetSlot
+
+        #region Put (value)
+
         /// <summary>
         /// Add the given mapping.
         /// </summary>
@@ -578,6 +588,10 @@ namespace Lucene.Net.Analysis.Util
             MapValue oldValue = PutImpl(text, new MapValue(value));
             return (oldValue != null) ? oldValue.Value : default;
         }
+
+        #endregion Put (value)
+
+        #region PutImpl
 
         /// <summary>
         /// Add the given mapping.
@@ -707,6 +721,226 @@ namespace Lucene.Net.Analysis.Util
 
             return null;
         }
+
+        #endregion PutImpl
+
+        #region Set (value)
+
+        /// <summary>
+        /// Returns the value of the mapping of <paramref name="length"/> chars of <paramref name="text"/>
+        /// starting at <paramref name="offset"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="offset"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Set(char[] text, int offset, int length, TValue value)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, offset, length, new MapValue(value));
+        }
+
+        /// <summary>
+        /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Set(char[] text, TValue value)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, new MapValue(value));
+        }
+
+        /// <summary>
+        /// Returns the value of the mapping of the chars inside this <see cref="ICharSequence"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Set(ICharSequence text, TValue value)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, new MapValue(value));
+        }
+
+        /// <summary>
+        /// Returns the value of the mapping of the chars inside this <see cref="string"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Set(string text, TValue value)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, new MapValue(value));
+        }
+
+        /// <summary>
+        /// Returns the value of the mapping of the chars inside this <see cref="object.ToString()"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Set(object o, TValue value)
+        {
+            if (o is null)
+                throw new ArgumentNullException(nameof(o));
+
+            // LUCENENET NOTE: Testing for *is* is at least 10x faster
+            // than casting using *as* and then checking for null.
+            // http://stackoverflow.com/q/1583050/181087
+            if (o is string str)
+            {
+                Set(str, value);
+                return;
+            }
+            if (o is char[] charArray)
+            {
+                Set(charArray, 0, charArray.Length, value);
+                return;
+            }
+            if (o is StringCharSequence strCs)
+            {
+                Set(strCs.Value ?? string.Empty, value);
+                return;
+            }
+            if (o is CharArrayCharSequence charArrayCs)
+            {
+                Set(charArrayCs.Value ?? Arrays.Empty<char>(), value);
+                return;
+            }
+            if (o is StringBuilderCharSequence stringBuilderCs)
+            {
+                Set(stringBuilderCs.Value?.ToString() ?? string.Empty, value);
+                return;
+            }
+            if (o is ICharSequence cs)
+            {
+                Set(cs.ToString(), value);
+                return;
+            }
+
+            // LUCENENET: We need value types to be represented using the invariant
+            // culture, so it is consistent regardless of the current culture. 
+            // It's easy to work out if this is a value type, but difficult
+            // to get to the ToString(IFormatProvider) overload of the type without
+            // a lot of special cases. It's easier just to change the culture of the 
+            // thread before calling ToString(), but we don't want that behavior to
+            // bleed into Get.
+            string s;
+            using (var context = new CultureContext(CultureInfo.InvariantCulture))
+            {
+                s = o.ToString();
+            }
+            Set(s, value);
+        }
+
+        #endregion Set (value)
+
+        #region SetImpl
+
+        /// <summary>
+        /// LUCENENET specific. Like PutImpl, but doesn't have a return value or lookup to get the old value.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void SetImpl(ICharSequence text, MapValue value)
+        {
+            // LUCENENET: Added guard clause
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            if (text is CharArrayCharSequence charArrayCs)
+            {
+                SetImpl(charArrayCs.Value ?? Arrays.Empty<char>(), value);
+            }
+
+            SetImpl(text.ToString(), value); // could be more efficient
+        }
+
+        /// <summary>
+        /// LUCENENET specific. Like PutImpl, but doesn't have a return value or lookup to get the old value.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void SetImpl(string text, MapValue value)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            // LUCENENET specific - only allocate char array if it is required.
+            if (ignoreCase)
+            {
+                SetImpl(text.ToCharArray(), value);
+                return;
+            }
+            int slot = GetSlot(text);
+            if (keys[slot] != null)
+            {
+                values[slot] = value;
+                return;
+            }
+            keys[slot] = text.ToCharArray();
+            values[slot] = value;
+            count++;
+
+            if (count + (count >> 2) > keys.Length)
+            {
+                Rehash();
+            }
+        }
+
+        /// <summary>
+        /// LUCENENET specific. Like PutImpl, but doesn't have a return value or lookup to get the old value.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void SetImpl(char[] text, MapValue value)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, 0, text.Length, value);
+        }
+
+        /// <summary>
+        /// LUCENENET specific. Like PutImpl, but doesn't have a return value or lookup to get the old value.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="offset"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void SetImpl(char[] text, int offset, int length, MapValue value)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            if (ignoreCase)
+            {
+                charUtils.ToLower(text, offset, length);
+            }
+            int slot = GetSlot(text, offset, length);
+            if (keys[slot] != null)
+            {
+                values[slot] = value;
+                return;
+            }
+            keys[slot] = text;
+            values[slot] = value;
+            count++;
+
+            if (count + (count >> 2) > keys.Length)
+            {
+                Rehash();
+            }
+        }
+
+        #endregion SetImpl
 
         #region PutAll
 
@@ -1343,7 +1577,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue this[char[] key, int offset, int length]
         {
             get => Get(key, offset, length);
-            set => Put(key, value);
+            set => Set(key, offset, length, value);
         }
 
         /// <summary>
@@ -1354,7 +1588,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue this[char[] key]
         {
             get => Get(key);
-            set => Put(key, value);
+            set => Set(key, value);
         }
 
         /// <summary>
@@ -1365,7 +1599,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue this[ICharSequence key]
         {
             get => Get(key);
-            set => Put(key, value);
+            set => Set(key, value);
         }
 
         /// <summary>
@@ -1376,7 +1610,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue this[string key]
         {
             get => Get(key);
-            set => Put(key, value);
+            set => Set(key, value);
         }
 
         /// <summary>
@@ -1387,7 +1621,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue this[object key]
         {
             get => Get(key);
-            set => Put(key, value);
+            set => Set(key, value);
         }
 
         /// <summary>
