@@ -87,6 +87,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive
         ///          otherwise <c>true</c>. </param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startSize"/> is less than zero.</exception>
         public CharArraySet(LuceneVersion matchVersion, int startSize, bool ignoreCase)
             : this(new CharArrayDictionary<object>(matchVersion, startSize, ignoreCase))
         {
@@ -102,6 +103,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive
         ///          otherwise <c>true</c>. </param>
+        /// <exception cref="ArgumentNullException"><paramref name="c"/> is <c>null</c>.</exception>
         public CharArraySet(LuceneVersion matchVersion, ICollection<string> c, bool ignoreCase)
             : this(matchVersion, c?.Count ?? 0, ignoreCase)
         {
@@ -136,6 +138,9 @@ namespace Lucene.Net.Analysis.Util
         /// <c>true</c> if the <paramref name="length"/> chars of <paramref name="text"/> starting at <paramref name="offset"/>
         /// are in the set 
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="offset"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
         public virtual bool Contains(char[] text, int offset, int length)
         {
             return map.ContainsKey(text, offset, length);
@@ -145,6 +150,7 @@ namespace Lucene.Net.Analysis.Util
         /// <c>true</c> if the <see cref="T:char[]"/>s 
         /// are in the set 
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Contains(char[] text)
         {
             return map.ContainsKey(text, 0, text.Length);
@@ -153,6 +159,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// <c>true</c> if the <see cref="ICharSequence"/> is in the set
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="cs"/> is <c>null</c>.</exception>
         public virtual bool Contains(ICharSequence cs)
         {
             return map.ContainsKey(cs);
@@ -161,6 +168,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// <c>true</c> if the <see cref="string"/> is in the set
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="cs"/> is <c>null</c>.</exception>
         public virtual bool Contains(string cs)
         {
             return map.ContainsKey(cs);
@@ -169,6 +177,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// <c>true</c> if the <see cref="object.ToString()"/> representation of <paramref name="o"/> is in the set
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
         public virtual bool Contains(object o)
         {
             return map.ContainsKey(o);
@@ -182,6 +191,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="o">A string-able object</param>
         /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
         public virtual bool Add(object o)
         {
             return map.Put(o);
@@ -191,6 +201,7 @@ namespace Lucene.Net.Analysis.Util
         /// Add this <see cref="ICharSequence"/> into the set
         /// </summary>
         /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Add(ICharSequence text)
         {
             return map.Put(text);
@@ -200,6 +211,7 @@ namespace Lucene.Net.Analysis.Util
         /// Add this <see cref="string"/> into the set
         /// </summary>
         /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Add(string text)
         {
             return map.Put(text);
@@ -211,6 +223,7 @@ namespace Lucene.Net.Analysis.Util
         /// The user should never modify this text array after calling this method.
         /// </summary>
         /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Add(char[] text)
         {
             return map.Put(text);
@@ -351,6 +364,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> A copy of the given set as a <see cref="CharArraySet"/>. If the given set
         ///         is a <see cref="CharArraySet"/> the <see cref="CharArrayDictionary{TValue}.ignoreCase"/> field as well as the
         ///         <see cref="CharArrayDictionary{TValue}.MatchVersion"/> will be preserved. </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         public static CharArraySet Copy<T>(LuceneVersion matchVersion, ICollection<T> set)
         {
             if (set is null)
@@ -438,6 +452,8 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if the specified object is equal to this set</returns>
         public override bool Equals(object obj)
         {
+            if (obj is null)
+                return false;
             if (obj is ISet<string> other)
                 return JCG.SetEqualityComparer<string>.Default.Equals(this, other);
             return false;
@@ -465,14 +481,23 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="array">The one-dimensional <see cref="T:string[]"/> Array that is the destination of the 
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException">The number of elements in the source is greater
+        /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
         public void CopyTo(string[] array, int arrayIndex)
         {
-            using (var iter = map.OriginalKeySet.GetEnumerator())
+            if (array is null)
+                throw new ArgumentNullException(nameof(array));
+            if (arrayIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, "Non-negative number required.");
+            if (map.Count > array.Length - arrayIndex)
+                throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
+
+            using var iter = map.OriginalKeySet.GetEnumerator();
+            for (int i = arrayIndex; iter.MoveNext(); i++)
             {
-                for (int i = arrayIndex; iter.MoveNext(); i++)
-                {
-                    array[i] = iter.Current;
-                }
+                array[i] = iter.Current;
             }
         }
 
@@ -488,8 +513,15 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection to compare to the current set.</param>
         /// <returns><c>true</c> if the current set is equal to other; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public virtual bool SetEquals(IEnumerable<string> other)
         {
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            // LUCENENET TODO: Fix implementation so it can compare sets
+            // that are not CharArraySet and add overloads for char[], ICharSequence, and T
+
             if (!(other is CharArraySet otherSet))
                 return false;
 
@@ -505,16 +537,15 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public virtual bool UnionWith(IEnumerable<char[]> other)
         {
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
             if (IsReadOnly)
-            {
                 throw UnsupportedOperationException.Create("CharArraySet is readonly");
-            }
+
             bool modified = false;
             foreach (var item in other)
             {
@@ -532,16 +563,15 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public virtual bool UnionWith(IEnumerable<ICharSequence> other)
         {
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
             if (IsReadOnly)
-            {
                 throw UnsupportedOperationException.Create("CharArraySet is readonly");
-            }
+
             bool modified = false;
             foreach (var item in other)
             {
@@ -558,16 +588,15 @@ namespace Lucene.Net.Analysis.Util
         /// in itself, the specified collection, or both.
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public virtual void UnionWith(IEnumerable<string> other)
         {
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
             if (IsReadOnly)
-            {
                 throw UnsupportedOperationException.Create("CharArraySet is readonly");
-            }
+
             foreach (var item in other)
             {
                 Add(item);
@@ -580,16 +609,15 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public virtual bool UnionWith<T>(IEnumerable<T> other)
         {
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
             if (IsReadOnly)
-            {
                 throw UnsupportedOperationException.Create("CharArraySet is readonly");
-            }
+
             bool modified = false;
             foreach (var item in other)
             {
@@ -643,12 +671,12 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public virtual bool IsSubsetOf(IEnumerable<string> other)
         {
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
+
             if (this.Count == 0)
             {
                 return true;
@@ -674,12 +702,12 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public virtual bool IsSubsetOf<T>(IEnumerable<T> other)
         {
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
+
             if (this.Count == 0)
             {
                 return true;
@@ -696,12 +724,12 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public virtual bool IsSupersetOf(IEnumerable<string> other)
         {
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
+
             ICollection<string> is2 = other as ICollection<string>;
             if (is2 != null)
             {
@@ -723,12 +751,12 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public virtual bool IsSupersetOf<T>(IEnumerable<T> other)
         {
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
+
             ICollection<T> is2 = other as ICollection<T>;
             if (is2 != null && is2.Count == 0)
             {
@@ -742,12 +770,12 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public virtual bool IsProperSubsetOf(IEnumerable<string> other)
         {
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
+
             ICollection<string> is2 = other as ICollection<string>;
             if (is2 != null)
             {
@@ -777,12 +805,12 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public virtual bool IsProperSubsetOf<T>(IEnumerable<T> other)
         {
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
+
             ICollection<T> is2 = other as ICollection<T>;
             if (is2 != null && this.Count == 0)
             {
@@ -800,12 +828,12 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public virtual bool IsProperSupersetOf(IEnumerable<string> other)
         {
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
+
             if (this.Count == 0)
             {
                 return false;
@@ -836,12 +864,12 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public virtual bool IsProperSupersetOf<T>(IEnumerable<T> other)
         {
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
+
             if (this.Count == 0)
             {
                 return false;
@@ -860,12 +888,12 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if the <see cref="CharArraySet"/> object and <paramref name="other"/> share at least one common element; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public virtual bool Overlaps(IEnumerable<string> other)
         {
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
+
             if (this.Count != 0)
             {
                 foreach (var local in other)
@@ -884,12 +912,12 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object and <paramref name="other"/> share at least one common element; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public virtual bool Overlaps<T>(IEnumerable<T> other)
         {
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
+
             if (this.Count != 0)
             {
                 foreach (var local in other)
@@ -909,7 +937,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">collection to be checked for containment in this collection</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
-        public virtual bool ContainsAll(IEnumerable<string> other)
+        public virtual bool ContainsAll(IEnumerable<string> other) // LUCENENET TODO: API - Remove this (in .NET it is IsSupersetOf)
         {
             foreach (var local in other)
             {
@@ -927,7 +955,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">collection to be checked for containment in this collection</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
-        public virtual bool ContainsAll<T>(IEnumerable<T> other)
+        public virtual bool ContainsAll<T>(IEnumerable<T> other) // LUCENENET TODO: API - Remove this (in .NET it is IsSupersetOf)
         {
             foreach (var local in other)
             {
@@ -976,262 +1004,368 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public static class CharArraySetExtensions
     {
-#region Add
+        #region Add
 
         /// <summary>
-        /// Add this <see cref="bool"/> into the set
+        /// Add this <see cref="bool"/> into the set.
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         public static bool Add(this CharArraySet set, bool text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.Put(text.ToString());
         }
 
         /// <summary>
-        /// Add this <see cref="byte"/> into the set
+        /// Add this <see cref="byte"/> into the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         public static bool Add(this CharArraySet set, byte text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// Add this <see cref="char"/> into the set
+        /// Add this <see cref="char"/> into the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         public static bool Add(this CharArraySet set, char text)
         {
-            return set.map.Put("" + text);
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
+            return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
         }
 
         ///// <summary>
-        ///// Add this <see cref="decimal"/> into the set
+        ///// Add this <see cref="decimal"/> into the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
-        ///// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        ///// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
+        ///// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         //public static bool Add(this CharArraySet set, decimal text)
         //{
+        //    if (set is null)
+        //        throw new ArgumentNullException(nameof(set));
+
         //    return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
         //}
 
         ///// <summary>
-        ///// Add this <see cref="double"/> into the set
+        ///// Add this <see cref="double"/> into the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
-        ///// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        ///// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
+        ///// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         //public static bool Add(this CharArraySet set, double text)
         //{
+        //    if (set is null)
+        //        throw new ArgumentNullException(nameof(set));
+
         //    return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
         //}
 
         ///// <summary>
-        ///// Add this <see cref="float"/> into the set
+        ///// Add this <see cref="float"/> into the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
-        ///// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        ///// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
+        ///// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         //public static bool Add(this CharArraySet set, float text)
         //{
+        //    if (set is null)
+        //        throw new ArgumentNullException(nameof(set));
+
         //    return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
         //}
 
         /// <summary>
-        /// Add this <see cref="int"/> into the set
+        /// Add this <see cref="int"/> into the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         public static bool Add(this CharArraySet set, int text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// Add this <see cref="long"/> into the set
+        /// Add this <see cref="long"/> into the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         public static bool Add(this CharArraySet set, long text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// Add this <see cref="sbyte"/> into the set
+        /// Add this <see cref="sbyte"/> into the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         [CLSCompliant(false)]
         public static bool Add(this CharArraySet set, sbyte text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// Add this <see cref="short"/> into the set
+        /// Add this <see cref="short"/> into the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         public static bool Add(this CharArraySet set, short text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// Add this <see cref="uint"/> into the set
+        /// Add this <see cref="uint"/> into the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         [CLSCompliant(false)]
         public static bool Add(this CharArraySet set, uint text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// Add this <see cref="ulong"/> into the set
+        /// Add this <see cref="ulong"/> into the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         [CLSCompliant(false)]
         public static bool Add(this CharArraySet set, ulong text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// Add this <see cref="ushort"/> into the set
+        /// Add this <see cref="ushort"/> into the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         [CLSCompliant(false)]
         public static bool Add(this CharArraySet set, ushort text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
         }
 
-#endregion
+        #endregion
 
-#region Contains
+        #region Contains
 
         /// <summary>
-        /// <c>true</c> if the <see cref="bool"/> is in the set
+        /// <c>true</c> if the <see cref="bool"/> is in the set.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         public static bool Contains(this CharArraySet set, bool text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.ContainsKey(text.ToString());
         }
 
         /// <summary>
-        /// <c>true</c> if the <see cref="byte"/> is in the set
+        /// <c>true</c> if the <see cref="byte"/> is in the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         public static bool Contains(this CharArraySet set, byte text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// <c>true</c> if the <see cref="char"/> is in the set
+        /// <c>true</c> if the <see cref="char"/> is in the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         public static bool Contains(this CharArraySet set, char text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.ContainsKey("" + text);
         }
 
         ///// <summary>
-        ///// <c>true</c> if the <see cref="decimal"/> is in the set
+        ///// <c>true</c> if the <see cref="decimal"/> is in the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         //public static bool Contains(this CharArraySet set, decimal text)
         //{
+        //    if (set is null)
+        //        throw new ArgumentNullException(nameof(set));
+
         //    return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
         //}
 
         ///// <summary>
-        ///// <c>true</c> if the <see cref="double"/> is in the set
+        ///// <c>true</c> if the <see cref="double"/> is in the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         //public static bool Contains(this CharArraySet set, double text)
         //{
+        //    if (set is null)
+        //        throw new ArgumentNullException(nameof(set));
+
         //    return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
         //}
 
         ///// <summary>
-        ///// <c>true</c> if the <see cref="float"/> is in the set
+        ///// <c>true</c> if the <see cref="float"/> is in the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         //public static bool Contains(this CharArraySet set, float text)
         //{
+        //    if (set is null)
+        //        throw new ArgumentNullException(nameof(set));
+
         //    return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
         //}
 
         /// <summary>
-        /// <c>true</c> if the <see cref="int"/> is in the set
+        /// <c>true</c> if the <see cref="int"/> is in the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         public static bool Contains(this CharArraySet set, int text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// <c>true</c> if the <see cref="long"/> is in the set
+        /// <c>true</c> if the <see cref="long"/> is in the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         public static bool Contains(this CharArraySet set, long text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// <c>true</c> if the <see cref="sbyte"/> is in the set
+        /// <c>true</c> if the <see cref="sbyte"/> is in the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         [CLSCompliant(false)]
         public static bool Contains(this CharArraySet set, sbyte text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// <c>true</c> if the <see cref="short"/> is in the set
+        /// <c>true</c> if the <see cref="short"/> is in the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         public static bool Contains(this CharArraySet set, short text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// <c>true</c> if the <see cref="uint"/> is in the set
+        /// <c>true</c> if the <see cref="uint"/> is in the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         [CLSCompliant(false)]
         public static bool Contains(this CharArraySet set, uint text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// <c>true</c> if the <see cref="ulong"/> is in the set
+        /// <c>true</c> if the <see cref="ulong"/> is in the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         [CLSCompliant(false)]
         public static bool Contains(this CharArraySet set, ulong text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// <c>true</c> if the <see cref="ushort"/> is in the set
+        /// <c>true</c> if the <see cref="ushort"/> is in the set. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         [CLSCompliant(false)]
         public static bool Contains(this CharArraySet set, ushort text)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
+
             return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
         }
 
-#endregion
+        #endregion
 
-#region UnionWith
+        #region UnionWith
 
         /// <summary>
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
+        /// <see cref="byte"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
+        /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public static bool UnionWith(this CharArraySet set, IEnumerable<byte> other)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
             if (set.IsReadOnly)
-            {
                 throw UnsupportedOperationException.Create("CharArraySet is readonly");
-            }
+
             bool modified = false;
             foreach (var item in other)
             {
@@ -1246,20 +1380,22 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
+        /// <see cref="char"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
+        /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public static bool UnionWith(this CharArraySet set, IEnumerable<char> other)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
             if (set.IsReadOnly)
-            {
                 throw UnsupportedOperationException.Create("CharArraySet is readonly");
-            }
+
             bool modified = false;
             foreach (var item in other)
             {
@@ -1274,20 +1410,22 @@ namespace Lucene.Net.Analysis.Util
         ///// <summary>
         ///// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         ///// in itself, the specified collection, or both.
+        ///// <see cref="decimal"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
         ///// <param name="set">this <see cref="CharArraySet"/></param>
         ///// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         ///// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        ///// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
+        ///// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         //public static bool UnionWith(this CharArraySet set, IEnumerable<decimal> other)
         //{
+        //    if (set is null)
+        //        throw new ArgumentNullException(nameof(set));
         //    if (other is null)
-        //    {
         //        throw new ArgumentNullException(nameof(other));
-        //    }
         //    if (set.IsReadOnly)
-        //    {
         //        throw UnsupportedOperationException.Create("CharArraySet is readonly");
-        //    }
+
         //    bool modified = false;
         //    foreach (var item in other)
         //    {
@@ -1302,20 +1440,22 @@ namespace Lucene.Net.Analysis.Util
         ///// <summary>
         ///// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         ///// in itself, the specified collection, or both.
+        ///// <see cref="double"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
         ///// <param name="set">this <see cref="CharArraySet"/></param>
         ///// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         ///// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        ///// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
+        ///// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         //public static bool UnionWith(this CharArraySet set, IEnumerable<double> other)
         //{
+        //    if (set is null)
+        //        throw new ArgumentNullException(nameof(set));
         //    if (other is null)
-        //    {
         //        throw new ArgumentNullException(nameof(other));
-        //    }
         //    if (set.IsReadOnly)
-        //    {
         //        throw UnsupportedOperationException.Create("CharArraySet is readonly");
-        //    }
+
         //    bool modified = false;
         //    foreach (var item in other)
         //    {
@@ -1330,20 +1470,22 @@ namespace Lucene.Net.Analysis.Util
         ///// <summary>
         ///// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         ///// in itself, the specified collection, or both.
+        ///// <see cref="float"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
         ///// <param name="set">this <see cref="CharArraySet"/></param>
         ///// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         ///// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        ///// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
+        ///// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         //public static bool UnionWith(this CharArraySet set, IEnumerable<float> other)
         //{
+        //    if (set is null)
+        //        throw new ArgumentNullException(nameof(set));
         //    if (other is null)
-        //    {
         //        throw new ArgumentNullException(nameof(other));
-        //    }
         //    if (set.IsReadOnly)
-        //    {
         //        throw UnsupportedOperationException.Create("CharArraySet is readonly");
-        //    }
+
         //    bool modified = false;
         //    foreach (var item in other)
         //    {
@@ -1358,20 +1500,22 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
+        /// <see cref="int"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
+        /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public static bool UnionWith(this CharArraySet set, IEnumerable<int> other)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
             if (set.IsReadOnly)
-            {
                 throw UnsupportedOperationException.Create("CharArraySet is readonly");
-            }
+
             bool modified = false;
             foreach (var item in other)
             {
@@ -1386,20 +1530,22 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
+        /// <see cref="long"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
+        /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public static bool UnionWith(this CharArraySet set, IEnumerable<long> other)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
             if (set.IsReadOnly)
-            {
                 throw UnsupportedOperationException.Create("CharArraySet is readonly");
-            }
+
             bool modified = false;
             foreach (var item in other)
             {
@@ -1414,21 +1560,23 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
+        /// <see cref="sbyte"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
+        /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         [CLSCompliant(false)]
         public static bool UnionWith(this CharArraySet set, IEnumerable<sbyte> other)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
             if (set.IsReadOnly)
-            {
                 throw UnsupportedOperationException.Create("CharArraySet is readonly");
-            }
+
             bool modified = false;
             foreach (var item in other)
             {
@@ -1443,20 +1591,22 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
+        /// <see cref="short"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
+        /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public static bool UnionWith(this CharArraySet set, IEnumerable<short> other)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
             if (set.IsReadOnly)
-            {
                 throw UnsupportedOperationException.Create("CharArraySet is readonly");
-            }
+
             bool modified = false;
             foreach (var item in other)
             {
@@ -1471,21 +1621,23 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
+        /// <see cref="uint"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
+        /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         [CLSCompliant(false)]
         public static bool UnionWith(this CharArraySet set, IEnumerable<uint> other)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
             if (set.IsReadOnly)
-            {
                 throw UnsupportedOperationException.Create("CharArraySet is readonly");
-            }
+
             bool modified = false;
             foreach (var item in other)
             {
@@ -1500,21 +1652,23 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
+        /// <see cref="ulong"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
+        /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         [CLSCompliant(false)]
         public static bool UnionWith(this CharArraySet set, IEnumerable<ulong> other)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
             if (set.IsReadOnly)
-            {
                 throw UnsupportedOperationException.Create("CharArraySet is readonly");
-            }
+
             bool modified = false;
             foreach (var item in other)
             {
@@ -1529,21 +1683,23 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
+        /// <see cref="ushort"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
+        /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         [CLSCompliant(false)]
         public static bool UnionWith(this CharArraySet set, IEnumerable<ushort> other)
         {
+            if (set is null)
+                throw new ArgumentNullException(nameof(set));
             if (other is null)
-            {
                 throw new ArgumentNullException(nameof(other));
-            }
             if (set.IsReadOnly)
-            {
                 throw UnsupportedOperationException.Create("CharArraySet is readonly");
-            }
+
             bool modified = false;
             foreach (var item in other)
             {
@@ -1572,6 +1728,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="set">This set.</param>
         /// <param name="matchVersion">Compatibility match version.</param>
         /// <returns>A copy of this <see cref="ISet{T}"/> as a <see cref="CharArraySet"/>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         public static CharArraySet ToCharArraySet<T>(this ISet<T> set, LuceneVersion matchVersion)
         {
             return CharArraySet.CopySet(matchVersion, set, ignoreCase: false);
@@ -1586,6 +1743,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="matchVersion">Compatibility match version.</param>
         /// <param name="ignoreCase"><c>false</c> if and only if the set should be case sensitive otherwise <c>true</c>.</param>
         /// <returns>A copy of this <see cref="ISet{T}"/> as a <see cref="CharArraySet"/>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
         public static CharArraySet ToCharArraySet<T>(this ISet<T> set, LuceneVersion matchVersion, bool ignoreCase)
         {
             return CharArraySet.CopySet(matchVersion, set, ignoreCase);
@@ -1606,6 +1764,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="list">This list.</param>
         /// <param name="matchVersion">Compatibility match version.</param>
         /// <returns>A copy of this <see cref="IList{T}"/> as a <see cref="CharArraySet"/>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="list"/> is <c>null</c>.</exception>
         public static CharArraySet ToCharArraySet<T>(this IList<T> list, LuceneVersion matchVersion)
         {
             return CharArraySet.CopySet(matchVersion, list, ignoreCase: false);
@@ -1620,6 +1779,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="matchVersion">Compatibility match version.</param>
         /// <param name="ignoreCase"><c>false</c> if and only if the set should be case sensitive otherwise <c>true</c>.</param>
         /// <returns>A copy of this <see cref="IList{T}"/> as a <see cref="CharArraySet"/>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="list"/> is <c>null</c>.</exception>
         public static CharArraySet ToCharArraySet<T>(this IList<T> list, LuceneVersion matchVersion, bool ignoreCase)
         {
             return CharArraySet.CopySet(matchVersion, list, ignoreCase);
