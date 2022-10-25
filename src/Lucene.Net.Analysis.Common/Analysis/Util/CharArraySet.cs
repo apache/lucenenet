@@ -748,7 +748,7 @@ namespace Lucene.Net.Analysis.Util
                     return false;
                 }
             }
-            return this.ContainsAll(other);
+            return this.ContainsAllImpl(other);
         }
 
         /// <summary>
@@ -767,7 +767,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 return true;
             }
-            return this.ContainsAll(other);
+            return this.ContainsAllImpl(other);
         }
 
         /// <summary>
@@ -857,7 +857,7 @@ namespace Lucene.Net.Analysis.Util
                     {
                         return false;
                     }
-                    return this.ContainsAll(set);
+                    return this.ContainsAllImpl(set);
                 }
             }
             this.GetFoundAndUnfoundCounts(other, out int foundCount, out int unfoundCount);
@@ -942,7 +942,8 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">collection to be checked for containment in this collection</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
-        public virtual bool ContainsAll(IEnumerable<string> other) // LUCENENET TODO: API - Remove this (in .NET it is IsSupersetOf)
+        [Obsolete("Use the IsSupersetOf() method instead. This method will be removed in 4.8.0 release candidate."), EditorBrowsable(EditorBrowsableState.Never)]
+        public virtual bool ContainsAll(IEnumerable<string> other)
         {
             foreach (var local in other)
             {
@@ -960,7 +961,44 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">collection to be checked for containment in this collection</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
-        public virtual bool ContainsAll<T>(IEnumerable<T> other) // LUCENENET TODO: API - Remove this (in .NET it is IsSupersetOf)
+        [Obsolete("Use the IsSupersetOf() method instead. This method will be removed in 4.8.0 release candidate."), EditorBrowsable(EditorBrowsableState.Never)]
+        public virtual bool ContainsAll<T>(IEnumerable<T> other)
+        {
+            foreach (var local in other)
+            {
+                if (!this.Contains(local))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Returns <c>true</c> if this collection contains all of the elements
+        /// in the specified collection.
+        /// </summary>
+        /// <param name="other">collection to be checked for containment in this collection</param>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
+        private bool ContainsAllImpl(IEnumerable<string> other)
+        {
+            foreach (var local in other)
+            {
+                if (!this.Contains(local))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Returns <c>true</c> if this collection contains all of the elements
+        /// in the specified collection.
+        /// </summary>
+        /// <param name="other">collection to be checked for containment in this collection</param>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
+        private bool ContainsAllImpl<T>(IEnumerable<T> other)
         {
             foreach (var local in other)
             {
