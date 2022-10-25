@@ -900,10 +900,10 @@ namespace Lucene.Net.Analysis.Util
         /// the same key value pairs as the current map</returns>
         public override bool Equals(object obj)
         {
-            var other = obj as IDictionary<string, TValue>;
-            if (other is null)
+            if (obj is null)
                 return false;
-
+            if (obj is not IDictionary<string, TValue> other)
+                return false;
             if (this.Count != other.Count)
                 return false;
 
@@ -914,7 +914,7 @@ namespace Lucene.Net.Analysis.Util
                     if (!this.TryGetValue(iter.Current.Key, out TValue value))
                         return false;
 
-                    if (!EqualityComparer<TValue>.Default.Equals(value, iter.Current.Value))
+                    if (!JCG.EqualityComparer<TValue>.Default.Equals(value, iter.Current.Value))
                         return false;
                 }
             }
@@ -936,7 +936,7 @@ namespace Lucene.Net.Analysis.Util
                 while (iter.MoveNext())
                 {
                     hash = (hash * PRIME) ^ iter.CurrentKeyString.GetHashCode();
-                    hash = (hash * PRIME) ^ iter.CurrentValue.GetHashCode();
+                    hash = (hash * PRIME) ^ JCG.EqualityComparer<TValue>.Default.GetHashCode(iter.CurrentValue);
                 }
             }
             return hash;
