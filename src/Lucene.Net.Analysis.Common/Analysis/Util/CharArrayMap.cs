@@ -343,13 +343,32 @@ namespace Lucene.Net.Analysis.Util
             if (o is null)
                 throw new ArgumentNullException(nameof(o), "o can't be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
 
-            var c = o as char[];
-            if (c != null)
+            if (o is string str)
+                return ContainsKey(str);
+            if (o is char[] charArray)
+                return ContainsKey(charArray, 0, charArray.Length);
+            if (o is StringCharSequence strCs)
+                return ContainsKey(strCs.Value ?? string.Empty);
+            if (o is CharArrayCharSequence charArrayCs)
+                return ContainsKey(charArrayCs.Value ?? Arrays.Empty<char>());
+            if (o is StringBuilderCharSequence stringBuilderCs)
+                return ContainsKey(stringBuilderCs.Value?.ToString() ?? string.Empty);
+            if (o is ICharSequence cs)
+                return ContainsKey(cs.ToString());
+
+            // LUCENENET: We need value types to be represented using the invariant
+            // culture, so it is consistent regardless of the current culture. 
+            // It's easy to work out if this is a value type, but difficult
+            // to get to the ToString(IFormatProvider) overload of the type without
+            // a lot of special cases. It's easier just to change the culture of the 
+            // thread before calling ToString(), but we don't want that behavior to
+            // bleed into ContainsKey.
+            string s;
+            using (var context = new CultureContext(CultureInfo.InvariantCulture))
             {
-                var text = c;
-                return ContainsKey(text, 0, text.Length);
+                s = o.ToString();
             }
-            return ContainsKey(o.ToString()); // LUCENENET TODO: Need to run ToString() in the invariant context
+            return ContainsKey(s);
         }
 
         /// <summary>
@@ -410,12 +429,32 @@ namespace Lucene.Net.Analysis.Util
             // LUCENENET NOTE: Testing for *is* is at least 10x faster
             // than casting using *as* and then checking for null.
             // http://stackoverflow.com/q/1583050/181087
-            if (o is char[])
+            if (o is string str)
+                return Get(str);
+            if (o is char[] charArray)
+                return Get(charArray, 0, charArray.Length);
+            if (o is StringCharSequence strCs)
+                return Get(strCs.Value ?? string.Empty);
+            if (o is CharArrayCharSequence charArrayCs)
+                return Get(charArrayCs.Value ?? Arrays.Empty<char>());
+            if (o is StringBuilderCharSequence stringBuilderCs)
+                return Get(stringBuilderCs.Value?.ToString() ?? string.Empty);
+            if (o is ICharSequence cs)
+                return Get(cs.ToString());
+
+            // LUCENENET: We need value types to be represented using the invariant
+            // culture, so it is consistent regardless of the current culture. 
+            // It's easy to work out if this is a value type, but difficult
+            // to get to the ToString(IFormatProvider) overload of the type without
+            // a lot of special cases. It's easier just to change the culture of the 
+            // thread before calling ToString(), but we don't want that behavior to
+            // bleed into Get.
+            string s;
+            using (var context = new CultureContext(CultureInfo.InvariantCulture))
             {
-                var text = o as char[];
-                return Get(text, 0, text.Length);
+                s = o.ToString();
             }
-            return Get(o.ToString()); // LUCENENET TODO: Need to run ToString() in the invariant context
+            return Get(s);
         }
 
         private int GetSlot(char[] text, int offset, int length)
@@ -549,6 +588,9 @@ namespace Lucene.Net.Analysis.Util
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
+            if (text is CharArrayCharSequence charArrayCs)
+                return PutImpl(charArrayCs.Value ?? Arrays.Empty<char>(), value);
+
             return PutImpl(text.ToString(), value); // could be more efficient
         }
 
@@ -565,11 +607,19 @@ namespace Lucene.Net.Analysis.Util
             // LUCENENET NOTE: Testing for *is* is at least 10x faster
             // than casting using *as* and then checking for null.
             // http://stackoverflow.com/q/1583050/181087 
-            if (o is char[])
-            {
-                var c = o as char[];
-                return PutImpl(c, value);
-            }
+            if (o is string str)
+                return PutImpl(str, value);
+            if (o is char[] charArray)
+                return PutImpl(charArray, value);
+            if (o is StringCharSequence strCs)
+                return PutImpl(strCs.Value ?? string.Empty, value);
+            if (o is CharArrayCharSequence charArrayCs)
+                return PutImpl(charArrayCs.Value ?? Arrays.Empty<char>(), value);
+            if (o is StringBuilderCharSequence stringBuilderCs)
+                return PutImpl(stringBuilderCs.Value?.ToString() ?? string.Empty, value);
+            if (o is ICharSequence cs)
+                return PutImpl(cs.ToString(), value);
+
             // LUCENENET: We need value types to be represented using the invariant
             // culture, so it is consistent regardless of the current culture. 
             // It's easy to work out if this is a value type, but difficult
@@ -1222,12 +1272,32 @@ namespace Lucene.Net.Analysis.Util
             // LUCENENET NOTE: Testing for *is* is at least 10x faster
             // than casting using *as* and then checking for null.
             // http://stackoverflow.com/q/1583050/181087
-            if (key is char[])
+            if (key is string str)
+                return TryGetValue(str, out value);
+            if (key is char[] charArray)
+                return TryGetValue(charArray, 0, charArray.Length, out value);
+            if (key is StringCharSequence strCs)
+                return TryGetValue(strCs.Value ?? string.Empty, out value);
+            if (key is CharArrayCharSequence charArrayCs)
+                return TryGetValue(charArrayCs.Value ?? Arrays.Empty<char>(), out value);
+            if (key is StringBuilderCharSequence stringBuilderCs)
+                return TryGetValue(stringBuilderCs.Value?.ToString() ?? string.Empty, out value);
+            if (key is ICharSequence cs)
+                return TryGetValue(cs.ToString(), out value);
+
+            // LUCENENET: We need value types to be represented using the invariant
+            // culture, so it is consistent regardless of the current culture. 
+            // It's easy to work out if this is a value type, but difficult
+            // to get to the ToString(IFormatProvider) overload of the type without
+            // a lot of special cases. It's easier just to change the culture of the 
+            // thread before calling ToString(), but we don't want that behavior to
+            // bleed into ContainsKey.
+            string s;
+            using (var context = new CultureContext(CultureInfo.InvariantCulture))
             {
-                var text = key as char[];
-                return TryGetValue(text, 0, text.Length, out value);
+                s = key.ToString();
             }
-            return TryGetValue(key.ToString(), out value); // LUCENENET TODO: Need to run ToString() in the invariant context
+            return TryGetValue(s, out value);
         }
 
         /// <summary>
