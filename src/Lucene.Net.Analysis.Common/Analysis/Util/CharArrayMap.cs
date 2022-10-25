@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -639,13 +640,35 @@ namespace Lucene.Net.Analysis.Util
         /// Add the given mapping.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private MapValue PutImpl(string text, MapValue value)
         {
             // LUCENENET: Added guard clause
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
-            return PutImpl(text.ToCharArray(), value);
+            // LUCENENET specific - only allocate char array if it is required.
+            if (ignoreCase)
+            {
+                return PutImpl(text.ToCharArray(), value);
+            }
+            int slot = GetSlot(text);
+            if (keys[slot] != null)
+            {
+                MapValue oldValue = values[slot];
+                values[slot] = value;
+                return oldValue;
+            }
+            keys[slot] = text.ToCharArray();
+            values[slot] = value;
+            count++;
+
+            if (count + (count >> 2) > keys.Length)
+            {
+                Rehash();
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -655,6 +678,7 @@ namespace Lucene.Net.Analysis.Util
         /// a check for <c>null</c> on the <typeparamref name="TValue"/> type.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private MapValue PutImpl(char[] text, MapValue value)
         {
             // LUCENENET: Added guard clause
@@ -824,6 +848,7 @@ namespace Lucene.Net.Analysis.Util
 
         #endregion
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Rehash()
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(keys.Length == values.Length);
@@ -846,6 +871,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool Equals(char[] text1, int offset, int length, char[] text2)
         {
             if (length != text2.Length)
@@ -878,6 +904,7 @@ namespace Lucene.Net.Analysis.Util
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool Equals(ICharSequence text1, char[] text2)
         {
             int length = text1.Length;
@@ -910,6 +937,7 @@ namespace Lucene.Net.Analysis.Util
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool Equals(string text1, char[] text2)
         {
             int length = text1.Length;
@@ -992,6 +1020,7 @@ namespace Lucene.Net.Analysis.Util
             return hash;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int GetHashCode(char[] text, int offset, int length)
         {
             if (text is null)
@@ -1024,6 +1053,7 @@ namespace Lucene.Net.Analysis.Util
             return code;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int GetHashCode(ICharSequence text)
         {
             if (text is null)
@@ -1050,6 +1080,7 @@ namespace Lucene.Net.Analysis.Util
             return code;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int GetHashCode(string text)
         {
             if (text is null)
