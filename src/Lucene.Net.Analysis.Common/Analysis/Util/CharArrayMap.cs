@@ -935,8 +935,8 @@ namespace Lucene.Net.Analysis.Util
             {
                 while (iter.MoveNext())
                 {
-                    hash = (hash * PRIME) ^ iter.Current.Key.GetHashCode();
-                    hash = (hash * PRIME) ^ iter.Current.Value.GetHashCode();
+                    hash = (hash * PRIME) ^ iter.CurrentKeyString.GetHashCode();
+                    hash = (hash * PRIME) ^ iter.CurrentValue.GetHashCode();
                 }
             }
             return hash;
@@ -1387,7 +1387,7 @@ namespace Lucene.Net.Analysis.Util
                     this.entryIterator = new Enumerator(outerInstance, !outerInstance.IsReadOnly);
                 }
 
-                public string Current => entryIterator.Current.Key;
+                public string Current => entryIterator.CurrentKeyString;
 
                 object IEnumerator.Current => Current;
 
@@ -1637,7 +1637,7 @@ namespace Lucene.Net.Analysis.Util
 
         private sealed class UnmodifiableCharArraySet : CharArraySet
         {
-            internal UnmodifiableCharArraySet(ICharArrayDictionary map) 
+            internal UnmodifiableCharArraySet(ICharArrayDictionary map)
                 : base(map)
             {
             }
@@ -3406,7 +3406,7 @@ namespace Lucene.Net.Analysis.Util
             return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
         }
 
-#endregion
+        #endregion
     }
 
     /// <summary>
