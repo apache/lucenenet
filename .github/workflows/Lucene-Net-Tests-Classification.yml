@@ -23,6 +23,7 @@ name: 'Lucene.Net.Tests.Classification'
 on:
   workflow_dispatch:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
     - 'src/Lucene.Net.Tests.Classification/**/*'
     - '.build/dependencies.props'

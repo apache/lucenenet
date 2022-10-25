@@ -23,6 +23,7 @@ name: 'Lucene.Net.Tests.Codecs'
 on:
   workflow_dispatch:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
     - 'src/Lucene.Net.Tests.Codecs/**/*'
     - '.build/dependencies.props'

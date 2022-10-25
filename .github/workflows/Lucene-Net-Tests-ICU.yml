@@ -23,6 +23,7 @@ name: 'Lucene.Net.Tests.ICU'
 on:
   workflow_dispatch:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
     - 'src/dotnet/Lucene.Net.Tests.ICU/**/*'
     - '.build/dependencies.props'

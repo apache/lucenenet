@@ -23,6 +23,7 @@ name: 'Lucene.Net.Tests._T-Z'
 on:
   workflow_dispatch:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
     - 'src/Lucene.Net.Tests._T-Z/**/*'
     - '.build/dependencies.props'

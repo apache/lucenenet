@@ -23,6 +23,7 @@ name: 'Lucene.Net.Tests._J-S'
 on:
   workflow_dispatch:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
     - 'src/Lucene.Net.Tests._J-S/**/*'
     - '.build/dependencies.props'
