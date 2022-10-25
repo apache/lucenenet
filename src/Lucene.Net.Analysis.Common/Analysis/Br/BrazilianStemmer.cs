@@ -340,7 +340,7 @@ namespace Lucene.Net.Analysis.Br
         /// Replace a <see cref="string"/> suffix by another
         /// </summary>
         /// <returns> the replaced <see cref="string"/> </returns>
-        private string ReplaceSuffix(string value, string toReplace, string changeTo)
+        private static string ReplaceSuffix(string value, string toReplace, string changeTo) // LUCENENET: CA1822: Mark members as static
         {
             string vvalue;
 
@@ -381,7 +381,7 @@ namespace Lucene.Net.Analysis.Br
         /// See if a suffix is preceded by a <see cref="string"/>
         /// </summary>
         /// <returns> true if the suffix is preceded </returns>
-        private bool SuffixPreceded(string value, string suffix, string preceded)
+        private static bool SuffixPreceded(string value, string suffix, string preceded) // LUCENENET: CA1822: Mark members as static
         {
             // be-safe !!!
             if ((value is null) || (suffix is null) || (preceded is null) || !Suffix(value, suffix))
