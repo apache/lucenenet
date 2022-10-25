@@ -1652,7 +1652,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// LUCENENET specific class used to break the infinite recursion when the
-        /// CharArraySet iterates the keys of this dictionary via <see cref="OriginalKeySet"/>. 
+        /// CharArraySet iterates the keys of this dictionary via <see cref="ICharArrayDictionary.OriginalKeySet"/>. 
         /// In Java, the keyset of the abstract base class was used to break the infinite recursion, 
         /// however this class doesn't have an abstract base class so that is not an option. 
         /// This class is just a facade around the keys (not another collection of keys), so it 
@@ -1938,9 +1938,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// helper for <see cref="CharArraySet"/> to not produce endless recursion
         /// </summary>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public ICollection<string> OriginalKeySet
+        ICollection<string> ICharArrayDictionary.OriginalKeySet
         {
             get
             {
