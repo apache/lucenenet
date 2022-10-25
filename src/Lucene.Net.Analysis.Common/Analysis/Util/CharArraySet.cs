@@ -536,7 +536,7 @@ namespace Lucene.Net.Analysis.Util
         /// in itself, the specified collection, or both.
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public virtual bool UnionWith(IEnumerable<char[]> other)
@@ -550,9 +550,7 @@ namespace Lucene.Net.Analysis.Util
             foreach (var item in other)
             {
                 if (Add(item))
-                {
                     modified = true;
-                }
             }
             return modified;
         }
@@ -562,7 +560,7 @@ namespace Lucene.Net.Analysis.Util
         /// in itself, the specified collection, or both.
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public virtual bool UnionWith(IEnumerable<ICharSequence> other)
@@ -576,9 +574,7 @@ namespace Lucene.Net.Analysis.Util
             foreach (var item in other)
             {
                 if (Add(item))
-                {
                     modified = true;
-                }
             }
             return modified;
         }
@@ -588,19 +584,28 @@ namespace Lucene.Net.Analysis.Util
         /// in itself, the specified collection, or both.
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
-        public virtual void UnionWith(IEnumerable<string> other)
+        public virtual bool UnionWith(IEnumerable<string> other)
         {
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
             if (IsReadOnly)
                 throw UnsupportedOperationException.Create("CharArraySet is readonly");
 
+            bool modified = false;
             foreach (var item in other)
             {
-                Add(item);
+                if (Add(item))
+                    modified = true;
             }
+            return modified;
+        }
+
+        void ISet<string>.UnionWith(IEnumerable<string> other)
+        {
+            UnionWith(other);
         }
 
         /// <summary>
@@ -608,7 +613,7 @@ namespace Lucene.Net.Analysis.Util
         /// in itself, the specified collection, or both.
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public virtual bool UnionWith<T>(IEnumerable<T> other)
@@ -621,9 +626,9 @@ namespace Lucene.Net.Analysis.Util
             bool modified = false;
             foreach (var item in other)
             {
-                if (item is char[])
+                if (item is char[] charArray)
                 {
-                    if (Add(item as char[]))
+                    if (Add(charArray))
                     {
                         modified = true;
                     }
@@ -1354,7 +1359,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public static bool UnionWith(this CharArraySet set, IEnumerable<byte> other)
@@ -1384,7 +1389,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public static bool UnionWith(this CharArraySet set, IEnumerable<char> other)
@@ -1414,7 +1419,7 @@ namespace Lucene.Net.Analysis.Util
         ///// </summary>
         ///// <param name="set">this <see cref="CharArraySet"/></param>
         ///// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
-        ///// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        ///// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
         ///// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
         ///// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         //public static bool UnionWith(this CharArraySet set, IEnumerable<decimal> other)
@@ -1444,7 +1449,7 @@ namespace Lucene.Net.Analysis.Util
         ///// </summary>
         ///// <param name="set">this <see cref="CharArraySet"/></param>
         ///// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
-        ///// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        ///// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
         ///// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
         ///// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         //public static bool UnionWith(this CharArraySet set, IEnumerable<double> other)
@@ -1474,7 +1479,7 @@ namespace Lucene.Net.Analysis.Util
         ///// </summary>
         ///// <param name="set">this <see cref="CharArraySet"/></param>
         ///// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
-        ///// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        ///// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
         ///// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
         ///// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         //public static bool UnionWith(this CharArraySet set, IEnumerable<float> other)
@@ -1504,7 +1509,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public static bool UnionWith(this CharArraySet set, IEnumerable<int> other)
@@ -1534,7 +1539,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public static bool UnionWith(this CharArraySet set, IEnumerable<long> other)
@@ -1564,7 +1569,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         [CLSCompliant(false)]
@@ -1595,7 +1600,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public static bool UnionWith(this CharArraySet set, IEnumerable<short> other)
@@ -1625,7 +1630,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         [CLSCompliant(false)]
@@ -1656,7 +1661,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         [CLSCompliant(false)]
@@ -1687,7 +1692,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> or <paramref name="other"/> is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         [CLSCompliant(false)]
