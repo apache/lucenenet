@@ -231,6 +231,7 @@ on:
 jobs:
 
   Test:
+    if: ! github.event.pull_request.draft
     runs-on: `${{ matrix.os }}
     strategy:
       fail-fast: false
