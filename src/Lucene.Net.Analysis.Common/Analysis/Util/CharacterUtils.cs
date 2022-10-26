@@ -183,10 +183,17 @@ namespace Lucene.Net.Analysis.Util
                 Debugging.Assert(offset <= 0 && offset <= buffer.Length);
             }
 
-            // Slight optimization, eliminating a few method calls internally
-            CultureInfo.InvariantCulture.TextInfo
-                .ToLower(new string(buffer, offset, length))
-                .CopyTo(0, buffer, offset, length);
+            // Reduce allocations by using the stack and spans
+            var source = new ReadOnlySpan<char>(buffer, offset, length);
+            var destination = buffer.AsSpan(offset, length);
+            var spare = length * sizeof(char) <= Constants.MaxStackByteLimit ? stackalloc char[length] : new char[length];
+            source.ToLower(spare, CultureInfo.InvariantCulture);
+            spare.CopyTo(destination);
+
+            //// Slight optimization, eliminating a few method calls internally
+            //CultureInfo.InvariantCulture.TextInfo
+            //    .ToLower(new string(buffer, offset, length))
+            //    .CopyTo(0, buffer, offset, length);
 
             //// Optimization provided by Vincent Van Den Berghe: 
             //// http://search-lucene.com/m/Lucene.Net/j1zMf1uckOzOYqsi?subj=Proposal+to+speed+up+implementation+of+LowercaseFilter+charUtils+ToLower
@@ -194,8 +201,9 @@ namespace Lucene.Net.Analysis.Util
             //    .ToLowerInvariant()
             //    .CopyTo(0, buffer, offset, length);
 
-            // Original (slow) Lucene implementation:
-            //for (int i = offset; i < limit; )
+            //// Original (slow) Lucene implementation:
+            //int limit = length - offset;
+            //for (int i = offset; i < limit;)
             //{
             //    i += Character.ToChars(
             //        Character.ToLower(
@@ -217,10 +225,17 @@ namespace Lucene.Net.Analysis.Util
                 Debugging.Assert(offset <= 0 && offset <= buffer.Length);
             }
 
-            // Slight optimization, eliminating a few method calls internally
-            CultureInfo.InvariantCulture.TextInfo
-                .ToUpper(new string(buffer, offset, length))
-                .CopyTo(0, buffer, offset, length);
+            // Reduce 2 heap allocations by using the stack and spans
+            var source = new ReadOnlySpan<char>(buffer, offset, length);
+            var destination = buffer.AsSpan(offset, length);
+            var spare = length * sizeof(char) <= Constants.MaxStackByteLimit ? stackalloc char[length] : new char[length];
+            source.ToUpper(spare, CultureInfo.InvariantCulture);
+            spare.CopyTo(destination);
+
+            //// Slight optimization, eliminating a few method calls internally
+            //CultureInfo.InvariantCulture.TextInfo
+            //    .ToUpper(new string(buffer, offset, length))
+            //    .CopyTo(0, buffer, offset, length);
 
             //// Optimization provided by Vincent Van Den Berghe: 
             //// http://search-lucene.com/m/Lucene.Net/j1zMf1uckOzOYqsi?subj=Proposal+to+speed+up+implementation+of+LowercaseFilter+charUtils+ToLower
@@ -228,8 +243,9 @@ namespace Lucene.Net.Analysis.Util
             //    .ToUpperInvariant()
             //    .CopyTo(0, buffer, offset, length);
 
-            // Original (slow) Lucene implementation:
-            //for (int i = offset; i < limit; )
+            //// Original (slow) Lucene implementation:
+            //int limit = length - offset;
+            //for (int i = offset; i < limit;)
             //{
             //    i += Character.ToChars(
             //        Character.ToUpper(
