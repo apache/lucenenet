@@ -89,8 +89,7 @@ namespace Lucene.Net.Analysis.Util
             cm.PutAll(hm);
             assertEquals(hm.Count, cm.Count);
 
-            // LUCENENET: Need to cast here - no implicit conversion.
-            CharArraySet cs = cm.Keys as CharArraySet;
+            CharArraySet cs = cm.Keys;
             int n = 0;
             foreach (string o in cs)
             {
@@ -117,7 +116,6 @@ namespace Lucene.Net.Analysis.Util
             cm.PutAll(hm);
             assertEquals(hm.Count, cs.Count);
             assertEquals(cm.Count, cs.Count);
-            // LUCENENET: Need to cast here - no implicit conversion
             CharArrayDictionary<int?>.Enumerator iter1 = cm.GetEnumerator();
             n = 0;
             while (iter1.MoveNext())

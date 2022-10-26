@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using J2N.Globalization;
 using J2N.Text;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
@@ -232,10 +233,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// LUCENENET specific for supporting <see cref="ICollection{T}"/>.
         /// </summary>
-        void ICollection<string>.Add(string item)
-        {
-            Add(item);
-        }
+        void ICollection<string>.Add(string item) => Add(item);
 
         /// <summary>
         /// Gets the number of elements contained in the <see cref="CharArraySet"/>.
@@ -378,9 +376,8 @@ namespace Lucene.Net.Analysis.Util
             // LUCENENET NOTE: Testing for *is* is at least 10x faster
             // than casting using *as* and then checking for null.
             // http://stackoverflow.com/q/1583050/181087
-            if (set is CharArraySet)
+            if (set is CharArraySet source)
             {
-                var source = set as CharArraySet;
                 return new CharArraySet(CharArrayDictionary.Copy<object>(source.map.MatchVersion, source.map));
             }
 
@@ -403,33 +400,94 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns an <see cref="IEnumerator"/> for <see cref="T:char[]"/> instances in this set.
+        /// Returns an <see cref="IEnumerator"/> for newly created <see cref="string"/> or existing <see cref="T:char[]"/> instances in this set.
         /// </summary>
-        public virtual IEnumerator GetEnumerator()
+        public virtual Enumerator GetEnumerator()
         {
-            // use the OriginalKeySet's enumerator (to not produce endless recursion)
-            return map.OriginalKeySet.GetEnumerator();
+            // LUCENENET specific - Use custom Enumerator to prevent endless recursion
+            return new Enumerator(map);
         }
 
-        IEnumerator<string> IEnumerable<string>.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        IEnumerator<string> IEnumerable<string>.GetEnumerator() => GetEnumerator();
+
+        #region Nested Class: Enumerator
+
+        /// <summary>
+        /// Public enumerator class so efficient properties are exposed to users. LUCENENET specific.
+        /// <para/>
+        /// <b>Note:</b> This enumerator has no checks to ensure the collection has
+        /// not been modified during enumeration. The behavior after calling a method
+        /// that mutates state such as
+        /// <see cref="Clear()"/> or an overload of <see cref="Add(string)"/> or
+        /// <see cref="UnionWith(IEnumerable{string})"/> is undefined.
+        /// </summary>
+        public sealed class Enumerator : IEnumerator<string>
         {
-            // use the OriginalKeySet's enumerator (to not produce endless recursion)
-            return (IEnumerator<string>)map.OriginalKeySet.GetEnumerator();
+            private readonly ICharArrayDictionaryEnumerator enumerator;
+
+            internal Enumerator(ICharArrayDictionary map)
+            {
+                this.enumerator = map.GetEnumerator();
+            }
+
+            /// <summary>
+            /// Gets the current key as a <see cref="CharArrayCharSequence"/>... do not modify the returned char[]
+            /// </summary>
+            // LUCENENET specific - quick access to ICharSequence interface
+            public ICharSequence CurrentValueCharSequence
+                => enumerator.CurrentKeyCharSequence;
+
+            /// <summary>
+            /// Gets the current value... do not modify the returned char[]
+            /// </summary>
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+            [WritableArray]
+            public char[] CurrentValue => enumerator.CurrentKey;
+
+            /// <summary>
+            /// Gets the current value as a newly created <see cref="string"/> object.
+            /// </summary>
+            public string Current => enumerator.CurrentKeyString;
+
+            object IEnumerator.Current => Current;
+
+            public void Dispose()
+            {
+                enumerator.Dispose();
+            }
+
+            public bool MoveNext()
+            {
+                return enumerator.MoveNext();
+            }
+
+            public void Reset()
+            {
+                enumerator.Reset();
+            }
         }
+
+        #endregion Nested Class: Enumerator
 
         /// <summary>
         /// Returns a string that represents the current object. (Inherited from <see cref="object"/>.)
         /// </summary>
         public override string ToString()
         {
+            if (Count == 0)
+                return "[]";
+
             var sb = new StringBuilder("[");
-            foreach (var item in this)
+            using var iter = GetEnumerator();
+            while (iter.MoveNext())
             {
                 if (sb.Length > 1)
                 {
                     sb.Append(", ");
                 }
-                sb.Append(item);
+                sb.Append(iter.CurrentValue); // LUCENENET specific - avoid string allocations by using iter.CurrentValue instead of iter.Current
             }
             return sb.Append(']').ToString();
         }
@@ -494,7 +552,7 @@ namespace Lucene.Net.Analysis.Util
             if (map.Count > array.Length - arrayIndex)
                 throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
 
-            using var iter = map.OriginalKeySet.GetEnumerator();
+            using var iter = GetEnumerator();
             for (int i = arrayIndex; iter.MoveNext(); i++)
             {
                 array[i] = iter.Current;

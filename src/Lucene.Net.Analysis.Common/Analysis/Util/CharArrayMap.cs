@@ -1627,7 +1627,9 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Gets a collection containing the keys in the <see cref="CharArrayDictionary{TValue}"/>.
         /// </summary>
-        public virtual ICollection<string> Keys => KeySet;
+        public virtual CharArraySet Keys => KeySet;
+
+        ICollection<string> IDictionary<string, TValue>.Keys => KeySet;
 
 
         private volatile ICollection<TValue> valueSet;
@@ -1650,103 +1652,12 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        /// <summary>
-        /// LUCENENET specific class used to break the infinite recursion when the
-        /// CharArraySet iterates the keys of this dictionary via <see cref="ICharArrayDictionary.OriginalKeySet"/>. 
-        /// In Java, the keyset of the abstract base class was used to break the infinite recursion, 
-        /// however this class doesn't have an abstract base class so that is not an option. 
-        /// This class is just a facade around the keys (not another collection of keys), so it 
-        /// doesn't consume any additional RAM while providing another "virtual" collection to iterate over.
-        /// </summary>
-        internal sealed class KeyCollection : ICollection<string>
-        {
-            private readonly CharArrayDictionary<TValue> outerInstance;
-
-            public KeyCollection(CharArrayDictionary<TValue> outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            public int Count => outerInstance.Count;
-
-            bool ICollection<string>.IsReadOnly => true;
-
-            void ICollection<string>.Add(string item)
-            {
-                throw UnsupportedOperationException.Create();
-            }
-
-            void ICollection<string>.Clear()
-            {
-                throw UnsupportedOperationException.Create();
-            }
-
-            public bool Contains(string item)
-            {
-                return outerInstance.ContainsKey(item);
-            }
-
-            public void CopyTo(string[] array, int arrayIndex)
-            {
-                using var iter = GetEnumerator();
-                for (int i = arrayIndex; iter.MoveNext(); i++)
-                {
-                    array[i] = iter.Current;
-                }
-            }
-
-            public IEnumerator<string> GetEnumerator()
-            {
-                return new KeyEnumerator(outerInstance);
-            }
-
-            bool ICollection<string>.Remove(string item)
-            {
-                throw UnsupportedOperationException.Create();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
-
-            /// <summary>
-            /// LUCENENET specific class to iterate the values in the <see cref="KeyCollection"/>.
-            /// </summary>
-            private sealed class KeyEnumerator : IEnumerator<string>
-            {
-                private readonly Enumerator entryIterator;
-
-                public KeyEnumerator(CharArrayDictionary<TValue> outerInstance)
-                {
-                    this.entryIterator = new Enumerator(outerInstance, !outerInstance.IsReadOnly);
-                }
-
-                public string Current => entryIterator.CurrentKeyString;
-
-                object IEnumerator.Current => Current;
-
-                public void Dispose()
-                {
-                    // nothing to do
-                }
-
-                public bool MoveNext()
-                {
-                    return entryIterator.MoveNext();
-                }
-
-                public void Reset()
-                {
-                    entryIterator.Reset();
-                }
-            }
-        }
+        #region Nested Class: ValueCollection
 
         /// <summary>
         /// LUCENENET specific class that represents the values in the <see cref="CharArrayDictionary{TValue}"/>.
         /// </summary>
-        internal sealed class ValueCollection : ICollection<TValue>
+        private sealed class ValueCollection : ICollection<TValue>
         {
             private readonly CharArrayDictionary<TValue> outerInstance;
 
@@ -1790,24 +1701,23 @@ namespace Lucene.Net.Analysis.Util
                 }
             }
 
-            public IEnumerator<TValue> GetEnumerator()
+            public Enumerator GetEnumerator()
             {
-                return new ValueEnumerator(outerInstance);
+                return new Enumerator(outerInstance);
             }
+
+            IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator() => GetEnumerator();
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
             bool ICollection<TValue>.Remove(TValue item)
             {
                 throw UnsupportedOperationException.Create();
             }
 
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
-
             public override string ToString()
             {
-                using var i = (ValueEnumerator)GetEnumerator();
+                using var i = GetEnumerator();
                 if (!i.HasNext)
                     return "[]";
 
@@ -1829,13 +1739,13 @@ namespace Lucene.Net.Analysis.Util
             /// <summary>
             /// LUCENENET specific class to enumerate the values in the <see cref="ValueCollection"/>.
             /// </summary>
-            private sealed class ValueEnumerator : IEnumerator<TValue>
+            public sealed class Enumerator : IEnumerator<TValue>
             {
-                private readonly Enumerator entryIterator;
+                private readonly CharArrayDictionary<TValue>.Enumerator entryIterator;
 
-                public ValueEnumerator(CharArrayDictionary<TValue> outerInstance)
+                public Enumerator(CharArrayDictionary<TValue> outerInstance)
                 {
-                    this.entryIterator = new Enumerator(outerInstance, !outerInstance.IsReadOnly);
+                    this.entryIterator = new CharArrayDictionary<TValue>.Enumerator(outerInstance, !outerInstance.IsReadOnly);
                 }
 
                 public TValue Current => entryIterator.CurrentValue;
@@ -1861,12 +1771,14 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        #endregion
+        #endregion Nested Class: ValueCollection
 
         /// <summary>
         /// <c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> is read-only; otherwise <c>false</c>.
         /// </summary>
         public virtual bool IsReadOnly => false;
+
+        #endregion For .NET Support LUCENENET
 
         /// <summary>
         /// Returns an enumerator that iterates through the <see cref="CharArrayDictionary{TValue}"/>.
@@ -1876,21 +1788,11 @@ namespace Lucene.Net.Analysis.Util
             return new Enumerator(this, !IsReadOnly);
         }
 
-        /// <summary>
-        /// Returns an enumerator that iterates through the <see cref="CharArrayDictionary{TValue}"/>.
-        /// </summary>
-        IEnumerator<KeyValuePair<string, TValue>> IEnumerable<KeyValuePair<string, TValue>>.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator<KeyValuePair<string, TValue>> IEnumerable<KeyValuePair<string, TValue>>.GetEnumerator() => GetEnumerator();
 
-        /// <summary>
-        /// Returns an enumerator that iterates through the <see cref="CharArrayDictionary{TValue}"/>.
-        /// </summary>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        ICharArrayDictionaryEnumerator ICharArrayDictionary.GetEnumerator() => GetEnumerator();
 
         bool IDictionary<string, TValue>.Remove(string key)
         {
@@ -1932,24 +1834,13 @@ namespace Lucene.Net.Analysis.Util
             return sb.Append('}').ToString();
         }
 
+        // LUCENENET: Removed entrySet because in .NET we use the collection itself as the IEnumerable
         private CharArraySet keySet = null;
-        private KeyCollection originalKeySet = null;
 
-        /// <summary>
-        /// helper for <see cref="CharArraySet"/> to not produce endless recursion
-        /// </summary>
-        ICollection<string> ICharArrayDictionary.OriginalKeySet
-        {
-            get
-            {
-                if (originalKeySet is null)
-                {
-                    // prevent adding of entries
-                    originalKeySet = new KeyCollection(this);
-                }
-                return originalKeySet;
-            }
-        }
+        // LUCENENET: Removed entrySet(), createEntrySet() because in .NET we use the collection itself as the IEnumerable
+
+        // LUCENENET: Removed originalKeySet() because we fixed infinite recursion
+        // by adding a custom enumerator for KeyCollection.
 
         /// <summary>
         /// Returns an <see cref="CharArraySet"/> view on the map's keys.
@@ -1962,15 +1853,18 @@ namespace Lucene.Net.Analysis.Util
                 if (keySet is null)
                 {
                     // prevent adding of entries
-                    keySet = new UnmodifiableCharArraySet(this);
+                    keySet = new KeyCollection(this);
                 }
                 return keySet;
             }
         }
 
-        private sealed class UnmodifiableCharArraySet : CharArraySet
+        #region Nested Class: KeyCollection
+
+        // LUCENENET: This was an anonymous class in Java
+        private sealed class KeyCollection : CharArraySet
         {
-            internal UnmodifiableCharArraySet(ICharArrayDictionary map)
+            internal KeyCollection(CharArrayDictionary<TValue> map)
                 : base(map)
             {
             }
@@ -1995,10 +1889,21 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
+        #endregion Nested Class: KeyCollection
+
+        #region Nested Class: Enumerator
+
         /// <summary>
-        /// public iterator class so efficient methods are exposed to users
+        /// Public enumerator class so efficient properties are exposed to users.
+        /// <para/>
+        /// <b>Note:</b> This enumerator has no checks to ensure the collection has
+        /// not been modified during enumeration. The behavior after calling a method
+        /// that mutates state such as
+        /// <see cref="Clear()"/> or an overload of <see cref="Add(string, TValue)"/>,
+        /// <see cref="Put(string)"/>, <see cref="PutAll(IDictionary{string, TValue})"/>
+        /// or <see cref="this[string]"/> is undefined.
         /// </summary>
-        public class Enumerator : IEnumerator<KeyValuePair<string, TValue>>
+        public class Enumerator : IEnumerator<KeyValuePair<string, TValue>>, ICharArrayDictionaryEnumerator
         {
             private readonly CharArrayDictionary<TValue> outerInstance;
 
@@ -2013,7 +1918,7 @@ namespace Lucene.Net.Analysis.Util
                 GoNext();
             }
 
-            internal void GoNext()
+            private void GoNext() // LUCENENET: Changed accessibility from internal to private
             {
                 lastPos = pos;
                 pos++;
@@ -2024,6 +1929,13 @@ namespace Lucene.Net.Analysis.Util
             }
 
             internal bool HasNext => pos < outerInstance.keys.Length;
+
+            /// <summary>
+            /// Gets the current key as a <see cref="CharArrayCharSequence"/>... do not modify the returned char[]
+            /// </summary>
+            // LUCENENET specific - quick access to ICharSequence interface
+            public virtual ICharSequence CurrentKeyCharSequence
+                => outerInstance.keys[lastPos].AsCharSequence();
 
             /// <summary>
             /// Gets the current key... do not modify the returned char[]
@@ -2101,6 +2013,8 @@ namespace Lucene.Net.Analysis.Util
             #endregion
         }
 
+        #endregion Nested Class: Enumerator
+
         // LUCENENET NOTE: The Java Lucene type MapEntry was removed here because it is not possible 
         // to inherit the value type KeyValuePair{TKey, TValue} in .NET.
 
@@ -2120,7 +2034,7 @@ namespace Lucene.Net.Analysis.Util
     /// <summary>
     /// LUCENENET specific interface used so <see cref="CharArraySet"/>
     /// can hold a reference to <see cref="CharArrayDictionary{TValue}"/> without
-    /// knowing its generic type.
+    /// knowing its generic closing type for TValue.
     /// </summary>
     internal interface ICharArrayDictionary
     {
@@ -2134,11 +2048,25 @@ namespace Lucene.Net.Analysis.Util
         bool IgnoreCase { get; }
         bool IsReadOnly { get; }
         LuceneVersion MatchVersion { get; }
-        ICollection<string> OriginalKeySet { get; }
         bool Put(char[] text);
         bool Put(ICharSequence text);
         bool Put(object o);
         bool Put(string text);
+        ICharArrayDictionaryEnumerator GetEnumerator();
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface used so <see cref="CharArraySet"/> can
+    /// iterate the keys of <see cref="CharArrayDictionary{TValue}"/> without
+    /// knowing its generic closing type for TValue.
+    /// </summary>
+    internal interface ICharArrayDictionaryEnumerator : IDisposable
+    {
+        bool MoveNext();
+        ICharSequence CurrentKeyCharSequence { get; }
+        string CurrentKeyString { get; }
+        char[] CurrentKey { get; }
+        void Reset();
     }
 
     public static class CharArrayDictionary // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
