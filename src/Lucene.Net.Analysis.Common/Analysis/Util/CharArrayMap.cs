@@ -2240,9 +2240,8 @@ namespace Lucene.Net.Analysis.Util
                 return CharArrayDictionary<TValue>.Empty;
             }
 
-            if (map is CharArrayDictionary<TValue>)
+            if (map is CharArrayDictionary<TValue> m)
             {
-                var m = map as CharArrayDictionary<TValue>;
                 // use fast path instead of iterating all values
                 // this is even on very small sets ~10 times faster than iterating
                 var keys = new char[m.keys.Length][];
