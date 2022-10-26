@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis.Util
             foreach (string text in c)
             {
                 // LUCENENET: S1699: Don't call call protected members in the constructor
-                map.Put(text);
+                map.Set(text);
             }
         }
 

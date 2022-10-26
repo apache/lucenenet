@@ -754,10 +754,116 @@ namespace Lucene.Net.Analysis.Util
 
         #endregion PutImpl
 
+        #region Set
+
+        /// <summary>
+        /// Sets the value of the mapping of the chars inside this <paramref name="text"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Set(char[] text)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, PLACEHOLDER);
+        }
+
+        /// <summary>
+        /// Sets the value of the mapping of the chars inside this <see cref="ICharSequence"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Set(ICharSequence text)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, PLACEHOLDER);
+        }
+
+        /// <summary>
+        /// Sets the value of the mapping of the chars inside this <see cref="string"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Set(string text)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, PLACEHOLDER);
+        }
+
+        /// <summary>
+        /// Sets the value of the mapping of the chars inside this <see cref="object.ToString()"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
+        private void Set(object o)
+        {
+            if (o is null)
+                throw new ArgumentNullException(nameof(o));
+
+            // LUCENENET NOTE: Testing for *is* is at least 10x faster
+            // than casting using *as* and then checking for null.
+            // http://stackoverflow.com/q/1583050/181087
+            if (o is string str)
+            {
+                Set(str);
+                return;
+            }
+            if (o is char[] charArray)
+            {
+                Set(charArray);
+                return;
+            }
+            if (o is StringCharSequence strCs)
+            {
+                Set(strCs.Value ?? string.Empty);
+                return;
+            }
+            if (o is CharArrayCharSequence charArrayCs)
+            {
+                Set(charArrayCs.Value ?? Arrays.Empty<char>());
+                return;
+            }
+            if (o is StringBuilderCharSequence stringBuilderCs)
+            {
+                Set(stringBuilderCs.Value?.ToString() ?? string.Empty);
+                return;
+            }
+            if (o is ICharSequence cs)
+            {
+                Set(cs.ToString());
+                return;
+            }
+
+            // LUCENENET: We need value types to be represented using the invariant
+            // culture, so it is consistent regardless of the current culture. 
+            // It's easy to work out if this is a value type, but difficult
+            // to get to the ToString(IFormatProvider) overload of the type without
+            // a lot of special cases. It's easier just to change the culture of the 
+            // thread before calling ToString(), but we don't want that behavior to
+            // bleed into Get.
+            string s;
+            using (var context = new CultureContext(CultureInfo.InvariantCulture))
+            {
+                s = o.ToString();
+            }
+            Set(s);
+        }
+
+        void ICharArrayDictionary.Set(char[] text) => Set(text);
+        void ICharArrayDictionary.Set(ICharSequence text) => Set(text);
+        void ICharArrayDictionary.Set(object o) => Set(o);
+        void ICharArrayDictionary.Set(string text) => Set(text);
+
+        #endregion Set
+
         #region Set (value)
 
         /// <summary>
-        /// Returns the value of the mapping of <paramref name="length"/> chars of <paramref name="text"/>
+        /// Sets the value of the mapping of <paramref name="length"/> chars of <paramref name="text"/>
         /// starting at <paramref name="offset"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
@@ -773,7 +879,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
+        /// Sets the value of the mapping of the chars inside this <paramref name="text"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -786,7 +892,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns the value of the mapping of the chars inside this <see cref="ICharSequence"/>.
+        /// Sets the value of the mapping of the chars inside this <see cref="ICharSequence"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -799,7 +905,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns the value of the mapping of the chars inside this <see cref="string"/>.
+        /// Sets the value of the mapping of the chars inside this <see cref="string"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -812,7 +918,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns the value of the mapping of the chars inside this <see cref="object.ToString()"/>.
+        /// Sets the value of the mapping of the chars inside this <see cref="object.ToString()"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1864,6 +1970,8 @@ namespace Lucene.Net.Analysis.Util
             return sb.Append('}').ToString();
         }
 
+   
+
         // LUCENENET: Removed entrySet because in .NET we use the collection itself as the IEnumerable
         private CharArraySet keySet = null;
 
@@ -2082,6 +2190,10 @@ namespace Lucene.Net.Analysis.Util
         bool Put(ICharSequence text);
         bool Put(object o);
         bool Put(string text);
+        void Set(char[] text);
+        void Set(ICharSequence text);
+        void Set(object o);
+        void Set(string text);
         ICharArrayDictionaryEnumerator GetEnumerator();
     }
 
