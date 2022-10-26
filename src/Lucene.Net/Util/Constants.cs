@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 #if NETFRAMEWORK
@@ -30,6 +30,11 @@ namespace Lucene.Net.Util
     /// </summary>
     public static class Constants // LUCENENET specific - made static because all members are static and constructor in Lucene was private
     {
+        /// <summary>
+        /// The maximum stack allocation size before switching to making allocations on the heap.
+        /// </summary>
+        internal static int MaxStackByteLimit = SystemProperties.GetPropertyAsInt32("maxStackByteLimit", defaultValue: 2048); // LUCENENET specific
+
         // LUCENENET NOTE: IMPORTANT - this line must be placed before RUNTIME_VERSION so it can be parsed.
         private static readonly Regex VERSION = new Regex(@"(\d+\.\d+(?:\.\d+)?(?:\.\d+)?)", RegexOptions.Compiled);
 

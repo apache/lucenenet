@@ -41,7 +41,8 @@ public class Startup : LuceneTestFrameworkInitializer
             {
                 ["foo"] = "fooValue",
                 ["bar"] = "barValue",
-                ["baz"] = "bazValue"
+                ["baz"] = "bazValue",
+                ["maxStackByteLimit"] = "5000",
             });
         ConfigureServices(serviceCollection, configurationBuilder);
         IServiceProvider services = serviceCollection.BuildServiceProvider();
