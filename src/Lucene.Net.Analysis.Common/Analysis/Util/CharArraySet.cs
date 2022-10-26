@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Creates a set from a collection of objects. 
+        /// Creates a set from a collection of <see cref="string"/>s. 
         /// </summary>
         /// <param name="matchVersion">
         ///          Compatibility match version see <see cref="CharArraySet"/> for details. </param>
@@ -113,6 +113,56 @@ namespace Lucene.Net.Analysis.Util
                 throw new ArgumentNullException(nameof(collection));
 
             foreach (string text in collection)
+            {
+                // LUCENENET: S1699: Don't call call protected members in the constructor
+                map.Set(text);
+            }
+        }
+
+        /// <summary>
+        /// Creates a set from a collection of <see cref="T:char[]"/>s. 
+        /// </summary>
+        /// <param name="matchVersion">
+        ///          Compatibility match version see <see cref="CharArraySet"/> for details. </param>
+        /// <param name="collection">
+        ///          A collection whose elements to be placed into the set. </param>
+        /// <param name="ignoreCase">
+        ///          <c>false</c> if and only if the set should be case sensitive
+        ///          otherwise <c>true</c>. </param>
+        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
+        public CharArraySet(LuceneVersion matchVersion, ICollection<char[]> collection, bool ignoreCase)
+            : this(matchVersion, collection?.Count ?? 0, ignoreCase)
+        {
+            // LUCENENET: Added guard clause
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+
+            foreach (char[] text in collection)
+            {
+                // LUCENENET: S1699: Don't call call protected members in the constructor
+                map.Set(text);
+            }
+        }
+
+        /// <summary>
+        /// Creates a set from a collection of <see cref="ICharSequence"/>s. 
+        /// </summary>
+        /// <param name="matchVersion">
+        ///          Compatibility match version see <see cref="CharArraySet"/> for details. </param>
+        /// <param name="collection">
+        ///          A collection whose elements to be placed into the set. </param>
+        /// <param name="ignoreCase">
+        ///          <c>false</c> if and only if the set should be case sensitive
+        ///          otherwise <c>true</c>. </param>
+        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
+        public CharArraySet(LuceneVersion matchVersion, ICollection<ICharSequence> collection, bool ignoreCase)
+            : this(matchVersion, collection?.Count ?? 0, ignoreCase)
+        {
+            // LUCENENET: Added guard clause
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+
+            foreach (ICharSequence text in collection)
             {
                 // LUCENENET: S1699: Don't call call protected members in the constructor
                 map.Set(text);
