@@ -66,13 +66,15 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
     <PackageReference Include="Prism.Core" Version="$(PrismCorePackageVersion)" />
+    <PackageReference Include="System.Memory" Version="$(SystemMemoryPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
     <PackageReference Include="Prism.Core" Version="$(PrismCorePackageVersion)" />
+    <PackageReference Include="System.Memory" Version="$(SystemMemoryPackageVersion)" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <InternalsVisibleTo Include="Lucene.Net.Analysis.Common" />
     <InternalsVisibleTo Include="Lucene.Net.Analysis.Kuromoji" />
