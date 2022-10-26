@@ -151,12 +151,11 @@ namespace Lucene.Net.Analysis.Ja
                     int bgCost = costs.Get(backPosData.lastRightID[posData.backIndex[idx]],
                                                  dict.GetLeftId(posData.backID[idx]));
 
-                    string surfaceForm = new string(fragment,
-                                                          posData.backPos[idx] - startPos,
-                                                          pos - posData.backPos[idx]);
+                    // LUCENENET: Removed unnecessary surfaceForm allocation and appended
+                    // the chars directly to the StringBuilder below.
 
                     sb.Append(" [label=\"");
-                    sb.Append(surfaceForm);
+                    sb.Append(fragment, posData.backPos[idx] - startPos, pos - posData.backPos[idx]); 
                     sb.Append(' ');
                     sb.Append(wordCost);
                     if (bgCost >= 0)
