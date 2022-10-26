@@ -176,7 +176,7 @@ namespace Lucene.Net.Analysis.Nl
                     {
                         char[] nextKey = iter.NextKey();
                         spare.CopyChars(nextKey, 0, nextKey.Length);
-                        builder.Add(new string(spare.Chars), iter.CurrentValue);
+                        builder.Add(spare.Chars, iter.CurrentValue);
                     }
                 }
                 try
