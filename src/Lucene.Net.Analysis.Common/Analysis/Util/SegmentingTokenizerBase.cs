@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 #if FEATURE_BREAKITERATOR
 using ICU4N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.Util
         {
             base.Reset();
             wrapper.SetText(m_buffer, 0, 0);
-            iterator.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
+            iterator.SetText(wrapper);
             length = usableLength = m_offset = 0;
         }
 
@@ -176,7 +176,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             wrapper.SetText(m_buffer, 0, Math.Max(0, usableLength));
-            iterator.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
+            iterator.SetText(wrapper);
         }
 
         // TODO: refactor to a shared readFully somewhere
