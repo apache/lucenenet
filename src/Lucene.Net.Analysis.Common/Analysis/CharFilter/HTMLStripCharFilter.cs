@@ -2,6 +2,7 @@
 using J2N;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Text;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -31371,10 +31372,11 @@ namespace Lucene.Net.Analysis.CharFilters
                             inputSegment.Write(zzBuffer, zzStartRead, matchLength);
                             if (matchLength <= 7)
                             { // 0x10FFFF = 1114111: max 7 decimal chars
-                                string decimalCharRef = YyText();
-                                if (!int.TryParse(decimalCharRef, NumberStyles.Integer, CultureInfo.InvariantCulture, out int codePoint))
+                                // LUCENENET: Originally, we got the value of YyText(), which allocates..so we can eliminate the allocation
+                                // by grabbing the values YyText() converts to a string: new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+                                if (!J2N.Numerics.Int32.TryParse(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead, radix: 10, out int codePoint))
                                 {
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing code point '{0}'", decimalCharRef);
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing code point '{0}'", new CharArrayFormatter(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead));
                                 }
                                 if (codePoint <= 0x10FFFF)
                                 {
@@ -31625,11 +31627,9 @@ namespace Lucene.Net.Analysis.CharFilters
                             inputSegment.Write(zzBuffer, zzStartRead, matchLength);
                             if (matchLength <= 6)
                             { // 10FFFF: max 6 hex chars
-                                string hexCharRef
-                                    = new string(zzBuffer, zzStartRead + 1, matchLength - 1);
-                                if (!int.TryParse(hexCharRef, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int codePoint))
+                                if (!J2N.Numerics.Int32.TryParse(zzBuffer, zzStartRead + 1, matchLength - 1, radix: 16, out int codePoint))
                                 {
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing hex code point '{0}'", hexCharRef);
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing hex code point '{0}'", new CharArrayFormatter(zzBuffer, zzStartRead + 1, matchLength - 1));
                                 }
                                 if (codePoint <= 0x10FFFF)
                                 {
