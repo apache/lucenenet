@@ -265,7 +265,7 @@ namespace Lucene.Net.Analysis.Util
             using var iter = GetEnumerator();
             for (int i = arrayIndex; iter.MoveNext(); i++)
             {
-                array[i] = new KeyValuePair<string, TValue>(iter.Current.Key, iter.CurrentValue);
+                array[i] = new KeyValuePair<string, TValue>(iter.CurrentKeyString, iter.CurrentValue);
             }
         }
 
@@ -283,7 +283,7 @@ namespace Lucene.Net.Analysis.Util
             using var iter = GetEnumerator();
             while (iter.MoveNext())
             {
-                map.Put(iter.Current.Key, iter.CurrentValue);
+                map.Put((char[])iter.CurrentKey.Clone(), iter.CurrentValue);
             }
         }
 
@@ -1950,20 +1950,22 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public override string ToString()
         {
+            if (count == 0)
+                return "{}";
+
             var sb = new StringBuilder("{");
 
             using (var iter1 = this.GetEnumerator())
             {
                 while (iter1.MoveNext())
                 {
-                    KeyValuePair<string, TValue> entry = iter1.Current;
                     if (sb.Length > 1)
                     {
                         sb.Append(", ");
                     }
-                    sb.Append(entry.Key);
+                    sb.Append(iter1.CurrentKey);
                     sb.Append('=');
-                    sb.Append(entry.Value);
+                    sb.Append(iter1.CurrentValue);
                 }
             }
 
