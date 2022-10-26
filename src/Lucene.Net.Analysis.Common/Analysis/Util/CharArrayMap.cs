@@ -532,7 +532,14 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Add the given mapping.
+        /// <para/>
+        /// <b>Note:</b> The <see cref="this[ICharSequence]"/> setter is more efficient than this method if
+        /// the return value is not required.
         /// </summary>
+        /// <param name="text">A key with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
+        /// <returns>The previous value associated with the key, or the default for the type of <paramref name="value"/>
+        /// parameter if there was no mapping for <paramref name="text"/>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual TValue Put(ICharSequence text, TValue value)
         {
@@ -547,7 +554,14 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add the given mapping using the <see cref="object.ToString()"/> representation
         /// of <paramref name="o"/> in the <see cref="CultureInfo.InvariantCulture"/>.
+        /// <para/>
+        /// <b>Note:</b> The <see cref="this[object]"/> setter is more efficient than this method if
+        /// the return value is not required.
         /// </summary>
+        /// <param name="o">A key with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="value">The value to be associated with the specified object <paramref name="o"/>.</param>
+        /// <returns>The previous value associated with the key, or the default for the type of <paramref name="value"/>
+        /// parameter if there was no mapping for <paramref name="o"/>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
         public virtual TValue Put(object o, TValue value)
         {
@@ -561,7 +575,14 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Add the given mapping.
+        /// <para/>
+        /// <b>Note:</b> The <see cref="this[string]"/> setter is more efficient than this method if
+        /// the return value is not required.
         /// </summary>
+        /// <param name="text">A key with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
+        /// <returns>The previous value associated with the key, or the default for the type of <paramref name="value"/>
+        /// parameter if there was no mapping for <paramref name="text"/>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual TValue Put(string text, TValue value)
         {
@@ -577,7 +598,14 @@ namespace Lucene.Net.Analysis.Util
         /// Add the given mapping.
         /// If ignoreCase is true for this dictionary, the text array will be directly modified.
         /// The user should never modify this text array after calling this method.
+        /// <para/>
+        /// <b>Note:</b> The <see cref="this[char[]]"/> setter is more efficient than this method if
+        /// the return value is not required.
         /// </summary>
+        /// <param name="text">A key with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
+        /// <returns>The previous value associated with the key, or the default for the type of <paramref name="value"/>
+        /// parameter if there was no mapping for <paramref name="text"/>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual TValue Put(char[] text, TValue value)
         {
@@ -597,6 +625,7 @@ namespace Lucene.Net.Analysis.Util
         /// Add the given mapping.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private MapValue PutImpl(ICharSequence text, MapValue value)
         {
             // LUCENENET: Added guard clause
@@ -613,6 +642,7 @@ namespace Lucene.Net.Analysis.Util
         /// Add the given mapping.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private MapValue PutImpl(object o, MapValue value)
         {
             // LUCENENET: Added guard clause
