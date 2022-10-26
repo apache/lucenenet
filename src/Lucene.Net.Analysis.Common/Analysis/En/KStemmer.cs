@@ -401,7 +401,7 @@ namespace Lucene.Net.Analysis.En
                 if (!d.ContainsKey(exceptionWords[i]))
                 {
                     entry = new DictEntry(exceptionWords[i], true);
-                    d.Put(exceptionWords[i], entry);
+                    d[exceptionWords[i]] = entry;
                 }
                 else
                 {
@@ -414,7 +414,7 @@ namespace Lucene.Net.Analysis.En
                 if (!d.ContainsKey(directConflations[i][0]))
                 {
                     entry = new DictEntry(directConflations[i][1], false);
-                    d.Put(directConflations[i][0], entry);
+                    d[directConflations[i][0]] = entry;
                 }
                 else
                 {
@@ -427,7 +427,7 @@ namespace Lucene.Net.Analysis.En
                 if (!d.ContainsKey(countryNationality[i][0]))
                 {
                     entry = new DictEntry(countryNationality[i][1], false);
-                    d.Put(countryNationality[i][0], entry);
+                    d[countryNationality[i][0]] = entry;
                 }
                 else
                 {
@@ -444,7 +444,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(array[i]))
                 {
-                    d.Put(array[i], defaultEntry);
+                    d[array[i]] = defaultEntry;
                 }
                 else
                 {
@@ -457,7 +457,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(array[i]))
                 {
-                    d.Put(array[i], defaultEntry);
+                    d[array[i]] = defaultEntry;
                 }
                 else
                 {
@@ -470,7 +470,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(array[i]))
                 {
-                    d.Put(array[i], defaultEntry);
+                    d[array[i]] = defaultEntry;
                 }
                 else
                 {
@@ -483,7 +483,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(array[i]))
                 {
-                    d.Put(array[i], defaultEntry);
+                    d[array[i]] = defaultEntry;
                 }
                 else
                 {
@@ -496,7 +496,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(array[i]))
                 {
-                    d.Put(array[i], defaultEntry);
+                    d[array[i]] = defaultEntry;
                 }
                 else
                 {
@@ -509,7 +509,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(array[i]))
                 {
-                    d.Put(array[i], defaultEntry);
+                    d[array[i]] = defaultEntry;
                 }
                 else
                 {
@@ -522,7 +522,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(array[i]))
                 {
-                    d.Put(array[i], defaultEntry);
+                    d[array[i]] = defaultEntry;
                 }
                 else
                 {
@@ -534,7 +534,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(KStemData8.data[i]))
                 {
-                    d.Put(KStemData8.data[i], defaultEntry);
+                    d[KStemData8.data[i]] = defaultEntry;
                 }
                 else
                 {
@@ -546,7 +546,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(supplementDict[i]))
                 {
-                    d.Put(supplementDict[i], defaultEntry);
+                    d[supplementDict[i]] = defaultEntry;
                 }
                 else
                 {
@@ -558,7 +558,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(properNouns[i]))
                 {
-                    d.Put(properNouns[i], defaultEntry);
+                    d[properNouns[i]] = defaultEntry;
                 }
                 else
                 {

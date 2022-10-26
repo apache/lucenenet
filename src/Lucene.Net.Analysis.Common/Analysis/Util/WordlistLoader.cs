@@ -207,7 +207,7 @@ namespace Lucene.Net.Analysis.Util
                 while ((line = reader.ReadLine()) != null)
                 {
                     string[] wordstem = line.Split(new char[] { '\t' }, 2);
-                    result.Put(wordstem[0], wordstem[1]);
+                    result[wordstem[0]] = wordstem[1];
                 }
             }
             finally

@@ -652,7 +652,7 @@ namespace Lucene.Net.Analysis.Core
                 for (int i = 0; i < num; i++)
                 {
                     // TODO: make nastier
-                    map.Put(TestUtil.RandomSimpleString(random), TestUtil.RandomSimpleString(random));
+                    map[TestUtil.RandomSimpleString(random)] = TestUtil.RandomSimpleString(random);
                 }
                 return map;
             }

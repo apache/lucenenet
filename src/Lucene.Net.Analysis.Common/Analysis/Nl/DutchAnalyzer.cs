@@ -95,10 +95,10 @@ namespace Lucene.Net.Analysis.Nl
 #pragma warning disable 612, 618
                 var DEFAULT_STEM_DICT = new CharArrayDictionary<string>(LuceneVersion.LUCENE_CURRENT, 4, false);
 #pragma warning restore 612, 618
-                DEFAULT_STEM_DICT.Put("fiets", "fiets"); //otherwise fiet
-                DEFAULT_STEM_DICT.Put("bromfiets", "bromfiets"); //otherwise bromfiet
-                DEFAULT_STEM_DICT.Put("ei", "eier");
-                DEFAULT_STEM_DICT.Put("kind", "kinder");
+                DEFAULT_STEM_DICT["fiets"] = "fiets"; //otherwise fiet
+                DEFAULT_STEM_DICT["bromfiets"] = "bromfiets"; //otherwise bromfiet
+                DEFAULT_STEM_DICT["ei"] = "eier";
+                DEFAULT_STEM_DICT["kind"] = "kinder";
                 return DEFAULT_STEM_DICT;
             }
         }

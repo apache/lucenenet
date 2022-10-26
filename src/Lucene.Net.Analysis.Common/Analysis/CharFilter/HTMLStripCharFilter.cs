@@ -30774,10 +30774,10 @@ namespace Lucene.Net.Analysis.CharFilters
             for (int i = 0; i < entities.Length; i += 2)
             {
                 var value = entities[i + 1][0];
-                entityValues.Put(entities[i], value);
+                entityValues[entities[i]] = value;
                 if (upperCaseVariantsAccepted.TryGetValue(entities[i], out string upperCaseVariant) && upperCaseVariant != null)
                 {
-                    entityValues.Put(upperCaseVariant, value);
+                    entityValues[upperCaseVariant] = value;
                 }
             }
             return entityValues;

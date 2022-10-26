@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.Synonym
                 {
                     map = new SlowSynonymMap();
                     map.flags |= flags & IGNORE_CASE;
-                    currMap.submap.Put(str, map);
+                    currMap.submap[str] = map;
                 }
 
                 currMap = map;
