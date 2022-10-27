@@ -1,10 +1,12 @@
 ﻿// Lucene version compatibility level 4.8.1
 #if FEATURE_BREAKITERATOR
+using ICU4N.Support.Text;
 using ICU4N.Text;
 using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -80,7 +82,7 @@ namespace Lucene.Net.Analysis.Th
         }
 
         private readonly ThaiWordBreaker wordBreaker;
-        private readonly CharArrayIterator wrapper = Analysis.Util.CharArrayIterator.NewWordInstance();
+        private readonly CharArrayIterator wrapper = CharArrayIterator.NewWordInstance();
 
         private int sentenceStart;
         private int sentenceEnd;
@@ -162,7 +164,7 @@ namespace Lucene.Net.Analysis.Th
                 this.sentenceStart = sentenceStart;
                 this.sentenceEnd = sentenceEnd;
                 wrapper.SetText(m_buffer, sentenceStart, sentenceEnd - sentenceStart);
-                wordBreaker.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
+                wordBreaker.SetText(wrapper);
             }
             finally
             {
@@ -215,18 +217,18 @@ namespace Lucene.Net.Analysis.Th
     internal class ThaiWordBreaker
     {
         private readonly BreakIterator wordBreaker;
-        private string text;
+        private readonly CharsRef text = new CharsRef();
         private readonly Queue<int> transitions = new Queue<int>();
-        private static readonly Regex thaiPattern = new Regex(@"\p{IsThai}+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly UnicodeSet thai = new UnicodeSet("[:Thai:]").Freeze();
 
         public ThaiWordBreaker(BreakIterator wordBreaker)
         {
             this.wordBreaker = wordBreaker ?? throw new ArgumentNullException(nameof(wordBreaker));
         }
 
-        public void SetText(string text)
+        public void SetText(CharArrayIterator text)
         {
-            this.text = text;
+            this.text.CopyChars(text.Text, text.Start, text.Length);
             wordBreaker.SetText(text);
         }
 
@@ -262,20 +264,20 @@ namespace Lucene.Net.Analysis.Th
             if (current != BreakIterator.Done && current - prev > 0)
             {
                 int length = text.Length;
-                string toMatch;
+                int codePoint;
                 // Find all of the transitions between Thai and non-Thai characters and digits
                 for (int i = prev; i < current; i++)
                 {
                     char high = text[i];
                     // Account for surrogate pairs
                     if (char.IsHighSurrogate(high) && i < length && i + 1 < current && char.IsLowSurrogate(text[i + 1]))
-                        toMatch = string.Empty + high + text[++i];
+                        codePoint = Character.ToCodePoint(high, text[++i]);
                     else
-                        toMatch = string.Empty + high;
+                        codePoint = high;
 
-                    if (char.IsLetter(toMatch, 0)) // Always break letters apart from digits to match the JDK
+                    if (Character.IsLetter(codePoint)) // Always break letters apart from digits to match the JDK
                     {
-                        isThai = thaiPattern.IsMatch(toMatch);
+                        isThai = thai.Contains(codePoint);
                         isNonThai = !isThai;
                     }
                     else
