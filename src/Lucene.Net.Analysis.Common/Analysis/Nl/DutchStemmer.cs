@@ -242,7 +242,8 @@ namespace Lucene.Net.Analysis.Nl
                 {
                     sb.Remove(index, index + 3 - index);
                 }
-                return;
+                // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+                //return;
             }
         }
 

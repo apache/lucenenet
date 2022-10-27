@@ -192,7 +192,8 @@ namespace Lucene.Net.Support.IO
                 catch (IOException e) when (IsFileAlreadyExistsException(e, fileName))
                 {
                     // If the error was because the file exists, try again.
-                    continue;
+                    // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+                    continue; //NOSONAR
                 }
             }
             return new FileInfo(fileName);

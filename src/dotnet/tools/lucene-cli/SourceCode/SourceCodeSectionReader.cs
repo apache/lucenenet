@@ -106,7 +106,8 @@ namespace Lucene.Net.Cli.SourceCode
                     if (COMMENT_END.IsMatch(line))
                     {
                         inComment = false;
-                        continue; // Skip this line
+                        // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+                        continue; // Skip this line //NOSONAR
                     }
                 }
                 else

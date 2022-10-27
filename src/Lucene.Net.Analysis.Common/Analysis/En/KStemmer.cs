@@ -722,7 +722,8 @@ namespace Lucene.Net.Analysis.En
                     {
                         Lookup();
                     }
-                    return;
+                    // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+                    //return;
                 }
                 else
                 {
@@ -872,7 +873,8 @@ namespace Lucene.Net.Analysis.En
                 word.UnsafeWrite('e');
                 k = j + 1;
                 // nolookup() - we already tried the "e" ending
-                return;
+                // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+                //return;
             }
         }
 
@@ -990,7 +992,8 @@ namespace Lucene.Net.Analysis.En
                 word.UnsafeWrite('e');
                 k = j + 1;
                 // nolookup(); we already tried an 'e' ending
-                return;
+                // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+                //return;
             }
         }
 
@@ -1068,7 +1071,8 @@ namespace Lucene.Net.Analysis.En
                 word.Length = j + 1;
                 k = j;
                 // nolookup(), we already did it.
-                return;
+                // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+                //return;
             }
         }
 
@@ -1106,7 +1110,8 @@ namespace Lucene.Net.Analysis.En
                 k = old_k;
                 // nolookup() because we restored the original ending
             }
-            return;
+            // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+            //return;
         }
 
         /// <summary>handle -ness</summary>
@@ -1126,7 +1131,8 @@ namespace Lucene.Net.Analysis.En
                 }
                 Lookup();
             }
-            return;
+            // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+            //return;
         }
 
         /// <summary>handle -ism</summary>
@@ -1142,7 +1148,8 @@ namespace Lucene.Net.Analysis.En
                 k = j;
                 Lookup();
             }
-            return;
+            // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+            //return;
         }
 
         /// <summary>this routine deals with -ment endings.</summary>
@@ -1162,7 +1169,8 @@ namespace Lucene.Net.Analysis.En
                 k = old_k;
                 // nolookup
             }
-            return;
+            // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+            //return;
         }
 
         /// <summary>this routine deals with -ize endings.</summary>
@@ -1203,7 +1211,8 @@ namespace Lucene.Net.Analysis.En
                 k = old_k;
                 // nolookup()
             }
-            return;
+            // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+            //return;
         }
 
         /// <summary>handle -ency and -ancy</summary>
@@ -1229,7 +1238,8 @@ namespace Lucene.Net.Analysis.En
                 k = j + 3;
                 Lookup();
             }
-            return;
+            // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+            //return;
         }
 
         /// <summary>handle -able and -ible</summary>
@@ -1283,7 +1293,8 @@ namespace Lucene.Net.Analysis.En
                 k = old_k;
                 // nolookup()
             }
-            return;
+            // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+            //return;
         }
 
         /// <summary>
@@ -1327,7 +1338,8 @@ namespace Lucene.Net.Analysis.En
                 k = j + 2;
                 // nolookup()
             }
-            return;
+            // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+            //return;
         }
 
         private static char[] ization = "ization".ToCharArray();
@@ -1473,7 +1485,8 @@ namespace Lucene.Net.Analysis.En
             }
 
             // nolookup(); all of the other paths restored original values
-            return;
+            // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+            //return;
         }
 
         /// <summary>
@@ -1647,7 +1660,8 @@ namespace Lucene.Net.Analysis.En
                 k = j;
                 // nolookup()... we already tried removing the "ly" variant
             }
-            return;
+            // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+            //return;
         }
 
         /// <summary>
@@ -1744,7 +1758,8 @@ namespace Lucene.Net.Analysis.En
                 }
 
             }
-            return;
+            // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+            //return;
         }
 
         /// <summary>
@@ -1804,7 +1819,8 @@ namespace Lucene.Net.Analysis.En
                 k = old_k;
                 // nolookup()
             }
-            return;
+            // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+            //return;
         }
 
         internal KStemmer()

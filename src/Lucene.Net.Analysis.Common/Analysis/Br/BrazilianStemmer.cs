@@ -1340,7 +1340,8 @@ namespace Lucene.Net.Analysis.Br
             if (Suffix(RV, "o"))
             {
                 CT = RemoveSuffix(CT, "o");
-                return;
+                // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+                //return;
             }
 
         }
@@ -1376,7 +1377,8 @@ namespace Lucene.Net.Analysis.Br
                 }
 
                 CT = RemoveSuffix(CT, "e");
-                return;
+                // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+                //return;
             }
         }
 

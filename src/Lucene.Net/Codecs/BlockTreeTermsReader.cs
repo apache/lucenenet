@@ -1241,7 +1241,8 @@ namespace Lucene.Net.Codecs
                                             return;
                                         }
                                     }
-                                    continue;
+                                    // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
+                                    continue; //NOSONAR
                                 }
                                 else if (cmp == 0)
                                 {
