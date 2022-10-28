@@ -640,8 +640,7 @@ namespace Lucene.Net.Codecs.Compressing
                         CopyTo(match2, match1);
                         CopyTo(match3, match2);
 
-                        // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
-                        goto search3Continue; //NOSONAR
+                        // goto search3Continue; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
                     search3Continue: ;
                     }
                 //search3Break: ; // LUCENENET NOTE: Unreachable

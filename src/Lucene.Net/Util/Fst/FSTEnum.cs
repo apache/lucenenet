@@ -216,8 +216,7 @@ namespace Lucene.Net.Util.Fst
                         Incr();
                         arc = m_fst.ReadFirstTargetArc(arc, GetArc(m_upto), m_fstReader);
                         targetLabel = TargetLabel;
-                        // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
-                        continue; //NOSONAR
+                        // continue; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
                     }
                     else if (low == arc.NumArcs)
                     {
@@ -391,8 +390,7 @@ namespace Lucene.Net.Util.Fst
                         Incr();
                         arc = m_fst.ReadFirstTargetArc(arc, GetArc(m_upto), m_fstReader);
                         targetLabel = TargetLabel;
-                        // LUCENENET: Redundant jump statements. https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS3626&id=nikcio_lucenenet
-                        continue; //NOSONAR
+                        // continue; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
                     }
                     else if (high == -1)
                     {
