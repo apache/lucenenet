@@ -65,7 +65,7 @@ param(
 
     [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot)),
 
-    [string[]]$TestFrameworks = @('net6.0', 'net5.0','net461','net48'), # targets under test: net6.0, netstandard2.1, netstanard2.0, net48
+    [string[]]$TestFrameworks = @('net6.0', 'net5.0','net461','net48'), # targets under test: net6.0, netstandard2.1, netstanard2.0, net462
 
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
 
@@ -284,7 +284,8 @@ jobs:
           echo `"title=Test Run for `$project_name - `${{matrix.framework}} - `${{matrix.platform}} - `${{matrix.os}}`" | Out-File -FilePath  `$env:GITHUB_ENV -Encoding utf8 -Append
         shell: pwsh
       - run: dotnet build `${{env.project_path}} --configuration `${{matrix.configuration}} --framework `${{matrix.framework}} /p:TestFrameworks=true
-      - run: dotnet test `${{env.project_path}} --configuration `${{matrix.configuration}} --framework `${{matrix.framework}} --no-build --no-restore --blame-hang --blame-hang-dump-type mini --blame-hang-timeout 20minutes --logger:`"console;verbosity=normal`" --logger:`"trx;LogFileName=`${{env.trx_file_name}}`" --logger:`"liquid.md;LogFileName=`${{env.md_file_name}};Title=`${{env.title}};`" --results-directory:`"`${{github.workspace}}/`${{env.test_results_artifact_name}}/`${{env.project_name}}`" -- RunConfiguration.TargetPlatform=`${{matrix.platform}}
+      - run: dotnet test `${{env.project_path}} --configuration `${{matrix.configuration}} --framework `${{matrix.framework}} --no-build --no-restore --blame-hang --blame-hang-dump-type mini --blame-hang-timeout 20minutes --logger:`"console;verbosity=normal`" --logger:`"trx;LogFileName=`${{env.trx_file_name}}`" --logger:`"liquid.md;LogFileName=`${{env.md_file_name}};Title=`${{env.title}};`" --results-directory:`"`${{github.workspace}}/`${{env.test_results_artifact_name}}/`${{env.project_name}}`" -- RunConfiguration.TargetPlatform=`${{matrix.platform}} TestRunParameters.Parameter\(name=\`"tests:slow\`",\ value=\`"false\`"\)
+        shell: bash
       # upload reports as build artifacts
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2
