@@ -151,6 +151,26 @@
     <Message Text="$(OutputTargetFrameworks)" Importance="high"/>
   </Target>
 
+
+  <!-- Disable Json Source Generator from being added to projects. This is being done to work around a bug in VS 2022
+    which appeared around VS2022 7.3.6 which causes StackOverflowExceptions when compiling the solution.
+	see: https://developercommunity.visualstudio.com/t/VS-2022-1736-Process-is-terminated-due/10173885#T-ND10184855
+	for more details.  Once a fix is rolled out for VS2022, this block can be removed -->
+  <Target Name="RemoveJsonSourceGenerator" BeforeTargets="CoreCompile">
+	<ItemGroup>
+		<AnalyzersByFileName Include="@(Analyzer -> '%(FileName)')">
+			<OriginalIdentity>%(Identity)</OriginalIdentity>
+		</AnalyzersByFileName>
+		<AnalyzersToRemoveByFileName Include="System.Text.Json.SourceGeneration" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<AnalyzersToRemove Include="@(AnalyzersByFileName)" Condition="'@(AnalyzersToRemoveByFileName)' == '@(AnalyzersByFileName)' and '%(Identity)' != ''" />
+		<Analyzer Remove="%(AnalyzersToRemove.OriginalIdentity)" />
+	</ItemGroup>
+  </Target>
+
+	
   <!-- Global PackageReferences -->
   <ItemGroup>
     <!-- This is to allow the .NET Framework references to be machine-indepenedent so builds can happen without installing prerequisites -->
