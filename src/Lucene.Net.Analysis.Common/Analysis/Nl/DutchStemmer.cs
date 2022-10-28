@@ -242,7 +242,7 @@ namespace Lucene.Net.Analysis.Nl
                 {
                     sb.Remove(index, index + 3 - index);
                 }
-                return;
+                //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
             }
         }
 

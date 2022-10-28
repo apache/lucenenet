@@ -722,7 +722,7 @@ namespace Lucene.Net.Analysis.En
                     {
                         Lookup();
                     }
-                    return;
+                    //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
                 }
                 else
                 {
@@ -872,7 +872,7 @@ namespace Lucene.Net.Analysis.En
                 word.UnsafeWrite('e');
                 k = j + 1;
                 // nolookup() - we already tried the "e" ending
-                return;
+                //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
             }
         }
 
@@ -990,7 +990,7 @@ namespace Lucene.Net.Analysis.En
                 word.UnsafeWrite('e');
                 k = j + 1;
                 // nolookup(); we already tried an 'e' ending
-                return;
+                //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
             }
         }
 
@@ -1068,7 +1068,7 @@ namespace Lucene.Net.Analysis.En
                 word.Length = j + 1;
                 k = j;
                 // nolookup(), we already did it.
-                return;
+                //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
             }
         }
 
@@ -1106,7 +1106,7 @@ namespace Lucene.Net.Analysis.En
                 k = old_k;
                 // nolookup() because we restored the original ending
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>handle -ness</summary>
@@ -1126,7 +1126,7 @@ namespace Lucene.Net.Analysis.En
                 }
                 Lookup();
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>handle -ism</summary>
@@ -1142,7 +1142,7 @@ namespace Lucene.Net.Analysis.En
                 k = j;
                 Lookup();
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>this routine deals with -ment endings.</summary>
@@ -1162,7 +1162,7 @@ namespace Lucene.Net.Analysis.En
                 k = old_k;
                 // nolookup
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>this routine deals with -ize endings.</summary>
@@ -1203,7 +1203,7 @@ namespace Lucene.Net.Analysis.En
                 k = old_k;
                 // nolookup()
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>handle -ency and -ancy</summary>
@@ -1229,7 +1229,7 @@ namespace Lucene.Net.Analysis.En
                 k = j + 3;
                 Lookup();
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>handle -able and -ible</summary>
@@ -1283,7 +1283,7 @@ namespace Lucene.Net.Analysis.En
                 k = old_k;
                 // nolookup()
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>
@@ -1327,7 +1327,7 @@ namespace Lucene.Net.Analysis.En
                 k = j + 2;
                 // nolookup()
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         private static char[] ization = "ization".ToCharArray();
@@ -1473,7 +1473,7 @@ namespace Lucene.Net.Analysis.En
             }
 
             // nolookup(); all of the other paths restored original values
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>
@@ -1647,7 +1647,7 @@ namespace Lucene.Net.Analysis.En
                 k = j;
                 // nolookup()... we already tried removing the "ly" variant
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>
@@ -1744,7 +1744,7 @@ namespace Lucene.Net.Analysis.En
                 }
 
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>
@@ -1804,7 +1804,7 @@ namespace Lucene.Net.Analysis.En
                 k = old_k;
                 // nolookup()
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         internal KStemmer()

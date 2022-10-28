@@ -265,7 +265,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(len == 0, "{0}", len);
                     output.WriteVInt32(0);
-                    return;
+                    //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
                 }
                 else
                 {

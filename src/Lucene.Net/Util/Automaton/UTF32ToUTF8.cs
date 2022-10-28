@@ -180,7 +180,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     // Super degen: just single edge, one UTF8 byte:
                     start.AddTransition(new Transition(startUTF8.ByteAt(upto), endUTF8.ByteAt(upto), end));
-                    return;
+                    //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
                 }
                 else
                 {

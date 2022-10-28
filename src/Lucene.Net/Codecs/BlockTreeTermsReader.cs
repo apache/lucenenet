@@ -1241,7 +1241,7 @@ namespace Lucene.Net.Codecs
                                             return;
                                         }
                                     }
-                                    continue;
+                                    //continue; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
                                 }
                                 else if (cmp == 0)
                                 {

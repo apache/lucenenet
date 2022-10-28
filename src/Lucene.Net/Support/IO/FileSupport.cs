@@ -192,7 +192,6 @@ namespace Lucene.Net.Support.IO
                 catch (IOException e) when (IsFileAlreadyExistsException(e, fileName))
                 {
                     // If the error was because the file exists, try again.
-                    continue;
                 }
             }
             return new FileInfo(fileName);

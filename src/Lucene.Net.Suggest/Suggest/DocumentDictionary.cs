@@ -176,7 +176,7 @@ namespace Lucene.Net.Search.Suggest
                         {
                             if (contextField.GetBinaryValue() is null && contextField.GetStringValue() is null)
                             {
-                                continue;
+                                //continue; //LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
                             }
                             else
                             {
