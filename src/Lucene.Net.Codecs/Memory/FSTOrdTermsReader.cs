@@ -35,7 +35,7 @@ namespace Lucene.Net.Codecs.Memory
     /// <summary>
     /// FST-based terms dictionary reader.
     /// <para/>
-    /// The FST index maps each term and its ord, and during seek 
+    /// The FST index maps each term and its ord, and during seek
     /// the ord is used fetch metadata from a single block.
     /// The term dictionary is fully memory resident.
     /// <para/>
@@ -566,7 +566,7 @@ namespace Lucene.Net.Codecs.Memory
                 private bool pending;
 
                 /// <summary>
-                /// stack to record how current term is constructed, 
+                /// stack to record how current term is constructed,
                 /// used to accumulate metadata or rewind term:
                 ///   level == term.length + 1,
                 ///     == 0 when term is null
@@ -695,7 +695,7 @@ namespace Lucene.Net.Codecs.Memory
                             frame = PopFrame();
                         }
                         return false;
-                    DFSContinue:;
+                    DFSContinue: {/* LUCENENET: intentionally blank */}
                     }
                 DFSBreak:
                     DecodeStats();
@@ -816,8 +816,8 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 /// <summary>
-                /// Load frame for target arc(node) on fst, so that 
-                /// arc.label >= label and !fsa.reject(arc.label) 
+                /// Load frame for target arc(node) on fst, so that
+                /// arc.label >= label and !fsa.reject(arc.label)
                 /// </summary>
                 private Frame LoadCeilFrame(int label, Frame top, Frame frame)
                 {

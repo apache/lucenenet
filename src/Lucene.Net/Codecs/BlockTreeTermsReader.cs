@@ -1444,7 +1444,7 @@ namespace Lucene.Net.Codecs
                         {
                             //System.out.println("    no s=" + state);
                         }
-                    nextTermContinue:;
+                    nextTermContinue: {/* LUCENENET: intentionally blank */}
                     }
                     //nextTermBreak:;
                 }
@@ -3223,7 +3223,7 @@ namespace Lucene.Net.Codecs
                                     return SeekStatus.FOUND;
                                 }
                             }
-                        nextTermContinue: ;
+                        nextTermContinue: {/* LUCENENET: intentionally blank */}
                         }
                     nextTermBreak:
 
@@ -3379,7 +3379,7 @@ namespace Lucene.Net.Codecs
                                     return SeekStatus.FOUND;
                                 }
                             }
-                        nextTermContinue: ;
+                        nextTermContinue: {/* LUCENENET: intentionally blank */}
                         }
                     nextTermBreak:
 

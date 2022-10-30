@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
     // TODO
     //   - test w/ syns
-    //   - add pruning of low-freq ngrams?   
+    //   - add pruning of low-freq ngrams?
 
     /// <summary>
     /// Builds an ngram model from the text sent to <see cref="Build(IInputEnumerator, double)"/>
@@ -47,30 +47,30 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// the request sent to <see cref="DoLookup(string, IEnumerable{BytesRef}, bool, int)"/>.  This tries to
     /// handle the "long tail" of suggestions for when the
     /// incoming query is a never before seen query string.
-    /// 
+    ///
     /// <para>Likely this suggester would only be used as a
     /// fallback, when the primary suggester fails to find
     /// any suggestions.
-    /// 
+    ///
     /// </para>
     /// <para>Note that the weight for each suggestion is unused,
     /// and the suggestions are the analyzed forms (so your
     /// analysis process should normally be very "light").
-    /// 
+    ///
     /// </para>
     /// <para>This uses the stupid backoff language model to smooth
-    /// scores across ngram models; see 
+    /// scores across ngram models; see
     /// <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.76.1126">
     /// "Large language models in machine translation"</a> for details.
-    /// 
+    ///
     /// </para>
     /// <para> From <see cref="DoLookup(string, IEnumerable{BytesRef}, bool, int)"/>, the key of each result is the
     /// ngram token; the value is <see cref="long.MaxValue"/> * score (fixed
     /// point, cast to long).  Divide by <see cref="long.MaxValue"/> to get
     /// the score back, which ranges from 0.0 to 1.0.
-    /// 
+    ///
     /// <c>onlyMorePopular</c> is unused.
-    /// 
+    ///
     /// @lucene.experimental
     /// </para>
     /// </summary>
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///  lookup, this means that if a given trigram did not
         ///  occur, and we backoff to the bigram, the overall score
         ///  will be 0.4 times what the bigram model would have
-        ///  assigned. 
+        ///  assigned.
         /// </summary>
         public const double ALPHA = 0.4;
 
@@ -134,13 +134,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// The default character used to join multiple tokens
         /// into a single ngram token.  The input tokens produced
-        /// by the analyzer must not contain this character. 
+        /// by the analyzer must not contain this character.
         /// </summary>
         public const byte DEFAULT_SEPARATOR = 0x1e;
 
         /// <summary>
         /// Instantiate, using the provided analyzer for both
-        /// indexing and lookup, using bigram model by default. 
+        /// indexing and lookup, using bigram model by default.
         /// </summary>
         public FreeTextSuggester(Analyzer analyzer)
               : this(analyzer, analyzer, DEFAULT_GRAMS)
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Instantiate, using the provided indexing and lookup
-        /// analyzers, using bigram model by default. 
+        /// analyzers, using bigram model by default.
         /// </summary>
         public FreeTextSuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer)
               : this(indexAnalyzer, queryAnalyzer, DEFAULT_GRAMS)
@@ -159,7 +159,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// Instantiate, using the provided indexing and lookup
         /// analyzers, with the specified model (2
-        /// = bigram, 3 = trigram, etc.). 
+        /// = bigram, 3 = trigram, etc.).
         /// </summary>
         public FreeTextSuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer, int grams)
               : this(indexAnalyzer, queryAnalyzer, grams, DEFAULT_SEPARATOR)
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// tokens into a single ngram token; it must be an ascii
         /// (7-bit-clean) byte.  No input tokens should have this
         /// byte, otherwise <see cref="ArgumentException"/> is
-        /// thrown. 
+        /// thrown.
         /// </summary>
         public FreeTextSuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer, int grams, byte separator)
         {
@@ -679,7 +679,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         // reject up to seen.size() paths in acceptResult():
                         Util.Fst.Util.TopNSearcher<Int64> searcher = new TopNSearcherAnonymousClass(this, fst, num, num + seen.Count, weightComparer, seen, finalLastToken);
 
-                        // since this search is initialized with a single start node 
+                        // since this search is initialized with a single start node
                         // it is okay to start with an empty input path here
                         searcher.AddStartPaths(arc, prefixOutput, true, new Int32sRef());
 
@@ -726,13 +726,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         spare.Grow(token.Length);
                         UnicodeUtil.UTF8toUTF16(token, spare);
                         LookupResult result = new LookupResult(spare.ToString(),
-                            // LUCENENET NOTE: We need to calculate this as decimal because when using double it can sometimes 
+                            // LUCENENET NOTE: We need to calculate this as decimal because when using double it can sometimes
                             // return numbers that are greater than long.MaxValue, which results in a negative long number.
                             (long)(long.MaxValue * (decimal)backoff * ((decimal)DecodeWeight(completion.Output)) / contextCount));
                         results.Add(result);
                         if (Debugging.AssertsEnabled) Debugging.Assert(results.Count == seen.Count);
                     //System.out.println("  add result=" + result);
-                    nextCompletionContinue:;
+                    nextCompletionContinue: {/* LUCENENET: intentionally blank */}
                     }
                     backoff *= ALPHA;
                 }

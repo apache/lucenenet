@@ -89,7 +89,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Default index interval. </summary>
         public const int DEFAULT_INDEX_INTERVAL = 24;
-        
+
         private static readonly MonotonicAppendingInt64Buffer SINGLE_ZERO_BUFFER = LoadSingleZeroBuffer();
         // LUCENENET specific - optimized empty array creation
         private static readonly WAH8DocIdSet EMPTY = new WAH8DocIdSet(Arrays.Empty<byte>(), 0, 1, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
@@ -175,7 +175,7 @@ namespace Lucene.Net.Util
                 if (Debugging.AssertsEnabled) Debugging.Assert(word != 0);
                 builder.AddWord(wordNum, word);
                 ++wordNum;
-            mainContinue:;
+            mainContinue: {/* LUCENENET: intentionally blank */}
             }
             //mainBreak:
             return builder.Build();

@@ -297,7 +297,7 @@ namespace Lucene.Net.Codecs.Compressing
                     anchor = off;
                 //mainContinue: ; // LUCENENET NOTE: Not Referenced
                 }
-            mainBreak: ;
+            mainBreak: {/* LUCENENET: intentionally blank */}
             }
 
             // last literals
@@ -641,15 +641,15 @@ namespace Lucene.Net.Codecs.Compressing
                         CopyTo(match3, match2);
 
                         // goto search3Continue; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
-                    search3Continue: ;
+                    search3Continue: {/* LUCENENET: intentionally blank */}
                     }
                 //search3Break: ; // LUCENENET NOTE: Unreachable
 
-                search2Continue: ;
+                search2Continue: {/* LUCENENET: intentionally blank */}
                 }
             //search2Break: ; // LUCENENET NOTE: Not referenced
 
-            mainContinue: ;
+            mainContinue: {/* LUCENENET: intentionally blank */}
             }
         //mainBreak: // LUCENENET NOTE: Not referenced
 

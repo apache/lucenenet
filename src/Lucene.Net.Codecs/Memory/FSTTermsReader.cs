@@ -52,7 +52,7 @@ namespace Lucene.Net.Codecs.Memory
     /// <summary>
     /// FST-based terms dictionary reader.
     /// <para/>
-    /// The FST directly maps each term and its metadata, 
+    /// The FST directly maps each term and its metadata,
     /// it is memory resident.
     /// <para/>
     /// @lucene.experimental
@@ -612,7 +612,7 @@ namespace Lucene.Net.Codecs.Memory
                             frame = PopFrame();
                         }
                         return false;
-                    DFSContinue:;
+                    DFSContinue: {/* LUCENENET: intentionally blank */}
                     }
                 DFSBreak:
                     LoadMetaData();
@@ -730,8 +730,8 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 /// <summary>
-                /// Load frame for target arc(node) on fst, so that 
-                /// arc.label >= label and !fsa.reject(arc.label) 
+                /// Load frame for target arc(node) on fst, so that
+                /// arc.label >= label and !fsa.reject(arc.label)
                 /// </summary>
                 private Frame LoadCeilFrame(int label, Frame top, Frame frame)
                 {

@@ -34,7 +34,7 @@ namespace Lucene.Net.Store
     /// <summary>
     /// Combines multiple files into a single compound file.
     /// <para/>
-    /// @lucene.internal 
+    /// @lucene.internal
     /// </summary>
     /// <seealso cref="CompoundFileDirectory"/>
     internal sealed class CompoundFileWriter : IDisposable
@@ -311,7 +311,7 @@ namespace Lucene.Net.Store
                     while (pendingEntries.Count > 0)
                     {
                         FileEntry entry = pendingEntries.First.Value;
-                        pendingEntries.Remove(entry); ;
+                        pendingEntries.Remove(entry);
                         CopyFileEntry(GetOutput(), entry);
                         entries[entry.File] = entry;
                     }
