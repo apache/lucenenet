@@ -579,7 +579,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                                 }
                                 m_cursor++;
                             }
-                            golab7:;
+                            golab7: {/* LUCENENET: intentionally blank */}
                         } while (false);
                         lab3:
                         goto lab1;

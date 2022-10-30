@@ -2207,7 +2207,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         lab18:
                         goto lab15;
                     } while (false);
-                    lab17: {/* LUCENENET: intentionally blank */}
+                    lab17:
                     m_cursor = m_limit - v_10;
                     // (, line 356
                     // call stem_suffix_chain_before_ki, line 356
