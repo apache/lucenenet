@@ -290,7 +290,7 @@ namespace Lucene.Net.QueryParsers.Classic
             }
             else
             {
-
+                /* LUCENENET: intentionally blank */
             }
             switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
             {
