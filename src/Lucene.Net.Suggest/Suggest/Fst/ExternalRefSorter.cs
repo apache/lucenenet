@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Support.IO;
+using Lucene.Net.Util;
 using System;
 using System.IO;
 
@@ -39,7 +40,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         public ExternalRefSorter(OfflineSorter sort)
         {
             this.sort = sort;
-            this.input = new FileInfo(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+            this.input = FileSupport.CreateTempFile("RefSorter-", ".raw", OfflineSorter.GetDefaultTempDir());
             this.writer = new OfflineSorter.ByteSequencesWriter(input);
         }
 
@@ -58,7 +59,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 CloseWriter();
 
-                sorted = new FileInfo(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+                sorted = FileSupport.CreateTempFile("RefSorter-", ".sorted", OfflineSorter.GetDefaultTempDir());
                 sort.Sort(input, sorted);
 
                 input.Delete();
