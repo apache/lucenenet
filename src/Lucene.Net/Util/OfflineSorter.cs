@@ -555,6 +555,14 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
+            /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="FileInfo"/>. </summary>
+            /// <exception cref="ArgumentException"><paramref name="path"/> is <c>null</c> or whitespace.</exception>
+            public ByteSequencesWriter(string path)
+                : this(NewBinaryWriterDataOutput(path))
+            {
+            }
+
+            /// <summary>
             /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="DataOutput"/>. </summary>
             /// <exception cref="ArgumentNullException"><paramref name="os"/> is <c>null</c>.</exception>
             public ByteSequencesWriter(DataOutput os)
@@ -573,15 +581,28 @@ namespace Lucene.Net.Util
                 if (file is null)
                     throw new ArgumentNullException(nameof(file));
 
-                string fileName = file.FullName;
+                return NewBinaryWriterDataOutput(file.FullName);
+            }
+
+            /// <summary>
+            /// LUCENENET specific - ensures the file has been created with no BOM
+            /// if it doesn't already exist and opens the file for writing.
+            /// Java doesn't use a BOM by default.
+            /// </summary>
+            /// <exception cref="ArgumentException"><paramref name="path"/> is <c>null</c> or whitespace.</exception>
+            private static BinaryWriterDataOutput NewBinaryWriterDataOutput(string path)
+            {
+                if (string.IsNullOrWhiteSpace(path))
+                    throw new ArgumentException($"{nameof(path)} may not be null or whitespace.");
+
                 // Create the file (without BOM) if it doesn't already exist
-                if (!File.Exists(fileName))
+                if (!File.Exists(path))
                 {
                     // Create the file
-                    File.WriteAllText(fileName, string.Empty, new UTF8Encoding(false) /* No BOM */);
+                    File.WriteAllText(path, string.Empty, new UTF8Encoding(false) /* No BOM */);
                 }
 
-                return new BinaryWriterDataOutput(new BinaryWriter(new FileStream(fileName, FileMode.Open, FileAccess.Write)));
+                return new BinaryWriterDataOutput(new BinaryWriter(new FileStream(path, FileMode.Open, FileAccess.Write)));
             }
 
             /// <summary>
@@ -670,6 +691,15 @@ namespace Lucene.Net.Util
                 : this(file is not null ?
                       new BinaryReaderDataInput(new BinaryReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))) :
                       throw new ArgumentNullException(nameof(file))) // LUCENENET: Added guard clause
+            {
+            }
+
+            /// <summary>
+            /// Constructs a <see cref="ByteSequencesReader"/> from the provided <paramref name="path"/>. </summary>
+            /// <exception cref="ArgumentException"><paramref name="path"/> is <c>null</c> or whitespace.</exception>
+            // LUCENENET specific
+            public ByteSequencesReader(string path)
+                : this(!string.IsNullOrWhiteSpace(path) ? new FileInfo(path) : throw new ArgumentException($"{nameof(path)} may not be null or whitespace."))
             {
             }
 
