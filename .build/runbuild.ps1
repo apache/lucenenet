@@ -50,6 +50,7 @@ properties {
     [int]$maximumParallelJobs = 8
     
     #test parameters
+    #The build uses Lucene.Net.Tests.Analysis.Common to determine all of the targets for the solution:
     [string]$projectWithAllTestFrameworks = "$baseDirectory/src/Lucene.Net.Tests.Analysis.Common/Lucene.Net.Tests.Analysis.Common.csproj"
     [string]$where = ""
 }
