@@ -198,20 +198,20 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Defaults constructor.
         /// </summary>
-        /// <seealso cref="DefaultTempDir()"/>
+        /// <seealso cref="GetDefaultTempDir()"/>
         /// <seealso cref="BufferSize.Automatic()"/>
         public OfflineSorter()
-            : this(DEFAULT_COMPARER, BufferSize.Automatic(), DefaultTempDir(), MAX_TEMPFILES)
+            : this(DEFAULT_COMPARER, BufferSize.Automatic(), GetDefaultTempDir(), MAX_TEMPFILES)
         {
         }
 
         /// <summary>
         /// Defaults constructor with a custom comparer.
         /// </summary>
-        /// <seealso cref="DefaultTempDir()"/>
+        /// <seealso cref="GetDefaultTempDir()"/>
         /// <seealso cref="BufferSize.Automatic()"/>
         public OfflineSorter(IComparer<BytesRef> comparer)
-            : this(comparer, BufferSize.Automatic(), DefaultTempDir(), MAX_TEMPFILES)
+            : this(comparer, BufferSize.Automatic(), GetDefaultTempDir(), MAX_TEMPFILES)
         {
         }
 
@@ -349,6 +349,16 @@ namespace Lucene.Net.Util
         /// or not available, an <see cref="IOException"/> is thrown.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static DirectoryInfo GetDefaultTempDir()
+        {
+            return new DirectoryInfo(Path.GetTempPath());
+        }
+
+        /// <summary>
+        /// Returns the default temporary directory. By default, the System's temp folder. If not accessible
+        /// or not available, an <see cref="IOException"/> is thrown.
+        /// </summary>
+        [Obsolete("Use GetDefaultTempDir() instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public static DirectoryInfo DefaultTempDir()
         {
             return new DirectoryInfo(Path.GetTempPath());

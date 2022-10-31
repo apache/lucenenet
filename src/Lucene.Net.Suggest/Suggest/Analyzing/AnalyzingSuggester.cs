@@ -405,7 +405,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 throw new ArgumentException("this suggester doesn't support contexts");
             }
             string prefix = this.GetType().Name;
-            var directory = OfflineSorter.DefaultTempDir();
+            var directory = OfflineSorter.GetDefaultTempDir();
             var tempInput = FileSupport.CreateTempFile(prefix, ".input", directory);
             var tempSorted = FileSupport.CreateTempFile(prefix, ".sorted", directory);
 
