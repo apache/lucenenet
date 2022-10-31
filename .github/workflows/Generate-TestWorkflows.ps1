@@ -75,9 +75,7 @@ param(
 
     [string]$DotNet6SDKVersion = '6.0.100',
 
-    [string]$DotNet5SDKVersion = '5.0.400',
-
-    [string]$DotNetCore3SDKVersion = '3.1.412'
+    [string]$DotNet5SDKVersion = '5.0.400'
 )
 
 
@@ -158,8 +156,7 @@ function Write-TestWorkflow(
     [string[]]$TestPlatforms = @('x64'),
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest', 'macos-latest'),
     [string]$DotNet6SDKVersion = $DotNet6SDKVersion,
-    [string]$DotNet5SDKVersion = $DotNet5SDKVersion,
-    [string]$DotNetCore3SDKVersion = $DotNetCore3SDKVersion) {
+    [string]$DotNet5SDKVersion = $DotNet5SDKVersion) {
 
     $dependencies = New-Object System.Collections.Generic.HashSet[string]
     Get-ProjectDependencies $ProjectPath $RelativeRoot $dependencies
@@ -256,12 +253,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup .NET 3.1 SDK
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '$DotNetCore3SDKVersion'
-        if: `${{ startswith(matrix.framework, 'netcoreapp3.') }}
-
       - name: Setup .NET 5 SDK
         uses: actions/setup-dotnet@v1
         with:
@@ -317,7 +308,7 @@ try {
     Pop-Location
 }
 
-#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net5.0','netcoreapp3.1') -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion
+#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net5.0') -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion
 
 #Write-Host $TestProjects
 
@@ -344,5 +335,5 @@ foreach ($testProject in $TestProjects) {
     Write-Host "Frameworks To Test for ${projectName}: $($frameworks -join ';')" -ForegroundColor Cyan
 
     #Write-Host "Project: $projectName"
-    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion -DotNetCore3SDKVersion $DotNetCore3SDKVersion
+    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion
 }
