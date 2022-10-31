@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             if (map is null)
             {
-                throw new ArgumentException("map is required", "map");
+                throw new ArgumentException("map is required", nameof(map));
             }
 
             this.map = map;
