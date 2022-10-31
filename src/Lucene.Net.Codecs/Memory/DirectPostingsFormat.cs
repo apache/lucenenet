@@ -48,7 +48,7 @@ namespace Lucene.Net.Codecs.Memory
     using TermState = Index.TermState;
     using Transition = Util.Automaton.Transition;
 
-    // TODO: 
+    // TODO:
     //   - build depth-N prefix hash?
     //   - or: longer dense skip lists than just next byte?
 
@@ -56,23 +56,23 @@ namespace Lucene.Net.Codecs.Memory
     /// Wraps <see cref="Lucene41.Lucene41PostingsFormat"/> format for on-disk
     /// storage, but then at read time loads and stores all
     /// terms &amp; postings directly in RAM as byte[], int[].
-    /// 
+    ///
     /// <para><b>WARNING</b>: This is
     /// exceptionally RAM intensive: it makes no effort to
     /// compress the postings data, storing terms as separate
-    /// byte[] and postings as separate int[], but as a result it 
+    /// byte[] and postings as separate int[], but as a result it
     /// gives substantial increase in search performance.
-    /// 
+    ///
     /// </para>
     /// <para>This postings format supports <see cref="TermsEnum.Ord"/>
     /// and <see cref="TermsEnum.SeekExact(long)"/>.
-    /// 
+    ///
     /// </para>
     /// <para>Because this holds all term bytes as a single
     /// byte[], you cannot have more than 2.1GB worth of term
     /// bytes in a single segment.
     /// </para>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     [PostingsFormatName("Direct")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class DirectPostingsFormat : PostingsFormat
@@ -85,7 +85,7 @@ namespace Lucene.Net.Codecs.Memory
 
         // TODO: allow passing/wrapping arbitrary postings format?
 
-        public DirectPostingsFormat() 
+        public DirectPostingsFormat()
             : this(DEFAULT_MIN_SKIP_COUNT, DEFAULT_LOW_FREQ_CUTOFF)
         {
         }
@@ -95,9 +95,9 @@ namespace Lucene.Net.Codecs.Memory
         /// same prefix before we put a skip pointer down.  Terms
         /// with docFreq less than or equal <paramref name="lowFreqCutoff"/> will use a single int[]
         /// to hold all docs, freqs, position and offsets; terms
-        /// with higher docFreq will use separate arrays. 
+        /// with higher docFreq will use separate arrays.
         /// </summary>
-        public DirectPostingsFormat(int minSkipCount, int lowFreqCutoff) 
+        public DirectPostingsFormat(int minSkipCount, int lowFreqCutoff)
             : base()
         {
             _minSkipCount = minSkipCount;
@@ -1318,7 +1318,7 @@ namespace Lucene.Net.Codecs.Memory
                                 //   System.out.println("  beyond end; no terms will match");
                                 // }
                                 return;
-                                nextLabelContinue: ;
+                                nextLabelContinue: {/* LUCENENET: intentionally blank */}
                             }
                             //nextLabelBreak: ; // LUCENENET NOTE: Not used
                         }
@@ -1639,7 +1639,7 @@ namespace Lucene.Net.Codecs.Memory
                                 // }
                             }
                         }
-                    nextTermContinue:;
+                    nextTermContinue: {/* LUCENENET: intentionally blank */}
                     }
 
                     //nextTermBreak: ; // LUCENENET NOTE: Not used
@@ -2282,7 +2282,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override int Advance(int target)
             {
-       
+
                 //System.out.println("  advance target=" + target + " cur=" + docID() + " upto=" + upto + " of " + docIDs.length);
                 // if (DEBUG) {
                 //   System.out.println("advance target=" + target + " len=" + docIDs.length);
@@ -2594,7 +2594,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (payloads is null)
                     return null;
-                
+
                 var payloadBytes = payloads[upto][posUpto/(hasOffsets ? 3 : 1)];
                 if (payloadBytes is null)
                 {

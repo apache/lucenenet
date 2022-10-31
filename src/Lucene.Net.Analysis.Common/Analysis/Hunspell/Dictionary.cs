@@ -1338,7 +1338,7 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 if (rawFlags.Length == 0)
                 {
-                    return Arrays.Empty<char>(); ; // LUCENENET: Optimized char[] creation
+                    return Arrays.Empty<char>(); // LUCENENET: Optimized char[] creation
                 }
 
                 StringBuilder builder = new StringBuilder();

@@ -243,7 +243,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 Entry e = this.next;
                 if (e is null)
                 {
-                    throw IllegalStateException.Create(this.GetType() + " cannot get next entry"); ;
+                    throw IllegalStateException.Create(this.GetType() + " cannot get next entry");
                 }
 
                 Entry n = e.next;

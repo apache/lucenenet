@@ -167,7 +167,7 @@ namespace Lucene.Net.Analysis.Sinks
             AttributeSource.State finalState = CaptureState();
             foreach (WeakReference<SinkTokenStream> @ref in sinks)
             {
-                SinkTokenStream sink; ;
+                SinkTokenStream sink;
                 if (@ref.TryGetTarget(out sink))
                 {
                     sink.SetFinalState(finalState);

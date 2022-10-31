@@ -46,7 +46,7 @@ namespace Lucene.Net.Spatial.Prefix
 
         public int PrefixGridScanLevel { get; }//at least one less than grid.getMaxLevels()
 
-        protected AbstractVisitingPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, 
+        protected AbstractVisitingPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid,
                                                 int detailLevel, int prefixGridScanLevel) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(queryShape, fieldName, grid, detailLevel)
         {
@@ -145,7 +145,7 @@ namespace Lucene.Net.Spatial.Prefix
                 return null;// all done
             }
             thisTerm = m_termsEnum.Term;
-                
+
             curVNode = new VNode(null);
             curVNode.Reset(m_filter.m_grid.WorldCell);
 
@@ -238,10 +238,9 @@ namespace Lucene.Net.Spatial.Prefix
                         AddIntersectingChildren();
                     }
                 }
-                ;
             }//main loop
             main_break: { }
-                
+
             return Finish();
         }
 
@@ -279,7 +278,7 @@ namespace Lucene.Net.Spatial.Prefix
                     thisTerm = m_termsEnum.Term;
                 }
             }
-                
+
             //Decide whether to continue to divide & conquer, or whether it's time to
             // scan through terms beneath this cell.
             // Scanning is a performance optimization trade-off.

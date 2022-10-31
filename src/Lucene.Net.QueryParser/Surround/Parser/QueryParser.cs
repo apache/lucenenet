@@ -53,7 +53,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
     /// default, meaning the operands are adjacent, or may be provided as a
     /// prefix from 2-99.  So, for example, 3W(a, b) means that terms a and b
     /// must appear within three positions of each other, or in other words, up
-    /// to two terms may appear between a and b. 
+    /// to two terms may appear between a and b.
     /// </para>
     /// </summary>
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
@@ -218,7 +218,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             {
                 if (Jj_2_1(2))
                 {
-                    ;
+                    /* LUCENENET: intentionally blank */
                 }
                 else
                 {
@@ -250,7 +250,6 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                 {
                     case RegexpToken.OR:
-                        ;
                         break;
                     default:
                         jj_la1[0] = jj_gen;
@@ -283,7 +282,6 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                 {
                     case RegexpToken.AND:
-                        ;
                         break;
                     default:
                         jj_la1[1] = jj_gen;
@@ -316,7 +314,6 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                 {
                     case RegexpToken.NOT:
-                        ;
                         break;
                     default:
                         jj_la1[2] = jj_gen;
@@ -349,7 +346,6 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                 {
                     case RegexpToken.N:
-                        ;
                         break;
                     default:
                         jj_la1[3] = jj_gen;
@@ -380,7 +376,6 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                 {
                     case RegexpToken.W:
-                        ;
                         break;
                     default:
                         jj_la1[4] = jj_gen;
@@ -487,7 +482,6 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                 {
                     case RegexpToken.COMMA:
-                        ;
                         break;
                     default:
                         jj_la1[7] = jj_gen;
@@ -556,7 +550,6 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                 {
                     case RegexpToken.CARAT:
-                        ;
                         break;
                     default:
                         jj_la1[9] = jj_gen;
@@ -580,7 +573,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 }
                 q.Weight = (f * q.Weight); /* left associative, fwiw */
             }
-        label_8: ;
+        label_8: {/* LUCENENET: intentionally blank */}
         }
 
         private bool Jj_2_1(int xla)
@@ -699,7 +692,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             throw GenerateParseException();
         }
 
-        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // LUCENENET: It is no longer good practice to use binary serialization.
         // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
@@ -818,7 +811,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                         jj_expentries.Add(jj_expentry);
                         goto jj_entries_loop_break;
                     }
-                jj_entries_loop_continue: ;
+                jj_entries_loop_continue: {/* LUCENENET: intentionally blank */}
                 }
             jj_entries_loop_break:
                 if (pos != 0) jj_lasttokens[(jj_endpos = pos) - 1] = kind;

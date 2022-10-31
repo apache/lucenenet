@@ -323,7 +323,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     goto replab3;
                     end_of_outer_loop: { }
                 }
-                replab3:;
+                replab3: {/* LUCENENET: intentionally blank */}
             } while (false);
             //lab2: - not referenced
             m_cursor = v_3;
@@ -402,7 +402,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         }
                         m_cursor++;
                     }
-                    golab5:;
+                    golab5: {/* LUCENENET: intentionally blank */}
                 } while (false);
                 lab1:
                 // setmark p1, line 42

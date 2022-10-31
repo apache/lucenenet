@@ -162,21 +162,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
 
         // These changes were made to introduce operator precedence:
-        // - Clause() now returns a QueryNode. 
+        // - Clause() now returns a QueryNode.
         // - The modifiers are consumed by Clause() and returned as part of the QueryNode Object
-        // - Query does not consume conjunctions (AND, OR) anymore. 
+        // - Query does not consume conjunctions (AND, OR) anymore.
         // - This is now done by two new non-terminals: ConjClause and DisjClause
         // The parse tree looks similar to this:
         //       Query ::= DisjQuery ( DisjQuery )*
-        //   DisjQuery ::= ConjQuery ( OR ConjQuery )* 
+        //   DisjQuery ::= ConjQuery ( OR ConjQuery )*
         //   ConjQuery ::= Clause ( AND Clause )*
-        //      Clause ::= [ Modifier ] ... 
+        //      Clause ::= [ Modifier ] ...
         public IQueryNode Query(string field)
         {
             IList<IQueryNode> clauses = null;
             IQueryNode c, first = null;
             first = DisjQuery(field);
-            
+
             while (true)
             {
                 switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
@@ -191,7 +191,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     case RegexpToken.RANGEIN_START:
                     case RegexpToken.RANGEEX_START:
                     case RegexpToken.NUMBER:
-                        ;
                         break;
                     default:
                         jj_la1[4] = jj_gen;
@@ -222,13 +221,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             IQueryNode first, c;
             IList<IQueryNode> clauses = null;
             first = ConjQuery(field);
-            
+
             while (true)
             {
                 switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                 {
                     case RegexpToken.OR:
-                        ;
                         break;
                     default:
                         jj_la1[5] = jj_gen;
@@ -260,13 +258,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             IQueryNode first, c;
             IList<IQueryNode> clauses = null;
             first = ModClause(field);
-            
+
             while (true)
             {
                 switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                 {
                     case RegexpToken.AND:
-                        ;
                         break;
                     default:
                         jj_la1[6] = jj_gen;
@@ -305,7 +302,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         //   mods=Modifiers() q=Clause(field)
         //   {
         //     if (mods == ModifierQueryNode.Modifier.MOD_NONE) firstQuery=q;
-        //     
+        //
         //     // do not create modifier nodes with MOD_NONE
         //      if (mods != ModifierQueryNode.Modifier.MOD_NONE) {
         //        q = new ModifierQueryNode(q, mods);
@@ -314,7 +311,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         //   }
         //   (
         //     conj=Conjunction() mods=Modifiers() q=Clause(field)
-        //     { 
+        //     {
         //       // do not create modifier nodes with MOD_NONE
         //        if (mods != ModifierQueryNode.Modifier.MOD_NONE) {
         //          q = new ModifierQueryNode(q, mods);
@@ -501,7 +498,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         }
                         else
                         {
-                            ;
+                            /* LUCENENET: intentionally blank */
                         }
                         switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                         {
@@ -1081,7 +1078,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             throw GenerateParseException();
         }
 
-        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // LUCENENET: It is no longer good practice to use binary serialization.
         // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]

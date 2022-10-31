@@ -54,7 +54,7 @@ namespace Lucene.Net.Facet
         private int collectDocID = -1;
         private float collectScore;
 
-        internal DrillSidewaysScorer(AtomicReaderContext context, Scorer baseScorer, 
+        internal DrillSidewaysScorer(AtomicReaderContext context, Scorer baseScorer,
             ICollector drillDownCollector, DocsAndCost[] dims, bool scoreSubDocsAtOnce)
         {
             this.dims = dims;
@@ -186,9 +186,9 @@ namespace Lucene.Net.Facet
         /// drilldowns, or when the docs must be scored at once
         /// (i.e., like <see cref="Search.BooleanScorer2"/>, not <see cref="Search.BooleanScorer"/>).  In
         /// this case we just .Next() on base and .Advance() on
-        /// the dim filters. 
+        /// the dim filters.
         /// </summary>
-        private void DoQueryFirstScoring(ICollector collector, DocIdSetIterator[] disis, 
+        private void DoQueryFirstScoring(ICollector collector, DocIdSetIterator[] disis,
             ICollector[] sidewaysCollectors, IBits[] bits, ICollector[] bitsSidewaysCollectors)
         {
             //if (DEBUG) {
@@ -270,14 +270,14 @@ namespace Lucene.Net.Facet
                 }
 
                 docID = baseScorer.NextDoc();
-                nextDocContinue:;
+                nextDocContinue: {/* LUCENENET: intentionally blank */}
             }
-            //nextDocBreak:; // Not referenced
+            //nextDocBreak: // Not referenced
         }
 
         /// <summary>
         /// Used when drill downs are highly constraining vs
-        /// baseQuery. 
+        /// baseQuery.
         /// </summary>
         private void DoDrillDownAdvanceScoring(ICollector collector, DocIdSetIterator[] disis, ICollector[] sidewaysCollectors)
         {

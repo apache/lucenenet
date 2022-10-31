@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
 
                 if (inclusiveUpperPoint < 0 || inclusiveLowerPoint > inclusiveUpperPoint)
                 {
-                    return null; ;
+                    return null;
                 }
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
@@ -769,7 +769,7 @@ namespace Lucene.Net.Search
             }
             return true;
         }
-        
+
         // LUCENENET specific - override this method to eliminate boxing on value types
         protected virtual bool Equals(T objA, T objB)
         {

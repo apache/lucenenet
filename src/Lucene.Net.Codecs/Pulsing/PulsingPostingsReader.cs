@@ -381,7 +381,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     }
                     else
                     {
-                        _accum += code.TripleShift(1); ; // shift off low bit
+                        _accum += code.TripleShift(1); // shift off low bit
                         _freq = (code & 1) != 0 ? 1 : _postings.ReadVInt32();
 
                         // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
