@@ -128,7 +128,7 @@ namespace Lucene.Net.Search.Suggest
         private OfflineSorter.ByteSequencesReader Sort()
         {
             string prefix = this.GetType().Name;
-            DirectoryInfo directory = OfflineSorter.DefaultTempDir();
+            DirectoryInfo directory = OfflineSorter.GetDefaultTempDir();
             tempInput = FileSupport.CreateTempFile(prefix, ".input", directory);
             tempSorted = FileSupport.CreateTempFile(prefix, ".sorted", directory);
 
