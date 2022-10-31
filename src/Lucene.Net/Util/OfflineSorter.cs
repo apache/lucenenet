@@ -183,6 +183,7 @@ namespace Lucene.Net.Util
         }
 
         private readonly BufferSize ramBufferSize;
+        private readonly DirectoryInfo tempDirectory;
 
         private readonly Counter bufferBytesUsed = Counter.NewCounter();
         private readonly BytesRefArray buffer;
@@ -217,9 +218,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// All-details constructor.
         /// </summary>
-#pragma warning disable IDE0060 // Remove unused parameter
         public OfflineSorter(IComparer<BytesRef> comparer, BufferSize ramBufferSize, DirectoryInfo tempDirectory, int maxTempfiles)
-#pragma warning restore IDE0060 // Remove unused parameter
         {
             buffer = new BytesRefArray(bufferBytesUsed);
             if (ramBufferSize.bytes < ABSOLUTE_MIN_SORT_BUFFER_SIZE)
@@ -233,8 +232,18 @@ namespace Lucene.Net.Util
             }
 
             this.ramBufferSize = ramBufferSize;
+            this.tempDirectory = tempDirectory;
             this.maxTempFiles = maxTempfiles;
             this.comparer = comparer;
+        }
+
+        /// <summary>
+        /// All-details constructor, specifying <paramref name="tempDirectoryPath"/> as a <see cref="string"/>.
+        /// </summary>
+        // LUCENENET specific
+        public OfflineSorter(IComparer<BytesRef> comparer, BufferSize ramBufferSize, string tempDirectoryPath, int maxTempfiles)
+            : this(comparer, ramBufferSize, new DirectoryInfo(tempDirectoryPath), maxTempfiles)
+        {
         }
 
         /// <summary>
@@ -265,7 +274,7 @@ namespace Lucene.Net.Util
                         // Handle intermediate merges.
                         if (merges.Count == maxTempFiles)
                         {
-                            var intermediate = new FileInfo(Path.GetTempFileName());
+                            var intermediate = FileSupport.CreateTempFile("sort", "intermediate", tempDirectory);
                             try
                             {
                                 MergePartitions(merges, intermediate);
@@ -361,7 +370,7 @@ namespace Lucene.Net.Util
         private FileInfo SortPartition(/*int len*/) // LUCENENET NOTE: made private, since protected is not valid in a sealed class. Also eliminated unused parameter.
         {
             var data = this.buffer;
-            FileInfo tempFile = FileSupport.CreateTempFile("sort", "partition", DefaultTempDir());
+            FileInfo tempFile = FileSupport.CreateTempFile("sort", "partition", tempDirectory);
 
             long start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             sortInfo.SortTime += ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - start); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
