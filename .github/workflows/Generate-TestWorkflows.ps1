@@ -255,7 +255,11 @@ jobs:
 
     if ($isCLI) {
         $fileText += "
-      project_under_test_path: '$luceneCliProjectPath'"
+      project_under_test_path: '$luceneCliProjectPath'
+      run_slow_tests: 'true'"
+    } else {
+        $fileText += "
+      run_slow_tests: 'false'"
     }
 
     $fileText += "
@@ -299,8 +303,8 @@ jobs:
     }
 
     $fileText += "
-      - run: dotnet build `${{env.project_path}} --configuration `${{matrix.configuration}} --framework `${{matrix.framework}} /p:TestFrameworks=true /p:PortableDebugTypeOnly=true
-      - run: dotnet test `${{env.project_path}} --configuration `${{matrix.configuration}} --framework `${{matrix.framework}} --no-build --no-restore --blame-hang --blame-hang-dump-type mini --blame-hang-timeout 20minutes --logger:`"console;verbosity=normal`" --logger:`"trx;LogFileName=`${{env.trx_file_name}}`" --logger:`"liquid.md;LogFileName=`${{env.md_file_name}};Title=`${{env.title}};`" --results-directory:`"`${{github.workspace}}/`${{env.test_results_artifact_name}}/`${{env.project_name}}`" -- RunConfiguration.TargetPlatform=`${{matrix.platform}} TestRunParameters.Parameter\(name=\`"tests:slow\`",\ value=\`"false\`"\)
+      - run: dotnet build `${{env.project_path}} --configuration `${{matrix.configuration}} --framework `${{matrix.framework}} /p:TestFrameworks=true
+      - run: dotnet test `${{env.project_path}} --configuration `${{matrix.configuration}} --framework `${{matrix.framework}} --no-build --no-restore --blame-hang --blame-hang-dump-type mini --blame-hang-timeout 20minutes --logger:`"console;verbosity=normal`" --logger:`"trx;LogFileName=`${{env.trx_file_name}}`" --logger:`"liquid.md;LogFileName=`${{env.md_file_name}};Title=`${{env.title}};`" --results-directory:`"`${{github.workspace}}/`${{env.test_results_artifact_name}}/`${{env.project_name}}`" -- RunConfiguration.TargetPlatform=`${{matrix.platform}} TestRunParameters.Parameter\(name=\`"tests:slow\`",\ value=\`"\`${{env.run_slow_tests}}\`"\)
         shell: bash
       # upload reports as build artifacts
       - name: Upload a Build Artifact

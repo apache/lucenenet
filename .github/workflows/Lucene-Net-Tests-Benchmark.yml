@@ -77,6 +77,7 @@ jobs:
             framework: net461
     env:
       project_path: './src/Lucene.Net.Tests.Benchmark/Lucene.Net.Tests.Benchmark.csproj'
+      run_slow_tests: 'false'
       trx_file_name: 'TestResults.trx'
       md_file_name: 'TestResults.md' # Report file name for LiquidTestReports.Markdown
 
@@ -109,8 +110,8 @@ jobs:
           # Title for LiquidTestReports.Markdown
           echo "title=Test Run for $project_name - ${{matrix.framework}} - ${{matrix.platform}} - ${{matrix.os}}" | Out-File -FilePath  $env:GITHUB_ENV -Encoding utf8 -Append
         shell: pwsh
-      - run: dotnet build ${{env.project_path}} --configuration ${{matrix.configuration}} --framework ${{matrix.framework}} /p:TestFrameworks=true /p:PortableDebugTypeOnly=true
-      - run: dotnet test ${{env.project_path}} --configuration ${{matrix.configuration}} --framework ${{matrix.framework}} --no-build --no-restore --blame-hang --blame-hang-dump-type mini --blame-hang-timeout 20minutes --logger:"console;verbosity=normal" --logger:"trx;LogFileName=${{env.trx_file_name}}" --logger:"liquid.md;LogFileName=${{env.md_file_name}};Title=${{env.title}};" --results-directory:"${{github.workspace}}/${{env.test_results_artifact_name}}/${{env.project_name}}" -- RunConfiguration.TargetPlatform=${{matrix.platform}} TestRunParameters.Parameter\(name=\"tests:slow\",\ value=\"false\"\)
+      - run: dotnet build ${{env.project_path}} --configuration ${{matrix.configuration}} --framework ${{matrix.framework}} /p:TestFrameworks=true
+      - run: dotnet test ${{env.project_path}} --configuration ${{matrix.configuration}} --framework ${{matrix.framework}} --no-build --no-restore --blame-hang --blame-hang-dump-type mini --blame-hang-timeout 20minutes --logger:"console;verbosity=normal" --logger:"trx;LogFileName=${{env.trx_file_name}}" --logger:"liquid.md;LogFileName=${{env.md_file_name}};Title=${{env.title}};" --results-directory:"${{github.workspace}}/${{env.test_results_artifact_name}}/${{env.project_name}}" -- RunConfiguration.TargetPlatform=${{matrix.platform}} TestRunParameters.Parameter\(name=\"tests:slow\",\ value=\"\${{env.run_slow_tests}}\"\)
         shell: bash
       # upload reports as build artifacts
       - name: Upload a Build Artifact
